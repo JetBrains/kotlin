@@ -1,0 +1,1 @@
+actual class <!AMBIGUOUS_EXPECTS("Actual class 'A'", "left.kt, right.kt"), PACKAGE_OR_CLASSIFIER_REDECLARATION("A")!>A<!>

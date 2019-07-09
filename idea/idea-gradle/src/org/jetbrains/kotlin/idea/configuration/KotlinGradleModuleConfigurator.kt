@@ -16,14 +16,13 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.facet.FacetManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.versions.getDefaultJvmTarget
-import org.jetbrains.kotlin.resolve.TargetPlatform
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 
 class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
 
@@ -31,7 +30,10 @@ class KotlinGradleModuleConfigurator : KotlinWithGradleConfigurator() {
         get() = NAME
 
     override val targetPlatform: TargetPlatform
-        get() = JvmPlatform
+        get() = JvmPlatforms.unspecifiedJvmPlatform
+
+    @Suppress("DEPRECATION_ERROR")
+    override fun getTargetPlatform() = JvmPlatforms.CompatJvmPlatform
 
     override val presentableText: String
         get() = "Java with Gradle"

@@ -16,15 +16,14 @@
 
 package org.jetbrains.kotlin.psi2ir.intermediate
 
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.buildStatement
+import org.jetbrains.kotlin.ir.builders.irIfNull
+import org.jetbrains.kotlin.ir.builders.irNull
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorWithScope
-import org.jetbrains.kotlin.types.typeUtil.builtIns
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 
 class SafeCallReceiver(
@@ -33,7 +32,7 @@ class SafeCallReceiver(
     val endOffset: Int,
     val extensionReceiver: IntermediateValue?,
     val dispatchReceiver: IntermediateValue?,
-    val isAssignmentReceiver: Boolean
+    val isStatement: Boolean
 ) : CallReceiver {
 
     override fun call(withDispatchAndExtensionReceivers: (IntermediateValue?, IntermediateValue?) -> IrExpression): IrExpression {
@@ -52,7 +51,7 @@ class SafeCallReceiver(
 
         val irResult = withDispatchAndExtensionReceivers(dispatchReceiverValue, extensionReceiverValue)
 
-        val resultType = if (isAssignmentReceiver) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
+        val resultType = if (isStatement) generator.context.irBuiltIns.unitType else irResult.type.makeNullable()
 
         val irBlock = IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL)
 
@@ -79,7 +78,7 @@ fun IrExpression.safeCallOnDispatchReceiver(
         generator, startOffset, endOffset,
         extensionReceiver = null,
         dispatchReceiver = OnceExpressionValue(this),
-        isAssignmentReceiver = false
+        isStatement = false
     ).call { dispatchReceiverValue, _ ->
         ifNotNull(dispatchReceiverValue!!.load())
     }

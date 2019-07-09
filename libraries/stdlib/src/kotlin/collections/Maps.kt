@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -488,6 +488,7 @@ public inline fun <K, V> Map<out K, V>.filterNot(predicate: (Map.Entry<K, V>) ->
  * Returns a new map containing all key-value pairs from the given collection of pairs.
  *
  * The returned map preserves the entry iteration order of the original collection.
+ * If any of two pairs would have the same key the last one gets added to the map.
  */
 public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
     if (this is Collection) {
@@ -510,6 +511,7 @@ public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destina
  * Returns a new map containing all key-value pairs from the given array of pairs.
  *
  * The returned map preserves the entry iteration order of the original array.
+ * If any of two pairs would have the same key the last one gets added to the map.
  */
 public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V> = when (size) {
     0 -> emptyMap()
@@ -527,6 +529,7 @@ public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destin
  * Returns a new map containing all key-value pairs from the given sequence of pairs.
  *
  * The returned map preserves the entry iteration order of the original sequence.
+ * If any of two pairs would have the same key the last one gets added to the map.
  */
 public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<K, V>()).optimizeReadOnlyMap()
 

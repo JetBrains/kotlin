@@ -11,7 +11,7 @@ import android.util.SparseArray
 import android.widget.Button
 
 @SuppressWarnings("unused")
-@Suppress("UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION")
+@Suppress("UsePropertyAccessSyntax", "UNUSED_VARIABLE", "unused", "UNUSED_PARAMETER", "DEPRECATION", "UNNECESSARY_NOT_NULL_ASSERTION", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) : Button(context, attrs, defStyle) {
 
     private var cachedRect: Rect? = null
@@ -73,7 +73,7 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
 
         // This one should not be reported:
         @SuppressLint("UseSparseArrays")
-        val myOtherMap = <warning descr="Use `new SparseArray<Object>(...)` instead for better performance">HashMap<Int, Any>()</warning>
+        val myOtherMap = HashMap<Int, Any>()
     }
 
     protected fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int,
@@ -113,7 +113,7 @@ class JavaPerformanceTest(context: Context, attrs: AttributeSet, defStyle: Int) 
         <warning descr="Avoid object allocations during draw/layout operations (preallocate and reuse instead)">BitmapFactory.decodeFile(null)</warning>
         val canvas: Canvas? = null
         <warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">canvas!!.getClipBounds()</warning> // allocates on your behalf
-        <warning descr="Avoid object allocations during draw operations: Use `Canvas.getClipBounds(Rect)` instead of `Canvas.getClipBounds()` which allocates a temporary `Rect`">canvas.clipBounds</warning> // allocates on your behalf
+        canvas.clipBounds // allocates on your behalf
         canvas.getClipBounds(null) // NOT an error
 
         val layoutWidth = width

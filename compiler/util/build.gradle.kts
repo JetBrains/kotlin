@@ -4,14 +4,13 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":core:deserialization"))
+    compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     compileOnly(intellijDep()) { includeIntellijCoreJarDependencies(project) }
-    compileOnly(intellijDep("jps-standalone")) { includeJars("jps-model") }
+    compileOnly(jpsStandalone()) { includeJars("jps-model") }
 }
 
 sourceSets {

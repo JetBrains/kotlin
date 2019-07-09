@@ -20,7 +20,7 @@ import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
-object LongComparisonGenerator : ComparisonGenerator {
+object LongComparisonGenerator : SignedIntegerComparisonGenerator {
     override val comparedType: Type = Type.LONG_TYPE
 
     override fun jumpIfGreaterOrEqual(v: InstructionAdapter, label: Label) {
@@ -39,6 +39,12 @@ object LongComparisonGenerator : ComparisonGenerator {
     }
 
     override fun jumpIfLess(v: InstructionAdapter, label: Label) {
+        v.lcmp()
+        v.iflt(label)
+    }
+
+    override fun jumpIfLessThanZero(v: InstructionAdapter, label: Label) {
+        v.lconst(0L)
         v.lcmp()
         v.iflt(label)
     }

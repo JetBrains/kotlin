@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class UIntArray(private val intArray: IntArray) {
     val size get() = intArray.size

@@ -205,7 +205,7 @@ private fun kjsmToString(kjsmFile: File): String {
 }
 
 private fun sourceMapFileToString(sourceMapFile: File, generatedJsFile: File): String {
-    val sourceMapParseResult = SourceMapParser.parse(StringReader(sourceMapFile.readText()))
+    val sourceMapParseResult = SourceMapParser.parse(sourceMapFile.readText())
     return when (sourceMapParseResult) {
         is SourceMapSuccess -> {
             val bytesOut = ByteArrayOutputStream()

@@ -17,10 +17,14 @@
 package org.jetbrains.kotlin.android.lint
 
 import com.intellij.codeInspection.InspectionProfileEntry
+import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProviderImpl
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.PathUtil
 import org.jetbrains.android.inspections.lint.AndroidLintInspectionBase
 import org.jetbrains.kotlin.android.KotlinAndroidTestCase
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.idea.facet.getOrCreateFacet
+import org.jetbrains.kotlin.idea.facet.initializeIfNeeded
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.findStringWithPrefixes
@@ -34,6 +38,16 @@ abstract class AbstractKotlinLintTest : KotlinAndroidTestCase() {
         (myFixture as CodeInsightTestFixtureImpl).setVirtualFileFilter { false } // Allow access to tree elements.
         ConfigLibraryUtil.configureKotlinRuntime(myModule)
         ConfigLibraryUtil.addLibrary(myModule, "androidExtensionsRuntime", "dist/kotlinc/lib", arrayOf("android-extensions-runtime.jar"))
+
+        val facet = myModule.getOrCreateFacet(IdeModifiableModelsProviderImpl(project), useProjectSettings = false, commitModel = true)
+
+        facet.configuration.settings.apply {
+            initializeIfNeeded(myModule, null)
+
+            val arguments = CommonCompilerArguments.DummyImpl()
+            arguments.pluginClasspaths = arrayOf("kotlin-android-extensions.jar")
+            compilerArguments = arguments
+        }
     }
 
     override fun tearDown() {

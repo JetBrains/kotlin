@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.codegen.optimization.boxing
 
 import org.jetbrains.kotlin.codegen.optimization.OptimizationMethodVisitor
-import org.jetbrains.kotlin.codegen.optimization.common.OPTIMIZATION_ASM_API_VERSION
 import org.jetbrains.kotlin.codegen.optimization.common.debugText
 import org.jetbrains.kotlin.codegen.optimization.common.isLoadOperation
 import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
@@ -120,7 +119,7 @@ class PopBackwardPropagationTransformer : MethodTransformer() {
             throw AssertionError("Incorrect bytecode at ${methodNode.instructions.indexOf(insn)}: ${insn.debugText} $frame")
         }
 
-        private inner class HazardsTrackingInterpreter : SourceInterpreter(OPTIMIZATION_ASM_API_VERSION) {
+        private inner class HazardsTrackingInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
             override fun naryOperation(insn: AbstractInsnNode, values: MutableList<out SourceValue>): SourceValue {
                 for (value in values) {
                     value.insns.markAsDontTouch()

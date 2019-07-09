@@ -21,8 +21,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.*
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.references.ReferenceAccess
 import org.jetbrains.kotlin.idea.references.readWriteAccess
@@ -30,30 +29,37 @@ import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Replace overloaded operator with function call") {
+class OperatorToFunctionIntention :
+    SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Replace overloaded operator with function call") {
     companion object {
-        private fun isApplicablePrefix(element: KtPrefixExpression, caretOffset: Int): Boolean {
+        private fun isApplicableUnary(element: KtUnaryExpression, caretOffset: Int): Boolean {
             val opRef = element.operationReference
             if (!opRef.textRange.containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
-                KtTokens.PLUS, KtTokens.MINUS, KtTokens.PLUSPLUS, KtTokens.MINUSMINUS, KtTokens.EXCL -> true
+                KtTokens.PLUS, KtTokens.MINUS, KtTokens.EXCL -> true
+                KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> !isUsedAsExpression(element)
                 else -> false
             }
         }
 
-        private fun isApplicablePostfix(element: KtPostfixExpression, caretOffset: Int): Boolean {
-            val opRef = element.operationReference
-            if (!opRef.textRange.containsOffset(caretOffset)) return false
-            if (element.baseExpression == null) return false
-            return when (opRef.getReferencedNameElementType()) {
-                KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> true
-                else -> false
-            }
+        // TODO: replace to `element.isUsedAsExpression(element.analyze(BodyResolveMode.PARTIAL_WITH_CFA))` after fix KT-25682
+        private fun isUsedAsExpression(element: KtExpression): Boolean {
+            val parent = element.parent
+            return if (parent is KtBlockExpression) parent.lastBlockStatementOrThis() == element && parentIsUsedAsExpression(parent.parent)
+            else parentIsUsedAsExpression(parent)
+        }
+
+        private fun parentIsUsedAsExpression(element: PsiElement): Boolean = when (val parent = element.parent) {
+            is KtLoopExpression, is KtFile -> false
+            is KtIfExpression, is KtWhenExpression -> (parent as KtExpression).isUsedAsExpression(parent.analyze(BodyResolveMode.PARTIAL_WITH_CFA))
+            else -> true
         }
 
         private fun isApplicableBinary(element: KtBinaryExpression, caretOffset: Int): Boolean {
@@ -95,13 +101,12 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
             return false
         }
 
-        private fun convertPrefix(element: KtPrefixExpression): KtExpression {
+        private fun convertUnary(element: KtUnaryExpression): KtExpression {
             val op = element.operationReference.getReferencedNameElementType()
             val operatorName = when (op) {
+                KtTokens.PLUSPLUS, KtTokens.MINUSMINUS -> return convertUnaryWithAssignFix(element)
                 KtTokens.PLUS -> OperatorNameConventions.UNARY_PLUS
                 KtTokens.MINUS -> OperatorNameConventions.UNARY_MINUS
-                KtTokens.PLUSPLUS -> OperatorNameConventions.INC
-                KtTokens.MINUSMINUS -> OperatorNameConventions.DEC
                 KtTokens.EXCL -> OperatorNameConventions.NOT
                 else -> return element
             }
@@ -110,7 +115,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
             return element.replace(transformed) as KtExpression
         }
 
-        private fun convertPostFix(element: KtPostfixExpression): KtExpression {
+        private fun convertUnaryWithAssignFix(element: KtUnaryExpression): KtExpression {
             val op = element.operationReference.getReferencedNameElementType()
             val operatorName = when (op) {
                 KtTokens.PLUSPLUS -> OperatorNameConventions.INC
@@ -118,7 +123,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                 else -> return element
             }
 
-            val transformed = KtPsiFactory(element).createExpressionByPattern("$0.$1()", element.baseExpression!!, operatorName)
+            val transformed = KtPsiFactory(element).createExpressionByPattern("$0 = $0.$1()", element.baseExpression!!, operatorName)
             return element.replace(transformed) as KtExpression
         }
 
@@ -188,8 +193,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
                     appendExpressions(element.indexExpressions)
                     appendFixedText(",")
                     appendExpression(parent.right)
-                }
-                else {
+                } else {
                     appendFixedText("get(")
                     appendExpressions(element.indexExpressions)
                 }
@@ -234,8 +238,7 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
             val commentSaver = CommentSaver(elementToBeReplaced, saveLineBreaks = true)
 
             val result = when (element) {
-                is KtPrefixExpression -> convertPrefix(element)
-                is KtPostfixExpression -> convertPostFix(element)
+                is KtUnaryExpression -> convertUnary(element)
                 is KtBinaryExpression -> convertBinary(element)
                 is KtArrayAccessExpression -> convertArrayAccess(element)
                 is KtCallExpression -> convertCall(element)
@@ -244,40 +247,29 @@ class OperatorToFunctionIntention : SelfTargetingIntention<KtExpression>(KtExpre
 
             commentSaver.restore(result)
 
-            val callName = findCallName(result)
-                           ?: error("No call name found in ${result.text}")
+            val callName = findCallName(result) ?: error("No call name found in ${result.text}")
             return result to callName
         }
 
-        private fun findCallName(result: KtExpression): KtSimpleNameExpression? {
-            return when (result) {
-                is KtBinaryExpression -> {
-                    if (KtPsiUtil.isAssignment(result))
-                        findCallName(result.right!!)
-                    else
-                        findCallName(result.left!!)
-                }
-
-                is KtUnaryExpression -> {
-                    result.baseExpression?.let { findCallName(it) }
-                }
-
-                is KtParenthesizedExpression -> result.expression?.let { findCallName(it) }
-
-                else -> result.getQualifiedElementSelector() as KtSimpleNameExpression?
+        private fun findCallName(result: KtExpression): KtSimpleNameExpression? = when (result) {
+            is KtBinaryExpression -> {
+                if (KtPsiUtil.isAssignment(result))
+                    findCallName(result.right!!)
+                else
+                    findCallName(result.left!!)
             }
+            is KtUnaryExpression -> result.baseExpression?.let { findCallName(it) }
+            is KtParenthesizedExpression -> result.expression?.let { findCallName(it) }
+            else -> result.getQualifiedElementSelector() as KtSimpleNameExpression?
         }
     }
 
-    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean {
-        return when (element) {
-            is KtPrefixExpression -> isApplicablePrefix(element, caretOffset)
-            is KtPostfixExpression -> isApplicablePostfix(element, caretOffset)
-            is KtBinaryExpression -> isApplicableBinary(element, caretOffset)
-            is KtArrayAccessExpression -> isApplicableArrayAccess(element, caretOffset)
-            is KtCallExpression -> isApplicableCall(element, caretOffset)
-            else -> false
-        }
+    override fun isApplicableTo(element: KtExpression, caretOffset: Int): Boolean = when (element) {
+        is KtUnaryExpression -> isApplicableUnary(element, caretOffset)
+        is KtBinaryExpression -> isApplicableBinary(element, caretOffset)
+        is KtArrayAccessExpression -> isApplicableArrayAccess(element, caretOffset)
+        is KtCallExpression -> isApplicableCall(element, caretOffset)
+        else -> false
     }
 
     override fun applyTo(element: KtExpression, editor: Editor?) {

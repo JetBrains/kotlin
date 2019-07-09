@@ -1,12 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.parsers
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.models.CommonInfoElementType
+import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.models.SpecTestCaseInfoElementType
 import org.jetbrains.kotlin.spec.models.SpecTestInfoElements
 import org.jetbrains.kotlin.spec.parsers.CommonParser.splitByComma
@@ -16,6 +18,7 @@ import java.util.*
 private operator fun SpecTestCase.plusAssign(addTestCase: SpecTestCase) {
     this.code += addTestCase.code
     this.unexpectedBehavior = this.unexpectedBehavior or addTestCase.unexpectedBehavior
+    this.unspecifiedBehavior = this.unspecifiedBehavior or addTestCase.unspecifiedBehavior
     this.issues?.addAll(addTestCase.issues!!)
     this.ranges.addAll(addTestCase.ranges)
 }
@@ -44,7 +47,11 @@ private fun SpecTestCase.save(
 }
 
 fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
-    val testCasesSet = SpecTestCasesSet(mutableMapOf(), mutableMapOf(), mutableMapOf())
+    val testCasesSet = SpecTestCasesSet(
+        mutableMapOf<String, TestCasesByNumbers>(),
+        mutableMapOf<String, NavigableMap<Int, TestCasesByNumbers>>(),
+        mutableMapOf<Int, SpecTestCase>()
+    )
     var rangeOffset = 0
 
     for ((filename, fileContent) in testFiles) {
@@ -52,8 +59,8 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
         var startFind = 0
 
         if (!testCasesSet.byFiles.contains(filename)) {
-            testCasesSet.byFiles[filename] = mutableMapOf()
-            testCasesSet.byRanges[filename] = TreeMap()
+            testCasesSet.byFiles[filename] = mutableMapOf<Int, SpecTestCase>()
+            testCasesSet.byRanges[filename] = TreeMap<Int, TestCasesByNumbers>()
         }
 
         val testCasesOfFile = testCasesSet.byFiles[filename]!!
@@ -71,7 +78,9 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
                 code = matcher.group("codeSL") ?: matcher.group("codeML"),
                 ranges = mutableListOf(range),
                 unexpectedBehavior = caseInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
-                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList()
+                unspecifiedBehavior = caseInfoElements.contains(LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR),
+                issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList(),
+                exception = caseInfoElements[CommonInfoElementType.EXCEPTION]?.content?.let { TestsExceptionType.fromValue(it) }
             ).save(testCasesSet.byNumbers, testCasesOfFile, testCasesByRangesOfFile, caseInfoElements)
 
             startFind = matcher.end() - nextDirective.length

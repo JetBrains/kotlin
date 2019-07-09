@@ -12,6 +12,7 @@
 // ERROR: Type inference failed: inline fun <T> Iterable<T>.firstOrNull(predicate: (T) -> Boolean): T?<br>cannot be applied to<br>receiver: Collection<List<String>>  arguments: ((List<String>) -> () -> Boolean)<br>
 // ERROR: Type mismatch: inferred type is (List<String>) -> () -> Boolean but (List<String>) -> Boolean was expected
 // ERROR: Unresolved reference: maximumSizeOfGroup
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 fun doSomethingStrangeWithCollection(collection: Collection<String>): Collection<String>? {
     val groupsByLength = collection.groupBy { s -> { s.length } }

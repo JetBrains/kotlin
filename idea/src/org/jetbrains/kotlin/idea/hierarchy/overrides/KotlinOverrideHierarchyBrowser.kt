@@ -37,7 +37,7 @@ import javax.swing.JPanel
 import javax.swing.JTree
 
 class KotlinOverrideHierarchyBrowser(
-        project: Project, baseElement: PsiElement
+    project: Project, baseElement: PsiElement
 ) : MethodHierarchyBrowserBase(project, baseElement) {
     override fun createTrees(trees: MutableMap<String, JTree>) {
         val actionManager = ActionManager.getInstance()
@@ -49,25 +49,25 @@ class KotlinOverrideHierarchyBrowser(
 
         BaseOnThisMethodAction().registerCustomShortcutSet(actionManager.getAction(IdeActions.ACTION_METHOD_HIERARCHY).shortcutSet, tree)
 
-        trees.put(MethodHierarchyBrowserBase.METHOD_TYPE, tree)
+        trees[METHOD_TYPE] = tree
     }
 
     override fun createLegendPanel(): JPanel? =
-            MethodHierarchyBrowserBase.createStandardLegendPanel(
-                    KotlinBundle.message("hierarchy.legend.member.is.defined.in.class"),
-                    KotlinBundle.message("hierarchy.legend.member.defined.in.superclass"),
-                    KotlinBundle.message("hierarchy.legend.member.should.be.defined")
-            )
+        createStandardLegendPanel(
+            KotlinBundle.message("hierarchy.legend.member.is.defined.in.class"),
+            KotlinBundle.message("hierarchy.legend.member.defined.in.superclass"),
+            KotlinBundle.message("hierarchy.legend.member.should.be.defined")
+        )
 
     override fun getElementFromDescriptor(descriptor: HierarchyNodeDescriptor) = descriptor.psiElement
 
     override fun isApplicableElement(psiElement: PsiElement): Boolean =
-            psiElement.isOverrideHierarchyElement()
+        psiElement.isOverrideHierarchyElement()
 
     override fun createHierarchyTreeStructure(typeName: String, psiElement: PsiElement): HierarchyTreeStructure? =
-            if (typeName == MethodHierarchyBrowserBase.METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement as KtCallableDeclaration) else null
+        if (typeName == METHOD_TYPE) KotlinOverrideTreeStructure(myProject, psiElement as KtCallableDeclaration) else null
 
-    override fun getComparator() = JavaHierarchyUtil.getComparator(myProject)!!
+    override fun getComparator() = JavaHierarchyUtil.getComparator(myProject)
 
     override fun getContentDisplayName(typeName: String, element: PsiElement): String? {
         val targetElement = element.unwrapped

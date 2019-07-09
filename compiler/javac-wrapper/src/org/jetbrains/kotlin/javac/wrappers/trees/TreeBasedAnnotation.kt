@@ -100,46 +100,50 @@ class TreeBasedAnnotationAsAnnotationArgument(private val annotation: JCTree.JCA
 
 }
 
-private fun createAnnotationArguments(annotation: TreeBasedAnnotation,
-                                      javac: JavacWrapper,
-                                      onElement: JavaElement): Collection<JavaAnnotationArgument> =
+private fun createAnnotationArguments(
+    annotation: TreeBasedAnnotation, javac: JavacWrapper, onElement: JavaElement
+): Collection<JavaAnnotationArgument> =
         annotation.annotation.arguments.mapNotNull {
             val name = if (it is JCTree.JCAssign) Name.identifier(it.lhs.toString()) else Name.identifier("value")
-            createAnnotationArgument(it, name, annotation.compilationUnit, javac, annotation, onElement)
+            createAnnotationArgument(it, name, annotation.compilationUnit, javac, annotation.resolve(), onElement)
         }
 
-private fun createAnnotationArgument(argument: JCTree.JCExpression,
-                                     name: Name,
-                                     compilationUnit: CompilationUnitTree,
-                                     javac: JavacWrapper,
-                                     annotation: TreeBasedAnnotation,
-                                     onElement: JavaElement): JavaAnnotationArgument? =
-        when (argument) {
-            is JCTree.JCLiteral -> TreeBasedLiteralAnnotationArgument(name, argument.value, javac)
-            is JCTree.JCFieldAccess -> {
-                if (argument.name.contentEquals("class")) {
-                    TreeBasedJavaClassObjectAnnotationArgument(argument.selected, name, compilationUnit, javac, onElement)
-                }
-                else {
-                    TreeBasedReferenceAnnotationArgument(name, compilationUnit, argument, javac, onElement)
-                }
+internal fun createAnnotationArgument(
+    argument: JCTree.JCExpression,
+    name: Name,
+    compilationUnit: CompilationUnitTree,
+    javac: JavacWrapper,
+    containingClass: JavaClass?,
+    onElement: JavaElement
+): JavaAnnotationArgument? =
+    when (argument) {
+        is JCTree.JCLiteral -> TreeBasedLiteralAnnotationArgument(name, argument.value, javac)
+        is JCTree.JCFieldAccess -> {
+            if (argument.name.contentEquals("class")) {
+                TreeBasedJavaClassObjectAnnotationArgument(argument.selected, name, compilationUnit, javac, onElement)
+            } else {
+                TreeBasedReferenceAnnotationArgument(name, compilationUnit, argument, javac, onElement)
             }
-            is JCTree.JCAssign -> createAnnotationArgument(argument.rhs, name, compilationUnit, javac, annotation, onElement)
-            is JCTree.JCNewArray -> TreeBasedArrayAnnotationArgument(argument.elems.mapNotNull { createAnnotationArgument(it, name, compilationUnit, javac, annotation, onElement) }, name, javac)
-            is JCTree.JCAnnotation -> TreeBasedAnnotationAsAnnotationArgument(argument, name, compilationUnit, javac, onElement)
-            is JCTree.JCParens -> createAnnotationArgument(argument.expr, name, compilationUnit, javac, annotation, onElement)
-            is JCTree.JCBinary -> resolveArgumentValue(argument, annotation, name, compilationUnit, javac)
-            is JCTree.JCUnary -> resolveArgumentValue(argument, annotation, name, compilationUnit, javac)
-            else -> throw UnsupportedOperationException("Unknown annotation argument $argument")
         }
+        is JCTree.JCAssign -> createAnnotationArgument(argument.rhs, name, compilationUnit, javac, containingClass, onElement)
+        is JCTree.JCNewArray -> TreeBasedArrayAnnotationArgument(argument.elems.mapNotNull {
+            createAnnotationArgument(it, name, compilationUnit, javac, containingClass, onElement)
+        }, name, javac)
+        is JCTree.JCAnnotation -> TreeBasedAnnotationAsAnnotationArgument(argument, name, compilationUnit, javac, onElement)
+        is JCTree.JCParens -> createAnnotationArgument(argument.expr, name, compilationUnit, javac, containingClass, onElement)
+        is JCTree.JCBinary -> resolveArgumentValue(argument, containingClass, name, compilationUnit, javac)
+        is JCTree.JCUnary -> resolveArgumentValue(argument, containingClass, name, compilationUnit, javac)
+        else -> throw UnsupportedOperationException("Unknown annotation argument $argument")
+    }
 
-private fun resolveArgumentValue(argument: JCTree.JCExpression,
-                                 annotation: TreeBasedAnnotation,
-                                 name: Name,
-                                 compilationUnit: CompilationUnitTree,
-                                 javac: JavacWrapper): JavaAnnotationArgument? {
-    val containingAnnotation = annotation.resolve() ?: return null
-    val evaluator = ConstantEvaluator(containingAnnotation, javac, compilationUnit)
-
+private fun resolveArgumentValue(
+    argument: JCTree.JCExpression,
+    containingClass: JavaClass?,
+    name: Name,
+    compilationUnit: CompilationUnitTree,
+    javac: JavacWrapper
+): JavaAnnotationArgument? {
+    if (containingClass == null) return null
+    val evaluator = ConstantEvaluator(containingClass, javac, compilationUnit)
     return evaluator.getValue(argument)?.let { TreeBasedLiteralAnnotationArgument(name, it, javac) }
 }

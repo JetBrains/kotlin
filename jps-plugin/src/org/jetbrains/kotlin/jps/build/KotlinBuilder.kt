@@ -30,10 +30,12 @@ import org.jetbrains.jps.incremental.java.JavaBuilder
 import org.jetbrains.jps.incremental.storage.BuildDataManager
 import org.jetbrains.jps.model.JpsProject
 import org.jetbrains.kotlin.build.GeneratedFile
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
+import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinModuleKind
@@ -42,17 +44,18 @@ import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.incremental.ICReporterBase
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
-import org.jetbrains.kotlin.jps.incremental.withLookupStorage
+import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
 import org.jetbrains.kotlin.jps.model.kotlinKind
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
-import org.jetbrains.kotlin.jps.targets.KotlinUnsupportedModuleBuildTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.preloading.ClassCondition
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
+import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
 import java.util.*
 import kotlin.collections.HashSet
@@ -94,11 +97,6 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         LOG.debug("==========================================")
         LOG.info("is Kotlin incremental compilation enabled for JVM: ${IncrementalCompilation.isEnabledForJvm()}")
         LOG.info("is Kotlin incremental compilation enabled for JS: ${IncrementalCompilation.isEnabledForJs()}")
-        if (IncrementalCompilation.isEnabledForJs()) {
-            val messageCollector = MessageCollectorAdapter(context, null)
-            messageCollector.report(INFO, "Using experimental incremental compilation for Kotlin/JS")
-        }
-
         LOG.info("is Kotlin compiler daemon enabled: ${isDaemonEnabled()}")
 
         val historyLabel = context.getBuilderParameter("history label")
@@ -143,6 +141,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             }
 
             kotlinContext.cleanupCaches()
+            kotlinContext.reportUnsupportedTargets()
         }
 
         LOG.info("Total Kotlin global compile context initialization time: $time ms")
@@ -252,7 +251,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         val changesCollector = ChangesCollector()
         removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-        val affectedByRemovedClasses = changesCollector.getDirtyFiles(incrementalCaches.values, context.projectDescriptor.dataManager)
+        val affectedByRemovedClasses = changesCollector.getDirtyFiles(incrementalCaches.values, kotlinContext.lookupStorageManager)
 
         fsOperations.markFilesForCurrentRound(affectedByRemovedClasses)
     }
@@ -336,14 +335,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val kotlinContext = context.kotlin
         val kotlinChunk = chunk.toKotlinChunk(context)!!
 
-        if (representativeTarget is KotlinUnsupportedModuleBuildTarget) {
-            val msg = "${representativeTarget.kind} is not yet supported in IDEA internal build system. " +
-                    "Please use Gradle to build ${kotlinChunk.presentableShortName}."
-
-            kotlinContext.testingLogger?.addCustomMessage(msg)
-            messageCollector.report(STRONG_WARNING, msg)
-
-            return NOTHING_DONE
+        if (!kotlinChunk.haveSameCompiler) {
+            messageCollector.report(
+                ERROR,
+                "Cyclically dependent modules ${kotlinChunk.presentableModulesToCompilersList} should have same compiler."
+            )
+            return ABORT
         }
 
         if (!kotlinChunk.isEnabled) {
@@ -429,8 +426,11 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         }
 
         val generatedFiles = getGeneratedFiles(context, chunk, environment.outputItemsCollector)
-
-        registerOutputItems(outputConsumer, generatedFiles)
+        val kotlinTargets = kotlinContext.targetsBinding
+        for ((target, outputItems) in generatedFiles) {
+            val kotlinTarget = kotlinTargets[target] ?: error("Could not find Kotlin target for JPS target $target")
+            kotlinTarget.registerOutputItems(outputConsumer, outputItems)
+        }
         kotlinChunk.saveVersions()
 
         if (targets.any { kotlinContext.hasKotlinMarker[it] == null }) {
@@ -476,12 +476,12 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 )
             }
 
-            updateLookupStorage(lookupTracker, dataManager, kotlinDirtyFilesHolder)
+            updateLookupStorage(lookupTracker, kotlinContext.lookupStorageManager, kotlinDirtyFilesHolder)
 
             if (!isChunkRebuilding) {
                 changesCollector.processChangesUsingLookups(
                     kotlinDirtyFilesHolder.allDirtyFiles,
-                    dataManager,
+                    kotlinContext.lookupStorageManager,
                     fsOperations,
                     incrementalCaches.values
                 )
@@ -638,61 +638,60 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
     }
 
-    private fun registerOutputItems(outputConsumer: OutputConsumer, outputItems: Map<ModuleBuildTarget, List<GeneratedFile>>) {
-        for ((target, outputs) in outputItems) {
-            for (output in outputs) {
-                outputConsumer.registerOutputFile(target, output.outputFile, output.sourceFiles.map { it.path })
-            }
-        }
-    }
-
     private fun updateLookupStorage(
         lookupTracker: LookupTracker,
-        dataManager: BuildDataManager,
+        lookupStorageManager: JpsLookupStorageManager,
         dirtyFilesHolder: KotlinDirtySourceFilesHolder
     ) {
         if (lookupTracker !is LookupTrackerImpl)
             throw AssertionError("Lookup tracker is expected to be LookupTrackerImpl, got ${lookupTracker::class.java}")
 
-        dataManager.withLookupStorage { lookupStorage ->
+        lookupStorageManager.withLookupStorage { lookupStorage ->
             lookupStorage.removeLookupsFrom(dirtyFilesHolder.allDirtyFiles.asSequence() + dirtyFilesHolder.allRemovedFilesFiles.asSequence())
             lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
         }
     }
 }
 
-private class JpsICReporter : ICReporter {
+private class JpsICReporter : ICReporterBase() {
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
+    }
+
     override fun report(message: () -> String) {
         if (KotlinBuilder.LOG.isDebugEnabled) {
             KotlinBuilder.LOG.debug(message())
         }
     }
+
+    override fun reportVerbose(message: () -> String) {
+        report(message)
+    }
 }
 
 private fun ChangesCollector.processChangesUsingLookups(
     compiledFiles: Set<File>,
-    dataManager: BuildDataManager,
+    lookupStorageManager: JpsLookupStorageManager,
     fsOperations: FSOperationsHelper,
     caches: Iterable<JpsIncrementalCache>
 ) {
     val allCaches = caches.flatMap { it.thisWithDependentCaches }
     val reporter = JpsICReporter()
 
-    reporter.report { "Start processing changes" }
+    reporter.reportVerbose { "Start processing changes" }
 
-    val dirtyFiles = getDirtyFiles(allCaches, dataManager)
+    val dirtyFiles = getDirtyFiles(allCaches, lookupStorageManager)
     fsOperations.markInChunkOrDependents(dirtyFiles.asIterable(), excludeFiles = compiledFiles)
 
-    reporter.report { "End of processing changes" }
+    reporter.reportVerbose { "End of processing changes" }
 }
 
 private fun ChangesCollector.getDirtyFiles(
     caches: Iterable<IncrementalCacheCommon>,
-    dataManager: BuildDataManager
+    lookupStorageManager: JpsLookupStorageManager
 ): Set<File> {
     val reporter = JpsICReporter()
     val (dirtyLookupSymbols, dirtyClassFqNames) = getDirtyData(caches, reporter)
-    val dirtyFilesFromLookups = dataManager.withLookupStorage {
+    val dirtyFilesFromLookups = lookupStorageManager.withLookupStorage {
         mapLookupSymbolsToFiles(it, dirtyLookupSymbols, reporter)
     }
     return dirtyFilesFromLookups + mapClassesFqNamesToFiles(caches, dirtyClassFqNames, reporter)

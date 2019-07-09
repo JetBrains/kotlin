@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin
@@ -47,14 +47,9 @@ enum class KotlinPlatformType: Named, Serializable {
 
         fun setupAttributesMatchingStrategy(attributesSchema: AttributesSchema) {
             attributesSchema.attribute(KotlinPlatformType.attribute).run {
-                if (isGradleVersionAtLeast(4, 0)) {
-                    compatibilityRules.add(CompatibilityRule::class.java)
-                    disambiguationRules.add(DisambiguationRule::class.java)
-                }
+                compatibilityRules.add(CompatibilityRule::class.java)
+                disambiguationRules.add(DisambiguationRule::class.java)
             }
         }
     }
 }
-
-private fun isGradleVersionAtLeast(major: Int, minor: Int) =
-    GradleVersion.current() >= GradleVersion.version("$major.$minor")

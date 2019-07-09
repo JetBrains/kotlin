@@ -8,7 +8,7 @@ jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-scripting-common"))
 }
 
@@ -17,16 +17,8 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar()
-val sourcesJar = sourcesJar()
-val javadocJar = javadocJar()
-
-dist()
-
-ideaPlugin {
-    from(jar, sourcesJar)
-}
-
-standardPublicJars()
-
 publish()
+
+runtimeJar()
+sourcesJar()
+javadocJar()

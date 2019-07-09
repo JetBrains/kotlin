@@ -110,15 +110,21 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             return qualifiedExpression.getOperationSign() == KtTokens.DOT &&
                    qualifiedExpression.getReceiverExpression() == KtPsiUtil.deparenthesize(expression);
         }
-        if (parent instanceof KtBinaryExpression) {
-            KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
-            if (!OperatorConventions.BINARY_OPERATION_NAMES.containsKey(binaryExpression.getOperationToken()) &&
-                !KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) {
-                return false;
-            }
-            return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
+
+        return isLValue(expression, parent);
+    }
+
+    public static boolean isLValue(@NotNull KtSimpleNameExpression expression, @Nullable PsiElement parent) {
+        if (!(parent instanceof KtBinaryExpression)) {
+            return false;
         }
-        return false;
+
+        KtBinaryExpression binaryExpression = (KtBinaryExpression) parent;
+        if (!OperatorConventions.BINARY_OPERATION_NAMES.containsKey(binaryExpression.getOperationToken()) &&
+            !KtTokens.ALL_ASSIGNMENTS.contains(binaryExpression.getOperationToken())) {
+            return false;
+        }
+        return PsiTreeUtil.isAncestor(binaryExpression.getLeft(), expression, false);
     }
 
     private static boolean isDangerousWithNull(@NotNull KtSimpleNameExpression expression, @NotNull ExpressionTypingContext context) {
@@ -1430,10 +1436,10 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
             if (rightType != null) {
                 if (TypeIntersector.isIntersectionEmpty(leftType, rightType)) {
                     context.trace.report(EQUALITY_NOT_APPLICABLE.on(expression, expression.getOperationReference(), leftType, rightType));
+                } else {
+                    EnumCompatibilityCheckerKt.checkEnumsForCompatibility(context, expression, leftType, rightType);
                 }
-                else if (TypeIntersector.isIncompatibleEnums(leftType, rightType)) {
-                    context.trace.report(INCOMPATIBLE_ENUM_COMPARISON.on(expression, leftType, rightType));
-                }
+
 
                 SenselessComparisonChecker.checkSenselessComparisonWithNull(
                         expression, left, right, context,
@@ -1457,7 +1463,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
     @NotNull
     private KotlinTypeInfo assignmentIsNotAnExpressionError(KtBinaryExpression expression, ExpressionTypingContext context) {
         facade.checkStatementType(expression, context);
-        context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
+        if (!context.isDebuggerContext) {
+            context.trace.report(ASSIGNMENT_IN_EXPRESSION_CONTEXT.on(expression));
+        }
         return TypeInfoFactoryKt.noTypeInfo(context);
     }
 
@@ -1717,15 +1725,9 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 context, call, arrayAccessExpression, isGet ? OperatorNameConventions.GET : OperatorNameConventions.SET);
 
         List<KtExpression> indices = arrayAccessExpression.getIndexExpressions();
-        // The accumulated data flow info of all index expressions is saved on the last index
-        KotlinTypeInfo resultTypeInfo = arrayTypeInfo;
-        if (!indices.isEmpty()) {
-            resultTypeInfo = facade.getTypeInfo(indices.get(indices.size() - 1), context);
-        }
 
-        if (!isGet) {
-            resultTypeInfo = facade.getTypeInfo(rightHandSide, context);
-        }
+        KotlinTypeInfo resultTypeInfo =
+                computeAccumulatedInfoForArrayAccessExpression(arrayTypeInfo, indices, rightHandSide, isGet, context, facade);
 
         if ((isImplicit && !functionResults.isSuccess()) || !functionResults.isSingleResult()) {
             traceForResolveResult.report(isGet ? NO_GET_METHOD.on(arrayAccessExpression) : NO_SET_METHOD.on(arrayAccessExpression));
@@ -1734,5 +1736,41 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
         traceForResolveResult.record(isGet ? INDEXED_LVALUE_GET : INDEXED_LVALUE_SET, arrayAccessExpression,
                                      functionResults.getResultingCall());
         return resultTypeInfo.replaceType(functionResults.getResultingDescriptor().getReturnType());
+    }
+
+    private static KotlinTypeInfo computeAccumulatedInfoForArrayAccessExpression(
+            @NotNull KotlinTypeInfo arrayTypeInfo,
+            @NotNull List<KtExpression> indices,
+            @Nullable KtExpression rightHandSide,
+            boolean isGet,
+            @NotNull ExpressionTypingContext context,
+            @NotNull ExpressionTypingInternals facade
+    ) {
+        KotlinTypeInfo accumulatedTypeInfo = null;
+        boolean forceResolve = !context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference);
+
+        // The accumulated data flow info of all index expressions is saved on the last index
+        if (!indices.isEmpty()) {
+            accumulatedTypeInfo = getTypeInfo(indices.get(indices.size() - 1), facade, context, forceResolve);
+        }
+
+        if (!isGet && rightHandSide != null) {
+            accumulatedTypeInfo = getTypeInfo(rightHandSide, facade, context, forceResolve);
+        }
+
+        return accumulatedTypeInfo != null ? accumulatedTypeInfo : arrayTypeInfo;
+    }
+
+    private static KotlinTypeInfo getTypeInfo(
+            @NotNull KtExpression expression,
+            @NotNull ExpressionTypingInternals facade,
+            @NotNull ExpressionTypingContext context,
+            boolean forceExpressionResolve
+    ) {
+        if (forceExpressionResolve) {
+            return facade.getTypeInfo(expression, context);
+        } else {
+            return BindingContextUtils.getRecordedTypeInfo(expression, context.trace.getBindingContext());
+        }
     }
 }

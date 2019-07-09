@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 class Outer(val foo: StringBuilder) {
   inner class Inner() {
     fun len() : Int {

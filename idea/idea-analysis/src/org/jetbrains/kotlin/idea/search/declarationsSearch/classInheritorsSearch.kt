@@ -29,17 +29,17 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 
 fun HierarchySearchRequest<*>.searchInheritors(): Query<PsiClass> {
     val psiClass: PsiClass = when (originalElement) {
-                                 is KtClassOrObject -> runReadAction { originalElement.toLightClassWithBuiltinMapping() ?: KtFakeLightClass(originalElement) }
-                                 is PsiClass -> originalElement
-                                 else -> null
-                             } ?: return EmptyQuery.getEmptyQuery()
+        is KtClassOrObject -> runReadAction { originalElement.toLightClassWithBuiltinMapping() ?: KtFakeLightClass(originalElement) }
+        is PsiClass -> originalElement
+        else -> null
+    } ?: return EmptyQuery.getEmptyQuery()
 
     return ClassInheritorsSearch.search(
-            psiClass,
-            searchScope,
-            searchDeeply,
-            /* checkInheritance = */ true,
-            /* includeAnonymous = */ true
+        psiClass,
+        searchScope,
+        searchDeeply,
+        /* checkInheritance = */ true,
+        /* includeAnonymous = */ true
     )
 }
 

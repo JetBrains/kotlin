@@ -1,0 +1,14 @@
+public final class Some : R|kotlin/Any| {
+    public constructor(): R|test/Some|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/Some.Companion|
+
+        public final annotation class TestAnnotation : R|kotlin/Annotation| {
+            public constructor(): R|test/Some.Companion.TestAnnotation|
+
+        }
+
+    }
+
+}

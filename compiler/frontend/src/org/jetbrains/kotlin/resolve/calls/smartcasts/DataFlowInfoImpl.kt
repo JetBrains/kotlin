@@ -142,7 +142,7 @@ internal class DataFlowInfoImpl private constructor(
 
     private fun KotlinType.canBeDefinitelyNotNullOrNotNull(settings: LanguageVersionSettings): Boolean {
         return if (settings.supportsFeature(LanguageFeature.NewInference))
-            this.isMarkedNullable || DefinitelyNotNullType.makesSenseToBeDefinitelyNotNull(this.unwrap())
+            TypeUtils.isNullableType(this)
         else
             this.isMarkedNullable
     }

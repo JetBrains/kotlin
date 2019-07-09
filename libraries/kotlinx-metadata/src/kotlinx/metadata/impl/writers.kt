@@ -1,19 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlinx.metadata.impl
 
 import kotlinx.metadata.*
-import kotlinx.metadata.impl.extensions.MetadataExtensions
+import kotlinx.metadata.impl.extensions.applySingleExtension
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.VersionRequirement
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 
 class WriteContext(val strings: StringTable) {
-    private val extensions = MetadataExtensions.INSTANCES
     val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
 
     operator fun get(string: String): Int =
@@ -21,18 +20,6 @@ class WriteContext(val strings: StringTable) {
 
     fun getClassName(name: ClassName): Int =
         strings.getClassNameIndex(name)
-
-    internal fun <T : KmExtensionVisitor> applySingleExtension(type: KmExtensionType, block: MetadataExtensions.() -> T?): T? {
-        var result: T? = null
-        for (extension in extensions) {
-            val current = block(extension) ?: continue
-            if (result != null) {
-                throw IllegalStateException("Multiple extensions handle the same extension type: $type")
-            }
-            result = current
-        }
-        return result
-    }
 }
 
 private fun writeTypeParameter(
@@ -46,7 +33,7 @@ private fun writeTypeParameter(
             writeType(c, flags) { t.addUpperBound(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmTypeParameterExtensionVisitor? =
-            c.applySingleExtension(type) {
+            applySingleExtension(type) {
                 writeTypeParameterExtensions(type, t, c)
             }
 
@@ -115,7 +102,7 @@ private fun writeType(c: WriteContext, flags: Flags, output: (ProtoBuf.Type.Buil
             }
 
         override fun visitExtensions(type: KmExtensionType): KmTypeExtensionVisitor? =
-            c.applySingleExtension(type) {
+            applySingleExtension(type) {
                 writeTypeExtensions(type, t, c)
             }
 
@@ -142,7 +129,7 @@ private fun writeConstructor(c: WriteContext, flags: Flags, output: (ProtoBuf.Co
             writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? =
-            c.applySingleExtension(type) {
+            applySingleExtension(type) {
                 writeConstructorExtensions(type, t, c)
             }
 
@@ -177,7 +164,7 @@ private fun writeFunction(c: WriteContext, flags: Flags, name: String, output: (
             writeContract(c) { t.contract = it.build() }
 
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? =
-            c.applySingleExtension(type) {
+            applySingleExtension(type) {
                 writeFunctionExtensions(type, t, c)
             }
 
@@ -211,7 +198,7 @@ fun writeProperty(
         writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? =
-        c.applySingleExtension(type) {
+        applySingleExtension(type) {
             writePropertyExtensions(type, t, c)
         }
 
@@ -286,19 +273,21 @@ private fun writeVersionRequirement(
 
     override fun visit(kind: KmVersionRequirementVersionKind, level: KmVersionRequirementLevel, errorCode: Int?, message: String?) {
         t = ProtoBuf.VersionRequirement.newBuilder().apply {
-            if (kind != defaultInstanceForType.versionKind) {
-                this.versionKind = when (kind) {
-                    KmVersionRequirementVersionKind.LANGUAGE_VERSION -> ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
-                    KmVersionRequirementVersionKind.COMPILER_VERSION -> ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
-                    KmVersionRequirementVersionKind.API_VERSION -> ProtoBuf.VersionRequirement.VersionKind.API_VERSION
-                }
+            val versionKind = when (kind) {
+                KmVersionRequirementVersionKind.LANGUAGE_VERSION -> ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION
+                KmVersionRequirementVersionKind.COMPILER_VERSION -> ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION
+                KmVersionRequirementVersionKind.API_VERSION -> ProtoBuf.VersionRequirement.VersionKind.API_VERSION
             }
-            if (level != defaultInstanceForType.level) {
-                this.level = when (level) {
-                    KmVersionRequirementLevel.WARNING -> ProtoBuf.VersionRequirement.Level.WARNING
-                    KmVersionRequirementLevel.ERROR -> ProtoBuf.VersionRequirement.Level.ERROR
-                    KmVersionRequirementLevel.HIDDEN -> ProtoBuf.VersionRequirement.Level.HIDDEN
-                }
+            if (versionKind != defaultInstanceForType.versionKind) {
+                this.versionKind = versionKind
+            }
+            val requirementLevel = when (level) {
+                KmVersionRequirementLevel.WARNING -> ProtoBuf.VersionRequirement.Level.WARNING
+                KmVersionRequirementLevel.ERROR -> ProtoBuf.VersionRequirement.Level.ERROR
+                KmVersionRequirementLevel.HIDDEN -> ProtoBuf.VersionRequirement.Level.HIDDEN
+            }
+            if (requirementLevel != defaultInstanceForType.level) {
+                this.level = requirementLevel
             }
             if (errorCode != null) {
                 this.errorCode = errorCode
@@ -382,11 +371,10 @@ private fun writeEffectExpression(c: WriteContext, output: (ProtoBuf.Expression.
         }
 
         override fun visitConstantValue(value: Any?) {
-            @Suppress("UNUSED_VARIABLE") // force exhaustive when
-            val unused = when (value) {
+            when (value) {
                 true -> t.constantValue = ProtoBuf.Expression.ConstantValue.TRUE
                 false -> t.constantValue = ProtoBuf.Expression.ConstantValue.FALSE
-                null -> null
+                null -> t.constantValue = ProtoBuf.Expression.ConstantValue.NULL
                 else -> throw IllegalArgumentException("Only true, false or null constant values are allowed for effects (was=$value)")
             }
         }
@@ -456,7 +444,7 @@ open class ClassWriter(stringTable: StringTable) : KmClassVisitor() {
         writeVersionRequirement(c) { t.addVersionRequirement(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmClassExtensionVisitor? =
-        c.applySingleExtension(type) {
+        applySingleExtension(type) {
             writeClassExtensions(type, t, c)
         }
 
@@ -481,7 +469,7 @@ open class PackageWriter(stringTable: StringTable) : KmPackageVisitor() {
         writeTypeAlias(c, flags, name) { t.addTypeAlias(it) }
 
     override fun visitExtensions(type: KmExtensionType): KmPackageExtensionVisitor? =
-        c.applySingleExtension(type) {
+        applySingleExtension(type) {
             writePackageExtensions(type, t, c)
         }
 

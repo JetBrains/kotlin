@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.KotlinDirecto
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.analyzeConflictsInFile
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinExactPackagesIndex
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
@@ -38,14 +37,14 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 class KotlinAwareDelegatingMoveDestination(
-        private val delegate: MoveDestination,
-        private val targetPackage: PsiPackage?,
-        private val targetDirectory: PsiDirectory?
+    private val delegate: MoveDestination,
+    private val targetPackage: PsiPackage?,
+    private val targetDirectory: PsiDirectory?
 ) : MoveDestination by delegate {
     override fun analyzeModuleConflicts(
-            elements: MutableCollection<PsiElement>,
-            conflicts: MultiMap<PsiElement, String>,
-            usages: Array<out UsageInfo>
+        elements: MutableCollection<PsiElement>,
+        conflicts: MultiMap<PsiElement, String>,
+        usages: Array<out UsageInfo>
     ) {
         delegate.analyzeModuleConflicts(elements, conflicts, usages)
 
@@ -72,22 +71,21 @@ class KotlinAwareDelegatingMoveDestination(
                 super.visitElement(element)
             }
         }
-        filesToProcess.flatMap {it.declarations}.forEach { it.accept(extraElementCollector) }
+        filesToProcess.flatMap { it.declarations }.forEach { it.accept(extraElementCollector) }
 
-        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable!!
+        val progressIndicator = ProgressManager.getInstance().progressIndicator!!
         progressIndicator.pushState()
 
         val extraUsages = ArrayList<UsageInfo>()
         try {
             progressIndicator.text = "Looking for Usages"
             for ((index, element) in extraElementsForReferenceSearch.withIndex()) {
-                progressIndicator.fraction = (index + 1)/extraElementsForReferenceSearch.size.toDouble()
+                progressIndicator.fraction = (index + 1) / extraElementsForReferenceSearch.size.toDouble()
                 ReferencesSearch.search(element, projectScope).mapNotNullTo(extraUsages) { ref ->
-                    createMoveUsageInfoIfPossible(ref, element, true, false)
+                    createMoveUsageInfoIfPossible(ref, element, addImportToOriginalFile = true, isInternal = false)
                 }
             }
-        }
-        finally {
+        } finally {
             progressIndicator.popState()
         }
 

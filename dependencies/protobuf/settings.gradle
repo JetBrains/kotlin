@@ -1,0 +1,1 @@
+include ":protobuf-lite", ":protobuf-relocated"

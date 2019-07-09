@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 class ArrayWrapper<T>() {
     val contents = ArrayList<T>()

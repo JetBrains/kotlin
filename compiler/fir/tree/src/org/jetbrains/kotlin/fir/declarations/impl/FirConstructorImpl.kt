@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
@@ -12,34 +12,63 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirBody
+import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
-import org.jetbrains.kotlin.fir.types.FirType
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-open class FirConstructorImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    visibility: Visibility,
-    isExpect: Boolean,
-    isActual: Boolean,
-    delegatedSelfType: FirType,
-    final override var delegatedConstructor: FirDelegatedConstructorCall?,
-    override val body: FirBody?
-) : FirAbstractCallableMember(
-    session, psi, NAME, visibility, Modality.FINAL,
-    isExpect, isActual, isOverride = false, receiverType = null, returnType = delegatedSelfType
-), FirConstructor {
+open class FirConstructorImpl : FirAbstractCallableMember, FirConstructor {
+
+    override val symbol: FirFunctionSymbol
+
+    final override var delegatedConstructor: FirDelegatedConstructorCall? = null
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        visibility: Visibility,
+        isExpect: Boolean,
+        isActual: Boolean,
+        delegatedSelfTypeRef: FirTypeRef,
+        delegatedConstructor: FirDelegatedConstructorCall?
+    ) : super(
+        session, psi, NAME, visibility, Modality.FINAL,
+        isExpect, isActual, isOverride = false, receiverTypeRef = null, returnTypeRef = delegatedSelfTypeRef
+    ) {
+        this.symbol = symbol
+        this.delegatedConstructor = delegatedConstructor
+        symbol.bind(this)
+    }
+
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        symbol: FirFunctionSymbol,
+        receiverTypeRef: FirTypeRef?,
+        returnTypeRef: FirTypeRef
+    ) : super(session, psi, NAME, receiverTypeRef, returnTypeRef) {
+        this.symbol = symbol
+        symbol.bind(this)
+    }
+
     override val valueParameters = mutableListOf<FirValueParameter>()
 
-    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        valueParameters.transformInplace(transformer, data)
-        delegatedConstructor?.transformSingle(transformer, data)
+    override var body: FirBlock? = null
 
-        return super<FirAbstractCallableMember>.transformChildren(transformer, data)
+    override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
+        annotations.transformInplace(transformer, data)
+        valueParameters.transformInplace(transformer, data)
+        returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        status = status.transformSingle(transformer, data)
+        delegatedConstructor?.transformSingle(transformer, data)
+        body = body?.transformSingle(transformer, data)
+
+        return this
     }
 
     companion object {

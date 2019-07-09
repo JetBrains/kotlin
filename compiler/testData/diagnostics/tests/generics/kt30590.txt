@@ -1,0 +1,11 @@
+package
+
+public fun </*0*/ T : A, /*1*/ R : T> emptyStrangeMap(): kotlin.collections.Map<T, R>
+public fun test(): [ERROR : Error function type]
+public fun test7(): kotlin.collections.Map<A, A>
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

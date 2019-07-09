@@ -22,9 +22,9 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.kotlin.KotlinAbstractUExpression
 
 class KotlinUBreakExpression(
-        override val psi: KtBreakExpression,
+        override val sourcePsi: KtBreakExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UBreakExpression {
     override val label: String?
-        get() = psi.getLabelName()
+        get() = sourcePsi.getLabelName()
 }

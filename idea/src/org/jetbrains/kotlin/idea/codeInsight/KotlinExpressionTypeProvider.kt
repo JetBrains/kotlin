@@ -32,16 +32,20 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForSelector
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 
 class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
@@ -112,7 +116,8 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
         }
 
         val expressionTypeInfo = bindingContext[BindingContext.EXPRESSION_TYPE_INFO, element] ?: noTypeInfo(DataFlowInfo.EMPTY)
-        val expressionType = element.getType(bindingContext)
+        val expressionType = element.getType(bindingContext) ?: getTypeForArgumentName(element, bindingContext)
+
         val result = expressionType?.let { typeRenderer.renderType(it) } ?: return "Type is unknown"
 
         val dataFlowValueFactory = element.getResolutionFacade().frontendService<DataFlowValueFactory>()
@@ -130,6 +135,15 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
             }
         }
         return result
+    }
+
+    private fun getTypeForArgumentName(element: KtExpression, bindingContext: BindingContext): KotlinType? {
+        val valueArgumentName = (element.parent as? KtValueArgumentName) ?: return null
+        val argument = valueArgumentName.parent as? KtValueArgument ?: return null
+        val ktCallExpression = argument.parents.filterIsInstance<KtCallExpression>().firstOrNull() ?: return null
+        val resolvedCall = ktCallExpression.getResolvedCall(bindingContext) ?: return null
+        val parameter = resolvedCall.getParameterForArgument(argument) ?: return null
+        return parameter.type
     }
 
     override fun getErrorHint(): String = "No expression found"

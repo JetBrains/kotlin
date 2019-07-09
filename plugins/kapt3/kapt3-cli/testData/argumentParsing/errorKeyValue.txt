@@ -1,0 +1,7 @@
+# before
+-Kapt-option=a:b
+
+# after
+-P
+plugin:org.jetbrains.kotlin.kapt3:aptMode=compile
+-Kapt-option=a:b

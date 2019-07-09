@@ -21,6 +21,7 @@ import java.io.File
 import java.io.Serializable
 import java.util.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.jvm.internal.TypeIntrinsics
 import kotlin.reflect.KClass
 
 const val REPL_CODE_LINE_FIRST_NO = 1
@@ -89,7 +90,9 @@ sealed class ReplCompileResult : Serializable {
                           val classes: List<CompiledClassData>,
                           val hasResult: Boolean,
                           val classpathAddendum: List<File>,
-                          val type: String?) : ReplCompileResult() {
+                          val type: String?,
+                          val data: Any? // TODO: temporary; migration to new scripting infrastructure
+    ) : ReplCompileResult() {
         companion object { private val serialVersionUID: Long = 2L }
     }
 
@@ -121,8 +124,12 @@ interface ReplEvalAction {
 }
 
 sealed class ReplEvalResult : Serializable {
-    class ValueResult(val value: Any?, val type: String?) : ReplEvalResult() {
-        override fun toString(): String = "$value : $type"
+    class ValueResult(val name: String, val value: Any?, val type: String?) : ReplEvalResult() {
+        override fun toString(): String {
+            val v = if (value is Function<*>) "<function${TypeIntrinsics.getFunctionArity(value)}>" else value
+            return "$name: $type = $v"
+        }
+
         companion object { private val serialVersionUID: Long = 1L }
     }
 

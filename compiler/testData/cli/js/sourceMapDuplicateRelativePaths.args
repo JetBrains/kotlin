@@ -1,5 +1,4 @@
 $TESTDATA_DIR$/sourceMapDuplicatePath/
--no-stdlib
 -source-map
 -source-map-base-dirs
 $TESTDATA_DIR$/sourceMapDuplicatePath/foo:$TESTDATA_DIR$/sourceMapDuplicatePath/bar

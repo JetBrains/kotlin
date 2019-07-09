@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -9,6 +9,7 @@ import com.intellij.framework.addSupport.FrameworkSupportInModuleConfigurable
 import com.intellij.ide.util.frameworkSupport.FrameworkSupportModel
 import com.intellij.openapi.externalSystem.model.project.ProjectId
 import com.intellij.openapi.module.Module
+import com.intellij.openapi.project.ProjectCoreUtil
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
 import com.intellij.openapi.util.Key
@@ -16,7 +17,7 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
@@ -132,7 +133,13 @@ internal fun flushSettingsGradleCopy(module: Module) {
         val settingsFile = findSettingsGradleFile(module)
         val settingsScriptBuilder = module.settingsScriptBuilder
         if (settingsScriptBuilder != null && settingsFile != null) {
-            val project = module.project
+            // The module.project is not opened yet.
+            // Due to optimization in ASTDelegatePsiElement.getManager() and relevant ones,
+            // we have to take theOnlyOpenProject() for manipulations with tmp file
+            // (otherwise file will have one parent project and its elements will have other parent project,
+            // and we will get KT-29333 problem).
+            // TODO: get rid of file manipulations until project is opened
+            val project = ProjectCoreUtil.theOnlyOpenProject() ?: module.project
             val tmpFile =
                 GroovyPsiElementFactory
                 .getInstance(project)

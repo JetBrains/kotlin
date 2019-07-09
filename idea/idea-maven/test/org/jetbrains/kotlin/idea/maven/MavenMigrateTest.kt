@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.maven
@@ -9,17 +9,20 @@ import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiManager
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.concurrency.FutureResult
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.configuration.KotlinMigrationProjectComponent
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
-import org.jetbrains.kotlin.test.testFramework.runInEdtAndWait
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 import java.io.File
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class MavenMigrateTest : MavenImportingTestCase() {
     override fun setUp() {
         super.setUp()
@@ -104,7 +107,8 @@ class MavenMigrateTest : MavenImportingTestCase() {
         }
 
         val importResult = FutureResult<KotlinMigrationProjectComponent.MigrationTestState?>()
-        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstance(myProject)
+        val migrationProjectComponent = KotlinMigrationProjectComponent.getInstanceIfNotDisposed(myProject)
+            ?: error("Disposed project")
 
         migrationProjectComponent.setImportFinishListener { migrationState ->
             importResult.set(migrationState)

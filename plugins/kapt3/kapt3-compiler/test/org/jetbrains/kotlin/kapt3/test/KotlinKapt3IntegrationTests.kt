@@ -28,6 +28,7 @@ import javax.annotation.processing.RoundEnvironment
 import javax.lang.model.element.ElementKind
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import kotlin.system.exitProcess
 
 class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9TestLauncher {
     override fun test(
@@ -56,7 +57,7 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
     fun testComments() = test("Simple", "test.MyAnnotation") { _, _, env ->
         fun commentOf(className: String) = env.elementUtils.getDocComment(env.elementUtils.getTypeElement(className))
 
-        assert(commentOf("test.Simple") == " * KDoc comment.\n")
+        assert(commentOf("test.Simple") == " KDoc comment.\n")
         assert(commentOf("test.EnumClass") == null) // simple comment - not saved
         assert(commentOf("test.MyAnnotation") == null) // multiline comment - not saved
     }
@@ -96,8 +97,8 @@ class KotlinKapt3IntegrationTests : AbstractKotlinKapt3IntegrationTest(), Java9T
         test(name, "test.MyAnnotation") { _, _, _ ->
             val kaptExtension = AnalysisHandlerExtension.getInstances(myEnvironment.project).firstIsInstance<Kapt3ExtensionForTests>()
 
-            val stubsOutputDir = kaptExtension.paths.stubsOutputDir
-            val incrementalDataOutputDir = kaptExtension.paths.incrementalDataOutputDir
+            val stubsOutputDir = kaptExtension.options.stubsOutputDir
+            val incrementalDataOutputDir = kaptExtension.options.incrementalDataOutputDir
 
             val bindings = kaptExtension.savedBindings!!
 
@@ -149,7 +150,7 @@ internal class SingleJUnitTestRunner {
             val (className, methodName) = args.single().split('#')
             val request = Request.method(Class.forName(className), methodName)
             val result = JUnitCore().run(request)
-            System.exit(if (result.wasSuccessful()) 0 else 1)
+            exitProcess(if (result.wasSuccessful()) 0 else 1)
         }
     }
 }

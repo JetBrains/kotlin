@@ -1,0 +1,8 @@
+// "Replace 'if' expression with safe access expression" "true"
+class Test {
+    var x: Any? = null
+
+    fun test() {
+        (x as? String)?.length
+    }
+}

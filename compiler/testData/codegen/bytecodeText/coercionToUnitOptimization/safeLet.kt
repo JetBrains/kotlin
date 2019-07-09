@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(ss: List<String?>) {
     val shortStrings = hashSetOf<String>()
     val longStrings = hashSetOf<String>()

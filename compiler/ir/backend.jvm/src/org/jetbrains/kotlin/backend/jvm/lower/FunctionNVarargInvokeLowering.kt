@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.jvm.lower
@@ -8,34 +8,46 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
+import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.filterDeclarations
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.name.Name
 
-class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLoweringPass {
+internal val functionNVarargInvokePhase = makeIrFilePhase(
+    ::FunctionNVarargInvokeLowering,
+    name = "FunctionNVarargInvoke",
+    description = "Handle invoke functions with large number of arguments"
+)
+
+private class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLoweringPass {
 
     override fun lower(irClass: IrClass) {
         val invokeFunctions = irClass.filterDeclarations<IrSimpleFunction> { it.name.toString() == "invoke" }
         if (invokeFunctions.isEmpty() ||
             invokeFunctions.any { it.valueParameters.size > 0 && it.valueParameters.last().varargElementType != null } ||
-            invokeFunctions.all { it.valueParameters.size + (if (it.extensionReceiverParameter != null) 1 else 0) <= CallableReferenceLowering.MAX_ARGCOUNT_WITHOUT_VARARG }
+            invokeFunctions.all { it.valueParameters.size + (if (it.extensionReceiverParameter != null) 1 else 0) < FunctionInvokeDescriptor.Factory.BIG_ARITY }
         ) {
             // No need to add a new vararg invoke method
             return
@@ -51,23 +63,24 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
         val descriptor = WrappedSimpleFunctionDescriptor()
         return IrFunctionImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-            origin = CallableReferenceLowering.DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+            origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
             symbol = IrSimpleFunctionSymbolImpl(descriptor),
             name = Name.identifier("invoke"),
             visibility = Visibilities.PUBLIC,
             modality = Modality.OPEN,
+            returnType = context.irBuiltIns.anyNType,
             isInline = false,
             isExternal = false,
             isTailrec = false,
             isSuspend = false
         ).apply {
             descriptor.bind(this)
-            returnType = context.irBuiltIns.anyNType
-            dispatchReceiverParameter = irClass.thisReceiver
+            parent = irClass
+            dispatchReceiverParameter = irClass.thisReceiver?.copyTo(this)
             val varargParameterDescriptor = WrappedValueParameterDescriptor()
             val varargParam = IrValueParameterImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                origin = CallableReferenceLowering.DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL,
+                origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL,
                 symbol = IrValueParameterSymbolImpl(varargParameterDescriptor),
                 name = Name.identifier("args"),
                 index = 0,
@@ -78,6 +91,7 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
             ).apply {
                 varargParameterDescriptor.bind(this)
             }
+            varargParam.parent = this
             valueParameters.add(varargParam)
             val irBuilder = context.createIrBuilder(symbol, UNDEFINED_OFFSET, UNDEFINED_OFFSET)
             body = irBuilder.irBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
@@ -98,9 +112,8 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
                                 backendContext.irBuiltIns.anyNType,
                                 IrTypeOperator.CAST,
                                 target.returnType,
-                                target.returnType.classifierOrFail,
                                 irCall(target).apply {
-                                    dispatchReceiver = irGet(irClass.thisReceiver!!)
+                                    dispatchReceiver = irGet(dispatchReceiverParameter!!)
                                     target.valueParameters.forEachIndexed { i, irValueParameter ->
                                         val type = irValueParameter.type
                                         putValueArgument(
@@ -116,7 +129,7 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
                                                 )
                                                 +irIfThen(
                                                     irNotIs(irGet(argValue), type),
-                                                    irCall(context.irBuiltIns.illegalArgumentExceptionFun).apply {
+                                                    irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                                                         putValueArgument(0, irString("Wrong type, expected $type"))
                                                     }
                                                 )
@@ -135,7 +148,7 @@ class FunctionNVarargInvokeLowering(var context: JvmBackendContext) : ClassLower
                     separator = " or ",
                     postfix = " arguments to invoke call"
                 )
-                +irCall(context.irBuiltIns.illegalArgumentExceptionFun.symbol).apply {
+                +irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
                     putValueArgument(0, irString(throwMessage))
                 }
             }

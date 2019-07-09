@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun testCollection(i: Int, xs: List<Any>) = i in xs.indices
 
 fun testLongWithCollection(i: Long, xs: List<Any>) = i in xs.indices

@@ -1,0 +1,9 @@
+FILE: genericCalls.kt
+    public? final? fun <T> nullableValue(): T? {
+        ^nullableValue Null(null)
+    }
+    public? final? fun test(): kotlin/Unit {
+        lval n: <implicit> = nullableValue#<Int>()
+        lval x: <implicit> = nullableValue#<Double>()
+        lval s: <implicit> = nullableValue#<String>()
+    }

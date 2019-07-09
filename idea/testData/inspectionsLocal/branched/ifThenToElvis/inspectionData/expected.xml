@@ -1,0 +1,110 @@
+<problems>
+  <problem>
+    <file>ifAsPartOfExpression.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>ifAsPartOfExpression</package>
+    <entry_point TYPE="method" FQNAME="ifAsPartOfExpression.IfAsPartOfExpressionKt void main(java.lang.String[] args)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>comparisonInElse.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>comparisonInElse</package>
+    <entry_point TYPE="method" FQNAME="comparisonInElse.ComparisonInElseKt boolean foo(comparisonInElse.Your your)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>willNotInlineClassProperty.kt</file>
+    <line>3</line>
+    <module>light_idea_test_case</module>
+    <package>willNotInlineClassProperty</package>
+    <entry_point TYPE="field" FQNAME="willNotInlineClassProperty.F c" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>applicableForLocalStableVar.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>applicableForLocalStableVar</package>
+    <entry_point TYPE="method" FQNAME="applicableForLocalStableVar.ApplicableForLocalStableVarKt java.lang.String test()" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelector.kt</file>
+    <line>4</line>
+    <module>light_idea_test_case</module>
+    <package>nullCheckWithSelector</package>
+    <entry_point TYPE="method" FQNAME="nullCheckWithSelector.NullCheckWithSelectorKt int foo(nullCheckWithSelector.My arg)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelectorCall.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <package>nullCheckWithSelectorCall</package>
+    <entry_point TYPE="field" FQNAME="nullCheckWithSelectorCall.NullCheckWithSelectorCallKt foo" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>implicitReceiver.kt</file>
+    <line>2</line>
+    <module>light_idea_test_case</module>
+    <package>implicitReceiver</package>
+    <entry_point TYPE="method" FQNAME="implicitReceiver.ImplicitReceiverKt boolean foo(java.lang.String $self)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>nullCheckWithSelectorCallChain.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <package>nullCheckWithSelectorCallChain</package>
+    <entry_point TYPE="field" FQNAME="nullCheckWithSelectorCallChain.NullCheckWithSelectorCallChainKt foo" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>extensionFunctionInClass.kt</file>
+    <line>5</line>
+    <module>light_idea_test_case</module>
+    <package>extensionFunctionInClass</package>
+    <entry_point TYPE="method" FQNAME="extensionFunctionInClass.ExtensionFunctionInClassKt int test(extensionFunctionInClass.Foo $self, extensionFunctionInClass.Foo foo)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>doesNotInlineVariableInMultiDeclaration.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <package>doesNotInlineVariableInMultiDeclaration</package>
+    <entry_point TYPE="method" FQNAME="doesNotInlineVariableInMultiDeclaration.DoesNotInlineVariableInMultiDeclarationKt int f(doesNotInlineVariableInMultiDeclaration.IntPair pair)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>ifAsExpression.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>ifAsExpression</package>
+    <entry_point TYPE="method" FQNAME="ifAsExpression.IfAsExpressionKt void main(java.lang.String[] args)" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+  <problem>
+    <file>longLine.kt</file>
+    <line>8</line>
+    <module>light_idea_test_case</module>
+    <package>longLine</package>
+    <entry_point TYPE="method" FQNAME="longLine.LongLineKt void main()" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?:'</problem_class>
+    <description>If-Then foldable to '?:'</description>
+  </problem>
+</problems>

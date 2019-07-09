@@ -86,36 +86,44 @@ fun generateFunctions(repository: Repository, function: Operation): List<Generat
     return listOf(realFunction, getterOrSetterFunction, functionWithCallbackOrNull).filterNotNull()
 }
 
-fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute =
-        GenerateAttribute(attribute.name,
-                type = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it },
-                initializer =
-                    if (putNoImpl && !attribute.static) {
-                        mapLiteral(attribute.defaultValue, mapType(repository, attribute.type), repository.enums)
-                    }
-                    else if (attribute.defaultValue != null) {
-                        "definedExternally"
-                    }
-                    else {
-                        null
-                    },
-                getterSetterNoImpl = putNoImpl,
-                kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
-                override = false,
-                vararg = attribute.vararg,
-                static = attribute.static,
-                required = attribute.required
-        )
+fun generateAttribute(putNoImpl: Boolean, repository: Repository, attribute: Attribute, nullableAttributes: Boolean): GenerateAttribute {
+    val mappedType = mapType(repository, attribute.type).let { if (nullableAttributes) it.toNullable() else it }
+    return GenerateAttribute(attribute.name,
+                             type = mappedType,
+                             initializer =
+                             if (putNoImpl && !attribute.static) {
+                                 mapLiteral(attribute.defaultValue, mapType(repository, attribute.type), repository.enums)
+                             } else if (attribute.defaultValue != null) {
+                                 "definedExternally"
+                             } else {
+                                 null
+                             },
+                             getterSetterNoImpl = putNoImpl,
+                             kind = if (attribute.readOnly) AttributeKind.VAL else AttributeKind.VAR,
+                             override = false,
+                             vararg = attribute.vararg,
+                             static = attribute.static,
+                             required = attribute.required
+    )
+}
+
+
+private fun InterfaceDefinition.isInterface() : Boolean {
+    return when {
+        dictionary -> true
+        extendedAttributes.any { it.call == "NoInterfaceObject" } -> true
+        callback -> true
+        else -> false
+    }
+}
 
 private fun InterfaceDefinition.superTypes(repository: Repository) = superTypes.map { repository.interfaces[it] }.filterNotNull()
 private fun resolveDefinitionKind(repository: Repository, iface: InterfaceDefinition, constructors: List<ExtendedAttribute> = iface.findConstructors()): GenerateDefinitionKind =
         when {
-            iface.dictionary -> GenerateDefinitionKind.INTERFACE
-            iface.extendedAttributes.any { it.call == "NoInterfaceObject" } -> GenerateDefinitionKind.INTERFACE
+            iface.isInterface() -> GenerateDefinitionKind.INTERFACE
             constructors.isNotEmpty() || iface.superTypes(repository).any { resolveDefinitionKind(repository, it) == GenerateDefinitionKind.CLASS } -> {
                 GenerateDefinitionKind.CLASS
             }
-            iface.callback -> GenerateDefinitionKind.INTERFACE
             else -> GenerateDefinitionKind.ABSTRACT_CLASS
         }
 
@@ -125,7 +133,7 @@ private fun InterfaceDefinition.mapOperations(repository: Repository) = operatio
 private fun Constant.mapConstant(repository : Repository) = GenerateAttribute(name, mapType(repository, type), null, false, AttributeKind.VAL, false, false, true, false)
 private val EMPTY_CONSTRUCTOR = ExtendedAttribute(null, "Constructor", emptyList())
 
-fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateTraitOrClass {
+fun generateTrait(repository: Repository, iface: InterfaceDefinition): List<GenerateClass> {
     val superClasses = iface.superTypes
             .mapNotNull { repository.interfaces[it] }
             .filter {
@@ -161,19 +169,38 @@ fun generateTrait(repository: Repository, iface: InterfaceDefinition): GenerateT
         ConstructorWithSuperTypeCall(constructorAsFunction, secondaryConstructor)
     }
 
-    val result = GenerateTraitOrClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensions.map { it.name }).distinct(),
-            memberAttributes = iface.mapAttributes(repository).toMutableList(),
-            memberFunctions = iface.mapOperations(repository).toMutableList(),
-            constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
-            primaryConstructor = primaryConstructorWithCall,
-            secondaryConstructors = secondaryConstructorsWithCall,
-            generateBuilderFunction = iface.dictionary
-    )
+    val memberAttributes = iface.mapAttributes(repository)
+    val memberFunctions = iface.mapOperations(repository)
 
-    return markAsArrayLikeIfApplicable(result)
+    val extensionsNames = extensions.map { it.name }
+
+    val namedConstructors =
+        iface.findExtendedAttributes("NamedConstructor").map { namedConstructor ->
+            GenerateClass(
+                name = namedConstructor.call,
+                namespace = iface.namespace,
+                kind = GenerateDefinitionKind.CLASS,
+                superTypes = listOf(iface.name) + extensionsNames,
+                memberAttributes = memberAttributes.toMutableList(),
+                memberFunctions = memberFunctions.toMutableList(),
+                constants = emptyList(),
+                primaryConstructor = ConstructorWithSuperTypeCall(generateConstructorAsFunction(repository, namedConstructor), namedConstructor),
+                secondaryConstructors = emptyList(),
+                generateBuilderFunction = false
+            )
+        }
+
+    return (listOf(GenerateClass(iface.name, iface.namespace, entityKind, (iface.superTypes + extensionsNames).distinct(),
+                                 memberAttributes = memberAttributes.toMutableList(),
+                                 memberFunctions = memberFunctions.toMutableList(),
+                                 constants = (iface.constants.map { it.mapConstant(repository) } + extensions.flatMap { it.constants.map { it.mapConstant(repository) } }.distinct().toList()),
+                                 primaryConstructor = primaryConstructorWithCall,
+                                 secondaryConstructors = secondaryConstructorsWithCall,
+                                 generateBuilderFunction = iface.dictionary
+    )) + namedConstructors).map(::markAsArrayLikeIfApplicable)
 }
 
-fun markAsArrayLikeIfApplicable(iface: GenerateTraitOrClass): GenerateTraitOrClass {
+fun markAsArrayLikeIfApplicable(iface: GenerateClass): GenerateClass {
     fun isInt(type: Type) = type is SimpleType && type.type == "Int"
 
     val lengthProperty = iface.memberAttributes.singleOrNull { it.name == "length" && isInt(it.type)  }
@@ -191,7 +218,7 @@ fun generateConstructorAsFunction(repository: Repository, constructor: ExtendedA
         nativeGetterOrSetter = NativeGetterOrSetter.NONE)
 
 
-fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
+fun mapUnionType(it: UnionType) = GenerateClass(
         name = it.name,
         namespace = it.namespace,
         kind = GenerateDefinitionKind.INTERFACE,
@@ -204,12 +231,12 @@ fun mapUnionType(it: UnionType) = GenerateTraitOrClass(
         generateBuilderFunction = false
 )
 
-fun generateUnionTypeTraits(allUnionTypes: Sequence<UnionType>): Sequence<GenerateTraitOrClass> = allUnionTypes.map(::mapUnionType)
+fun generateUnionTypeTraits(allUnionTypes: Sequence<UnionType>): Sequence<GenerateClass> = allUnionTypes.map(::mapUnionType)
 
 fun mapDefinitions(repository: Repository, definitions: Iterable<InterfaceDefinition>) =
-        definitions.map { generateTrait(repository, it) }
+        definitions.flatMap { generateTrait(repository, it) }
 
-fun generateUnions(ifaces: List<GenerateTraitOrClass>, typedefs: Iterable<TypedefDefinition>): GenerateUnionTypes {
+fun generateUnions(ifaces: List<GenerateClass>, typedefs: Iterable<TypedefDefinition>): GenerateUnionTypes {
     val declaredTypes = ifaces.associateBy { it.name }
 
     val anonymousUnionTypes = collectUnionTypes(declaredTypes)
@@ -259,7 +286,26 @@ private fun mapLiteral(literal: String?, expectedType: Type = DynamicType, enums
         }
     }
 
-fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
+    private fun specifyType(name: String, type: Type, context: String): Type {
+
+    if ((type is SimpleType) && (type.type == "Event")) {
+        (eventSpecifierMapper[name] ?: eventSpecifierMapperWithContext[EventMapKey(name, context)])?.let {
+            return type.copy(type = it)
+        }
+    }
+
+    return type
+}
+
+private fun generalizeType(name: String, type: Type, context: String): Type {
+    if ((type is FunctionType) && (type.parameterTypes.size == 1)) {
+        val paramAttribute = type.parameterTypes[0]
+        return type.copy(parameterTypes = listOf(paramAttribute.copy(type = specifyType(name, paramAttribute.type, context))))
+    }
+    return type
+}
+
+fun implementInterfaces(declarations: List<GenerateClass>) : List<GenerateClass> {
     val unimplementedMemberMap = getUnimplementedMembers(declarations)
     val nonAbstractDeclarations = declarations.filter { it.kind == GenerateDefinitionKind.CLASS }
     for (declaration in nonAbstractDeclarations) {
@@ -272,9 +318,16 @@ fun implementInterfaces(declarations: List<GenerateTraitOrClass>) {
             declaration.memberFunctions += function.copy(override = true)
         }
     }
+
+    return declarations.map { declaration ->
+        declaration.copy(
+            memberAttributes = declaration
+                .memberAttributes.map { attribute -> attribute.copy(type = generalizeType(attribute.name, attribute.type, declaration.name)) }.toMutableList()
+        )
+    }
 }
 
-private fun getUnimplementedMembers(declarations: List<GenerateTraitOrClass>): Map<String, UnimplementedMembers> {
+private fun getUnimplementedMembers(declarations: List<GenerateClass>): Map<String, UnimplementedMembers> {
     val declarationMap = declarations.associate { it.name to it }
     val unimplementedMemberCache = mutableMapOf<String, UnimplementedMembers>()
 

@@ -34,11 +34,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedureCallbacks
+import org.jetbrains.kotlin.types.checker.requireOrDescribe
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeParameterMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.defaultProjections
 import org.jetbrains.kotlin.types.typeUtil.isDefaultBound
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.util.*
@@ -426,13 +432,18 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
 
     companion object {
         fun forSpecificity(): SimpleConstraintSystem = object : ConstraintSystemBuilderImpl(Mode.SPECIFICITY), SimpleConstraintSystem {
+            override val context: TypeSystemInferenceExtensionContext
+                get() = SimpleClassicTypeSystemContext
             var counter = 0
 
-            override fun registerTypeVariables(typeParameters: Collection<TypeParameterDescriptor>) =
-                registerTypeVariables(CallHandle.NONE, typeParameters)
+            override fun registerTypeVariables(typeParameters: Collection<TypeParameterMarker>) =
+                registerTypeVariables(CallHandle.NONE, typeParameters.cast())
 
-            override fun addSubtypeConstraint(subType: UnwrappedType, superType: UnwrappedType) =
+            override fun addSubtypeConstraint(subType: KotlinTypeMarker, superType: KotlinTypeMarker) {
+                requireOrDescribe(subType is UnwrappedType, subType)
+                requireOrDescribe(superType is UnwrappedType, superType)
                 addSubtypeConstraint(subType, superType, ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(counter++))
+            }
 
             override fun hasContradiction(): Boolean {
                 fixVariables()

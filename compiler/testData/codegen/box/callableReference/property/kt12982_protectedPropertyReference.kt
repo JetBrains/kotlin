@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Foo {
     protected var x = 0
 

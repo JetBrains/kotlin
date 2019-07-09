@@ -1,0 +1,9 @@
+LineBreakpoint created at coroutineContextWithoutSuspend.kt:11
+Run Java
+Connected to the target VM
+coroutineContextWithoutSuspend.kt:11
+Compile bytecode for coroutineContext
+ frame    = foo:11, CoroutineContextWithoutSuspendKt {coroutineContextWithoutSuspend}
+Disconnected from the target VM
+
+Process finished with exit code 0

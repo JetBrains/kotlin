@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 enum class Bar {
     ONE,
     TWO

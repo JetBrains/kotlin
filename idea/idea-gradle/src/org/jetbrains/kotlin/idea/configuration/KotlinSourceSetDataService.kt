@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -30,7 +30,9 @@ import org.jetbrains.kotlin.idea.inspections.gradle.findAll
 import org.jetbrains.kotlin.idea.inspections.gradle.findKotlinPluginVersion
 import org.jetbrains.kotlin.idea.platform.IdePlatformKindTooling
 import org.jetbrains.kotlin.idea.roots.migrateNonJvmSourceFolders
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 
@@ -51,10 +53,10 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
             val sourceSetData = nodeToImport.data
             val kotlinSourceSet = nodeToImport.kotlinSourceSet ?: continue
             val ideModule = modelsProvider.findIdeModule(sourceSetData) ?: continue
-            val platform = kotlinSourceSet.platform
+            val platform = kotlinSourceSet.actualPlatforms
             val rootModel = modelsProvider.getModifiableRootModel(ideModule)
 
-            if (platform != KotlinPlatform.JVM && platform != KotlinPlatform.ANDROID) {
+            if (platform.platforms.any { it != KotlinPlatform.JVM && it != KotlinPlatform.ANDROID }) {
                 migrateNonJvmSourceFolders(rootModel)
             }
 
@@ -98,21 +100,28 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 ?.data
                 ?.let { findKotlinPluginVersion(it) }// ?: return null TODO: Fix in CLion or our plugin KT-27623
 
-            val platformKind = IdePlatformKindTooling.getTooling(kotlinSourceSet.platform).kind
-            val platform = when (platformKind) {
-                is JvmIdePlatformKind -> {
-                    val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
-                    JvmIdePlatformKind.Platform(target)
+            val platformKinds = kotlinSourceSet.actualPlatforms.platforms //TODO(auskov): fix calculation of jvm target
+                .map { IdePlatformKindTooling.getTooling(it).kind }
+                .flatMap {
+                    when (it) {
+                        is JvmIdePlatformKind -> {
+                            val target = JvmTarget.fromString(moduleData.targetCompatibility ?: "") ?: JvmTarget.DEFAULT
+                            JvmPlatforms.jvmPlatformByTargetVersion(target).componentPlatforms
+                        }
+                        else -> it.defaultPlatform.componentPlatforms
+                    }
                 }
-                else -> platformKind.defaultPlatform
-            }
+                .distinct()
+                .toSet()
+
+            val platform = TargetPlatform(platformKinds)
 
             val coroutinesProperty = CoroutineSupport.byCompilerArgument(
                 mainModuleNode.coroutines ?: findKotlinCoroutinesProperty(ideModule.project)
             )
 
             val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false)
-            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
+            kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider, mainModuleNode.isHmpp)
 
             val compilerArguments = kotlinSourceSet.compilerArguments
             val defaultCompilerArguments = kotlinSourceSet.defaultCompilerArguments

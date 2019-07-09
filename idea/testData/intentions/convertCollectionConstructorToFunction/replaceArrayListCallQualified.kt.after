@@ -1,0 +1,4 @@
+// WITH_RUNTIME
+fun foo() {
+    var list = <caret>arrayListOf<Int>()
+}

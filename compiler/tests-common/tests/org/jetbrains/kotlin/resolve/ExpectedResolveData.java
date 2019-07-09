@@ -21,12 +21,14 @@ import com.intellij.psi.PsiQualifiedNamedElement;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.builtins.DefaultBuiltIns;
+import org.jetbrains.kotlin.analyzer.AnalysisResult;
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.diagnostics.Errors;
 import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils;
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.*;
@@ -126,16 +128,18 @@ public abstract class ExpectedResolveData {
 
     protected abstract KtFile createKtFile(String fileName, String text);
 
-    protected static BindingContext analyze(List<KtFile> files, KotlinCoreEnvironment environment) {
+    protected static AnalysisResult analyze(List<KtFile> files, KotlinCoreEnvironment environment) {
         if (files.isEmpty()) {
-            System.err.println("Suspicious: no files");
-            return BindingContext.EMPTY;
+            throw new AssertionError("Suspicious: no files");
         }
 
-        return JvmResolveUtil.analyze(files, environment).getBindingContext();
+        return JvmResolveUtil.analyze(files, environment);
     }
 
-    public final void checkResult(BindingContext bindingContext) {
+    public final void checkResult(@NotNull AnalysisResult result) {
+        BindingContext bindingContext = result.getBindingContext();
+        ModuleDescriptor module = result.getModuleDescriptor();
+
         Set<PsiElement> unresolvedReferences = new HashSet<>();
         for (Diagnostic diagnostic : bindingContext.getDiagnostics()) {
             if (Errors.UNRESOLVED_REFERENCE_DIAGNOSTICS.contains(diagnostic.getFactory())) {
@@ -236,7 +240,7 @@ public abstract class ExpectedResolveData {
 
                 KotlinType actualType = bindingContext.get(BindingContext.TYPE, typeReference);
                 assertNotNull("Type " + name + " not resolved for reference " + name, actualType);
-                ClassifierDescriptor expectedClass = getBuiltinClass(name.substring(STANDARD_PREFIX.length()));
+                ClassDescriptor expectedClass = getBuiltinClass(module, name.substring(STANDARD_PREFIX.length()));
                 assertTypeConstructorEquals("Type resolution mismatch: ", expectedClass.getTypeConstructor(), actualType.getConstructor());
                 continue;
             }
@@ -292,8 +296,7 @@ public abstract class ExpectedResolveData {
             TypeConstructor expectedTypeConstructor;
             if (typeName.startsWith(STANDARD_PREFIX)) {
                 String name = typeName.substring(STANDARD_PREFIX.length());
-                ClassifierDescriptor expectedClass = getBuiltinClass(name);
-                expectedTypeConstructor = expectedClass.getTypeConstructor();
+                expectedTypeConstructor = getBuiltinClass(module, name).getTypeConstructor();
             }
             else {
                 Position declarationPosition = declarationToPosition.get(typeName);
@@ -339,15 +342,12 @@ public abstract class ExpectedResolveData {
     }
 
     @NotNull
-    public static ClassifierDescriptor getBuiltinClass(String nameOrFqName) {
-        ClassifierDescriptor expectedClass;
-
-        if (nameOrFqName.indexOf('.') >= 0) {
-            expectedClass = DefaultBuiltIns.getInstance().getBuiltInClassByFqNameNullable(FqName.fromSegments(Arrays.asList(nameOrFqName.split("\\."))));
-        }
-        else {
-            expectedClass = DefaultBuiltIns.getInstance().getBuiltInClassByNameNullable(Name.identifier(nameOrFqName));
-        }
+    private static ClassDescriptor getBuiltinClass(@NotNull ModuleDescriptor module, @NotNull String nameOrFqName) {
+        FqName fqName =
+                nameOrFqName.contains(".")
+                ? new FqName(nameOrFqName)
+                : KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(nameOrFqName));
+        ClassDescriptor expectedClass = DescriptorUtilKt.resolveClassByFqName(module, fqName, NoLookupLocation.FROM_TEST);
         assertNotNull("Expected class not found: " + nameOrFqName, expectedClass);
 
         return expectedClass;

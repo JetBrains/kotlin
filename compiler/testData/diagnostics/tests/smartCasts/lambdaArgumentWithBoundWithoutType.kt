@@ -16,7 +16,7 @@ val foo: Foo = run {
 val foofoo: Foo = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>run<!> {
     val x = foo()
     if (x == null) throw Exception()
-    <!NI;TYPE_MISMATCH, DEBUG_INFO_SMARTCAST!>x<!>
+    <!DEBUG_INFO_SMARTCAST, NI;TYPE_MISMATCH!>x<!>
 }
 
 val bar: Bar = <!NI;TYPE_MISMATCH!><!OI;TYPE_INFERENCE_CONFLICTING_SUBSTITUTIONS!>run<!> {

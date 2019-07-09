@@ -1,0 +1,7 @@
+package
+
+public fun bad(): kotlin.String
+public fun ok(): kotlin.String
+public inline fun </*0*/ T> kotlin.Any?.myRun(/*0*/ block: () -> T): T
+    CallsInPlace(block, EXACTLY_ONCE)
+

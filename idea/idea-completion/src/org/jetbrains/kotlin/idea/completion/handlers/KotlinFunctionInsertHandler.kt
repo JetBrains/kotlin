@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.idea.completion.handlers
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.AutoPopupController
 import com.intellij.codeInsight.completion.InsertionContext
 import com.intellij.codeInsight.lookup.Lookup
 import com.intellij.codeInsight.lookup.LookupElement
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
+import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.completion.LambdaSignatureTemplates
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.util.CallType
@@ -93,15 +93,18 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val project = context.project
             val chars = document.charsSequence
 
-            val insertLambda = lambdaInfo != null && completionChar != '(' && !(completionChar == '\t' && chars.isCharAt(offset, '('))
+            val isSmartEnterCompletion = completionChar == Lookup.COMPLETE_STATEMENT_SELECT_CHAR
+            val isReplaceCompletion = completionChar == Lookup.REPLACE_SELECT_CHAR
+            val isNormalCompletion = completionChar == Lookup.NORMAL_SELECT_CHAR
+
+            val insertLambda = lambdaInfo != null && completionChar != '(' && !(isReplaceCompletion && chars.isCharAt(offset, '('))
 
             val openingBracket = if (insertLambda) '{' else '('
             val closingBracket = if (insertLambda) '}' else ')'
 
-            var insertTypeArguments =
-                inputTypeArguments && (completionChar == '\n' || completionChar == '\r' || completionChar == Lookup.REPLACE_SELECT_CHAR)
+            var insertTypeArguments = inputTypeArguments && (isNormalCompletion || isReplaceCompletion || isSmartEnterCompletion)
 
-            if (completionChar == Lookup.REPLACE_SELECT_CHAR) {
+            if (isReplaceCompletion) {
                 val offset1 = chars.skipSpaces(offset)
                 if (offset1 < chars.length) {
                     if (chars[offset1] == '<') {
@@ -142,19 +145,23 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                         context.setAddCompletionChar(false)
                     }
 
-                    if (isInsertSpacesInOneLineFunctionEnabled(project)) {
+                    if (isInsertSpacesInOneLineFunctionEnabled(context.file)) {
                         document.insertString(offset, " {  }")
                         inBracketsShift = 1
                     } else {
                         document.insertString(offset, " {}")
                     }
                 } else {
-                    document.insertString(offset, "()")
+                    if (isSmartEnterCompletion) {
+                        document.insertString(offset, "(")
+                    } else {
+                        document.insertString(offset, "()")
+                    }
                 }
                 PsiDocumentManager.getInstance(project).commitDocument(document)
 
                 openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
-                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)!!
+                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
@@ -192,8 +199,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             return inputValueArguments || lambdaInfo != null
         }
 
-        private fun isInsertSpacesInOneLineFunctionEnabled(project: Project) =
-            CodeStyleSettingsManager.getSettings(project).getCustomSettings(KotlinCodeStyleSettings::class.java)!!.INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
+        private fun isInsertSpacesInOneLineFunctionEnabled(file: PsiFile) =
+            CodeStyle.getCustomSettings(file, KotlinCodeStyleSettings::class.java).INSERT_WHITESPACES_IN_SIMPLE_ONE_LINE_METHOD
     }
 
     object Infix : KotlinFunctionInsertHandler(CallType.INFIX) {

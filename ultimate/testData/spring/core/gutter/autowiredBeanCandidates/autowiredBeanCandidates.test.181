@@ -1,9 +1,0 @@
-{
-    withRuntime: "true",
-    springConfig: ["config.xml"],
-    file: "Bean.kt",
-    icon: "ShowAutowiredDependencies",
-    tooltip: "Navigate to autowired candidates",
-    naming: "generic",
-    targets: ["autowiredProp", "collab", "prop2"]
-}

@@ -1,7 +1,5 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
 // WITH_RUNTIME
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 interface Z {
     private fun privateFun() = { "OK" }

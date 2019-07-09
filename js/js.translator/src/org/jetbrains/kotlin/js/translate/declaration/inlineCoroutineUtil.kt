@@ -69,7 +69,7 @@ fun <T : JsNode> transformCoroutineMetadataToSpecialFunctions(node: T): T {
     return visitor.accept(node)
 }
 
-private fun SpecialFunction.ref() = pureFqn(suggestedName, Namer.kotlinObject())
+private fun SpecialFunction.ref() = pureFqn(JsDynamicScope.declareName(suggestedName).also { it.specialFunction = this }, Namer.kotlinObject())
 
 fun <T : JsNode> transformSpecialFunctionsToCoroutineMetadata(node: T): T {
     val visitor = object : JsVisitorWithContextImpl() {

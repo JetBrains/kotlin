@@ -2,11 +2,11 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
-      2 GET_OBJECT 'Unit' type=kotlin.Unit
-      3 RETURN type=kotlin.Nothing from='foo(): Unit'
+      1 FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+      2 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+      3 RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Unit declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+    Function exit: FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
 
 // END FUN: foo
 

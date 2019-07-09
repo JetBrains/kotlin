@@ -130,7 +130,7 @@ abstract class TypeInfo(val variance: Variance) {
             return Collections.singletonList(callableBuilder.currentFileModule.builtIns.anyType)
         }
         val scope = getScopeForTypeApproximation(callableBuilder.config, callableBuilder.placement)
-        val approximations = getResolvableApproximations(scope, false, true)
+        val approximations = getResolvableApproximations(scope, checkTypeParameters = false, allowIntersections = true)
         return when (variance) {
             Variance.IN_VARIANCE -> approximations.toList()
             else -> listOf(approximations.firstOrNull() ?: this)

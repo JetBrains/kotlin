@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.serialization.deserialization.builtins
@@ -28,7 +28,8 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         builtInsModule: ModuleDescriptor,
         classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
-        additionalClassPartsProvider: AdditionalClassPartsProvider
+        additionalClassPartsProvider: AdditionalClassPartsProvider,
+        isFallback: Boolean
     ): PackageFragmentProvider {
         return createBuiltInPackageFragmentProvider(
             storageManager,
@@ -37,6 +38,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             classDescriptorFactories,
             platformDependentDeclarationFilter,
             additionalClassPartsProvider,
+            isFallback,
             resourceLoader::loadResource
         )
     }
@@ -48,12 +50,13 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
         classDescriptorFactories: Iterable<ClassDescriptorFactory>,
         platformDependentDeclarationFilter: PlatformDependentDeclarationFilter,
         additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
+        isFallback: Boolean,
         loadResource: (String) -> InputStream?
     ): PackageFragmentProvider {
         val packageFragments = packageFqNames.map { fqName ->
             val resourcePath = BuiltInSerializerProtocol.getBuiltInsFilePath(fqName)
             val inputStream = loadResource(resourcePath) ?: throw IllegalStateException("Resource not found in classpath: $resourcePath")
-            BuiltInsPackageFragmentImpl.create(fqName, storageManager, module, inputStream)
+            BuiltInsPackageFragmentImpl.create(fqName, storageManager, module, inputStream, isFallback)
         }
         val provider = PackageFragmentProviderImpl(packageFragments)
 

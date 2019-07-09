@@ -5,5 +5,5 @@ val a = l@ {
 val b = l@ {
     if ("" == "OK") return@l
 
-    return@l <!UNRESOLVED_REFERENCE, RETURN_TYPE_MISMATCH!>r<!>
+    return@l <!RETURN_TYPE_MISMATCH, UNRESOLVED_REFERENCE!>r<!>
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
@@ -215,7 +216,7 @@ class FunctionDescriptorResolver(
         }
 
         val extensionReceiver = receiverType?.let {
-            val splitter = AnnotationSplitter.create(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
+            val splitter = AnnotationSplitter(storageManager, receiverType.annotations, EnumSet.of(AnnotationUseSiteTarget.RECEIVER))
             DescriptorFactory.createExtensionReceiverParameterForCallable(
                 functionDescriptor, it, splitter.getAnnotationsForTarget(AnnotationUseSiteTarget.RECEIVER)
             )
@@ -263,10 +264,10 @@ class FunctionDescriptorResolver(
 
         if (!isContractsEnabled || !function.mayHaveContract()) return null
 
-        return LazyContractProvider {
-            AstLoadingFilter.forceAllowTreeLoading(function.containingFile) {
+        return LazyContractProvider(storageManager) {
+            AstLoadingFilter.forceAllowTreeLoading(function.containingFile, ThrowableComputable {
                 expressionTypingServices.getBodyExpressionType(trace, scope, dataFlowInfo, function, functionDescriptor)
-            }
+            })
         }
     }
 

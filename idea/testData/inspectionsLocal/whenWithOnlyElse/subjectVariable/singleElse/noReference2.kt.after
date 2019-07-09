@@ -1,0 +1,5 @@
+fun test() {
+    use("")
+}
+
+fun use(s: String) {}

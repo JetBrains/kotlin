@@ -31,17 +31,17 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
 class PropertyInfo(
-        val identifier: Identifier,
-        val isVar: Boolean,
-        val psiType: PsiType,
-        val field: PsiField?,
-        val getMethod: PsiMethod?,
-        val setMethod: PsiMethod?,
-        val isGetMethodBodyFieldAccess: Boolean,
-        val isSetMethodBodyFieldAccess: Boolean,
-        val modifiers: Modifiers,
-        val specialSetterAccess: Modifier?,
-        val superInfo: SuperInfo?
+    val identifier: Identifier,
+    val isVar: Boolean,
+    val psiType: PsiType,
+    val field: PsiField?,
+    val getMethod: PsiMethod?,
+    val setMethod: PsiMethod?,
+    val isGetMethodBodyFieldAccess: Boolean,
+    val isSetMethodBodyFieldAccess: Boolean,
+    val modifiers: Modifiers,
+    val specialSetterAccess: Modifier?,
+    val superInfo: SuperInfo?
 ) {
     init {
         assert(field != null || getMethod != null || setMethod != null)
@@ -79,7 +79,8 @@ class PropertyInfo(
                 if (setMethod.body != null && !isSetMethodBodyFieldAccess)
                     return true
             }
-            return modifiers.contains(Modifier.EXTERNAL) || modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
+            return modifiers.contains(Modifier.EXTERNAL) ||
+                    modifiers.contains(Modifier.OVERRIDE) && this.field == null && !modifiers.contains(Modifier.ABSTRACT)
         }
 
     companion object {
@@ -87,7 +88,16 @@ class PropertyInfo(
             val isVar = field.isVar(converter.referenceSearcher)
             val isInObject = field.containingClass?.let { converter.shouldConvertIntoObject(it) } == true
             val modifiers = converter.convertModifiers(field, false, isInObject)
-            return PropertyInfo(field.declarationIdentifier(), isVar, field.type, field, null, null, false, false, modifiers, null, null)
+            return PropertyInfo(
+                field.declarationIdentifier(), isVar, field.type, field,
+                getMethod = null,
+                setMethod = null,
+                isGetMethodBodyFieldAccess = false,
+                isSetMethodBodyFieldAccess = false,
+                modifiers = modifiers,
+                specialSetterAccess = null,
+                superInfo = null
+            )
         }
     }
 }
@@ -108,10 +118,10 @@ class PropertyDetectionCache(private val converter: Converter) {
 
 sealed class SuperInfo {
     class Property(
-            val isVar: Boolean,
-            val name: String,
-            val hasAbstractModifier: Boolean
-            //TODO: add visibility
+        val isVar: Boolean,
+        val name: String,
+        val hasAbstractModifier: Boolean
+        //TODO: add visibility
     ) : SuperInfo()
 
     object Function : SuperInfo()
@@ -122,8 +132,8 @@ sealed class SuperInfo {
 }
 
 private class PropertyDetector(
-        private val psiClass: PsiClass,
-        private val converter: Converter
+    private val psiClass: PsiClass,
+    private val converter: Converter
 ) {
     private val isOpenClass = converter.needOpenModifier(psiClass)
 
@@ -137,8 +147,8 @@ private class PropertyDetector(
         dropPropertiesConflictingWithFields(memberToPropertyInfo)
 
         val mappedFields = memberToPropertyInfo.values
-                .mapNotNull { it.field }
-                .toSet()
+            .mapNotNull { it.field }
+            .toSet()
 
         // map all other fields
         for (field in psiClass.fields) {
@@ -192,13 +202,18 @@ private class PropertyDetector(
 
                 if (getterInfo != null && getterInfo.field == null) {
                     if (!field.hasModifierProperty(PsiModifier.PRIVATE)
-                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any { PsiUtil.isAccessedForReading(it) && !it.canBeReplacedWithFieldAccess() }) {
+                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any {
+                            PsiUtil.isAccessedForReading(it) && !it.canBeReplacedWithFieldAccess()
+                        }
+                    ) {
                         field = null
                     }
-                }
-                else if (setterInfo != null && setterInfo.field == null) {
+                } else if (setterInfo != null && setterInfo.field == null) {
                     if (!field.hasModifierProperty(PsiModifier.PRIVATE)
-                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any { PsiUtil.isAccessedForWriting(it) && !it.canBeReplacedWithFieldAccess() }) {
+                        || converter.referenceSearcher.findVariableUsages(field, psiClass).any {
+                            PsiUtil.isAccessedForWriting(it) && !it.canBeReplacedWithFieldAccess()
+                        }
+                    ) {
                         field = null
                     }
                 }
@@ -222,24 +237,26 @@ private class PropertyDetector(
 
             val propertyAccess = modifiers.accessModifier()
             val setterAccess = if (setterInfo != null)
-                converter.convertModifiers(setterInfo.method, false, false).accessModifier()
+                converter.convertModifiers(setterInfo.method, isMethodInOpenClass = false, isInObject = false).accessModifier()
             else if (field != null && field.isVar(converter.referenceSearcher))
-                converter.convertModifiers(field, false, false).accessModifier()
+                converter.convertModifiers(field, isMethodInOpenClass = false, isInObject = false).accessModifier()
             else
                 propertyAccess
             val specialSetterAccess = setterAccess?.takeIf { it != propertyAccess }
 
-            val propertyInfo = PropertyInfo(Identifier.withNoPrototype(propertyName),
-                                            isVar,
-                                            type,
-                                            field,
-                                            getterInfo?.method,
-                                            setterInfo?.method,
-                                            field != null && getterInfo?.field == field,
-                                            field != null && setterInfo?.field == field,
-                                            modifiers,
-                                            specialSetterAccess,
-                                            superProperty)
+            val propertyInfo = PropertyInfo(
+                Identifier.withNoPrototype(propertyName),
+                isVar,
+                type,
+                field,
+                getterInfo?.method,
+                setterInfo?.method,
+                field != null && getterInfo?.field == field,
+                field != null && setterInfo?.field == field,
+                modifiers,
+                specialSetterAccess,
+                superProperty
+            )
             propertyInfos.add(propertyInfo)
         }
         return propertyInfos
@@ -252,8 +269,7 @@ private class PropertyDetector(
             if (field != null) {
                 if (memberToPropertyInfo.containsKey(field)) { // field already in use by other property
                     continue
-                }
-                else {
+                } else {
                     memberToPropertyInfo[field] = propertyInfo
                 }
             }
@@ -265,8 +281,8 @@ private class PropertyDetector(
     }
 
     private fun detectGetters(
-            methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            propertyNamesWithConflict: MutableSet<String>
+        methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
+        propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToGetterInfo = LinkedHashMap<String, AccessorInfo>()
         for ((method, superInfo) in methodsToCheck) {
@@ -284,9 +300,9 @@ private class PropertyDetector(
     }
 
     private fun detectSetters(
-            methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
-            propertyNamesFromGetters: Set<String>,
-            propertyNamesWithConflict: MutableSet<String>
+        methodsToCheck: List<Pair<PsiMethod, SuperInfo.Property?>>,
+        propertyNamesFromGetters: Set<String>,
+        propertyNamesWithConflict: MutableSet<String>
     ): Map<String, AccessorInfo> {
         val propertyNameToSetterInfo = LinkedHashMap<String, AccessorInfo>()
         for ((method, superInfo) in methodsToCheck) {
@@ -310,9 +326,9 @@ private class PropertyDetector(
 
         //TODO: bases
         val prohibitedSignatures = psiClass.methods
-                .filter { it !in mappedMethods }
-                .map { it.getSignature(PsiSubstitutor.EMPTY) }
-                .toSet()
+            .filter { it !in mappedMethods }
+            .map { it.getSignature(PsiSubstitutor.EMPTY) }
+            .toSet()
 
         for (propertyInfo in propertyInfos) {
             if (propertyInfo.modifiers.contains(Modifier.OVERRIDE)) continue // cannot drop override
@@ -327,7 +343,9 @@ private class PropertyDetector(
 
             if (propertyInfo.isVar) {
                 val setterName = JvmAbi.setterName(propertyInfo.name)
-                val setterSignature = MethodSignatureUtil.createMethodSignature(setterName, arrayOf(propertyInfo.psiType), emptyArray(), PsiSubstitutor.EMPTY)
+                val setterSignature = MethodSignatureUtil.createMethodSignature(
+                    setterName, arrayOf(propertyInfo.psiType), emptyArray(), PsiSubstitutor.EMPTY
+                )
                 if (setterSignature in prohibitedSignatures) {
                     memberToPropertyInfo.dropProperty(propertyInfo)
                     continue
@@ -367,7 +385,9 @@ private class PropertyDetector(
     }
 
     private fun convertModifiers(field: PsiField?, getMethod: PsiMethod?, setMethod: PsiMethod?, isOverride: Boolean): Modifiers {
-        val fieldModifiers = field?.let { converter.convertModifiers(it, false, false) } ?: Modifiers.Empty
+        val fieldModifiers = field?.let {
+            converter.convertModifiers(it, isMethodInOpenClass = false, isInObject = false)
+        } ?: Modifiers.Empty
         val getterModifiers = getMethod?.let { converter.convertModifiers(it, isOpenClass, false) } ?: Modifiers.Empty
         val setterModifiers = setMethod?.let { converter.convertModifiers(it, isOpenClass, false) } ?: Modifiers.Empty
 
@@ -395,16 +415,16 @@ private class PropertyDetector(
         }
 
         val prototypes = listOfNotNull<PsiElement>(field, getMethod, setMethod)
-                .map { PrototypeInfo(it, CommentsAndSpacesInheritance.NO_SPACES) }
+            .map { PrototypeInfo(it, CommentsAndSpacesInheritance.NO_SPACES) }
         return Modifiers(modifiers).assignPrototypes(*prototypes.toTypedArray())
     }
 
     private class AccessorInfo(
-            val method: PsiMethod,
-            val field: PsiField?,
-            val kind: AccessorKind,
-            val propertyName: String,
-            val superProperty: SuperInfo.Property?
+        val method: PsiMethod,
+        val field: PsiField?,
+        val kind: AccessorKind,
+        val propertyName: String,
+        val superProperty: SuperInfo.Property?
     )
 
     private fun getGetterInfo(method: PsiMethod, superProperty: SuperInfo.Property?): AccessorInfo? {
@@ -432,8 +452,11 @@ private class PropertyDetector(
         return when {
             converter.inConversionScope(containingClass) -> {
                 val propertyInfo = converter.propertyDetectionCache[containingClass][superMethod]
-                if (propertyInfo != null) SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT))
-                else SuperInfo.Function
+                if (propertyInfo != null) {
+                    SuperInfo.Property(propertyInfo.isVar, propertyInfo.name, propertyInfo.modifiers.contains(Modifier.ABSTRACT))
+                } else {
+                    SuperInfo.Function
+                }
             }
             superMethod is KtLightMethod -> {
                 val origin = superMethod.kotlinOrigin
@@ -510,8 +533,7 @@ private class PropertyDetector(
         val refExpr = expression as? PsiReferenceExpression ?: return null
         if (static) {
             if (!refExpr.isQualifierEmptyOrClass(psiClass)) return null
-        }
-        else {
+        } else {
             if (!refExpr.isQualifierEmptyOrThis()) return null
         }
         val field = refExpr.resolve() as? PsiField ?: return null

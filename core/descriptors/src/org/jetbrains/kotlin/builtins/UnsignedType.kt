@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins
@@ -38,6 +38,7 @@ object UnsignedTypes {
     }
 
     fun isShortNameOfUnsignedArray(name: Name) = name in arrayClassesShortNames
+    fun isShortNameOfUnsignedType(name: Name) = name in unsignedTypeNames
 
     fun getUnsignedClassIdByArrayClassId(arrayClassId: ClassId): ClassId? = arrayClassIdToUnsignedClassId[arrayClassId]
     fun getUnsignedArrayClassIdByUnsignedClassId(arrayClassId: ClassId): ClassId? = unsignedClassIdToArrayClassId[arrayClassId]
@@ -48,6 +49,15 @@ object UnsignedTypes {
         val descriptor = type.constructor.declarationDescriptor ?: return false
         return isUnsignedClass(descriptor)
     }
+
+    fun toUnsignedType(type: KotlinType): UnsignedType? =
+        when {
+            KotlinBuiltIns.isUByte(type) -> UnsignedType.UBYTE
+            KotlinBuiltIns.isUShort(type) -> UnsignedType.USHORT
+            KotlinBuiltIns.isUInt(type) -> UnsignedType.UINT
+            KotlinBuiltIns.isULong(type) -> UnsignedType.ULONG
+            else -> null
+        }
 
     fun isUnsignedClass(descriptor: DeclarationDescriptor): Boolean {
         val container = descriptor.containingDeclaration

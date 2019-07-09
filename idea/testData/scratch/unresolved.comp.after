@@ -1,3 +1,4 @@
+// REPL_MODE: false
+
 foo()    // ERROR: Unresolved reference: foo
-/** unresolved.kts:1 Unresolved reference: foo */
-/** Compilation Error */
+/** unresolved.kts:3 Unresolved reference: foo */

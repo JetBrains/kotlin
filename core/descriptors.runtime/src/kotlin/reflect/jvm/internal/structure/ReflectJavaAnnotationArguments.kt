@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 abstract class ReflectJavaAnnotationArgument(
-        override val name: Name?
+    override val name: Name?
 ) : JavaAnnotationArgument {
     companion object Factory {
         fun create(value: Any, name: Name?): ReflectJavaAnnotationArgument {
@@ -37,20 +37,20 @@ abstract class ReflectJavaAnnotationArgument(
 }
 
 class ReflectJavaLiteralAnnotationArgument(
-        name: Name?,
-        override val value: Any
+    name: Name?,
+    override val value: Any
 ) : ReflectJavaAnnotationArgument(name), JavaLiteralAnnotationArgument
 
 class ReflectJavaArrayAnnotationArgument(
-        name: Name?,
-        private val values: Array<*>
+    name: Name?,
+    private val values: Array<*>
 ) : ReflectJavaAnnotationArgument(name), JavaArrayAnnotationArgument {
-    override fun getElements() = values.map { ReflectJavaAnnotationArgument.create(it!!, null) }
+    override fun getElements() = values.map { create(it!!, null) }
 }
 
 class ReflectJavaEnumValueAnnotationArgument(
-        name: Name?,
-        private val value: Enum<*>
+    name: Name?,
+    private val value: Enum<*>
 ) : ReflectJavaAnnotationArgument(name), JavaEnumValueAnnotationArgument {
     override val enumClassId: ClassId?
         get() {
@@ -64,15 +64,15 @@ class ReflectJavaEnumValueAnnotationArgument(
 }
 
 class ReflectJavaClassObjectAnnotationArgument(
-        name: Name?,
-        private val klass: Class<*>
+    name: Name?,
+    private val klass: Class<*>
 ) : ReflectJavaAnnotationArgument(name), JavaClassObjectAnnotationArgument {
     override fun getReferencedType(): JavaType = ReflectJavaType.create(klass)
 }
 
 class ReflectJavaAnnotationAsAnnotationArgument(
-        name: Name?,
-        private val annotation: Annotation
+    name: Name?,
+    private val annotation: Annotation
 ) : ReflectJavaAnnotationArgument(name), JavaAnnotationAsAnnotationArgument {
     override fun getAnnotation(): JavaAnnotation = ReflectJavaAnnotation(annotation)
 }

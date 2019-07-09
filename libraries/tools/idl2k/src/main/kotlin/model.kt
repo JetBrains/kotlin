@@ -63,7 +63,6 @@ enum class GenerateDefinitionKind {
     ABSTRACT_CLASS
 }
 
-data class GenerateFunctionCall(val name: String, val arguments: List<String>)
 data class GenerateFunction(
         val name: String,
         val returnType: Type,
@@ -74,17 +73,18 @@ data class GenerateFunction(
 )
 
 data class ConstructorWithSuperTypeCall(val constructor: GenerateFunction, val constructorAttribute: ExtendedAttribute)
-data class GenerateTraitOrClass(
-        val name: String,
-        val namespace: String,
-        val kind: GenerateDefinitionKind,
-        val superTypes: List<String>,
-        val memberAttributes: MutableList<GenerateAttribute>,
-        val memberFunctions: MutableList<GenerateFunction>,
-        val constants: List<GenerateAttribute>,
-        val primaryConstructor: ConstructorWithSuperTypeCall?,
-        val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
-        val generateBuilderFunction: Boolean
+
+data class GenerateClass(
+    val name: String,
+    val namespace: String,
+    val kind: GenerateDefinitionKind,
+    val superTypes: List<String>,
+    val memberAttributes: MutableList<GenerateAttribute>,
+    val memberFunctions: MutableList<GenerateFunction>,
+    val constants: List<GenerateAttribute>,
+    val primaryConstructor: ConstructorWithSuperTypeCall?,
+    val secondaryConstructors: List<ConstructorWithSuperTypeCall>,
+    val generateBuilderFunction: Boolean
 )
 
 val GenerateFunction.signature: String
@@ -94,12 +94,11 @@ fun GenerateFunction.dynamicIfUnknownType(allTypes : Set<String>) = standardType
     copy(returnType = returnType.dynamicIfUnknownType(allTypes, standardTypes), arguments = arguments.map { it.dynamicIfUnknownType(allTypes, standardTypes) })
 }
 
-fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.call == name }
-fun InterfaceDefinition?.hasExtendedAttribute(name: String) = this?.findExtendedAttributes(name)?.isNotEmpty() ?: false
-fun InterfaceDefinition.findConstructors() = findExtendedAttributes("Constructor")
+fun InterfaceDefinition.findExtendedAttributes(name: String) = extendedAttributes.filter { it.name == name }
+fun InterfaceDefinition.findConstructors() = extendedAttributes.filter { it.call == "Constructor" }
 
 data class GenerateUnionTypes(
-        val typeNamesToUnionsMap: Map<String, List<String>>,
-        val anonymousUnionsMap: Map<String, GenerateTraitOrClass>,
-        val typedefsMarkersMap: Map<String, GenerateTraitOrClass>
+    val typeNamesToUnionsMap: Map<String, List<String>>,
+    val anonymousUnionsMap: Map<String, GenerateClass>,
+    val typedefsMarkersMap: Map<String, GenerateClass>
 )

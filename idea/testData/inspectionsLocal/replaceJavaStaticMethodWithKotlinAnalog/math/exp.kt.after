@@ -1,0 +1,6 @@
+import kotlin.math.exp
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    exp(x)
+}

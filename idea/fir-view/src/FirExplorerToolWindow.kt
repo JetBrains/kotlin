@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.actions.internal
@@ -27,7 +27,6 @@ import com.intellij.ui.treeStructure.SimpleTreeBuilder
 import com.intellij.ui.treeStructure.SimpleTreeStructure
 import com.intellij.ui.treeStructure.Tree
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -73,7 +72,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
                     val psiDocumentManager = PsiDocumentManager.getInstance(project)
                     val file = runReadAction { psiDocumentManager.getPsiFile(editor.document) as? KtFile }
                     if (file != null) {
-                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase() {}).buildFirFile(file) }
+                        val firFile = runReadAction { RawFirBuilder(object : FirSessionBase(null) {}, stubMode = false).buildFirFile(file) }
                         runInEdt {
                             treeStructure.root = FirExplorerTreeNode("root = ", firFile, null)
                             builder.updateFromRoot(!init)
@@ -189,7 +188,7 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
 
         override fun getChildren(): Array<SimpleNode> {
             if (data == null) {
-                return SimpleNode.NO_CHILDREN
+                return NO_CHILDREN
             } else {
                 val classOfData = data::class
 
@@ -243,11 +242,11 @@ class FirExplorerToolWindow(private val project: Project, private val toolWindow
 
         override fun update(presentation: PresentationData) {
             super.update(presentation)
-            presentation.setIcon(AllIcons.General.Recursive)
+            presentation.setIcon(AllIcons.Actions.ShowAsTree)
         }
 
         override fun getChildren(): Array<SimpleNode> {
-            if (data == null) return SimpleNode.NO_CHILDREN
+            if (data == null) return NO_CHILDREN
 
 
             return data.mapIndexed { index, any ->

@@ -1,0 +1,1 @@
+fun test(d: dynamic) = d!!

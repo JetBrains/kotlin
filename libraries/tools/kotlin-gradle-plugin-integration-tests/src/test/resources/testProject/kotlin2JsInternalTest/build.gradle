@@ -20,9 +20,11 @@ dependencies {
     compile "org.mozilla:rhino:1.7.7.1"
 }
 
+def classesDir = "${buildDir}/classes/kotlin"
+
 task runRhino(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    workingDir = "${buildDir}/classes/"
+    workingDir = classesDir
     main = 'org.mozilla.javascript.tools.shell.Main'
     args = ["-opt", "-1", "-f", "kotlin.js", "-f", "main/kotlin2JsInternalTest.js", "-f", "test/kotlin2JsInternalTest_test.js", "-f", "check.js"]
 }
@@ -33,7 +35,7 @@ build.doLast {
             includeEmptyDirs = false
 
             from zipTree(file.absolutePath)
-            into "${buildDir}/classes/"
+            into classesDir
             include { fileTreeElement ->
                 def path = fileTreeElement.path
                 path.endsWith(".js") && (path.startsWith("META-INF/resources/") || !path.startsWith("META-INF/"))
@@ -43,7 +45,7 @@ build.doLast {
     copy {
         from "."
         include "check.js"
-        into "${buildDir}/classes/"
+        into classesDir
     }
 }
 

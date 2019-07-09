@@ -26,7 +26,7 @@ fun threeLevelsReturnNoInitialization(x: Int?): Int? {
     // Inner always jumps to outer
     // And middle always calls inner
     // So, in fact, middle never finished normally
-    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initalization
+    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initialization
     // Hence, outer doesn't performs definite initialization
     val y: Int
     myRun outer@ {

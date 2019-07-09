@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.ifEmpty
+import kotlin.math.min
 
 fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     val project = element.project
@@ -42,6 +43,66 @@ fun moveCaretIntoGeneratedElement(editor: Editor, element: PsiElement) {
     PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
 
     pointer.element?.let { moveCaretIntoGeneratedElementDocumentUnblocked(editor, it) }
+}
+
+class RestoreCaret<T: PsiElement>(beforeElement: T, val editor: Editor?) {
+    private val relativeOffset: Int
+    private val beforeElementTextLength: Int = beforeElement.textLength
+
+    init {
+        relativeOffset = findRelativeOffset(beforeElement, editor)
+    }
+
+    fun restoreCaret(afterElement: T, defaultOffset: ((element: T) -> Int)? = null) {
+        if (editor == null) return
+        val project = editor.project ?: return
+
+        val pointer = SmartPointerManager.getInstance(project).createSmartPsiElementPointer(afterElement)
+
+        val document = editor.document
+        PsiDocumentManager.getInstance(project).commitDocument(document)
+        PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(document)
+
+        val afterElementChanged = pointer.element ?: return
+
+        val offset = if (relativeOffset != -1 && afterElementChanged.textLength == beforeElementTextLength) {
+            afterElementChanged.startOffset + relativeOffset
+        } else {
+            if (defaultOffset != null) {
+                defaultOffset(afterElementChanged)
+            } else {
+                -1
+            }
+        }
+
+        if (offset == -1) {
+            return
+        }
+
+        if (document.textLength > offset) {
+            editor.caretModel.moveToOffset(offset)
+        }
+    }
+
+    companion object {
+        fun findRelativeOffset(element: PsiElement, editor: Editor?): Int {
+            if (editor != null) {
+                val singleCaret = editor.caretModel.allCarets.singleOrNull()
+                if (singleCaret != null) {
+                    val caretOffset = singleCaret.offset
+                    val textRange = element.textRange
+                    if (textRange.startOffset <= caretOffset && caretOffset <= textRange.endOffset) {
+                        val relative = caretOffset - element.startOffset
+                        if (relative >= 0) {
+                            return relative
+                        }
+                    }
+                }
+            }
+
+            return -1
+        }
+    }
 }
 
 private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, element: PsiElement): Boolean {
@@ -60,7 +121,7 @@ private fun moveCaretIntoGeneratedElementDocumentUnblocked(editor: Editor, eleme
                 val start = firstInBlock.textRange!!.startOffset
                 val end = lastInBlock.textRange!!.endOffset
 
-                editor.moveCaret(Math.min(start, end))
+                editor.moveCaret(min(start, end))
 
                 if (start < end) {
                     editor.selectionModel.setSelection(start, end)

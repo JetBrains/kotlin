@@ -1,39 +1,25 @@
 @file:Suppress("unused") // usages in build scripts are not tracked properly
 
-import org.gradle.api.*
-import org.gradle.api.artifacts.*
-import org.gradle.api.tasks.*
-import org.gradle.kotlin.dsl.*
+import org.gradle.api.GradleException
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.artifacts.ConfigurablePublishArtifact
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.AbstractCopyTask
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.Upload
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.tasks.Jar
+import org.gradle.kotlin.dsl.*
 import java.io.File
 
-// can be used now only for the non-published projects, due to conflicts in the "archives" config
-// TODO: fix the problem above
-fun Project.classesDirsArtifact(): FileCollection {
-
-    task("uploadArchives") {
-        // hides rule-based task with the same name, which appears to be broken in this project
-    }
-
-    val classesDirsCfg = configurations.getOrCreate("classes-dirs")
-
-    val classesDirs = mainSourceSet.output.classesDirs
-
-    val classesTask = tasks["classes"]
-
-    afterEvaluate {
-        classesDirs.files.forEach {
-            addArtifact(classesDirsCfg, classesTask, it)
-        }
-    }
-
-    return classesDirs
-}
 
 private const val MAGIC_DO_NOT_CHANGE_TEST_JAR_TASK_NAME = "testJar"
 
@@ -51,14 +37,26 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): Jar {
     }
 }
 
+var Project.artifactsRemovedDiagnosticFlag: Boolean
+    get() = extra.has("artifactsRemovedDiagnosticFlag") && extra["artifactsRemovedDiagnosticFlag"] == true
+    set(value) {
+        extra["artifactsRemovedDiagnosticFlag"] = value
+    }
+
+fun Project.removeArtifacts(configuration: Configuration, task: Task) {
+    configuration.artifacts.removeAll { artifact ->
+        artifact.file in task.outputs.files
+    }
+
+    artifactsRemovedDiagnosticFlag = true
+}
+
 fun Project.noDefaultJar() {
     tasks.findByName("jar")?.let { defaultJarTask ->
         defaultJarTask.enabled = false
         defaultJarTask.actions = emptyList()
         configurations.forEach { cfg ->
-            cfg.artifacts.removeAll { artifact ->
-                artifact.file in defaultJarTask.outputs.files
-            }
+            removeArtifacts(cfg, defaultJarTask)
         }
     }
 }
@@ -71,12 +69,18 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
     }
 }
 
-fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
+fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
-        configurations.getOrCreate("archives").artifacts.removeAll { (it as? ArchivePublishArtifact)?.archiveTask?.let { it == defaultJarTask } ?: false }
+        removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
     }
     return task.apply {
+        configurations.findByName("embedded")?.let { embedded ->
+            dependsOn(embedded)
+            from {
+                embedded.map(::zipTree)
+            }
+        }
         setupPublicJar(project.the<BasePluginConvention>().archivesBaseName)
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         body()
@@ -86,37 +90,45 @@ fun<T: Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
 
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask("jar", body), { })
 
-fun Project.sourcesJar(sourceSet: String? = "main", body: Jar.() -> Unit = {}): Jar =
-        getOrCreateTask("sourcesJar") {
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            classifier = "sources"
-            try {
-                if (sourceSet != null) {
-                    project.pluginManager.withPlugin("java-base") {
-                        from(project.javaPluginConvention().sourceSets[sourceSet].allSource)
-                    }
-                }
-            } catch (e: UnknownDomainObjectException) {
-                // skip default sources location
-            }
-            body()
-            project.addArtifact("archives", this, this)
+fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
+    val task = tasks.register<Jar>("sourcesJar") {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        archiveClassifier.set("sources")
+
+        from(project.mainSourceSet.allSource)
+
+        project.configurations.findByName("embedded")?.let { embedded ->
+            from(provider {
+                embedded.resolvedConfiguration
+                    .resolvedArtifacts
+                    .map { it.id.componentIdentifier }
+                    .filterIsInstance<ProjectComponentIdentifier>()
+                    .map { project(it.projectPath).mainSourceSet.allSource }
+            })
         }
 
-fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar =
-        getOrCreateTask("javadocJar") {
-            setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-            classifier = "javadoc"
-            tasks.findByName("javadoc")?.let{ it as Javadoc }?.takeIf { it.enabled }?.let {
-                dependsOn(it)
-                from(it.destinationDir)
-            }
-            body()
-            project.addArtifact("archives", this, this)
-        }
+        body()
+    }
+
+    addArtifact("archives", task)
+    addArtifact("sources", task)
+
+    return task
+}
+
+fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar = getOrCreateTask("javadocJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    classifier = "javadoc"
+    tasks.findByName("javadoc")?.let { it as Javadoc }?.takeIf { it.enabled }?.let {
+        dependsOn(it)
+        from(it.destinationDir)
+    }
+    body()
+    project.addArtifact("archives", this, this)
+}
 
 
-fun Project.standardPublicJars(): Unit {
+fun Project.standardPublicJars() {
     runtimeJar()
     sourcesJar()
     javadocJar()
@@ -125,6 +137,10 @@ fun Project.standardPublicJars(): Unit {
 fun Project.publish(body: Upload.() -> Unit = {}): Upload {
     apply<plugins.PublishedKotlinModule>()
 
+    if (artifactsRemovedDiagnosticFlag) {
+        error("`publish()` should be called before removing artifacts typically done in `noDefaultJar()` or `runtimeJar()` call")
+    }
+
     afterEvaluate {
         if (configurations.findByName("classes-dirs") != null)
             throw GradleException("classesDirsArtifact() is incompatible with publish(), see sources comments for details")
@@ -132,50 +148,6 @@ fun Project.publish(body: Upload.() -> Unit = {}): Upload {
 
     return (tasks.getByName("uploadArchives") as Upload).apply {
         body()
-    }
-}
-
-fun Project.ideaPlugin(subdir: String = "lib", body: AbstractCopyTask.() -> Unit): Copy {
-    val thisProject = this
-    val pluginTask = task<Copy>("ideaPlugin") {
-        body()
-        into(File(rootProject.extra["ideaPluginDir"].toString(), subdir).path)
-        rename("-${java.util.regex.Pattern.quote(thisProject.version.toString())}", "")
-    }
-
-    task("idea-plugin") {
-        dependsOn(pluginTask)
-    }
-
-    return pluginTask
-}
-
-fun Project.ideaPlugin(subdir: String = "lib"): Copy = ideaPlugin(subdir) {
-    runtimeJarTaskIfExists()?.let {
-        from(it)
-    }
-}
-
-fun Project.dist(targetDir: File? = null,
-                 targetName: String? = null,
-                 fromTask: Task? = null,
-                 body: AbstractCopyTask.() -> Unit = {}): AbstractCopyTask {
-    val distJarCfg = configurations.getOrCreate("distJar")
-    val distLibDir: File by rootProject.extra
-    val distJarName = targetName ?: (the<BasePluginConvention>().archivesBaseName + ".jar")
-    val thisProject = this
-
-    return task<Copy>("dist") {
-        body()
-        (fromTask ?: runtimeJarTaskIfExists())?.let {
-            from(it)
-            if (targetName != null) {
-                rename(it.outputs.files.singleFile.name, targetName)
-            }
-        }
-        rename("-${java.util.regex.Pattern.quote(thisProject.version.toString())}", "")
-        into(targetDir ?: distLibDir)
-        project.addArtifact(distJarCfg, this, File(targetDir ?: distLibDir, distJarName))
     }
 }
 
@@ -206,7 +178,12 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 }
 
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
-        addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
+    addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
+
+fun <T : Task> Project.addArtifact(configurationName: String, task: TaskProvider<T>, body: ConfigurablePublishArtifact.() -> Unit = {}) {
+    configurations.maybeCreate(configurationName)
+    artifacts.add(configurationName, task, body)
+}
 
 fun Project.cleanArtifacts() {
     configurations["archives"].artifacts.let { artifacts ->

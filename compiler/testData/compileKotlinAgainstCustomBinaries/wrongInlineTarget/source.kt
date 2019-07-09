@@ -13,16 +13,30 @@ fun baz() {
     allInline
     allInline = 1
 
-    val a = A()
-    a.inlineFun {}
-    a.inlineGetter
-    a.inlineGetter = 1
+    val base = Base()
+    base.inlineFunBase {}
+    base.inlineGetterBase
+    base.inlineGetterBase = 1
 
-    a.inlineSetter
-    a.inlineSetter = 1
+    base.inlineSetterBase
+    base.inlineSetterBase = 1
 
-    a.allInline
-    a.allInline = 1
+    base.allInlineBase
+    base.allInlineBase = 1
 }
 
 
+class Derived : Base() {
+
+    fun test() {
+        inlineFunBase {}
+        inlineGetterBase
+        inlineGetterBase = 1
+
+        inlineSetterBase
+        inlineSetterBase = 1
+
+        allInlineBase
+        allInlineBase = 1
+    }
+}

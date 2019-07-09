@@ -1,4 +1,3 @@
-// !API_VERSION: 1.3
 // !JVM_DEFAULT_MODE: compatibility
 // TARGET_BACKEND: JVM
 // FILE: Simple.java

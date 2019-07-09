@@ -84,5 +84,9 @@ class LockBasedLazyResolveStorageManager(private val storageManager: StorageMana
         }
 
         override fun wantsDiagnostics() = trace.wantsDiagnostics()
+
+        override fun toString(): String {
+            return "Lock-protected trace of LockBasedLazyResolveStorageManager $storageManager"
+        }
     }
 }

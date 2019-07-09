@@ -1,5 +1,5 @@
 // IS_APPLICABLE: true
 fun foo() {
     val x = 4
-    val y = "$x${x}$x"
+    val y = "$x${<caret>x}$x"
 }

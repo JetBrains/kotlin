@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockBodyImpl
@@ -31,11 +31,13 @@ class AnonymousInitializerGenerator(
 
     fun generateAnonymousInitializerDeclaration(
         ktAnonymousInitializer: KtAnonymousInitializer,
-        classDescriptor: ClassDescriptor
+        irClass: IrClass
     ): IrDeclaration =
         context.symbolTable.declareAnonymousInitializer(
-            ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset, IrDeclarationOrigin.DEFINED, classDescriptor
+            ktAnonymousInitializer.startOffsetSkippingComments, ktAnonymousInitializer.endOffset,
+            IrDeclarationOrigin.DEFINED, irClass.descriptor
         ).buildWithScope { irAnonymousInitializer ->
+            irAnonymousInitializer.parent = irClass
             val bodyGenerator = createBodyGenerator(irAnonymousInitializer.symbol)
             val statementGenerator = bodyGenerator.createStatementGenerator()
             val ktBody = ktAnonymousInitializer.body!!

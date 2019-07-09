@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.contracts.parsing
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
+import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.ContractDescription
 import org.jetbrains.kotlin.contracts.description.EffectDeclaration
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanVariableReference
@@ -34,16 +35,15 @@ import org.jetbrains.kotlin.contracts.parsing.effects.PsiReturnsEffectParser
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtBinaryExpression
-import org.jetbrains.kotlin.psi.KtCallExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtLambdaExpression
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
+import org.jetbrains.kotlin.storage.StorageManager
 
 internal class PsiContractParserDispatcher(
     private val collector: ContractParsingDiagnosticsCollector,
-    private val callContext: ContractCallContext
+    private val callContext: ContractCallContext,
+    private val storageManager: StorageManager
 ) {
     private val conditionParser = PsiConditionParser(collector, callContext, this)
     private val constantParser = PsiConstantParser(callContext)
@@ -67,11 +67,12 @@ internal class PsiContractParserDispatcher(
             return null
         }
 
-        val effects = lambda.bodyExpression?.statements?.mapNotNull { parseEffect(it) } ?: return null
-
+        val effectsWithExpression = lambda.bodyExpression?.statements?.map { parseEffect(it) to it } ?: return null
+        checkDuplicatedCallsEffectsAndReport(effectsWithExpression)
+        val effects = effectsWithExpression.mapNotNull { it.first }
         if (effects.isEmpty()) return null
 
-        return ContractDescription(effects, callContext.functionDescriptor)
+        return ContractDescription(effects, callContext.functionDescriptor, storageManager)
     }
 
     fun parseCondition(expression: KtExpression?): BooleanExpression? = expression?.accept(conditionParser, Unit)
@@ -88,6 +89,19 @@ internal class PsiContractParserDispatcher(
         }
 
         return parser.tryParseEffect(expression)
+    }
+
+    private fun checkDuplicatedCallsEffectsAndReport(effects: List<Pair<EffectDeclaration?, KtExpression>>) {
+        val descriptorsWithCallsEffect = mutableSetOf<ParameterDescriptor>()
+        for ((effect, expression) in effects) {
+            if (effect !is CallsEffectDeclaration) continue
+            val descriptor = effect.variableReference.descriptor
+            if (descriptor in descriptorsWithCallsEffect) {
+                collector.badDescription("Duplicated contract for ${descriptor.name}. Only one `callsInPlace` contract per parameter is allowed.", expression)
+            } else {
+                descriptorsWithCallsEffect.add(descriptor)
+            }
+        }
     }
 
     private fun isValidEffectDeclaration(expression: KtExpression): Boolean {
@@ -112,9 +126,10 @@ internal class PsiContractParserDispatcher(
 
     fun parseVariable(expression: KtExpression?): VariableReference? {
         if (expression == null) return null
-        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor ?: return null
+        val descriptor = expression.getResolvedCall(callContext.bindingContext)?.resultingDescriptor
         if (descriptor !is ParameterDescriptor) {
-            collector.badDescription("only references to parameters are allowed in contract description", expression)
+            if (expression !is KtConstantExpression)
+                collector.badDescription("only references to parameters are allowed in contract description", expression)
             return null
         }
 

@@ -50,12 +50,12 @@ import org.jetbrains.kotlin.types.KotlinType
  * @param safeCall If true, then the whole code must not be executed if the [value] evaluates to null.
  */
 internal fun MutableCodeToInline.introduceValue(
-        value: KtExpression,
-        valueType: KotlinType?,
-        usages: Collection<KtExpression>,
-        expressionToBeReplaced: KtExpression,
-        nameSuggestion: String? = null,
-        safeCall: Boolean = false
+    value: KtExpression,
+    valueType: KotlinType?,
+    usages: Collection<KtExpression>,
+    expressionToBeReplaced: KtExpression,
+    nameSuggestion: String? = null,
+    safeCall: Boolean = false
 ) {
     assert(usages.all { this.containsStrictlyInside(it) })
 
@@ -100,12 +100,10 @@ internal fun MutableCodeToInline.introduceValue(
             }
 
             replaceUsages(name)
-        }
-        else {
+        } else {
             statementsBefore.add(0, value)
         }
-    }
-    else {
+    } else {
         val useIt = !isNameUsed("it")
         val name = if (useIt) Name.identifier("it") else suggestName { !isNameUsed(it) }
         replaceUsages(name)
@@ -139,17 +137,17 @@ fun String.nameHasConflictsInScope(lexicalScope: LexicalScope) = lexicalScope.ge
 }
 
 private fun variableNeedsExplicitType(
-        initializer: KtExpression,
-        initializerType: KotlinType,
-        context: KtExpression,
-        resolutionScope: LexicalScope,
-        bindingContext: BindingContext
+    initializer: KtExpression,
+    initializerType: KotlinType,
+    context: KtExpression,
+    resolutionScope: LexicalScope,
+    bindingContext: BindingContext
 ): Boolean {
     if (ErrorUtils.containsErrorType(initializerType)) return false
     val valueTypeWithoutExpectedType = initializer.computeTypeInContext(
-            resolutionScope,
-            context,
-            dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
+        resolutionScope,
+        context,
+        dataFlowInfo = bindingContext.getDataFlowInfoBefore(context)
     )
     return valueTypeWithoutExpectedType == null || ErrorUtils.containsErrorType(valueTypeWithoutExpectedType)
 }

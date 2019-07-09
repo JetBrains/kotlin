@@ -1,4 +1,4 @@
-// !LANGUAGE: +ReleaseCoroutines +ExperimentalBuilderInference
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES

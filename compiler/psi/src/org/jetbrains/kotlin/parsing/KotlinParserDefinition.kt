@@ -41,8 +41,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtWhenEntry
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
+import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinParserDefinition : ParserDefinition {
 
@@ -50,7 +50,7 @@ class KotlinParserDefinition : ParserDefinition {
 
     override fun createParser(project: Project): PsiParser = KotlinParser(project)
 
-    override fun getFileNodeType(): IFileElementType = KtStubElementTypes.FILE
+    override fun getFileNodeType(): IFileElementType = KtFileElementType.INSTANCE
 
     override fun getWhitespaceTokens(): TokenSet = KtTokens.WHITESPACES
 

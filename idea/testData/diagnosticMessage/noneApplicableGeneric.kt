@@ -1,6 +1,7 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: NONE_APPLICABLE
 // !MESSAGE_TYPE: HTML
+// !LANGUAGE: -NewInference
 
 package p
 

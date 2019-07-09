@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun byteInFloat(x: Byte, a: Float, b: Float) = x in a .. b
 fun byteInDouble(x: Byte, a: Double, b: Double) = x in a .. b
 fun shortInFloat(x: Short, a: Float, b: Float) = x in a .. b

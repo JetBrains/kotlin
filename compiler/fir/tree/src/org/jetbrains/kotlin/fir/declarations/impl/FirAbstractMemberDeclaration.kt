@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
@@ -20,22 +20,30 @@ import org.jetbrains.kotlin.name.Name
 abstract class FirAbstractMemberDeclaration(
     session: FirSession,
     psi: PsiElement?,
-    name: Name,
-    visibility: Visibility,
-    modality: Modality?,
-    isExpect: Boolean,
-    isActual: Boolean
+    name: Name
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirMemberDeclaration {
-    final override val typeParameters = mutableListOf<FirTypeParameter>()
-
-    final override var status = FirDeclarationStatusImpl(
-        session,
-        visibility,
-        modality
-    ).apply {
-        this.isExpect = isExpect
-        this.isActual = isActual
+    constructor(
+        session: FirSession,
+        psi: PsiElement?,
+        name: Name,
+        visibility: Visibility,
+        modality: Modality?,
+        isExpect: Boolean,
+        isActual: Boolean
+    ) : this(session, psi, name) {
+        this.status = FirDeclarationStatusImpl(
+            session,
+            visibility,
+            modality
+        ).apply {
+            this.isExpect = isExpect
+            this.isActual = isActual
+        }
     }
+
+    final override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+
+    final override lateinit var status: FirDeclarationStatusImpl
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         typeParameters.transformInplace(transformer, data)

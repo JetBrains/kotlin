@@ -22,8 +22,11 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.copyBean
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
-import org.jetbrains.kotlin.platform.IdePlatform
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
+import org.jetbrains.kotlin.platform.compat.toIdePlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
@@ -104,9 +107,9 @@ sealed class VersionView : DescriptionAware {
         }
 
         fun deserialize(value: String?, isAutoAdvance: Boolean): VersionView {
-            if (isAutoAdvance) return VersionView.LatestStable
+            if (isAutoAdvance) return LatestStable
             val languageVersion = LanguageVersion.fromVersionString(value)
-            return if (languageVersion != null) VersionView.Specific(languageVersion) else VersionView.LatestStable
+            return if (languageVersion != null) Specific(languageVersion) else LatestStable
         }
     }
 }
@@ -187,11 +190,29 @@ class KotlinFacetSettings {
             compilerArguments!!.apiVersion = value?.versionString
         }
 
-    val platform: IdePlatform<*, *>?
+    var targetPlatform: TargetPlatform? = null
         get() {
-            val compilerArguments = this.compilerArguments ?: return null
-            return IdePlatformKind.platformByCompilerArguments(compilerArguments)
+            // This work-around is required in order to fix importing of the proper JVM target version and works only
+            // for fully actualized JVM target platform
+            //TODO(auskov): this hack should be removed after fixing equals in SimplePlatform
+            val args = compilerArguments
+            val singleSimplePlatform = field?.componentPlatforms?.singleOrNull()
+            if (singleSimplePlatform == JvmPlatforms.defaultJvmPlatform.singleOrNull() && args != null) {
+                return IdePlatformKind.platformByCompilerArguments(args)
+            }
+            return field
         }
+
+
+    @Suppress("DEPRECATION_ERROR")
+    @Deprecated(
+        message = "This accessor is deprecated and will be removed soon, use API from 'org.jetbrains.kotlin.platform.*' packages instead",
+        replaceWith = ReplaceWith("targetPlatform"),
+        level = DeprecationLevel.ERROR
+    )
+    fun getPlatform(): org.jetbrains.kotlin.platform.IdePlatform<*, *>? {
+        return targetPlatform?.toIdePlatform()
+    }
 
     var coroutineSupport: LanguageFeature.State?
         get() {
@@ -200,7 +221,7 @@ class KotlinFacetSettings {
             return CoroutineSupport.byCompilerArgumentsOrNull(compilerArguments)
         }
         set(value) {
-            compilerArguments!!.coroutinesState = when (value) {
+            compilerArguments?.coroutinesState = when (value) {
                 null -> CommonCompilerArguments.DEFAULT
                 LanguageFeature.State.ENABLED -> CommonCompilerArguments.ENABLE
                 LanguageFeature.State.ENABLED_WITH_WARNING -> CommonCompilerArguments.WARN
@@ -218,6 +239,7 @@ class KotlinFacetSettings {
     var isTestModule: Boolean = false
 
     var externalProjectId: String = ""
+    var isHmppEnabled: Boolean = false
 }
 
 interface KotlinFacetSettingsProvider {

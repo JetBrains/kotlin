@@ -30,3 +30,10 @@ annotation class DependsOn(val value: String = "", val groupId: String = "", val
 @Retention(AnnotationRetention.SOURCE)
 annotation class Repository(val value: String = "", val id: String = "", val url: String = "")
 
+/**
+ * Import other script(s)
+ */
+@Target(AnnotationTarget.FILE)
+@Repeatable
+@Retention(AnnotationRetention.SOURCE)
+annotation class Import(vararg val paths: String)

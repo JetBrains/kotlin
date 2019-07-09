@@ -4,7 +4,7 @@ public open class EnumArgumentWithCustomToString {
     public constructor EnumArgumentWithCustomToString()
     @test.EnumArgumentWithCustomToString.EnumAnno(value = E.CAKE) @test.EnumArgumentWithCustomToString.EnumArrayAnno(value = {E.CAKE, E.CAKE}) public/*package*/ open fun annotated(): kotlin.Unit
 
-    public open enum class E : kotlin.Enum<test.EnumArgumentWithCustomToString.E!> {
+    public final enum class E : kotlin.Enum<test.EnumArgumentWithCustomToString.E!> {
         enum entry CAKE
 
         private constructor E()

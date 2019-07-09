@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
@@ -10,17 +10,14 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirTotalResolveTransformer {
 
-    private val transformers: List<FirTransformer<Nothing?>> = listOf(
+    val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
+        FirSupertypeResolverTransformer(),
         FirTypeResolveTransformer(),
-        FirStatusResolveTransformer()
+        FirStatusResolveTransformer(),
+        FirImplicitTypeBodyResolveTransformerAdapter(),
+        FirBodyResolveTransformerAdapter()
     )
-
-    fun processFile(firFile: FirFile) {
-        for (transformer in transformers) {
-            firFile.transform<FirFile, Nothing?>(transformer, null)
-        }
-    }
 
     fun processFiles(files: List<FirFile>) {
         for (transformer in transformers) {

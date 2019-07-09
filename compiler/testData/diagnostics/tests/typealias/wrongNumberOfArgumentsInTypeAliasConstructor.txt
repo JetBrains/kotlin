@@ -14,10 +14,22 @@ public val test2pra: PR<kotlin.String, kotlin.Int> /* = Pair<kotlin.Int, kotlin.
 public val test3: P<kotlin.Int, kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
 public val test3p2: P2<kotlin.Int> /* = Pair<kotlin.Int, kotlin.Int> */
 public val test3pr: P2<kotlin.String> /* = Pair<kotlin.String, kotlin.String> */
+public val testMP0: MP<kotlin.Int> /* = MyPair<kotlin.String, kotlin.Int> */
+public val testMP1: [ERROR : Type for MP(1, "")]
+public val testMP2: MP<kotlin.String> /* = MyPair<kotlin.String, kotlin.String> */
 public val testN0: [ERROR : Type for N("")]
 public val testN1: N<kotlin.Int> /* = Num<kotlin.Int> */
 public val testN1a: N<kotlin.String> /* = Num<kotlin.String> */
 public val testN2: N<kotlin.Int> /* = Num<kotlin.Int> */
+
+public final class MyPair</*0*/ T1 : kotlin.CharSequence, /*1*/ T2 : kotlin.Number> {
+    public constructor MyPair</*0*/ T1 : kotlin.CharSequence, /*1*/ T2 : kotlin.Number>(/*0*/ string: T1, /*1*/ number: T2)
+    public final val number: T2
+    public final val string: T1
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
 
 public final class Num</*0*/ T : kotlin.Number> {
     public constructor Num</*0*/ T : kotlin.Number>(/*0*/ x: T)
@@ -35,6 +47,7 @@ public final class Pair</*0*/ T1, /*1*/ T2> {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+public typealias MP</*0*/ T1> = MyPair<kotlin.String, T1>
 public typealias N</*0*/ T> = Num<T>
 public typealias P</*0*/ T1, /*1*/ T2> = Pair<T1, T2>
 public typealias P2</*0*/ T> = Pair<T, T>

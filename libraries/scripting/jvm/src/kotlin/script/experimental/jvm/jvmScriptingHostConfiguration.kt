@@ -1,15 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.jvm
 
 import java.io.File
+import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.*
+import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface JvmScriptingHostConfigurationKeys
@@ -24,6 +26,12 @@ val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>
 
 val JvmScriptingHostConfigurationKeys.jdkHome by PropertiesCollection.key<File>()
 
+val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader> {
+    get(ScriptingHostConfiguration.configurationDependencies)?.let {
+        URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray())
+    }
+}
+
 @Suppress("unused")
 val ScriptingHostConfigurationKeys.jvm
     get() = JvmScriptingHostConfigurationBuilder()
@@ -33,22 +41,32 @@ val defaultJvmScriptingHostConfiguration
         getScriptingClass(JvmGetScriptingClass())
     }
 
-class JvmGetScriptingClass : GetScriptingClass {
+class JvmGetScriptingClass : GetScriptingClass, Serializable {
 
+    @Transient
     private var dependencies: List<ScriptDependency>? = null
+
+    @Transient
     private var classLoader: ClassLoader? = null
-    private var baseClassLoaderIsInitialized = false
+
+    @Transient
+    // TODO: find out whether Transient fields are initialized on deserialization and if so, convert back to not-nullable val
+    private var baseClassLoaderIsInitialized: Boolean? = null
+
+    @Transient
     private var baseClassLoader: ClassLoader? = null
 
+    override fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*> =
+        invoke(classType, contextClass.java.classLoader, hostConfiguration)
+
     @Synchronized
-    override fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*> {
+    operator fun invoke(classType: KotlinType, contextClassLoader: ClassLoader?, hostConfiguration: ScriptingHostConfiguration): KClass<*> {
 
         // checking if class already loaded in the same context
-        val contextClassloader = contextClass.java.classLoader
         val fromClass = classType.fromClass
         if (fromClass != null) {
             if (fromClass.java.classLoader == null) return fromClass // root classloader
-            val actualClassLoadersChain = generateSequence(contextClassloader) { it.parent }
+            val actualClassLoadersChain = generateSequence(contextClassLoader) { it.parent }
             if (actualClassLoadersChain.any { it == fromClass.java.classLoader }) return fromClass
         }
 
@@ -61,8 +79,8 @@ class JvmGetScriptingClass : GetScriptingClass {
             )
         }
 
-        if (!baseClassLoaderIsInitialized) {
-            baseClassLoader = contextClassloader
+        if (baseClassLoaderIsInitialized != true) {
+            baseClassLoader = contextClassLoader
             baseClassLoaderIsInitialized = true
         }
         // TODO: this check breaks testLazyScriptDefinition, find out the reason and fix
@@ -79,14 +97,34 @@ class JvmGetScriptingClass : GetScriptingClass {
                 }
             }
             classLoader =
-                    if (classpath == null || classpath.isEmpty()) baseClassLoader
-                    else URLClassLoader(classpath.toTypedArray(), baseClassLoader)
+                if (classpath == null || classpath.isEmpty()) baseClassLoader
+                else URLClassLoader(classpath.toTypedArray(), baseClassLoader)
         }
 
         return try {
-            classLoader!!.loadClass(classType.typeName).kotlin
+            (classLoader ?: ClassLoader.getSystemClassLoader()).loadClass(classType.typeName).kotlin
         } catch (e: Throwable) {
-            throw IllegalArgumentException("unable to load class $classType", e)
+            throw IllegalArgumentException("unable to load class ${classType.typeName}", e)
         }
+    }
+
+    override fun equals(other: Any?): Boolean =
+        when {
+            other === this -> true
+            other !is JvmGetScriptingClass -> false
+            else -> {
+                other.dependencies == dependencies &&
+                        (other.classLoader == null || classLoader == null || other.classLoader == classLoader) &&
+                        (other.baseClassLoader == null || baseClassLoader == null || other.baseClassLoader == baseClassLoader)
+            }
+        }
+
+
+    override fun hashCode(): Int {
+        return dependencies.hashCode() + 23 * classLoader.hashCode() + 37 * baseClassLoader.hashCode()
+    }
+
+    companion object {
+        private const val serialVersionUID = 1L
     }
 }

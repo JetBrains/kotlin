@@ -1,0 +1,7 @@
+package
+
+public val functions: kotlin.collections.Map<kotlin.String, () -> kotlin.Any>
+public fun f(/*0*/ s: kotlin.String, /*1*/ action: (kotlin.String.() -> kotlin.Unit)?): kotlin.Unit
+public fun run(/*0*/ name: kotlin.String): kotlin.Any
+public fun kotlin.String.bar(): kotlin.String
+public fun kotlin.String.foo(): kotlin.String

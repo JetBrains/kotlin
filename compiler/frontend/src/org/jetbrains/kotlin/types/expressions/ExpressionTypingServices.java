@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
@@ -19,15 +19,13 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.psi.*;
 import org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt;
 import org.jetbrains.kotlin.resolve.*;
+import org.jetbrains.kotlin.resolve.calls.components.InferenceSession;
 import org.jetbrains.kotlin.resolve.calls.context.ContextDependency;
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo;
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue;
 import org.jetbrains.kotlin.resolve.calls.tower.KotlinResolutionCallbacksImpl;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
-import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind;
-import org.jetbrains.kotlin.resolve.scopes.LexicalWritableScope;
-import org.jetbrains.kotlin.resolve.scopes.TraceBasedLocalRedeclarationChecker;
+import org.jetbrains.kotlin.resolve.scopes.*;
 import org.jetbrains.kotlin.types.ErrorUtils;
 import org.jetbrains.kotlin.types.KotlinType;
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.TypeInfoFactoryKt;
@@ -74,9 +72,10 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace
     ) {
-        KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, trace);
+        KotlinType type = getType(scope, expression, expectedType, dataFlowInfo, inferenceSession, trace);
 
         return type != null ? type : ErrorUtils.createErrorType("Type for " + expression.getText());
     }
@@ -87,10 +86,14 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace,
             boolean isStatement
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, isStatement, expression, ContextDependency.INDEPENDENT);
+        return getTypeInfo(
+                scope, expression, expectedType, dataFlowInfo, inferenceSession,
+                trace, isStatement, expression, ContextDependency.INDEPENDENT
+        );
     }
 
     @NotNull
@@ -99,6 +102,7 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace,
             boolean isStatement,
             @NotNull KtExpression contextExpression,
@@ -106,7 +110,7 @@ public class ExpressionTypingServices {
     ) {
         ExpressionTypingContext context = ExpressionTypingContext.newContext(
                 trace, scope, dataFlowInfo, expectedType, contextDependency, statementFilter, getLanguageVersionSettings(),
-                expressionTypingComponents.dataFlowValueFactory
+                expressionTypingComponents.dataFlowValueFactory, inferenceSession
         );
         if (contextExpression != expression) {
             context = context.replaceExpressionContextProvider(arg -> arg == expression ? contextExpression : null);
@@ -125,9 +129,10 @@ public class ExpressionTypingServices {
             @NotNull KtExpression expression,
             @NotNull KotlinType expectedType,
             @NotNull DataFlowInfo dataFlowInfo,
+            @NotNull InferenceSession inferenceSession,
             @NotNull BindingTrace trace
     ) {
-        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, trace, false).getType();
+        return getTypeInfo(scope, expression, expectedType, dataFlowInfo, inferenceSession, trace, false).getType();
     }
 
     /////////////////////////////////////////////////////////
@@ -258,12 +263,7 @@ public class ExpressionTypingServices {
         boolean isFirstStatement = true;
         for (Iterator<? extends KtElement> iterator = block.iterator(); iterator.hasNext(); ) {
             // Use filtering trace to keep effect system cache only for one statement
-            AbstractFilteringTrace traceForSingleStatement = new AbstractFilteringTrace(context.trace, "trace for single statement") {
-                @Override
-                protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
-                    return slice == BindingContext.EXPRESSION_EFFECTS;
-                }
-            };
+            AbstractFilteringTrace traceForSingleStatement = new EffectsFilteringTrace(context.trace);
 
             newContext = newContext.replaceBindingTrace(traceForSingleStatement);
 
@@ -303,9 +303,8 @@ public class ExpressionTypingServices {
             }
             blockLevelVisitor = new ExpressionTypingVisitorDispatcher.ForBlock(expressionTypingComponents, annotationChecker, scope);
 
-            expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope, isFirstStatement);
-
             if (isFirstStatement) {
+                expressionTypingComponents.contractParsingServices.checkContractAndRecordIfPresent(statementExpression, context.trace, scope);
                 isFirstStatement = false;
             }
         }
@@ -375,4 +374,18 @@ public class ExpressionTypingServices {
         return result;
     }
 
+    private static class EffectsFilteringTrace extends AbstractFilteringTrace {
+        public EffectsFilteringTrace(BindingTrace parentTrace) {
+            super(parentTrace, "Effects filtering trace");
+        }
+
+        @Override
+        protected <K, V> boolean shouldBeHiddenFromParent(@NotNull WritableSlice<K, V> slice, K key) {
+            return slice == BindingContext.EXPRESSION_EFFECTS;
+        }
+    }
+
+    public LocalRedeclarationChecker createLocalRedeclarationChecker(BindingTrace trace) {
+        return new TraceBasedLocalRedeclarationChecker(trace, expressionTypingComponents.overloadChecker);
+    }
 }

@@ -55,7 +55,7 @@ object ProtectedConstructorCallChecker : CallChecker {
         // And without ProtectedConstructorCallChecker such calls would be allowed only because they are performed within subclass
         // of constructor owner
         @Suppress("DEPRECATION")
-        if (Visibilities.findInvisibleMember(Visibilities.FALSE_IF_PROTECTED, descriptor, scopeOwner) == actualConstructor) {
+        if (Visibilities.findInvisibleMember(Visibilities.FALSE_IF_PROTECTED, descriptor, scopeOwner) == actualConstructor.original) {
             context.trace.report(Errors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL.on(reportOn, descriptor))
         }
     }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test;
@@ -32,6 +32,11 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
 
     public void testAllFilesPresentInKdoc() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/kdoc"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("AutoPopupAfterAtInKDoc.kt")
+    public void testAutoPopupAfterAtInKDoc() throws Exception {
+        runTest("idea/idea-completion/testData/kdoc/AutoPopupAfterAtInKDoc.kt");
     }
 
     @TestMetadata("ExtensionsFQLink.kt")
@@ -77,6 +82,11 @@ public class KDocCompletionTestGenerated extends AbstractJvmBasicCompletionTest 
     @TestMetadata("MemberLink.kt")
     public void testMemberLink() throws Exception {
         runTest("idea/idea-completion/testData/kdoc/MemberLink.kt");
+    }
+
+    @TestMetadata("NoAutoPopupAfterDigitInKDoc.kt")
+    public void testNoAutoPopupAfterDigitInKDoc() throws Exception {
+        runTest("idea/idea-completion/testData/kdoc/NoAutoPopupAfterDigitInKDoc.kt");
     }
 
     @TestMetadata("NoCompletionAfterFunName.kt")

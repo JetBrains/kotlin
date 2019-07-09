@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, NATIVE, JS_IR, JVM_IR
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.reflect.full.instanceParameter

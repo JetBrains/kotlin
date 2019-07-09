@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:kotlin.jvm.JvmMultifileClass
@@ -9,8 +9,11 @@
 
 package kotlin.text
 
+import java.nio.ByteBuffer
+import java.nio.CharBuffer
 import java.nio.charset.Charset
-import java.util.*
+import java.nio.charset.CodingErrorAction
+import java.util.Locale
 import java.util.regex.Pattern
 
 
@@ -109,10 +112,144 @@ public actual inline fun String.toUpperCase(): String = (this as java.lang.Strin
 public actual inline fun String.toLowerCase(): String = (this as java.lang.String).toLowerCase()
 
 /**
- * Returns a new character array containing the characters from this string.
+ * Concatenates characters in this [CharArray] into a String.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun CharArray.concatToString(): String {
+    return String(this)
+}
+
+/**
+ * Concatenates characters in this [CharArray] or its subrange into a String.
+ *
+ * @param startIndex the beginning (inclusive) of the subrange of characters, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange of characters, size of this array by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun CharArray.concatToString(startIndex: Int = 0, endIndex: Int = this.size): String {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+    return String(this, startIndex, endIndex - startIndex)
+}
+
+/**
+ * Returns a [CharArray] containing characters of this string or its substring.
+ *
+ * @param startIndex the beginning (inclusive) of the substring, 0 by default.
+ * @param endIndex the end (exclusive) of the substring, length of this string by default.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun String.toCharArray(startIndex: Int = 0, endIndex: Int = this.length): CharArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+    return toCharArray(CharArray(endIndex - startIndex), 0, startIndex, endIndex)
+}
+
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array.
+ *
+ * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun ByteArray.decodeToString(): String {
+    return String(this)
+}
+
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array or its subrange.
+ *
+ * @param startIndex the beginning (inclusive) of the subrange to decode, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to decode, size of this array by default.
+ * @param throwOnInvalidSequence specifies whether to throw an exception on malformed byte sequence or replace it by the replacement char `\uFFFD`.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun ByteArray.decodeToString(
+    startIndex: Int = 0,
+    endIndex: Int = this.size,
+    throwOnInvalidSequence: Boolean = false
+): String {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, this.size)
+
+    if (!throwOnInvalidSequence) {
+        return String(this, startIndex, endIndex - startIndex)
+    }
+
+    val decoder = Charsets.UTF_8.newDecoder()
+        .onMalformedInput(CodingErrorAction.REPORT)
+        .onUnmappableCharacter(CodingErrorAction.REPORT)
+
+    return decoder.decode(ByteBuffer.wrap(this, startIndex, endIndex - startIndex)).toString()
+}
+
+/**
+ * Encodes this string to an array of bytes in UTF-8 encoding.
+ *
+ * Any malformed char sequence is replaced by the replacement byte sequence.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+public actual fun String.encodeToByteArray(): ByteArray {
+    return this.toByteArray(Charsets.UTF_8)
+}
+
+/**
+ * Encodes this string or its substring to an array of bytes in UTF-8 encoding.
+ *
+ * @param startIndex the beginning (inclusive) of the substring to encode, 0 by default.
+ * @param endIndex the end (exclusive) of the substring to encode, length of this string by default.
+ * @param throwOnInvalidSequence specifies whether to throw an exception on malformed char sequence or replace.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the length of this string.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ * @throws CharacterCodingException if this string contains malformed char sequence and [throwOnInvalidSequence] is true.
+ */
+@SinceKotlin("1.3")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+@ExperimentalStdlibApi
+public actual fun String.encodeToByteArray(
+    startIndex: Int = 0,
+    endIndex: Int = this.length,
+    throwOnInvalidSequence: Boolean = false
+): ByteArray {
+    AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
+
+    if (!throwOnInvalidSequence) {
+        return this.substring(startIndex, endIndex).toByteArray(Charsets.UTF_8)
+    }
+
+    val encoder = Charsets.UTF_8.newEncoder()
+        .onMalformedInput(CodingErrorAction.REPORT)
+        .onUnmappableCharacter(CodingErrorAction.REPORT)
+
+    val byteBuffer = encoder.encode(CharBuffer.wrap(this, startIndex, endIndex))
+    return if (byteBuffer.hasArray() && byteBuffer.arrayOffset() == 0 && byteBuffer.remaining() == byteBuffer.array()!!.size) {
+        byteBuffer.array()
+    } else {
+        ByteArray(byteBuffer.remaining()).also { byteBuffer.get(it) }
+    }
+}
+
+/**
+ * Returns a [CharArray] containing characters of this string.
  */
 @kotlin.internal.InlineOnly
-public inline fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
+public actual inline fun String.toCharArray(): CharArray = (this as java.lang.String).toCharArray()
 
 /**
  * Copies characters from this string into the [destination] character array and returns that array.
@@ -272,6 +409,9 @@ public actual inline fun String(chars: CharArray): String =
 
 /**
  * Converts the characters from a portion of the specified array to a string.
+ *
+ * @throws IndexOutOfBoundsException if either [offset] or [length] are less than zero
+ * or `offset + length` is out of [chars] array bounds.
  */
 @kotlin.internal.InlineOnly
 public actual inline fun String(chars: CharArray, offset: Int, length: Int): String =
@@ -348,6 +488,8 @@ public inline fun String.intern(): String = (this as java.lang.String).intern()
 
 /**
  * Returns `true` if this string is empty or consists solely of whitespace characters.
+ *
+ * @sample samples.text.Strings.stringIsBlank
  */
 public actual fun CharSequence.isBlank(): Boolean = length == 0 || indices.all { this[it].isWhitespace() }
 
@@ -426,6 +568,32 @@ public actual fun String.capitalize(): String {
 }
 
 /**
+ * Returns a copy of this string having its first letter titlecased preferring [Char.toTitleCase] (if different from
+ * [Char.toUpperCase]) or by [String.toUpperCase] using the specified [locale], or the original string,
+ * if it's empty or already starts with an upper case letter.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun String.capitalize(locale: Locale): String {
+    if (isNotEmpty()) {
+        val firstChar = this[0]
+        if (firstChar.isLowerCase()) {
+            return buildString {
+                val titleChar = firstChar.toTitleCase()
+                if (titleChar != firstChar.toUpperCase()) {
+                    append(titleChar)
+                } else {
+                    append(this@capitalize.substring(0, 1).toUpperCase(locale))
+                }
+                append(this@capitalize.substring(1))
+            }
+        }
+    }
+    return this
+}
+
+/**
  * Returns a copy of this string having its first letter lowercased, or the original string,
  * if it's empty or already starts with a lower case letter.
  *
@@ -433,6 +601,17 @@ public actual fun String.capitalize(): String {
  */
 public actual fun String.decapitalize(): String {
     return if (isNotEmpty() && this[0].isUpperCase()) substring(0, 1).toLowerCase() + substring(1) else this
+}
+
+/**
+ * Returns a copy of this string having its first letter lowercased using the specified [locale],
+ * or the original string, if it's empty or already starts with a lower case letter.
+ */
+@SinceKotlin("1.3")
+@ExperimentalStdlibApi
+@kotlin.internal.LowPriorityInOverloadResolution
+public fun String.decapitalize(locale: Locale): String {
+    return if (isNotEmpty() && !this[0].isLowerCase()) substring(0, 1).toLowerCase(locale) + substring(1) else this
 }
 
 /**

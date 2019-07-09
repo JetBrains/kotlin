@@ -90,7 +90,9 @@ message Annotation {
       // - Array<String>::class, if array_dimension_count = 1
       // - Array<Array<String>>::class, if array_dimension_count = 2
       // - etc.
-      // Other forms of array class literals are not supported by this format, see KT-26568
+      // Since it's very difficult to represent Kotlin-specific type aspects (nullability, type projections) of array arguments
+      // in class literals on JVM, we don't bother to do represent this in our format as well.
+      // So, for example, values `Array<Array<in B?>>::class` and `Array<out Array<B>>?>::class` will be represented exactly the same here.
       optional int32 array_dimension_count = 11 [default = 0];
 
       /*

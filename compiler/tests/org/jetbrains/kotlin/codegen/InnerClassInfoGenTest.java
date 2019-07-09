@@ -116,8 +116,6 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         extractAndCompareInnerClasses("A$bar$1", bar);
     }
 
-
-
     private void checkAccess(@NotNull String outerName, @NotNull String innerName, int accessFlags) {
         String name = outerName + "$" + innerName;
         InnerClassAttribute attribute = CollectionsKt.single(extractInnerClasses(name), value -> innerName.equals(value.innerName));
@@ -139,7 +137,7 @@ public class InnerClassInfoGenTest extends CodegenTestCase {
         ClassReader reader = new ClassReader(bytes);
         List<InnerClassAttribute> result = new ArrayList<>();
 
-        reader.accept(new ClassVisitor(ASM5) {
+        reader.accept(new ClassVisitor(API_VERSION) {
             @Override
             public void visitInnerClass(@NotNull String name, String outerName, String innerName, int access) {
                 result.add(new InnerClassAttribute(name, outerName, innerName, access));

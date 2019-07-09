@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 //inspired by kt3492
 interface BK {
     fun foo(): String

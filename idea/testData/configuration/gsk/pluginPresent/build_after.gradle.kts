@@ -1,20 +1,9 @@
 import org.gradle.api.JavaVersion.VERSION_1_7
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlin_version: String by extra
-buildscript {
-    var kotlin_version: String by extra
-    kotlin_version = "$VERSION$"
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath(kotlinModule("gradle-plugin", kotlin_version))
-    }
-}
-
 plugins {
     application
+    kotlin("jvm") version "$VERSION$"
 }
 
 apply {
@@ -31,7 +20,7 @@ repositories {
 
 dependencies {
     testCompile("junit:junit:4.12")
-    compile(kotlinModule("stdlib-jdk8", kotlin_version))
+    implementation(kotlin("stdlib-jdk8"))
 }
 val compileKotlin: KotlinCompile by tasks
 compileKotlin.kotlinOptions {

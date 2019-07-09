@@ -1,6 +1,6 @@
-// IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 // FILE: A.kt
-// LANGUAGE_VERSION: 1.2
 
 @file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 @file:JvmPackageName("bar")
@@ -13,7 +13,6 @@ var v: Int = 1
 inline fun i(block: () -> Unit) = block()
 
 // FILE: B.kt
-// LANGUAGE_VERSION: 1.2
 
 import foo.*
 

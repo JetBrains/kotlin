@@ -1,16 +1,14 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-@file:Suppress("ACTUAL_WITHOUT_EXPECT") // for building kotlin-runtime
 
 package kotlin.reflect
 
 /**
  * Represents a class and provides introspection capabilities.
  * Instances of this class are obtainable by the `::class` syntax.
- * See the [Kotlin language documentation](http://kotlinlang.org/docs/reference/reflection.html#class-references)
+ * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/reflection.html#class-references)
  * for more information.
  *
  * @param T the type of the class.
@@ -99,7 +97,7 @@ public actual interface KClass<T : Any> : KDeclarationContainer, KAnnotatedEleme
 
     /**
      * `true` if this class is `sealed`.
-     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/classes.html#sealed-classes)
+     * See the [Kotlin language documentation](https://kotlinlang.org/docs/reference/sealed-classes.html)
      * for more information.
      */
     @SinceKotlin("1.1")

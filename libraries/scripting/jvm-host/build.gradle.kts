@@ -1,29 +1,27 @@
 
 plugins {
     kotlin("jvm")
-    id("jps-compatible")
 }
 
 jvmTarget = "1.6"
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-scripting-common"))
     compile(project(":kotlin-scripting-jvm"))
-    compile(project(":kotlin-script-util"))
+    compileOnly(project(":kotlin-scripting-compiler"))
     compileOnly(project(":compiler:cli"))
-    compileOnly(intellijCoreDep())
-    runtime(projectRuntimeJar(":kotlin-compiler"))
-    testCompile(commonDep("junit"))
+    compileOnly(project(":kotlin-reflect-api"))
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 }
 
 sourceSets {
     "main" { projectDefault() }
-    "test" { projectDefault() }
+    "test" {}
 }
 
-standardPublicJars()
-
 publish()
+
+standardPublicJars()
 

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.idea.intentions.declarations
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.ScrollType
 import com.intellij.openapi.ui.Messages
@@ -37,14 +38,21 @@ import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
 import org.jetbrains.kotlin.idea.quickfix.createFromUsage.callableBuilder.getReturnTypeReference
 import org.jetbrains.kotlin.idea.refactoring.withExpectedActuals
 import org.jetbrains.kotlin.idea.references.KtReference
-import org.jetbrains.kotlin.idea.util.*
+import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
+import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"), LowPriorityAction {
+private val LOG = Logger.getInstance(ConvertMemberToExtensionIntention::class.java)
+
+class ConvertMemberToExtensionIntention :
+    SelfTargetingRangeIntention<KtCallableDeclaration>(KtCallableDeclaration::class.java, "Convert member to extension"),
+    LowPriorityAction {
     private fun isApplicable(element: KtCallableDeclaration): Boolean {
         val classBody = element.parent as? KtClassBody ?: return false
         if (classBody.parent !is KtClass) return false
@@ -76,35 +84,71 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
 
         runWriteAction {
-            val (extension, bodyToSelect) = createExtensionCallableAndPrepareBodyToSelect(element, allowExpected)
+            val (extension, bodyTypeToSelect) = createExtensionCallableAndPrepareBodyToSelect(element, allowExpected)
 
             editor?.apply {
                 unblockDocument()
 
-                if (bodyToSelect != null) {
-                    val range = bodyToSelect.textRange
-                    moveCaret(range.startOffset, ScrollType.CENTER)
+                if (extension.isValid) {
 
-                    val parent = bodyToSelect.parent
-                    val lastSibling =
-                            if (parent is KtBlockExpression)
-                                parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
-                            else
-                                bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
-                    val endOffset = lastSibling?.endOffset ?: range.endOffset
-                    selectionModel.setSelection(range.startOffset, endOffset)
-                }
-                else {
-                    moveCaret(extension.textOffset, ScrollType.CENTER)
+                    if (bodyTypeToSelect != GeneratedBodyType.NOTHING) {
+                        val bodyToSelect = getBodyForSelection(extension, bodyTypeToSelect)
+
+                        if (bodyToSelect != null) {
+                            val range = bodyToSelect.textRange
+                            moveCaret(range.startOffset, ScrollType.CENTER)
+
+                            val parent = bodyToSelect.parent
+                            val lastSibling =
+                                if (parent is KtBlockExpression)
+                                    parent.rBrace?.siblings(forward = false, withItself = false)?.first { it !is PsiWhiteSpace }
+                                else
+                                    bodyToSelect.siblings(forward = true, withItself = false).lastOrNull()
+                            val endOffset = lastSibling?.endOffset ?: range.endOffset
+                            selectionModel.setSelection(range.startOffset, endOffset)
+                        } else {
+                            LOG.error("Extension created with new method body for $bodyToSelect but this body was not found after document commit. Extension text: \"${extension.text}\"")
+                            moveCaret(extension.textOffset, ScrollType.CENTER)
+                        }
+                    } else {
+                        moveCaret(extension.textOffset, ScrollType.CENTER)
+                    }
+                } else {
+                    LOG.error("Extension invalidated during document commit. Extension text \"${extension.text}\"")
                 }
             }
         }
     }
 
+    private fun getBodyForSelection(extension: KtCallableDeclaration, bodyTypeToSelect: GeneratedBodyType): KtExpression? {
+        fun selectBody(declaration: KtDeclarationWithBody): KtExpression? {
+
+            if (!declaration.hasBody()) return extension
+
+            return declaration.bodyExpression?.let {
+                (it as? KtBlockExpression)?.statements?.singleOrNull() ?: it
+            }
+        }
+
+        return when (bodyTypeToSelect) {
+            GeneratedBodyType.FUNCTION -> (extension as? KtFunction)?.let { selectBody(it) }
+            GeneratedBodyType.GETTER -> (extension as? KtProperty)?.getter?.let { selectBody(it) }
+            GeneratedBodyType.SETTER -> (extension as? KtProperty)?.setter?.let { selectBody(it) }
+            else -> null
+        }
+    }
+
+    private enum class GeneratedBodyType {
+        NOTHING,
+        FUNCTION,
+        SETTER,
+        GETTER
+    }
+
     private fun processSingleDeclaration(
-            element: KtCallableDeclaration,
-            allowExpected: Boolean
-    ): Pair<KtCallableDeclaration, KtExpression?> {
+        element: KtCallableDeclaration,
+        allowExpected: Boolean
+    ): Pair<KtCallableDeclaration, GeneratedBodyType> {
         val descriptor = element.unsafeResolveToDescriptor()
         val containingClass = descriptor.containingDeclaration as ClassDescriptor
 
@@ -114,7 +158,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         val project = file.project
         val outermostParent = KtPsiUtil.getOutermostParent(element, file, false)
 
-        val ktFilesToAddImports = SmartList<KtFile>()
+        val ktFilesToAddImports = LinkedHashSet<KtFile>()
         val javaCallsToFix = SmartList<PsiMethodCallExpression>()
         for (ref in ReferencesSearch.search(element)) {
             when (ref) {
@@ -142,8 +186,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         if (typeParameterList != null) {
             if (extension.typeParameterList != null) {
                 extension.typeParameterList!!.replace(typeParameterList)
-            }
-            else {
+            } else {
                 extension.addBefore(typeParameterList, extension.receiverTypeReference)
                 extension.addBefore(psiFactory.createWhiteSpace(), extension.receiverTypeReference)
             }
@@ -158,21 +201,14 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             extension.addModifier(KtTokens.EXPECT_KEYWORD)
         }
 
-        var bodyToSelect: KtExpression? = null
-
-        fun selectBody(declaration: KtDeclarationWithBody) {
-            if (bodyToSelect == null) {
-                val body = declaration.bodyExpression
-                bodyToSelect = (body as? KtBlockExpression)?.statements?.single() ?: body
-            }
-        }
+        var bodyTypeToSelect = GeneratedBodyType.NOTHING
 
         val bodyText = getFunctionBodyTextFromTemplate(
-                project,
-                if (extension is KtFunction) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER,
-                extension.name,
-                extension.getReturnTypeReference()?.text ?: "Unit",
-                extension.containingClassOrObject?.fqName
+            project,
+            if (extension is KtFunction) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER,
+            extension.name,
+            extension.getReturnTypeReference()?.text ?: "Unit",
+            extension.containingClassOrObject?.fqName
         )
 
         when (extension) {
@@ -180,7 +216,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                 if (!extension.hasBody() && !isEffectivelyExpected) {
                     //TODO: methods in PSI for setBody
                     extension.add(psiFactory.createBlock(bodyText))
-                    selectBody(extension)
+                    bodyTypeToSelect = GeneratedBodyType.FUNCTION
                 }
             }
 
@@ -195,11 +231,10 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                     if (getter == null) {
                         getter = extension.addAfter(templateGetter, extension.typeReference) as KtPropertyAccessor
                         extension.addBefore(psiFactory.createNewLine(), getter)
-                        selectBody(getter)
-                    }
-                    else if (!getter.hasBody()) {
+                        bodyTypeToSelect = GeneratedBodyType.GETTER
+                    } else if (!getter.hasBody()) {
                         getter = getter.replace(templateGetter) as KtPropertyAccessor
-                        selectBody(getter)
+                        bodyTypeToSelect = GeneratedBodyType.GETTER
                     }
 
                     if (extension.isVar) {
@@ -207,11 +242,14 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
                         if (setter == null) {
                             setter = extension.addAfter(templateSetter, getter) as KtPropertyAccessor
                             extension.addBefore(psiFactory.createNewLine(), setter)
-                            selectBody(setter)
-                        }
-                        else if (!setter.hasBody()) {
-                            setter = setter.replace(templateSetter) as KtPropertyAccessor
-                            selectBody(setter)
+                            if (bodyTypeToSelect == GeneratedBodyType.NOTHING) {
+                                bodyTypeToSelect = GeneratedBodyType.SETTER
+                            }
+                        } else if (!setter.hasBody()) {
+                            setter.replace(templateSetter) as KtPropertyAccessor
+                            if (bodyTypeToSelect == GeneratedBodyType.NOTHING) {
+                                bodyTypeToSelect = GeneratedBodyType.SETTER
+                            }
                         }
                     }
                 }
@@ -239,7 +277,7 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
-        return extension to bodyToSelect
+        return extension to bodyTypeToSelect
     }
 
     private fun askIfExpectedIsAllowed(file: KtFile): Boolean {
@@ -248,16 +286,16 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
         }
 
         return Messages.showYesNoDialog(
-                "Do you want to make new extension an expected declaration?",
-                text,
-                Messages.getQuestionIcon()
+            "Do you want to make new extension an expected declaration?",
+            text,
+            Messages.getQuestionIcon()
         ) == Messages.YES
     }
 
     private fun createExtensionCallableAndPrepareBodyToSelect(
-            element: KtCallableDeclaration,
-            allowExpected: Boolean = true
-    ): Pair<KtCallableDeclaration, KtExpression?> {
+        element: KtCallableDeclaration,
+        allowExpected: Boolean = true
+    ): Pair<KtCallableDeclaration, GeneratedBodyType> {
         val expectedDeclaration = element.liftToExpected() as? KtCallableDeclaration
         if (expectedDeclaration != null) {
             element.withExpectedActuals().filterIsInstance<KtCallableDeclaration>().forEach {
@@ -267,7 +305,12 @@ class ConvertMemberToExtensionIntention : SelfTargetingRangeIntention<KtCallable
             }
         }
 
-        return processSingleDeclaration(element, allowExpected)
+        val classVisibility = element.containingClass()?.visibilityModifierType()
+        val (extension, bodyTypeToSelect) = processSingleDeclaration(element, allowExpected)
+        if (classVisibility != null && extension.visibilityModifier() == null) {
+            extension.addModifier(classVisibility)
+        }
+        return extension to bodyTypeToSelect
     }
 
     private fun newTypeParameterList(member: KtCallableDeclaration): KtTypeParameterList? {

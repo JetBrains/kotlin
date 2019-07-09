@@ -1,14 +1,18 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kapt.base.test
 
 import junit.framework.TestCase
+import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
+import org.jetbrains.kotlin.kapt3.base.incremental.DeclaredProcType
+import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.WriterBackedKaptLogger
 import org.junit.Test
@@ -23,48 +27,50 @@ class JavaKaptContextTest : TestCase() {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt3/kapt3-base/testData/runner")
 
-        fun simpleProcessor() = object : AbstractProcessor() {
-            override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
-                for (annotation in annotations) {
-                    val annotationName = annotation.simpleName.toString()
-                    val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
+        fun simpleProcessor() = IncrementalProcessor(
+            object : AbstractProcessor() {
+                override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
+                    for (annotation in annotations) {
+                        val annotationName = annotation.simpleName.toString()
+                        val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
 
-                    for (annotatedElement in annotatedElements) {
-                        val generatedClassName = annotatedElement.simpleName.toString().capitalize() + annotationName.capitalize()
-                        val file = processingEnv.filer.createSourceFile("generated." + generatedClassName)
-                        file.openWriter().use {
-                            it.write("""
+                        for (annotatedElement in annotatedElements) {
+                            val generatedClassName = annotatedElement.simpleName.toString().capitalize() + annotationName.capitalize()
+                            val file = processingEnv.filer.createSourceFile("generated." + generatedClassName)
+                            file.openWriter().use {
+                                it.write(
+                                    """
                             package generated;
                             class $generatedClassName {}
-                            """.trimIndent())
+                            """.trimIndent()
+                                )
+                            }
                         }
                     }
+
+                    return true
                 }
 
-                return true
-            }
-
-            override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
-        }
+                override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
+            }, DeclaredProcType.NON_INCREMENTAL
+        )
     }
 
-    private fun doAnnotationProcessing(javaSourceFile: File, processor: Processor, outputDir: File) {
-        KaptContext(
-            KaptPaths(
-                projectBaseDir = javaSourceFile.parentFile,
-                compileClasspath = emptyList(),
-                annotationProcessingClasspath = emptyList(),
-                javaSourceRoots = emptyList(),
-                sourcesOutputDir = outputDir,
-                classFilesOutputDir = outputDir,
-                stubsOutputDir = outputDir,
-                incrementalDataOutputDir = outputDir
-            ),
-            withJdk = true,
-            logger = WriterBackedKaptLogger(isVerbose = true),
-            mapDiagnosticLocations = true,
-            processorOptions = emptyMap()
-        ).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
+    private fun doAnnotationProcessing(javaSourceFile: File, processor: IncrementalProcessor, outputDir: File) {
+        val options = KaptOptions.Builder().apply {
+            projectBaseDir = javaSourceFile.parentFile
+
+            sourcesOutputDir = outputDir
+            classesOutputDir = outputDir
+            stubsOutputDir = outputDir
+            incrementalDataOutputDir = outputDir
+
+            flags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+            detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+        }.build()
+
+        val logger = WriterBackedKaptLogger(isVerbose = true)
+        KaptContext(options, true, logger).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
     }
 
     @Test
@@ -93,7 +99,7 @@ class JavaKaptContextTest : TestCase() {
         }
 
         try {
-            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), processor, TEST_DATA_DIR)
+            doAnnotationProcessing(File(TEST_DATA_DIR, "Simple.java"), IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL), TEST_DATA_DIR)
         } catch (e: KaptBaseError) {
             assertEquals(KaptBaseError.Kind.EXCEPTION, e.kind)
             assertEquals("Here we are!", e.cause!!.message)

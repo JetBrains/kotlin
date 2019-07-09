@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorUtil
-import org.jetbrains.kotlin.cli.jvm.BundledCompilerPlugins
 import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import java.io.File
+import java.net.URLClassLoader
 import java.util.*
 
 object PluginCliParser {
@@ -59,7 +59,7 @@ object PluginCliParser {
 
     @JvmStatic
     fun loadPlugins(pluginClasspaths: Iterable<String>?, pluginOptions: Iterable<String>?, configuration: CompilerConfiguration) {
-        val classLoader = PluginURLClassLoader(
+        val classLoader = URLClassLoader(
             pluginClasspaths
                 ?.map { File(it).toURI().toURL() }
                 ?.toTypedArray()
@@ -67,8 +67,7 @@ object PluginCliParser {
             this::class.java.classLoader
         )
 
-        val componentRegistrars = ServiceLoader.load(ComponentRegistrar::class.java, classLoader).toMutableList()
-        componentRegistrars.addAll(BundledCompilerPlugins.componentRegistrars)
+        val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 
         processPluginOptions(pluginOptions, configuration, classLoader)
@@ -77,19 +76,19 @@ object PluginCliParser {
     private fun processPluginOptions(
         pluginOptions: Iterable<String>?,
         configuration: CompilerConfiguration,
-        classLoader: ClassLoader
+        classLoader: URLClassLoader
     ) {
         val optionValuesByPlugin = pluginOptions?.map(::parsePluginOption)?.groupBy {
             if (it == null) throw CliOptionProcessingException("Wrong plugin option format: $it, should be ${CommonCompilerArguments.PLUGIN_OPTION_FORMAT}")
             it.pluginId
         } ?: mapOf()
 
-        val commandLineProcessors = ServiceLoader.load(CommandLineProcessor::class.java, classLoader).toMutableList()
-        commandLineProcessors.addAll(BundledCompilerPlugins.commandLineProcessors)
+        // TODO issue a warning on using deprecated command line processors when all official plugin migrate to the newer convention
+        val commandLineProcessors = ServiceLoaderLite.loadImplementations(CommandLineProcessor::class.java, classLoader)
 
         for (processor in commandLineProcessors) {
-            val declaredOptions = processor.pluginOptions.associateBy { it.name }
-            val optionsToValues = MultiMap<CliOption, CliOptionValue>()
+            val declaredOptions = processor.pluginOptions.associateBy { it.optionName }
+            val optionsToValues = MultiMap<AbstractCliOption, CliOptionValue>()
 
             for (optionValue in optionValuesByPlugin[processor.pluginId].orEmpty()) {
                 val option = declaredOptions[optionValue!!.optionName]
@@ -103,14 +102,14 @@ object PluginCliParser {
                     throw PluginCliOptionProcessingException(
                         processor.pluginId,
                         processor.pluginOptions,
-                        "Required plugin option not present: ${processor.pluginId}:${option.name}"
+                        "Required plugin option not present: ${processor.pluginId}:${option.optionName}"
                     )
                 }
                 if (!option.allowMultipleOccurrences && values.size > 1) {
                     throw PluginCliOptionProcessingException(
                         processor.pluginId,
                         processor.pluginOptions,
-                        "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.name}"
+                        "Multiple values are not allowed for plugin option ${processor.pluginId}:${option.optionName}"
                     )
                 }
 

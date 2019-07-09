@@ -87,7 +87,7 @@ public class MethodContext extends CodegenContext<CallableMemberDescriptor> {
     public StackValue generateReceiver(@NotNull CallableDescriptor descriptor, @NotNull GenerationState state, boolean ignoreNoOuter) {
         // When generating bytecode of some suspend function, we replace the original descriptor with one that reflects how it should look on JVM.
         // But when we looking for receiver parameter in resolved call, it still references the initial function, so we unwrap it here
-        // before comparision.
+        // before comparison.
         if (CoroutineCodegenUtilKt.unwrapInitialDescriptorForSuspendFunction(getCallableDescriptorWithReceiver()) == descriptor) {
             return getReceiverExpression(state.getTypeMapper());
         }

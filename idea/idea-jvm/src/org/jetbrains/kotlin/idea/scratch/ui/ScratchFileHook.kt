@@ -24,10 +24,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
-import org.jetbrains.kotlin.idea.scratch.getAllEditorsWithScratchPanel
-import org.jetbrains.kotlin.idea.scratch.getEditorWithoutScratchPanel
-import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
+import org.jetbrains.kotlin.idea.scratch.*
 
 class ScratchFileHook(val project: Project) : ProjectComponent {
 
@@ -36,7 +33,7 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
     }
 
     override fun projectClosed() {
-        getAllEditorsWithScratchPanel(project).forEach { (editor, panel) -> editor.removeScratchPanel(panel) }
+        getAllEditorsWithScratchPanel(project).forEach { (editor, _) -> editor.removeScratchPanel() }
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
@@ -46,6 +43,8 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
             val editor = getEditorWithoutScratchPanel(source, file) ?: return
 
             ScratchTopPanel.createPanel(project, file, editor)
+
+            ScratchFileAutoRunner.addListener(project, editor)
         }
 
         override fun fileClosed(source: FileEditorManager, file: VirtualFile) {}

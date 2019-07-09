@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun watch(p: String, f: (String) -> Int) {
     f(p)
 }

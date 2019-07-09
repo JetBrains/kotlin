@@ -5,10 +5,9 @@ plugins {
 
 description = "Kotlin/Native utils"
 
-jvmTarget = "1.6"
-
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
+    compile(project(":kotlin-util-io"))
 }
 
 sourceSets {
@@ -16,6 +15,7 @@ sourceSets {
     "test" { none() }
 }
 
+publish()
+
 standardPublicJars()
 
-publish()

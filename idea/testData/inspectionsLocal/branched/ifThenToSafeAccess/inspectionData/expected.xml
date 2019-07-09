@@ -145,4 +145,22 @@
     <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
     <description>Foldable if-then</description>
   </problem>
+  <problem>
+    <file>resultCall.kt</file>
+    <line>6</line>
+    <module>light_idea_test_case</module>
+    <package>resultCall</package>
+    <entry_point TYPE="field" FQNAME="resultCall.ResultCallKt result" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Foldable if-then</description>
+  </problem>
+  <problem>
+    <file>noStdResultInCallChain.kt</file>
+    <line>7</line>
+    <module>light_idea_test_case</module>
+    <package>noStdResultInCallChain</package>
+    <entry_point TYPE="field" FQNAME="noStdResultInCallChain.NoStdResultInCallChainKt result" />
+    <problem_class severity="INFO" attribute_key="INFO_ATTRIBUTES">If-Then foldable to '?.'</problem_class>
+    <description>Foldable if-then</description>
+  </problem>
 </problems>

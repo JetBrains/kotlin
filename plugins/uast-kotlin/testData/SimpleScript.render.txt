@@ -2,6 +2,7 @@ public class SimpleScript {
     public final fun getBarOrNull(@org.jetbrains.annotations.NotNull flag: boolean) : SimpleScript.Bar {
         return if (flag) <init>(42) else null
     }
+    public static final fun main(@null p: java.lang.String[]) : void = UastEmptyExpression
     public fun SimpleScript(@null p: java.lang.String[]) {
         println("Hello World!")
         getBarOrNull(true)

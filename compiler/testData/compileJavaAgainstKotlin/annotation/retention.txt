@@ -1,0 +1,13 @@
+package test
+
+@kotlin.annotation.Retention(value = AnnotationRetention.RUNTIME) public final annotation class Runtime : kotlin.Annotation {
+    public constructor Runtime()
+}
+
+@kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) public final annotation class Source : kotlin.Annotation {
+    public constructor Source()
+}
+
+@test.Runtime public/*package*/ open class Test {
+    public/*package*/ constructor Test()
+}

@@ -28,6 +28,7 @@ import com.intellij.openapi.roots.impl.libraries.LibraryEx
 import com.intellij.openapi.roots.libraries.Library
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEditor
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
 import org.jetbrains.kotlin.idea.framework.CommonLibraryKind
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
@@ -189,7 +190,14 @@ object ConfigLibraryUtil {
         val editor = NewLibraryEditor()
         editor.name = libraryName
         for (jarPath in jarPaths) {
-            val jarFile = if (rootPath == null) File(jarPath) else File(rootPath, jarPath)
+            val jarFile = rootPath?.let {
+                File(rootPath, jarPath).takeIf { it.exists() }
+                    ?: FileUtil.findFilesByMask(jarPath.toPattern(), File(rootPath)).firstOrNull()
+            } ?: File(jarPath)
+
+            require(jarFile.exists()) {
+                "Cannot configure library with given path, file doesn't exists $jarPath"
+            }
             editor.addRoot(VfsUtil.getUrlForLibraryRoot(jarFile), OrderRootType.CLASSES)
         }
 

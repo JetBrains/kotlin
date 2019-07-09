@@ -1,0 +1,4 @@
+package
+
+public fun </*0*/ K> select(): K
+public fun test(): kotlin.Unit

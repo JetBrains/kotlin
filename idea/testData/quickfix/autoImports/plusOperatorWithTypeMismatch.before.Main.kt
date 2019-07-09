@@ -4,6 +4,7 @@
 // ACTION: Create member function 'JustClass.plus'
 // ACTION: Flip '+'
 // ACTION: Replace overloaded operator with function call
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 
 class JustClass

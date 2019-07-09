@@ -1,0 +1,274 @@
+package
+
+public fun main(): kotlin.Unit
+
+public final class A : java.util.concurrent.ConcurrentHashMap<kotlin.String, kotlin.Int> {
+    public constructor A()
+    invisible_fake final override /*1*/ /*fake_override*/ var baseCount: kotlin.Long
+    invisible_fake final override /*1*/ /*fake_override*/ var cellsBusy: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var counterCells: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.CounterCell!>!
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>
+    invisible_fake final override /*1*/ /*fake_override*/ var entrySet: java.util.concurrent.ConcurrentHashMap.EntrySetView<kotlin.String!, kotlin.Int!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val keys: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>
+    invisible_fake final override /*1*/ /*fake_override*/ var nextTable: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var sizeCtl: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var table: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var transferIndex: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: java.util.concurrent.ConcurrentHashMap.ValuesView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int>
+    invisible_fake final override /*1*/ /*fake_override*/ fun addCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun batchFor(/*0*/ p0: kotlin.Long): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int?, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.Function<in kotlin.String, out kotlin.Int>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun contains(/*0*/ p0: kotlin.Any!): kotlin.Boolean
+    public final operator fun contains(/*0*/ x: kotlin.Char): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun elements(): java.util.Enumeration<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun fullAddCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun helpTransfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ fun initTable(): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun keySet(/*0*/ p0: kotlin.Int!): java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun mappingCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String, kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    invisible_fake final override /*1*/ /*fake_override*/ fun putVal(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Boolean): kotlin.Int!
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduce(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.String!, out kotlin.String!>!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int>): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun replaceNode(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Any!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> search(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!): U!
+    invisible_fake final override /*1*/ /*fake_override*/ fun sumCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake final override /*1*/ /*fake_override*/ fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun treeifyBin(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun tryPresize(/*0*/ p0: kotlin.Int): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+}
+
+public final class B : java.util.concurrent.ConcurrentHashMap<kotlin.String, kotlin.Int> {
+    public constructor B()
+    invisible_fake final override /*1*/ /*fake_override*/ var baseCount: kotlin.Long
+    invisible_fake final override /*1*/ /*fake_override*/ var cellsBusy: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var counterCells: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.CounterCell!>!
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>
+    invisible_fake final override /*1*/ /*fake_override*/ var entrySet: java.util.concurrent.ConcurrentHashMap.EntrySetView<kotlin.String!, kotlin.Int!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val keys: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>
+    invisible_fake final override /*1*/ /*fake_override*/ var nextTable: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var sizeCtl: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var table: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var transferIndex: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: java.util.concurrent.ConcurrentHashMap.ValuesView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int>
+    invisible_fake final override /*1*/ /*fake_override*/ fun addCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun batchFor(/*0*/ p0: kotlin.Long): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int?, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.Function<in kotlin.String, out kotlin.Int>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun elements(): java.util.Enumeration<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun fullAddCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun helpTransfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ fun initTable(): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun keySet(/*0*/ p0: kotlin.Int!): java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun mappingCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String, kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    invisible_fake final override /*1*/ /*fake_override*/ fun putVal(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Boolean): kotlin.Int!
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduce(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.String!, out kotlin.String!>!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int>): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun replaceNode(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Any!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> search(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!): U!
+    invisible_fake final override /*1*/ /*fake_override*/ fun sumCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake final override /*1*/ /*fake_override*/ fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun treeifyBin(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun tryPresize(/*0*/ p0: kotlin.Int): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+}
+
+public final class C : java.util.concurrent.ConcurrentHashMap<kotlin.String, kotlin.Int> {
+    public constructor C()
+    invisible_fake final override /*1*/ /*fake_override*/ var baseCount: kotlin.Long
+    invisible_fake final override /*1*/ /*fake_override*/ var cellsBusy: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var counterCells: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.CounterCell!>!
+    public open override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<kotlin.String, kotlin.Int>>
+    invisible_fake final override /*1*/ /*fake_override*/ var entrySet: java.util.concurrent.ConcurrentHashMap.EntrySetView<kotlin.String!, kotlin.Int!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var keySet: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val keys: java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>
+    invisible_fake final override /*1*/ /*fake_override*/ var nextTable: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ val size: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var sizeCtl: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var table: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ var transferIndex: kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ var values: java.util.concurrent.ConcurrentHashMap.ValuesView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<kotlin.Int>
+    invisible_fake final override /*1*/ /*fake_override*/ fun addCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun batchFor(/*0*/ p0: kotlin.Long): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    protected/*protected and package*/ open override /*1*/ /*fake_override*/ fun clone(): kotlin.Any!
+    public open override /*1*/ /*fake_override*/ fun compute(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int?, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun computeIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.Function<in kotlin.String, out kotlin.Int>): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun computeIfPresent(/*0*/ p0: kotlin.String, /*1*/ p1: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ fun contains(/*0*/ value: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: kotlin.String): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun elements(): java.util.Enumeration<kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: java.util.function.BiConsumer<in kotlin.String, in kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiConsumer<in kotlin.String!, in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEach(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachEntry(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.String!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachKey(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Consumer<in kotlin.Int!>!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> forEachValue(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.Consumer<in U!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun fullAddCount(/*0*/ p0: kotlin.Long, /*1*/ p1: kotlin.Boolean): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun get(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun getOrDefault(/*0*/ key: kotlin.String, /*1*/ defaultValue: kotlin.Int): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    invisible_fake final override /*1*/ /*fake_override*/ fun helpTransfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    invisible_fake final override /*1*/ /*fake_override*/ fun initTable(): kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!
+    public open override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun keySet(/*0*/ p0: kotlin.Int!): java.util.concurrent.ConcurrentHashMap.KeySetView<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun keys(): java.util.Enumeration<kotlin.String!>!
+    public open override /*1*/ /*fake_override*/ fun mappingCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun merge(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: java.util.function.BiFunction<in kotlin.Int, in kotlin.Int, out kotlin.Int?>): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun put(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out kotlin.String, kotlin.Int>): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun putIfAbsent(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    invisible_fake final override /*1*/ /*fake_override*/ fun putVal(/*0*/ p0: kotlin.String!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Boolean): kotlin.Int!
+    invisible_fake open override /*1*/ /*fake_override*/ fun readObject(/*0*/ p0: java.io.ObjectInputStream!): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduce(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!): kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceEntriesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.String!, out kotlin.String!>!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceKeysToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.String!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongBiFunction<in kotlin.String!, in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.Int!, in kotlin.Int!, out kotlin.Int!>!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> reduceValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!, /*2*/ p2: java.util.function.BiFunction<in U!, in U!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToDouble(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToDoubleFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Double, /*3*/ p3: java.util.function.DoubleBinaryOperator!): kotlin.Double
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToInt(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToIntFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Int, /*3*/ p3: java.util.function.IntBinaryOperator!): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun reduceValuesToLong(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.ToLongFunction<in kotlin.Int!>!, /*2*/ p2: kotlin.Long, /*3*/ p3: java.util.function.LongBinaryOperator!): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun remove(/*0*/ key: kotlin.String, /*1*/ value: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int): kotlin.Int?
+    public open override /*1*/ /*fake_override*/ fun replace(/*0*/ p0: kotlin.String, /*1*/ p1: kotlin.Int, /*2*/ p2: kotlin.Int): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun replaceAll(/*0*/ p0: java.util.function.BiFunction<in kotlin.String, in kotlin.Int, out kotlin.Int>): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun replaceNode(/*0*/ p0: kotlin.Any!, /*1*/ p1: kotlin.Int!, /*2*/ p2: kotlin.Any!): kotlin.Int!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> search(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.BiFunction<in kotlin.String!, in kotlin.Int!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchEntries(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchKeys(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.String!, out U!>!): U!
+    public open override /*1*/ /*fake_override*/ fun </*0*/ U : kotlin.Any!> searchValues(/*0*/ p0: kotlin.Long, /*1*/ p1: java.util.function.Function<in kotlin.Int!, out U!>!): U!
+    invisible_fake final override /*1*/ /*fake_override*/ fun sumCount(): kotlin.Long
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    invisible_fake final override /*1*/ /*fake_override*/ fun transfer(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun treeifyBin(/*0*/ p0: kotlin.Array<(out) java.util.concurrent.ConcurrentHashMap.Node<kotlin.String!, kotlin.Int!>!>!, /*1*/ p1: kotlin.Int): kotlin.Unit
+    invisible_fake final override /*1*/ /*fake_override*/ fun tryPresize(/*0*/ p0: kotlin.Int): kotlin.Unit
+    invisible_fake open override /*1*/ /*fake_override*/ fun writeObject(/*0*/ p0: java.io.ObjectOutputStream!): kotlin.Unit
+}

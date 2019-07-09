@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+// FIX: Unwrap 'Deferred' return type (breaks use-sites!)
+
+package kotlinx.coroutines
+
+interface My {
+    suspend fun <caret>function(): Int
+}

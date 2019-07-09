@@ -1,0 +1,28 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "25.0.2"
+
+    defaultConfig {
+        applicationId "org.example.inter.project.ic"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = true
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile project(':lib-android')
+    compile project(':lib-jvm')
+    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+}

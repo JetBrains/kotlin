@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -195,7 +195,7 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
                         );
                     }
                     else {
-                        propertyCodegen.generatePrimaryConstructorProperty(p, propertyDescriptor);
+                        propertyCodegen.generatePrimaryConstructorProperty(propertyDescriptor);
                     }
                 }
             }
@@ -231,7 +231,9 @@ public abstract class ClassBodyCodegen extends MemberCodegen<KtPureClassOrObject
     private void generateDelegationToDefaultImpl(@NotNull FunctionDescriptor interfaceFun, @NotNull FunctionDescriptor inheritedFun) {
 
         functionCodegen.generateMethod(
-                new JvmDeclarationOrigin(CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun),
+                new JvmDeclarationOrigin(
+                        CLASS_MEMBER_DELEGATION_TO_DEFAULT_IMPL, descriptorToDeclaration(interfaceFun), interfaceFun, null
+                ),
                 inheritedFun,
                 new FunctionGenerationStrategy.CodegenBased(state) {
                     @Override

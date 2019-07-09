@@ -4,14 +4,12 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:backend"))
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":kotlin-reflect"))
     compile(projectTests(":compiler:tests-common"))
     compile(commonDep("junit:junit"))
@@ -23,9 +21,15 @@ dependencies {
     testCompile(project(":compiler:frontend.java"))
     testCompile(projectTests(":jps-plugin"))
     testCompile(commonDep("junit:junit"))
-    testCompile(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "groovy-all", "jps-builders", rootProject = rootProject) }
-    testCompile(intellijDep("jps-standalone")) { includeJars("jps-model") }
-    testCompile(intellijDep("jps-build-test"))
+    testCompile(intellijDep()) { includeJars("openapi", "util", "idea", "idea_rt", "groovy-all", rootProject = rootProject) }
+    Platform[191].orLower {
+        testCompile(intellijDep()) { includeJars("jps-builders") }
+    }
+    Platform[192].orHigher {
+        testCompile(intellijPluginDep("java")) { includeJars("jps-builders") }
+    }
+    testCompile(jpsStandalone()) { includeJars("jps-model") }
+    testCompile(jpsBuildTest())
 }
 
 sourceSets {
@@ -34,9 +38,18 @@ sourceSets {
 }
 
 projectTest {
-    dependsOn(*testDistProjects.map { "$it:dist" }.toTypedArray())
+    dependsOn(":dist")
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
     }
+
+    if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {
+        systemProperty("kotlin.test.android.teamcity", true)
+    }
+
+    project.findProperty("kotlin.test.android.path.filter")?.let {
+        systemProperty("kotlin.test.android.path.filter", it.toString())
+    }
+
     workingDir = rootDir
 }

@@ -1,0 +1,10 @@
+import Outer.Middle as Middle1
+
+class Outer {
+    class Middle<T> {}
+}
+
+class B<T> {}
+
+fun foo(b: B<Middle1<String>>) {
+}

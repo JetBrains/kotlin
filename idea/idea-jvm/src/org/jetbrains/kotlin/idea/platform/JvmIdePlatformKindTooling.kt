@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.core.platform.impl
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
 import org.jetbrains.kotlin.utils.PathUtil
 import javax.swing.Icon
 
@@ -33,7 +33,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project) = Kotlin2JvmCompilerArgumentsHolder.getInstance(project).settings
 
-    override val resolverForModuleFactory = JvmAnalyzerFacade
+    override val resolverForModuleFactory = JvmResolverForModuleFactory
 
     override val mavenLibraryIds = listOf(
         PathUtil.KOTLIN_JAVA_STDLIB_NAME,
@@ -70,7 +70,7 @@ class JvmIdePlatformKindTooling : IdePlatformKindTooling() {
                 val framework = TestFrameworks.detectFramework(lightClass) ?: return null
                 if (!framework.isTestMethod(lightMethod, /*checkAbstract = */ false)) return null
 
-                "java:test://${lightClass.qualifiedName}.${lightMethod.name}" to framework
+                "java:test://${lightClass.qualifiedName}/${lightMethod.name}" to framework
             }
 
             else -> return null

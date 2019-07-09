@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 enum class En { A, B, С }
 
 fun main(args: Array<String>) {

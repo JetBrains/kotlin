@@ -36,18 +36,18 @@ fun falseWhenInt(x: Any?): Boolean {
 fun truetrue(x: Any?) {
     if (trueWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
 
 fun truefalse(x: Any?) {
     if (trueWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         x.<!UNRESOLVED_REFERENCE!>length<!>
@@ -58,18 +58,18 @@ fun truefalse(x: Any?) {
 fun falsetrue(x: Any?) {
     if (falseWhenString(x) || trueWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
 }
 
 fun falsefalse(x: Any?) {
     if (falseWhenString(x) || falseWhenInt(x)) {
         x.<!UNRESOLVED_REFERENCE!>length<!>
-        x.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+        x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
     }
     else {
         <!DEBUG_INFO_SMARTCAST!>x<!>.length

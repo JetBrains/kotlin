@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -42,9 +42,9 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils;
 import org.jetbrains.kotlin.resolve.InlineClassDescriptorResolver;
 import org.jetbrains.kotlin.resolve.InlineClassesUtilsKt;
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker;
+import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver;
 import org.jetbrains.kotlin.resolve.inline.InlineUtil;
 import org.jetbrains.kotlin.resolve.jvm.*;
-import org.jetbrains.kotlin.resolve.jvm.checkers.DalvikIdentifierUtils;
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
 import org.jetbrains.kotlin.serialization.DescriptorSerializer;
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor;
@@ -65,7 +65,8 @@ import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface;
 import static org.jetbrains.kotlin.resolve.DescriptorUtils.*;
-import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isEffectivelyInlineOnly;
+import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineOnlyPrivateInBytecode;
+import static org.jetbrains.kotlin.resolve.inline.InlineOnlyKt.isInlineWithReified;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmDefaultAnnotation;
 import static org.jetbrains.kotlin.resolve.jvm.annotations.JvmAnnotationUtilKt.hasJvmSyntheticAnnotation;
@@ -98,9 +99,19 @@ public class AsmUtil {
             .put(JavaVisibilities.PACKAGE_VISIBILITY, NO_FLAG_PACKAGE_PRIVATE)
             .build();
 
+    public static final String CAPTURED_PREFIX = "$";
+
     public static final String THIS = "this";
 
+    public static final String THIS_IN_DEFAULT_IMPLS = "$this";
+
     public static final String LABELED_THIS_FIELD = THIS + "_";
+
+    public static final String CAPTURED_LABELED_THIS_FIELD = CAPTURED_PREFIX + LABELED_THIS_FIELD;
+
+    public static final String INLINE_DECLARATION_SITE_THIS = "this_";
+
+    public static final String LABELED_THIS_PARAMETER = CAPTURED_PREFIX + THIS + "$";
 
     public static final String CAPTURED_THIS_FIELD = "this$0";
 
@@ -115,6 +126,8 @@ public class AsmUtil {
 
     // For non-inlined callable references ('kotlin.jvm.internal.CallableReference' has a 'receiver' field)
     public static final String BOUND_REFERENCE_RECEIVER = "receiver";
+
+    public static final String LOCAL_FUNCTION_VARIABLE_PREFIX = "$fun$";
 
     private static final ImmutableMap<Integer, JvmPrimitiveType> primitiveTypeByAsmSort;
     private static final ImmutableMap<Type, Type> primitiveTypeByBoxedType;
@@ -136,17 +149,39 @@ public class AsmUtil {
 
     @NotNull
     public static String getCapturedFieldName(@NotNull String originalName) {
-        return "$" + originalName;
+        return CAPTURED_PREFIX + originalName;
     }
 
     @NotNull
-    public static String getLabeledThisNameForReceiver(
+    public static String getNameForCapturedReceiverField(
             @NotNull CallableDescriptor descriptor,
             @NotNull BindingContext bindingContext,
             @NotNull LanguageVersionSettings languageVersionSettings
     ) {
+        return getLabeledThisNameForReceiver(
+                descriptor, bindingContext, languageVersionSettings, LABELED_THIS_FIELD, CAPTURED_RECEIVER_FIELD);
+    }
+
+    @NotNull
+    public static String getNameForReceiverParameter(
+            @NotNull CallableDescriptor descriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull LanguageVersionSettings languageVersionSettings
+    ) {
+        return getLabeledThisNameForReceiver(
+                descriptor, bindingContext, languageVersionSettings, LABELED_THIS_PARAMETER, RECEIVER_PARAMETER_NAME);
+    }
+
+    @NotNull
+    private static String getLabeledThisNameForReceiver(
+            @NotNull CallableDescriptor descriptor,
+            @NotNull BindingContext bindingContext,
+            @NotNull LanguageVersionSettings languageVersionSettings,
+            @NotNull String prefix,
+            @NotNull String defaultName
+    ) {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
-            return CAPTURED_RECEIVER_FIELD;
+            return defaultName;
         }
 
         Name callableName = null;
@@ -154,7 +189,7 @@ public class AsmUtil {
         if (descriptor instanceof FunctionDescriptor) {
             String labelName = bindingContext.get(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, (FunctionDescriptor) descriptor);
             if (labelName != null) {
-                return getLabeledThisName(labelName, CAPTURED_RECEIVER_FIELD);
+                return getLabeledThisName(labelName, prefix, defaultName);
             }
 
             if (descriptor instanceof VariableAccessorDescriptor) {
@@ -168,38 +203,19 @@ public class AsmUtil {
         }
 
         if (callableName.isSpecial()) {
-            return CAPTURED_RECEIVER_FIELD;
+            return defaultName;
         }
 
-        return getLabeledThisName(callableName.asString(), CAPTURED_RECEIVER_FIELD);
+        return getLabeledThisName(callableName.asString(), prefix, defaultName);
     }
 
     @NotNull
-    private static String getLabeledThisName(@NotNull String callableName, @NotNull String defaultName) {
+    public static String getLabeledThisName(@NotNull String callableName, @NotNull String prefix, @NotNull String defaultName) {
         if (!Name.isValidIdentifier(callableName)) {
             return defaultName;
         }
 
-        if (!DalvikIdentifierUtils.isValidDalvikIdentifier(callableName)) {
-            return LABELED_THIS_FIELD + mangleLabel(callableName);
-        }
-
-        return LABELED_THIS_FIELD + callableName;
-    }
-
-    private static String mangleLabel(String label) {
-        StringBuilder sb = new StringBuilder();
-
-        for (char c : label.toCharArray()) {
-            if (DalvikIdentifierUtils.isValidDalvikCharacter(c)) {
-                sb.append(c);
-                continue;
-            }
-
-            sb.append("_u").append(Integer.toHexString(c));
-        }
-
-        return sb.toString();
+        return prefix + VariableAsmNameManglingUtils.mangleNameIfNeeded(callableName);
     }
 
     @NotNull
@@ -209,9 +225,9 @@ public class AsmUtil {
     }
 
     @NotNull
-    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull GenerationState state) {
+    public static Type boxType(@NotNull Type type, @NotNull KotlinType kotlinType, @NotNull KotlinTypeMapper typeMapper) {
         if (InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
-            return state.getTypeMapper().mapTypeAsDeclaration(kotlinType);
+            return typeMapper.mapTypeAsDeclaration(kotlinType);
         }
 
         Type boxedPrimitiveType = boxPrimitiveType(type);
@@ -311,7 +327,11 @@ public class AsmUtil {
     }
 
     public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, GenerationState state) {
-        int flags = getCommonCallableFlags(functionDescriptor, kind, state);
+        return getMethodAsmFlags(functionDescriptor, kind, state.getDeprecationProvider());
+    }
+
+    public static int getMethodAsmFlags(FunctionDescriptor functionDescriptor, OwnerKind kind, DeprecationResolver deprecationResolver) {
+        int flags = getCommonCallableFlags(functionDescriptor, kind, deprecationResolver);
 
         for (AnnotationCodegen.JvmFlagAnnotation flagAnnotation : AnnotationCodegen.METHOD_FLAGS) {
             flags |= flagAnnotation.getJvmFlag(functionDescriptor.getOriginal());
@@ -361,19 +381,20 @@ public class AsmUtil {
     }
 
     public static int getCommonCallableFlags(FunctionDescriptor functionDescriptor, @NotNull GenerationState state) {
-        return getCommonCallableFlags(functionDescriptor, null, state);
+        return getCommonCallableFlags(functionDescriptor, null, state.getDeprecationProvider());
     }
 
     private static int getCommonCallableFlags(
             FunctionDescriptor functionDescriptor,
             @Nullable OwnerKind kind,
-            @NotNull GenerationState state
+            @NotNull DeprecationResolver deprecationResolver
     ) {
         int flags = getVisibilityAccessFlag(functionDescriptor, kind);
         flags |= getVarargsFlag(functionDescriptor);
         flags |= getDeprecatedAccessFlag(functionDescriptor);
-        if (state.getDeprecationProvider().isDeprecatedHidden(functionDescriptor) ||
-            (functionDescriptor.isSuspend()) && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
+        if (deprecationResolver.isDeprecatedHidden(functionDescriptor) ||
+            isInlineWithReified(functionDescriptor) ||
+            functionDescriptor.isSuspend() && functionDescriptor.getVisibility().equals(Visibilities.PRIVATE)) {
             flags |= ACC_SYNTHETIC;
         }
         return flags;
@@ -430,6 +451,11 @@ public class AsmUtil {
         return InlineUtil.isInlineOrContainingInline(descriptor.getContainingDeclaration()) ? ACC_PUBLIC : NO_FLAG_PACKAGE_PRIVATE;
     }
 
+    public static int getSyntheticAccessFlagForLambdaClass(@NotNull ClassDescriptor descriptor) {
+        return descriptor instanceof SyntheticClassDescriptorForLambda &&
+               ((SyntheticClassDescriptorForLambda) descriptor).isCallableReference() ? ACC_SYNTHETIC : 0;
+    }
+
     public static int calculateInnerClassAccessFlags(@NotNull ClassDescriptor innerClass) {
         int visibility =
                 innerClass instanceof SyntheticClassDescriptorForLambda
@@ -438,6 +464,7 @@ public class AsmUtil {
                   ? ACC_PUBLIC
                   : getVisibilityAccessFlag(innerClass);
         return visibility |
+               getSyntheticAccessFlagForLambdaClass(innerClass) |
                innerAccessFlagsForModalityAndKind(innerClass) |
                (innerClass.isInner() ? 0 : ACC_STATIC);
     }
@@ -505,7 +532,7 @@ public class AsmUtil {
             return ACC_PRIVATE;
         }
 
-        if (isEffectivelyInlineOnly(memberDescriptor)) {
+        if (isInlineOnlyPrivateInBytecode(memberDescriptor)) {
             return ACC_PRIVATE;
         }
 
@@ -624,7 +651,6 @@ public class AsmUtil {
     }
 
     public static void genClosureFields(List<Pair<String, Type>> allFields, ClassBuilder builder) {
-        //noinspection PointlessBitwiseExpression
         int access = NO_FLAG_PACKAGE_PRIVATE | ACC_SYNTHETIC | ACC_FINAL;
         for (Pair<String, Type> field : allFields) {
             builder.newField(JvmDeclarationOrigin.NO_ORIGIN, access, field.first, field.second.getDescriptor(), null, null);
@@ -760,7 +786,7 @@ public class AsmUtil {
         return typeMapper.mapToCallableMethod(toStringDescriptor, false, OwnerKind.ERASED_INLINE_CLASS);
     }
 
-    static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
+    public static void genHashCode(MethodVisitor mv, InstructionAdapter iv, Type type, JvmTarget jvmTarget) {
         if (type.getSort() == Type.ARRAY) {
             Type elementType = correctElementType(type);
             if (elementType.getSort() == Type.OBJECT || elementType.getSort() == Type.ARRAY) {
@@ -830,17 +856,28 @@ public class AsmUtil {
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> {
             left.put(AsmTypes.OBJECT_TYPE, left.kotlinType, v);
             right.put(AsmTypes.OBJECT_TYPE, right.kotlinType, v);
-            genAreEqualCall(v);
-
-            if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
-                genInvertBoolean(v);
-            }
-            return Unit.INSTANCE;
+            return genAreEqualCall(v, opToken);
         });
+    }
+
+    @NotNull
+    public static StackValue genEqualsBoxedOnStack(@NotNull IElementType opToken) {
+        return StackValue.operation(Type.BOOLEAN_TYPE, v -> genAreEqualCall(v, opToken));
     }
 
     public static void genAreEqualCall(InstructionAdapter v) {
         v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "areEqual", "(Ljava/lang/Object;Ljava/lang/Object;)Z", false);
+    }
+
+    @NotNull
+    private static Unit genAreEqualCall(InstructionAdapter v, @NotNull IElementType opToken) {
+        genAreEqualCall(v);
+
+        if (opToken == KtTokens.EXCLEQ || opToken == KtTokens.EXCLEQEQEQ) {
+            genInvertBoolean(v);
+        }
+
+        return Unit.INSTANCE;
     }
 
     public static void genIEEE754EqualForNullableTypesCall(InstructionAdapter v, Type left, Type right) {
@@ -915,7 +952,8 @@ public class AsmUtil {
             if (descriptor.isOperator()) {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
+                    String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
+                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
                 }
             }
             return;
@@ -923,7 +961,8 @@ public class AsmUtil {
 
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, CAPTURED_RECEIVER_FIELD, descriptor);
+            String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
+            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
@@ -1212,8 +1251,16 @@ public class AsmUtil {
         return JvmClassName.byFqNameWithoutInnerClasses(fqName).getInternalName();
     }
 
-    public static void putJavaLangClassInstance(@NotNull InstructionAdapter v, @NotNull Type type) {
-        if (isPrimitive(type)) {
+    public static void putJavaLangClassInstance(
+            @NotNull InstructionAdapter v,
+            @NotNull Type type,
+            @Nullable KotlinType kotlinType,
+            @NotNull KotlinTypeMapper typeMapper
+    ) {
+        if (kotlinType != null && InlineClassesUtilsKt.isInlineClassType(kotlinType)) {
+            v.aconst(boxType(type, kotlinType, typeMapper));
+        }
+        else if (isPrimitive(type)) {
             v.getstatic(boxType(type).getInternalName(), "TYPE", "Ljava/lang/Class;");
         }
         else {

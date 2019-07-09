@@ -22,21 +22,29 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
+import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
-import org.jetbrains.kotlin.idea.intentions.*
+import org.jetbrains.kotlin.idea.inspections.KotlinEqualsBetweenInconvertibleTypesInspection
+import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.conventionNameCalls.isAnyEquals
+import org.jetbrains.kotlin.idea.intentions.isOperatorOrCompatible
+import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
+import org.jetbrains.kotlin.idea.intentions.toResolvedCall
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
+import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getLastParentOfTypeInRow
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getFirstArgumentExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getReceiverExpression
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.isReallySuccess
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
@@ -44,6 +52,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getKotlinTypeWithPossibleSm
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
+import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -63,7 +72,7 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
 
     override fun isApplicable(element: KtDotQualifiedExpression): Boolean {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression ?: return false
-        val operation = operation(calleeExpression) ?: return false
+        if (operation(calleeExpression) == null) return false
 
         val resolvedCall = element.toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
         if (!resolvedCall.isReallySuccess()) return false
@@ -74,13 +83,18 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return element.isReceiverExpressionWithValue()
     }
 
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
         val calleeExpression = element.callExpression?.calleeExpression as? KtSimpleNameExpression
         val identifier = calleeExpression?.getReferencedNameAsName()
+        if (element.platform.isJs() && identifier == OperatorNameConventions.EQUALS) {
+            val context = element.analyze(BodyResolveMode.PARTIAL)
+            if (element.receiverExpression.getType(context)?.isDynamic() == true) {
+                return ProblemHighlightType.INFORMATION
+            }
+        }
         val isFloatingPointNumberEquals = calleeExpression?.isFloatingPointNumberEquals() ?: false
-
         return if (isFloatingPointNumberEquals) {
             ProblemHighlightType.INFORMATION
         } else if (identifier == OperatorNameConventions.EQUALS || identifier == OperatorNameConventions.COMPARE_TO) {
@@ -105,28 +119,27 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
         return "Replace with '${operation.value}'"
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val qualifiedExpression = element.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return
-        val callExpression = qualifiedExpression.callExpression ?: return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val callExpression = element.callExpression ?: return
         val operation = operation(callExpression.calleeExpression as? KtSimpleNameExpression ?: return) ?: return
         val argument = callExpression.valueArguments.single().getArgumentExpression() ?: return
-        val receiver = qualifiedExpression.receiverExpression
+        val receiver = element.receiverExpression
 
-        val factory = KtPsiFactory(qualifiedExpression)
+        val factory = KtPsiFactory(element)
         when (operation) {
             KtTokens.EXCLEQ -> {
-                val prefixExpression = qualifiedExpression.getWrappingPrefixExpressionIfAny() ?: return
+                val prefixExpression = element.getWrappingPrefixExpressionIfAny() ?: return
                 val newExpression = factory.createExpressionByPattern("$0 != $1", receiver, argument)
                 prefixExpression.replace(newExpression)
             }
             in OperatorConventions.COMPARISON_OPERATIONS -> {
-                val binaryParent = qualifiedExpression.parent as? KtBinaryExpression ?: return
+                val binaryParent = element.parent as? KtBinaryExpression ?: return
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
                 binaryParent.replace(newExpression)
             }
             else -> {
                 val newExpression = factory.createExpressionByPattern("$0 ${operation.value} $1", receiver, argument)
-                qualifiedExpression.replace(newExpression)
+                element.replace(newExpression)
             }
         }
     }
@@ -137,14 +150,23 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
     private fun operation(calleeExpression: KtSimpleNameExpression): KtSingleValueToken? {
         val identifier = calleeExpression.getReferencedNameAsName()
         val dotQualified = calleeExpression.parent.parent as? KtDotQualifiedExpression ?: return null
+        val isOperatorOrCompatible by lazy {
+            (calleeExpression.resolveToCall()?.resultingDescriptor as? FunctionDescriptor)?.isOperatorOrCompatible == true
+        }
         return when (identifier) {
             OperatorNameConventions.EQUALS -> {
                 if (!dotQualified.isAnyEquals()) return null
+                with(KotlinEqualsBetweenInconvertibleTypesInspection) {
+                    val receiver = dotQualified.receiverExpression
+                    val argument = dotQualified.callExpression?.valueArguments?.singleOrNull()?.getArgumentExpression()
+                    if (dotQualified.analyze(BodyResolveMode.PARTIAL).isInconvertibleTypes(receiver, argument)) return null
+                }
                 val prefixExpression = dotQualified.getWrappingPrefixExpressionIfAny()
                 if (prefixExpression != null && prefixExpression.operationToken == KtTokens.EXCL) KtTokens.EXCLEQ
                 else KtTokens.EQEQ
             }
             OperatorNameConventions.COMPARE_TO -> {
+                if (!isOperatorOrCompatible) return null
                 // callee -> call -> DotQualified -> Binary
                 val binaryParent = dotQualified.parent as? KtBinaryExpression ?: return null
                 val notZero = when {
@@ -160,19 +182,24 @@ class ReplaceCallWithBinaryOperatorInspection : AbstractApplicabilityBasedInspec
                     null
                 }
             }
-            else -> OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
+            else -> {
+                if (!isOperatorOrCompatible) return null
+                OperatorConventions.BINARY_OPERATION_NAMES.inverse()[identifier]
+            }
         }
     }
 
     private fun KtDotQualifiedExpression.isFloatingPointNumberEquals(): Boolean {
         val resolvedCall = resolveToCall() ?: return false
         val context = analyze(BodyResolveMode.PARTIAL)
+        val declarationDescriptor = containingDeclarationForPseudocode?.resolveToDescriptorIfAny()
         val dataFlowValueFactory = getResolutionFacade().getFrontendService(DataFlowValueFactory::class.java)
+        val defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, stableTypes -> stableTypes.firstOrNull() ?: givenType }
         val receiverType = resolvedCall.getReceiverExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         val argumentType = resolvedCall.getFirstArgumentExpression()?.getKotlinTypeWithPossibleSmartCastToFP(
-            context, containingDeclarationForPseudocode?.resolveToDescriptorIfAny(), languageVersionSettings, dataFlowValueFactory
+            context, declarationDescriptor, languageVersionSettings, dataFlowValueFactory, defaultType
         ) ?: return false
         return receiverType.isFpType() && argumentType.isNumericType() ||
                 argumentType.isFpType() && receiverType.isNumericType()

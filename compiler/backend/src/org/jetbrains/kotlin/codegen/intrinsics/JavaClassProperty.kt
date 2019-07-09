@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.UNIT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.getType
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
@@ -53,7 +52,7 @@ object JavaClassProperty : IntrinsicPropertyGetter() {
         when {
             type == Type.VOID_TYPE -> {
                 receiver.put(Type.VOID_TYPE, v)
-                StackValue.unit().put(UNIT_TYPE, v)
+                StackValue.unit().put(v)
                 invokeVirtualGetClassMethod()
             }
 

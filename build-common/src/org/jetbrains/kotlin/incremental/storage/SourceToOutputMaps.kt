@@ -21,32 +21,40 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.File
 
-internal class SourceToJvmNameMap(storageFile: File) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile)
-internal class SourceToFqNameMap(storageFile: File) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile)
+internal class SourceToJvmNameMap(
+    storageFile: File,
+    pathConverter: FileToPathConverter
+) : AbstractSourceToOutputMap<JvmClassName>(JvmClassNameTransformer, storageFile, pathConverter)
+
+internal class SourceToFqNameMap(
+    storageFile: File,
+    pathConverter: FileToPathConverter
+) : AbstractSourceToOutputMap<FqName>(FqNameTransformer, storageFile, pathConverter)
 
 internal abstract class AbstractSourceToOutputMap<Name>(
-        private val nameTransformer: NameTransformer<Name>,
-        storageFile: File
+    private val nameTransformer: NameTransformer<Name>,
+    storageFile: File,
+    private val pathConverter: FileToPathConverter
 ) : BasicStringMap<Collection<String>>(storageFile, PathStringDescriptor, StringCollectionExternalizer) {
     fun clearOutputsForSource(sourceFile: File) {
-        remove(sourceFile.absolutePath)
+        remove(pathConverter.toPath(sourceFile))
     }
 
     fun add(sourceFile: File, className: Name) {
-        storage.append(sourceFile.absolutePath, nameTransformer.asString(className))
+        storage.append(pathConverter.toPath(sourceFile), nameTransformer.asString(className))
     }
 
     fun contains(sourceFile: File): Boolean =
-            sourceFile.absolutePath in storage
+        pathConverter.toPath(sourceFile) in storage
 
     operator fun get(sourceFile: File): Collection<Name> =
-            storage[sourceFile.absolutePath].orEmpty().map(nameTransformer::asName)
+        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asName)
 
     fun getFqNames(sourceFile: File): Collection<FqName> =
-        storage[sourceFile.absolutePath].orEmpty().map(nameTransformer::asFqName)
+        storage[pathConverter.toPath(sourceFile)].orEmpty().map(nameTransformer::asFqName)
 
     override fun dumpValue(value: Collection<String>) =
-            value.dumpCollection()
+        value.dumpCollection()
 
     private fun remove(path: String) {
         storage.remove(path)

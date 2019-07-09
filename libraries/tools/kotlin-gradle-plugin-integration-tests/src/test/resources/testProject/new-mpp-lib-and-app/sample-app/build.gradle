@@ -64,8 +64,14 @@ kotlin {
         fromPreset(presets.macosX64, 'macos64')
 
         configure([wasm32, linux64, mingw64, macos64]) {
-            compilations.main.outputKinds += org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind.EXECUTABLE
-            compilations.main.entryPoint = "com.example.app.native.main"
+            binaries.executable("main") {
+                entryPoint = "com.example.app.native.main"
+            }
+            
+            binaries.all {
+                // Check that linker options are correctly passed to the compiler.
+                linkerOpts = ['-L.']
+            }
         }
     }
 }

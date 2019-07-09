@@ -3,7 +3,7 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.gradle.api.file.FileTree
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.isJavaFile
 import org.jetbrains.kotlin.gradle.utils.isKotlinFile
 import org.jetbrains.kotlin.gradle.utils.isParentOf

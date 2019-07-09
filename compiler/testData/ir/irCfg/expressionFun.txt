@@ -2,11 +2,11 @@
 // FUN: foo
 BB 0
 CONTENT
-      1 FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:kotlin.Int flags:
-      2 GET_VAR 'value-parameter arg: Int' type=kotlin.Int origin=null
-      3 RETURN type=kotlin.Nothing from='foo(Int): Int'
+      1 FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:kotlin.Int 
+      2 GET_VAR 'arg: kotlin.Int declared in <root>.foo' type=kotlin.Int origin=null
+      3 RETURN type=kotlin.Nothing from='public final fun foo (arg: kotlin.Int): kotlin.Int declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:kotlin.Int flags:
+    Function exit: FUN name:foo visibility:public modality:FINAL <> (arg:kotlin.Int) returnType:kotlin.Int 
 
 // END FUN: foo
 

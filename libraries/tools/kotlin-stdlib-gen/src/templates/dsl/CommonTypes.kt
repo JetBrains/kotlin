@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package templates
@@ -54,12 +54,14 @@ enum class PrimitiveType {
     ULong;
 
     val capacity by lazy { descendingByDomainCapacity.indexOf(this).let { if (it < 0) it else descendingByDomainCapacity.size - it } }
+    val capacityUnsigned by lazy { descendingByDomainCapacityUnsigned.indexOf(this).let { if (it < 0) it else descendingByDomainCapacityUnsigned.size - it } }
 
     companion object {
         val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
         val defaultPrimitives = PrimitiveType.values().toSet() - unsignedPrimitives
         val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
         val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
+        val floatingPointPrimitives = setOf(Double, Float)
         val rangePrimitives = setOf(Int, Long, Char, UInt, ULong)
 
         val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
@@ -73,6 +75,24 @@ enum class PrimitiveType {
 
 fun PrimitiveType.isIntegral(): Boolean = this in PrimitiveType.integralPrimitives
 fun PrimitiveType.isNumeric(): Boolean = this in PrimitiveType.numericPrimitives
+fun PrimitiveType.isFloatingPoint(): Boolean = this in PrimitiveType.floatingPointPrimitives
+fun PrimitiveType.isUnsigned(): Boolean = this in PrimitiveType.unsignedPrimitives
+
+fun PrimitiveType.sumType() = when (this) {
+    PrimitiveType.Byte, PrimitiveType.Short, PrimitiveType.Char -> PrimitiveType.Int
+    PrimitiveType.UByte, PrimitiveType.UShort -> PrimitiveType.UInt
+    else -> this
+}
+
+fun PrimitiveType.zero() = when (this) {
+    PrimitiveType.Double -> "0.0"
+    PrimitiveType.Float -> "0.0f"
+    PrimitiveType.Long -> "0L"
+    PrimitiveType.ULong -> "0uL"
+    in PrimitiveType.unsignedPrimitives -> "0u"
+    else -> "0"
+}
+
 enum class Inline {
     No,
     Yes,
@@ -86,12 +106,26 @@ enum class Platform {
     Common,
     JVM,
     JS,
-    Native;
+    Native
+}
+
+enum class Backend {
+    Any,
+    Legacy,
+    IR
+}
+
+enum class KotlinTarget(val platform: Platform, val backend: Backend) {
+    Common(Platform.Common, Backend.Any),
+    JVM(Platform.JVM, Backend.Any),
+    JS(Platform.JS, Backend.Legacy),
+    JS_IR(Platform.JS, Backend.IR),
+    Native(Platform.Native, Backend.IR);
 
     val fullName get() = "Kotlin/$name"
 
     companion object {
-        val values = values().toList()
+        val values = KotlinTarget.values().toList()
     }
 }
 
@@ -104,3 +138,5 @@ enum class SequenceClass {
 
 data class Deprecation(val message: String, val replaceWith: String? = null, val level: DeprecationLevel = DeprecationLevel.WARNING)
 val forBinaryCompatibility = Deprecation("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
+
+data class ThrowsException(val exceptionType: String, val reason: String)

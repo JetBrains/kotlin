@@ -1,0 +1,122 @@
+/*
+ * Copyright 2010-2015 JetBrains s.r.o.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata;
+
+import "core/metadata/src/metadata.proto";
+
+option java_outer_classname = "JsKlibMetadataProtoBuf";
+option optimize_for = LITE_RUNTIME;
+
+message Header {
+  /*
+    preRelease
+  */
+  optional int32 flags = 1;
+
+  // (patch << 16) + (minor << 8) + major
+  optional int32 js_code_binary_version = 2 [default = 1];
+
+  optional string package_fq_name = 3;
+
+  optional org.jetbrains.kotlin.metadata.StringTable strings = 4;
+
+  optional org.jetbrains.kotlin.metadata.QualifiedNameTable qualified_names = 5;
+
+  // Annotations on the whole module
+  repeated org.jetbrains.kotlin.metadata.Annotation annotation = 6;
+}
+
+message File {
+  // If absent, id is the index of the file in the Files.file list
+  optional int32 id = 1;
+
+  repeated org.jetbrains.kotlin.metadata.Annotation annotation = 2;
+}
+
+message Files {
+  repeated File file = 1;
+}
+
+message DescriptorUniqId {
+  required int64 index = 1;
+}
+
+
+extend org.jetbrains.kotlin.metadata.Package {
+  optional int32 package_fq_name = 131;
+}
+
+extend org.jetbrains.kotlin.metadata.Class {
+  repeated org.jetbrains.kotlin.metadata.Annotation class_annotation = 130;
+  optional int32 class_containing_file_id = 135;
+  optional DescriptorUniqId class_uniq_id = 136;
+}
+
+extend org.jetbrains.kotlin.metadata.Constructor {
+  repeated org.jetbrains.kotlin.metadata.Annotation constructor_annotation = 130;
+  optional DescriptorUniqId constructor_uniq_id = 131;
+}
+
+extend org.jetbrains.kotlin.metadata.Function {
+  repeated org.jetbrains.kotlin.metadata.Annotation function_annotation = 130;
+  optional int32 function_containing_file_id = 135;
+  optional DescriptorUniqId function_uniq_id = 136;
+}
+
+extend org.jetbrains.kotlin.metadata.Property {
+  repeated org.jetbrains.kotlin.metadata.Annotation property_annotation = 130;
+  repeated org.jetbrains.kotlin.metadata.Annotation property_getter_annotation = 132;
+  repeated org.jetbrains.kotlin.metadata.Annotation property_setter_annotation = 133;
+  optional org.jetbrains.kotlin.metadata.Annotation.Argument.Value compile_time_value = 131;
+  optional int32 property_containing_file_id = 135;
+  optional DescriptorUniqId property_uniq_id = 136;
+
+}
+
+extend org.jetbrains.kotlin.metadata.EnumEntry {
+  repeated org.jetbrains.kotlin.metadata.Annotation enum_entry_annotation = 130;
+  optional DescriptorUniqId enum_entry_uniq_id = 131;
+}
+
+extend org.jetbrains.kotlin.metadata.ValueParameter {
+  repeated org.jetbrains.kotlin.metadata.Annotation parameter_annotation = 130;
+  optional DescriptorUniqId value_param_uniq_id = 131;
+}
+
+extend org.jetbrains.kotlin.metadata.Type {
+  repeated org.jetbrains.kotlin.metadata.Annotation type_annotation = 130;
+}
+
+extend org.jetbrains.kotlin.metadata.TypeParameter {
+  repeated org.jetbrains.kotlin.metadata.Annotation type_parameter_annotation = 130;
+  optional DescriptorUniqId type_param_uniq_id = 131;
+}
+
+extend org.jetbrains.kotlin.metadata.PackageFragment {
+  optional Files package_fragment_files = 130;
+}
+
+message Classes {
+  // id in StringTable
+  repeated int32 class_name = 1 [packed = true];
+}
+
+message Library {
+  repeated org.jetbrains.kotlin.metadata.PackageFragment package_fragment = 2;
+
+  repeated string imported_module = 3;
+}

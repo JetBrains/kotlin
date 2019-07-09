@@ -2,6 +2,7 @@
 // COMPILER_ARGUMENTS: -version -Xuse-experimental=Something
 // DISABLE-ERRORS
 // WITH_RUNTIME
+// ACTION: Introduce import alias
 // ACTION: Make internal
 // ACTION: Make private
 

@@ -32,16 +32,14 @@ object SignatureBuildingComponents {
     fun inJavaLang(name: String, vararg signatures: String) = inClass(javaLang(name), *signatures)
     fun inJavaUtil(name: String, vararg signatures: String) = inClass(javaUtil(name), *signatures)
 
-    fun inClass(internalName: String, vararg signatures: String) = signatures.mapTo(LinkedHashSet()) { internalName + "." + it }
+    fun inClass(internalName: String, vararg signatures: String) = signatures.mapTo(LinkedHashSet()) { "$internalName.$it" }
 
     fun signature(classDescriptor: ClassDescriptor, jvmDescriptor: String) = signature(classDescriptor.internalName, jvmDescriptor)
     fun signature(classId: ClassId, jvmDescriptor: String) = signature(classId.internalName, jvmDescriptor)
-    fun signature(internalName: String, jvmDescriptor: String) = internalName + "." + jvmDescriptor
+    fun signature(internalName: String, jvmDescriptor: String) = "$internalName.$jvmDescriptor"
 
-    fun jvmDescriptor(name: String, vararg parameters: String, ret: String = "V") =
-            jvmDescriptor(name, parameters.asList(), ret)
     fun jvmDescriptor(name: String, parameters: List<String>, ret: String = "V") =
-            "$name(${parameters.joinToString("") { escapeClassName(it) }})${escapeClassName(internalName = ret)}"
+        "$name(${parameters.joinToString("") { escapeClassName(it) }})${escapeClassName(internalName = ret)}"
 
     private fun escapeClassName(internalName: String) = if (internalName.length > 1) "L$internalName;" else internalName
 }

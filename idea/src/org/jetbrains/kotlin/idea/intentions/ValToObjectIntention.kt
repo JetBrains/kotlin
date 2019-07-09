@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.psi.psiUtil.visibilityModifier
 
 class ValToObjectIntention : SelfTargetingIntention<KtProperty>(KtProperty::class.java, "Convert to object declaration") {
 

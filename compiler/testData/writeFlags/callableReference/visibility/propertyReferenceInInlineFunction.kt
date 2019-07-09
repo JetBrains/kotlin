@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A {
     val foo = ""
 
@@ -6,4 +7,4 @@ class A {
 
 // TESTED_OBJECT_KIND: class
 // TESTED_OBJECTS: A$bar$1
-// FLAGS: ACC_FINAL, ACC_PUBLIC, ACC_SUPER
+// FLAGS: ACC_FINAL, ACC_PUBLIC, ACC_SUPER, ACC_SYNTHETIC

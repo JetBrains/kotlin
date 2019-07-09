@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
@@ -15,8 +15,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.config.JVMConfigurationKeys;
-import org.jetbrains.kotlin.script.StandardScriptDefinition;
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition;
 import org.jetbrains.kotlin.test.ConfigurationKind;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
@@ -25,6 +24,8 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase;
 
 import java.io.File;
 import java.util.*;
+
+import static org.jetbrains.kotlin.script.ScriptTestUtilKt.loadScriptingPlugin;
 
 public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase {
     protected File javaFilesDir;
@@ -42,13 +43,6 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
         coroutinesPackage = "";
     }
 
-    @Override
-    protected void tearDown() throws Exception {
-        if (javaFilesDir != null) FileUtil.delete(javaFilesDir);
-        if (kotlinSourceRoot != null) FileUtil.delete(kotlinSourceRoot);
-        super.tearDown();
-    }
-
     public class ModuleAndDependencies {
         final M module;
         final List<String> dependencies;
@@ -62,6 +56,11 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
     }
 
     @NotNull
+    protected Boolean isScriptingNeeded(@NotNull File file) {
+        return file.getName().endsWith(KotlinParserDefinition.STD_SCRIPT_EXT);
+    }
+
+    @NotNull
     protected KotlinCoreEnvironment createEnvironment(@NotNull File file) {
         CompilerConfiguration configuration = KotlinTestUtils.newConfiguration(
                 getConfigurationKind(),
@@ -69,7 +68,9 @@ public abstract class KotlinMultiFileTestWithJava<M, F> extends KtUsefulTestCase
                 getClasspath(file),
                 isJavaSourceRootNeeded() ? Collections.singletonList(javaFilesDir) : Collections.emptyList()
         );
-        configuration.add(JVMConfigurationKeys.SCRIPT_DEFINITIONS, StandardScriptDefinition.INSTANCE);
+        if (isScriptingNeeded(file)) {
+            loadScriptingPlugin(configuration);
+        }
         if (isKotlinSourceRootNeeded()) {
             ContentRootsKt.addKotlinSourceRoot(configuration, kotlinSourceRoot.getPath());
         }

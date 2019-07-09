@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 data class Foo(var bar: Int?)
 
 fun box(): String {

@@ -1,4 +1,4 @@
-// LANGUAGE_VERSION: 1.2
+// !LANGUAGE: -ProperVisibilityForCompanionObjectInstanceField
 
 inline fun on(body: () -> Any) = body().toString()
 

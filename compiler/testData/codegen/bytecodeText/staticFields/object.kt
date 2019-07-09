@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 object A {
     val r: Int = 1
 }

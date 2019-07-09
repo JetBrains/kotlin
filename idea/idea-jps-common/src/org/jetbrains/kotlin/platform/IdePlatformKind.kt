@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:JvmName("IdePlatformKindUtil")
+
 package org.jetbrains.kotlin.platform
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.extensions.ApplicationExtensionDescriptor
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.config.isJps
@@ -13,20 +15,27 @@ import org.jetbrains.kotlin.platform.impl.CommonIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JsIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
-    abstract val compilerPlatform: TargetPlatform
-    abstract val platforms: List<IdePlatform<Kind, *>>
+    abstract fun supportsTargetPlatform(platform: TargetPlatform): Boolean
 
-    abstract val defaultPlatform: IdePlatform<Kind, *>
+    abstract val defaultPlatform: TargetPlatform
 
-    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): IdePlatform<Kind, CommonCompilerArguments>?
+    @Suppress("DEPRECATION_ERROR", "DeprecatedCallableAddReplaceWith")
+    @Deprecated(
+        message = "IdePlatform is deprecated and will be removed soon, please, migrate to org.jetbrains.kotlin.platform.TargetPlatform",
+        level = DeprecationLevel.ERROR
+    )
+    abstract fun getDefaultPlatform(): IdePlatform<*, *>
+
+    abstract fun platformByCompilerArguments(arguments: CommonCompilerArguments): TargetPlatform?
 
     abstract val argumentsClass: Class<out CommonCompilerArguments>
 
     abstract val name: String
+
+    abstract fun createArguments(): CommonCompilerArguments
 
     override fun equals(other: Any?): Boolean = javaClass == other?.javaClass
     override fun hashCode(): Int = javaClass.hashCode()
@@ -55,23 +64,18 @@ abstract class IdePlatformKind<Kind : IdePlatformKind<Kind>> {
             kinds
         }
 
-        val All_PLATFORMS by lazy { ALL_KINDS.flatMap { it.platforms } }
 
-        val IDE_PLATFORMS_BY_COMPILER_PLATFORMS by lazy { ALL_KINDS.map { it.compilerPlatform to it }.toMap() }
-
-        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): IdePlatform<*, *>? =
+        fun <Args : CommonCompilerArguments> platformByCompilerArguments(arguments: Args): TargetPlatform? =
             ALL_KINDS.firstNotNullResult { it.platformByCompilerArguments(arguments) }
 
     }
 }
 
 val TargetPlatform.idePlatformKind: IdePlatformKind<*>
-    get() = IdePlatformKind.IDE_PLATFORMS_BY_COMPILER_PLATFORMS[this] ?: error("Unknown platform $this")
-
-fun IdePlatformKind<*>?.orDefault(): IdePlatformKind<*> {
-    return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
-}
-
-fun IdePlatform<*, *>?.orDefault(): IdePlatform<*, *> {
-    return this ?: DefaultIdeTargetPlatformKindProvider.defaultPlatform
-}
+    get() = IdePlatformKind.ALL_KINDS.filter { it.supportsTargetPlatform(this) }.let { list ->
+        when {
+            list.size == 1 -> list.first()
+            list.size > 1 -> list.first().also { Logger.getInstance(IdePlatformKind.javaClass).warn("Found more than one IdePlatformKind [$list] for target [$this].") }
+            else -> error("Unknown platform $this")
+        }
+    }

@@ -1,4 +1,5 @@
-// See also KT-10386 
+// !WITH_NEW_INFERENCE
+// See also KT-10386
 interface A
 class B : A
 fun foo1(list: List<A>, arg: B?): Boolean {

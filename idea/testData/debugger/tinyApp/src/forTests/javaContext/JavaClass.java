@@ -46,4 +46,8 @@ public class JavaClass {
     public void property() {
         int breakpoint = 1;
     }
+
+    public interface JavaStatic {
+        static int state() { return 1; }
+    }
 }

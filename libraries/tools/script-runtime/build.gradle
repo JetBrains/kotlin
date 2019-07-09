@@ -4,7 +4,6 @@ apply plugin: 'kotlin'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 
 pill {
@@ -12,7 +11,7 @@ pill {
 }
 
 dependencies {
-    compileOnly project(':kotlin-stdlib')
+    compileOnly kotlinStdlib()
 }
 
 configurations {
@@ -33,13 +32,11 @@ jar {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+    sources sourcesJar
     mainJar jar
 }
 
-dist {
-    from (jar, sourcesJar)
-}
+javadocJar()
 
 compileKotlin {
     kotlinOptions.freeCompilerArgs = [
@@ -48,5 +45,3 @@ compileKotlin {
             "-module-name", project.name
     ]
 }
-
-

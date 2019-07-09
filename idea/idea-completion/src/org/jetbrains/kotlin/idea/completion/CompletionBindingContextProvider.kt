@@ -25,11 +25,10 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
-import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.psi.KtBlockExpression
@@ -53,7 +52,7 @@ import java.util.*
 class CompletionBindingContextProvider(project: Project) {
     private val LOG = Logger.getInstance(CompletionBindingContextProvider::class.java)
 
-    @TestOnly
+    @get:TestOnly
     internal var TEST_LOG: StringBuilder? = null
 
     companion object {
@@ -85,8 +84,14 @@ class CompletionBindingContextProvider(project: Project) {
     }
 
     private var prevCompletionDataCache: CachedValue<DataHolder> = CachedValuesManager.getManager(project).createCachedValue(
-            { CachedValueProvider.Result.create(DataHolder(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) },
-            false)
+        {
+            CachedValueProvider.Result.create(
+                DataHolder(),
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker
+            )
+        },
+        false
+    )
 
 
     fun getBindingContext(position: PsiElement, resolutionFacade: ResolutionFacade): BindingContext {

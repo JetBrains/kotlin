@@ -1,0 +1,2 @@
+package editor.completion.apx
+class ImportedClass

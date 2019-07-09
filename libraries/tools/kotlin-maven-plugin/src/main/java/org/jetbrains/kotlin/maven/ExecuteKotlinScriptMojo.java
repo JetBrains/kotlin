@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.util.Disposer;
+import kotlin.script.experimental.jvm.JvmScriptingHostConfigurationKt;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DefaultArtifact;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -42,13 +43,15 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler;
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot;
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar;
 import org.jetbrains.kotlin.config.CommonConfigurationKeys;
 import org.jetbrains.kotlin.config.CompilerConfiguration;
-import org.jetbrains.kotlin.load.java.JvmAbi;
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
-import org.jetbrains.kotlin.script.ReflectionUtilKt;
-import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationExtensionKt;
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar;
+import org.jetbrains.kotlin.scripting.configuration.ConfigurationKt;
+import org.jetbrains.kotlin.utils.ParametersMapKt;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -166,6 +169,9 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
 
             configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector);
 
+            configuration.add(ComponentRegistrar.Companion.getPLUGIN_COMPONENT_REGISTRARS(),
+                              new ScriptingCompilerConfigurationComponentRegistrar());
+
             List<File> deps = new ArrayList<>();
 
             deps.addAll(getDependenciesForScript());
@@ -180,10 +186,11 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             }
 
             configuration.add(CLIConfigurationKeys.CONTENT_ROOTS, new KotlinSourceRoot(scriptFile.getAbsolutePath(), false));
-            configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmAbi.DEFAULT_MODULE_NAME);
+            configuration.put(CommonConfigurationKeys.MODULE_NAME, JvmProtoBufUtil.DEFAULT_MODULE_NAME);
 
-            ScriptingCompilerConfigurationExtensionKt.configureScriptDefinitions(
-                    scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector, new HashMap<>()
+            ConfigurationKt.configureScriptDefinitions(
+                    scriptTemplates, configuration, this.getClass().getClassLoader(), messageCollector,
+                    JvmScriptingHostConfigurationKt.getDefaultJvmScriptingHostConfiguration()
             );
 
             KotlinCoreEnvironment environment = KotlinCoreEnvironment.createForProduction(rootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
@@ -201,7 +208,7 @@ public class ExecuteKotlinScriptMojo extends AbstractMojo {
             try {
                 Class<?> klass = classLoader.loadClass(nameForScript.asString());
                 ExecuteKotlinScriptMojo.INSTANCE = this;
-                if (ReflectionUtilKt.tryConstructClassFromStringArgs(klass, scriptArguments) == null)
+                if (ParametersMapKt.tryConstructClassFromStringArgs(klass, scriptArguments) == null)
                     throw new ScriptExecutionException(scriptFile, "unable to construct script");
             } catch (ClassNotFoundException e) {
                 throw new ScriptExecutionException(scriptFile, "internal error", e);

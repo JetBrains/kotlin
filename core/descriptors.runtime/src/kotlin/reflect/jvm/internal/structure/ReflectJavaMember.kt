@@ -40,9 +40,9 @@ abstract class ReflectJavaMember : ReflectJavaElement(), ReflectJavaAnnotationOw
         get() = ReflectJavaClass(member.declaringClass)
 
     protected fun getValueParameters(
-            parameterTypes: Array<Type>,
-            parameterAnnotations: Array<Array<Annotation>>,
-            isVararg: Boolean
+        parameterTypes: Array<Type>,
+        parameterAnnotations: Array<Array<Annotation>>,
+        isVararg: Boolean
     ): List<JavaValueParameter> {
         val result = ArrayList<JavaValueParameter>(parameterTypes.size)
         val names = Java8ParameterNamesLoader.loadParameterNames(member)
@@ -79,8 +79,7 @@ private object Java8ParameterNamesLoader {
 
         val getParameters = try {
             methodOrConstructorClass.getMethod("getParameters")
-        }
-        catch (e: NoSuchMethodException) {
+        } catch (e: NoSuchMethodException) {
             return Cache(null, null)
         }
 

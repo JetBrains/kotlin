@@ -3,32 +3,17 @@ apply plugin: 'kotlin'
 configureJvmProject(project)
 configurePublishing(project)
 
+dependencies {
+    embedded(project(":kotlinx-serialization-compiler-plugin")) { transitive = false }
+}
+
 compileJava {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
     options.fork = false
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
-    maven { url 'http://repository.jetbrains.com/utils' }
-}
-
-dependencies {
-    compileOnly project(':kotlin-gradle-plugin-api')
-
-    compileOnly project(':kotlin-stdlib')
-    compileOnly project(path: ':kotlin-compiler-embeddable', configuration: 'runtimeJar')
-
-    compileOnly 'org.jetbrains.kotlin:gradle-api:1.6'
-}
-
-evaluationDependsOn(":kotlinx-serialization-compiler-plugin")
-
 jar {
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlinx-serialization-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 
@@ -36,5 +21,6 @@ ArtifactsKt.runtimeJar(project, jar, {})
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()

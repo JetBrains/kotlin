@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 import kotlin.test.assertEquals
 
 fun test(coll: Collection<*>?): Int {

@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     var xl = 0L     // Long, size 2
     var xi = 0      // Int, size 1

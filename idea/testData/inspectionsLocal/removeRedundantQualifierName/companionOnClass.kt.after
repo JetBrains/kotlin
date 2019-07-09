@@ -1,0 +1,14 @@
+package my.simple.name
+import my.simple.name.Foo.Companion.VARIABLE
+
+class Foo {
+    companion object {
+        const val VARIABLE = 1
+    }
+}
+
+fun main() {
+    val a = Foo.VARIABLE
+    val b = Foo.Companion.VARIABLE
+    val c = Foo()
+}

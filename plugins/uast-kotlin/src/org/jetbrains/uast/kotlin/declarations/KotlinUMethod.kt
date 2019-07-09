@@ -91,6 +91,7 @@ open class KotlinUMethod(
 
 
     override val uastBody by lz {
+        if (kotlinOrigin?.canAnalyze() != true) return@lz null // EA-137193
         val bodyExpression = when (kotlinOrigin) {
             is KtFunction -> kotlinOrigin.bodyExpression
             is KtProperty -> when {
@@ -101,18 +102,7 @@ open class KotlinUMethod(
             else -> null
         } ?: return@lz null
 
-        when (bodyExpression) {
-            !is KtBlockExpression -> {
-                KotlinUBlockExpression.KotlinLazyUBlockExpression(this, { block ->
-                    val implicitReturn = KotlinUImplicitReturnExpression(block)
-                    val uBody = getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
-                            ?: return@KotlinLazyUBlockExpression emptyList()
-                    listOf(implicitReturn.apply { returnExpression = uBody })
-                })
-
-            }
-            else -> getLanguagePlugin().convertElement(bodyExpression, this) as? UExpression
-        }
+        wrapExpressionBody(this, bodyExpression)
     }
 
     override val isOverride: Boolean
@@ -121,6 +111,12 @@ open class KotlinUMethod(
     override fun getBody(): PsiCodeBlock? = super<UAnnotationMethod>.getBody()
 
     override fun getOriginalElement(): PsiElement? = super<UAnnotationMethod>.getOriginalElement()
+
+    override val returnTypeReference: UTypeReferenceExpression? by lz {
+        (sourcePsi as? KtCallableDeclaration)?.typeReference?.let {
+            LazyKotlinUTypeReferenceExpression(it, this) { javaPsi.returnType ?: UastErrorType }
+        }
+    }
 
     override fun equals(other: Any?) = other is KotlinUMethod && psi == other.psi
 
@@ -135,4 +131,17 @@ open class KotlinUMethod(
                 else
                     KotlinUMethod(psi, containingElement)
     }
+}
+
+internal fun wrapExpressionBody(function: UElement, bodyExpression: KtExpression): UExpression? = when (bodyExpression) {
+    !is KtBlockExpression -> {
+        KotlinUBlockExpression.KotlinLazyUBlockExpression(function) { block ->
+            val implicitReturn = KotlinUImplicitReturnExpression(block)
+            val uBody = function.getLanguagePlugin().convertElement(bodyExpression, implicitReturn) as? UExpression
+                ?: return@KotlinLazyUBlockExpression emptyList()
+            listOf(implicitReturn.apply { returnExpression = uBody })
+        }
+
+    }
+    else -> function.getLanguagePlugin().convertElement(bodyExpression, function) as? UExpression
 }

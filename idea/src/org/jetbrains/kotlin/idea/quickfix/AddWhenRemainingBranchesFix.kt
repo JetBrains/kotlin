@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -78,7 +79,7 @@ class AddWhenRemainingBranchesFix(
             val whenCloseBrace = element.closeBrace ?: throw AssertionError("isAvailable should check if close brace exist")
             val elseBranch = element.entries.find { it.isElse }
             val psiFactory = KtPsiFactory(element)
-
+            (whenCloseBrace.prevSibling as? PsiWhiteSpace)?.replace(psiFactory.createNewLine())
             for (case in missingCases) {
                 val branchConditionText = when (case) {
                     UnknownMissingCase, NullMissingCase, is BooleanMissingCase ->

@@ -15,4 +15,4 @@ class Some {
 
 }
 // EXPRESSION: base.a
-// RESULT: java.lang.NoSuchMethodError : Method not found: MemberDescription(ownerInternalName = privatePropertyWithExplicitDefaultGetter/Some, name = getA, desc = ()I, isStatic = false)
+// RESULT: 1: I

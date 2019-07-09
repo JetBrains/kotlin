@@ -1,0 +1,11 @@
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+    public final object B : R|kotlin/Any| {
+        public final fun foo(a: R|kotlin/Int|): R|kotlin/String|
+
+        private constructor(): R|test/A.B|
+
+    }
+
+}

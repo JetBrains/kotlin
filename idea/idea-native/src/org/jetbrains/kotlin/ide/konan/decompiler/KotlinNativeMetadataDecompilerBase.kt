@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan.decompiler
@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.FlexibleTypeDeserializer
@@ -31,15 +30,14 @@ import java.io.IOException
 
 abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
     private val fileType: FileType,
-    private val targetPlatform: TargetPlatform,
-    private val serializerProtocol: SerializerExtensionProtocol,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val flexibleTypeDeserializer: FlexibleTypeDeserializer,
-    private val expectedBinaryVersion: V,
-    private val invalidBinaryVersion: V,
+    private val expectedBinaryVersion: () -> V,
+    private val invalidBinaryVersion: () -> V,
     stubVersion: Int
 ) : ClassFileDecompilers.Full() {
 
-    private val stubBuilder =
+    private val metadataStubBuilder: KotlinNativeMetadataStubBuilder =
         KotlinNativeMetadataStubBuilder(
             stubVersion,
             fileType,
@@ -47,13 +45,15 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
             ::readFileSafely
         )
 
-    private val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    private val renderer: DescriptorRenderer by lazy {
+        DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
+    }
 
     protected abstract fun doReadFile(file: VirtualFile): FileWithMetadata?
 
     override fun accepts(file: VirtualFile) = file.fileType == fileType
 
-    override fun getStubBuilder() = stubBuilder
+    override fun getStubBuilder() = metadataStubBuilder
 
     override fun createFileViewProvider(file: VirtualFile, manager: PsiManager, physical: Boolean) =
         KotlinDecompiledFileViewProvider(manager, file, physical) { provider ->
@@ -83,15 +83,14 @@ abstract class KotlinNativeMetadataDecompilerBase<out V : BinaryVersion>(
         val file = readFileSafely(virtualFile)
 
         return when (file) {
-            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, file.version)
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), file.version)
             is FileWithMetadata.Compatible -> decompiledText(
                 file,
-                targetPlatform,
-                serializerProtocol,
+                serializerProtocol(),
                 flexibleTypeDeserializer,
                 renderer
             )
-            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion, invalidBinaryVersion)
+            null -> createIncompatibleAbiVersionDecompiledText(expectedBinaryVersion(), invalidBinaryVersion())
         }
     }
 }
@@ -116,7 +115,7 @@ sealed class FileWithMetadata {
 
 //todo: this function is extracted for KotlinNativeMetadataStubBuilder, that's the difference from Big Kotlin.
 fun decompiledText(
-    file: FileWithMetadata.Compatible, targetPlatform: TargetPlatform,
+    file: FileWithMetadata.Compatible,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer,
     renderer: DescriptorRenderer
@@ -124,7 +123,7 @@ fun decompiledText(
     val packageFqName = file.packageFqName
     val resolver = KotlinNativeMetadataDeserializerForDecompiler(
         packageFqName, file.proto, file.nameResolver,
-        targetPlatform, serializerProtocol, flexibleTypeDeserializer
+        serializerProtocol, flexibleTypeDeserializer
     )
     val declarations = arrayListOf<DeclarationDescriptor>()
     declarations.addAll(resolver.resolveDeclarationsInFacade(packageFqName))

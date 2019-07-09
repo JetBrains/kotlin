@@ -1,0 +1,6 @@
+import kotlin.math.atan2
+
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    atan2(x, y)
+}

@@ -7,7 +7,7 @@ and ensure that the public binary API wasn't changed in a way that make this cha
 
 Compile and run tests. `CasesPublicAPITest` verifies the tool itself, 
 and `RuntimePublicAPITest` dumps the public API of `kotlin-stdlib`, 
-`kotlin-stdlib-jdk7/8`, `kotlin-stdlib-jre7/8` and `kotlin-reflect` jars,
+`kotlin-stdlib-jdk7/8`, and `kotlin-reflect` jars,
 which must be built beforehand with gradle. Use `clean assemble` tasks,
 since the incremental compilation currently doesn't produce all the required output.
 
@@ -29,7 +29,7 @@ A class is considered to be effectively public if all of the following condition
     - no visibility (means no Kotlin declaration corresponds to this compiled class)
     - *public*
     - *protected*
-    - *internal*, only in case if the class is annotated with `InlineExposed`
+    - *internal*, only in case if the class is annotated with `PublishedApi`
  - it isn't a local class
  - it isn't a synthetic class with mappings for `when` tableswitches (`$WhenMappings`)
  - it contains at least one effectively public member, in case if the class corresponds
@@ -47,9 +47,9 @@ if all of the following conditions are met:
     - no visibility (means no Kotlin declaration corresponds to this class member)
     - *public*
     - *protected*
-    - *internal*, only in case if the class is annotated with `InlineExposed`
+    - *internal*, only in case if the class is annotated with `PublishedApi`
 
-    > Note that Kotlin visibility of a field exposed by `lateinit` property is the visibility of it's setter.
+    > Note that Kotlin visibility of a field exposed by `lateinit` property is the visibility of its setter.
  - in case if the member is protected, it is contained in *non-final* class
  - it isn't a synthetic access method for a private field
 

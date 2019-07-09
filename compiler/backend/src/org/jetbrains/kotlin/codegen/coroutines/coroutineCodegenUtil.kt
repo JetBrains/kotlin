@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
@@ -121,6 +121,10 @@ val INITIAL_DESCRIPTOR_FOR_SUSPEND_FUNCTION = object : CallableDescriptor.UserDa
 
 @JvmField
 val INITIAL_SUSPEND_DESCRIPTOR_FOR_DO_RESUME = object : CallableDescriptor.UserDataKey<FunctionDescriptor> {}
+
+val CONTINUATION_PARAMETER_NAME = Name.identifier("continuation")
+
+const val CONTINUATION_VARIABLE_NAME = "\$continuation"
 
 // Resolved calls to suspension function contain descriptors as they visible within coroutines:
 // E.g. `fun <V> await(f: CompletableFuture<V>): V` instead of `fun <V> await(f: CompletableFuture<V>, machine: Continuation<V>): Unit`
@@ -258,7 +262,7 @@ fun <D : FunctionDescriptor> getOrCreateJvmSuspendFunctionView(
         original = null,
         index = function.valueParameters.size,
         annotations = Annotations.EMPTY,
-        name = Name.identifier("continuation"),
+        name = CONTINUATION_PARAMETER_NAME,
         // Add j.l.Object to invoke(), because that is the type of parameters we have in FunctionN+1
         outType = if (function.containingDeclaration.safeAs<ClassDescriptor>()?.defaultType?.isBuiltinFunctionalType == true)
             function.builtIns.nullableAnyType
@@ -338,7 +342,7 @@ fun createMethodNodeForIntercepted(
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null
@@ -364,7 +368,7 @@ fun createMethodNodeForCoroutineContext(
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             Type.getMethodDescriptor(languageVersionSettings.coroutineContextAsmType()),
@@ -387,13 +391,13 @@ fun createMethodNodeForSuspendCoroutineUninterceptedOrReturn(
     typeMapper: KotlinTypeMapper,
     languageVersionSettings: LanguageVersionSettings
 ): MethodNode {
-    assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturnInJvm(languageVersionSettings)) {
+    assert(functionDescriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn(languageVersionSettings)) {
         "functionDescriptor must be kotlin.coroutines.intrinsics.suspendCoroutineUninterceptedOrReturn"
     }
 
     val node =
         MethodNode(
-            Opcodes.ASM5,
+            Opcodes.API_VERSION,
             Opcodes.ACC_STATIC,
             "fake",
             typeMapper.mapAsmMethod(functionDescriptor).descriptor, null, null

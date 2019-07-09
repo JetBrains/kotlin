@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
-package foo
 
+@JsExport
 val top = "TOP LEVEL"
 
 fun box(): String {
@@ -11,7 +10,7 @@ fun box(): String {
 
     assertEquals(5, eval("3 + 2"))
 
-    val PACKAGE = "JS_TESTS.foo"
+    val PACKAGE = "JS_TESTS"
     assertEquals(top, eval("$PACKAGE.top"))
 
     return "OK"

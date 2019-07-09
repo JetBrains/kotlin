@@ -1,0 +1,4 @@
+public abstract interface Runnable : R|kotlin/Any| {
+    public abstract fun run(): R|kotlin/Unit|
+
+}

@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.inline
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
 import org.jetbrains.kotlin.js.backend.ast.JsExpression
 
-class InlineableResult(
+data class InlineableResult(
         val inlineableBody: JsStatement,
         val resultExpression: JsExpression?
 )

@@ -22,7 +22,7 @@ fun test1(derived: Base) =
 // RESULT: 1: I
 
 // EXPRESSION: nullable.prop
-// RESULT: Method threw 'kotlin.TypeCastException' exception.
+// RESULT: java.lang.NullPointerException
 fun test2(nullable: Derived?) =
         nullable != null &&
         //Breakpoint!

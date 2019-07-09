@@ -38,13 +38,13 @@ import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getElementTextWithContext
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
-import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.resolve.source.getPsi
@@ -131,9 +131,9 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     private fun generateClassLiteralsNotEqual(paramName: String, targetClass: KtClassOrObject): String {
         val defaultExpression = "javaClass != $paramName?.javaClass"
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
-        return when (targetClass.platform) {
-            is JsPlatform -> "other == null || this::class.js != $paramName::class.js"
-            is TargetPlatform.Common -> "other == null || this::class != $paramName::class"
+        return when {
+            targetClass.platform.isJs() -> "other == null || this::class.js != $paramName::class.js"
+            targetClass.platform.isCommon() -> "other == null || this::class != $paramName::class"
             else -> defaultExpression
         }
     }
@@ -141,9 +141,9 @@ class KotlinGenerateEqualsAndHashcodeAction : KotlinGenerateMemberActionBase<Kot
     private fun generateClassLiteral(targetClass: KtClassOrObject): String {
         val defaultExpression = "javaClass"
         if (!targetClass.languageVersionSettings.supportsFeature(LanguageFeature.BoundCallableReferences)) return defaultExpression
-        return when (targetClass.platform) {
-            is JsPlatform -> "this::class.js"
-            is TargetPlatform.Common -> "this::class"
+        return when {
+            targetClass.platform.isJs() -> "this::class.js"
+            targetClass.platform.isCommon() -> "this::class"
             else -> defaultExpression
         }
     }

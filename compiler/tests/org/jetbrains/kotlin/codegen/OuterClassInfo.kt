@@ -17,7 +17,7 @@
 package org.jetbrains.kotlin.codegen
 
 data class OuterClassInfo(
-        val owner: String,
-        val methodName: String?,
-        val methodDesc: String?
+    val owner: String,
+    val methodName: String?,
+    val methodDesc: String?
 )

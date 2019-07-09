@@ -3,7 +3,6 @@ description = 'Kotlin Common Standard Library'
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'pill-configurable'
 
-configureDist(project)
 configurePublishing(project)
 
 def commonSrcDir = "../src"
@@ -19,8 +18,6 @@ sourceSets {
             srcDir 'src'
             srcDir commonSrcDir
             srcDir '../unsigned/src'
-            srcDir '../coroutines/common/src'
-            srcDir '../coroutines/src'
         }
     }
     test {
@@ -29,7 +26,7 @@ sourceSets {
             srcDir 'test'
         }
     }
-    coroutines {
+    coroutinesExperimental {
         kotlin {
             srcDir '../coroutines-experimental/src'
         }
@@ -40,7 +37,7 @@ dependencies {
     testCompile project(":kotlin-test:kotlin-test-common")
     testCompile project(":kotlin-test:kotlin-test-annotations-common")
 
-    coroutinesCompile sourceSets.main.output
+    coroutinesExperimentalCompile sourceSets.main.output
 }
 
 compileKotlinCommon {
@@ -63,7 +60,7 @@ compileKotlinCommon {
     }
 }
 
-compileCoroutinesKotlinCommon {
+compileCoroutinesExperimentalKotlinCommon {
     kotlinOptions {
         languageVersion = "1.3"
         apiVersion = "1.3"
@@ -82,20 +79,22 @@ compileCoroutinesKotlinCommon {
 compileTestKotlinCommon {
     kotlinOptions {
         freeCompilerArgs += [
-                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes"
+                "-Xuse-experimental=kotlin.Experimental",
+                "-Xuse-experimental=kotlin.ExperimentalUnsignedTypes",
+                "-Xuse-experimental=kotlin.ExperimentalStdlibApi"
         ]
     }
 }
 
 jar {
     manifestAttributes(manifest, project, 'Main')
-    from sourceSets.coroutines.output
+    from sourceSets.coroutinesExperimental.output
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.kotlin
-    from sourceSets.coroutines.kotlin
+    from sourceSets.coroutinesExperimental.kotlin
 }
 
 configurations {
@@ -105,18 +104,8 @@ configurations {
 artifacts {
     archives sourcesJar
     sources sourcesJar
-    archives javadocJar
 }
 
-// TODO: call the "dist" task instead, once we need to publish kotlin-stdlib-common.jar with the compiler distribution
-task distCommon(type: Copy) {
-    from(jar)
-    from(sourcesJar)
-    into "$distDir/common"
-    rename "-${java.util.regex.Pattern.quote(version)}", ''
-}
-
-dist.dependsOn distCommon
-
+javadocJar()
 
 classes.setDependsOn(classes.dependsOn.findAll { it != "compileJava" })

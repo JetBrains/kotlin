@@ -1,0 +1,35 @@
+# mkdir
+output/ap
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+
+# kotlinc
+-cp %KOTLIN_STDLIB%
+-d output/ap
+ap/Processor.kt
+
+# kapt
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-Kapt-processors=apt.SampleApt
+-Kapt-correct-error-types=true
+-d output/classes
+-cp output/ap:%KOTLIN_STDLIB%
+Test.kt
+
+# javac
+-cp output/ap
+-d output/javaClasses
+-proc:none
+output/sources/generated/Property.java
+
+# java
+-cp output/classes:output/javaClasses:output/ap:%KOTLIN_STDLIB%
+test.Test
+
+# after
+public class generated.Property

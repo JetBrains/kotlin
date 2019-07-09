@@ -17,12 +17,13 @@
 package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.org.objectweb.asm.MethodVisitor
+import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class DeferredMethodVisitor(
-        val intermediate: MethodNode,
-        private val resultNode: () -> MethodVisitor
-) : MethodVisitor(API, intermediate) {
+    val intermediate: MethodNode,
+    private val resultNode: () -> MethodVisitor
+) : MethodVisitor(Opcodes.API_VERSION, intermediate) {
 
     override fun visitEnd() {
         super.visitEnd()

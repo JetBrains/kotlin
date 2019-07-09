@@ -1,2 +1,2 @@
 // INSPECTION_CLASS: org.jetbrains.kotlin.idea.inspections.UnsafeCastFromDynamicInspection
-// JS
+// KOTLIN_JAVASCRIPT

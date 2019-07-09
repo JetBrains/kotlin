@@ -1,6 +1,6 @@
+// !LANGUAGE: -ProhibitOperatorMod
+// !API_VERSION: 1.0
 // TARGET_BACKEND: JVM
-
-// LANGUAGE_VERSION: 1.0
 // FULL_JDK
 
 import java.math.BigInteger

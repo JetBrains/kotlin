@@ -1,0 +1,16 @@
+package
+
+public final annotation class A1 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor A1(/*0*/ x: kotlin.Int = ...)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final annotation class A2 : kotlin.Annotation {
+    @kotlin.jvm.JvmOverloads public constructor A2()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

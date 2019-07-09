@@ -1,0 +1,12 @@
+package
+
+public val </*0*/ T> @Ann T.test: kotlin.Int
+public val @Ann kotlin.Int.test: kotlin.Int
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Ann : kotlin.Annotation {
+    public constructor Ann(/*0*/ x: kotlin.Int)
+    public final val x: kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

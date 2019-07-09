@@ -2,7 +2,7 @@
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.2
+
 import kotlin.test.*
 
 private operator fun A.inc() = A()

@@ -5,11 +5,11 @@
 import kotlin.contracts.*
 
 fun passLambdaValue(l: ContractBuilder.() -> Unit) {
-    contract(<!ERROR_IN_CONTRACT_DESCRIPTION(first argument of 'contract'-call should be a lambda expression)!>l<!>)
+    contract(<!ERROR_IN_CONTRACT_DESCRIPTION("first argument of 'contract'-call should be a lambda expression")!>l<!>)
 }
 
 fun passAnonymousFunction(x: Boolean) {
-    contract(<!ERROR_IN_CONTRACT_DESCRIPTION(first argument of 'contract'-call should be a lambda expression)!>fun ContractBuilder.() {
+    contract(<!ERROR_IN_CONTRACT_DESCRIPTION("first argument of 'contract'-call should be a lambda expression")!>fun ContractBuilder.() {
         returns() implies x
     }<!>)
 }

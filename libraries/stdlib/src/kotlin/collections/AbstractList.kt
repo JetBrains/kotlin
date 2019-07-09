@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT AbstractList
@@ -120,6 +120,15 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             }
             if (fromIndex > toIndex) {
                 throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
+            }
+        }
+
+        internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
+            if (startIndex < 0 || endIndex > size) {
+                throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
+            }
+            if (startIndex > endIndex) {
+                throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
             }
         }
 

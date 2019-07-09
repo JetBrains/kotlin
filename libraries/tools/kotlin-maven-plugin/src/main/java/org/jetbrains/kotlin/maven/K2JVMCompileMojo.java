@@ -253,7 +253,7 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         File kotlinClassesDir = new File(cachesDir, "classes");
         File snapshotsFile = new File(cachesDir, "snapshots.bin");
         String classpath = arguments.getClasspath();
-        MavenICReporter icReporter = MavenICReporter.get(getLog());
+        MavenICReporter icReporter = new MavenICReporter(getLog());
 
         try {
             arguments.setDestination(kotlinClassesDir.getAbsolutePath());

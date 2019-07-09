@@ -2,7 +2,7 @@ package
 
 public fun main(): kotlin.Unit
 
-public abstract enum class A : kotlin.Enum<A!> {
+public final enum class A : kotlin.Enum<A!> {
     enum entry ENTRY
 
     public constructor A()

@@ -1,0 +1,29 @@
+FILE: super.kt
+    public? final? interface A : kotlin/Any {
+        public? final? fun foo(): kotlin/Unit {
+        }
+
+    }
+    public? final? interface B : kotlin/Any {
+        public? final? fun foo(): kotlin/Unit {
+        }
+
+        public? final? fun bar(): kotlin/Unit {
+        }
+
+    }
+    public? final? class C : A, B {
+        public? constructor(): R|C| {
+            super<kotlin/Any>()
+        }
+
+        public? open? override fun bar(): kotlin/Unit {
+            super<<implicit>>.bar#()
+        }
+
+        public? open? override fun foo(): kotlin/Unit {
+            super<A>.foo#()
+            super<B>.foo#()
+        }
+
+    }

@@ -24,14 +24,25 @@ import org.jetbrains.kotlin.js.translate.reference.ReferenceTranslator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 class JSTestGenerator(val context: TranslationContext) {
 
-    fun generateTestCalls(moduleDescriptor: ModuleDescriptor) {
-        generateTestCalls(moduleDescriptor, FqName.ROOT)
+    fun generateTestCalls(file: KtFile, fileMemberScope: List<DeclarationDescriptor>): JsStatement? {
+        val testsFunction = JsFunction(context.scope(), JsBlock(), "${file.virtualFilePath} file suite function")
+        fileMemberScope.forEach {
+            if (it is ClassDescriptor) {
+                generateTestFunctions(it, testsFunction)
+            }
+        }
+        if (!testsFunction.body.isEmpty) {
+            val suiteName = JsStringLiteral(file.packageFqName.asString())
+            return JsInvocation(suiteRef, suiteName, JsBooleanLiteral(false), testsFunction).makeStmt()
+        }
+        return null
     }
 
     private fun generateTestCalls(moduleDescriptor: ModuleDescriptor, packageName: FqName) {

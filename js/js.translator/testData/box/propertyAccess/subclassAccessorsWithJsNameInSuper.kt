@@ -1,6 +1,4 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1303
-package foo
 
 open class A {
     open val x: Int
@@ -30,7 +28,7 @@ class B : A(), C {
     override val z = 55
 }
 
-fun getPackage() = js("return JS_TESTS.foo")
+fun getPackage() = js("JS_TESTS")
 
 fun box(): String {
     val a = B()

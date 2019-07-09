@@ -3,6 +3,7 @@ package org.jetbrains.uast.kotlin
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import com.intellij.psi.ResolveResult
 import org.jetbrains.kotlin.asJava.toLightAnnotation
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -22,11 +23,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUMethod
+import org.jetbrains.uast.kotlin.internal.multiResolveResults
 
 abstract class KotlinUAnnotationBase<T : KtCallElement>(
     final override val sourcePsi: T,
     givenParent: UElement?
-) : KotlinAbstractUElement(givenParent), UAnnotationEx, UAnchorOwner {
+) : KotlinAbstractUElement(givenParent), UAnnotationEx, UAnchorOwner, UMultiResolvable {
 
     abstract override val javaPsi: PsiAnnotation?
 
@@ -60,7 +62,7 @@ abstract class KotlinUAnnotationBase<T : KtCallElement>(
 
     protected abstract fun computeClassDescriptor(): ClassDescriptor?
 
-    override fun resolve(): PsiClass? = computeClassDescriptor()?.toSource()?.getMaybeLightElement(this) as? PsiClass
+    override fun resolve(): PsiClass? = computeClassDescriptor()?.toSource()?.getMaybeLightElement() as? PsiClass
 
     override fun findAttributeValue(name: String?): UExpression? =
         findDeclaredAttributeValue(name) ?: findAttributeDefaultValue(name ?: "value")
@@ -100,6 +102,8 @@ abstract class KotlinUAnnotationBase<T : KtCallElement>(
         }
         return superParent
     }
+
+    override fun multiResolve(): Iterable<ResolveResult> = sourcePsi.multiResolveResults().asIterable()
 }
 
 class KotlinUAnnotation(
@@ -117,9 +121,7 @@ class KotlinUAnnotation(
     override val uastAnchor by lazy {
         KotlinUIdentifier(
             javaPsi?.nameReferenceElement,
-            annotationEntry.typeReference?.typeElement?.let {
-                (it as? KtUserType)?.referenceExpression?.getReferencedNameElement() ?: it.navigationElement
-            },
+            annotationEntry.typeReference?.nameElement,
             this
         )
     }

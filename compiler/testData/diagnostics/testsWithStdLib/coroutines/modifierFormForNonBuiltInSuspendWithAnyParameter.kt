@@ -1,5 +1,4 @@
 // !LANGUAGE: +ReleaseCoroutines
-// !API_VERSION: 1.3
 // SKIP_TXT
 
 fun <R> suspend(block: R) = block

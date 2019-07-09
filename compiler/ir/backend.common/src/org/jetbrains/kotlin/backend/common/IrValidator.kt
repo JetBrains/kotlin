@@ -19,23 +19,27 @@ package org.jetbrains.kotlin.backend.common
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 fun validateIrFile(context: CommonBackendContext, irFile: IrFile) {
-    val visitor = IrValidator(context, false)
+    val visitor = IrValidator(context, IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = false))
     irFile.acceptVoid(visitor)
 }
 
 fun validateIrModule(context: CommonBackendContext, irModule: IrModuleFragment) {
-    val visitor = IrValidator(context, true) // TODO: consider taking the boolean from settings.
+    val visitor = IrValidator(
+        context,
+        IrValidatorConfig(abortOnError = false, ensureAllNodesAreDifferent = true)
+    ) // TODO: consider taking the boolean from settings.
     irModule.acceptVoid(visitor)
 
     // TODO: also check that all referenced symbol targets are reachable.
 }
 
-private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile, irElement: IrElement) {
+private fun CommonBackendContext.reportIrValidationError(message: String, irFile: IrFile?, irElement: IrElement) {
     try {
         this.reportWarning("[IR VALIDATION] $message", irFile, irElement)
     } catch (e: Throwable) {
@@ -45,10 +49,17 @@ private fun CommonBackendContext.reportIrValidationError(message: String, irFile
     // TODO: throw an exception after fixing bugs leading to invalid IR.
 }
 
-private class IrValidator(val context: CommonBackendContext, performHeavyValidations: Boolean) : IrElementVisitorVoid {
+data class IrValidatorConfig(
+    val abortOnError: Boolean,
+    val ensureAllNodesAreDifferent: Boolean,
+    val checkTypes: Boolean = true,
+    val checkDescriptors: Boolean = true
+)
 
-    val builtIns = context.builtIns
-    lateinit var currentFile: IrFile
+class IrValidator(val context: CommonBackendContext, val config: IrValidatorConfig) : IrElementVisitorVoid {
+
+    val irBuiltIns = context.irBuiltIns
+    var currentFile: IrFile? = null
 
     override fun visitFile(declaration: IrFile) {
         currentFile = declaration
@@ -58,15 +69,49 @@ private class IrValidator(val context: CommonBackendContext, performHeavyValidat
     private fun error(element: IrElement, message: String) {
         // TODO: render all element's parents.
         context.reportIrValidationError(
-                "$message\n" +
-                        element.render(),
-                currentFile, element)
+            "$message\n" + element.render(),
+            currentFile,
+            element
+        )
+
+        if (config.abortOnError) {
+            error("Validation failed")
+        }
     }
 
-    private val elementChecker = CheckIrElementVisitor(builtIns, this::error, performHeavyValidations)
+    private val elementChecker = CheckIrElementVisitor(irBuiltIns, this::error, config)
 
     override fun visitElement(element: IrElement) {
         element.acceptVoid(elementChecker)
         element.acceptChildrenVoid(this)
     }
 }
+
+fun IrModuleFragment.checkDeclarationParents() {
+    this.accept(CheckDeclarationParentsVisitor, null)
+}
+
+object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
+
+    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
+        element.acceptChildren(this, element as? IrDeclarationParent ?: data)
+    }
+
+    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
+        checkParent(declaration, data)
+        super.visitDeclaration(declaration, data)
+    }
+
+    private fun checkParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?) {
+        val parent = try {
+            declaration.parent
+        } catch (e: Throwable) {
+            error("$declaration for ${declaration.descriptor} has no parent")
+        }
+
+        if (parent != expectedParent) {
+            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
+        }
+    }
+}
+

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class A(val x : Int, val y : A?)
 
 fun check(a : A?) : Int {

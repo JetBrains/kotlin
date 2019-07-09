@@ -20,8 +20,9 @@ import com.intellij.lang.SmartEnterProcessorWithFixers
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
+import kotlin.math.min
 
-abstract class MissingConditionFixer<T: PsiElement> : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
+abstract class MissingConditionFixer<T : PsiElement> : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {
     override fun apply(editor: Editor, processor: KotlinSmartEnterHandler, element: PsiElement) {
         val workElement = getElement(element) ?: return
 
@@ -35,19 +36,17 @@ abstract class MissingConditionFixer<T: PsiElement> : SmartEnterProcessorWithFix
                 var stopOffset = doc.getLineEndOffset(doc.getLineNumber(workElement.range.start))
                 val then = getBody(workElement)
                 if (then != null) {
-                    stopOffset = Math.min(stopOffset, then.range.start)
+                    stopOffset = min(stopOffset, then.range.start)
                 }
 
-                stopOffset = Math.min(stopOffset, workElement.range.end)
+                stopOffset = min(stopOffset, workElement.range.end)
 
                 doc.replaceString(workElement.range.start, stopOffset, "$keyword ()")
                 processor.registerUnresolvedError(workElement.range.start + "$keyword (".length)
-            }
-            else {
+            } else {
                 processor.registerUnresolvedError(lParen.range.end)
             }
-        }
-        else {
+        } else {
             if (rParen == null) {
                 doc.insertString(condition.range.end, ")")
             }

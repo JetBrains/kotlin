@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface Callable {
     fun call(b: Boolean)
 }

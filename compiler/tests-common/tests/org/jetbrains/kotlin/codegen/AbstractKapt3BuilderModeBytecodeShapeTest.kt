@@ -29,9 +29,9 @@ abstract class AbstractKapt3BuilderModeBytecodeShapeTest : CodegenTestCase() {
         }
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: MutableList<TestFile>) {
+        compile(files)
         val txtFile = File(wholeFile.parentFile, wholeFile.nameWithoutExtension + ".txt")
-        compile(files, javaFilesDir)
         KotlinTestUtils.assertEqualsToFile(txtFile, BytecodeListingTextCollectingVisitor.getText(classFileFactory))
     }
 

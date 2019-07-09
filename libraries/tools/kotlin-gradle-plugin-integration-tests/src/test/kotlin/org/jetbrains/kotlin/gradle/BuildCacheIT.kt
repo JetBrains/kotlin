@@ -135,27 +135,12 @@ class BuildCacheIT : BaseGradleIT() {
     }
 
     @Test
-    fun testKaptCachingDisabledByDefault() = with(Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")) {
+    fun testKaptCachingEnabledByDefault() = with(Project("simple", GRADLE_VERSION, directoryPrefix = "kapt2")) {
         prepareLocalBuildCache()
-
-        build("build") {
-            assertSuccessful()
-            assertContains("Packing task ':kaptGenerateStubsKotlin'")
-            assertNotContains("Packing task ':kaptKotlin'")
-            assertContains("Caching disabled for task ':kaptKotlin': 'Caching is disabled by default for kapt")
-        }
-
-        File(projectDir, "build.gradle").appendText(
-            "\n" + """
-            afterEvaluate {
-                kaptKotlin.useBuildCache = true
-            }
-            """.trimIndent()
-        )
 
         build("clean", "build") {
             assertSuccessful()
-            assertContains(":kaptGenerateStubsKotlin FROM-CACHE")
+            assertContains("Packing task ':kaptGenerateStubsKotlin'")
             assertContains("Packing task ':kaptKotlin'")
         }
 
@@ -163,6 +148,21 @@ class BuildCacheIT : BaseGradleIT() {
             assertSuccessful()
             assertContains(":kaptGenerateStubsKotlin FROM-CACHE")
             assertContains(":kaptKotlin FROM-CACHE")
+        }
+
+        File(projectDir, "build.gradle").appendText(
+            "\n" + """
+            afterEvaluate {
+                kaptKotlin.useBuildCache = false
+            }
+            """.trimIndent()
+        )
+
+        build("clean", "build") {
+            assertSuccessful()
+            assertContains(":kaptGenerateStubsKotlin FROM-CACHE")
+            assertNotContains(":kaptKotlin FROM-CACHE")
+            assertContains("Caching disabled for task ':kaptKotlin': 'Caching is disabled for kapt")
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.sources
@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinNativeCompile
 
 internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
     private var languageVersionImpl: LanguageVersion? = null
@@ -70,7 +70,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginOptionsTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginOptionsTask) {
                 is AbstractKotlinCompile<*> -> pluginOptionsTask.pluginOptions
-                is KotlinNativeCompile -> pluginOptionsTask.compilerPluginOptions
+                is AbstractKotlinNativeCompile -> pluginOptionsTask.compilerPluginOptions
                 else -> error("Unexpected task: $pluginOptionsTask")
             }.arguments
         }
@@ -80,7 +80,7 @@ internal class DefaultLanguageSettingsBuilder : LanguageSettingsBuilder {
             val pluginClasspathTask = compilerPluginOptionsTask.value ?: return null
             return when (pluginClasspathTask) {
                 is AbstractKotlinCompile<*> -> pluginClasspathTask.pluginClasspath
-                is KotlinNativeCompile -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
+                is AbstractKotlinNativeCompile -> pluginClasspathTask.compilerPluginClasspath ?: pluginClasspathTask.project.files()
                 else -> error("Unexpected task: $pluginClasspathTask")
             }
         }

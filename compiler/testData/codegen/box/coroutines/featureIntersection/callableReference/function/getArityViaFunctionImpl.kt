@@ -1,10 +1,6 @@
-// !LANGUAGE: +ReleaseCoroutines
-// !API_VERSION: 1.3
-// TODO: muted automatically, investigate should it be ran for JS or not
+// TARGET_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS, NATIVE, JS_IR
 // IGNORE_LIGHT_ANALYSIS
-
 // WITH_RUNTIME
 // WITH_COROUTINES
 

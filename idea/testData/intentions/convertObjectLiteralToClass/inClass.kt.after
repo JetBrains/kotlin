@@ -1,9 +1,9 @@
 class Test { // TARGET_BLOCK:
     fun foo() {
-        O()
+        Runnable1()
     }
 
-    class O : Runnable {
+    class Runnable1 : Runnable {
         override fun run() {
         }
     }

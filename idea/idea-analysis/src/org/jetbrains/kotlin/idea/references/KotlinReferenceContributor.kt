@@ -16,8 +16,6 @@
 
 package org.jetbrains.kotlin.idea.references
 
-import com.intellij.psi.PsiReference
-import com.intellij.psi.PsiReferenceRegistrar
 import org.jetbrains.kotlin.idea.kdoc.KDocReference
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtImportDirective
@@ -26,24 +24,27 @@ import org.jetbrains.kotlin.psi.KtPackageDirective
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.psiUtil.parents
 
-class KotlinReferenceContributor() : AbstractKotlinReferenceContributor() {
-    override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
+internal class KotlinReferenceContributor : KotlinReferenceProviderContributor {
+    override fun registerReferenceProviders(registrar: KotlinPsiReferenceRegistrar) {
         with(registrar) {
             registerProvider(factory = ::KtSimpleNameReference)
 
-            registerMultiProvider<KtNameReferenceExpression> {
-                if (it.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
-                if (it.parents.any { it is KtImportDirective || it is KtPackageDirective || it is KtUserType }) {
+            registerMultiProvider<KtNameReferenceExpression> { nameReferenceExpression ->
+                if (nameReferenceExpression.getReferencedNameElementType() != KtTokens.IDENTIFIER) return@registerMultiProvider emptyArray()
+                if (nameReferenceExpression.parents.any { it is KtImportDirective || it is KtPackageDirective || it is KtUserType }) {
                     return@registerMultiProvider emptyArray()
                 }
 
-                when (it.readWriteAccess(useResolveForReadWrite = false)) {
+                when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = false)) {
                     ReferenceAccess.READ ->
-                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it))
+                        arrayOf(SyntheticPropertyAccessorReference.Getter(nameReferenceExpression))
                     ReferenceAccess.WRITE ->
-                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Setter(it))
+                        arrayOf(SyntheticPropertyAccessorReference.Setter(nameReferenceExpression))
                     ReferenceAccess.READ_WRITE ->
-                        arrayOf<PsiReference>(SyntheticPropertyAccessorReference.Getter(it), SyntheticPropertyAccessorReference.Setter(it))
+                        arrayOf(
+                            SyntheticPropertyAccessorReference.Getter(nameReferenceExpression),
+                            SyntheticPropertyAccessorReference.Setter(nameReferenceExpression)
+                        )
                 }
             }
 

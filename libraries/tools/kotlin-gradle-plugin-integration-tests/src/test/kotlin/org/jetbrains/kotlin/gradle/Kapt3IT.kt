@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.tasks.USING_INCREMENTAL_COMPILATION_MESSAGE
+import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Assert
+import org.junit.Assume
 import org.junit.Test
 import java.io.File
 import java.util.zip.ZipFile
@@ -42,6 +43,55 @@ abstract class Kapt3BaseIT : BaseGradleIT() {
 class Kapt3WorkersIT : Kapt3IT() {
     override fun kaptOptions(): KaptOptions =
         super.kaptOptions().copy(useWorkers = true)
+
+    @Test
+    fun testJavacIsLoadedOnce() {
+        // todo: actual minimum version is 4.3, but I had some problems. Investigate later.
+        // todo: consider minimum version for the whole class, with Gradle <4.3 all tests duplicate tests without workers
+        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.5.1")
+
+        val project =
+            Project("javacIsLoadedOnce", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build") {
+            assertSuccessful()
+            assertSubstringCount("Loaded com.sun.tools.javac.util.Context from", 1)
+        }
+    }
+
+    @Test
+    fun testKaptSkipped() {
+        val gradleVersionRequired = GradleVersionRequired.AtLeast("4.3")
+
+        val project =
+            Project("kaptSkipped", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build") {
+            assertSuccessful()
+        }
+    }
+
+    private fun testSimpleWithCustomJdk(gradleVersion: String, javaHome: File, jdkDescription: String) {
+        val gradleVersionRequired = GradleVersionRequired.AtLeast(gradleVersion)
+
+        Assume.assumeTrue("$jdkDescription isn't available", javaHome.isDirectory)
+        val options = defaultBuildOptions().copy(javaHome = javaHome)
+
+        val project =
+            Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+        project.build("build", options = options) {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+    }
+
+    @Test
+    fun testSimpleWithJdk10() {
+        testSimpleWithCustomJdk("4.7", File(System.getProperty("jdk10Home")!!), "JDK 10")
+    }
+
+    @Test
+    fun testSimpleWithJdk11() {
+        testSimpleWithCustomJdk("5.0", File(System.getProperty("jdk11Home")!!), "JDK 11")
+    }
 }
 
 open class Kapt3IT : Kapt3BaseIT() {
@@ -125,7 +175,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         project.build("build", options = defaultBuildOptions().copy(incremental = false)) {
             assertSuccessful()
             assertTasksExecuted(":kaptGenerateStubsKotlin")
-            assertNotContains(USING_INCREMENTAL_COMPILATION_MESSAGE)
+            assertNotContains(USING_JVM_INCREMENTAL_COMPILATION_MESSAGE)
         }
     }
 
@@ -294,28 +344,6 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @Test
-    fun testKaptClassesDirSync() {
-        val project = Project("autoService", GradleVersionRequired.Exact("3.5"), directoryPrefix = "kapt2")
-
-        project.build("build") {
-            assertSuccessful()
-            assertKaptSuccessful()
-            assertFileExists("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
-            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
-        }
-
-        project.projectDir.getFileByName("MyProcessor.kt").modify {
-            it.replace("@AutoService(Processor::class)", "")
-        }
-
-        project.build(":processor:build") {
-            assertSuccessful()
-            assertNoSuchFile("processor/build/classes/main/META-INF/services/javax.annotation.processing.Processor")
-            assertFileExists("processor/build/classes/main/processor/MyProcessor.class")
-        }
-    }
-
     /**
      * Tests that compile arguments are properly copied from compileKotlin to kaptTask
      */
@@ -395,6 +423,16 @@ open class Kapt3IT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testNoKaptPluginApplied() {
+        val project = Project("nokapt", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertFailed()
+            assertContains("Could not find method kapt() for arguments")
+        }
+    }
+
+    @Test
     fun testChangesInLocalAnnotationProcessor() {
         val project = Project("localAnnotationProcessor", directoryPrefix = "kapt2")
 
@@ -430,6 +468,77 @@ open class Kapt3IT : Kapt3BaseIT() {
         build("tasks") {
             assertSuccessful()
             assertNotContains("Resolved!")
+        }
+    }
+
+    @Test
+    fun testDisableDiscoveryInCompileClasspath() = with(Project("kaptAvoidance", directoryPrefix = "kapt2")) {
+        setupWorkingDir()
+        val buildGradle = projectDir.resolve("app/build.gradle")
+        buildGradle.modify {
+            it.addBeforeSubstring("//", "kapt \"org.jetbrains.kotlin")
+        }
+        build("assemble") {
+            assertSuccessful()
+            assertContains("Annotation processors discovery from compile classpath is deprecated")
+        }
+
+        buildGradle.modify {
+            "$it\n\nkapt.includeCompileClasspath = false"
+        }
+        build("assemble") {
+            assertFailed()
+            assertNotContains("Annotation processors discovery from compile classpath is deprecated")
+        }
+    }
+
+
+    @Test
+    fun testKaptAvoidance() = with(Project("kaptAvoidance", directoryPrefix = "kapt2")) {
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin",
+                ":app:compileKotlin",
+                ":app:compileJava",
+                ":lib:compileKotlin"
+            )
+        }
+
+        val original = "fun foo() = 0"
+        val replacement1 = "fun foo() = 1"
+        val replacement2 = "fun foo() = 2"
+        val libClassKt = projectDir.getFileByName("LibClass.kt")
+        libClassKt.modify { it.checkedReplace(original, replacement1) }
+
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(
+                ":lib:compileKotlin",
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        // enable discovery
+        projectDir.resolve("app/build.gradle").modify {
+            "$it\n\nkapt.includeCompileClasspath = false"
+        }
+        build("assemble") {
+            assertSuccessful()
+            assertTasksUpToDate(":lib:compileKotlin")
+            assertTasksExecuted(
+                ":app:kaptGenerateStubsKotlin",
+                ":app:kaptKotlin"
+            )
+        }
+
+        libClassKt.modify { it.checkedReplace(replacement1, replacement2) }
+        build("assemble") {
+            assertSuccessful()
+            assertTasksExecuted(":lib:compileKotlin", ":app:kaptGenerateStubsKotlin")
+            assertTasksUpToDate(":app:kaptKotlin")
         }
     }
 
@@ -492,5 +601,44 @@ open class Kapt3IT : Kapt3BaseIT() {
         gradleBuildScript().appendText("\ndependencies { implementation project(':simple') }")
 
         testResolveAllConfigurations()
+    }
+
+    @Test
+    fun testMPPKaptPresence() {
+        val project = Project("mpp-kapt-presence", directoryPrefix = "kapt2")
+
+        project.build("build") {
+            assertSuccessful()
+            assertTasksExecuted(":dac:jdk:kaptGenerateStubsKotlin", ":dac:jdk:compileKotlin")
+        }
+    }
+
+    /** Regression test for KT-31127. */
+    @Test
+    fun testKotlinProcessorUsingFiler() {
+        val project = Project("kotlinProject").apply {
+            setupWorkingDir()
+            gradleBuildScript().appendText("""
+                apply plugin: 'kotlin-kapt'
+
+                dependencies {
+                   kapt "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                   implementation "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                }
+            """.trimIndent())
+
+            // The test must not contain any java sources in order to detect the issue.
+            Assert.assertEquals(emptyList<File>(), projectDir.allJavaFiles().toList())
+            projectDir.getFileByName("Dummy.kt").modify {
+                it.replace("class Dummy", "@example.KotlinFilerGenerated class Dummy")
+            }
+        }
+
+        project.build("build") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/main/demo/DummyGenerated.kt")
+            assertTasksExecuted(":compileKotlin")
+            assertTasksSkipped(":compileJava")
+        }
     }
 }

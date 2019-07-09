@@ -1,29 +1,28 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.utils.commonSupertype
-import org.jetbrains.kotlin.backend.common.utils.isSubtypeOf
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCatchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrElseBranchImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrTryImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 /**
@@ -39,7 +38,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  * is converted into
  *
  * try {}
- * catch (ex: Ex = LCA(Ex1, Ex2, Ex3) {
+ * catch (ex: Ex = LCA(Ex1, Ex2, Ex3)) {
  *   when (ex) {
  *     ex is Ex1 -> catch1((Ex1)ex)
  *     ex is Ex2 -> catch2((Ex2)ex)
@@ -51,15 +50,16 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
  */
 
 class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    val litTrue = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
+    val litTrue get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, true)
     val unitType = context.irBuiltIns.unitType
     val nothingType = context.irBuiltIns.nothingType
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildren(object : IrElementTransformer<IrDeclarationParent> {
 
-            override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent): IrStatement {
-                return super.visitFunction(declaration, declaration)
+            override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent): IrStatement {
+                val parent = (declaration as? IrDeclarationParent) ?: data
+                return super.visitDeclaration(declaration, parent)
             }
 
             override fun visitTry(aTry: IrTry, data: IrDeclarationParent): IrExpression {
@@ -70,7 +70,7 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                 val commonType = mergeTypes(aTry.catches.map { it.catchParameter.type })
 
                 val pendingExceptionDeclaration = JsIrBuilder.buildVar(commonType, data, "\$p")
-                val pendingException = JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol)
+                val pendingException = { JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol) }
 
                 val branches = mutableListOf<IrBranch>()
 
@@ -81,9 +81,9 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                     val typeSymbol = type.classifierOrNull
                     val castedPendingException = {
                         if (type !is IrDynamicType)
-                            buildImplicitCast(pendingException, type, typeSymbol!!)
+                            buildImplicitCast(pendingException(), type, typeSymbol!!)
                         else
-                            pendingException
+                            pendingException()
                     }
 
                     val catchBody = catch.result.transform(object : IrElementTransformer<IrValueSymbol> {
@@ -98,14 +98,14 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
                         branches += IrElseBranchImpl(catch.startOffset, catch.endOffset, litTrue, catchBody)
                         break
                     } else {
-                        val typeCheck = buildIsCheck(pendingException, type, typeSymbol!!)
+                        val typeCheck = buildIsCheck(pendingException(), type, typeSymbol!!)
                         branches += IrBranchImpl(catch.startOffset, catch.endOffset, typeCheck, catchBody)
                     }
                 }
 
 
                 if (commonType !is IrDynamicType) {
-                    val throwStatement = JsIrBuilder.buildThrow(nothingType, pendingException)
+                    val throwStatement = JsIrBuilder.buildThrow(nothingType, pendingException())
                     branches += IrElseBranchImpl(litTrue, JsIrBuilder.buildBlock(nothingType, listOf(throwStatement)))
                 }
 
@@ -124,8 +124,21 @@ class MultipleCatchesLowering(val context: JsIrBackendContext) : FileLoweringPas
             private fun buildImplicitCast(value: IrExpression, toType: IrType, toTypeSymbol: IrClassifierSymbol) =
                 JsIrBuilder.buildTypeOperator(toType, IrTypeOperator.IMPLICIT_CAST, value, toType, toTypeSymbol)
 
-            private fun mergeTypes(types: List<IrType>) = types.commonSupertype().also {
-                assert(it.isSubtypeOf(context.irBuiltIns.throwableType) || it is IrDynamicType)
+            private fun mergeTypes(types: List<IrType>): IrType {
+
+                return types.firstOrNull { it is IrDynamicType } ?: run {
+
+                    val superClassifier =
+                        types.map { (it as IrSimpleType).classifier }.commonSuperclass().also {
+                            assert(it.isSubtypeOfClass(context.irBuiltIns.throwableClass))
+                        }
+
+                    val typeArguments = if (superClassifier is IrClassSymbol) {
+                        superClassifier.owner.typeParameters.map { IrStarProjectionImpl }
+                    } else emptyList<IrTypeArgument>()
+
+                    return IrSimpleTypeImpl(superClassifier, false, typeArguments, emptyList())
+                }
             }
 
         }, irFile)

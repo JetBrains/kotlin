@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -25,6 +25,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.PathUtil
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.CoroutineSupport
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -86,8 +87,11 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
 
     protected fun PsiFile.isKtDsl() = this is KtFile
 
-    private fun isFileConfigured(buildScript: PsiFile): Boolean = with(getManipulator(buildScript)) {
-        isConfiguredWithOldSyntax(kotlinPluginName) || isConfigured(getKotlinPluginExpression(buildScript.isKtDsl()))
+    private fun isFileConfigured(buildScript: PsiFile): Boolean {
+        val manipulator = getManipulatorIfAny(buildScript) ?: return false
+        return with(manipulator) {
+            isConfiguredWithOldSyntax(kotlinPluginName) || isConfigured(getKotlinPluginExpression(buildScript.isKtDsl()))
+        }
     }
 
     @JvmSuppressWildcards
@@ -284,15 +288,18 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         libraryJarDescriptors: List<LibraryJarDescriptor>
     ) {
         val scope = OrderEntryFix.suggestScopeByLocation(module, element)
-        KotlinWithGradleConfigurator.addKotlinLibraryToModule(module, scope, library)
+        addKotlinLibraryToModule(module, scope, library)
     }
 
     companion object {
-        fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> = when (file) {
+        fun getManipulatorIfAny(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*>? = when (file) {
             is KtFile -> KotlinBuildScriptManipulator(file, preferNewSyntax)
             is GroovyFile -> GroovyBuildScriptManipulator(file, preferNewSyntax)
-            else -> error("Unknown build script file type (${file::class.qualifiedName})!")
+            else -> null
         }
+
+        fun getManipulator(file: PsiFile, preferNewSyntax: Boolean = true): GradleBuildScriptManipulator<*> =
+            getManipulatorIfAny(file, preferNewSyntax) ?: error("Unknown build script file type (${file::class.qualifiedName})!")
 
         val GROUP_ID = "org.jetbrains.kotlin"
         val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
@@ -302,8 +309,12 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
         private val KOTLIN_BUILD_SCRIPT_NAME = "build.gradle.kts"
         private val KOTLIN_SETTINGS_SCRIPT_NAME = "settings.gradle.kts"
 
-        fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean) =
-            "$scope \"org.jetbrains.kotlin:$artifactName${if (withVersion) ":\$kotlin_version" else ""}\""
+        fun getGroovyDependencySnippet(artifactName: String, scope: String, withVersion: Boolean, gradleVersion: GradleVersion): String {
+            val updatedScope = gradleVersion.scope(scope)
+            val versionStr = if (withVersion) ":\$kotlin_version" else ""
+
+            return "$updatedScope \"org.jetbrains.kotlin:$artifactName$versionStr\""
+        }
 
         fun getGroovyApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 

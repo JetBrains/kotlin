@@ -94,35 +94,32 @@ class DeserializedDescriptorResolver {
         get() = !components.configuration.skipMetadataVersionCheck &&
                 classHeader.isPreRelease && classHeader.metadataVersion == KOTLIN_1_3_M1_METADATA_VERSION
 
-    internal fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
+    private fun readData(kotlinClass: KotlinJvmBinaryClass, expectedKinds: Set<KotlinClassHeader.Kind>): Array<String>? {
         val header = kotlinClass.classHeader
         return (header.data ?: header.incompatibleData)?.takeIf { header.kind in expectedKinds }
     }
 
-    private inline fun <T : Any> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T? {
+    private inline fun <T : Any> parseProto(klass: KotlinJvmBinaryClass, block: () -> T): T? =
         try {
             try {
-                return block()
-            }
-            catch (e: InvalidProtocolBufferException) {
+                block()
+            } catch (e: InvalidProtocolBufferException) {
                 throw IllegalStateException("Could not read data from ${klass.location}", e)
             }
-        }
-        catch (e: Throwable) {
+        } catch (e: Throwable) {
             if (skipMetadataVersionCheck || klass.classHeader.metadataVersion.isCompatible()) {
                 throw e
             }
 
             // TODO: log.warn
-            return null
+            null
         }
-    }
 
     companion object {
         internal val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
 
         private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
-                setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+            setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
 
         private val KOTLIN_1_1_EAP_METADATA_VERSION = JvmMetadataVersion(1, 1, 2)
 

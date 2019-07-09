@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun <T> runAfterLoop(fn: () -> T): T {
     for (i in 1..2);
     return fn()
@@ -11,7 +12,8 @@ fun foo() : String {
     return foobar(1, 2L, bar(3, 4L, 5.toByte(), "6"), 7.toByte())
 }
 
-// 9 ISTORE
+// fake inline variables occupy 7 ISTOREs.
+// 16 ISTORE
 // 13 ILOAD
 // 2 ASTORE
 // 8 ALOAD

@@ -10,4 +10,4 @@ fun testSome(): Boolean {
     return false
 }
 
-// 2 +3 4 2 7 10
+// 2 3 4 2 7 10

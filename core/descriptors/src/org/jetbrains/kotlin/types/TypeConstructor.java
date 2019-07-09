@@ -22,11 +22,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface TypeConstructor {
+public interface TypeConstructor extends TypeConstructorMarker {
     /**
      * It may differ from ClassDescriptor.declaredParameters if the class is inner, in such case
      * it also contains additional parameters from outer declarations.

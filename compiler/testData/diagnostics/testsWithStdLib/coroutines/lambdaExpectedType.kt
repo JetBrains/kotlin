@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !CHECK_TYPE
 // !DIAGNOSTICS: -UNUSED_PARAMETER -ASSIGNED_BUT_NEVER_ACCESSED_VARIABLE -UNUSED_VALUE -UNUSED_VARIABLE
 
@@ -30,7 +31,7 @@ fun foo() {
     genericBuilder<Int> { <!TYPE_MISMATCH!>""<!> }
 
     val y = { 1 }
-    <!TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
+    <!OI;TYPE_INFERENCE_PARAMETER_CONSTRAINT_ERROR!>genericBuilder<!>(<!TYPE_MISMATCH!>y<!>)
 
     unitBuilder {}
     unitBuilder { <!UNUSED_EXPRESSION!>1<!> }

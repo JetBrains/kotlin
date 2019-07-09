@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 val cs: CharSequence = "abcd"
 
 fun box(): String {

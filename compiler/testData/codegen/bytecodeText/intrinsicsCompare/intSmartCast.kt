@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun equals3(a: Int?, b: Int?) = a != null && b != null && a == b
 
 fun equals4(a: Int?, b: Int?) = if (a is Int && b is Int) a == b else null!!

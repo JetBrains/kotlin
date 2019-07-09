@@ -1,6 +1,6 @@
 fun println(s: String) {}
 
 fun foo() {
-    <caret>println("")
+    println("")
     1
 }

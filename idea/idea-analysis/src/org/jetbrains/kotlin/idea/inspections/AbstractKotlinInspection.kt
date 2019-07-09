@@ -20,10 +20,15 @@ import com.intellij.codeHighlighting.HighlightDisplayLevel
 import com.intellij.codeInspection.*
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.util.parents
 import org.jetbrains.kotlin.asJava.unwrapped
 import org.jetbrains.kotlin.caches.resolve.KotlinCacheService
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.highlighter.createSuppressWarningActions
+import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.KtValVarKeywordOwner
 
 abstract class AbstractKotlinInspection : LocalInspectionTool(), CustomSuppressableInspectionTool {
     override fun getSuppressActions(element: PsiElement?): Array<SuppressIntentionAction>? {
@@ -68,6 +73,21 @@ abstract class AbstractKotlinInspection : LocalInspectionTool(), CustomSuppressa
         if (!isOnTheFly && highlightType == ProblemHighlightType.INFORMATION) return
         val problemDescriptor = manager.createProblemDescriptor(element, range, description, highlightType, isOnTheFly, *fixes)
         registerProblem(problemDescriptor)
+    }
+
+    // a workaround for IDEA-211491
+    override fun getProblemElement(psiElement: PsiElement): PsiNamedElement? {
+        val parent = psiElement.parents().firstOrNull { parent ->
+            when (parent) {
+                is KtPropertyAccessor -> true
+                is KtNamedDeclaration -> parent !is KtValVarKeywordOwner || parent.valOrVarKeyword != null
+                else -> false
+            }
+        }
+        if (parent is KtPropertyAccessor) {
+            return parent.property
+        }
+        return super.getProblemElement(psiElement)
     }
 }
 

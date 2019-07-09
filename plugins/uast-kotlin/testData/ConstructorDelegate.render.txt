@@ -1,0 +1,25 @@
+public final class ConstructorDelegateKt {
+    public static final fun createBase(@org.jetbrains.annotations.NotNull i: int) : Base {
+        return <init>(i)
+    }
+}
+
+public abstract interface Base {
+    public abstract fun print() : void = UastEmptyExpression
+}
+
+public final class BaseImpl : Base {
+    @org.jetbrains.annotations.NotNull private final var x: int
+    public fun print() : void {
+        print(x)
+    }
+    public final fun getX() : int = UastEmptyExpression
+    public fun BaseImpl(@org.jetbrains.annotations.NotNull x: int) = UastEmptyExpression
+}
+
+public final class Derived : Base, java.lang.CharSequence {
+    public fun Derived(@org.jetbrains.annotations.NotNull b: Base) = UastEmptyExpression
+    public fun getLength() : int = UastEmptyExpression
+    public fun get(@null index: int) : char = UastEmptyExpression
+    public fun subSequence(@null startIndex: int, @null endIndex: int) : java.lang.CharSequence = UastEmptyExpression
+}

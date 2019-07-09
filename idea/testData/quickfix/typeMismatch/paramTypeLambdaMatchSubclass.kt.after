@@ -1,0 +1,9 @@
+// "Surround with lambda" "true"
+fun subclass() {
+    base({ Leaf() })
+}
+
+fun base(base: () -> Base) {}
+
+open class Base {}
+class Leaf : Base()

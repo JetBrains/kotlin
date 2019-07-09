@@ -17,7 +17,7 @@ fun foo(x: Any?, y: C<*>) {
 
     with(x) {
         if (this is C<*>) {
-            <!OI;MEMBER_PROJECTED_OUT, DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
+            <!DEBUG_INFO_IMPLICIT_RECEIVER_SMARTCAST, OI;MEMBER_PROJECTED_OUT!>bindTo<!>(<!NI;TYPE_MISMATCH!>""<!>)
         }
     }
 }

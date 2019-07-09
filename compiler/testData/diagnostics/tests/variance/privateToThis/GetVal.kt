@@ -15,23 +15,23 @@ class Test<in I, out O> {
         apply(this.i)
         with(Test<I, O>()) {
             apply(i) // resolved to this@Test.i
-            apply(this.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!>)
-            apply(this@with.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!>)
+            apply(this.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!>)
+            apply(this@with.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!>)
             apply(this@Test.i)
         }
     }
 
     fun <I, O> test(t: Test<I, O>) {
-        t.apply(t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!>)
+        t.apply(t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!>)
     }
 
     companion object {
         fun <I, O> test(t: Test<I, O>) {
-            t.apply(t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!>)
+            t.apply(t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!>)
         }
     }
 }
 
 fun <I, O> test(t: Test<I, O>) {
-    t.apply(t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!>)
+    t.apply(t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!>)
 }

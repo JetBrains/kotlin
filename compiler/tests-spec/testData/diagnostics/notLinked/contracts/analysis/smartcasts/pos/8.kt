@@ -1,4 +1,3 @@
-// !WITH_CONTRACT_FUNCTIONS
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -7,6 +6,7 @@
  * SECTIONS: contracts, analysis, smartcasts
  * NUMBER: 8
  * DESCRIPTION: Smartcasts using some Returns effects.
+ * HELPERS: contractFunctions
  */
 
 // FILE: contracts.kt

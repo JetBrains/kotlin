@@ -1,3 +1,0 @@
-// INSPECTION_CLASS: com.intellij.spring.model.highlighting.config.SpringFacetUastInspection
-// FIXTURE_CLASS: org.jetbrains.kotlin.idea.spring.tests.SpringTestFixtureExtension
-// FORBID_SPRING_FILE_SET_AUTOCONFIGURE

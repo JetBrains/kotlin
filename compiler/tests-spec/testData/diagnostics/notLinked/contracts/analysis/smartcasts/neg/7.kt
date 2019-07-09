@@ -246,7 +246,7 @@ fun case_4(value_1: Any?) {
     value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
     case_4_2(<!TYPE_MISMATCH!>value_1<!>)
     <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte()
-    case_4_3(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>value_1<!>)
+    case_4_3(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>value_1<!>)
     <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
 }
 
@@ -340,28 +340,28 @@ fun case_8(value_1: Any?) {
         value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
         if (case_8_2(<!TYPE_MISMATCH!>value_1<!>)) {
             <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte()
-            if (case_8_3(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>value_1<!>)) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
+            if (case_8_3(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>value_1<!>)) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
         }
     }
     if (!case_8_4(value_1)) {
         value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
         if (!case_8_5(<!TYPE_MISMATCH!>value_1<!>)) {
             <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte()
-            if (!case_8_6(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>value_1<!>)) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
+            if (!case_8_6(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>value_1<!>)) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
         }
     }
     if (case_8_7(value_1) == null) {
         value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
         if (case_8_8(<!TYPE_MISMATCH!>value_1<!>) != null) {
             <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte()
-            if (case_8_9(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>value_1<!>) != null) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
+            if (case_8_9(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>value_1<!>) != null) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
         }
     }
     if (case_8_10(value_1) != null) {
         value_1?.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>toByte<!>()
         if (case_8_11(<!TYPE_MISMATCH!>value_1<!>) == null) {
             <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!>toByte()
-            if (case_8_12(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>value_1<!>) == null) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
+            if (case_8_12(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>value_1<!>) == null) <!DEBUG_INFO_CONSTANT!>value_1<!><!UNSAFE_CALL!>.<!><!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_CLASS!>inv<!>()
         }
     }
 }

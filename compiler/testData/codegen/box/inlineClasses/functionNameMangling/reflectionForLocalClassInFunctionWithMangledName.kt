@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR, JS, JS_IR, NATIVE
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 import kotlin.test.*
 
@@ -11,10 +11,15 @@ fun test(s: S) {
     val localKClass = Local::class
     val localJClass = localKClass.java
 
-    assertEquals("test\$Local", localKClass.simpleName)
+    val kName = localKClass.simpleName
+    // See https://youtrack.jetbrains.com/issue/KT-29413
+    // assertEquals("Local", kName)
+    if (kName != "Local" && kName != "test\$Local") throw AssertionError("Fail KClass: $kName")
 
     assertTrue { localJClass.isLocalClass }
-    assertEquals("test\$Local", localJClass.simpleName)
+
+    val jName = localJClass.simpleName
+    if (jName != "Local" && jName != "test\$Local") throw AssertionError("Fail java.lang.Class: $jName")
 }
 
 fun box(): String {

@@ -5,6 +5,16 @@ class C {
         @JvmName("set_rwProp")
         set(v) {}
 
+    @get:JvmName("xyz1")
+    @set:JvmName("xyz2")
+    var xyz: String
+        get() = ""
+        set(value) {}
+
+    @get:JvmName("hasBigArity")
+    val hasBigArity: Boolean
+        get() = true
+
     fun getRwProp(): Int = 123
     fun setRwProp(v: Int) {}
 

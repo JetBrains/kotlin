@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 import kotlin.reflect.KProperty
 
 class Delegate<T>(var inner: T) {

@@ -20,16 +20,16 @@ import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstitutor
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ReceiverConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.*
-import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.captureFromExpression
 import org.jetbrains.kotlin.types.checker.hasSupertypeWithGivenTypeConstructor
-import org.jetbrains.kotlin.types.lowerIfFlexible
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
-import org.jetbrains.kotlin.types.upperIfFlexible
 
 
 fun checkSimpleArgument(
@@ -65,12 +65,26 @@ private fun checkExpressionArgument(
                 return UnstableSmartCast(expressionArgument, unstableType)
             }
         }
+
+        if (argumentType.isMarkedNullable) {
+            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType, actualExpectedType, position)) return null
+            if (csBuilder.addSubtypeConstraintIfCompatible(argumentType.makeNotNullable(), actualExpectedType, position)) {
+                return ArgumentTypeMismatchDiagnostic(actualExpectedType, argumentType, expressionArgument)
+            }
+        }
+
         csBuilder.addSubtypeConstraint(argumentType, actualExpectedType, position)
         return null
     }
 
     val expectedNullableType = expectedType.makeNullableAsSpecified(true)
     val position = if (isReceiver) ReceiverConstraintPosition(expressionArgument) else ArgumentConstraintPosition(expressionArgument)
+
+    // Used only for arguments with @NotNull annotation
+    if (expectedType is NotNullTypeVariable && argumentType.isMarkedNullable) {
+        diagnosticsHolder.addDiagnostic(ArgumentTypeMismatchDiagnostic(expectedType, argumentType, expressionArgument))
+    }
+
     if (expressionArgument.isSafeCall) {
         if (!csBuilder.addSubtypeConstraintIfCompatible(argumentType, expectedNullableType, position)) {
             diagnosticsHolder.addDiagnosticIfNotNull(
@@ -130,7 +144,11 @@ private fun captureFromTypeParameterUpperBoundIfNeeded(argumentType: UnwrappedTy
                     it.unwrap().hasSupertypeWithGivenTypeConstructor(expectedTypeConstructor)
         }
         if (chosenSupertype != null) {
-            return captureFromExpression(chosenSupertype.unwrap()) ?: argumentType
+            val capturedType = captureFromExpression(chosenSupertype.unwrap())
+            return if (capturedType != null && argumentType.isDefinitelyNotNullType)
+                capturedType.makeDefinitelyNotNullOrNotNull()
+            else
+                capturedType ?: argumentType
         }
     }
 
@@ -153,7 +171,9 @@ private fun checkSubCallArgument(
 
     // subArgument cannot has stable smartcast
     // return type can contains fixed type variables
-    val currentReturnType = csBuilder.buildCurrentSubstitutor().safeSubstitute(subCallArgument.receiver.receiverValue.type.unwrap())
+    val currentReturnType =
+        (csBuilder.buildCurrentSubstitutor() as NewTypeSubstitutor)
+            .safeSubstitute(subCallArgument.receiver.receiverValue.type.unwrap())
     if (subCallArgument.isSafeCall) {
         csBuilder.addSubtypeConstraint(currentReturnType, expectedNullableType, position)
         return subCallResult

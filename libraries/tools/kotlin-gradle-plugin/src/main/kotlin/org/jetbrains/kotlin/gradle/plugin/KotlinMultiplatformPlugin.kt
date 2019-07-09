@@ -24,6 +24,7 @@ import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.logging.kotlinWarn
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 
 abstract class KotlinPlatformPluginBase(protected val platformName: String) : Plugin<Project> {
@@ -84,11 +85,11 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
 
         val incrementalMultiplatform = PropertiesProvider(project).incrementalMultiplatform ?: true
         project.afterEvaluate {
-            project.tasks.withType(AbstractKotlinCompile::class.java).all {
-                if (it.incremental && !incrementalMultiplatform) {
-                    project.logger.debug("IC is turned off for task '${it.path}' because multiplatform IC is not enabled")
+            project.tasks.withType(AbstractKotlinCompile::class.java).all { task ->
+                if (task.incremental && !incrementalMultiplatform) {
+                    task.logger.debug("IC is turned off for task '${task.path}' because multiplatform IC is not enabled")
                 }
-                it.incremental = it.incremental && incrementalMultiplatform
+                task.incremental = task.incremental && incrementalMultiplatform
             }
         }
     }
@@ -161,12 +162,12 @@ open class KotlinPlatformImplementationPluginBase(platformName: String) : Kotlin
     protected open fun addCommonSourceSetToPlatformSourceSet(commonSourceSet: Named, platformProject: Project) {
         platformProject.whenEvaluated {
             // At the point when the source set in the platform module is created, the task does not exist
-            val platformTask = platformProject.tasks
+            val platformTasks = platformProject.tasks
                 .withType(AbstractKotlinCompile::class.java)
-                .singleOrNull { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
+                .filter { it.sourceSetName == commonSourceSet.name } // TODO use strict check once this code is not run in K/N
 
             val commonSources = getKotlinSourceDirectorySetSafe(commonSourceSet)!!
-            if (platformTask != null) {
+            for (platformTask in platformTasks) {
                 platformTask.source(commonSources)
                 platformTask.commonSourceSet += commonSources
             }

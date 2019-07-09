@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -24,7 +13,6 @@ import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analyzer.ModuleInfo
@@ -36,14 +24,14 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.SdkInfo
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinModuleOutOfCodeBlockModificationTracker
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgumentsHolder
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.completion.test.withServiceRegistered
 import org.jetbrains.kotlin.idea.facet.KotlinFacetConfiguration
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
-import org.jetbrains.kotlin.idea.project.KotlinCodeBlockModificationListener
-import org.jetbrains.kotlin.idea.project.KotlinModuleModificationTracker
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.test.allKotlinFiles
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
@@ -51,9 +39,13 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.projectStructure.sdk
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.ANNOTATION_OPTION
 import org.jetbrains.kotlin.samWithReceiver.SamWithReceiverCommandLineProcessor.Companion.PLUGIN_ID
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind.FULL_JDK
+import org.junit.Assert.assertNotEquals
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     override fun getTestDataPath() = PluginTestCaseBase.getTestDataPathBase() + "/multiModuleHighlighting/"
 
@@ -142,30 +134,48 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
             tracker.sdkResolversComputed.clear()
             tracker.moduleResolversComputed.clear()
 
-            val module1ModCount = KotlinCodeBlockModificationListener.getInstance(myProject).getModificationCount(module1)
+            val module1ModTracker = KotlinModuleOutOfCodeBlockModificationTracker(module1)
+            val module2ModTracker = KotlinModuleOutOfCodeBlockModificationTracker(module2)
+            val module3ModTracker = KotlinModuleOutOfCodeBlockModificationTracker(module3)
 
-            val module1ModTracker = KotlinModuleModificationTracker(module1)
-            val module2ModTracker = KotlinModuleModificationTracker(module2)
-            val module3ModTracker = KotlinModuleModificationTracker(module3)
+            val m2ContentRoot = ModuleRootManager.getInstance(module1).contentRoots.single()
+            val m1 = m2ContentRoot.findChild("m1.kt")!!
+            val m1doc = FileDocumentManager.getInstance().getDocument(m1)!!
+            project.executeWriteCommand("a") {
+                m1doc.insertString(m1doc.textLength , "fun foo() = 1")
+                PsiDocumentManager.getInstance(myProject).commitAllDocuments()
+            }
 
-            val contentRoot = ModuleRootManager.getInstance(module2).contentRoots.single()
-            val m2 = contentRoot.findChild("m2.kt")!!
+            // Internal counters should be ready after modifications in m1
+            val afterFirstModification = KotlinModuleOutOfCodeBlockModificationTracker.getModificationCount(module1)
+
+            assertEquals(afterFirstModification, module1ModTracker.modificationCount)
+            assertEquals(afterFirstModification, module2ModTracker.modificationCount)
+            assertEquals(afterFirstModification, module3ModTracker.modificationCount)
+
+            val m1ContentRoot = ModuleRootManager.getInstance(module2).contentRoots.single()
+            val m2 = m1ContentRoot.findChild("m2.kt")!!
             val m2doc = FileDocumentManager.getInstance().getDocument(m2)!!
             project.executeWriteCommand("a") {
                 m2doc.insertString(m2doc.textLength , "fun foo() = 1")
                 PsiDocumentManager.getInstance(myProject).commitAllDocuments()
             }
-            val currentModCount = PsiManager.getInstance(project).modificationTracker.outOfCodeBlockModificationCount
 
-            assertEquals(module1ModCount, KotlinCodeBlockModificationListener.getInstance(myProject).getModificationCount(module1))
-            assertEquals(module1ModCount, module1ModTracker.modificationCount)
+            val currentModCount = KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker.modificationCount
+
+            // Counter for m1 module should be unaffected by modification in m2
+            assertEquals(afterFirstModification, KotlinModuleOutOfCodeBlockModificationTracker.getModificationCount(module1))
+            assertEquals(afterFirstModification, module1ModTracker.modificationCount)
+
+            // Counters for m2 and m3 should be changed
+            assertNotEquals(afterFirstModification, currentModCount)
             assertEquals(currentModCount, module2ModTracker.modificationCount)
             assertEquals(currentModCount, module3ModTracker.modificationCount)
 
             checkHighlightingInProject { project.allKotlinFiles().filter { "m2" in it.name } }
 
             assertEquals(0, tracker.sdkResolversComputed.size)
-            assertEquals(1, tracker.moduleResolversComputed.size)
+            assertEquals(2, tracker.moduleResolversComputed.size)
 
             tracker.moduleResolversComputed.clear()
             (PsiModificationTracker.SERVICE.getInstance(myProject) as PsiModificationTrackerImpl).incOutOfCodeBlockModificationCounter()
@@ -204,12 +214,12 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     fun testSamWithReceiverExtension() {
         val module1 = module("m1").setupKotlinFacet {
             settings.compilerArguments!!.pluginOptions =
-                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.A")
+                arrayOf("plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}=anno.A")
         }
 
         val module2 = module("m2").setupKotlinFacet {
             settings.compilerArguments!!.pluginOptions =
-                    arrayOf("plugin:${PLUGIN_ID}:${ANNOTATION_OPTION.name}=anno.B")
+                arrayOf("plugin:$PLUGIN_ID:${ANNOTATION_OPTION.optionName}=anno.B")
         }
 
 
@@ -304,6 +314,7 @@ open class MultiModuleHighlightingTest : AbstractMultiModuleHighlightingTest() {
     private fun Module.makeJsModule() {
         setupKotlinFacet {
             settings.compilerArguments = K2JSCompilerArguments()
+            settings.targetPlatform = JSLibraryKind.compilerPlatform
         }
     }
 }

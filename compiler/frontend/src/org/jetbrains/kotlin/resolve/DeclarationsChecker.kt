@@ -369,7 +369,7 @@ class DeclarationsChecker(
             upperBoundCheckRequests.add(DescriptorResolver.UpperBoundCheckRequest(name, typeReference, type))
         }
 
-        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests)
+        DescriptorResolver.checkUpperBoundTypes(trace, upperBoundCheckRequests, false)
 
         for (request in upperBoundCheckRequests) {
             DescriptorResolver.checkBounds(request.upperBound, request.upperBoundType, trace)
@@ -926,7 +926,9 @@ class DeclarationsChecker(
         for (parameter in varargParameters) {
             val varargElementType = parameter.varargElementType!!.upperIfFlexible()
             if (KotlinTypeChecker.DEFAULT.isSubtypeOf(varargElementType, nullableNothing) ||
-                (varargElementType.isInlineClassType() && !UnsignedTypes.isUnsignedType(varargElementType))
+                (varargElementType.isInlineClassType() &&
+                        !UnsignedTypes.isUnsignedType(varargElementType) &&
+                        !KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType(varargElementType))
             ) {
                 val parameterDeclaration = DescriptorToSourceUtils.descriptorToDeclaration(parameter) as? KtParameter ?: continue
                 trace.report(FORBIDDEN_VARARG_PARAMETER_TYPE.on(parameterDeclaration, varargElementType))

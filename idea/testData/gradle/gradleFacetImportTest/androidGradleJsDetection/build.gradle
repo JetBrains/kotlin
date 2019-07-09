@@ -1,0 +1,30 @@
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven {
+url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        }
+        jcenter()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:2.3.0"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.0"
+    }
+}
+
+ext {
+    androidBuildToolsVersion = '23.0.1'
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        maven {
+url='https://dl.bintray.com/kotlin/kotlin-eap-1.1'
+        }
+        jcenter()
+    }
+}

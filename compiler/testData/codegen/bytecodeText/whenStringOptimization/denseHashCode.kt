@@ -1,4 +1,3 @@
-
 fun foo() : Int {
     val x : String = "dsa"
     when (x) {

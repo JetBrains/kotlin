@@ -1,0 +1,29 @@
+LineBreakpoint created at fieldGetters.kt:8
+Run Java
+Connected to the target VM
+fieldGetters.kt:8
+Compile bytecode for K1().a
+Compile bytecode for K1().a_field
+Compile bytecode for K2().a
+Compile bytecode for K2().a_field
+Compile bytecode for PublicField().foo
+Compile bytecode for PackagePrivateField().foo
+Compile bytecode for ProtectedField().foo
+Compile bytecode for PrivateField().foo
+Compile bytecode for PublicFieldGetter().foo
+Compile bytecode for PublicFieldGetter().foo_field
+Compile bytecode for PrivateFieldPublicGetter().foo
+Compile bytecode for PrivateFieldPublicGetter().foo_field
+Compile bytecode for PrivateFieldPrivateGetter().foo
+Compile bytecode for PrivateFieldPrivateGetter().foo_field
+Compile bytecode for PublicGetter1().foo
+Compile bytecode for PublicGetter1().foo_field
+Compile bytecode for PublicGetter2().foo
+Compile bytecode for PublicGetter2().foo_field
+Compile bytecode for PrivateGetter1().foo
+Compile bytecode for PublicGetterOnly().foo
+Compile bytecode for PublicFieldAndGetterInParent().foo
+Compile bytecode for PublicFieldAndGetterInParent().foo_field
+Disconnected from the target VM
+
+Process finished with exit code 0

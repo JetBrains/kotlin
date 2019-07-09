@@ -19,15 +19,15 @@ package org.jetbrains.kotlin.contracts.interpretation
 import org.jetbrains.kotlin.contracts.description.expressions.BooleanConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.model.structure.ESConstant
-import org.jetbrains.kotlin.contracts.model.structure.lift
+import org.jetbrains.kotlin.contracts.model.structure.ESConstants
 
 internal class ConstantValuesInterpreter {
     fun interpretConstant(constantReference: ConstantReference): ESConstant? = when (constantReference) {
-        BooleanConstantReference.TRUE -> true.lift()
-        BooleanConstantReference.FALSE -> false.lift()
-        ConstantReference.NULL -> ESConstant.NULL
-        ConstantReference.NOT_NULL -> ESConstant.NOT_NULL
-        ConstantReference.WILDCARD -> ESConstant.WILDCARD
+        BooleanConstantReference.TRUE -> ESConstants.trueValue
+        BooleanConstantReference.FALSE -> ESConstants.falseValue
+        ConstantReference.NULL -> ESConstants.nullValue
+        ConstantReference.NOT_NULL -> ESConstants.notNullValue
+        ConstantReference.WILDCARD -> ESConstants.wildcard
         else -> null
     }
 }

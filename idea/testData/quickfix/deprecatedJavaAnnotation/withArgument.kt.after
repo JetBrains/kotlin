@@ -1,8 +1,4 @@
 // "Replace annotation with kotlin.annotation.Retention" "true"
-// ERROR: Type mismatch: inferred type is RetentionPolicy but AnnotationRetention was expected
 
-import java.lang.annotation.RetentionPolicy
-import kotlin.annotation.Retention
-
-@Retention<caret>(RetentionPolicy.SOURCE)
+@<caret>Retention(AnnotationRetention.SOURCE)
 annotation class Foo

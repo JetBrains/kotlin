@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import java.lang.AssertionError
 import java.math.BigInteger
 
 interface ExpressionConverter {
@@ -399,13 +398,15 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                 }
                 is KtFunction -> if (isTopLevel) {
                     result = if (origin.isExtensionDeclaration()) {
-                        val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
-                        MethodCallExpression.build(qualifier,
-                                                   origin.name!!,
-                                                   convertArguments(expression, isExtension = true),
-                                                   typeArguments,
-                                                   isNullable,
-                                                   dot)
+                        val receiver = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
+                        MethodCallExpression.build(
+                            receiver,
+                            origin.name!!,
+                            convertArguments(expression, isExtension = true),
+                            typeArguments,
+                            isNullable,
+                            dot
+                        )
                     }
                     else {
                         MethodCallExpression.build(null,
@@ -420,13 +421,15 @@ class DefaultExpressionConverter : JavaElementVisitor(), ExpressionConverter {
                     val resolvedQualifier = (methodExpr.qualifier as? PsiReferenceExpression)?.resolve()
                     if (isFacadeClassFromLibrary(resolvedQualifier)) {
                         result = if (target.isKotlinExtensionFunction()) {
-                            val qualifier = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
-                            MethodCallExpression.build(qualifier,
-                                                       methodExpr.referenceName!!,
-                                                       convertArguments(expression, isExtension = true),
-                                                       typeArguments,
-                                                       isNullable,
-                                                       dot)
+                            val receiver = codeConverter.convertExpression(arguments.firstOrNull(), shouldParenthesize = true)
+                            MethodCallExpression.build(
+                                receiver,
+                                methodExpr.referenceName!!,
+                                convertArguments(expression, isExtension = true),
+                                typeArguments,
+                                isNullable,
+                                dot
+                            )
                         }
                         else {
                             MethodCallExpression.build(null,

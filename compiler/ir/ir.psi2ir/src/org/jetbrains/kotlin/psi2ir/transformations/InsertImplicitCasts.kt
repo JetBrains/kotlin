@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.transformations
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -26,29 +27,35 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
 import org.jetbrains.kotlin.ir.util.TypeTranslator
+import org.jetbrains.kotlin.ir.util.coerceToUnitIfNeeded
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
-import org.jetbrains.kotlin.types.isError
-import org.jetbrains.kotlin.types.isNullabilityFlexible
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
-import org.jetbrains.kotlin.types.upperIfFlexible
 
 fun insertImplicitCasts(element: IrElement, context: GeneratorContext) {
-    element.transformChildren(InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator), null)
+    element.transformChildren(
+        InsertImplicitCasts(context.builtIns, context.irBuiltIns, context.typeTranslator, context.extensions.samConversion),
+        null
+    )
 }
 
 open class InsertImplicitCasts(
     private val builtIns: KotlinBuiltIns,
     private val irBuiltIns: IrBuiltIns,
-    private val typeTranslator: TypeTranslator
+    private val typeTranslator: TypeTranslator,
+    private val samConversion: GeneratorExtensions.SamConversion
 ) : IrElementTransformerVoid() {
 
     private fun KotlinType.toIrType() = typeTranslator.translateType(this)
@@ -90,17 +97,21 @@ open class InsertImplicitCasts(
             statements.forEachIndexed { i, irStatement ->
                 if (irStatement is IrExpression) {
                     statements[i] =
-                            if (i == lastIndex)
-                                irStatement.cast(type)
-                            else
-                                irStatement.coerceToUnit()
+                        if (i == lastIndex)
+                            irStatement.cast(type)
+                        else
+                            irStatement.coerceToUnit()
                 }
             }
         }
 
     override fun visitReturn(expression: IrReturn): IrExpression =
         expression.transformPostfix {
-            value = value.cast(expression.returnTarget.returnType)
+            value = if (expression.returnTargetSymbol is IrConstructorSymbol) {
+                value.coerceToUnit()
+            } else {
+                value.cast(expression.returnTarget.returnType)
+            }
         }
 
     override fun visitSetVariable(expression: IrSetVariable): IrExpression =
@@ -167,6 +178,29 @@ open class InsertImplicitCasts(
             finallyExpression = finallyExpression?.coerceToUnit()
         }
 
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression =
+        when (expression.operator) {
+            IrTypeOperator.SAM_CONVERSION -> expression.transformPostfix {
+                val targetClassDescriptor = typeOperandClassifier.descriptor as? ClassDescriptor
+                    ?: throw AssertionError("Target type of $operator should be a class: ${render()}")
+                argument = argument.cast(samConversion.getFunctionTypeForSAMClass(targetClassDescriptor))
+            }
+
+            IrTypeOperator.IMPLICIT_CAST -> {
+                // This branch is required for handling specific ambiguous cases in implicit cast insertion,
+                // such as SAM conversion VS smart cast.
+                // Here IMPLICIT_CAST serves as a type hint.
+                // Replace IrTypeOperatorCall(IMPLICIT_CAST, ...) with an argument cast to the required type
+                // (possibly generating another IrTypeOperatorCall(IMPLICIT_CAST, ...), if required).
+
+                expression.transformChildrenVoid()
+                expression.argument.cast(expression.typeOperand)
+            }
+
+            else ->
+                super.visitTypeOperator(expression)
+        }
+
     override fun visitVararg(expression: IrVararg): IrExpression =
         expression.transformPostfix {
             elements.forEachIndexed { i, element ->
@@ -190,18 +224,24 @@ open class InsertImplicitCasts(
         if (expectedType == null) return this
         if (expectedType.isError) return this
 
+        // TODO here we can have non-denotable KotlinTypes (both in 'this@cast.type' and 'expectedType').
+
         val notNullableExpectedType = expectedType.makeNotNullable()
 
         val valueType = this.type.originalKotlinType!!
 
         return when {
-            KotlinBuiltIns.isUnit(expectedType) ->
+            expectedType.isUnit() ->
                 coerceToUnit()
 
-            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() -> {
-                val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
-                implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
-            }
+            valueType.isDynamic() && !expectedType.isDynamic() ->
+                if (expectedType.isNullableAny())
+                    this
+                else
+                    implicitCast(expectedType, IrTypeOperator.IMPLICIT_DYNAMIC_CAST)
+
+            valueType.isNullabilityFlexible() && valueType.containsNull() && !expectedType.containsNull() ->
+                implicitNonNull(valueType, expectedType)
 
             KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, expectedType.makeNullable()) ->
                 this
@@ -219,6 +259,11 @@ open class InsertImplicitCasts(
         }
     }
 
+    private fun IrExpression.implicitNonNull(valueType: KotlinType, expectedType: KotlinType): IrExpression {
+        val nonNullValueType = valueType.upperIfFlexible().makeNotNullable()
+        return implicitCast(nonNullValueType, IrTypeOperator.IMPLICIT_NOTNULL).cast(expectedType)
+    }
+
     private fun IrExpression.implicitCast(
         targetType: KotlinType,
         typeOperator: IrTypeOperator
@@ -229,34 +274,18 @@ open class InsertImplicitCasts(
             endOffset,
             irType,
             typeOperator,
-            irType, irType.classifierOrFail,
+            irType,
             this
         )
     }
 
     protected open fun IrExpression.coerceToUnit(): IrExpression {
         val valueType = getKotlinType(this)
-        return coerceToUnitIfNeeded(valueType)
+        return coerceToUnitIfNeeded(valueType, irBuiltIns)
     }
 
     protected fun getKotlinType(irExpression: IrExpression) =
         irExpression.type.originalKotlinType!!
-
-    protected fun IrExpression.coerceToUnitIfNeeded(valueType: KotlinType): IrExpression {
-        return if (isUnitSubtype(valueType))
-            this
-        else
-            IrTypeOperatorCallImpl(
-                startOffset, endOffset,
-                irBuiltIns.unitType,
-                IrTypeOperator.IMPLICIT_COERCION_TO_UNIT,
-                irBuiltIns.unitType, irBuiltIns.unitType.classifierOrFail,
-                this
-            )
-    }
-
-    protected fun isUnitSubtype(valueType: KotlinType) =
-        KotlinTypeChecker.DEFAULT.isSubtypeOf(valueType, builtIns.unitType)
 
     private fun KotlinType.isBuiltInIntegerType(): Boolean =
         KotlinBuiltIns.isByte(this) ||

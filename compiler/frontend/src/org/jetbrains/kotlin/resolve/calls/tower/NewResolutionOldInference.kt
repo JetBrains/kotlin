@@ -209,7 +209,7 @@ class NewResolutionOldInference(
             }
         }
 
-        val overloadResults = convertToOverloadResults<D>(candidates, tracing, context, languageVersionSettings)
+        val overloadResults = convertToOverloadResults<D>(candidates, tracing, context)
         coroutineInferenceSupport.checkCoroutineCalls(context, tracing, overloadResults)
         return overloadResults
     }
@@ -255,19 +255,21 @@ class NewResolutionOldInference(
             TowerResolver.SuccessfulResultCollector(), useOrder = true
         )
 
-        return convertToOverloadResults(processedCandidates, tracing, basicCallContext, languageVersionSettings)
+        return convertToOverloadResults(processedCandidates, tracing, basicCallContext)
     }
 
     private fun <D : CallableDescriptor> allCandidatesResult(allCandidates: Collection<MyCandidate>) =
         OverloadResolutionResultsImpl.nameNotFound<D>().apply {
-            this.allCandidates = allCandidates.map { it.resolvedCall as MutableResolvedCall<D> }
+            this.allCandidates = allCandidates.map {
+                @Suppress("UNCHECKED_CAST")
+                it.resolvedCall as MutableResolvedCall<D>
+            }
         }
 
     private fun <D : CallableDescriptor> convertToOverloadResults(
         candidates: Collection<MyCandidate>,
         tracing: TracingStrategy,
-        basicCallContext: BasicCallResolutionContext,
-        languageVersionSettings: LanguageVersionSettings
+        basicCallContext: BasicCallResolutionContext
     ): OverloadResolutionResultsImpl<D> {
         val resolvedCalls = candidates.map {
             val (diagnostics, resolvedCall) = it
@@ -316,6 +318,7 @@ class NewResolutionOldInference(
                 }
             }
 
+            @Suppress("UNCHECKED_CAST")
             resolvedCall as MutableResolvedCall<D>
         }
 
@@ -476,7 +479,7 @@ class NewResolutionOldInference(
             variable: MyCandidate,
             invoke: MyCandidate
         ): MyCandidate {
-            val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
+            @Suppress("UNCHECKED_CAST") val resolvedCallImpl = VariableAsFunctionResolvedCallImpl(
                 invoke.resolvedCall as MutableResolvedCall<FunctionDescriptor>,
                 variable.resolvedCall as MutableResolvedCall<VariableDescriptor>
             )

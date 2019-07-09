@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.utils.PathUtil
 
 class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
     private companion object {
-        val ANNOTATATION_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.ANNOTATION_OPTION.name}="
-        val INVOKEINITIALIZERS_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name}="
+        val ANNOTATATION_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.ANNOTATION_OPTION.optionName}="
+        val INVOKEINITIALIZERS_PARAMETER_PREFIX = "no-arg:${NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.optionName}="
     }
 
     override val compilerPluginId = NoArgCommandLineProcessor.PLUGIN_ID
@@ -49,14 +49,14 @@ class NoArgMavenProjectImportHandler : AbstractMavenImportHandler() {
             text.substring(ANNOTATATION_PARAMETER_PREFIX.length)
         })
 
-        val options = annotations.mapTo(mutableListOf()) { PluginOption(NoArgCommandLineProcessor.ANNOTATION_OPTION.name, it) }
+        val options = annotations.mapTo(mutableListOf()) { PluginOption(NoArgCommandLineProcessor.ANNOTATION_OPTION.optionName, it) }
 
         val invokeInitializerOptionValue = compilerPluginOptions
                 .firstOrNull { it.startsWith(INVOKEINITIALIZERS_PARAMETER_PREFIX) }
                 ?.drop(INVOKEINITIALIZERS_PARAMETER_PREFIX.length) == "true"
 
         if (invokeInitializerOptionValue) {
-            options.add(PluginOption(NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.name, "true"))
+            options.add(PluginOption(NoArgCommandLineProcessor.INVOKE_INITIALIZERS_OPTION.optionName, "true"))
         }
 
         return options

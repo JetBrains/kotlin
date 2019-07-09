@@ -7,5 +7,5 @@ interface Tr<T> {
 fun test(t: Tr<out String>) {
     // resolved as t.v = t.v + null!!, where type of right operand is String,
     // so TYPE_MISMATCH: String is not <: of Captured(out String)
-    <!OI;SETTER_PROJECTED_OUT!>t.v<!> += null!!
+    <!SETTER_PROJECTED_OUT!>t.v<!> += null!!
 }

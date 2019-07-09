@@ -94,7 +94,7 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     ) {
         List<KaptOption> options = new ArrayList<>();
 
-        options.add(new KaptOption("aptOnly", true));
+        options.add(new KaptOption("aptMode", "stubsAndApt"));
         options.add(new KaptOption("useLightAnalysis", useLightAnalysis));
         options.add(new KaptOption("correctErrorTypes", correctErrorTypes));
         options.add(new KaptOption("mapDiagnosticLocations", mapDiagnosticLocations));

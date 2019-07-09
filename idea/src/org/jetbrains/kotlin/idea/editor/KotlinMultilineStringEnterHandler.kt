@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.idea.editor
 
+import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.CodeInsightSettings
-import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegate.Result
 import com.intellij.codeInsight.editorActions.enter.EnterHandlerDelegateAdapter
 import com.intellij.injected.editor.EditorWindow
@@ -26,19 +26,16 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler
 import com.intellij.openapi.editor.ex.EditorEx
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager
 import com.intellij.psi.impl.source.tree.LeafPsiElement
-import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.refactoring.hostEditor
 import org.jetbrains.kotlin.idea.refactoring.project
-import org.jetbrains.kotlin.idea.refactoring.toPsiFile
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
@@ -53,8 +50,9 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     private var isInBrace = false
 
     override fun preprocessEnter(
-            file: PsiFile, editor: Editor, caretOffset: Ref<Int>, caretAdvance: Ref<Int>, dataContext: DataContext,
-            originalHandler: EditorActionHandler?): EnterHandlerDelegate.Result {
+        file: PsiFile, editor: Editor, caretOffset: Ref<Int>, caretAdvance: Ref<Int>, dataContext: DataContext,
+        originalHandler: EditorActionHandler?
+    ): Result {
         val offset = caretOffset.get().toInt()
         if (editor !is EditorWindow) {
             return preprocessEnter(file, editor, offset, originalHandler, dataContext)
@@ -69,7 +67,13 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         return preprocessEnter(file, editor, offset, originalHandler, dataContext)
     }
 
-    private fun preprocessEnter(file: PsiFile, editor: Editor, offset: Int, originalHandler: EditorActionHandler?, dataContext: DataContext): Result {
+    private fun preprocessEnter(
+        file: PsiFile,
+        editor: Editor,
+        offset: Int,
+        originalHandler: EditorActionHandler?,
+        dataContext: DataContext
+    ): Result {
         if (file !is KtFile) return Result.Continue
 
         val document = editor.document
@@ -80,8 +84,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         val element = file.findElementAt(offset)
         if (!inMultilineString(element, offset)) {
             return Result.Continue
-        }
-        else {
+        } else {
             wasInMultilineString = true
         }
 
@@ -131,7 +134,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             getMarginCharFromTrimMarginCallsInChain(literal) ?: getMarginCharFromLiteral(literal)
 
         runWriteAction {
-            val settings = MultilineSettings(file.project)
+            val settings = MultilineSettings(file)
 
             val caretMarker = document.createRangeMarker(offset, offset)
             caretMarker.isGreedyToRight = true
@@ -171,8 +174,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                     // Move closing bracket under same indent
                     forceIndent(caretOffset() + 1, indentSize, newMarginChar, document, settings)
                 }
-            }
-            else {
+            } else {
                 val isPrevLineFirst = document.getLineNumber(literalOffset) == prevLineNumber
 
                 val indentInPreviousLine = when {
@@ -189,13 +191,13 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
                 val marginCharToInsert = if (marginChar != null &&
                     !prefixStripped.startsWith(marginChar) &&
-                    !nonBlankNotFirstLines.isEmpty() &&
-                    nonBlankNotFirstLines.none { it.trimStart().startsWith(marginChar) }) {
+                    nonBlankNotFirstLines.isNotEmpty() &&
+                    nonBlankNotFirstLines.none { it.trimStart().startsWith(marginChar) }
+                ) {
 
                     // We have margin char but decide not to insert it
                     null
-                }
-                else {
+                } else {
                     marginChar
                 }
 
@@ -237,15 +239,14 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
     }
 
     companion object {
-        val DEFAULT_TRIM_MARGIN_CHAR = '|'
-        val TRIM_INDENT_CALL = "trimIndent"
-        val TRIM_MARGIN_CALL = "trimMargin"
+        const val DEFAULT_TRIM_MARGIN_CHAR = '|'
+        const val TRIM_INDENT_CALL = "trimIndent"
+        const val TRIM_MARGIN_CALL = "trimMargin"
 
-        val MULTILINE_QUOTE = "\"\"\""
+        const val MULTILINE_QUOTE = "\"\"\""
 
-        class MultilineSettings(project: Project) {
-            private val kotlinIndentOptions =
-                    CodeStyleSettingsManager.getInstance(project).currentSettings.getIndentOptions(KotlinFileType.INSTANCE)
+        class MultilineSettings(file: PsiFile) {
+            private val kotlinIndentOptions = CodeStyle.getIndentOptions(file)
 
             private val useTabs = kotlinIndentOptions.USE_TAB_CHARACTER
             private val tabSize = kotlinIndentOptions.TAB_SIZE
@@ -281,11 +282,11 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
                 else -> return null
             }
 
-            return element.parents.firstIsInstanceOrNull<KtStringTemplateExpression>()
+            return element.parents.firstIsInstanceOrNull()
         }
 
         fun inMultilineString(element: PsiElement?, offset: Int) =
-                !(findString(element, offset)?.isSingleQuoted() ?: true)
+            !(findString(element, offset)?.isSingleQuoted() ?: true)
 
         fun getMarginCharFromLiteral(str: KtStringTemplateExpression, marginChar: Char = DEFAULT_TRIM_MARGIN_CHAR): Char? {
             val lines = str.text.lines()
@@ -304,18 +305,17 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         private fun getLiteralCalls(str: KtStringTemplateExpression): Sequence<KtCallExpression> {
             var previous: PsiElement = str
             return str.parents
-                    .takeWhile { parent ->
-                        if (parent is KtQualifiedExpression && parent.receiverExpression == previous) {
-                            previous = parent
-                            true
-                        }
-                        else {
-                            false
-                        }
+                .takeWhile { parent ->
+                    if (parent is KtQualifiedExpression && parent.receiverExpression == previous) {
+                        previous = parent
+                        true
+                    } else {
+                        false
                     }
-                    .mapNotNull { qualified ->
-                        (qualified as KtQualifiedExpression).selectorExpression as? KtCallExpression
-                    }
+                }
+                .mapNotNull { qualified ->
+                    (qualified as KtQualifiedExpression).selectorExpression as? KtCallExpression
+                }
         }
 
         fun getMarginCharFromTrimMarginCallsInChain(str: KtStringTemplateExpression): Char? {
@@ -335,7 +335,7 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
         }
 
         fun getLineByNumber(number: Int, document: Document): String =
-                document.getText(TextRange(document.getLineStartOffset(number), document.getLineEndOffset(number)))
+            document.getText(TextRange(document.getLineStartOffset(number), document.getLineEndOffset(number)))
 
         fun insertNewLine(nlOffset: Int, indent: Int, document: Document, settings: MultilineSettings) {
             document.insertString(nlOffset, "\n")
@@ -347,9 +347,11 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
             val lineStart = document.getLineStartOffset(lineNumber)
             val line = getLineByNumber(lineNumber, document)
             val wsPrefix = line.takeWhile { c -> c == ' ' || c == '\t' }
-            document.replaceString(lineStart,
-                                   lineStart + wsPrefix.length,
-                                   settings.getSmartSpaces(indent) + (marginChar?.toString() ?: ""))
+            document.replaceString(
+                lineStart,
+                lineStart + wsPrefix.length,
+                settings.getSmartSpaces(indent) + (marginChar?.toString() ?: "")
+            )
         }
 
         fun String.prefixLength(f: (Char) -> Boolean) = takeWhile(f).count()
@@ -360,20 +362,20 @@ class KotlinMultilineStringEnterHandler : EnterHandlerDelegateAdapter() {
 
             if (marginChar == null) {
                 document.insertString(literal.textRange.endOffset, ".$TRIM_INDENT_CALL()")
-            }
-            else {
+            } else {
                 document.insertString(
-                        literal.textRange.endOffset,
-                        if (marginChar == DEFAULT_TRIM_MARGIN_CHAR) {
-                            ".$TRIM_MARGIN_CALL()"
-                        }
-                        else {
-                            ".$TRIM_MARGIN_CALL(\"$marginChar\")"
-                        })
+                    literal.textRange.endOffset,
+                    if (marginChar == DEFAULT_TRIM_MARGIN_CHAR) {
+                        ".$TRIM_MARGIN_CALL()"
+                    } else {
+                        ".$TRIM_MARGIN_CALL(\"$marginChar\")"
+                    }
+                )
             }
         }
 
         private data class HostPosition(val file: PsiFile, val editor: Editor, val offset: Int)
+
         private fun getHostPosition(dataContext: DataContext): HostPosition? {
             val editor = dataContext.hostEditor as? EditorEx ?: return null
             val project = dataContext.project

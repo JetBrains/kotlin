@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.actions
@@ -38,7 +38,7 @@ class NewKotlinScriptAction : CreateFileFromTemplateAction(
     }
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-        NewKotlinFileAction.createFileFromTemplate(name, template, dir)
+        NewKotlinFileAction.createFileFromTemplateWithStat(name, template, dir)
 
     override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin Script"
 

@@ -6,7 +6,6 @@ import com.intellij.lexer.FlexLexer;
 import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.text.CharArrayUtil;
-import java.lang.Character;
 import org.jetbrains.kotlin.kdoc.parser.KDocKnownTag;
 
 
@@ -478,7 +477,7 @@ class _KDocLexer implements FlexLexer {
 
 
   /**
-   * Reports an error that occured while scanning.
+   * Reports an error that occurred while scanning.
    *
    * In a wellformed scanner (no or only correct usage of
    * yypushback(int) and a match-all fallback rule) this method

@@ -1,22 +1,10 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.codeInsight;
 
-import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
@@ -26,6 +14,7 @@ import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiModificationTrackerImpl;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListenerKt;
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade;
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase;
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase;
@@ -55,16 +44,6 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
         boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
 
-        // Special behaviour in 173, should be dropped after abandoning this version.
-        // BUNCH: 181
-        if ("InGlobalPropertyWithGetter".equals(getTestName(false))) {
-            String apiVersion = ApplicationInfo.getInstance().getApiVersion();
-            if (apiVersion != null && apiVersion.contains("-173.")) {
-                expectedOutOfBlock = true;
-                isSkipCheckDefined = true;
-            }
-        }
-
         assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
                    !isSkipCheckDefined || expectedOutOfBlock);
 
@@ -75,13 +54,15 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
         PsiElement element = myFixture.getFile().findElementAt(myFixture.getCaretOffset());
         assertNotNull("Should be valid element", element);
 
-        long oobBeforeType = tracker.getOutOfCodeBlockModificationCount();
+        KtFile file = (KtFile) getFile();
+
+        long oobBeforeType = KotlinCodeBlockModificationListenerKt.getOutOfBlockModificationCount(file);
         long modificationCountBeforeType = tracker.getModificationCount();
 
         myFixture.type(getStringToType());
         PsiDocumentManager.getInstance(myFixture.getProject()).commitDocument(myFixture.getDocument(myFixture.getFile()));
 
-        long oobAfterCount = tracker.getOutOfCodeBlockModificationCount();
+        long oobAfterCount = KotlinCodeBlockModificationListenerKt.getOutOfBlockModificationCount(file);
         long modificationCountAfterType = tracker.getModificationCount();
 
         assertTrue("Modification tracker should always be changed after type", modificationCountBeforeType != modificationCountAfterType);

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package test.collections
@@ -9,7 +9,6 @@ import test.assertStaticAndRuntimeTypeIs
 import kotlin.test.*
 import test.collections.behaviors.*
 import test.comparisons.STRING_CASE_INSENSITIVE_ORDER
-import kotlin.math.sin
 import kotlin.random.Random
 
 class CollectionTest {
@@ -829,6 +828,21 @@ class CollectionTest {
         assertEquals(listOf("aa" to 20, "aa" to 3, "ab" to 3), data)
     }
 
+    @Test fun sortStable() {
+        val keyRange = 'A'..'D'
+        for (size in listOf(10, 100, 2000)) {
+            val list = MutableList(size) { index -> Sortable(keyRange.random(), index) }
+
+            list.sorted().assertStableSorted()
+            list.sortedDescending().assertStableSorted(descending = true)
+
+            list.sort()
+            list.assertStableSorted()
+            list.sortDescending()
+            list.assertStableSorted(descending = true)
+        }
+    }
+
     @Test fun sortedBy() {
         assertEquals(listOf("two" to 3, "three" to 20), listOf("three" to 20, "two" to 3).sortedBy { it.second })
         assertEquals(listOf("three" to 20, "two" to 3), listOf("three" to 20, "two" to 3).sortedBy { it.first })
@@ -860,6 +874,22 @@ class CollectionTest {
         expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator) }
         expect(listOf("cat", "dad", "BAD")) { data.sortedWith(comparator.reversed()) }
         expect(listOf("BAD", "dad", "cat")) { data.sortedWith(comparator.reversed().reversed()) }
+    }
+
+    @Test fun sortByStable() {
+        val keyRange = 'A'..'D'
+        for (size in listOf(10, 100, 2000)) {
+            val list = MutableList(size) { index -> Sortable(keyRange.random(), index) }
+
+            list.sortedBy { it.key }.assertStableSorted()
+            list.sortedByDescending { it.key }.assertStableSorted(descending = true)
+
+            list.sortBy { it.key }
+            list.assertStableSorted()
+
+            list.sortByDescending { it.key }
+            list.assertStableSorted(descending = true)
+        }
     }
 
     @Test fun decomposeFirst() {

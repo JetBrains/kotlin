@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 //WITH_RUNTIME
 // FILE: 1.kt
 class Foo {

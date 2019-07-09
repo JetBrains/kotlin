@@ -142,34 +142,36 @@ class AccessorPropertyLValue(
 
     override fun load(): IrExpression =
         callReceiver.adjustForCallee(getterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
-            IrGetterCallImpl(
+            IrCallImpl(
                 startOffset, endOffset,
                 type,
                 getter!!, getterDescriptor,
                 typeArgumentsCount,
-                dispatchReceiverValue?.load(),
-                extensionReceiverValue?.load(),
+                0,
                 origin,
                 superQualifier
             ).apply {
                 putTypeArguments()
+                dispatchReceiver = dispatchReceiverValue?.load()
+                extensionReceiver = extensionReceiverValue?.load()
             }
         }
 
     override fun store(irExpression: IrExpression) =
         callReceiver.adjustForCallee(setterDescriptor!!).call { dispatchReceiverValue, extensionReceiverValue ->
-            IrSetterCallImpl(
+            IrCallImpl(
                 startOffset, endOffset,
                 context.irBuiltIns.unitType,
                 setter!!, setterDescriptor,
                 typeArgumentsCount,
-                dispatchReceiverValue?.load(),
-                extensionReceiverValue?.load(),
-                irExpression,
+                1,
                 origin,
                 superQualifier
             ).apply {
                 putTypeArguments()
+                dispatchReceiver = dispatchReceiverValue?.load()
+                extensionReceiver = extensionReceiverValue?.load()
+                putValueArgument(0, irExpression)
             }
         }
 

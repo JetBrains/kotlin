@@ -23,11 +23,11 @@ import org.jetbrains.uast.UIdentifier
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUDoWhileExpression(
-        override val psi: KtDoWhileExpression,
+        override val sourcePsi: KtDoWhileExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UDoWhileExpression {
-    override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+    override val condition by lz { KotlinConverter.convertOrEmpty(sourcePsi.condition, this) }
+    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.body, this) }
 
     override val doIdentifier: UIdentifier
         get() = KotlinUIdentifier(null, this)

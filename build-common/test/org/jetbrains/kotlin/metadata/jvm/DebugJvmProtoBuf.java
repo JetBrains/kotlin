@@ -4613,7 +4613,7 @@ public final class DebugJvmProtoBuf {
    * <code>extend .org.jetbrains.kotlin.metadata.Class { ... }</code>
    *
    * <pre>
-   * If absent, assumed to be JvmAbi.DEFAULT_MODULE_NAME
+   * If absent, assumed to be "main" (JvmProtoBufUtil.DEFAULT_MODULE_NAME)
    * </pre>
    */
   public static final

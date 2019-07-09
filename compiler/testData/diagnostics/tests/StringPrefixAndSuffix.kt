@@ -35,6 +35,6 @@ fun test(a: Any) {
     if(<!USELESS_IS_CHECK!>"s"<!UNSUPPORTED!>is<!> Any<!>) {}
     test("s"<!UNSUPPORTED!>as<!> Any)
 
-    a <!UNSUPPORTED!>foo<!>""<!UNSUPPORTED, SYNTAX!>1<!>
-    a <!UNSUPPORTED!>foo<!>""<!UNSUPPORTED, SYNTAX!>1.0<!>
+    a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1<!>
+    a <!UNSUPPORTED!>foo<!>""<!SYNTAX, UNSUPPORTED!>1.0<!>
 }

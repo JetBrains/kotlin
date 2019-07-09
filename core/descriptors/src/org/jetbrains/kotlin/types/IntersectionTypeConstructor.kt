@@ -51,7 +51,7 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
         makeDebugNameForIntersectionType(intersectedTypes)
 
     private fun makeDebugNameForIntersectionType(resultingTypes: Iterable<KotlinType>): String =
-        resultingTypes.joinToString(separator = " & ", prefix = "{", postfix = "}")
+        resultingTypes.sortedBy { it.toString() }.joinToString(separator = " & ", prefix = "{", postfix = "}")
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

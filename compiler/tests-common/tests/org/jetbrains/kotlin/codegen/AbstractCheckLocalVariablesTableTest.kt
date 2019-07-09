@@ -20,7 +20,6 @@ import com.intellij.openapi.util.text.StringUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.utils.rethrow
 import org.jetbrains.org.objectweb.asm.*
 import java.io.File
 import java.util.*
@@ -29,11 +28,9 @@ import java.util.regex.Pattern
 /**
  * Test correctness of written local variables in class file for specified method
  */
-
 abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
-
-    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        compile(files)
 
         try {
             val classAndMethod = parseClassAndMethodSignature(wholeFile)
@@ -48,7 +45,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             val pathsString = outputFiles.joinToString { it.relativePath }
             assertNotNull("Couldn't find class file for pattern $classFileRegex in: $pathsString", outputFile)
 
-            val actualLocalVariables = readLocalVariable(ClassReader(outputFile!!.asByteArray()), methodName)
+            val actualLocalVariables = readLocalVariable(ClassReader(outputFile.asByteArray()), methodName)
 
             doCompare(wholeFile, files.single().content, actualLocalVariables)
         } catch (e: Throwable) {
@@ -100,14 +97,16 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
         private fun readLocalVariable(cr: ClassReader, methodName: String): List<LocalVariable> {
 
-            class Visitor : ClassVisitor(Opcodes.ASM5) {
+            class Visitor : ClassVisitor(Opcodes.API_VERSION) {
                 var readVariables: MutableList<LocalVariable> = ArrayList()
+                var methodFound = false
 
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
                 ): MethodVisitor? {
                     return if (methodName == name + desc) {
-                        object : MethodVisitor(Opcodes.ASM5) {
+                        methodFound = true
+                        object : MethodVisitor(Opcodes.API_VERSION) {
                             override fun visitLocalVariable(
                                 name: String, desc: String, signature: String?, start: Label, end: Label, index: Int
                             ) {
@@ -124,7 +123,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             cr.accept(visitor, ClassReader.SKIP_FRAMES)
 
-            TestCase.assertFalse("method not found: $methodName", visitor.readVariables.isEmpty())
+            TestCase.assertTrue("method not found: $methodName", visitor.methodFound)
 
             return visitor.readVariables
         }

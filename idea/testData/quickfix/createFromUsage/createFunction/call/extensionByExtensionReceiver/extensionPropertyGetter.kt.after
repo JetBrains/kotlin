@@ -1,11 +1,11 @@
+private val A.foo: Boolean
+    get() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 // "Create extension property 'A.foo'" "true"
 class A(val n: Int)
 
 class B {
     val A.test: Boolean get() = foo
 }
-
-private val A.foo: Boolean
-    get() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }

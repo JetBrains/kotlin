@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.konan.library
@@ -21,7 +21,7 @@ interface KonanLibraryLayout {
     // This is a default implementation. Can't make it an assignment.
     val target: KonanTarget? get() = null
 
-    val manifestFile get() = File(libDir, "manifest")
+    val manifestFile get() = File(libDir, KLIB_MANIFEST_FILE_NAME)
     val resourcesDir get() = File(libDir, "resources")
 
     val targetsDir get() = File(libDir, "targets")

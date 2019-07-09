@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// FIX: Replace with 'repeat()'
+
+fun test(s: String) {
+    repeat(s.length) {}
+}

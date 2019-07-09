@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun test(x : Int = 0, e : Any = "a") {

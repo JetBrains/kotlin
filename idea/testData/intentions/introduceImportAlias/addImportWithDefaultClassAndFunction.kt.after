@@ -1,0 +1,7 @@
+import kotlin.collections.List as List1
+
+// WITH_RUNTIME
+fun foo() {
+    val list: List1<String>
+    val secondList = List1(5) { 1 }
+}

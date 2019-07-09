@@ -1,0 +1,4 @@
+// FIX: Add '.getOrThrow()' to function result (breaks use-sites!)
+package kotlin
+
+fun incorrect() = Result("123").getOrThrow()

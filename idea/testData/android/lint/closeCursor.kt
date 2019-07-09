@@ -1,6 +1,6 @@
 // INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintRecycleInspection
 
-@file:Suppress("UNUSED_VARIABLE")
+@file:Suppress("UNUSED_VARIABLE", "NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS", "RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 
 import android.app.Activity
 import android.os.Bundle
@@ -13,7 +13,7 @@ class MainActivity : Activity() {
         val cursor = contentResolver.<warning descr="This `Cursor` should be freed up after use with `#close()`">query</warning>(null, null, null, null, null)
 
         // WARNING
-        contentResolver.<warning descr="This `Cursor` should be freed up after use with `#close()`">query</warning>(null, null, null, null, null)
+        contentResolver.query(null, null, null, null, null)
 
         // OK, closed in chained call
         contentResolver.query(null, null, null, null, null).close()

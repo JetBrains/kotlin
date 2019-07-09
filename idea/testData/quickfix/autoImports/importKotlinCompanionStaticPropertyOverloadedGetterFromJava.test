@@ -18,9 +18,8 @@ package foo
 
 class Bar {
     companion object {
-        val testValue = "foobar"
-            @JvmStatic get() {
-            }
+        @JvmStatic
+        val testValue get() = "foobar"
     }
 }
 

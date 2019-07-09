@@ -1,0 +1,7 @@
+FILE: simple.kt
+    public final fun foo(): R|kotlin/Int| {
+        ^foo Int(1)
+    }
+    public final fun bar(): R|kotlin/Int| {
+        ^bar R|/foo|()
+    }

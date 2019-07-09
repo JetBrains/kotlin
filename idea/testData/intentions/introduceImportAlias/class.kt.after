@@ -1,0 +1,14 @@
+import Outer.Inner as Inner1
+
+class Outer {
+    class Inner
+}
+
+class Test(){
+    fun test(){
+        val i = Inner1()
+    }
+    fun test2(){
+        val i = Inner1()
+    }
+}

@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+class FooException : Exception()
+
+class Test {
+    @Throws(FooException::class)
+    constructor() {
+        throw FooException()
+    }
+}

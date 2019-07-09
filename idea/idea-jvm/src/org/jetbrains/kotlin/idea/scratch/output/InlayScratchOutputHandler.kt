@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.scratch.output
 
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
@@ -29,7 +29,7 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     private const val minSpaceCount = 4
 
     override fun onStart(file: ScratchFile) {
-        clear(file)
+        getToolwindowHandler().onStart(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -38,25 +38,25 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
         createInlay(file, expression, output)
 
         if (output.type == ScratchOutputType.ERROR) {
-            ToolWindowScratchOutputHandler.handle(file, expression, output)
+            getToolwindowHandler().handle(file, expression, output)
         }
     }
 
     override fun error(file: ScratchFile, message: String) {
-        ToolWindowScratchOutputHandler.error(file, message)
+        getToolwindowHandler().error(file, message)
     }
 
     override fun onFinish(file: ScratchFile) {
-
+        getToolwindowHandler().onFinish(file)
     }
 
     override fun clear(file: ScratchFile) {
         clearInlays(file.editor)
-        ToolWindowScratchOutputHandler.clear(file)
+        getToolwindowHandler().clear(file)
     }
 
     private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        UIUtil.invokeLaterIfNeeded {
+        TransactionGuard.submitTransaction(file.project, Runnable {
             val editor = file.editor.editor
             val line = expression.lineStart
 
@@ -74,24 +74,27 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
                 if (shortText != text) {
                     printToToolWindow(file, expression, output)
                 }
-                editor.inlayModel.addInlineElement(lineEndOffset, InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type))
+                editor.inlayModel.addInlay(
+                    lineEndOffset,
+                    InlayScratchFileRenderer(" ".repeat(spaceCount) + shortText, output.type)
+                )
             }
 
             val existing = editor.inlayModel
-                .getInlineElementsInRange(lineEndOffset, lineEndOffset)
-                .singleOrNull { it.renderer is InlayScratchFileRenderer }
+                .getInlays(lineEndOffset, lineEndOffset)
+                .singleOrNull()
             if (existing != null) {
                 existing.dispose()
                 addInlay(((existing.renderer as InlayScratchFileRenderer).text + "; " + output.text).drop(spaceCount))
             } else {
                 addInlay(output.text)
             }
-        }
+        })
     }
 
     private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         if (output.type != ScratchOutputType.ERROR) {
-            ToolWindowScratchOutputHandler.handle(file, expression, output)
+            getToolwindowHandler().handle(file, expression, output)
         }
     }
 
@@ -104,11 +107,10 @@ object InlayScratchOutputHandler : ScratchOutputHandler {
     }
 
     private fun clearInlays(editor: TextEditor) {
-        UIUtil.invokeLaterIfNeeded {
+        TransactionGuard.submitTransaction(editor, Runnable {
             editor
-                .editor.inlayModel.getInlineElementsInRange(0, editor.editor.document.textLength)
-                .filter { it.renderer is InlayScratchFileRenderer }
+                .editor.inlayModel.getInlays(0, editor.editor.document.textLength)
                 .forEach { Disposer.dispose(it) }
-        }
+        })
     }
 }

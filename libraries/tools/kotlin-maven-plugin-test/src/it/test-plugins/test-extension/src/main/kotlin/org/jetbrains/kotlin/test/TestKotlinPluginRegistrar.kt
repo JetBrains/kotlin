@@ -25,7 +25,7 @@ class TestCommandLineProcessor : CommandLineProcessor {
             MyTestOption -> {
                 configuration.put(TestPluginKeys.TestOption, value)
             }
-            else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }

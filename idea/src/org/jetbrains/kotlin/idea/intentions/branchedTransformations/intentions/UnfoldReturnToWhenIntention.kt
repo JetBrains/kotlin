@@ -22,7 +22,10 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtPsiUtil
+import org.jetbrains.kotlin.psi.KtReturnExpression
+import org.jetbrains.kotlin.psi.KtWhenExpression
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -44,10 +47,11 @@ class UnfoldReturnToWhenIntention : LowPriorityAction, SelfTargetingRangeIntenti
         val whenExpression = element.returnedExpression as KtWhenExpression
         val newWhenExpression = whenExpression.copied()
 
+        val labelName = element.getLabelName()
         whenExpression.entries.zip(newWhenExpression.entries).forEach { (entry, newEntry) ->
             val expr = entry.expression!!.lastBlockStatementOrThis()
             val newExpr = newEntry.expression!!.lastBlockStatementOrThis()
-            newExpr.replace(UnfoldReturnToIfIntention.createReturnExpression(expr, psiFactory, context))
+            newExpr.replace(UnfoldReturnToIfIntention.createReturnExpression(expr, labelName, psiFactory, context))
         }
         element.replace(newWhenExpression)
     }

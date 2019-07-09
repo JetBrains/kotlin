@@ -415,7 +415,18 @@ open class LazyClassMemberScope(
     }
 
     private val secondaryConstructors: NotNullLazyValue<Collection<ClassConstructorDescriptor>> =
-        c.storageManager.createLazyValue { resolveSecondaryConstructors() }
+        c.storageManager.createLazyValue { doGetConstructors() }
+
+    private fun doGetConstructors(): Collection<ClassConstructorDescriptor> {
+        val result = mutableListOf<ClassConstructorDescriptor>()
+        result.addAll(resolveSecondaryConstructors())
+        addSyntheticSecondaryConstructors(result)
+        return result
+    }
+
+    private fun addSyntheticSecondaryConstructors(result: MutableCollection<ClassConstructorDescriptor>) {
+        c.syntheticResolveExtension.generateSyntheticSecondaryConstructors(thisDescriptor, trace.bindingContext, result)
+    }
 
     fun getConstructors(): Collection<ClassConstructorDescriptor> {
         val result = secondaryConstructors()
@@ -464,8 +475,8 @@ open class LazyClassMemberScope(
         descriptor.returnType = c.wrappedTypeFactory.createDeferredType(trace, { thisDescriptor.defaultType })
     }
 
-    override fun recordLookup(name: Name, from: LookupLocation) {
-        c.lookupTracker.record(from, thisDescriptor, name)
+    override fun recordLookup(name: Name, location: LookupLocation) {
+        c.lookupTracker.record(location, thisDescriptor, name)
     }
 
     // Do not add details here, they may compromise the laziness during debugging

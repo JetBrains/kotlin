@@ -1,10 +1,14 @@
-
 apply plugin: 'kotlin'
 apply plugin: 'maven'
+apply plugin: 'jps-compatible'
 
 repositories {
     mavenLocal()
     jcenter()
+}
+
+pill {
+    variant = 'FULL'
 }
 
 dependencies {
@@ -14,7 +18,7 @@ dependencies {
 
     compile project(':kotlin-test::kotlin-test-junit')
 
-    compileOnly project(":kotlin-stdlib")
+    compileOnly kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':compiler:plugin-api')
     compileOnly project(':compiler:cli-common')
@@ -22,7 +26,7 @@ dependencies {
     
     compileOnly gradleApi()
 
-    compileOnly("kotlin.build.custom.deps:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
+    compileOnly("kotlin.build:intellij-core:${rootProject.ext["versions.intellijSdk"]}") {
         artifact {
             name = 'intellij-core'
             type = 'jar'

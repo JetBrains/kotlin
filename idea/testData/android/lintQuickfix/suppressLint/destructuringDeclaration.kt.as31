@@ -1,9 +1,0 @@
-// INTENTION_TEXT: Suppress: Add @SuppressLint("SdCardPath") annotation
-// INSPECTION_CLASS: com.android.tools.idea.lint.AndroidLintSdCardPathInspection
-
-fun foo() {
-    val (a: String, b: String) = "<caret>/sdcard"
-}
-
-operator fun CharSequence.component1(): String = "component1"
-operator fun CharSequence.component2(): String = "component2"

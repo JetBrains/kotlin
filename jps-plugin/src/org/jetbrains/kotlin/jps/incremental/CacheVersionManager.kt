@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.incremental
@@ -23,16 +23,7 @@ class CacheVersionManager(
 ) : CacheAttributesManager<CacheVersion> {
     override val expected: CacheVersion? =
         if (expectedOwnVersion == null) null
-        else {
-            val metadata = JvmMetadataVersion.INSTANCE
-            val bytecode = JvmBytecodeBinaryVersion.INSTANCE
-
-            CacheVersion(
-                expectedOwnVersion * 1000000 +
-                        bytecode.major * 10000 + bytecode.minor * 100 +
-                        metadata.major * 1000 + metadata.minor
-            )
-        }
+        else CacheVersion(expectedOwnVersion, JvmBytecodeBinaryVersion.INSTANCE, JvmMetadataVersion.INSTANCE)
 
     override fun loadActual(): CacheVersion? =
         if (!versionFile.exists()) null
@@ -48,7 +39,7 @@ class CacheVersionManager(
         if (values == null) versionFile.delete()
         else {
             versionFile.parentFile.mkdirs()
-            versionFile.writeText(values.version.toString())
+            versionFile.writeText(values.intValue.toString())
         }
     }
 
@@ -57,4 +48,35 @@ class CacheVersionManager(
         get() = versionFile
 }
 
-data class CacheVersion(val version: Int)
+fun CacheVersion(own: Int, bytecode: JvmBytecodeBinaryVersion, metadata: JvmMetadataVersion): CacheVersion {
+    require(own in 0..(Int.MAX_VALUE / 1000000 - 1))
+    require(bytecode.major in 0..9)
+    require(bytecode.minor in 0..9)
+    require(metadata.major in 0..9)
+    require(metadata.minor in 0..99)
+
+    return CacheVersion(
+        own * 1000000 +
+                bytecode.major * 10000 + bytecode.minor * 100 +
+                metadata.major * 1000 + metadata.minor
+    )
+}
+
+data class CacheVersion(val intValue: Int) {
+    val own: Int
+        get() = intValue / 1000000
+
+    val bytecode: JvmBytecodeBinaryVersion
+        get() = JvmBytecodeBinaryVersion(
+            intValue / 10000 % 10,
+            intValue / 100 % 10
+        )
+
+    val metadata: JvmMetadataVersion
+        get() = JvmMetadataVersion(
+            intValue / 1000 % 10,
+            intValue / 1 % 100
+        )
+
+    override fun toString(): String = "CacheVersion(caches: $own, bytecode: $bytecode, metadata: $metadata)"
+}

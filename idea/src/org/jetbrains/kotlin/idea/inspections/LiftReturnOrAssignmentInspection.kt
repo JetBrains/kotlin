@@ -28,12 +28,13 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.anyDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class LiftReturnOrAssignmentInspection : AbstractKotlinInspection() {
+class LiftReturnOrAssignmentInspection @JvmOverloads constructor(private val skipLongExpressions: Boolean = true) :
+    AbstractKotlinInspection() {
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
         object : KtVisitorVoid() {
             private fun visitIfOrWhenOrTry(expression: KtExpression, keyword: PsiElement) {
-                if (expression.lineCount() > LINES_LIMIT) return
+                if (skipLongExpressions && expression.lineCount() > LINES_LIMIT) return
                 if (expression.isElseIf()) return
 
                 val foldableReturns = BranchedFoldingUtils.getFoldableReturns(expression)

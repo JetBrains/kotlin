@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.jvm.compiler
 
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
@@ -33,13 +35,16 @@ import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.jvm.JvmAnalyzerFacade
 import org.jetbrains.kotlin.resolve.jvm.JvmPlatformParameters
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.jvm.JvmResolverForModuleFactory
+import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -52,26 +57,35 @@ import java.util.*
 class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
 
     private class TestModule(
-            val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
-            val _dependencies: TestModule.() -> List<TestModule>
-    ) : ModuleInfo {
+        val project: Project,
+        val _name: String, val kotlinFiles: List<KtFile>, val javaFilesScope: GlobalSearchScope,
+        val _dependencies: TestModule.() -> List<TestModule>
+    ) : TrackableModuleInfo {
+        override fun createModificationTracker(): ModificationTracker = ModificationTracker.NEVER_CHANGED
+
         override fun dependencies() = _dependencies()
         override val name = Name.special("<$_name>")
+
+        override val platform: TargetPlatform
+            get() = JvmPlatforms.unspecifiedJvmPlatform
+
+        override val analyzerServices: PlatformDependentAnalyzerServices
+            get() = JvmPlatformAnalyzerServices
     }
 
     fun testJavaEntitiesBelongToCorrectModule() {
         val moduleDirs = File(PATH_TO_TEST_ROOT_DIR).listFiles { it -> it.isDirectory }!!
         val environment = createEnvironment(moduleDirs)
         val modules = setupModules(environment, moduleDirs)
-        val projectContext = ProjectContext(environment.project)
-        val builtIns = JvmBuiltIns(projectContext.storageManager)
+        val projectContext = ProjectContext(environment.project, "MultiModuleJavaAnalysisTest")
+        val builtIns = JvmBuiltIns(projectContext.storageManager, JvmBuiltIns.Kind.FROM_CLASS_LOADER)
         val resolverForProject = ResolverForProjectImpl(
             "test",
             projectContext, modules,
+            invalidateOnOOCB = false,
             modulesContent = { module -> ModuleContent(module, module.kotlinFiles, module.javaFilesScope) },
-            modulePlatforms = { JvmPlatform.multiTargetPlatform },
             moduleLanguageSettingsProvider = LanguageSettingsProvider.Default,
-            resolverForModuleFactoryByPlatform = { JvmAnalyzerFacade },
+            resolverForModuleFactoryByPlatform = { JvmResolverForModuleFactory },
             platformParameters = { _ ->
                 JvmPlatformParameters(
                     packagePartProviderFactory = { PackagePartProvider.Empty },
@@ -112,7 +126,7 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
                     return file.parent!!.parent!!.name == name
                 }
             }
-            modules[name] = TestModule(name, kotlinFiles, javaFilesScope) {
+            modules[name] = TestModule(project, name, kotlinFiles, javaFilesScope) {
                 when (this._name) {
                     "a" -> listOf(this)
                     "b" -> listOf(this, modules["a"]!!)

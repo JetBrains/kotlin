@@ -164,7 +164,8 @@ abstract class KtClassOrObject :
         val parts = mutableListOf<String>()
         var current: KtClassOrObject? = this
         while (current != null) {
-            parts.add(current.name!!)
+            val name = current.name ?: return null
+            parts.add(name)
             current = PsiTreeUtil.getParentOfType(current, KtClassOrObject::class.java)
         }
         val file = containingFile as? KtFile ?: return null

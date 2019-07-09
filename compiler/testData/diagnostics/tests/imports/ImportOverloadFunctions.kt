@@ -21,7 +21,7 @@ fun all(a: String) {}
 
 // FILE: 2.kt
 
-import k.<!INVISIBLE_REFERENCE, DEBUG_INFO_MISSING_UNRESOLVED!>zero<!>
+import k.<!DEBUG_INFO_MISSING_UNRESOLVED, INVISIBLE_REFERENCE!>zero<!>
 import k.one
 import k.two
 import k.all

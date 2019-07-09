@@ -31,6 +31,7 @@ import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.plugins.gradle.model.ClassSetProjectImportExtraModelProvider;
 import org.jetbrains.plugins.gradle.model.ExternalProject;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper;
@@ -140,7 +141,7 @@ public abstract class AbstractModelBuilderTest {
 
         try {
             ProjectImportAction projectImportAction = new ProjectImportAction(false);
-            projectImportAction.addExtraProjectModelClasses(getModels());
+            projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
             BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
             File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
             assertNotNull(initScript);
@@ -216,8 +217,8 @@ public abstract class AbstractModelBuilderTest {
     public static class DistributionLocator {
         private static final String RELEASE_REPOSITORY_ENV = "GRADLE_RELEASE_REPOSITORY";
         private static final String SNAPSHOT_REPOSITORY_ENV = "GRADLE_SNAPSHOT_REPOSITORY";
-        private static final String GRADLE_RELEASE_REPO = "http://services.gradle.org/distributions";
-        private static final String GRADLE_SNAPSHOT_REPO = "http://services.gradle.org/distributions-snapshots";
+        private static final String GRADLE_RELEASE_REPO = "https://services.gradle.org/distributions";
+        private static final String GRADLE_SNAPSHOT_REPO = "https://services.gradle.org/distributions-snapshots";
 
         @NotNull private final String myReleaseRepoUrl;
         @NotNull private final String mySnapshotRepoUrl;

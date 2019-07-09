@@ -21,7 +21,7 @@ import java.io.File
 
 abstract class AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest : AbstractIncrementalJsCompilerRunnerTest() {
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
-            super.createCompilerArguments(destinationDir, testDir).apply {
-                friendModulesDisabled = true
-            }
+        super.createCompilerArguments(destinationDir, testDir).apply {
+            friendModulesDisabled = true
+        }
 }

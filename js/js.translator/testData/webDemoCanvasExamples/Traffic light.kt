@@ -29,7 +29,7 @@ val context: CanvasRenderingContext2D
     }
 
 
-val PATH_TO_IMAGES = "http://try.kotlinlang.org/static/images/canvas/"
+val PATH_TO_IMAGES = "https://try.kotlinlang.org/static/images/canvas/"
 
 
 val state: CanvasState by lazy { CanvasState(canvas) }

@@ -1,4 +1,5 @@
 // WITH_RUNTIME
+// KJS_WITH_FULL_RUNTIME
 // FILE: 1.kt
 
 package test

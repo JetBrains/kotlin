@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.script.experimental.jvm.impl
 
 import java.io.File
+import java.net.JarURLConnection
 import java.net.URL
 
 // Based on an implementation in com.intellij.openapi.application.PathManager.getResourceRoot
@@ -29,7 +30,7 @@ private fun extractRoot(resourceURL: URL, resourcePath: String): String? {
     var resultPath: String? = null
     val protocol = resourceURL.protocol
     if (protocol == FILE_PROTOCOL) {
-        val path = resourceURL.toFile()!!.path
+        val path = resourceURL.toFileOrNull()!!.path
         val testPath = path.replace('\\', '/')
         val testResourcePath = resourcePath.replace('\\', '/')
         if (testPath.endsWith(testResourcePath, ignoreCase = true)) {
@@ -57,7 +58,7 @@ private fun splitJarUrl(url: String): Pair<String, String>? {
 
     if (jarPath.startsWith(FILE_PROTOCOL)) {
         try {
-            jarPath = URL(jarPath).toFile()!!.path.replace('\\', '/')
+            jarPath = URL(jarPath).toFileOrNull()!!.path.replace('\\', '/')
         } catch (e: Exception) {
             jarPath = jarPath.substring(FILE_PROTOCOL.length)
             if (jarPath.startsWith(SCHEME_SEPARATOR)) {
@@ -71,17 +72,35 @@ private fun splitJarUrl(url: String): Pair<String, String>? {
     return Pair(jarPath, resourcePath)
 }
 
-fun getResourcePathForClass(aClass: Class<*>): File {
+fun tryGetResourcePathForClass(aClass: Class<*>): File? {
     val path = "/" + aClass.name.replace('.', '/') + ".class"
-    val resourceRoot = getResourceRoot(aClass, path) ?: throw IllegalStateException("Resource not found: $path")
-    return File(resourceRoot).absoluteFile
+    return getResourceRoot(aClass, path)?.let {
+        File(it).absoluteFile
+    }
 }
 
-internal fun URL.toFile() =
+fun getResourcePathForClass(aClass: Class<*>): File {
+    return tryGetResourcePathForClass(aClass) ?: throw IllegalStateException("Resource for class: ${aClass.name} not found")
+}
+
+fun tryGetResourcePathForClassByName(name: String, classLoader: ClassLoader): File? =
     try {
-        File(toURI().schemeSpecificPart)
-    } catch (e: java.net.URISyntaxException) {
-        if (protocol != "file") null
-        else File(file)
+        classLoader.loadClass(name)?.let(::tryGetResourcePathForClass)
+    } catch (_: ClassNotFoundException) {
+        null
+    } catch (_: NoClassDefFoundError) {
+        null
     }
 
+internal fun URL.toFileOrNull() =
+    try {
+        File(toURI().schemeSpecificPart).canonicalFile
+    } catch (e: java.net.URISyntaxException) {
+        if (protocol != "file") null
+        else File(file).canonicalFile
+    }
+
+internal fun URL.toContainingJarOrNull(): File? =
+    if (protocol == "jar") {
+        (openConnection() as? JarURLConnection)?.jarFileURL?.toFileOrNull()
+    } else null

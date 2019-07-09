@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower.inline
@@ -96,7 +96,7 @@ private class ReturnableBlockTransformer(
         return super.visitDeclaration(declaration, data)
     }
 
-    private val constFalse = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
+    private val constFalse get() = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, false)
 
     override fun visitContainerExpression(expression: IrContainerExpression, data: ReturnableBlockLoweringContext): IrExpression {
         if (expression !is IrReturnableBlock) return super.visitContainerExpression(expression, data)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 import kotlin.test.assertEquals
 
 fun foo(x : String) : String {

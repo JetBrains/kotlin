@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter.markers
@@ -9,7 +9,6 @@ import com.intellij.application.options.colors.ColorAndFontOptions
 import com.intellij.codeHighlighting.Pass
 import com.intellij.codeInsight.daemon.GutterIconNavigationHandler
 import com.intellij.codeInsight.daemon.LineMarkerInfo
-import com.intellij.icons.AllIcons
 import com.intellij.ide.DataManager
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.psi.PsiElement
@@ -25,7 +24,7 @@ import javax.swing.JComponent
 
 private val navHandler = GutterIconNavigationHandler<PsiElement> { event, element ->
     val dataContext = (event.component as? JComponent)?.let { DataManager.getInstance().getDataContext(it) }
-            ?: return@GutterIconNavigationHandler
+        ?: return@GutterIconNavigationHandler
     val ktClass = element?.parent as? KtClass ?: return@GutterIconNavigationHandler
     val styleId = ktClass.styleIdForMarkerAnnotation() ?: return@GutterIconNavigationHandler
     ColorAndFontOptions.selectOrEditColor(dataContext, DslHighlighterExtension.styleOptionDisplayName(styleId), KotlinLanguage.NAME)
@@ -39,7 +38,9 @@ fun collectHighlightingColorsMarkers(
     ktClass: KtClass,
     result: MutableCollection<LineMarkerInfo<*>>
 ) {
-    if (ktClass.styleIdForMarkerAnnotation() == null) return
+    if (!KotlinLineMarkerOptions.dslOption.isEnabled) return
+
+    val styleId = ktClass.styleIdForMarkerAnnotation() ?: return
 
     val anchor = ktClass.nameIdentifier ?: return
 
@@ -47,7 +48,7 @@ fun collectHighlightingColorsMarkers(
         LineMarkerInfo<PsiElement>(
             anchor,
             anchor.textRange,
-            AllIcons.Gutter.Colors,
+            createDslStyleIcon(styleId),
             Pass.LINE_MARKERS,
             toolTipHandler, navHandler,
             GutterIconRenderer.Alignment.RIGHT
@@ -61,4 +62,3 @@ private fun KtClass.styleIdForMarkerAnnotation(): Int? {
     if (!classDescriptor.isDslHighlightingMarker()) return null
     return DslHighlighterExtension.styleIdByMarkerAnnotation(classDescriptor)
 }
-

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface Base {
     val foo: String
     fun bar(): String

@@ -1,7 +1,6 @@
 fun foo() {
-    val a: kotlin.test.Asserter?
-    if (<caret>) {
-        a = null
+    val a: kotlin.test.Asserter? = if (<caret>) {
+        null
     }
 
     a?.charAt(1)

@@ -1,3 +1,5 @@
+// PROBLEM: none
+
 class Test {
     companion object {
         fun f(x: Int, y: Int) = 1

@@ -64,9 +64,9 @@ object LambdaSignatureItems {
     }
 
     private fun createLookupElement(
-            functionType: KotlinType,
-            signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
-            explicitParameterTypes: Boolean
+        functionType: KotlinType,
+        signaturePresentation: LambdaSignatureTemplates.SignaturePresentation,
+        explicitParameterTypes: Boolean
     ): LookupElement {
         val lookupString = LambdaSignatureTemplates.signaturePresentation(functionType, signaturePresentation)
         val priority = if (explicitParameterTypes)
@@ -74,13 +74,19 @@ object LambdaSignatureItems {
         else
             SmartCompletionItemPriority.LAMBDA_SIGNATURE
         return LookupElementBuilder.create(lookupString)
-                .withInsertHandler({ context, lookupElement ->
-                                       val offset = context.startOffset
-                                       val placeholder = "{}"
-                                       context.document.replaceString(offset, context.tailOffset, placeholder)
-                                       LambdaSignatureTemplates.insertTemplate(context, TextRange(offset, offset + placeholder.length), functionType, explicitParameterTypes, signatureOnly = true)
-                                   })
-                .suppressAutoInsertion()
-                .assignSmartCompletionPriority(priority)
+            .withInsertHandler { context, _ ->
+                val offset = context.startOffset
+                val placeholder = "{}"
+                context.document.replaceString(offset, context.tailOffset, placeholder)
+                LambdaSignatureTemplates.insertTemplate(
+                    context,
+                    TextRange(offset, offset + placeholder.length),
+                    functionType,
+                    explicitParameterTypes,
+                    signatureOnly = true
+                )
+            }
+            .suppressAutoInsertion()
+            .assignSmartCompletionPriority(priority)
     }
 }

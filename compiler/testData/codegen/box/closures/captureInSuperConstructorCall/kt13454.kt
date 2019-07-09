@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 open class Foo(val x: () -> String)
 
 class Outer {

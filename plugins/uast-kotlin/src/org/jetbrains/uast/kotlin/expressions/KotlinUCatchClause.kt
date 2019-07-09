@@ -16,6 +16,7 @@
 
 package org.jetbrains.uast.kotlin
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtCatchClause
 import org.jetbrains.uast.UCatchClause
 import org.jetbrains.uast.UElement
@@ -24,22 +25,23 @@ import org.jetbrains.uast.UTypeReferenceExpression
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 
 class KotlinUCatchClause(
-        override val psi: KtCatchClause,
+        override val sourcePsi: KtCatchClause,
         givenParent: UElement?
 ) : KotlinAbstractUElement(givenParent), UCatchClause {
+    override val psi: PsiElement?
+        get() = sourcePsi
 
-    override val javaPsi = null
-    override val sourcePsi = psi
+    override val javaPsi: PsiElement? get() = null
 
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.catchBody, this) }
+    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.catchBody, this) }
     
     override val parameters by lz {
-        val parameter = psi.catchParameter ?: return@lz emptyList<UParameter>()
-        listOf(KotlinUParameter(UastKotlinPsiParameter.create(parameter, psi, this, 0), psi, this))
+        val parameter = sourcePsi.catchParameter ?: return@lz emptyList<UParameter>()
+        listOf(KotlinUParameter(UastKotlinPsiParameter.create(parameter, sourcePsi, this, 0), sourcePsi, this))
     }
 
     override val typeReferences by lz {
-        val parameter = psi.catchParameter ?: return@lz emptyList<UTypeReferenceExpression>()
+        val parameter = sourcePsi.catchParameter ?: return@lz emptyList<UTypeReferenceExpression>()
         val typeReference = parameter.typeReference ?: return@lz emptyList<UTypeReferenceExpression>()
         listOf(LazyKotlinUTypeReferenceExpression(typeReference, this) { typeReference.toPsiType(this, boxed = true) } )
     }

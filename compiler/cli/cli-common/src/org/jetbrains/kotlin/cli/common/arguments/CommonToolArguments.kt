@@ -27,7 +27,7 @@ abstract class CommonToolArguments : Freezable(), Serializable {
     var freeArgs: List<String> by FreezableVar(emptyList())
 
     @Transient
-    var errors: ArgumentParseErrors = ArgumentParseErrors()
+    var errors: ArgumentParseErrors? = null
 
     @Argument(value = "-help", shortName = "-h", description = "Print a synopsis of standard options")
     var help: Boolean by FreezableVar(false)

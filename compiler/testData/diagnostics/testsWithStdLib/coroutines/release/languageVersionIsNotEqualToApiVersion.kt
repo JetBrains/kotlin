@@ -1,6 +1,7 @@
 // !API_VERSION: 1.2
 // !DIAGNOSTICS: -PRE_RELEASE_CLASS, -UNUSED_PARAMETER
 // !LANGUAGE: +ReleaseCoroutines
+// !WITH_NEW_INFERENCE
 // SKIP_TXT
 
 <!UNSUPPORTED!>suspend<!> fun dummy() {}
@@ -34,4 +35,4 @@ fun test2() {
 
 <!UNSUPPORTED!>suspend<!> fun test3(): Unit = kotlin.coroutines.experimental.<!DEPRECATION!>suspendCoroutine<!> { _ -> Unit }
 
-<!UNSUPPORTED!>suspend<!> fun test4(): Unit = kotlin.coroutines.<!UNRESOLVED_REFERENCE!>suspendCoroutine<!> { <!CANNOT_INFER_PARAMETER_TYPE!>_<!> -> Unit }
+<!UNSUPPORTED!>suspend<!> fun test4(): Unit = kotlin.coroutines.<!UNRESOLVED_REFERENCE!>suspendCoroutine<!> { <!OI;CANNOT_INFER_PARAMETER_TYPE!>_<!> -> Unit }

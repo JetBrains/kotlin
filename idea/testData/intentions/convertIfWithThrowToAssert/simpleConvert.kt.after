@@ -1,4 +1,0 @@
-// WITH_RUNTIME
-fun foo() {
-    assert(!true) { "text" }
-}

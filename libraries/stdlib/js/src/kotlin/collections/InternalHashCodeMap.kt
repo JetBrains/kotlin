@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 /*
  * Based on GWT InternalHashCodeMap
@@ -68,7 +68,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         if (chainOrEntry !is Array<*>) {
             val entry: MutableEntry<K, V> = chainOrEntry
             if (equality.equals(entry.key, key)) {
-                deleteProperty(backingMap, hashCode)
+                jsDeleteProperty(backingMap, hashCode)
                 size--
                 return entry.value
             } else {
@@ -82,7 +82,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
                     if (chain.size == 1) {
                         chain.asDynamic().length = 0
                         // remove the whole array
-                        deleteProperty(backingMap, hashCode)
+                        jsDeleteProperty(backingMap, hashCode)
                     } else {
                         // splice out the entry we're removing
                         chain.asDynamic().splice(index, 1)
@@ -128,7 +128,7 @@ internal class InternalHashCodeMap<K, V>(override val equality: EqualityComparat
         return object : MutableIterator<MutableEntry<K, V>> {
             var state = -1 // -1 not ready, 0 - ready, 1 - done
 
-            val keys: Array<Int> = js("Object").keys(backingMap)
+            val keys: Array<String> = js("Object").keys(backingMap)
             var keyIndex = -1
 
             var chainOrEntry: dynamic = null

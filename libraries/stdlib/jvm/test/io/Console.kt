@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
@@ -62,6 +62,16 @@ class ConsoleTest {
     @Test
     fun shouldReadMultibyteEncodings() {
         testReadLine("first${linuxLineSeparator}second", listOf("first", "second"), charset = Charsets.UTF_32)
+    }
+
+    @Test
+    fun readSurrogatePairs() {
+        val c = "\uD83D\uDC4D" // thumb-up emoji
+        testReadLine("$c$linuxLineSeparator", listOf(c))
+        testReadLine("e $c$linuxLineSeparator", listOf("e $c"))
+        testReadLine("$c$windowsLineSeparator", listOf(c))
+        testReadLine("e $c$c", listOf("e $c$c"))
+        testReadLine("e $c$linuxLineSeparator$c", listOf("e $c", c))
     }
 
     private fun testReadLine(text: String, expected: List<String>, charset: Charset = Charsets.UTF_8) {

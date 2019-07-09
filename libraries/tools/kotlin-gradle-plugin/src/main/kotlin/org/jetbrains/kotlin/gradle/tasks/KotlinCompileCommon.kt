@@ -25,11 +25,13 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformCommonOptionsImpl
 import org.jetbrains.kotlin.gradle.dsl.fillDefaultValues
+import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import java.io.File
 
 @CacheableTask
-internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
+open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArguments>(), KotlinCommonCompile {
 
     private val kotlinOptionsImpl = KotlinMultiplatformCommonOptionsImpl()
     override val kotlinOptions: KotlinMultiplatformCommonOptions
@@ -44,9 +46,9 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
     override fun findKotlinCompilerClasspath(project: Project): List<File> =
         findKotlinMetadataCompilerClasspath(project)
 
-    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         args.apply { fillDefaultValues() }
-        super.setupCompilerArgs(args, defaultsOnly)
+        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         args.moduleName = friendTask?.moduleName ?: this@KotlinCompileCommon.moduleName
 
@@ -64,12 +66,13 @@ internal open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompil
     }
 
     override fun callCompilerAsync(args: K2MetadataCompilerArguments, sourceRoots: SourceRoots, changedFiles: ChangedFiles) {
-        val messageCollector = GradleMessageCollector(logger)
+        val messageCollector = GradlePrintingMessageCollector(logger)
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner()
         val environment = GradleCompilerEnvironment(
             computedCompilerClasspath, messageCollector, outputItemCollector,
-            localStateDirectories = localStateDirectories()
+            buildReportMode = buildReportMode,
+            outputFiles = allOutputFiles()
         )
         compilerRunner.runMetadataCompilerAsync(sourceRoots.kotlinSourceFiles, args, environment)
     }

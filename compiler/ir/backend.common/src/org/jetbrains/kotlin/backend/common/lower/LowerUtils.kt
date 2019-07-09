@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
-import org.jetbrains.kotlin.backend.common.atMostOne
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -40,9 +38,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
-import org.jetbrains.kotlin.utils.Printer
 
 class IrLoweringContext(backendContext: BackendContext) : IrGeneratorContextBase(backendContext.irBuiltIns)
 
@@ -58,7 +53,7 @@ class DeclarationIrBuilder(
 )
 
 abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
-    protected abstract fun remapVariable(value: IrValueDeclaration): IrValueParameter?
+    protected abstract fun remapVariable(value: IrValueDeclaration): IrValueDeclaration?
 
     override fun visitGetValue(expression: IrGetValue): IrExpression =
         remapVariable(expression.symbol.owner)?.let {
@@ -67,12 +62,12 @@ abstract class AbstractVariableRemapper : IrElementTransformerVoid() {
 }
 
 class VariableRemapper(val mapping: Map<IrValueParameter, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueParameter? =
+    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value]
 }
 
 class VariableRemapperDesc(val mapping: Map<ValueDescriptor, IrValueParameter>) : AbstractVariableRemapper() {
-    override fun remapVariable(value: IrValueDeclaration): IrValueParameter? =
+    override fun remapVariable(value: IrValueDeclaration): IrValueDeclaration? =
         mapping[value.descriptor]
 }
 
@@ -112,7 +107,7 @@ fun IrBuilderWithScope.irIfThen(condition: IrExpression, thenPart: IrExpression)
     }
 
 fun IrBuilderWithScope.irNot(arg: IrExpression) =
-    primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, IrStatementOrigin.EXCL, arg)
+    primitiveOp1(startOffset, endOffset, context.irBuiltIns.booleanNotSymbol, context.irBuiltIns.booleanType, IrStatementOrigin.EXCL, arg)
 
 fun IrBuilderWithScope.irThrow(arg: IrExpression) =
     IrThrowImpl(startOffset, endOffset, context.irBuiltIns.nothingType, arg)
@@ -126,7 +121,8 @@ fun IrBuilderWithScope.irCatch(catchParameter: IrVariable) =
 fun IrBuilderWithScope.irImplicitCoercionToUnit(arg: IrExpression) =
     IrTypeOperatorCallImpl(
         startOffset, endOffset, context.irBuiltIns.unitType,
-        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType, context.irBuiltIns.unitClass, arg
+        IrTypeOperator.IMPLICIT_COERCION_TO_UNIT, context.irBuiltIns.unitType,
+        arg
     )
 
 open class IrBuildingTransformer(private val context: BackendContext) : IrElementTransformerVoid() {
@@ -165,34 +161,11 @@ open class IrBuildingTransformer(private val context: BackendContext) : IrElemen
     }
 }
 
-class SimpleMemberScope(val members: List<DeclarationDescriptor>) : MemberScopeImpl() {
-
-    override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? =
-        members.filterIsInstance<ClassifierDescriptor>()
-            .atMostOne { it.name == name }
-
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
-        members.filterIsInstance<PropertyDescriptor>()
-            .filter { it.name == name }
-
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> =
-        members.filterIsInstance<SimpleFunctionDescriptor>()
-            .filter { it.name == name }
-
-    override fun getContributedDescriptors(
-        kindFilter: DescriptorKindFilter,
-        nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> =
-        members.filter { kindFilter.accepts(it) && nameFilter(it.name) }
-
-    override fun printScopeStructure(p: Printer) = TODO("not implemented")
-}
-
 fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
     val constructedClass = parent as IrClass
     val superClass = constructedClass.superTypes
         .mapNotNull { it as? IrSimpleType }
-        .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ANNOTATION_CLASS || kind == ClassKind.ANNOTATION_CLASS } }
+        .firstOrNull { (it.classifier.owner as IrClass).run { kind == ClassKind.CLASS || kind == ClassKind.ANNOTATION_CLASS || kind == ClassKind.ENUM_CLASS } }
         ?: irBuiltIns.anyType
     var callsSuper = false
     var numberOfCalls = 0
@@ -208,9 +181,11 @@ fun IrConstructor.callsSuper(irBuiltIns: IrBuiltIns): Boolean {
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
             assert(++numberOfCalls == 1) { "More than one delegating constructor call: ${symbol.owner}" }
             val delegatingClass = expression.symbol.owner.parent as IrClass
-            if (delegatingClass == superClass.classifierOrFail.owner)
+            // TODO: figure out why Lazy IR multiplies Declarations for descriptors and fix it
+            // It happens because of IrBuiltIns whose IrDeclarations are different for runtime and test
+            if (delegatingClass.descriptor == superClass.classifierOrFail.descriptor)
                 callsSuper = true
-            else if (delegatingClass != constructedClass)
+            else if (delegatingClass.descriptor != constructedClass.descriptor)
                 throw AssertionError(
                     "Expected either call to another constructor of the class being constructed or" +
                             " call to super class constructor. But was: $delegatingClass"

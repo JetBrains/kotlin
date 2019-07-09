@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.test.ConfigurationKind;
+import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.lang.annotation.Annotation;
 import java.util.Collection;
@@ -32,7 +33,7 @@ import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_FQ_NAME
 import static org.jetbrains.kotlin.load.java.JvmAnnotationNames.METADATA_VERSION_FIELD_NAME;
 
 public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
-    public static final FqName PACKAGE_NAME = new FqName("test");
+    private static final FqName PACKAGE_NAME = new FqName("test");
 
     @Override
     protected void setUp() throws Exception {
@@ -124,7 +125,7 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         List<OutputFile> output = generateClassesInFile().asList();
         Collection<OutputFile> files = CollectionsKt.filter(output, file -> file.getRelativePath().contains(classFilePart));
         assertFalse("No files with \"" + classFilePart + "\" in the name are found: " + output, files.isEmpty());
-        assertTrue("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, files.size() == 1);
+        assertEquals("Exactly one file with \"" + classFilePart + "\" in the name should be found: " + files, 1, files.size());
 
         String path = files.iterator().next().getRelativePath();
         String fqName = path.substring(0, path.length() - ".class".length()).replace('/', '.');
@@ -143,5 +144,16 @@ public class KotlinSyntheticClassAnnotationTest extends CodegenTestCase {
         assertNotNull(version);
         assertTrue("Annotation " + annotationFqName + " is written with an unsupported format",
                    new JvmMetadataVersion(version).isCompatible());
+    }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    private Class<? extends Annotation> loadAnnotationClassQuietly(@NotNull String fqName) {
+        try {
+            return (Class<? extends Annotation>) initializedClassLoader.loadClass(fqName);
+        }
+        catch (ClassNotFoundException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
     }
 }

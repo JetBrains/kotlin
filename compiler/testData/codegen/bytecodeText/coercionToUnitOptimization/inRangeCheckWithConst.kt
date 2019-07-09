@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun testPrimitiveArray(ints: IntArray) =
         10 in ints.indices
 

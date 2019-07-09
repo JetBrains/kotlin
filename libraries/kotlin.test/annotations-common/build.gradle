@@ -3,12 +3,11 @@ description = 'Kotlin Test Annotations Common'
 apply plugin: 'kotlin-platform-common'
 apply plugin: 'pill-configurable'
 
-configureDist(project)
 configurePublishing(project)
 
-
 dependencies {
-    compile project(':kotlin-stdlib-common')
+    compile kotlinStdlib("common")
+    testCompile project(":kotlin-test:kotlin-test-common")
 }
 
 pill {
@@ -26,5 +25,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()

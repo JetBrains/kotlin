@@ -110,13 +110,10 @@ private fun Member.getKPackage(): KDeclarationContainer? =
 
 /**
  * Returns a [KFunction] instance corresponding to the given Java [Method] instance,
- * or `null` if this method cannot be represented by a Kotlin function
- * (for example, if it is a synthetic method).
+ * or `null` if this method cannot be represented by a Kotlin function.
  */
 val Method.kotlinFunction: KFunction<*>?
     get() {
-        if (isSynthetic) return null
-
         if (Modifier.isStatic(modifiers)) {
             val kotlinPackage = getKPackage()
             if (kotlinPackage != null) {

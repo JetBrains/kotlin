@@ -58,6 +58,13 @@ open class RemovePsiElementSimpleFix(element: PsiElement, private val text: Stri
         }
     }
 
+    object RemoveTypeParametersFactory : KotlinSingleIntentionActionFactory() {
+        public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
+            val element = diagnostic.psiElement.getNonStrictParentOfType<KtTypeParameterList>() ?: return null
+            return RemovePsiElementSimpleFix(element, "Remove type parameters")
+        }
+    }
+
     object RemoveVariableFactory : KotlinSingleIntentionActionFactory() {
         public override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<PsiElement>? {
             val expression = diagnostic.psiElement.getNonStrictParentOfType<KtProperty>() ?: return null

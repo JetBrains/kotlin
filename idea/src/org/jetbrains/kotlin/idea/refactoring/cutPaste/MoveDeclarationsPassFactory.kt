@@ -30,7 +30,7 @@ import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiModificationTracker
-import org.jetbrains.kotlin.idea.conversion.copy.range
+import org.jetbrains.kotlin.idea.core.util.range
 
 class MoveDeclarationsPassFactory(highlightingPassRegistrar: TextEditorHighlightingPassRegistrar)
     : ProjectComponent, TextEditorHighlightingPassFactory {

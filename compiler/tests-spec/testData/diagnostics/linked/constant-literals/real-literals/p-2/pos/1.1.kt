@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 2
- * SENTENCE: [1] The exponent is an exponent mark (e or E) followed by an optionaly signed decimal integer (a sequence of decimal digits).
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, real-literals -> paragraph 2 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Simple real literals with an exponent mark.
  */

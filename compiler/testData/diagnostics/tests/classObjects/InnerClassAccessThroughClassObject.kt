@@ -28,7 +28,7 @@ object O {
 fun f() {
     A.c
     A.hashCode()
-    A().<!NO_COMPANION_OBJECT, NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE!>Nested<!>
+    A().<!NESTED_CLASS_ACCESSED_VIA_INSTANCE_REFERENCE, NO_COMPANION_OBJECT!>Nested<!>
     A.Nested()
     A().Inner()
     A.Companion.<!UNRESOLVED_REFERENCE!>Nested<!>

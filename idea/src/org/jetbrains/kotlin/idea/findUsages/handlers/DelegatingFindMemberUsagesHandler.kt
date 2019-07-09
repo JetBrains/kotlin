@@ -26,20 +26,21 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiParameter
 import com.intellij.usageView.UsageInfo
 import com.intellij.util.Processor
-import org.jetbrains.kotlin.idea.findUsages.*
+import org.jetbrains.kotlin.idea.findUsages.KotlinCallableFindUsagesOptions
+import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 class DelegatingFindMemberUsagesHandler(
-        val declaration: KtNamedDeclaration,
-        val elementsToSearch: Collection<PsiElement>,
-        val factory: KotlinFindUsagesHandlerFactory
+    val declaration: KtNamedDeclaration,
+    private val elementsToSearch: Collection<PsiElement>,
+    val factory: KotlinFindUsagesHandlerFactory
 ) : FindUsagesHandler(declaration) {
     private val kotlinHandler = KotlinFindMemberUsagesHandler.getInstance(declaration, elementsToSearch, factory)
 
     private data class HandlerAndOptions(
-            val handler: FindUsagesHandler,
-            val options: FindUsagesOptions?
+        val handler: FindUsagesHandler,
+        val options: FindUsagesOptions?
     )
 
     private fun getHandlerAndOptions(element: PsiElement, options: FindUsagesOptions?): HandlerAndOptions? {
@@ -48,8 +49,10 @@ class DelegatingFindMemberUsagesHandler(
                 HandlerAndOptions(KotlinFindMemberUsagesHandler.getInstance(element, elementsToSearch, factory), options)
 
             is PsiMethod, is PsiParameter ->
-                HandlerAndOptions(JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
-                                  (options as KotlinCallableFindUsagesOptions?)?.toJavaOptions(project))
+                HandlerAndOptions(
+                    JavaFindUsagesHandler(element, elementsToSearch.toTypedArray(), factory.javaHandlerFactory),
+                    (options as KotlinCallableFindUsagesOptions?)?.toJavaOptions(project)
+                )
 
             else -> null
         }
@@ -57,7 +60,7 @@ class DelegatingFindMemberUsagesHandler(
 
     override fun getFindUsagesDialog(isSingleFile: Boolean, toShowInNewTab: Boolean, mustOpenInNewTab: Boolean): AbstractFindUsagesDialog {
         return getHandlerAndOptions(psiElement, null)?.handler?.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
-               ?: super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
+            ?: super.getFindUsagesDialog(isSingleFile, toShowInNewTab, mustOpenInNewTab)
     }
 
     override fun getPrimaryElements(): Array<PsiElement> {

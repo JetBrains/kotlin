@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun foo1(x: Int): Boolean {
     when(x) {
         2 + 2 -> return true

@@ -1,6 +1,7 @@
 // "Create expected function in common module testModule_Common" "false"
 // ACTION: Convert member to extension
 // ACTION: Convert to block body
+// ACTION: Create expected class in common module testModule_Common
 // ACTION: Move to companion object
 // ACTION: Remove 'actual' modifier
 // ACTION: Remove explicit type specification

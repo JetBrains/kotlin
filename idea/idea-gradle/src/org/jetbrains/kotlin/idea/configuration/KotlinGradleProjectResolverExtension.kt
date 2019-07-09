@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
@@ -28,14 +29,14 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.io.FileUtil
 import org.gradle.api.artifacts.Dependency
 import org.gradle.tooling.model.idea.IdeaModule
-import org.jetbrains.kotlin.gradle.CompilerArgumentsBySourceSet
-import org.jetbrains.kotlin.gradle.KotlinGradleModel
-import org.jetbrains.kotlin.gradle.KotlinGradleModelBuilder
-import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.inspections.gradle.getDependencyModules
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.DataNodeUserDataProperty
 import org.jetbrains.kotlin.idea.util.NotNullableCopyableDataNodeUserDataProperty
+import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.plugins.gradle.model.ExternalProjectDependency
 import org.jetbrains.plugins.gradle.model.ExternalSourceSet
 import org.jetbrains.plugins.gradle.model.FileCollectionDependency
@@ -54,6 +55,8 @@ var DataNode<ModuleData>.compilerArgumentsBySourceSet
         by CopyableDataNodeUserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
+var DataNode<out ModuleData>.isHmpp
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_HMPP_MODULE"), false)
 var DataNode<ModuleData>.platformPluginId
         by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
 var DataNode<out ModuleData>.implementedModuleNames
@@ -67,6 +70,7 @@ var DataNode<out ModuleData>.dependenciesCache
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
     val isAndroidProjectKey = Key.findKeyByName("IS_ANDROID_PROJECT_KEY")
+    private val LOG = Logger.getInstance(PsiPrecedences::class.java)
 
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
         return setOf(KotlinGradleModelBuilder::class.java, Unit::class.java)
@@ -109,7 +113,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             when (dependency) {
                 is ExternalProjectDependency -> {
                     if (dependency.configurationName == Dependency.DEFAULT_CONFIGURATION) {
-                        val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
+                        @Suppress("UNCHECKED_CAST") val targetModuleNode = ExternalSystemApiUtil.findFirstRecursively(ideProject) {
                             (it.data as? ModuleData)?.id == dependency.projectPath
                         } as DataNode<ModuleData>? ?: return@mapNotNullTo null
                         ExternalSystemApiUtil.findAll(targetModuleNode, GradleSourceSetData.KEY)
@@ -176,7 +180,10 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
                     }
                 }
 
-                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(ideModule, gradleModule.project)
+                val dependencies = if (useModulePerSourceSet()) moduleNode.getDependencies(ideProject) else getDependencyModules(
+                    ideModule,
+                    gradleModule.project
+                )
                 // queue only those dependencies that haven't been discovered earlier
                 dependencies.filterTo(toProcess, discovered::add)
             }
@@ -188,7 +195,17 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ) {
-        if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) != null) {
+        if (LOG.isDebugEnabled) {
+            LOG.debug("Start populate module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
+        }
+        val mppModel = resolverCtx.getMppModel(gradleModule)
+        if (mppModel != null) {
+            mppModel.targets.forEach { target ->
+                KotlinFUSLogger.log(
+                    FUSEventGroups.GradleTarget,
+                    "MPP.${target.platform.id + (target.presetName?.let { ".$it" } ?: "")}"
+                )
+            }
             return super.populateModuleDependencies(gradleModule, ideModule, ideProject)
         }
 
@@ -204,13 +221,21 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         ideModule.isResolved = true
         ideModule.hasKotlinPlugin = gradleModel.hasKotlinPlugin
-        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet
+        ideModule.compilerArgumentsBySourceSet = gradleModel.compilerArgumentsBySourceSet.deepCopy()
         ideModule.coroutines = gradleModel.coroutines
         ideModule.platformPluginId = gradleModel.platformPluginId
+
+        if (gradleModel.hasKotlinPlugin) {
+            KotlinFUSLogger.log(FUSEventGroups.GradleTarget, gradleModel.kotlinTarget ?: "unknown")
+        }
+
         addImplementedModuleNames(gradleModule, ideModule, ideProject, gradleModel)
 
         if (useModulePerSourceSet()) {
             super.populateModuleDependencies(gradleModule, ideModule, ideProject)
+        }
+        if (LOG.isDebugEnabled) {
+            LOG.debug("Finish populating module dependencies. Gradle module: [$gradleModule], Ide module: [$ideModule], Ide project: [$ideProject]")
         }
     }
 
@@ -254,6 +279,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         val fullModuleId = compositePrefix + moduleId
 
+        @Suppress("UNCHECKED_CAST")
         return ideProject.children.find { (it.data as? ModuleData)?.id == fullModuleId } as DataNode<ModuleData>?
     }
 }

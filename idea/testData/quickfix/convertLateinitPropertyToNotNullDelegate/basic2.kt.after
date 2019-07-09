@@ -1,0 +1,5 @@
+import kotlin.properties.Delegates
+
+// "Convert to notNull delegate" "true"
+// WITH_RUNTIME
+var x by Delegates.notNull<Int>()

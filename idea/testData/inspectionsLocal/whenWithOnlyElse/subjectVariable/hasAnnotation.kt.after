@@ -1,0 +1,13 @@
+// WITH_RUNTIME
+fun hasAnnotation() {
+    run {
+        @Bar val a = create()
+        use(a)
+    }
+}
+
+fun create(): String = ""
+
+fun use(s: String) {}
+
+annotation class Bar

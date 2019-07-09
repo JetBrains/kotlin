@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.isSubpackageOf
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.KotlinPaths
+import java.io.File
 
 fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collection<KtFile>): Boolean {
     if (environment.configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)) {
@@ -41,4 +43,26 @@ fun checkKotlinPackageUsage(environment: KotlinCoreEnvironment, files: Collectio
         }
     }
     return true
+}
+
+fun getLibraryFromHome(
+    paths: KotlinPaths?,
+    getLibrary: (KotlinPaths) -> File,
+    libraryName: String,
+    messageCollector: MessageCollector,
+    noLibraryArgument: String
+): File? {
+    if (paths != null) {
+        val stdlibJar = getLibrary(paths)
+        if (stdlibJar.exists()) {
+            return stdlibJar
+        }
+    }
+
+    messageCollector.report(
+        CompilerMessageSeverity.STRONG_WARNING, "Unable to find " + libraryName + " in the Kotlin home directory. " +
+                "Pass either " + noLibraryArgument + " to prevent adding it to the classpath, " +
+                "or the correct '-kotlin-home'", null
+    )
+    return null
 }

@@ -1,0 +1,7 @@
+fun foo() {
+    if (false) {
+        bar(2)
+    } else bar(1)
+}
+
+fun bar(i: Int) {}

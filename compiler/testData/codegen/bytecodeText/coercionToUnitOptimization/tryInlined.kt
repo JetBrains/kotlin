@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test(list: List<String>) {
     val result = mutableListOf<String>()
     use1 { list.forEach { result.add(it) } }

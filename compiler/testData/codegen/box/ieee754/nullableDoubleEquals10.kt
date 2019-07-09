@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+
 fun myEquals(a: Double?, b: Double?) = a == b
 
 fun myEquals1(a: Double?, b: Double) = a == b

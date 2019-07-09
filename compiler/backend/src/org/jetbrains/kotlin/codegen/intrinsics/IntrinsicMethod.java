@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.codegen.Callable;
 import org.jetbrains.kotlin.codegen.CallableMethod;
 import org.jetbrains.kotlin.codegen.ExpressionCodegen;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor;
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall;
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes;
@@ -34,6 +35,10 @@ public abstract class IntrinsicMethod {
             @NotNull ExpressionCodegen codegen
     ) {
         return toCallable(codegen.getState().getTypeMapper().mapToCallableMethod(fd, false), isSuper, resolvedCall);
+    }
+
+    public boolean isApplicableToOverload(@NotNull CallableMemberDescriptor descriptor) {
+        return true;
     }
 
     @NotNull

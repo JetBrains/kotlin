@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("Test")
 

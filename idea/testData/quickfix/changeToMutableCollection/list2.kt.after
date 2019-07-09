@@ -1,0 +1,8 @@
+// "Change type to MutableList" "true"
+// WITH_RUNTIME
+fun main() {
+    val list = foo().toMutableList()<caret>
+    list[1] = 10
+}
+
+fun foo() = listOf(1, 2, 3)

@@ -3,12 +3,16 @@
 // WITH_RUNTIME
 // FULL_JDK
 
+package test
+
 inline fun inlineMe() {
     assert(false) { "FROM INLINED" }
 }
 
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+
+import test.*
 
 class CheckerJvmAssertInlineFunctionAssertionsEnabled {
     fun check() {

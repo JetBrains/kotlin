@@ -35,23 +35,23 @@ import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
-    override fun getDisplayName() = CodeInsightBundle.message("inspection.unresolved.property.key.reference.name")
+    override fun getDisplayName(): String = CodeInsightBundle.message("inspection.unresolved.property.key.reference.name")
 
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object : KtVisitorVoid() {
             private fun processResourceBundleReference(ref: ResourceBundleReference, template: KtStringTemplateExpression) {
-                if (ref.resolve() == null) {
+                if (ref.multiResolve(true).isEmpty()) {
                     holder.registerProblem(
-                            template,
-                            CodeInsightBundle.message("inspection.invalid.resource.bundle.reference", ref.canonicalText),
-                            ProblemHighlightType.LIKE_UNKNOWN_SYMBOL,
-                            TextRange(0, template.textLength)
+                        template,
+                        CodeInsightBundle.message("inspection.invalid.resource.bundle.reference", ref.canonicalText),
+                        ProblemHighlightType.LIKE_UNKNOWN_SYMBOL,
+                        TextRange(0, template.textLength)
                     )
                 }
             }
 
             private fun processPropertyReference(ref: PropertyReference, template: KtStringTemplateExpression) {
-                val property = ref.resolve() as? Property
+                val property = ref.multiResolve(true).firstOrNull()?.element as? Property
                 if (property == null) {
                     if (!ref.isSoft) {
                         holder.registerProblem(
@@ -66,7 +66,7 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 }
 
                 val argument = template.parents.firstIsInstanceOrNull<KtValueArgument>() ?: return
-                if (argument.getArgumentExpression() != KtPsiUtil.deparenthesize(template) ) return
+                if (argument.getArgumentExpression() != KtPsiUtil.deparenthesize(template)) return
 
                 val callExpression = argument.getStrictParentOfType<KtCallExpression>() ?: return
                 val resolvedCall = callExpression.resolveToCall() ?: return
@@ -85,8 +85,8 @@ class KotlinInvalidBundleOrPropertyInspection : AbstractKotlinInspection() {
                 val actualArgumentCount = messageArgument.arguments.size
                 if (actualArgumentCount < expectedArgumentCount) {
                     val description = CodeInsightBundle.message(
-                            "property.has.more.parameters.than.passed",
-                            ref.canonicalText, expectedArgumentCount, actualArgumentCount
+                        "property.has.more.parameters.than.passed",
+                        ref.canonicalText, expectedArgumentCount, actualArgumentCount
                     )
                     holder.registerProblem(template, description, ProblemHighlightType.GENERIC_ERROR)
                 }

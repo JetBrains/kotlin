@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 interface A<T, U : Number, V : Any> {
     fun foo(t: T, u: U): V? {
         return null

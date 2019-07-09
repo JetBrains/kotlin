@@ -1,0 +1,37 @@
+Additional checking of reference Getter: List
+Additional checking of reference KtSimpleNameReference: List
+Additional checking of reference Getter: List1
+Additional checking of reference KtSimpleNameReference: List1
+Changed resolve of KtSimpleNameReference: List1
+Additional checking of reference Getter: a1
+Additional checking of reference KtSimpleNameReference: a1
+Changed resolve of KtSimpleNameReference: a1
+Additional checking of reference Getter: run
+Additional checking of reference KtSimpleNameReference: run
+Additional checking of reference Getter: run1
+Additional checking of reference KtSimpleNameReference: run1
+Changed resolve of KtSimpleNameReference: run1
+Additional checking of reference KtInvokeFunctionReference: List1<String>(1) {}
+Additional checking of reference KtInvokeFunctionReference: List<String>(1) {}
+Additional checking of reference KtInvokeFunctionReference: a1()
+Additional checking of reference KtInvokeFunctionReference: run {}
+Additional checking of reference KtInvokeFunctionReference: run1 {}
+Trying to build import list again with import rules: +pack1.a as a1, +kotlin.collections.List as List1, +kotlin.run as run1
+Additional checking of reference Getter: List
+Additional checking of reference KtSimpleNameReference: List
+Additional checking of reference Getter: List1
+Additional checking of reference KtSimpleNameReference: List1
+Changed resolve of KtSimpleNameReference: List1
+Additional checking of reference Getter: a1
+Additional checking of reference KtSimpleNameReference: a1
+Changed resolve of KtSimpleNameReference: a1
+Additional checking of reference Getter: run
+Additional checking of reference KtSimpleNameReference: run
+Additional checking of reference Getter: run1
+Additional checking of reference KtSimpleNameReference: run1
+Changed resolve of KtSimpleNameReference: run1
+Additional checking of reference KtInvokeFunctionReference: List1<String>(1) {}
+Additional checking of reference KtInvokeFunctionReference: List<String>(1) {}
+Additional checking of reference KtInvokeFunctionReference: a1()
+Additional checking of reference KtInvokeFunctionReference: run {}
+Additional checking of reference KtInvokeFunctionReference: run1 {}

@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ T : Inv<*>?, /*1*/ F : Inv<out kotlin.Any>?, /*2*/ G : Inv<*>> test1(/*0*/ t: T, /*1*/ f: F, /*2*/ g: G?): kotlin.Unit
+public fun </*0*/ T : K, /*1*/ K : Inv<*>?> test2(/*0*/ t: T): kotlin.Unit
+public fun </*0*/ T : Inv<K>?, /*1*/ K : Inv<*>?> test3(/*0*/ t: T): kotlin.Unit
+
+public open class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>(/*0*/ value: kotlin.String)
+    public final val value: kotlin.String
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

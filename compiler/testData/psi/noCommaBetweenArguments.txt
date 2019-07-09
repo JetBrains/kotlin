@@ -1,0 +1,182 @@
+KtFile: noCommaBetweenArguments.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar1')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          PsiWhiteSpace('\n        ')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+              PsiWhiteSpace('\n        ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('A')
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                PsiErrorElement:Expecting an expression
+                  <empty list>
+                PsiElement(RPAR)(')')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar2')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              CALL_EXPRESSION
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('A')
+                VALUE_ARGUMENT_LIST
+                  PsiElement(LPAR)('(')
+                  PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('A')
+              PARENTHESIZED
+                PsiElement(LPAR)('(')
+                PsiErrorElement:Expecting an expression
+                  <empty list>
+                PsiElement(RPAR)(')')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar3')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+              PsiWhiteSpace(' ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('y')
+              PsiErrorElement:Expecting an element
+                <empty list>
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar4')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            BINARY_EXPRESSION
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('x')
+              PsiWhiteSpace('\n         ')
+              OPERATION_REFERENCE
+                PsiElement(IDENTIFIER)('y')
+              PsiErrorElement:Expecting an element
+                <empty list>
+          PsiWhiteSpace('\n    ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar5')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiErrorElement:Expecting ','
+            <empty list>
+          PsiWhiteSpace(' ')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar6')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiErrorElement:Expecting ','
+            <empty list>
+          PsiWhiteSpace('\n         ')
+          VALUE_ARGUMENT
+            STRING_TEMPLATE
+              PsiElement(OPEN_QUOTE)('"')
+              PsiElement(CLOSING_QUOTE)('"')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar7')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              LAMBDA_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    <empty list>
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace(' ')
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      <empty list>
+                    PsiElement(RBRACE)('}')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('bar8')
+        VALUE_ARGUMENT_LIST
+          PsiElement(LPAR)('(')
+          VALUE_ARGUMENT
+            CALL_EXPRESSION
+              LAMBDA_EXPRESSION
+                FUNCTION_LITERAL
+                  PsiElement(LBRACE)('{')
+                  BLOCK
+                    <empty list>
+                  PsiElement(RBRACE)('}')
+              PsiWhiteSpace('\n         ')
+              LAMBDA_ARGUMENT
+                LAMBDA_EXPRESSION
+                  FUNCTION_LITERAL
+                    PsiElement(LBRACE)('{')
+                    BLOCK
+                      <empty list>
+                    PsiElement(RBRACE)('}')
+          PsiWhiteSpace('\n    ')
+          PsiElement(RPAR)(')')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

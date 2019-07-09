@@ -24,6 +24,8 @@ import java.io.File;
 
 public interface MessageRenderer {
 
+    String PROPERTY_KEY = "org.jetbrains.kotlin.cliMessageRenderer";
+
     MessageRenderer XML = new XmlMessageRenderer();
 
     MessageRenderer WITHOUT_PATHS = new PlainTextMessageRenderer() {
@@ -32,6 +34,11 @@ public interface MessageRenderer {
         protected String getPath(@NotNull CompilerMessageLocation location) {
             return null;
         }
+
+        @Override
+        public String getName() {
+            return "Pathless";
+        }
     };
 
     MessageRenderer PLAIN_FULL_PATHS = new PlainTextMessageRenderer() {
@@ -39,6 +46,11 @@ public interface MessageRenderer {
         @Override
         protected String getPath(@NotNull CompilerMessageLocation location) {
             return location.getPath();
+        }
+
+        @Override
+        public String getName() {
+            return "FullPath";
         }
     };
 
@@ -50,7 +62,14 @@ public interface MessageRenderer {
         protected String getPath(@NotNull CompilerMessageLocation location) {
             return FileUtilsKt.descendantRelativeTo(new File(location.getPath()), cwd).getPath();
         }
+
+        @Override
+        public String getName() {
+            return "RelativePath";
+        }
     };
+
+    MessageRenderer GRADLE_STYLE = new GradleStyleMessageRenderer();
 
     String renderPreamble();
 
@@ -59,4 +78,6 @@ public interface MessageRenderer {
     String renderUsage(@NotNull String usage);
 
     String renderConclusion();
+
+    String getName();
 }

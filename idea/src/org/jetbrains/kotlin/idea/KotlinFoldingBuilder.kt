@@ -35,8 +35,10 @@ import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFunctionLiteral
+import org.jetbrains.kotlin.psi.KtImportList
 import org.jetbrains.kotlin.psi.psiUtil.allChildren
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
@@ -66,17 +68,19 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
         if (root !is KtFile) {
             return
         }
-        val imports = root.importDirectives
-        if (imports.size > 1) {
-            val importKeyword = imports[0].firstChild
-            val startOffset = importKeyword.endOffset + 1
 
-            val importList = root.importList
-            if (importList != null) {
+        val importList = root.importList
+        if (importList != null) {
+            val firstImport = importList.imports.firstOrNull()
+            if (firstImport != null && importList.imports.size > 1) {
+                val importKeyword = firstImport.firstChild
+
+                val startOffset = importKeyword.endOffset + 1
                 val endOffset = importList.endOffset
 
-                val range = TextRange(startOffset, endOffset)
-                descriptors.add(FoldingDescriptor(importList, range).apply { setCanBeRemovedWhenCollapsed(true) })
+                descriptors.add(FoldingDescriptor(importList, TextRange(startOffset, endOffset)).apply {
+                    setCanBeRemovedWhenCollapsed(true)
+                })
             }
         }
 
@@ -169,7 +173,7 @@ class KotlinFoldingBuilder : CustomFoldingBuilder(), DumbAware {
 
     private fun String.addSpaceIfNeeded(): String {
         if (isEmpty() || endsWith(" ")) return this
-        return this + " "
+        return "$this "
     }
 
     private fun getFirstLineOfComment(node: ASTNode): String {

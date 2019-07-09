@@ -50,6 +50,8 @@ fun String.replNormalizeLineBreaks() = replace(END_LINE, "\n")
 fun makeScriptBaseName(codeLine: ReplCodeLine) =
         "Line_${codeLine.no}${if (codeLine.generation > REPL_CODE_LINE_FIRST_GEN) "_gen_${codeLine.generation}" else ""}"
 
+fun scriptResultFieldName(lineNo: Int) = "res$lineNo"
+
 fun renderReplStackTrace(cause: Throwable, startFromMethodName: String): String {
     val newTrace = arrayListOf<StackTraceElement>()
     var skip = true

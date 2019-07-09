@@ -15,12 +15,17 @@ dependencies {
         testCompileOnly(intellijDep()) { includeJars("platform-api", "platform-impl") }
     }
 
+    Platform[192].orHigher {
+        testRuntime(intellijPluginDep("java"))
+    }
+
     compile(project(":compiler:util"))
     compile(project(":compiler:cli"))
     compile(project(":compiler:backend"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:plugin-api"))
+    compileOnly(project(":kotlin-annotation-processing-cli"))
     compileOnly(project(":kotlin-annotation-processing-base"))
     compileOnly(project(":kotlin-annotation-processing-runtime"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
@@ -32,8 +37,9 @@ dependencies {
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-annotation-processing-runtime"))
 
-    embeddedComponents(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
-    embeddedComponents(project(":kotlin-annotation-processing-base")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-runtime")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
+    embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 }
 
 sourceSets {
@@ -43,18 +49,14 @@ sourceSets {
 
 testsJar {}
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":dist")
 }
 
-runtimeJar {
-    fromEmbeddedComponents()
-}
+publish()
+
+runtimeJar()
 
 sourcesJar()
 javadocJar()
-
-dist()
-
-publish()

@@ -1,6 +1,6 @@
 // ACTION_CLASS: org.jetbrains.kotlin.idea.actions.generate.KotlinGenerateTestSupportActionBase$TearDown
 // NOT_APPLICABLE
-// CONFIGURE_LIBRARY: TestNG@plugins/testng/lib/testng.jar
+// CONFIGURE_LIBRARY: TestNG@testng(-|[0-9]|\.)*jar
 import org.testng.annotations.AfterMethod
 import org.testng.annotations.Test
 

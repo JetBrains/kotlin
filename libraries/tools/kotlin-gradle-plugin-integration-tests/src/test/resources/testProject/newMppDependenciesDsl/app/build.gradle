@@ -1,0 +1,39 @@
+plugins {
+	id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+}
+
+repositories {
+	mavenLocal()
+	jcenter()
+}
+
+kotlin {
+	jvm("jvm6")
+	js { }
+
+	sourceSets {
+		create("testNonTransitiveStringNotation") {
+			dependencies {
+				api("junit:junit:4.12") { setTransitive(false) }
+			}
+		}
+        create("testNonTransitiveDependencyNotation") {
+            dependencies {
+                api(kotlin("reflect")) { setTransitive(false) }
+            }
+        }
+        create("testExplicitKotlinVersion") {
+            dependencies {
+                api(kotlin("reflect", "1.3.0"))
+                implementation(kotlin("reflect", "1.2.71"))
+                compileOnly(kotlin("reflect", "1.2.70"))
+                runtimeOnly(kotlin("reflect", "1.2.60"))
+            }
+        }
+		create("testProjectWithConfiguration") {
+			dependencies {
+				api(project(path: ":lib", configuration: "outputConfiguration"))
+			}
+		}
+	}
+}

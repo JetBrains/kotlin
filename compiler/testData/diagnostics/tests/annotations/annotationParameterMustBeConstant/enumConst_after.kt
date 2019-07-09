@@ -11,5 +11,5 @@ enum class MyEnum {
     A
 }
 
-@AnnE(<!TYPE_MISMATCH, ANNOTATION_ARGUMENT_MUST_BE_CONST!>Test()<!>)
+@AnnE(<!ANNOTATION_ARGUMENT_MUST_BE_CONST, TYPE_MISMATCH!>Test()<!>)
 class Test2

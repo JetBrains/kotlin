@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ T> bar(/*0*/ i: T): T
+public fun dontRun(/*0*/ body: () -> kotlin.Unit): kotlin.Unit
+public fun foo(/*0*/ i: kotlin.Int): kotlin.Int
+
+public final class Case1 {
+    public constructor Case1()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun test(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

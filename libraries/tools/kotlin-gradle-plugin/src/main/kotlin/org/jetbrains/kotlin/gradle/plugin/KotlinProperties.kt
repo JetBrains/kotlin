@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.gradle.dsl.Coroutines
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import java.io.File
 import java.util.*
 
 internal fun PropertiesProvider.mapKotlinTaskProperties(task: AbstractKotlinCompile<*>) {
@@ -54,6 +56,15 @@ internal class PropertiesProvider(private val project: Project) {
     val coroutines: Coroutines?
         get() = property("kotlin.coroutines")?.let { Coroutines.byCompilerArgument(it) }
 
+    val buildReportEnabled: Boolean
+        get() = booleanProperty("kotlin.build.report.enable") ?: false
+
+    val buildReportVerbose: Boolean
+        get() = booleanProperty("kotlin.build.report.verbose") ?: false
+
+    val buildReportDir: File?
+        get() = property("kotlin.build.report.dir")?.let { File(it) }
+
     val incrementalJvm: Boolean?
         get() = booleanProperty("kotlin.incremental")
 
@@ -69,6 +80,18 @@ internal class PropertiesProvider(private val project: Project) {
     val useFallbackCompilerSearch: Boolean?
         get() = booleanProperty("kotlin.useFallbackCompilerSearch")
 
+    val keepMppDependenciesIntactInPoms: Boolean?
+        get() = booleanProperty("kotlin.mpp.keepMppDependenciesIntactInPoms")
+
+    val ignorePluginLoadedInMultipleProjects: Boolean?
+        get() = booleanProperty("kotlin.pluginLoadedInMultipleProjects.ignore")
+
+    val setJvmTargetFromAndroidCompileOptions: Boolean?
+        get() = booleanProperty("kotlin.setJvmTargetFromAndroidCompileOptions")
+
+    val enableGranularSourceSetsMetadata: Boolean?
+        get() = booleanProperty("kotlin.mpp.enableGranularSourceSetsMetadata")
+
     /**
      * Enables parallel tasks execution within a project with Workers API.
      * Does not enable using actual worker proccesses
@@ -76,6 +99,50 @@ internal class PropertiesProvider(private val project: Project) {
      */
     val parallelTasksInProject: Boolean?
         get() = booleanProperty("kotlin.parallel.tasks.in.project")
+
+    /**
+     * Enables individual test task reporting for aggregated test tasks.
+     *
+     * By default individual test tasks will not fail build if this task will be executed,
+     * also individual html and xml reports will replaced by one consolidated html report.
+     */
+    val individualTaskReports: Boolean?
+        get() = booleanProperty("kotlin.tests.individualTaskReports")
+
+    /**
+     * Forces using a "restricted" distribution of Kotlin/Native.
+     *
+     * A restricted distribution is available for MacOS only and doesn't contain platform libraries.
+     * If a host platform is not MacOS, the flag is ignored.
+     */
+    val nativeRestrictedDistribution: Boolean?
+        get() = booleanProperty("kotlin.native.restrictedDistribution")
+
+    /**
+     * Allows a user to provide a local Kotlin/Native distribution instead of a downloaded one.
+     */
+    val nativeHome: String?
+        get() = propertyWithDeprecatedVariant(KOTLIN_NATIVE_HOME, "org.jetbrains.kotlin.native.home")
+
+    /**
+     * Allows a user to override Kotlin/Native version.
+     */
+    val nativeVersion: String?
+        get() = propertyWithDeprecatedVariant("kotlin.native.version", "org.jetbrains.kotlin.native.version")
+
+    /**
+     * Allows a user to specify additional arguments of a JVM executing a K/N compiler.
+     */
+    val nativeJvmArgs: String?
+        get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
+
+    private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
+        val deprecatedProperty = property(deprecatedPropName)
+        if (deprecatedProperty != null) {
+            SingleWarningPerBuild.show(project, "Project property '$deprecatedPropName' is deprecated. Please use '$propName' instead.")
+        }
+        return property(propName) ?: deprecatedProperty
+    }
 
     private fun booleanProperty(propName: String): Boolean? =
         property(propName)?.toBoolean()
@@ -86,4 +153,8 @@ internal class PropertiesProvider(private val project: Project) {
         } else {
             localProperties.getProperty(propName)
         }
+
+    companion object {
+        internal const val KOTLIN_NATIVE_HOME = "kotlin.native.home"
+    }
 }

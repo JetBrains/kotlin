@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test.adapters
@@ -22,7 +22,7 @@ internal class QUnitAdapter : FrameworkAdapter {
         ignoredSuite = prevIgnore
     }
 
-    override fun test(name: String, ignored: Boolean, testFn: () -> Unit) {
+    override fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
         if (ignored or ignoredSuite) {
             QUnit.skip(name, wrapTest(testFn))
         } else {
@@ -30,15 +30,16 @@ internal class QUnitAdapter : FrameworkAdapter {
         }
     }
 
-    private fun wrapTest(testFn: () -> Unit): (dynamic) -> Unit = { assert ->
+    private fun wrapTest(testFn: () -> Any?): (dynamic) -> Any? = { assert ->
         var assertionsHappened = false
         assertHook = { testResult ->
             assertionsHappened = true
             assert.ok(testResult.result, testResult.lazyMessage())
         }
-        testFn()
+        val possiblePromise = testFn()
         if (!assertionsHappened) {
             assertTrue(true, "A test with no assertions is considered successful")
         }
+        possiblePromise
     }
 }

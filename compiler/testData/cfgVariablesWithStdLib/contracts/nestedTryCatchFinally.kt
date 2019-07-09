@@ -32,7 +32,7 @@ fun outerFinallyInitializes() {
         // Definite reassignment here, cause can get here only if myRun finished
         x = outerComputation()
     } catch (e: java.lang.Exception) {
-        // can catch exception thrown by the inner, so x can be not initalized
+        // can catch exception thrown by the inner, so x can be not initialized
         log()
     } finally {
         // Possible reassignment (e.g. if everything finished)

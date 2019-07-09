@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.resolve
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtFileClassProvider
 import org.jetbrains.kotlin.psi.analysisContext
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class KtFileClassProviderImpl(val kotlinAsJavaSupport: KotlinAsJavaSupport) :
     KtFileClassProvider {
@@ -40,7 +40,7 @@ class KtFileClassProviderImpl(val kotlinAsJavaSupport: KotlinAsJavaSupport) :
         // common files might be in fact compiled to jvm and thus correspond to a PsiClass
         // this API does not provide context (like GSS) to be able to determine if this file is in fact seen through a jvm module
         // this also fixes a problem where a Java JUnit run configuration producer would produce run configurations for a common file
-        if (moduleInfo.platform !is JvmPlatform) return emptyArray()
+        if (!moduleInfo.platform.isJvm()) return emptyArray()
 
         val jvmClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
         val fileClassFqName = file.javaFileFacadeFqName

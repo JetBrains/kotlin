@@ -1,8 +1,8 @@
-// IGNORE_BACKEND: JVM_IR
+// !LANGUAGE: -NullabilityAssertionOnExtensionReceiver
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.1
+
 import kotlin.test.*
 
 operator fun A.inc() = A()

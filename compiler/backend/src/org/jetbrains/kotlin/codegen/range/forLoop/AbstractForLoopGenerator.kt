@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.filterOutDescriptorsWithSpecialNames
-import org.jetbrains.kotlin.codegen.getElementType
+import org.jetbrains.kotlin.codegen.range.getElementType
 import org.jetbrains.kotlin.psi.KtDestructuringDeclaration
 import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.resolve.BindingContext

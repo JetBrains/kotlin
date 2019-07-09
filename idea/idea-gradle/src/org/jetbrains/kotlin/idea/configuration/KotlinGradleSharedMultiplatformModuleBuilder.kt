@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
@@ -29,10 +29,10 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.shared"
 
-    override fun getPresentableName() = "Kotlin (Multiplatform Library)"
+    override fun getPresentableName() = "Multiplatform Library | Gradle"
 
     override fun getDescription() =
-        "Multiplatform Gradle projects allow sharing the same Kotlin code between all three main platforms (JVM, JS, Native)."
+        "Multiplatform Gradle project allowing reuse of the same Kotlin code between all three main platforms (JVM, JS, and Native)"
 
     override fun createProjectSkeleton(rootDir: VirtualFile) {
         val src = rootDir.createChildDirectory(this, "src")
@@ -181,45 +181,49 @@ class KotlinGradleSharedMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
             apply plugin: 'maven-publish'
 
             kotlin {
-                targets {
-                    fromPreset(presets.jvm, '$jvmTargetName')
-                    fromPreset(presets.js, '$jsTargetName')
-                    // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-                    // For Linux, preset should be changed to e.g. presets.linuxX64
-                    // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.${defaultNativeTarget.presetName}, '${defaultNativeTarget.userTargetName}')
+                jvm()
+                js {
+                    browser {
+                    }
+                    nodejs {
+                    }
                 }
+                // For ARM, should be changed to iosArm32 or iosArm64
+                // For Linux, should be changed to e.g. linuxX64
+                // For MacOS, should be changed to e.g. macosX64
+                // For Windows, should be changed to e.g. mingwX64
+                ${defaultNativeTarget.presetName}("${defaultNativeTarget.userTargetName}")
                 sourceSets {
                     $commonSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-common'
+                            implementation kotlin('stdlib-common')
                         }
                     }
                     $commonTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-common'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-annotations-common'
+                            implementation kotlin('test-common')
+                            implementation kotlin('test-annotations-common')
                         }
                     }
                     $jvmSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk8'
+                            implementation kotlin('stdlib-jdk8')
                         }
                     }
                     $jvmTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test'
-                            implementation 'org.jetbrains.kotlin:kotlin-test-junit'
+                            implementation kotlin('test')
+                            implementation kotlin('test-junit')
                         }
                     }
                     $jsSourceName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-stdlib-js'
+                            implementation kotlin('stdlib-js')
                         }
                     }
                     $jsTestName {
                         dependencies {
-                            implementation 'org.jetbrains.kotlin:kotlin-test-js'
+                            implementation kotlin('test-js')
                         }
                     }
                     $nativeSourceName {

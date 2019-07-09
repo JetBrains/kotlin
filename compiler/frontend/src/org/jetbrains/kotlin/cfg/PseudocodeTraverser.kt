@@ -49,21 +49,20 @@ fun <D> Pseudocode.traverse(
         if (instruction is LocalFunctionDeclarationInstruction) {
             instruction.body.traverse(traversalOrder, edgesMap, analyzeInstruction)
         }
-        val edges = edgesMap[instruction]
-        if (edges != null) {
-            analyzeInstruction(instruction, edges.incoming, edges.outgoing)
-        }
+        val edges = edgesMap[instruction] ?: continue
+        analyzeInstruction(instruction, edges.incoming, edges.outgoing)
     }
 }
 
-fun <I : ControlFlowInfo<*, *>> Pseudocode.collectData(
+fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectData(
     traversalOrder: TraversalOrder,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
     updateEdge: (Instruction, Instruction, I) -> I,
     initialInfo: I
 ): Map<Instruction, Edges<I>> {
     val edgesMap = LinkedHashMap<Instruction, Edges<I>>()
-    edgesMap.put(getStartInstruction(traversalOrder), Edges(initialInfo, initialInfo))
+    val startInstruction = getStartInstruction(traversalOrder)
+    edgesMap[startInstruction] = Edges(initialInfo, initialInfo)
 
     val changed = mutableMapOf<Instruction, Boolean>()
     do {
@@ -76,7 +75,7 @@ fun <I : ControlFlowInfo<*, *>> Pseudocode.collectData(
     return edgesMap
 }
 
-private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
+private fun <I : ControlFlowInfo<*, *, *>> Pseudocode.collectDataFromSubgraph(
     traversalOrder: TraversalOrder,
     edgesMap: MutableMap<Instruction, Edges<I>>,
     mergeEdges: (Instruction, Collection<I>) -> Edges<I>,
@@ -125,15 +124,10 @@ private fun <I : ControlFlowInfo<*, *>> Pseudocode.collectDataFromSubgraph(
         val incomingEdgesData = HashSet<I>()
 
         for (previousInstruction in previousInstructions) {
-            val previousData = edgesMap[previousInstruction]
-            if (previousData != null) {
-                incomingEdgesData.add(
-                    updateEdge(
-                        previousInstruction, instruction, previousData.outgoing
-                    )
-                )
-            }
+            val previousData = edgesMap[previousInstruction] ?: continue
+            incomingEdgesData.add(updateEdge(previousInstruction, instruction, previousData.outgoing))
         }
+
         val mergedData = mergeEdges(instruction, incomingEdgesData)
         updateEdgeDataForInstruction(instruction, previousDataValue, mergedData, edgesMap, changed)
     }
@@ -154,7 +148,7 @@ private fun getPreviousIncludingSubGraphInstructions(
     return result
 }
 
-private fun <I : ControlFlowInfo<*, *>> updateEdgeDataForInstruction(
+private fun <I : ControlFlowInfo<*, *, *>> updateEdgeDataForInstruction(
     instruction: Instruction,
     previousValue: Edges<I>?,
     newValue: Edges<I>?,
@@ -163,7 +157,7 @@ private fun <I : ControlFlowInfo<*, *>> updateEdgeDataForInstruction(
 ) {
     if (previousValue != newValue && newValue != null) {
         changed[instruction] = true
-        edgesMap.put(instruction, newValue)
+        edgesMap[instruction] = newValue
     } else {
         changed[instruction] = false
     }

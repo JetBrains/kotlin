@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
 
 class JavaDescriptorResolver(
-        val packageFragmentProvider: LazyJavaPackageFragmentProvider,
-        private val javaResolverCache: JavaResolverCache
+    val packageFragmentProvider: LazyJavaPackageFragmentProvider,
+    private val javaResolverCache: JavaResolverCache
 ) {
     fun resolveClass(javaClass: JavaClass): ClassDescriptor? {
         val fqName = javaClass.fqName

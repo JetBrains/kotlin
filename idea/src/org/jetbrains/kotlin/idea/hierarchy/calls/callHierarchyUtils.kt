@@ -23,7 +23,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.toLightElements
-import org.jetbrains.kotlin.asJava.toLightMethods
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 

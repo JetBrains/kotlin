@@ -1,8 +1,7 @@
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: test.kt
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.2
+
 import kotlin.test.*
 
 operator fun A.inc() = A()

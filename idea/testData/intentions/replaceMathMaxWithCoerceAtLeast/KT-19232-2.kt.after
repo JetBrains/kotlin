@@ -1,5 +1,0 @@
-// WITH_RUNTIME
-
-fun foo() {
-    Pair(1.coerceAtLeast(3)<caret>, Math.max(2, 4)).let { println(it) }
-}

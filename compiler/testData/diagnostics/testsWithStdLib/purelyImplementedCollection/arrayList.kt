@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
+// !WITH_NEW_INFERENCE
 import java.util.*
 
 fun bar(): String? = null

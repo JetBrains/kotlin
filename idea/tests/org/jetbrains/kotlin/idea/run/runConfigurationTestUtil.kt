@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.run
@@ -28,8 +17,16 @@ import com.intellij.execution.configurations.RunProfile
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.roots.OrderRootType
+import com.intellij.openapi.roots.impl.libraries.ProjectLibraryTable
+import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.MapDataContext
+import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.junit.Assert
 
 fun getJavaRunParameters(configuration: RunConfiguration): JavaParameters {
@@ -53,9 +50,34 @@ fun createConfigurationFromElement(element: PsiElement, save: Boolean = false): 
     return runnerAndConfigurationSettings!!.configuration
 }
 
+fun createLibraryWithLongPaths(project: Project): Library {
+    val maxCommandlineLengthWindows = 24500
+    val maxFilenameLengthWindows = 245
+
+    return runWriteAction {
+        val modifiableModel = ProjectLibraryTable.getInstance(project).modifiableModel
+        val library = try {
+            modifiableModel.createLibrary("LibraryWithLongPaths", null)
+        } finally {
+            modifiableModel.commit()
+        }
+        with(library.modifiableModel) {
+            for (i in 0..maxCommandlineLengthWindows / maxFilenameLengthWindows) {
+                val tmpFile = VirtualFileManager.constructUrl(
+                    LocalFileSystem.getInstance().protocol,
+                    FileUtil.createTempDirectory("file$i", "a".repeat(maxFilenameLengthWindows)).path
+                )
+                addRoot(tmpFile, OrderRootType.CLASSES)
+            }
+            commit()
+        }
+        return@runWriteAction library
+    }
+}
+
 
 private object MockExecutor : DefaultRunExecutor() {
-    override fun getId() = DefaultRunExecutor.EXECUTOR_ID
+    override fun getId() = EXECUTOR_ID
 }
 
 private object MockProfile : RunProfile {

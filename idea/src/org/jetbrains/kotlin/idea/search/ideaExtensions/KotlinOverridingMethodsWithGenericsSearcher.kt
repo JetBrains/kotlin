@@ -24,7 +24,6 @@ import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -35,7 +34,7 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 
 class KotlinOverridingMethodsWithGenericsSearcher : QueryExecutor<PsiMethod, OverridingMethodsSearch.SearchParameters> {
-    override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: ExecutorProcessor<PsiMethod>): Boolean {
+    override fun execute(p: OverridingMethodsSearch.SearchParameters, consumer: Processor<in PsiMethod>): Boolean {
         val method = p.method
         if (method !is KtLightMethod) return true
 

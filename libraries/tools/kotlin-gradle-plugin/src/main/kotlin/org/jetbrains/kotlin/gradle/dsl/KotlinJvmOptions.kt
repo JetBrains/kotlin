@@ -23,8 +23,8 @@ interface KotlinJvmOptions  : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOption
      var jdkHome: kotlin.String?
 
     /**
-     * Target version of the generated JVM bytecode (1.6 or 1.8), default is 1.6
-     * Possible values: "1.6", "1.8"
+     * Target version of the generated JVM bytecode (1.6, 1.8, 9, 10, 11 or 12), default is 1.6
+     * Possible values: "1.6", "1.8", "9", "10", "11", "12"
      * Default value: "1.6"
      */
      var jvmTarget: kotlin.String

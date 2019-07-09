@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.kapt3.test
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiManager
@@ -24,7 +25,10 @@ import com.sun.tools.javac.tree.JCTree.JCCompilationUnit
 import com.sun.tools.javac.util.JCDiagnostic
 import com.sun.tools.javac.util.Log
 import junit.framework.ComparisonFailure
-import org.jetbrains.kotlin.checkers.CheckerTestUtil
+import org.jetbrains.kotlin.base.kapt3.DetectMemoryLeaksMode
+import org.jetbrains.kotlin.base.kapt3.KaptFlag
+import org.jetbrains.kotlin.base.kapt3.KaptOptions
+import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -32,14 +36,14 @@ import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
-import org.jetbrains.kotlin.kapt3.*
 import org.jetbrains.kotlin.kapt3.Kapt3ComponentRegistrar.KaptComponentContributor
+import org.jetbrains.kotlin.kapt3.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt3.base.KaptContext
-import org.jetbrains.kotlin.kapt3.base.KaptPaths
 import org.jetbrains.kotlin.kapt3.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt3.base.javac.KaptJavaLog
 import org.jetbrains.kotlin.kapt3.base.parseJavaFiles
 import org.jetbrains.kotlin.kapt3.javac.KaptJavaFileObject
+import org.jetbrains.kotlin.kapt3.prettyPrint
 import org.jetbrains.kotlin.kapt3.stubs.ClassFileToSourceStubConverter
 import org.jetbrains.kotlin.kapt3.util.MessageCollectorBackedKaptLogger
 import org.jetbrains.kotlin.psi.KtFile
@@ -53,10 +57,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.nio.file.Files
 import java.util.*
 import com.sun.tools.javac.util.List as JavacList
-
 
 abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     companion object {
@@ -67,7 +69,12 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val messageCollector = PrintingMessageCollector(ERR_PRINT_STREAM, MessageRenderer.PLAIN_FULL_PATHS, false)
     }
 
-    private val tempFiles = mutableListOf<File>()
+    val kaptFlags = mutableListOf<KaptFlag>()
+
+    override fun setUp() {
+        super.setUp()
+        kaptFlags.clear()
+    }
 
     override fun tearDown() {
         ERR_BYTE_STREAM.reset()
@@ -75,9 +82,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     }
 
     private fun createTempFile(prefix: String, suffix: String, text: String): File {
-        return File.createTempFile(prefix, suffix).apply {
+        return FileUtil.createTempFile(prefix, suffix, false).apply {
             writeText(text)
-            tempFiles += this
         }
     }
 
@@ -85,13 +91,13 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val project = myEnvironment.project
         val psiManager = PsiManager.getInstance(project)
 
-        val tmpDir = Files.createTempDirectory("kaptTest").toFile()
-        tempFiles += tmpDir
+        val tmpDir = KotlinTestUtils.tmpDir("kaptTest")
 
         val ktFiles = ArrayList<KtFile>(files.size)
         for (file in files.sorted()) {
             if (file.name.endsWith(".kt")) {
-                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList<CheckerTestUtil.DiagnosedRange>(0))
+                // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
+                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0), null)
                 val tmpKtFile = File(tmpDir, file.name).apply { writeText(content) }
                 val virtualFile = StandardFileSystems.local().findFileByPath(tmpKtFile.path) ?: error("Can't find ${file.name}")
                 ktFiles.add(psiManager.findFile(virtualFile) as? KtFile ?: error("Can't load ${file.name}"))
@@ -101,10 +107,8 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         myFiles = CodegenTestFiles.create(ktFiles)
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-        val javaSources = javaFilesDir?.let { arrayOf(it) } ?: emptyArray()
-
-        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *javaSources)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.ALL, *listOfNotNull(writeJavaFiles(files)).toTypedArray())
         addAnnotationProcessingRuntimeLibrary(myEnvironment)
 
         // Use light analysis mode in tests
@@ -118,7 +122,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         val classBuilderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
         val generationState = GenerationUtils.compileFiles(myFiles.psiFiles, myEnvironment, classBuilderFactory)
 
-        val logger = MessageCollectorBackedKaptLogger(isVerbose = true, messageCollector = messageCollector)
+        val logger = MessageCollectorBackedKaptLogger(isVerbose = true, isInfoAsWarnings = false, messageCollector = messageCollector)
 
         val javacOptions = wholeFile.getOptionValues("JAVAC_OPTION")
             .map { opt ->
@@ -126,28 +130,31 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 key to value
             }.toMap()
 
-        var javaFiles: List<File>? = null
         var kaptContext: KaptContext? = null
 
         try {
-            val sourceOutputDir = Files.createTempDirectory("kaptRunner").toFile()
+            val options = KaptOptions.Builder().apply {
+                projectBaseDir = generationState.project.basePath?.let(::File)
+                compileClasspath.addAll(PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath)
 
-            val paths = KaptPaths(
-                generationState.project.basePath?.let(::File),
-                compileClasspath = PathUtil.getJdkClassesRootsFromCurrentJre() + PathUtil.kotlinPathsForIdeaPlugin.stdlibPath,
-                annotationProcessingClasspath = emptyList(), javaSourceRoots = emptyList(),
-                sourcesOutputDir = sourceOutputDir, classFilesOutputDir = sourceOutputDir,
-                stubsOutputDir = sourceOutputDir, incrementalDataOutputDir = sourceOutputDir
-            )
+                sourcesOutputDir = KotlinTestUtils.tmpDir("kaptRunner")
+                classesOutputDir = sourcesOutputDir
+                stubsOutputDir = sourcesOutputDir
+                incrementalDataOutputDir = sourcesOutputDir
+
+                this.javacOptions.putAll(javacOptions)
+                flags.addAll(kaptFlags)
+
+                detectMemoryLeaks = DetectMemoryLeaksMode.NONE
+            }.build()
 
             kaptContext = KaptContextForStubGeneration(
-                paths, true,
-                logger, generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
-                classBuilderFactory.origins, generationState, mapDiagnosticLocations = true,
-                processorOptions = emptyMap(), javacOptions = javacOptions
+                options, true, logger,
+                generationState.project, generationState.bindingContext, classBuilderFactory.compiledClasses,
+                classBuilderFactory.origins, generationState
             )
 
-            javaFiles = files
+            val javaFiles = files
                 .filter { it.name.toLowerCase().endsWith(".java") }
                 .map { createTempFile(it.name.substringBeforeLast('.'), ".java", it.content) }
 
@@ -155,9 +162,6 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
         } catch (e: Throwable) {
             throw RuntimeException(e)
         } finally {
-            javaFiles?.forEach { it.delete() }
-            tempFiles.forEach { if (it.isFile) it.delete() else it.deleteRecursively() }
-            tempFiles.clear()
             kaptContext?.close()
         }
     }
@@ -165,11 +169,9 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
     protected fun convert(
         kaptContext: KaptContextForStubGeneration,
         javaFiles: List<File>,
-        generateNonExistentClass: Boolean,
-        correctErrorTypes: Boolean,
-        strictMode: Boolean
+        generateNonExistentClass: Boolean
     ): JavacList<JCCompilationUnit> {
-        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass, correctErrorTypes, strictMode)
+        val converter = ClassFileToSourceStubConverter(kaptContext, generateNonExistentClass)
 
         val kaptStubs = converter.convert()
         val convertedFiles = kaptStubs.map { stub ->
@@ -192,7 +194,7 @@ abstract class AbstractKotlinKapt3Test : CodegenTestCase() {
                 val actualFile = File(tree.sourceFile.toUri())
 
                 // By default, JavaFileObject.getName() returns the absolute path to the file.
-                // In our test, such a path will be temporary, so the comparision against it will lead to flaky tests.
+                // In our test, such a path will be temporary, so the comparison against it will lead to flaky tests.
                 tree.sourcefile = KaptJavaFileObject(tree, tree.defs.firstIsInstance(), actualFile)
             }
 
@@ -245,18 +247,28 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
     fun testSuppressWarning() {}
 
     override fun doTest(filePath: String) {
+        val wholeFile = File(filePath)
+
+        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+
+        if (wholeFile.isOptionSet("CORRECT_ERROR_TYPES")) {
+            kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
+        }
+
+        if (wholeFile.isOptionSet("STRICT_MODE")) {
+            kaptFlags.add(KaptFlag.STRICT)
+        }
+
         super.doTest(filePath)
         doTestWithJdk9(AbstractClassFileToSourceStubConverterTest::class.java, filePath)
     }
 
     override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
         val generateNonExistentClass = wholeFile.isOptionSet("NON_EXISTENT_CLASS")
-        val correctErrorTypes = wholeFile.isOptionSet("CORRECT_ERROR_TYPES")
         val validate = !wholeFile.isOptionSet("NO_VALIDATION")
-        val strictMode = wholeFile.isOptionSet("STRICT_MODE")
         val expectedErrors = wholeFile.getRawOptionValues(EXPECTED_ERROR).sorted()
 
-        val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass, correctErrorTypes, strictMode)
+        val convertedFiles = convert(kaptContext, javaFiles, generateNonExistentClass)
 
         kaptContext.javaLog.interceptorData.files = convertedFiles.map { it.sourceFile to it }.toMap()
         if (validate) kaptContext.compiler.enterTrees(convertedFiles)
@@ -309,19 +321,22 @@ open class AbstractClassFileToSourceStubConverterTest : AbstractKotlinKapt3Test(
 }
 
 abstract class AbstractKotlinKaptContextTest : AbstractKotlinKapt3Test() {
-    override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
-        val compilationUnits = convert(
-            kaptContext, javaFiles,
-            generateNonExistentClass = false, correctErrorTypes = true, strictMode = false
-        )
+    override fun doTest(filePath: String?) {
+        kaptFlags.add(KaptFlag.CORRECT_ERROR_TYPES)
+        kaptFlags.add(KaptFlag.STRICT)
+        kaptFlags.add(KaptFlag.MAP_DIAGNOSTIC_LOCATIONS)
+        super.doTest(filePath)
+    }
 
+    override fun check(kaptContext: KaptContextForStubGeneration, javaFiles: List<File>, txtFile: File, wholeFile: File) {
+        val compilationUnits = convert(kaptContext, javaFiles, generateNonExistentClass = false)
         kaptContext.doAnnotationProcessing(
             emptyList(),
             listOf(JavaKaptContextTest.simpleProcessor()),
             additionalSources = compilationUnits
         )
 
-        val stubJavaFiles = kaptContext.paths.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
+        val stubJavaFiles = kaptContext.options.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
         val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
         val actual = StringUtil.convertLineSeparators(actualRaw.trim({ it <= ' ' })).trimTrailingWhitespacesAndAddNewlineAtEOF()
         KotlinTestUtils.assertEqualsToFile(txtFile, actual)

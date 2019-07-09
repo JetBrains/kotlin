@@ -1,3 +1,0 @@
-FILE: simpleFun.kt
-    public? final? function foo(): kotlin.Unit {
-    }

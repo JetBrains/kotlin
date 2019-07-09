@@ -1,0 +1,42 @@
+<idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+
+    <localInspection
+        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection"
+        displayName="Kotlin Gradle and IDE plugins versions are different"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        language="Groovy"
+        hasStaticDescription="true"
+        level="WARNING"/>
+
+    <localInspection
+        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DifferentStdlibGradleVersionInspection"
+        displayName="Kotlin library and Gradle plugin versions are different"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        language="Groovy"
+        hasStaticDescription="true"
+        level="WARNING"/>
+
+    <localInspection
+        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.DeprecatedGradleDependencyInspection"
+        displayName="Deprecated library is used in Gradle"
+        groupName="Kotlin"
+        enabledByDefault="true"
+        cleanupTool="true"
+        language="Groovy"
+        hasStaticDescription="true"
+        level="WARNING"/>
+
+    <localInspection
+        implementationClass="org.jetbrains.kotlin.idea.inspections.gradle.GradleKotlinxCoroutinesDeprecationInspection"
+        displayName="Incompatible kotlinx.coroutines dependency is used with Kotlin 1.3+ in Gradle"
+        groupPath="Kotlin,Migration"
+        groupName="Gradle"
+        enabledByDefault="true"
+        language="Groovy"
+        hasStaticDescription="true"
+        level="ERROR"/>
+  </extensions>
+</idea-plugin>

@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: NATIVE
 
 class A : ArrayList<String>() {

@@ -30,10 +30,15 @@ public class PermissionManager {
     public static void setPermissions(PathManager pathManager) {
         if (!SystemInfo.isWindows) {
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk()));
-            setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk() + "/bin64"));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getBuildToolsFolderInAndroidSdk() + "/" + SDKDownloader.BUILD_TOOLS));
             setExecPermissionForSimpleNamedFiles(new File(pathManager.getPlatformToolsFolderInAndroidSdk()));
-            setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk() +"/qemu/linux-x86_64"));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getToolsFolderInAndroidSdk() +"/bin"));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getEmulatorFolderInAndroidSdk()));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getEmulatorFolderInAndroidSdk() +"/bin"));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getEmulatorFolderInAndroidSdk() +"/bin64"));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getEmulatorFolderInAndroidSdk() +"/qemu/linux-x86_64"));
+            setExecPermissionForSimpleNamedFiles(new File(pathManager.getAndroidSdkRoot() + "/system-images/android-19/default/armeabi-v7a/"));
+
             RunUtils.execute(generateChmodCmd(pathManager.getGradleBinFolder() + "/gradle"));
         }
     }

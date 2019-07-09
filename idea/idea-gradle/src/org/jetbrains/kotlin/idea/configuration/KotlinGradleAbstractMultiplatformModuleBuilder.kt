@@ -1,13 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.ide.util.projectWizard.WizardContext
+import com.intellij.openapi.externalSystem.ExternalSystemModulePropertyManager
+import com.intellij.openapi.externalSystem.model.ProjectSystemId
+import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.project.wizard.ExternalModuleSettingsStep
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.vfs.VfsUtil
@@ -21,12 +25,16 @@ import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder
 import org.jetbrains.plugins.gradle.service.settings.GradleProjectSettingsControl
 import org.jetbrains.plugins.gradle.settings.DistributionType
+import com.intellij.openapi.externalSystem.model.project.ProjectData
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import javax.swing.Icon
 
 abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     val mppInApplication: Boolean = false
 ) : GradleModuleBuilder() {
     var explicitPluginVersion: String? = null
+    val mppDirName = "app"
 
     override fun getNodeIcon(): Icon = KotlinIcons.MPP
 
@@ -39,7 +47,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
     }
 
     private fun setupMppModule(module: Module, parentDir: VirtualFile): VirtualFile? {
-        val moduleDir = parentDir.createChildDirectory(this, "app")
+        val moduleDir = parentDir.createChildDirectory(this, mppDirName)
         val buildGradle = moduleDir.createChildData(null, "build.gradle")
         val builder = BuildScriptDataBuilder(buildGradle)
         builder.setupAdditionalDependenciesForApplication()
@@ -69,6 +77,7 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
 
     override fun setupModule(module: Module) {
         try {
+            KotlinFUSLogger.log(FUSEventGroups.NPWizards, this.javaClass.simpleName)
             module.gradleModuleBuilder = this
             super.setupModule(module)
 
@@ -97,15 +106,32 @@ abstract class KotlinGradleAbstractMultiplatformModuleBuilder(
             VfsUtil.saveText(buildGradle, buildGradleText)
             if (mppInApplication) {
                 updateSettingsScript(module) {
-                    it.addIncludedModules(listOf(":app"))
+                    it.addIncludedModules(listOf(":$mppDirName"))
                 }
             }
             createProjectSkeleton(rootDir)
             if (externalProjectSettings.distributionType == DistributionType.DEFAULT_WRAPPED) {
-                setGradleWrapperToUseVersion(rootDir, "4.7")
+                setGradleWrapperToUseVersion(rootDir, "4.10")
             }
 
             if (notImportedCommonSourceSets) GradlePropertiesFileFacade.forProject(module.project).addNotImportedCommonSourceSetsProperty()
+            // Ensure project root path is set
+            val propertyManager = ExternalSystemModulePropertyManager.getInstance(module)
+            val path = externalProjectSettings.externalProjectPath
+            val externalSystemId = propertyManager.getExternalSystemId()
+            if (ExternalSystemApiUtil.getExternalRootProjectPath(module) == null && externalSystemId != null) {
+                val projectSystemId = ProjectSystemId(externalSystemId)
+                val projectData = ProjectData(projectSystemId, module.name, path, path)
+                val moduleData = ModuleData(
+                    propertyManager.getLinkedProjectId() ?: "",
+                    projectSystemId,
+                    propertyManager.getExternalModuleType() ?: "",
+                    module.name,
+                    path,
+                    path
+                )
+                propertyManager.setExternalOptions(projectSystemId, moduleData, projectData)
+            }
         } finally {
             flushSettingsGradleCopy(module)
         }

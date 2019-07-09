@@ -1,0 +1,23 @@
+FILE: fib.kt
+    public final fun fibIterative(n: R|kotlin/Int|): R|kotlin/Int| {
+        when () {
+            <(R|<local>/n|, Int(2)) ->  {
+                ^fibIterative Int(1)
+            }
+            else ->  {
+            }
+        }
+
+        lvar current: R|kotlin/Int| = Int(1)
+        lvar prev: R|kotlin/Int| = Int(1)
+        lval <range>: R|kotlin/ranges/IntRange| = Int(2).R|kotlin/Int.rangeTo|(R|<local>/n|)
+        lval <iterator>: R|kotlin/collections/IntIterator| = R|<local>/<range>|.R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+            lval temp: R|kotlin/Int| = R|<local>/current|
+            R|<local>/current| += R|<local>/prev|
+            R|<local>/prev| = R|<local>/temp|
+        }
+
+        ^fibIterative R|<local>/current|
+    }

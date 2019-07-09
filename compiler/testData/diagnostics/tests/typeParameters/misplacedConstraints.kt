@@ -1,6 +1,6 @@
 class Foo<<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T : Cloneable<!>> where T : Comparable<T> {
     fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>U : Cloneable<!>> foo(u: U): U where U: Comparable<U> {
-        fun <<!MISPLACED_TYPE_PARAMETER_CONSTRAINTS, BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER!>T: Any<!>> bar() where T: U {}
+        fun <<!BOUNDS_NOT_ALLOWED_IF_BOUNDED_BY_TYPE_PARAMETER, MISPLACED_TYPE_PARAMETER_CONSTRAINTS!>T: Any<!>> bar() where T: U {}
         return u
     }
 

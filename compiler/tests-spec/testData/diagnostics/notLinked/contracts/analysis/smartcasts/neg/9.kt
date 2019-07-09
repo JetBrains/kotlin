@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -8,6 +7,7 @@
  * SECTIONS: contracts, analysis, smartcasts
  * NUMBER: 9
  * DESCRIPTION: Check the lack of smartcasts after non-null assertions or not-null value assignment in lambdas of contract function with 'unknown' or 'at most once' CallsInPlace effects.
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

@@ -40,7 +40,7 @@ public class C extends A {
 
 fun use(a: A, b: B, c: C) {
     a.<!DEPRECATION!>f<!>()
-    b.<!DEPRECATION!>f<!>()
+    b.f()
     c.<!DEPRECATION!>f<!>()
 
     A.<!DEPRECATION!>D<!>

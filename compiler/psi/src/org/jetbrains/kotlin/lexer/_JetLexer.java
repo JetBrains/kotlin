@@ -2,13 +2,10 @@
 
 package org.jetbrains.kotlin.lexer;
 
-import java.util.*;
-import com.intellij.lexer.*;
-import com.intellij.psi.*;
+import com.intellij.lexer.FlexLexer;
+import com.intellij.psi.TokenType;
 import com.intellij.psi.tree.IElementType;
 import com.intellij.util.containers.Stack;
-import org.jetbrains.kotlin.lexer.KotlinLexerException;
-import org.jetbrains.kotlin.lexer.KtTokens;
 
 
 /**
@@ -781,7 +778,7 @@ class _JetLexer implements FlexLexer {
 
 
   /**
-   * Reports an error that occured while scanning.
+   * Reports an error that occurred while scanning.
    *
    * In a wellformed scanner (no or only correct usage of
    * yypushback(int) and a match-all fallback rule) this method

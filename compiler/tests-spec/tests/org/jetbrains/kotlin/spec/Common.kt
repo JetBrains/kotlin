@@ -1,10 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec
 
+import org.jetbrains.kotlin.TestsExceptionType
 import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.models.NotLinkedSpecTestFileInfoElementType
 import org.jetbrains.kotlin.spec.parsers.BasePatterns
@@ -73,7 +74,9 @@ data class SpecTestCase(
     var code: String,
     var ranges: MutableList<IntRange>,
     var unexpectedBehavior: Boolean,
-    val issues: MutableList<String>?
+    var unspecifiedBehavior: Boolean,
+    val issues: MutableList<String>?,
+    val exception: TestsExceptionType?
 )
 
 data class SpecTestCasesSet(

@@ -1,0 +1,6 @@
+def includeCidr = false
+def isTeamcityBuild = false
+def includeUltimate = false
+def includeStdlib = false
+
+rootProject.name = "kotlin"

@@ -1,0 +1,46 @@
+group 'Again'
+version '1.0-SNAPSHOT'
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
+        }
+    }
+
+    dependencies {
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.40")
+    }
+}
+
+apply plugin: 'kotlin-platform-common'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://dl.bintray.com/kotlin/kotlin-eap-1.2'
+    }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib-common:1.2.40"
+}
+
+compileKotlinCommon{
+    kotlinOptions {
+        languageVersion = 1.1
+        apiVersion = 1.0
+        freeCompilerArgs += ["-cp", "my/classpath"]
+        freeCompilerArgs += ["-d", "my/destination"]
+    }
+}
+
+compileTestKotlinCommon{
+    kotlinOptions {
+        languageVersion = 1.1
+        apiVersion = 1.0
+        freeCompilerArgs += ["-cp", "my/test/classpath"]
+        freeCompilerArgs += ["-d", "my/test/destination"]
+    }
+}

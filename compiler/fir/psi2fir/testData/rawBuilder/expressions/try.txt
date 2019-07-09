@@ -1,0 +1,16 @@
+FILE: try.kt
+    public? final? fun some(): kotlin/Unit {
+        try {
+            throw KotlinNullPointerException#()
+        }
+        catch (e: RuntimeException) {
+            println#(String(Runtime exception))
+        }
+        catch (e: Exception) {
+            println#(String(Some exception))
+        }
+        finally {
+            println#(String(finally))
+        }
+
+    }

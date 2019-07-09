@@ -1,46 +1,45 @@
 FILE fqName:<root> fileName:/bangbang.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test1(Any?): Any'
+      RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any declared in <root>'
         BLOCK type=kotlin.Any origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? flags:val
-            GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? [val] 
+            GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp0_notnull: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+              then: CALL 'public final fun THROW_NPE (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'tmp0_notnull: Any?' type=kotlin.Any? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int flags:
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any? flags:
+              then: GET_VAR 'val tmp0_notnull: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int 
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(Any?): Int'
+      RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any?): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? flags:val
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? [val] 
             BLOCK type=kotlin.Int? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? flags:val
-                GET_VAR 'value-parameter a: Any?' type=kotlin.Any? origin=null
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val] 
+                GET_VAR 'a: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
               WHEN type=kotlin.Int? origin=null
                 BRANCH
-                  if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                    arg0: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+                  if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                    arg0: GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
                   then: CONST Null type=kotlin.Nothing? value=null
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
-                  then: CALL 'hashCode(): Int' type=kotlin.Int origin=null
-                    $this: GET_VAR 'tmp0_safe_receiver: Any?' type=kotlin.Any? origin=null
+                  then: CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
+                    $this: GET_VAR 'val tmp0_safe_receiver: kotlin.Any? [val] declared in <root>.test2' type=kotlin.Any? origin=null
           WHEN type=kotlin.Int origin=null
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp1_notnull: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CALL 'THROW_NPE(): Nothing' type=kotlin.Nothing origin=EXCLEXCL
+              then: CALL 'public final fun THROW_NPE (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: GET_VAR 'tmp1_notnull: Int?' type=kotlin.Int? origin=null
-
+              then: GET_VAR 'val tmp1_notnull: kotlin.Int? [val] declared in <root>.test2' type=kotlin.Int? origin=null

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.incremental.js
 
+import org.jetbrains.kotlin.name.FqName
 import java.io.File
 import java.io.Serializable
 import java.security.MessageDigest
@@ -25,7 +26,7 @@ interface IncrementalResultsConsumer {
     fun processHeader(headerMetadata: ByteArray)
 
     /** processes new package part metadata and binary tree for compiled source file */
-    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray)
+    fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray)
 
     /**
      * [inlineFunction] is expected to be a body of inline function (an instance of [JsNode]),
@@ -39,6 +40,8 @@ interface IncrementalResultsConsumer {
      * Used in daemon RPC.
      */
     fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>)
+
+    fun processPackageMetadata(packageName: String, metadata: ByteArray)
 }
 
 class JsInlineFunctionHash(val sourceFilePath: String, val fqName: String, val inlineFunctionMd5Hash: Long): Serializable
@@ -84,8 +87,8 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
         this.headerMetadata = headerMetadata
     }
 
-    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray) {
-        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst))
+    override fun processPackagePart(sourceFile: File, packagePartMetadata: ByteArray, binaryAst: ByteArray, inlineData: ByteArray) {
+        _packageParts.put(sourceFile, TranslationResultValue(packagePartMetadata, binaryAst, inlineData))
     }
 
     override fun processInlineFunctions(functions: Collection<JsInlineFunctionHash>) {
@@ -96,6 +99,14 @@ class IncrementalResultsConsumerImpl : IncrementalResultsConsumer {
     override fun processInlineFunction(sourceFile: File, fqName: String, inlineFunction: Any, line: Int, column: Int) {
         val mapForSource = _deferInlineFuncs.getOrPut(sourceFile) { hashMapOf() }
         mapForSource[fqName] = FunctionWithSourceInfo(inlineFunction, line, column)
+    }
+
+    private val _packageMetadata = hashMapOf<String, ByteArray>()
+    val packageMetadata: Map<String, ByteArray>
+        get() = _packageMetadata
+
+    override fun processPackageMetadata(packageName: String, metadata: ByteArray) {
+        _packageMetadata[packageName] = metadata
     }
 }
 

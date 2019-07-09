@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen;
 
-import kotlin.collections.CollectionsKt;
 import kotlin.text.StringsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
@@ -181,10 +180,7 @@ public class SamWrapperCodegen {
             @NotNull KtFile containingFile,
             CallableMemberDescriptor contextDescriptor
     ) {
-        boolean hasPackagePartClass = CollectionsKt.any(
-                CodegenUtil.getDeclarationsToGenerate(containingFile, state.getBindingContext()),
-                PackageCodegenImpl::isFilePartDeclaration
-        );
+        boolean hasPackagePartClass = !CodegenUtil.getMemberDeclarationsToGenerate(containingFile).isEmpty();
         FqName filePartFqName = JvmFileClassUtil.getFileClassInfoNoResolve(containingFile).getFileClassFqName();
 
         FqName outermostOwner;

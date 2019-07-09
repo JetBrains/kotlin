@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.js.internal
 
 @JsName("DoubleCompanionObject")
-private object DoubleCompanionObject {
+internal object DoubleCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Double = js("Number.MIN_VALUE")
 
@@ -24,7 +24,7 @@ private object DoubleCompanionObject {
 }
 
 @JsName("FloatCompanionObject")
-private object FloatCompanionObject {
+internal  object FloatCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Float = js("Number.MIN_VALUE")
 
@@ -42,7 +42,7 @@ private object FloatCompanionObject {
 }
 
 @JsName("IntCompanionObject")
-private object IntCompanionObject {
+internal  object IntCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Int = -2147483647 - 1
 
@@ -57,7 +57,7 @@ private object IntCompanionObject {
 }
 
 @JsName("LongCompanionObject")
-private object LongCompanionObject {
+internal  object LongCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Long = js("Kotlin.Long.MIN_VALUE")
 
@@ -72,7 +72,7 @@ private object LongCompanionObject {
 }
 
 @JsName("ShortCompanionObject")
-private object ShortCompanionObject {
+internal  object ShortCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Short = -32768
 
@@ -87,7 +87,7 @@ private object ShortCompanionObject {
 }
 
 @JsName("ByteCompanionObject")
-private object ByteCompanionObject {
+internal  object ByteCompanionObject {
     @JsName("MIN_VALUE")
     val MIN_VALUE: Byte = -128
 
@@ -102,7 +102,7 @@ private object ByteCompanionObject {
 }
 
 @JsName("CharCompanionObject")
-private object CharCompanionObject {
+internal  object CharCompanionObject {
     @JsName("MIN_VALUE")
     public const val MIN_VALUE: Char = '\u0000'
 
@@ -134,7 +134,7 @@ private object CharCompanionObject {
     const val SIZE_BITS = 16
 }
 
-private object StringCompanionObject {}
+internal  object StringCompanionObject {}
 
-private object BooleanCompanionObject {}
+internal  object BooleanCompanionObject {}
 

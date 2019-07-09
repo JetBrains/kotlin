@@ -1,0 +1,18 @@
+package test
+
+public/*package*/ open class AnnotatedParameterInInnerClassConstructor {
+    public/*package*/ constructor AnnotatedParameterInInnerClassConstructor()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public final val value: kotlin.String
+    }
+
+    public/*package*/ open inner class Inner {
+        public/*package*/ constructor Inner(/*0*/ p0: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "a") kotlin.String!, /*1*/ p1: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "b") kotlin.String!)
+    }
+
+    public/*package*/ open inner class InnerGeneric</*0*/ T : kotlin.Any!> {
+        public/*package*/ constructor InnerGeneric</*0*/ T : kotlin.Any!>(/*0*/ p0: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "a") kotlin.String!, /*1*/ p1: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "b") kotlin.String!)
+    }
+}

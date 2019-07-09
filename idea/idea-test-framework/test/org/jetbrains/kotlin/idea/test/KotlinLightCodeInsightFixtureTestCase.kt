@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.test
@@ -60,8 +60,6 @@ import kotlin.reflect.full.findAnnotation
 abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFixtureTestCaseBase() {
     private val exceptions = ArrayList<Throwable>()
 
-    protected val module: Module get() = myFixture.module
-
     protected open val captureExceptions = true
 
     override fun setUp() {
@@ -87,8 +85,6 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
                 }
             })
         }
-
-        fixTemplates()
     }
 
     override fun tearDown() {
@@ -112,6 +108,27 @@ abstract class KotlinLightCodeInsightFixtureTestCase : KotlinLightCodeInsightFix
 
         return when (platformId) {
             JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES -> KotlinJdkAndMultiplatformStdlibDescriptor.JDK_AND_MULTIPLATFORM_STDLIB_WITH_SOURCES
+
+            KOTLIN_JVM_WITH_STDLIB_SOURCES -> ProjectDescriptorWithStdlibSources.INSTANCE
+
+            KOTLIN_JAVASCRIPT -> KotlinStdJSProjectDescriptor
+
+            KOTLIN_JVM_WITH_STDLIB_SOURCES_WITH_ADDITIONAL_JS -> {
+                KotlinMultiModuleProjectDescriptor(
+                    KOTLIN_JVM_WITH_STDLIB_SOURCES_WITH_ADDITIONAL_JS,
+                    mainModuleDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE,
+                    additionalModuleDescriptor = KotlinStdJSProjectDescriptor
+                )
+            }
+
+            KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB -> {
+                KotlinMultiModuleProjectDescriptor(
+                    KOTLIN_JAVASCRIPT_WITH_ADDITIONAL_JVM_WITH_STDLIB,
+                    mainModuleDescriptor = KotlinStdJSProjectDescriptor,
+                    additionalModuleDescriptor = ProjectDescriptorWithStdlibSources.INSTANCE
+                )
+            }
+
             else -> throw IllegalStateException("Unknown value for project descriptor kind")
         }
     }
@@ -212,7 +229,9 @@ object CompilerTestDirectives {
 fun configureCompilerOptions(fileText: String, project: Project, module: Module): Boolean {
     val version = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $LANGUAGE_VERSION_DIRECTIVE ")
     val jvmTarget = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $JVM_TARGET_DIRECTIVE ")
-    val options = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ")
+    // We can have several such directives in quickFixMultiFile tests
+    // TODO: refactor such tests or add sophisticated check for the directive
+    val options = InTextDirectivesUtils.findListWithPrefixes(fileText, "// $COMPILER_ARGUMENTS_DIRECTIVE ").firstOrNull()
 
     if (version != null || jvmTarget != null || options != null) {
         configureLanguageAndApiVersion(project, module, version ?: LanguageVersion.LATEST_STABLE.versionString)
@@ -263,7 +282,7 @@ fun configureLanguageAndApiVersion(
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-        facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider)
+        facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider, false)
         if (apiVersion != null) {
             facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
         }

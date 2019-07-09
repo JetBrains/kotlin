@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -10,6 +9,7 @@
  * DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26229
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

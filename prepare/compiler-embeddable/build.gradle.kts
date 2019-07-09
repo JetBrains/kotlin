@@ -6,10 +6,14 @@ plugins {
 }
 
 dependencies {
-    runtime(project(":kotlin-stdlib"))
+    runtime(kotlinStdlib())
     runtime(project(":kotlin-script-runtime"))
     runtime(project(":kotlin-reflect"))
+    runtime(project(":kotlin-daemon-embeddable"))
+    runtime(commonDep("org.jetbrains.intellij.deps", "trove4j"))
 }
+
+publish()
 
 noDefaultJar()
 
@@ -24,6 +28,4 @@ runtimeJar(embeddableCompiler()) {
 
 sourcesJar()
 javadocJar()
-
-publish()
 

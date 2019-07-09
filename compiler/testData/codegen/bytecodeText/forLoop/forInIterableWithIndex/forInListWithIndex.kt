@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 val xs = listOf("a", "b", "c", "d")
 
 fun box(): String {

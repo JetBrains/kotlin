@@ -12,7 +12,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 
@@ -27,7 +27,12 @@ val generateJsonTestsMap by generator("org.jetbrains.kotlin.spec.tasks.GenerateJ
 val remoteRunTests by task<Test> {
     val packagePrefix = "org.jetbrains.kotlin."
     val includeTests = setOf(
-        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*"
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*",
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations*",
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Local_variables\$Type_parameters*",
+        "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Dfa*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Annotations\$Type_annotations*",
+        "codegen.BlackBoxCodegenTestSpecGenerated\$NotLinked\$Objects\$Inheritance*"
     )
 
     workingDir = rootDir

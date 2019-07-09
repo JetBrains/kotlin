@@ -1,7 +1,6 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1290
-package foo
 
+@JsExport
 data class A(val value: Int)
 
 fun box(): String {
@@ -59,7 +58,7 @@ fun box(): String {
     assertEquals(undefined, js("(void 0)"), "void")
     assertEquals(true, js("'key' in {'key': 10}"), "in")
     assertEquals("string", js("typeof 'str'"), "typeof")
-    assertEquals(A(2), js("new _.foo.A(2)"), "new")
+    assertEquals(A(2), js("new _.A(2)"), "new")
     assertEquals(true, js("new String('str') instanceof String"), "instanceof")
 
     var s: Any = js("({key: 10})")

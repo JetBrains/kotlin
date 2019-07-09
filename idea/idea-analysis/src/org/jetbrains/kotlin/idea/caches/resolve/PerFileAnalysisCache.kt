@@ -23,7 +23,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analyzer.AnalysisResult
-import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.GlobalContext
@@ -33,9 +32,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils
 import org.jetbrains.kotlin.frontend.di.createContainerForLazyBodyResolve
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfo
-import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
+import org.jetbrains.kotlin.idea.project.IdeaModuleStructureOracle
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.jvmTarget
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
@@ -176,7 +175,9 @@ private object KotlinResolveDataProvider {
     ): AnalysisResult {
         try {
             if (analyzableElement is KtCodeFragment) {
-                return AnalysisResult.success(analyzeExpressionCodeFragment(codeFragmentAnalyzer, analyzableElement), moduleDescriptor)
+                val bodyResolveMode = BodyResolveMode.PARTIAL_FOR_COMPLETION
+                val bindingContext = codeFragmentAnalyzer.analyzeCodeFragment(analyzableElement, bodyResolveMode).bindingContext
+                return AnalysisResult.success(bindingContext, moduleDescriptor)
             }
 
             val trace = DelegatingBindingTrace(
@@ -187,9 +188,9 @@ private object KotlinResolveDataProvider {
 
             val moduleInfo = analyzableElement.containingKtFile.getModuleInfo()
 
+            // TODO: should return proper platform!
             val targetPlatform = moduleInfo.platform ?: TargetPlatformDetector.getPlatform(analyzableElement.containingKtFile)
 
-            val targetPlatformVersion = IDELanguageSettingsProvider.getTargetPlatform(moduleInfo, project)
             val lazyTopDownAnalyzer = createContainerForLazyBodyResolve(
                 //TODO: should get ModuleContext
                 globalContext.withProject(project).withModule(moduleDescriptor),
@@ -197,8 +198,9 @@ private object KotlinResolveDataProvider {
                 trace,
                 targetPlatform,
                 bodyResolveCache,
-                targetPlatformVersion,
-                analyzableElement.languageVersionSettings
+                targetPlatform.findAnalyzerServices,
+                analyzableElement.languageVersionSettings,
+                IdeaModuleStructureOracle()
             ).get<LazyTopDownAnalyzer>()
 
             lazyTopDownAnalyzer.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, listOf(analyzableElement))
@@ -214,15 +216,5 @@ private object KotlinResolveDataProvider {
 
             return AnalysisResult.internalError(BindingContext.EMPTY, e)
         }
-    }
-
-    private fun analyzeExpressionCodeFragment(codeFragmentAnalyzer: CodeFragmentAnalyzer, codeFragment: KtCodeFragment): BindingContext {
-        val trace = BindingTraceContext()
-        codeFragmentAnalyzer.analyzeCodeFragment(
-            codeFragment,
-            trace,
-            BodyResolveMode.PARTIAL_FOR_COMPLETION //TODO: discuss it
-        )
-        return trace.bindingContext
     }
 }

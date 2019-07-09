@@ -26,6 +26,7 @@ import java.io.PrintStream
 import java.lang.ref.SoftReference
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.ERROR
+import org.jetbrains.kotlin.utils.KotlinPathsFromBaseDirectory
 import org.jetbrains.kotlin.utils.SmartList
 
 object CompilerRunnerUtil {
@@ -114,10 +115,9 @@ object CompilerRunnerUtil {
         environment: JpsCompilerEnvironment,
         fn: (ClassLoader) -> T
     ): T? {
-        val paths = SmartList<File>()
-
         val libPath = getLibPath(environment.kotlinPaths, environment.messageCollector) ?: return null
-        paths.add(File(libPath, "kotlin-compiler.jar"))
+        val kotlinPaths = KotlinPathsFromBaseDirectory(libPath)
+        val paths = kotlinPaths.classPath(KotlinPaths.ClassPaths.CompilerWithScripting).toMutableList()
         jdkToolsJar?.let { paths.add(it) }
 
         val classLoader = getOrCreateClassLoader(environment, paths)

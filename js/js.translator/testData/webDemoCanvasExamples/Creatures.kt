@@ -72,7 +72,7 @@ class Logo(override var pos: Vector) : Shape() {
     fun drawLogo(state: CanvasState) {
         size = imageSize * (state.size.x / imageSize.x) * relSize
         // getKotlinLogo() is a 'magic' function here defined only for purposes of demonstration but in fact it just find an element containing the logo
-        state.context.drawImage(getImage("http://try.kotlinlang.org/static/images/canvas/Kotlin-logo.png"), 0.0, 0.0,
+        state.context.drawImage(getImage("https://try.kotlinlang.org/static/images/canvas/Kotlin-logo.png"), 0.0, 0.0,
                                 imageSize.x, imageSize.y,
                                 position.x, position.y,
                                 size.x, size.y)

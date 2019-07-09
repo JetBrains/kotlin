@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlinx.metadata
@@ -406,7 +406,7 @@ abstract class KmTypeAliasVisitor @JvmOverloads constructor(private val delegate
 
     /**
      * Visits the expanded type of the type alias, i.e. the full expansion of the underlying type, where all type aliases are substituted
-     * with their expanded types. If not type aliases are used in the underlying type, expanded type is equal to the underlying type.
+     * with their expanded types. If no type aliases are used in the underlying type, expanded type is equal to the underlying type.
      *
      * @param flags type flags, consisting of [Flag.Type] flags
      */
@@ -468,7 +468,7 @@ abstract class KmValueParameterVisitor @JvmOverloads constructor(private val del
 }
 
 /**
- * A visitor to visit a type parameter of a Kotlin class, function or property.
+ * A visitor to visit a type parameter of a Kotlin class, function, property or type alias.
  *
  * When using this class, zero or more [visitUpperBound] calls must be done first, followed by [visitEnd].
  */
@@ -520,7 +520,7 @@ abstract class KmTypeVisitor @JvmOverloads constructor(private val delegate: KmT
 
     /**
      * Visits the name of the type alias, if this type's classifier is a type alias. Note that all types are expanded for metadata produced
-     * by the Kotlin compiler, so the the type with a type alias classifier may only appear in a call to [visitAbbreviatedType].
+     * by the Kotlin compiler, so the type with a type alias classifier may only appear in a call to [visitAbbreviatedType].
      *
      * @param name the name of the type alias
      */

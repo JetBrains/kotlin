@@ -38,11 +38,13 @@ abstract class IncrementalCompilerRunner<
     Args : CommonCompilerArguments,
     CacheManager : IncrementalCachesManager<*>
 >(
-    workingDir: File,
+    private val workingDir: File,
     cacheDirName: String,
     protected val reporter: ICReporter,
     private val buildHistoryFile: File,
-        private val localStateDirs: Collection<File> = emptyList()
+    // there might be some additional output directories (e.g. for generated java in kapt)
+    // to remove them correctly on rebuild, we pass them as additional argument
+    private val outputFiles: Collection<File> = emptyList()
 ) {
 
     protected val cacheDirectory = File(workingDir, cacheDirName)
@@ -67,19 +69,8 @@ abstract class IncrementalCompilerRunner<
 
         fun rebuild(reason: () -> String): ExitCode {
             reporter.report(reason)
-
-            caches.clean()
-            dirtySourcesSinceLastTimeFile.delete()
-
-            reporter.report { "Deleting output directories on rebuild:" }
-            for (dir in sequenceOf(destinationDir(args)) + localStateDirs.asSequence()) {
-                if (!dir.isDirectory) continue
-
-                dir.deleteRecursively()
-                dir.mkdirs()
-                reporter.report { "deleted $dir" }
-            }
-
+            caches.close(false)
+            clearLocalStateOnRebuild(args)
             caches = createCacheManager(args)
             if (providedChangedFiles == null) {
                 caches.inputsCache.sourceSnapshotMap.compareAndUpdate(allSourceFiles)
@@ -111,6 +102,34 @@ abstract class IncrementalCompilerRunner<
         }
     }
 
+    private fun clearLocalStateOnRebuild(args: Args) {
+        val destinationDir = destinationDir(args)
+
+        reporter.reportVerbose { "Clearing output on rebuild" }
+        for (file in sequenceOf(destinationDir, workingDir) + outputFiles.asSequence()) {
+            val deleted: Boolean? = when {
+                file.isDirectory -> {
+                    reporter.reportVerbose { "  Deleting directory $file" }
+                    file.deleteRecursively()
+                }
+                file.isFile -> {
+                    reporter.reportVerbose { "  Deleting $file" }
+                    file.delete()
+                }
+                else -> null
+            }
+
+            if (deleted == false) {
+                reporter.reportVerbose { "  Could not delete $file" }
+            }
+        }
+
+        assert(!destinationDir.exists()) { "Could not delete destination dir $destinationDir" }
+        assert(!workingDir.exists()) { "Could not delete caches dir $workingDir" }
+        destinationDir.mkdirs()
+        workingDir.mkdirs()
+    }
+
     private fun sourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles, args: Args): CompilationMode =
             when (changedFiles) {
                 is ChangedFiles.Known -> calculateSourcesToCompile(caches, changedFiles, args)
@@ -120,16 +139,12 @@ abstract class IncrementalCompilerRunner<
     protected abstract fun calculateSourcesToCompile(caches: CacheManager, changedFiles: ChangedFiles.Known, args: Args): CompilationMode
 
     protected fun initDirtyFiles(dirtyFiles: DirtyFilesContainer, changedFiles: ChangedFiles.Known) {
-        dirtyFiles.add(changedFiles.modified)
-        dirtyFiles.add(changedFiles.removed)
+        dirtyFiles.add(changedFiles.modified, "was modified since last time")
+        dirtyFiles.add(changedFiles.removed, "was removed since last time")
 
         if (dirtySourcesSinceLastTimeFile.exists()) {
             val files = dirtySourcesSinceLastTimeFile.readLines().map(::File)
-            if (files.isNotEmpty()) {
-                reporter.report { "Source files added since last compilation: ${reporter.pathsAsString(files)}" }
-            }
-
-            dirtyFiles.add(files)
+            dirtyFiles.add(files, "was not compiled last time")
         }
     }
 
@@ -222,6 +237,7 @@ abstract class IncrementalCompilerRunner<
             exitCode = runCompiler(sourcesToCompile.toSet(), args, caches, services, messageCollectorAdapter)
             postCompilationHook(exitCode)
 
+            reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
             if (exitCode != ExitCode.OK) break
 
             dirtySourcesSinceLastTimeFile.delete()

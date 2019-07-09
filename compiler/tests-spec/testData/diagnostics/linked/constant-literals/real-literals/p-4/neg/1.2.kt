@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 4
- * SENTENCE: [1] The digits of the whole-number part or the fraction part or the exponent may be optionally separated by underscores, but an underscore may not be placed between, before, or after these parts.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, real-literals -> paragraph 4 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Real literals with underscores at the end.
  */
@@ -27,7 +26,7 @@ val value_5 = <!ILLEGAL_UNDERSCORE!>0_00e1_<!>
 val value_6 = <!ILLEGAL_UNDERSCORE!>.0_0__0___0E0_______________<!>
 
 // TESTCASE NUMBER: 7
-val value_7 = <!ILLEGAL_UNDERSCORE, FLOAT_LITERAL_CONFORMS_INFINITY!>0_1e+100_____f<!>
+val value_7 = <!FLOAT_LITERAL_CONFORMS_INFINITY, ILLEGAL_UNDERSCORE!>0_1e+100_____f<!>
 
 // TESTCASE NUMBER: 8
 val value_8 = <!ILLEGAL_UNDERSCORE!>.0_0E-0001___<!>
@@ -39,7 +38,7 @@ val value_9 = <!ILLEGAL_UNDERSCORE!>0___0__0e4___<!>
 val value_10 = <!ILLEGAL_UNDERSCORE!>0_00_0e99_f<!>
 
 // TESTCASE NUMBER: 11
-val value_11 = <!ILLEGAL_UNDERSCORE, FLOAT_LITERAL_CONFORMS_ZERO!>.0_5E-93_______F<!>
+val value_11 = <!FLOAT_LITERAL_CONFORMS_ZERO, ILLEGAL_UNDERSCORE!>.0_5E-93_______F<!>
 
 // TESTCASE NUMBER: 12
 val value_12 = <!ILLEGAL_UNDERSCORE!>.8____8888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888888_____8888888888888888888e+5_f<!>

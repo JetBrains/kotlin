@@ -120,3 +120,14 @@ internal object KtSpreadPostfixTemplate : ConstantStringBasedPostfixTemplate(
     "*\$expr$\$END$",
     createExpressionSelector(typePredicate = { KotlinBuiltIns.isArray(it) || KotlinBuiltIns.isPrimitiveArray(it) })
 )
+
+internal object KtArgumentPostfixTemplate : ConstantStringBasedPostfixTemplate(
+    "arg",
+    "functionCall(expr)",
+    "\$call$(\$expr$\$END$)",
+    createExpressionSelector(statementsOnly = true)
+) {
+    override fun setVariables(template: Template, element: PsiElement) {
+        template.addVariable("call", "", "", true)
+    }
+}

@@ -1,0 +1,40 @@
+package
+
+public fun </*0*/ T> TypePredicate.expectedTypeFor(/*0*/ keys: kotlin.collections.Iterable<T>): kotlin.collections.Map<T, TypePredicate>
+
+public final class KotlinType {
+    public constructor KotlinType()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class SmartFMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> : kotlin.collections.MutableMap<K!, V!> {
+    public constructor SmartFMap</*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!>()
+    public abstract override /*1*/ /*fake_override*/ val entries: kotlin.collections.MutableSet<kotlin.collections.MutableMap.MutableEntry<K!, V!>>
+    public abstract override /*1*/ /*fake_override*/ val keys: kotlin.collections.MutableSet<K!>
+    public abstract override /*1*/ /*fake_override*/ val size: kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ val values: kotlin.collections.MutableCollection<V!>
+    public abstract override /*1*/ /*fake_override*/ fun clear(): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun containsKey(/*0*/ key: K!): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun containsValue(/*0*/ value: V!): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public abstract override /*1*/ /*fake_override*/ fun get(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun isEmpty(): kotlin.Boolean
+    public open fun plus(/*0*/ @org.jetbrains.annotations.NotNull key: K, /*1*/ value: V!): SmartFMap<K!, V!>!
+    public abstract override /*1*/ /*fake_override*/ fun put(/*0*/ key: K!, /*1*/ value: V!): V?
+    public abstract override /*1*/ /*fake_override*/ fun putAll(/*0*/ from: kotlin.collections.Map<out K!, V!>): kotlin.Unit
+    public abstract override /*1*/ /*fake_override*/ fun remove(/*0*/ key: K!): V?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> emptyMap(): SmartFMap<K!, V!>!
+}
+
+public interface TypePredicate : (KotlinType) -> kotlin.Boolean {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ fun invoke(/*0*/ typeToCheck: KotlinType): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

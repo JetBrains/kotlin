@@ -1,17 +1,20 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.analyze
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.context.ContextForNewModule
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.frontend.js.di.createTopDownAnalyzerForJs
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -19,7 +22,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
-import org.jetbrains.kotlin.js.resolve.JsPlatform
+import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.js.resolve.MODULE_KIND
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
@@ -45,31 +48,51 @@ object TopDownAnalyzerFacadeForJS {
         project: Project,
         configuration: CompilerConfiguration,
         moduleDescriptors: List<ModuleDescriptorImpl>,
-        friendModuleDescriptors: List<ModuleDescriptorImpl>
+        friendModuleDescriptors: List<ModuleDescriptorImpl>,
+        thisIsBuiltInsModule: Boolean = false,
+        customBuiltInsModule: ModuleDescriptorImpl? = null
     ): JsAnalysisResult {
+        require(!thisIsBuiltInsModule || customBuiltInsModule == null) {
+            "Can't simultaneously use custom built-ins module and set current module as built-ins"
+        }
+
+        val builtIns = when {
+            thisIsBuiltInsModule -> DefaultBuiltIns(loadBuiltInsFromCurrentClassLoader = false)
+            customBuiltInsModule != null -> customBuiltInsModule.builtIns
+            else -> JsPlatformAnalyzerServices.builtIns
+        }
 
         val moduleName = configuration[CommonConfigurationKeys.MODULE_NAME]!!
-        val context = ContextForNewModule(ProjectContext(project), Name.special("<$moduleName>"), JsPlatform.builtIns, null)
-
-        context.module.setDependencies(
-            listOf(context.module) +
-                    moduleDescriptors +
-                    listOf(JsPlatform.builtIns.builtInsModule),
-            friendModuleDescriptors.toSet()
+        val context = ContextForNewModule(
+            ProjectContext(project, "TopDownAnalyzer for JS"),
+            Name.special("<$moduleName>"),
+            builtIns,
+            platform = null
         )
+
+        val additionalPackages = mutableListOf<PackageFragmentProvider>()
+
+        if (thisIsBuiltInsModule) {
+            builtIns.builtInsModule = context.module
+            additionalPackages += functionInterfacePackageFragmentProvider(context.storageManager, context.module)
+        }
+
+        val dependencies = mutableSetOf(context.module) + moduleDescriptors + builtIns.builtInsModule
+        context.module.setDependencies(dependencies.toList(), friendModuleDescriptors.toSet())
 
         val moduleKind = configuration.get(JSConfigurationKeys.MODULE_KIND, ModuleKind.PLAIN)
 
         val trace = BindingTraceContext()
         trace.record(MODULE_KIND, context.module, moduleKind)
-        return analyzeFilesWithGivenTrace(files, trace, context, configuration)
+        return analyzeFilesWithGivenTrace(files, trace, context, configuration, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(
         files: Collection<KtFile>,
         trace: BindingTrace,
         moduleContext: ModuleContext,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): JsAnalysisResult {
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
         val expectActualTracker = configuration.get(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER) ?: ExpectActualTracker.DoNothing
@@ -91,7 +114,7 @@ object TopDownAnalyzerFacadeForJS {
                 languageVersionSettings,
                 lookupTracker,
                 expectActualTracker,
-                packageFragment
+                additionalPackages + listOfNotNull(packageFragment)
         )
         analyzerForJs.analyzeDeclarations(TopDownAnalysisMode.TopLevelDeclarations, files)
         return JsAnalysisResult.success(trace, moduleContext.module)

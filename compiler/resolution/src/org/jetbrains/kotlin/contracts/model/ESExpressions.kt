@@ -16,16 +16,21 @@
 
 package org.jetbrains.kotlin.contracts.model
 
-import org.jetbrains.kotlin.types.KotlinType
 
+/**
+ * There is a subset of Kotlin language in Effect system (expressions
+ *   in right hand side of conditional effect) and [ESExpression] with subtypes
+ *   precisely enumerate what can be found here.
+ */
 interface ESExpression {
     fun <T> accept(visitor: ESExpressionVisitor<T>): T
 }
 
 interface ESOperator : ESExpression {
+    /**
+     * [Functor] that contains logic of concrete operator
+     */
     val functor: Functor
 }
 
-abstract class ESValue(override val type: KotlinType?) : Computation, ESExpression {
-    override val effects: List<ESEffect> = listOf()
-}
+interface ESValue : Computation, ESExpression

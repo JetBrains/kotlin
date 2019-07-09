@@ -4,21 +4,23 @@ UFile (package = )
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                 UIdentifier (Identifier (lazy))
-                USimpleNameReferenceExpression (identifier = lazy)
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                 ULambdaExpression
                     UBlockExpression
-                        ULiteralExpression (value = "/sdcard")
+                        UReturnExpression
+                            ULiteralExpression (value = "/sdcard")
         UField (name = annotatedDelegate$delegate)
             UAnnotation (fqName = org.jetbrains.annotations.NotNull)
             UAnnotation (fqName = kotlin.Suppress)
             UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                 UIdentifier (Identifier (lazy))
-                USimpleNameReferenceExpression (identifier = lazy)
+                USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                 ULambdaExpression
                     UBlockExpression
-                        UBinaryExpression (operator = +)
-                            ULiteralExpression (value = 1)
-                            ULiteralExpression (value = 1)
+                        UReturnExpression
+                            UBinaryExpression (operator = +)
+                                ULiteralExpression (value = 1)
+                                ULiteralExpression (value = 1)
         UAnnotationMethod (name = getSdCardPath)
         UAnnotationMethod (name = localPropertyTest)
             UBlockExpression
@@ -26,8 +28,9 @@ UFile (package = )
                     ULocalVariable (name = sdCardPathLocal)
                         UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1))
                             UIdentifier (Identifier (lazy))
-                            USimpleNameReferenceExpression (identifier = lazy)
+                            USimpleNameReferenceExpression (identifier = lazy, resolvesTo = null)
                             ULambdaExpression
                                 UBlockExpression
-                                    ULiteralExpression (value = "/sdcard")
+                                    UReturnExpression
+                                        ULiteralExpression (value = "/sdcard")
         UAnnotationMethod (name = getAnnotatedDelegate)

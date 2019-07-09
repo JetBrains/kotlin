@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.test
@@ -38,5 +38,5 @@ public external interface FrameworkAdapter {
      * @param ignored whether the test is ignored
      * @param testFn contains test body invocation
      */
-    fun test(name: String, ignored: Boolean, testFn: () -> Unit)
+    fun test(name: String, ignored: Boolean, testFn: () -> Any?)
 }

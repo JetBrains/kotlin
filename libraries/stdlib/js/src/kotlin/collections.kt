@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.collections
 
 import kotlin.comparisons.naturalOrder
-import kotlin.internal.InlineOnly
 import kotlin.random.Random
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */
@@ -49,10 +48,6 @@ internal actual fun <T> copyToArrayImpl(collection: Collection<*>, array: Array<
     }
     return array
 }
-
-@library("arrayToString")
-@Suppress("UNUSED_PARAMETER")
-internal fun arrayToString(array: Array<*>): String = definedExternally
 
 /**
  * Returns an immutable list containing only the specified object [element].
@@ -98,6 +93,8 @@ public actual fun <T> Iterable<T>.shuffled(): List<T> = toMutableList().apply { 
 
 /**
  * Sorts elements in the list in-place according to their natural sort order.
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
     collectionsSort(this, naturalOrder())
@@ -105,6 +102,8 @@ public actual fun <T : Comparable<T>> MutableList<T>.sort(): Unit {
 
 /**
  * Sorts elements in the list in-place according to the order specified with [comparator].
+ *
+ * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  */
 public actual fun <T> MutableList<T>.sortWith(comparator: Comparator<in T>): Unit {
     collectionsSort(this, comparator)
@@ -114,8 +113,7 @@ private fun <T> collectionsSort(list: MutableList<T>, comparator: Comparator<in 
     if (list.size <= 1) return
 
     val array = copyToArray(list)
-
-    array.asDynamic().sort(comparator.asDynamic().compare.bind(comparator))
+    sortArrayWith(array, comparator)
 
     for (i in 0 until array.size) {
         list[i] = array[i]

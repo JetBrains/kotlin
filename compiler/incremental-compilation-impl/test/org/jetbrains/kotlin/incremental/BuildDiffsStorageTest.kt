@@ -22,7 +22,6 @@ import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import java.io.File
-import java.io.OutputStream
 import java.util.*
 
 class BuildDiffsStorageTest {
@@ -45,8 +44,10 @@ class BuildDiffsStorageTest {
         val fqNames = listOf(FqName("fizz.Buzz"))
         val diff = BuildDifference(100, true, DirtyData(lookupSymbols, fqNames))
         val diffs = BuildDiffsStorage(listOf(diff))
-        Assert.assertEquals("BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz]))])",
-                            diffs.toString())
+        Assert.assertEquals(
+            "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz]))])",
+            diffs.toString()
+        )
     }
 
     @Test
@@ -87,8 +88,7 @@ class BuildDiffsStorageTest {
             BuildDiffsStorage.CURRENT_VERSION++
             val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
             Assert.assertEquals(null, diffsDeserialized)
-        }
-        finally {
+        } finally {
             BuildDiffsStorage.CURRENT_VERSION = versionBackup
         }
     }

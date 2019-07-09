@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 
 inline class Z(val x: Int) {

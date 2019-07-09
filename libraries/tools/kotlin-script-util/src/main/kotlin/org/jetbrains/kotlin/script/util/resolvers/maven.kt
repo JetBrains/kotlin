@@ -20,7 +20,10 @@ package org.jetbrains.kotlin.script.util.resolvers
 
 import com.jcabi.aether.Aether
 import org.jetbrains.kotlin.script.util.DependsOn
-import org.jetbrains.kotlin.script.util.Repository
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericArtifactCoordinates
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryCoordinates
+import org.jetbrains.kotlin.script.util.resolvers.experimental.GenericRepositoryWithBridge
+import org.jetbrains.kotlin.script.util.resolvers.experimental.MavenArtifactCoordinates
 import org.sonatype.aether.repository.RemoteRepository
 import org.sonatype.aether.resolution.DependencyResolutionException
 import org.sonatype.aether.util.artifact.DefaultArtifact
@@ -30,7 +33,7 @@ import java.util.*
 
 val mavenCentral = RemoteRepository("maven-central", "default", "https://repo.maven.apache.org/maven2/")
 
-class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
+class MavenResolver(val reportError: ((String) -> Unit)? = null): GenericRepositoryWithBridge {
 
     // TODO: make robust
     val localRepo = File(File(System.getProperty("user.home")!!, ".m2"), "repository")
@@ -39,9 +42,9 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 
     private fun currentRepos() = if (repos.isEmpty()) arrayListOf(mavenCentral) else repos
 
-    private fun String.isValidParam() = isNotBlank()
+    private fun String?.isValidParam() = this?.isNotBlank() ?: false
 
-    override fun tryResolve(dependsOn: DependsOn): Iterable<File>? {
+    override fun tryResolve(artifactCoordinates: GenericArtifactCoordinates): Iterable<File>? {
 
         fun error(msg: String) {
             reportError?.invoke(msg) ?: throw RuntimeException(msg)
@@ -49,16 +52,22 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
 
         fun String?.orNullIfBlank(): String? = this?.takeUnless(String::isBlank)
 
-        val artifactId: DefaultArtifact = when {
-            dependsOn.groupId.isValidParam() || dependsOn.artifactId.isValidParam() -> {
-                DefaultArtifact(dependsOn.groupId.orNullIfBlank(), dependsOn.artifactId.orNullIfBlank(), null, dependsOn.version.orNullIfBlank())
-            }
-            dependsOn.value.isValidParam() && dependsOn.value.count { it == ':' } == 2 -> {
-                DefaultArtifact(dependsOn.value)
-            }
-            else -> {
-                error("Unknown set of arguments to maven resolver: ${dependsOn.value}")
-                return null
+        val artifactId: DefaultArtifact = with(artifactCoordinates) {
+            if (this is MavenArtifactCoordinates && (groupId.isValidParam() || artifactId.isValidParam())) {
+                DefaultArtifact(
+                    groupId.orNullIfBlank(),
+                    artifactId.orNullIfBlank(),
+                    null,
+                    version.orNullIfBlank()
+                )
+            } else {
+                val coordinatesString = string
+                if (coordinatesString.isValidParam() && coordinatesString.count { it == ':' } == 2) {
+                    DefaultArtifact(coordinatesString)
+                } else {
+                    error("Unknown set of arguments to maven resolver: $coordinatesString")
+                    return null
+                }
             }
         }
 
@@ -69,22 +78,24 @@ class MavenResolver(val reportError: ((String) -> Unit)? = null): Resolver {
             else {
                 error("resolving ${artifactId.artifactId} failed: no results")
             }
-        }
-        catch (e: DependencyResolutionException) {
+        } catch (e: DependencyResolutionException) {
             reportError?.invoke("resolving ${artifactId.artifactId} failed: $e") ?: throw e
         }
         return null
     }
 
-    override fun tryAddRepo(annotation: Repository): Boolean {
-        val urlStr = annotation.url.takeIf { it.isValidParam() } ?: annotation.value.takeIf { it.isValidParam() } ?: return false
-        urlStr.toRepositoryUrlOrNull() ?: return false
-        repos.add(
+    override fun tryAddRepository(repositoryCoordinates: GenericRepositoryCoordinates): Boolean {
+        val url = repositoryCoordinates.url
+        if (url != null) {
+            repos.add(
                 RemoteRepository(
-                        if (annotation.id.isValidParam()) annotation.id else "central",
-                        "default",
-                        urlStr
-                ))
-        return true
+                    if (repositoryCoordinates.name.isValidParam()) repositoryCoordinates.name else url.host,
+                    "default",
+                    url.toString()
+                )
+            )
+            return true
+        }
+        return false
     }
 }

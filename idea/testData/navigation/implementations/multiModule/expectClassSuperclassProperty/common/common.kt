@@ -16,6 +16,7 @@ class SimpleChild : SimpleParent() {
     override val bar: Int get() = 1
 }
 
+// DISTINCT_REF
 // REF: [testModule_Common] (in test.ExpectedChild).bar
 // REF: [testModule_Common] (in test.ExpectedChildChild).bar
 // REF: [testModule_Common] (in test.SimpleChild).bar

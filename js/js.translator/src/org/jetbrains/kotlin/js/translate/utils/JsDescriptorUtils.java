@@ -149,11 +149,16 @@ public final class JsDescriptorUtils {
 
     @NotNull
     public static String getModuleName(@NotNull DeclarationDescriptor descriptor) {
-        ModuleDescriptor moduleDescriptor = DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor));
-        if (DescriptorUtils.getContainingModule(descriptor) == moduleDescriptor.getBuiltIns().getBuiltInsModule()) {
+        return getModuleName(DescriptorUtils.getContainingModule(findRealInlineDeclaration(descriptor)));
+    }
+
+    @NotNull
+    public static String getModuleName(@NotNull ModuleDescriptor module) {
+        if (module.getName().equals(KotlinBuiltIns.BUILTINS_MODULE_NAME)) {
             return Namer.KOTLIN_LOWER_NAME;
         }
-        String moduleName = moduleDescriptor.getName().asString();
+
+        String moduleName = module.getName().asString();
         return moduleName.substring(1, moduleName.length() - 1);
     }
 

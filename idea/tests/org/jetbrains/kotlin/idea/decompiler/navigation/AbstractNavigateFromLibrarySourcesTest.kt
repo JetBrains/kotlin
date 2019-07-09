@@ -1,10 +1,11 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.navigation
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.LibraryOrderEntry
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.OrderRootType
@@ -14,10 +15,14 @@ import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.utils.sure
 
 abstract class AbstractNavigateFromLibrarySourcesTest : LightCodeInsightFixtureTestCase() {
+    val module: Module get() = myModule
+
     protected fun navigationElementForReferenceInLibrarySource(filePath: String, referenceText: String): PsiElement {
-        val libraryOrderEntry = ModuleRootManager.getInstance(myModule!!).orderEntries.first { it is LibraryOrderEntry }
+        val libraryOrderEntry = ModuleRootManager.getInstance(module!!).orderEntries.first { it is LibraryOrderEntry }
         val libSourcesRoot = libraryOrderEntry.getUrls(OrderRootType.SOURCES)[0]
-        val vf = VirtualFileManager.getInstance().findFileByUrl(libSourcesRoot + "/$filePath")!!
+        val libUrl = "$libSourcesRoot/$filePath"
+        val vf = VirtualFileManager.getInstance().refreshAndFindFileByUrl(libUrl)
+            ?: error("Can't find library: $libUrl")
         val psiFile = psiManager.findFile(vf)!!
         val indexOf = psiFile.text!!.indexOf(referenceText)
         val reference = psiFile.findReferenceAt(indexOf)

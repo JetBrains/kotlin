@@ -1,4 +1,4 @@
-// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 // FILE: JFoo.java
 
 import org.jetbrains.annotations.Nullable;

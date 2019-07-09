@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
@@ -30,8 +30,8 @@ interface QuickFixTest {
         val inspectionFile = findInspectionFile(File(beforeFileName).parentFile)
         if (inspectionFile != null) {
             val className = FileUtil.loadFile(inspectionFile).trim { it <= ' ' }
-            val inspectionClass = Class.forName(className) as Class<InspectionProfileEntry>
-            return InspectionTestUtil.instantiateTools(listOf<Class<out InspectionProfileEntry>>(inspectionClass))
+            @Suppress("UNCHECKED_CAST") val inspectionClass = Class.forName(className) as Class<InspectionProfileEntry>
+            return InspectionTestUtil.instantiateTools(listOf(inspectionClass))
         }
 
         return emptyList()

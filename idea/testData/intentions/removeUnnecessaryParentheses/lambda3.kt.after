@@ -1,0 +1,6 @@
+fun main() {
+    foo();
+    { foo() }.invoke()
+}
+
+fun foo() {}

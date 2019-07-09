@@ -55,6 +55,9 @@ class TreeBasedMethod(
     override val returnType: JavaType
         get() = TreeBasedType.create(tree.returnType, compilationUnit, javac, annotations, this)
 
-    override val hasAnnotationParameterDefaultValue: Boolean
-        get() = tree.defaultValue != null
+    // TODO: allow nullable names in Tree-based annotation arguments and pass null instead of a synthetic name
+    override val annotationParameterDefaultValue: JavaAnnotationArgument?
+        get() = tree.defaultValue?.let { defaultValue ->
+            createAnnotationArgument(defaultValue, Name.identifier("value"), compilationUnit, javac, containingClass, this)
+        }
 }

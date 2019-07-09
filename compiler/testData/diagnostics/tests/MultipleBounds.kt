@@ -48,7 +48,7 @@ class Bar<T : <!FINAL_UPPER_BOUND!>Foo<!>>
 class Buzz<T> where T : <!FINAL_UPPER_BOUND!>Bar<<!UPPER_BOUND_VIOLATED!>Int<!>><!>, T : <!UNRESOLVED_REFERENCE!>nioho<!>
 
 class X<T : <!FINAL_UPPER_BOUND!>Foo<!>>
-class Y<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>Foo<!>, T : <!ONLY_ONE_CLASS_BOUND_ALLOWED, FINAL_UPPER_BOUND!>Bar<Foo><!>
+class Y<<!CONFLICTING_UPPER_BOUNDS!>T<!>> where T : <!FINAL_UPPER_BOUND!>Foo<!>, T : <!FINAL_UPPER_BOUND, ONLY_ONE_CLASS_BOUND_ALLOWED!>Bar<Foo><!>
 
 fun <T> test2(t : T)
   where

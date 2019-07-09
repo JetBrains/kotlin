@@ -40,7 +40,7 @@ abstract class AbstractDiagnosticsTestWithJsStdLibAndBackendCompilation : Abstra
         val diagnostics = analysisResult.bindingTrace.bindingContext.diagnostics
 
         if (!hasError(diagnostics)) {
-            val translator = K2JSTranslator(config)
+            val translator = K2JSTranslator(config, false)
             translator.translate(object : JsConfig.Reporter() {}, files, MainCallParameters.noCall(), analysisResult)
         }
 

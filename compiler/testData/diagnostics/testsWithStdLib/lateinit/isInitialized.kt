@@ -1,5 +1,4 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -NOTHING_TO_INLINE
-// !API_VERSION: 1.2
 // FILE: test.kt
 
 interface Base {

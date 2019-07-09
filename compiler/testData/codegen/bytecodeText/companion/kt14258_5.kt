@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // Checks that accessor are not used because property can be accessed directly.
 
 interface I {

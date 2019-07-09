@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+
 fun myEquals(a: Float?, b: Float?) = a == b
 
 fun myEquals1(a: Float?, b: Float) = a == b

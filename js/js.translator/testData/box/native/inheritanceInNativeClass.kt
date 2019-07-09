@@ -1,17 +1,21 @@
-// IGNORE_BACKEND: JS_IR
 // SKIP_MINIFICATION
 // Contains calls from external JS code
-package foo
 
+@JsExport
 open class A {
+    @JsName("foo")
     open protected fun foo(n: Int) = 23
 
+    @JsName("bar")
     fun bar(n: Int) = foo(n) + 100
 }
 
+@JsExport
 open class B {
+    @JsName("foo")
     protected fun foo(n: Int) = 42
 
+    @JsName("bar")
     open fun bar(n: Int) = 142
 }
 

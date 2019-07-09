@@ -1,7 +1,9 @@
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // SKIP_MINIFICATION
 // This test assumes that external JS code calls Kotlin code directly
-package foo
+
+// Legacy export, wrong types
+// DONT_TARGET_EXACT_BACKEND: JS_IR
 
 open class A
 

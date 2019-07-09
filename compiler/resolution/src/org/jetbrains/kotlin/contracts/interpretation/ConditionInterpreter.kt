@@ -16,14 +16,15 @@
 
 package org.jetbrains.kotlin.contracts.interpretation
 
-import org.jetbrains.kotlin.contracts.description.*
+import org.jetbrains.kotlin.contracts.description.ContractDescriptionVisitor
 import org.jetbrains.kotlin.contracts.description.expressions.*
 import org.jetbrains.kotlin.contracts.model.ESExpression
 import org.jetbrains.kotlin.contracts.model.functors.IsFunctor
 import org.jetbrains.kotlin.contracts.model.structure.*
 
-internal class ConditionInterpreter(private val dispatcher: ContractInterpretationDispatcher) :
-    ContractDescriptionVisitor<ESExpression?, Unit> {
+internal class ConditionInterpreter(
+    private val dispatcher: ContractInterpretationDispatcher
+) : ContractDescriptionVisitor<ESExpression?, Unit> {
     override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): ESExpression? {
         val left = logicalOr.left.accept(this, data) ?: return null
         val right = logicalOr.right.accept(this, data) ?: return null
@@ -43,12 +44,12 @@ internal class ConditionInterpreter(private val dispatcher: ContractInterpretati
 
     override fun visitIsInstancePredicate(isInstancePredicate: IsInstancePredicate, data: Unit): ESExpression? {
         val esVariable = dispatcher.interpretVariable(isInstancePredicate.arg) ?: return null
-        return ESIs(esVariable, IsFunctor(isInstancePredicate.type, isInstancePredicate.isNegated))
+        return ESIs(esVariable, IsFunctor(isInstancePredicate.type.toESType(), isInstancePredicate.isNegated))
     }
 
     override fun visitIsNullPredicate(isNullPredicate: IsNullPredicate, data: Unit): ESExpression? {
         val variable = dispatcher.interpretVariable(isNullPredicate.arg) ?: return null
-        return ESEqual(variable, ESConstant.NULL, isNullPredicate.isNegated)
+        return ESEqual(variable, ESConstants.nullValue, isNullPredicate.isNegated)
     }
 
     override fun visitBooleanConstantDescriptor(booleanConstantDescriptor: BooleanConstantReference, data: Unit): ESExpression? =

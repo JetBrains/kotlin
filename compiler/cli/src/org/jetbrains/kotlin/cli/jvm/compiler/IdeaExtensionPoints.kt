@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.jvm.compiler
@@ -12,8 +12,6 @@ import com.intellij.psi.JavaModuleSystem
 import com.intellij.psi.impl.compiled.ClsCustomNavigationPolicy
 
 internal object IdeaExtensionPoints {
-    const val IDEA_COMPATIBLE_BUILD_NUMBER = "182.3040"
-
     fun registerVersionSpecificAppExtensionPoints(area: ExtensionsArea) {
         @Suppress("DEPRECATION")
         CoreApplicationEnvironment.registerExtensionPoint(area, ClsCustomNavigationPolicy.EP_NAME, ClsCustomNavigationPolicy::class.java)

@@ -1,48 +1,10 @@
 // WITH_RUNTIME
+// PROBLEM: none
 
 package kotlinx.coroutines
 
-interface Deferred<T> {
-    suspend fun await(): T
-}
-
-interface CoroutineContext
-
-object DefaultDispatcher : CoroutineContext
-
-enum class CoroutineStart {
-    DEFAULT,
-    LAZY,
-    ATOMIC,
-    UNDISPATCHED
-}
-
-interface Job
-
-fun <T> async(
-    context: CoroutineContext = DefaultDispatcher,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    parent: Job? = null,
-    f: suspend () -> T
-): Deferred<T> {
-    TODO()
-}
-
-fun <T> runBlocking(
-    context: CoroutineContext = DefaultDispatcher,
-    f: suspend () -> T
-) {
-    TODO()
-}
-
-suspend fun <T> withContext(
-    context: CoroutineContext,
-    start: CoroutineStart = CoroutineStart.DEFAULT,
-    f: suspend () -> T
-) {
-    TODO()
-}
-
 suspend fun test(ctx: CoroutineContext) {
-    <caret>async(ctx, CoroutineStart.LAZY) { 42 }.await()
+    coroutineScope {
+        <caret>async(ctx, CoroutineStart.LAZY) { 42 }.await()
+    }
 }

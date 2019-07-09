@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.formatter;
@@ -166,9 +166,19 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ColonSpaces.after.kt");
         }
 
+        @TestMetadata("CommentInExpressionBodies.after.kt")
+        public void testCommentInExpressionBodies() throws Exception {
+            runTest("idea/testData/formatter/CommentInExpressionBodies.after.kt");
+        }
+
         @TestMetadata("CommentInFunctionLiteral.after.kt")
         public void testCommentInFunctionLiteral() throws Exception {
             runTest("idea/testData/formatter/CommentInFunctionLiteral.after.kt");
+        }
+
+        @TestMetadata("ContinuationIndentInAssigments.after.kt")
+        public void testContinuationIndentInAssigments() throws Exception {
+            runTest("idea/testData/formatter/ContinuationIndentInAssigments.after.kt");
         }
 
         @TestMetadata("ContinuationIndentInParameterLists.after.kt")
@@ -286,6 +296,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/EnumArguments.after.kt");
         }
 
+        @TestMetadata("EnumInitializerList.after.kt")
+        public void testEnumInitializerList() throws Exception {
+            runTest("idea/testData/formatter/EnumInitializerList.after.kt");
+        }
+
         @TestMetadata("EnumWrapping.after.kt")
         public void testEnumWrapping() throws Exception {
             runTest("idea/testData/formatter/EnumWrapping.after.kt");
@@ -294,6 +309,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("ExpressionBodyWrap.after.kt")
         public void testExpressionBodyWrap() throws Exception {
             runTest("idea/testData/formatter/ExpressionBodyWrap.after.kt");
+        }
+
+        @TestMetadata("ExtendsListAlignEnum.after.kt")
+        public void testExtendsListAlignEnum() throws Exception {
+            runTest("idea/testData/formatter/ExtendsListAlignEnum.after.kt");
         }
 
         @TestMetadata("ExtendsListWrap.after.kt")
@@ -594,6 +614,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("RightBracketOnNewLine.after.kt")
         public void testRightBracketOnNewLine() throws Exception {
             runTest("idea/testData/formatter/RightBracketOnNewLine.after.kt");
+        }
+
+        @TestMetadata("SafeCast.after.kt")
+        public void testSafeCast() throws Exception {
+            runTest("idea/testData/formatter/SafeCast.after.kt");
         }
 
         @TestMetadata("SaveSpacesInDocComments.after.kt")
@@ -1136,6 +1161,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
             runTest("idea/testData/formatter/ContinuationIndentForExpressionBodies.after.inv.kt");
         }
 
+        @TestMetadata("ContinuationIndentInAssigments.after.inv.kt")
+        public void testContinuationIndentInAssigments() throws Exception {
+            runTest("idea/testData/formatter/ContinuationIndentInAssigments.after.inv.kt");
+        }
+
         @TestMetadata("DelegationList.after.inv.kt")
         public void testDelegationList() throws Exception {
             runTest("idea/testData/formatter/DelegationList.after.inv.kt");
@@ -1174,6 +1204,11 @@ public class FormatterTestGenerated extends AbstractFormatterTest {
         @TestMetadata("EmptyLineBetweenEnumEntries.after.inv.kt")
         public void testEmptyLineBetweenEnumEntries() throws Exception {
             runTest("idea/testData/formatter/EmptyLineBetweenEnumEntries.after.inv.kt");
+        }
+
+        @TestMetadata("ExtendsListAlignEnum.after.inv.kt")
+        public void testExtendsListAlignEnum() throws Exception {
+            runTest("idea/testData/formatter/ExtendsListAlignEnum.after.inv.kt");
         }
 
         @TestMetadata("ForLineBreak.after.inv.kt")

@@ -6,4 +6,4 @@ fun g() {
     foo(<caret>)
 }
 
-// EXIST: { lookupString:"object", itemText:"object: A<...>{...}" }
+// EXIST: { lookupString:"object", itemText:"object : A<...>{...}" }

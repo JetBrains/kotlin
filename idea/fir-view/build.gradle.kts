@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 
@@ -12,7 +12,7 @@ dependencies {
     val compileOnly by configurations
 
 
-    compile(projectDist(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compileOnly(project(":kotlin-reflect-api"))
     compile(project(":core:descriptors"))
     compile(project(":compiler:fir:tree"))
@@ -20,9 +20,13 @@ dependencies {
 
     compile(project(":idea:idea-core"))
 
-    compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("util", "openapi", "idea", "asm-all", "jdom", "annotations", "trove4j", "guava", rootProject = rootProject) }
-    compileOnly(intellijPluginDep("gradle")) //{ includeJars("gradle-tooling-api", "gradle", rootProject = rootProject) }
+    compileOnly(intellijDep())
+
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+    }
+
+    compileOnly(intellijPluginDep("gradle"))
 }
 
 sourceSets {

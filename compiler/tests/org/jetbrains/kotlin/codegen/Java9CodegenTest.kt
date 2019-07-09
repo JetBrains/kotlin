@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -18,14 +18,14 @@ import java.util.concurrent.TimeUnit
 class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
     override fun setUp() {
         super.setUp()
-        val fileName = KotlinTestUtils.getTestDataPathBase() + "/codegen/" + getPrefix() + "/" + getTestName(true) + ".kt"
+        val fileName = KotlinTestUtils.getTestDataPathBase() + "/codegen/" + prefix + "/" + getTestName(true) + ".kt"
         val testFile = TestFile(fileName, File(fileName).readText())
         createEnvironmentWithMockJdkAndIdeaAnnotations(ConfigurationKind.NO_KOTLIN_REFLECT, listOf(testFile), TestJdkKind.FULL_JDK_9)
     }
 
     override fun getPrefix(): String = "java9/box"
 
-    override fun blackBox() {
+    override fun blackBox(reportFailures: Boolean) {
         val tmpdir = KotlinTestUtils.tmpDirForTest(this)
         generateClassesInFile().writeAll(tmpdir, null)
 
@@ -49,6 +49,6 @@ class Java9CodegenTest : AbstractBlackBoxCodegenTest() {
 
     fun testVarHandle() {
         loadFile()
-        blackBox()
+        blackBox(true)
     }
 }

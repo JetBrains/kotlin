@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -22,22 +22,22 @@ import java.io.File
 abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     private companion object {
         var TEST_LIGHT_ANALYSIS: ClassBuilderFactory = object : ClassBuilderFactories.TestClassBuilderFactory() {
-            override fun getClassBuilderMode() = ClassBuilderMode.LIGHT_ANALYSIS_FOR_TESTS
+            override fun getClassBuilderMode() = ClassBuilderMode.getLightAnalysisForTests()
         }
     }
 
-    override fun doMultiFileTest(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         for (file in files) {
             if (file.content.contains("// IGNORE_LIGHT_ANALYSIS")) {
                 return
             }
         }
 
-        val fullTxt = compileWithFullAnalysis(files, javaFilesDir)
-                .replace("final enum class", "enum class")
+        val fullTxt = compileWithFullAnalysis(files)
+            .replace("final enum class", "enum class")
 
-        val liteTxt = compileWithLightAnalysis(wholeFile, files, javaFilesDir)
-                .replace("@synthetic.kotlin.jvm.GeneratedByJvmOverloads ", "")
+        val liteTxt = compileWithLightAnalysis(wholeFile, files)
+            .replace("@synthetic.kotlin.jvm.GeneratedByJvmOverloads ", "")
 
         assertEquals(fullTxt, liteTxt)
     }
@@ -46,14 +46,14 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         return false
     }
 
-    private fun compileWithLightAnalysis(wholeFile: File, files: List<CodegenTestCase.TestFile>, javaFilesDir: File?): String {
+    private fun compileWithLightAnalysis(wholeFile: File, files: List<TestFile>): String {
         val boxTestsDir = File("compiler/testData/codegen/box")
         val relativePath = wholeFile.toRelativeString(boxTestsDir)
         // Fail if this test is not under codegen/box
         assert(!relativePath.startsWith(".."))
 
         val configuration = createConfiguration(
-                configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), javaFilesDir?.let(::listOf).orEmpty(), files
+            configurationKind, getJdkKind(files), listOf(getAnnotationsJar()), listOfNotNull(writeJavaFiles(files)), files
         )
         val environment = KotlinCoreEnvironment.createForTests(testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
         AnalysisHandlerExtension.registerExtension(environment.project, PartialAnalysisHandlerExtension())
@@ -61,18 +61,15 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
         val testFiles = loadMultiFiles(files, environment.project)
         val classFileFactory = GenerationUtils.compileFiles(testFiles.psiFiles, environment, TEST_LIGHT_ANALYSIS).factory
 
-        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter(), replaceHash = false)
+        return BytecodeListingTextCollectingVisitor.getText(classFileFactory, ListAnalysisFilter())
     }
 
-    protected fun compileWithFullAnalysis(
-            files: List<TestFile>,
-            javaSourceDir: File?
-    ): String {
-        compile(files, javaSourceDir)
+    private fun compileWithFullAnalysis(files: List<TestFile>): String {
+        compile(files)
         classFileFactory.getClassFiles()
 
         val classInternalNames = classFileFactory.generationState.bindingContext
-                .getSliceContents(CodegenBinding.ASM_TYPE).map { it.value.internalName to it.key }.toMap()
+            .getSliceContents(CodegenBinding.ASM_TYPE).map { it.value.internalName to it.key }.toMap()
 
         return BytecodeListingTextCollectingVisitor.getText(classFileFactory, object : ListAnalysisFilter() {
             override fun shouldWriteClass(access: Int, name: String): Boolean {
@@ -94,7 +91,7 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
             private fun shouldFilterClass(descriptor: ClassDescriptor): Boolean {
                 return descriptor.visibility == Visibilities.LOCAL || descriptor is SyntheticClassDescriptorForLambda
             }
-        }, replaceHash = false)
+        })
     }
 
     private open class ListAnalysisFilter : BytecodeListingTextCollectingVisitor.Filter {

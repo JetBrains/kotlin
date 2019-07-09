@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 abstract class A1<T> : MutableList<T> {
     override fun remove(x: T): Boolean = true
     override fun removeAt(index: Int): T = null!!

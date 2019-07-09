@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.script.examples.jvm.resolve.maven
@@ -18,6 +18,7 @@ import kotlin.script.experimental.jvm.compat.mapLegacyDiagnosticSeverity
 import kotlin.script.experimental.jvm.compat.mapLegacyScriptPosition
 import kotlin.script.experimental.jvm.dependenciesFromCurrentContext
 import kotlin.script.experimental.jvm.jvm
+import kotlin.script.experimental.jvm.withUpdatedClasspath
 
 @KotlinScript(
     fileExtension = "scriptwithdeps.kts",
@@ -52,18 +53,23 @@ fun configureMavenDepsOnAnnotations(context: ScriptConfigurationRefinementContex
     }
     val diagnostics = arrayListOf<ScriptDiagnostic>()
     fun report(severity: ScriptDependenciesResolver.ReportSeverity, message: String, position: ScriptContents.Position?) {
-        diagnostics.add(ScriptDiagnostic(message, mapLegacyDiagnosticSeverity(severity), mapLegacyScriptPosition(position)))
+        diagnostics.add(
+            ScriptDiagnostic(
+                message,
+                mapLegacyDiagnosticSeverity(severity),
+                context.script.locationId,
+                mapLegacyScriptPosition(position)
+            )
+        )
     }
     return try {
         val newDepsFromResolver = resolver.resolve(scriptContents, emptyMap(), ::report, null).get()
             ?: return context.compilationConfiguration.asSuccess(diagnostics)
         val resolvedClasspath = newDepsFromResolver.classpath.toList().takeIf { it.isNotEmpty() }
             ?: return context.compilationConfiguration.asSuccess(diagnostics)
-        ScriptCompilationConfiguration(context.compilationConfiguration) {
-            dependencies.append(JvmDependency(resolvedClasspath))
-        }.asSuccess(diagnostics)
+        context.compilationConfiguration.withUpdatedClasspath(resolvedClasspath).asSuccess(diagnostics)
     } catch (e: Throwable) {
-        ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics())
+        ResultWithDiagnostics.Failure(*diagnostics.toTypedArray(), e.asDiagnostics(path = context.script.locationId))
     }
 }
 

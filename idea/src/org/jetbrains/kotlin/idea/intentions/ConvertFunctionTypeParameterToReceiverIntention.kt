@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.*
+import org.jetbrains.kotlin.idea.core.util.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.refactoring.CallableRefactoring
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.usages.explicateReceiverOf
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
@@ -38,10 +39,8 @@ import org.jetbrains.kotlin.idea.refactoring.getAffectedCallables
 import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinIntroduceVariableHandler
 import org.jetbrains.kotlin.idea.references.KtReference
 import org.jetbrains.kotlin.idea.references.KtSimpleReference
-import org.jetbrains.kotlin.idea.runSynchronouslyWithProgress
 import org.jetbrains.kotlin.idea.search.usagesSearch.searchReferencesOrMethodReferences
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
@@ -187,7 +186,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                 runReadAction {
                     val progressStep = 1.0/callables.size
                     for ((i, callable) in callables.withIndex()) {
-                        ProgressManager.getInstance().progressIndicatorNullable!!.fraction = (i + 1) * progressStep
+                        ProgressManager.getInstance().progressIndicator!!.fraction = (i + 1) * progressStep
 
                         if (callable !is PsiNamedElement) continue
 
@@ -197,7 +196,7 @@ class ConvertFunctionTypeParameterToReceiverIntention : SelfTargetingRangeIntent
                         }
 
                         usageLoop@ for (ref in callable.searchReferencesOrMethodReferences()) {
-                            val refElement = ref.element ?: continue
+                            val refElement = ref.element
                             when (ref) {
                                 is KtSimpleReference<*> -> processExternalUsage(conflicts, refElement, usages)
                                 is KtReference -> continue@usageLoop

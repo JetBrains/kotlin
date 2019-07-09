@@ -134,7 +134,7 @@ class ParcelableClinitClassBuilderInterceptorExtension : ClassBuilderInterceptor
         }
     }
 
-    private class ClinitAwareMethodVisitor(val parcelableName: String, mv: MethodVisitor) : MethodVisitor(Opcodes.ASM5, mv) {
+    private class ClinitAwareMethodVisitor(val parcelableName: String, mv: MethodVisitor) : MethodVisitor(Opcodes.API_VERSION, mv) {
         override fun visitInsn(opcode: Int) {
             if (opcode == Opcodes.RETURN) {
                 val iv = InstructionAdapter(this)

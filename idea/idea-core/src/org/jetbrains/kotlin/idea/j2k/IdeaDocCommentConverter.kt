@@ -28,8 +28,8 @@ import com.intellij.psi.xml.XmlFile
 import com.intellij.psi.xml.XmlTag
 import com.intellij.psi.xml.XmlText
 import com.intellij.psi.xml.XmlTokenType
-import org.jetbrains.kotlin.j2k.DocCommentConverter
-import org.jetbrains.kotlin.j2k.content
+import org.jetbrains.kotlin.idea.j2k.DocCommentConverter
+import org.jetbrains.kotlin.idea.j2k.content
 
 object IdeaDocCommentConverter : DocCommentConverter {
     override fun convertDocComment(docComment: PsiDocComment): String {

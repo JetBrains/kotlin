@@ -40,8 +40,9 @@ import org.jetbrains.idea.maven.project.MavenProjectsManager
 import org.jetbrains.idea.maven.utils.MavenArtifactScope
 import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
-import org.jetbrains.kotlin.config.KotlinSourceRootType
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.SourceKotlinRootType
+import org.jetbrains.kotlin.config.TestSourceKotlinRootType
 import org.jetbrains.kotlin.idea.configuration.RepositoryDescription
 import org.jetbrains.kotlin.idea.maven.configuration.KotlinMavenConfigurator
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -256,11 +257,11 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
         }
 
         if (isPluginExecutionMissing(plugin, "default-compile", "compile")) {
-            addExecution(javacPlugin, "compile", PomFile.DefaultPhases.Compile, listOf("compile"))
+            addExecution(javacPlugin, "compile", DefaultPhases.Compile, listOf("compile"))
         }
 
         if (isPluginExecutionMissing(plugin, "default-testCompile", "testCompile")) {
-            addExecution(javacPlugin, "testCompile", PomFile.DefaultPhases.TestCompile, listOf("testCompile"))
+            addExecution(javacPlugin, "testCompile", DefaultPhases.TestCompile, listOf("testCompile"))
         }
     }
 
@@ -500,9 +501,9 @@ class PomFile private constructor(private val xmlFile: XmlFile, val domModel: Ma
 
     private fun SourceFolder.isRelatedSourceRoot(isTest: Boolean): Boolean {
         return if (isTest) {
-            rootType == JavaSourceRootType.TEST_SOURCE || rootType == KotlinSourceRootType.TestSource
+            rootType == JavaSourceRootType.TEST_SOURCE || rootType == TestSourceKotlinRootType
         } else {
-            rootType == JavaSourceRootType.SOURCE || rootType == KotlinSourceRootType.Source
+            rootType == JavaSourceRootType.SOURCE || rootType == SourceKotlinRootType
         }
     }
 

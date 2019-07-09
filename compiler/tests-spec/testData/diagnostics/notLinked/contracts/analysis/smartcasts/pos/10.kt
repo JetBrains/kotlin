@@ -1,4 +1,3 @@
-// !WITH_CONTRACT_FUNCTIONS
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
@@ -9,6 +8,7 @@
  * NUMBER: 10
  * DESCRIPTION: Smartcasts with correspond contract function with default value in last parameter.
  * ISSUES: KT-26444
+ * HELPERS: contractFunctions
  */
 
 // FILE: contracts.kt

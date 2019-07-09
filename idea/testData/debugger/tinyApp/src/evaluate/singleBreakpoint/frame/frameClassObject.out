@@ -4,37 +4,6 @@ Connected to the target VM
 frameClassObject.kt:16
 Compile bytecode for prop
 Compile bytecode for myFun()
-package frameClassObject
-
-fun main(args: Array<String>) {
-    A().test()
-}
-
-class A {
-    companion object {
-        val prop = 1
-        fun myFun() = 1
-    }
-
-    fun test() {
-        foo {
-            //Breakpoint!
-            prop
-        }
-    }
-}
-
-fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: prop
-// RESULT: 1: I
-
-// EXPRESSION: myFun()
-// RESULT: 1: I
  frame    = invoke:16, A$test$1 {frameClassObject}
    this     = this = {frameClassObject.A$test$1@uniqueID}Function0<kotlin.Unit>
      field    = arity: int = 0 (sp = Lambda.!EXT!)

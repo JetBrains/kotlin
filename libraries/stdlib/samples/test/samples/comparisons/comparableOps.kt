@@ -29,6 +29,12 @@ class ComparableOps {
     }
 
     @Sample
+    fun coerceAtLeastUnsigned() {
+        assertPrints(10u.coerceAtLeast(5u), "10")
+        assertPrints(10u.coerceAtLeast(20u), "20")
+    }
+
+    @Sample
     fun coerceAtLeastComparable() {
         assertPrints(DayOfWeek.WEDNESDAY.coerceAtLeast(DayOfWeek.MONDAY), "WEDNESDAY")
         assertPrints(DayOfWeek.WEDNESDAY.coerceAtLeast(DayOfWeek.FRIDAY), "FRIDAY")
@@ -40,6 +46,11 @@ class ComparableOps {
         assertPrints(10.coerceAtMost(20), "10")
     }
 
+    @Sample
+    fun coerceAtMostUnsigned() {
+        assertPrints(10u.coerceAtMost(5u), "5")
+        assertPrints(10u.coerceAtMost(20u), "10")
+    }
 
     @Sample
     fun coerceAtMostComparable() {
@@ -55,6 +66,17 @@ class ComparableOps {
         assertPrints(500.coerceIn(1, 100), "100")
         assertFailsWith<IllegalArgumentException> {
             10.coerceIn(100, 0)
+        }
+    }
+
+    @Sample
+    fun coerceInUnsigned() {
+        assertPrints(10u.coerceIn(1u, 100u), "10")
+        assertPrints(10u.coerceIn(1u..100u), "10")
+        assertPrints(0u.coerceIn(1u, 100u), "1")
+        assertPrints(500u.coerceIn(1u, 100u), "100")
+        assertFailsWith<IllegalArgumentException> {
+            10u.coerceIn(100u, 0u)
         }
     }
 

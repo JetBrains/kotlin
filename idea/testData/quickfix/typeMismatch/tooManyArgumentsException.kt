@@ -4,6 +4,8 @@
 // ACTION: Create function 'join'
 // ACTION: Flip ','
 // ACTION: Introduce local variable
+// ACTION: Convert to also
+// ACTION: Convert to apply
 // ACTION: Put arguments on separate lines
 
 //this test checks that there is no ArrayIndexOutOfBoundsException when there are more arguments than parameters

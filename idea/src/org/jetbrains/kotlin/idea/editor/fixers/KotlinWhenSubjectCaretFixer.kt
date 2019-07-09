@@ -16,10 +16,10 @@
 
 package org.jetbrains.kotlin.idea.editor.fixers
 
-import com.intellij.psi.PsiElement
 import com.intellij.lang.SmartEnterProcessorWithFixers
-import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import com.intellij.openapi.editor.Editor
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.editor.KotlinSmartEnterHandler
 import org.jetbrains.kotlin.psi.KtWhenExpression
 
 class KotlinWhenSubjectCaretFixer : SmartEnterProcessorWithFixers.Fixer<KotlinSmartEnterHandler>() {

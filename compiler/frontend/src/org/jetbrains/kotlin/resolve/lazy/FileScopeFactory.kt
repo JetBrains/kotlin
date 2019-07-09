@@ -27,11 +27,11 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.KtImportInfo
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.ImportPath
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
+import org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
-import org.jetbrains.kotlin.script.ScriptDependenciesProvider
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 
@@ -40,13 +40,13 @@ data class FileScopes(val lexicalScope: LexicalScope, val importingScope: Import
 class FileScopeFactory(
     private val topLevelDescriptorProvider: TopLevelDescriptorProvider,
     private val bindingTrace: BindingTrace,
-    private val targetPlatform: TargetPlatform,
+    private val analyzerServices: PlatformDependentAnalyzerServices,
     private val components: ImportResolutionComponents
 ) {
     private val defaultImports =
-        targetPlatform.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
+        analyzerServices.getDefaultImports(components.languageVersionSettings, includeLowPriorityImports = false).map(::DefaultImportImpl)
 
-    private val defaultLowPriorityImports = targetPlatform.defaultLowPriorityImports.map(::DefaultImportImpl)
+    private val defaultLowPriorityImports = analyzerServices.defaultLowPriorityImports.map(::DefaultImportImpl)
 
     private class DefaultImportImpl(private val importPath: ImportPath) : KtImportInfo {
         override val isAllUnder: Boolean get() = importPath.isAllUnder
@@ -66,13 +66,13 @@ class FileScopeFactory(
     }
 
     private data class DefaultImportResolvers(
-        val explicit: LazyImportResolver<DefaultImportImpl>,
-        val allUnder: LazyImportResolver<DefaultImportImpl>,
-        val lowPriority: LazyImportResolver<DefaultImportImpl>
+        val explicit: LazyImportResolver<KtImportInfo>,
+        val allUnder: LazyImportResolver<KtImportInfo>,
+        val lowPriority: LazyImportResolver<KtImportInfo>
     )
 
     private fun createDefaultImportResolvers(
-        extraImports: Collection<DefaultImportImpl>,
+        extraImports: Collection<KtImportInfo>,
         aliasImportNames: Collection<FqName>
     ): DefaultImportResolvers {
         val tempTrace = TemporaryBindingTrace.create(bindingTrace, "Transient trace for default imports lazy resolve", false)
@@ -95,7 +95,7 @@ class FileScopeFactory(
             tempTrace,
             packageFragment = null,
             aliasImportNames = aliasImportNames,
-            excludedImports = targetPlatform.excludedImports
+            excludedImports = analyzerServices.excludedImports
         )
         val lowPriority = createDefaultImportResolver(
             AllUnderImportsIndexed(defaultLowPriorityImports.also { imports ->
@@ -114,7 +114,7 @@ class FileScopeFactory(
     }
 
     private fun createDefaultImportResolver(
-        indexedImports: IndexedImports<DefaultImportImpl>,
+        indexedImports: IndexedImports<KtImportInfo>,
         trace: BindingTrace,
         aliasImportNames: Collection<FqName>,
         packageFragment: PackageFragmentDescriptor?,
@@ -178,10 +178,7 @@ class FileScopeFactory(
         val result = FileScopes(lexicalScope, lazyImportingScope, importResolver)
 
         private fun createDefaultImportResolversForFile(): DefaultImportResolvers {
-            val extraImports = file.takeIf { it.isScript() }?.let { ktFile ->
-                val scriptDependencies = ScriptDependenciesProvider.getInstance(ktFile.project).getScriptDependencies(ktFile.originalFile)
-                scriptDependencies?.imports?.map { DefaultImportImpl(ImportPath.fromString(it)) }
-            }.orEmpty()
+            val extraImports = ExtraImportsProviderExtension.getInstance(file.project).getExtraImports(file)
 
             if (extraImports.isEmpty() && aliasImportNames.isEmpty()) {
                 return defaultImportResolvers

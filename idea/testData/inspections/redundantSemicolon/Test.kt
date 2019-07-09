@@ -34,6 +34,7 @@ fun bar() {
 fun baz(args: Array<String>) {
     for (arg in args);
     while (args.size > 0);
+    if (args.size > 0);
     // But here redundant!
     do while (args.size > 0);
 }

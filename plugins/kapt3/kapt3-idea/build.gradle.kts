@@ -4,16 +4,17 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
-    compile(project(":kotlin-stdlib"))
+    compile(kotlinStdlib())
     compile(project(":compiler:frontend"))
     compile(project(":idea")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling"))
     compile(project(":idea:idea-core"))
     compile(project(":idea:idea-gradle"))
     compileOnly(intellijDep())
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+    }
     compileOnly(intellijPluginDep("gradle"))
     compileOnly(intellijPluginDep("android"))
 }
@@ -23,8 +24,4 @@ sourceSets {
     "test" {}
 }
 
-val jar = runtimeJar()
-
-ideaPlugin {
-    from(jar)
-}
+runtimeJar()

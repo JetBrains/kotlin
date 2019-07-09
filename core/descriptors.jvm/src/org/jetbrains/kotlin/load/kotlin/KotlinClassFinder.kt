@@ -21,7 +21,23 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
 interface KotlinClassFinder : KotlinMetadataFinder {
-    fun findKotlinClass(classId: ClassId): KotlinJvmBinaryClass?
+    fun findKotlinClassOrContent(classId: ClassId): Result?
 
-    fun findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass?
+    fun findKotlinClassOrContent(javaClass: JavaClass): Result?
+
+    sealed class Result {
+        fun toKotlinJvmBinaryClass(): KotlinJvmBinaryClass? = (this as? KotlinClass)?.kotlinJvmBinaryClass
+
+        data class KotlinClass(val kotlinJvmBinaryClass: KotlinJvmBinaryClass) : Result()
+        data class ClassFileContent(
+            @Suppress("ArrayInDataClass")
+            val content: ByteArray
+        ) : Result()
+    }
 }
+
+fun KotlinClassFinder.findKotlinClass(classId: ClassId): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(classId)?.toKotlinJvmBinaryClass()
+
+fun KotlinClassFinder.findKotlinClass(javaClass: JavaClass): KotlinJvmBinaryClass? =
+    findKotlinClassOrContent(javaClass)?.toKotlinJvmBinaryClass()

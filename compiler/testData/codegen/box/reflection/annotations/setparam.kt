@@ -1,5 +1,7 @@
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JS_IR, JS, NATIVE
+
+package test
 
 import kotlin.test.assertEquals
 
@@ -16,6 +18,6 @@ fun box(): String {
     val setterParameters = Foo::delegate.setter.parameters
     assertEquals(2, setterParameters.size)
     assertEquals("[]", setterParameters.first().annotations.toString())
-    assertEquals("[@Ann2(), @Ann1()]", setterParameters.last().annotations.toString())
+    assertEquals("[@test.Ann2(), @test.Ann1()]", setterParameters.last().annotations.toString())
     return "OK"
 }

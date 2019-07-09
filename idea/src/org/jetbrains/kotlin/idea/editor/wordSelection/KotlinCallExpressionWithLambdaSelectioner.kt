@@ -26,8 +26,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class KotlinCallExpressionWithLambdaSelectioner : ExtendWordSelectionHandlerBase() {
 
-    override fun canSelect(e: PsiElement): Boolean
-            = e is KtCallExpression && e.hasLambda()
+    override fun canSelect(e: PsiElement): Boolean = e is KtCallExpression && e.hasLambda()
 
     override fun select(e: PsiElement, editorText: CharSequence, cursorOffset: Int, editor: Editor): List<TextRange>? {
         if (e !is KtCallExpression) return null
@@ -36,7 +35,6 @@ class KotlinCallExpressionWithLambdaSelectioner : ExtendWordSelectionHandlerBase
         return listOf(TextRange(e.startOffset, endOffset))
     }
 
-    private fun KtCallExpression.hasLambda(): Boolean
-            = lambdaArguments.isNotEmpty()
+    private fun KtCallExpression.hasLambda(): Boolean = lambdaArguments.isNotEmpty()
 
 }

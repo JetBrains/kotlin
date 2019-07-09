@@ -1,16 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir
 
+import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransformer<D>, data: D) {
     val iterator = this.listIterator()
     while (iterator.hasNext()) {
-        val next = iterator.next()
+        val next = iterator.next() as FirPureAbstractElement
         val result = next.transform<T, D>(transformer, data)
         if (result.isSingle) {
             iterator.set(result.single)
@@ -25,10 +26,12 @@ fun <T : FirElement, D> MutableList<T>.transformInplace(transformer: FirTransfor
                 iterator.add(resultIterator.next())
             }
         }
+
     }
 }
 
-
 fun <T : FirElement, D> T.transformSingle(transformer: FirTransformer<D>, data: D): T {
-    return this.transform<T, D>(transformer, data).single
+    return (this as FirPureAbstractElement).transform<T, D>(transformer, data).single
 }
+
+fun ModuleInfo.dependenciesWithoutSelf(): Sequence<ModuleInfo> = dependencies().asSequence().filter { it != this }

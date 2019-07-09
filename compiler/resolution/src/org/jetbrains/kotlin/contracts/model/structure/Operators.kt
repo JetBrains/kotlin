@@ -35,7 +35,6 @@ class ESOr(val left: ESExpression, val right: ESExpression) : ESOperator {
 class ESNot(val arg: ESExpression) : ESOperator {
     override val functor = NotFunctor()
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitNot(this)
-
 }
 
 class ESIs(val left: ESValue, override val functor: IsFunctor) : ESOperator {
@@ -48,5 +47,8 @@ class ESEqual(val left: ESValue, val right: ESValue, isNegated: Boolean) : ESOpe
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T = visitor.visitEqual(this)
 }
 
-fun ESExpression.and(other: ESExpression?): ESExpression = if (other == null) this else ESAnd(this, other)
-fun ESExpression.or(other: ESExpression?): ESExpression = if (other == null) this else ESOr(this, other)
+fun ESExpression.and(other: ESExpression?): ESExpression =
+    if (other == null) this else ESAnd(this, other)
+
+fun ESExpression.or(other: ESExpression?): ESExpression =
+    if (other == null) this else ESOr(this, other)

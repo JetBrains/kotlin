@@ -1,3 +1,5 @@
+import org.gradle.util.VersionNumber
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
@@ -20,5 +22,19 @@ allprojects {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         jcenter()
+    }
+
+    if (VersionNumber.parse(android_tools_version) >= VersionNumber.parse("3.3.0")) {
+        // Workaround: the AGP 3.3.2 databinding library depends on these exact versions, and the espresso test library
+        // transitively brings newer incompatible ones. Force these versions:
+        configurations.all {
+            resolutionStrategy {
+                force 'com.android.support:support-annotations:26.1.0'
+                force 'com.android.support:support-core-utils:26.1.0'
+                force 'com.android.support:support-compat:26.1.0'
+                force 'android.arch.lifecycle:common:1.0.3'
+                force 'android.arch.core:common:1.0.0'
+            }
+        }
     }
 }

@@ -34,6 +34,7 @@ class InlineMetadata(val tag: JsStringLiteral, val function: FunctionWithWrapper
             val inliningContext = context.inlineFunctionContext!!
             val block = JsBlock(inliningContext.importBlock.statements + inliningContext.prototypeBlock.statements +
                                 inliningContext.declarationsBlock.statements + JsReturn(function))
+            context.reportInlineFunctionTag(tag.value);
             return InlineMetadata(tag, FunctionWithWrapper(function, block))
         }
 

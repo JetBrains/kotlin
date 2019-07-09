@@ -40,7 +40,6 @@ public final class DiagnosticFactoryToRendererMap {
     public String toString() {
         return "DiagnosticFactory#" + name;
     }
-    //
 
     private void checkMutability() {
         if (immutable) {

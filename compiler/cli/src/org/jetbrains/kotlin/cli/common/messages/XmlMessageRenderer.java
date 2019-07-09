@@ -57,4 +57,9 @@ public class XmlMessageRenderer implements MessageRenderer {
     public String renderConclusion() {
         return "</MESSAGES>";
     }
+
+    @Override
+    public String getName() {
+        return "XML";
+    }
 }

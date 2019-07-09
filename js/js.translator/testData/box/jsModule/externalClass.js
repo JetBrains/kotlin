@@ -6,5 +6,9 @@ define("lib", [], function() {
         return this.x + y;
     };
 
+    A.prototype.bar = function() {
+        return "(" + Array.prototype.join.call(arguments, "") + ")";
+    };
+
     return A;
 });

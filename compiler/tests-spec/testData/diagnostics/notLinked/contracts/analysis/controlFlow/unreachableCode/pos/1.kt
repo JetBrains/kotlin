@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -9,6 +8,7 @@
  * SECTIONS: contracts, analysis, controlFlow, unreachableCode
  * NUMBER: 1
  * DESCRIPTION: Unreachable code detection using contract function with CallsInPlace effect
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

@@ -18,29 +18,44 @@ package org.jetbrains.kotlin.compiler.plugin
 
 import java.util.regex.Pattern
 
+interface AbstractCliOption {
+    val optionName: String
+    val valueDescription: String
+    val description: String
+    val required: Boolean
+    val allowMultipleOccurrences: Boolean
+
+    val deprecatedName: String?
+        get() = null
+}
+
 class CliOption(
-        val name: String,
-        val valueDescription: String,
-        val description: String,
-        val required: Boolean = true,
-        val allowMultipleOccurrences: Boolean = false
-)
+    override val optionName: String,
+    override val valueDescription: String,
+    override val description: String,
+    override val required: Boolean = true,
+    override val allowMultipleOccurrences: Boolean = false
+) : AbstractCliOption {
+    @Deprecated("Use optionName instead.", ReplaceWith("optionName"))
+    val name: String
+        get() = optionName
+}
 
 open class CliOptionProcessingException(message: String, cause: Throwable? = null): RuntimeException(message, cause)
 
 class PluginCliOptionProcessingException(
         val pluginId: String,
-        val options: Collection<CliOption>,
+        val options: Collection<AbstractCliOption>,
         message: String,
         cause: Throwable? = null
 ): CliOptionProcessingException(message, cause)
 
-fun cliPluginUsageString(pluginId: String, options: Collection<CliOption>): String {
+fun cliPluginUsageString(pluginId: String, options: Collection<AbstractCliOption>): String {
     val LEFT_INDENT = 2
     val MAX_OPTION_WIDTH = 26
 
     val renderedOptions = options.map {
-        val name = "${it.name} ${it.valueDescription}"
+        val name = "${it.optionName} ${it.valueDescription}"
         val margin = if (name.length > MAX_OPTION_WIDTH) {
             "\n" + " ".repeat(MAX_OPTION_WIDTH + LEFT_INDENT + 1)
         } else " ".repeat(1 + MAX_OPTION_WIDTH - name.length)

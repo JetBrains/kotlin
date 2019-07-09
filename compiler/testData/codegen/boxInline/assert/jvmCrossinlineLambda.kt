@@ -1,9 +1,11 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
+
+package test
 
 object CrossinlineLambdaContainer {
     inline fun call(crossinline c: () -> Unit) {
@@ -15,7 +17,7 @@ object CrossinlineLambdaContainer {
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 
-import CrossinlineLambdaContainer.call
+import test.CrossinlineLambdaContainer.call
 
 interface Checker {
     fun checkTrue(): Boolean
@@ -102,9 +104,7 @@ class ShouldBeEnabled : Checker {
 
 fun setDesiredAssertionStatus(v: Boolean): Checker {
     val loader = Checker::class.java.classLoader
-    loader.setClassAssertionStatus("ShouldBeEnabled", true)
-    loader.setClassAssertionStatus("ShouldBeDisabled", false)
-    loader.setClassAssertionStatus("CrossinlineLambdaContainer", v)
+    loader.setDefaultAssertionStatus(v)
     val c = loader.loadClass(if (v) "ShouldBeEnabled" else "ShouldBeDisabled")
     return c.newInstance() as Checker
 }

@@ -31,7 +31,7 @@
   <component name="libraryTable">
     <library name="KotlinJavaRuntime (2)">
       <CLASSES>
-        <root url="jar://$PROJECT_DIR$/../mockRuntime11/kotlin-runtime.jar!/" />
+        <root url="jar://$PROJECT_DIR$/../mockRuntime11/kotlin-stdlib.jar!/" />
       </CLASSES>
       <JAVADOC />
       <SOURCES>

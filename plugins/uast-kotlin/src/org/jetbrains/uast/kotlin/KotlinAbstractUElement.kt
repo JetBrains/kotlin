@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -40,7 +41,8 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
     }
 
     protected open fun convertParent(): UElement? {
-        val psi = psi
+        @Suppress("DEPRECATION")
+        val psi = psi //TODO: `psi` is deprecated but it seems that it couldn't be simply replaced for this case
         var parent = psi?.parent ?: psi?.containingFile
 
         if (psi is KtLightClassForLocalDeclaration) {
@@ -79,10 +81,14 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
             parent = parent.parent
         }
 
-        while (parent is KtStringTemplateEntryWithExpression ||
-               parent is KtStringTemplateExpression && parent.entries.size == 1) {
-            parent = parent.parent
-        }
+        if (KotlinConverter.forceUInjectionHost) {
+            if (parent is KtBlockStringTemplateEntry) {
+                parent = parent.parent
+            }
+        } else
+            while (parent is KtStringTemplateEntryWithExpression || parent is KtStringTemplateExpression && parent.entries.size == 1) {
+                parent = parent.parent
+            }
 
         if (parent is KtWhenConditionWithExpression) {
             parent = parent.parent
@@ -110,7 +116,7 @@ abstract class KotlinAbstractUElement(private val givenParent: UElement?) : Kotl
 
         val result = doConvertParent(this, parent)
         if (result == this) {
-            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}]")
+            throw IllegalStateException("Loop in parent structure when converting a $psi of type ${psi?.javaClass} with parent $parent of type ${parent?.javaClass} text: [${parent?.text}], result = $result")
         }
 
         return result
@@ -183,7 +189,7 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }
     }
 
-    if (result is UMethod
+    if ((result is UMethod || result is KotlinLocalFunctionULambdaExpression)
         && result !is KotlinConstructorUMethod // no sense to wrap super calls with `return`
         && element is UExpression
         && element !is UBlockExpression
@@ -192,6 +198,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return KotlinUBlockExpression.KotlinLazyUBlockExpression(result, { block ->
             listOf(KotlinUImplicitReturnExpression(block).apply { returnExpression = element })
         }).expressions.single()
+    }
+
+    if (result is KotlinULambdaExpression.Body && element is UExpression && result.implicitReturn?.returnExpression == element) {
+        return result.implicitReturn!!
     }
 
     return result
@@ -217,12 +227,12 @@ abstract class KotlinAbstractUExpression(givenParent: UElement?) :
 
     override val javaPsi: PsiElement? = null
 
-    override val sourcePsi
-        get() = psi
+    override val psi
+        get() = sourcePsi
 
     override val annotations: List<UAnnotation>
         get() {
-            val annotatedExpression = psi?.parent as? KtAnnotatedExpression ?: return emptyList()
+            val annotatedExpression = sourcePsi?.parent as? KtAnnotatedExpression ?: return emptyList()
             return annotatedExpression.annotationEntries.map { KotlinUAnnotation(it, this) }
         }
 }

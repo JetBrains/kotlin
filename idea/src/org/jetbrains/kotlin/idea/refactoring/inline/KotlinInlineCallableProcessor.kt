@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.refactoring.inline
 import com.intellij.lang.findUsages.DescriptiveNameUtil
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.refactoring.BaseRefactoringProcessor
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.util.CommonRefactoringUtil
@@ -28,6 +27,7 @@ import com.intellij.usageView.UsageViewBundle
 import com.intellij.usageView.UsageViewDescriptor
 import org.jetbrains.kotlin.idea.codeInliner.UsageReplacementStrategy
 import org.jetbrains.kotlin.idea.codeInliner.replaceUsages
+import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.refactoring.pullUp.deleteWithCompanion
 import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.util.application.runReadAction
@@ -55,7 +55,7 @@ class KotlinInlineCallableProcessor(
         if (inlineThisOnly && reference != null) return arrayOf(UsageInfo(reference))
         val usages = runReadAction {
             val searchScope = GlobalSearchScope.projectScope(myProject)
-            ReferencesSearch.search(declaration, searchScope)
+            ReferencesSearchScopeHelper.search(declaration, searchScope)
         }
         return usages.map(::UsageInfo).toTypedArray()
     }

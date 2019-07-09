@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan.decompiler
@@ -11,14 +11,13 @@ import com.intellij.openapi.fileTypes.FileTypeFactory
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.konan.library.KLIB_METADATA_FILE_EXTENSION
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.konan.KonanSerializerProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
 class KotlinNativeMetadataDecompiler : KotlinNativeMetadataDecompilerBase<KotlinNativeMetadataVersion>(
-    KotlinNativeMetaFileType, KonanPlatform, KonanSerializerProtocol, NullFlexibleTypeDeserializer,
-    KotlinNativeMetadataVersion.DEFAULT_INSTANCE,
-    KotlinNativeMetadataVersion.INVALID_VERSION,
+    KotlinNativeMetaFileType, { KonanSerializerProtocol }, NullFlexibleTypeDeserializer,
+    { KotlinNativeMetadataVersion.DEFAULT_INSTANCE },
+    { KotlinNativeMetadataVersion.INVALID_VERSION },
     KotlinNativeMetaFileType.STUB_VERSION
 ) {
 

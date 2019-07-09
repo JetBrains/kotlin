@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.scratch;
@@ -46,6 +46,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/klass.kts");
         }
 
+        @TestMetadata("libraryDepWithKotlinTest.kts")
+        public void testLibraryDepWithKotlinTest() throws Exception {
+            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
+        }
+
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
             runTest("idea/testData/scratch/simple.kts");
@@ -54,6 +59,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
             runTest("idea/testData/scratch/simpleFun.kts");
+        }
+
+        @TestMetadata("simpleNoRuntime.kts")
+        public void testSimpleNoRuntime() throws Exception {
+            runTest("idea/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")
@@ -124,6 +134,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/scratch/klass.kts");
         }
 
+        @TestMetadata("libraryDepWithKotlinTest.kts")
+        public void testLibraryDepWithKotlinTest() throws Exception {
+            runTest("idea/testData/scratch/libraryDepWithKotlinTest.kts");
+        }
+
         @TestMetadata("simple.kts")
         public void testSimple() throws Exception {
             runTest("idea/testData/scratch/simple.kts");
@@ -132,6 +147,11 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
         @TestMetadata("simpleFun.kts")
         public void testSimpleFun() throws Exception {
             runTest("idea/testData/scratch/simpleFun.kts");
+        }
+
+        @TestMetadata("simpleNoRuntime.kts")
+        public void testSimpleNoRuntime() throws Exception {
+            runTest("idea/testData/scratch/simpleNoRuntime.kts");
         }
 
         @TestMetadata("spacesAtLineStart.kts")

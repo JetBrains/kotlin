@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter;
@@ -31,6 +20,8 @@ import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.KotlinTestUtils;
 
 import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Map;
 
 import static java.util.Collections.singletonList;
 
@@ -43,8 +34,8 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
 
     @NotNull
     @Override
-    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion) {
-        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion));
+    protected AnalysisResult analyze(@NotNull KtFile file, @Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
+        return TopDownAnalyzerFacadeForJS.analyzeFiles(singletonList(file), getConfig(explicitLanguageVersion, specificFeatures));
     }
 
     @NotNull
@@ -60,17 +51,21 @@ public abstract class AbstractDiagnosticMessageJsTest extends AbstractDiagnostic
     }
 
     @NotNull
-    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion) {
+    private JsConfig getConfig(@Nullable LanguageVersion explicitLanguageVersion, @NotNull Map<LanguageFeature, LanguageFeature.State> specificFeatures) {
         CompilerConfiguration configuration = getEnvironment().getConfiguration().copy();
         configuration.put(CommonConfigurationKeys.MODULE_NAME, KotlinTestUtils.TEST_MODULE_NAME);
         configuration.put(JSConfigurationKeys.LIBRARIES, JsConfig.JS_STDLIB);
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, true);
-        if (explicitLanguageVersion != null) {
-            CommonConfigurationKeysKt.setLanguageVersionSettings(
-                    configuration,
-                    new LanguageVersionSettingsImpl(explicitLanguageVersion, LanguageVersionSettingsImpl.DEFAULT.getApiVersion())
-            );
-        }
+
+        LanguageVersion languageVersion = explicitLanguageVersion == null
+                ? CommonConfigurationKeysKt.getLanguageVersionSettings(configuration).getLanguageVersion()
+                : explicitLanguageVersion;
+
+        CommonConfigurationKeysKt.setLanguageVersionSettings(configuration, new LanguageVersionSettingsImpl(
+                languageVersion,
+                LanguageVersionSettingsImpl.DEFAULT.getApiVersion(),
+                Collections.emptyMap(),
+                specificFeatures));
         return new JsConfig(getProject(), configuration);
     }
 }

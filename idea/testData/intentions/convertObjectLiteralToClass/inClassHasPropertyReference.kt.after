@@ -2,10 +2,10 @@ class Test { // TARGET_BLOCK:
     var field = 1
 
     fun foo() {
-        O()
+        Runnable1()
     }
 
-    inner class O : Runnable {
+    inner class Runnable1 : Runnable {
         override fun run() {
             field = 2
         }

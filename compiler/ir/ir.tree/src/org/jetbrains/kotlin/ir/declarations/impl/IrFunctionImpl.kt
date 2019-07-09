@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.declarations.impl
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
@@ -27,12 +28,13 @@ class IrFunctionImpl(
     name: Name,
     visibility: Visibility,
     override val modality: Modality,
+    returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
     override val isTailrec: Boolean,
     override val isSuspend: Boolean
 ) :
-    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal),
+    IrFunctionBase(startOffset, endOffset, origin, name, visibility, isInline, isExternal, returnType),
     IrSimpleFunction {
 
     constructor(
@@ -40,6 +42,7 @@ class IrFunctionImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrSimpleFunctionSymbol,
+        returnType: IrType,
         visibility: Visibility = symbol.descriptor.visibility,
         modality: Modality = symbol.descriptor.modality
     ) : this(
@@ -47,6 +50,7 @@ class IrFunctionImpl(
         symbol.descriptor.name,
         visibility,
         modality,
+        returnType,
         symbol.descriptor.isInline,
         symbol.descriptor.isExternal,
         symbol.descriptor.isTailrec,
@@ -57,27 +61,26 @@ class IrFunctionImpl(
 
     override val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = SmartList()
 
-    override var correspondingProperty: IrProperty? = null
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: FunctionDescriptor
-    ) : this(
-        startOffset, endOffset, origin,
-        IrSimpleFunctionSymbolImpl(descriptor)
-    )
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
 
+    // Used by kotlin-native in InteropLowering.kt and IrUtils2.kt
     constructor(
         startOffset: Int,
         endOffset: Int,
         origin: IrDeclarationOrigin,
         descriptor: FunctionDescriptor,
-        body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
-        this.body = body
-    }
+        returnType: IrType
+    ) : this(
+        startOffset, endOffset, origin,
+        IrSimpleFunctionSymbolImpl(descriptor), returnType
+    )
 
     init {
         symbol.bind(this)

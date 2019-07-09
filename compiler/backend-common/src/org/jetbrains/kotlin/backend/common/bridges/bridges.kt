@@ -27,9 +27,11 @@ interface FunctionHandle {
     * class ones (see [findConcreteSuperDeclaration] method in bridges.kt).
     * Note that interface methods with body compiled to jvm 8 target are assumed to be non-abstract in bridges method calculation
     * (more details in [DescriptorBasedFunctionHandle.isBodyOwner] comment).*/
-    val isInterfaceDeclaration: Boolean
+    val mayBeUsedAsSuperImplementation: Boolean
 
     fun getOverridden(): Iterable<FunctionHandle>
+
+    val mightBeIncorrectCode: Boolean get() = false
 }
 
 data class Bridge<out Signature>(
@@ -54,7 +56,7 @@ fun <Function : FunctionHandle, Signature> generateBridges(
     // into some of the super-classes and will be inherited in this class
     if (fake && function.getOverridden().none { it.isAbstract }) return setOf()
 
-    val implementation = findConcreteSuperDeclaration(function)
+    val implementation = findConcreteSuperDeclaration(function) ?: return setOf()
 
     val bridgesToGenerate = findAllReachableDeclarations(function).mapTo(LinkedHashSet<Signature>(), signature)
 
@@ -92,7 +94,7 @@ fun <Function : FunctionHandle> findAllReachableDeclarations(function: Function)
  * Given a concrete function, finds an implementation (a concrete declaration) of this function in the supertypes.
  * The implementation is guaranteed to exist because if it wouldn't, the given function would've been abstract
  */
-fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function {
+fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function): Function? {
     require(!function.isAbstract, { "Only concrete functions have implementations: $function" })
 
     if (function.isDeclaration) return function
@@ -114,9 +116,13 @@ fun <Function : FunctionHandle> findConcreteSuperDeclaration(function: Function)
     }
     result.removeAll(toRemove)
 
-    val concreteRelevantDeclarations = result.filter { !it.isAbstract && !it.isInterfaceDeclaration }
+    val concreteRelevantDeclarations = result.filter { !it.isAbstract && it.mayBeUsedAsSuperImplementation }
     if (concreteRelevantDeclarations.size != 1) {
-        error("Concrete fake override $function should have exactly one concrete super-declaration: $concreteRelevantDeclarations")
+        if (!function.mightBeIncorrectCode) {
+            error("Concrete fake override $function should have exactly one concrete super-declaration: $concreteRelevantDeclarations")
+        } else {
+            return null
+        }
     }
 
     return concreteRelevantDeclarations[0]

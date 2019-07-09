@@ -70,7 +70,10 @@ class RemoveUnusedFunctionParameterFix(parameter: KtParameter) : KotlinQuickFixA
         override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtParameter>? {
             val parameter = Errors.UNUSED_PARAMETER.cast(diagnostic).psiElement
             val parameterOwner = parameter.parent.parent
-            if (parameterOwner is KtFunctionLiteral || (parameterOwner is KtNamedFunction && parameterOwner.name == null)) return null
+            if (parameterOwner is KtFunctionLiteral
+                || (parameterOwner is KtNamedFunction && parameterOwner.name == null)
+                || parameterOwner is KtPropertyAccessor
+            ) return null
             return RemoveUnusedFunctionParameterFix(parameter)
         }
 

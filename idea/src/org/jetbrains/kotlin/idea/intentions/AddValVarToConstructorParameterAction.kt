@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -27,6 +16,8 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.refactoring.ValVarExpression
+import org.jetbrains.kotlin.idea.util.allowedValOrVar
+import org.jetbrains.kotlin.idea.util.isExpectDeclaration
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -34,16 +25,17 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 interface AddValVarToConstructorParameterAction {
     companion object {
-        val actionFamily = "Add val/var to primary constructor parameter"
+        const val actionFamily = "Add val/var to primary constructor parameter"
     }
 
     fun getActionText(element: KtParameter) = "Add val/var to parameter '${element.name ?: ""}'"
 
     fun canInvoke(element: KtParameter): Boolean {
-        return element.valOrVarKeyword == null && (element.parent as? KtParameterList)?.parent is KtPrimaryConstructor
+        return element.valOrVarKeyword == null && ((element.parent as? KtParameterList)?.parent as? KtPrimaryConstructor)
+            ?.takeIf { it.allowedValOrVar() || !it.isExpectDeclaration() } != null
     }
 
-    fun invoke(element: KtParameter, editor: Editor?) {
+    operator fun invoke(element: KtParameter, editor: Editor?) {
         val project = element.project
 
         element.addBefore(KtPsiFactory(project).createValKeyword(), element.nameIdentifier)
@@ -59,17 +51,17 @@ interface AddValVarToConstructorParameterAction {
         editor.caretModel.moveToOffset(parameter.startOffset)
 
         TemplateBuilderImpl(parameter)
-                .apply { replaceElement(parameter.valOrVarKeyword!!, ValVarExpression) }
-                .buildInlineTemplate()
-                .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
+            .apply { replaceElement(parameter.valOrVarKeyword ?: return@apply, ValVarExpression) }
+            .buildInlineTemplate()
+            .let { TemplateManager.getInstance(project).startTemplate(editor, it) }
     }
 
     class Intention :
-            SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
-            AddValVarToConstructorParameterAction {
+        SelfTargetingRangeIntention<KtParameter>(KtParameter::class.java, actionFamily),
+        AddValVarToConstructorParameterAction {
         override fun applicabilityRange(element: KtParameter): TextRange? {
             if (!canInvoke(element)) return null
-            if (element.getStrictParentOfType<KtClass>()?.isData() ?: false) return null
+            if (element.getStrictParentOfType<KtClass>()?.isData() == true) return null
             text = getActionText(element)
             return element.nameIdentifier?.textRange
         }
@@ -78,8 +70,8 @@ interface AddValVarToConstructorParameterAction {
     }
 
     class QuickFix(parameter: KtParameter) :
-            KotlinQuickFixAction<KtParameter>(parameter),
-            AddValVarToConstructorParameterAction {
+        KotlinQuickFixAction<KtParameter>(parameter),
+        AddValVarToConstructorParameterAction {
         override fun getText() = element?.let { getActionText(it) } ?: ""
 
         override fun getFamilyName() = actionFamily

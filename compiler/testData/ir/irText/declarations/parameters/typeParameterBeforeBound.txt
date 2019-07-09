@@ -1,41 +1,40 @@
 FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
-  CLASS CLASS name:Test1 modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:Test1<T, U> flags:
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[U]
+  CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1<T of <root>.Test1, U of <root>.Test1> 
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.Test1]
     TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?]
-    CONSTRUCTOR visibility:public <> () returnType:Test1<T, U> flags:primary
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <root>.Test1, U of <root>.Test1> [primary] 
       BLOCK_BODY
-        DELEGATING_CONSTRUCTOR_CALL 'constructor Any()'
-        INSTANCE_INITIALIZER_CALL classDescriptor='Test1'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? flags:
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
       overridden:
-        FUN IR_EXTERNAL_DECLARATION_STUB name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String flags:
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any flags:
-  FUN name:test2 visibility:public modality:FINAL <T, U> () returnType:kotlin.Unit flags:
-    TYPE_PARAMETER name:T index:0 variance: superTypes:[U]
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+  FUN name:test2 visibility:public modality:FINAL <T, U> () returnType:kotlin.Unit 
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.test2]
     TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?]
     BLOCK_BODY
-  PROPERTY name:test3 visibility:public modality:FINAL flags:var
-    FUN name:<get-test3> visibility:public modality:FINAL <T, U> ($receiver:Test1<T, U>) returnType:kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:var
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[U]
+  PROPERTY name:test3 visibility:public modality:FINAL [var] 
+    FUN name:<get-test3> visibility:public modality:FINAL <T, U> ($receiver:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>>) returnType:kotlin.Unit 
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.<get-test3>]
       TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:Test1<T, U> flags:
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.<get-test3>, U of <root>.<get-test3>> 
       BLOCK_BODY
-    FUN name:<set-test3> visibility:public modality:FINAL <T, U> ($receiver:Test1<T, U>, value:kotlin.Unit) returnType:kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:var
-      TYPE_PARAMETER name:T index:0 variance: superTypes:[U]
+    FUN name:<set-test3> visibility:public modality:FINAL <T, U> ($receiver:<root>.Test1<T of <root>.<set-test3>, U of <root>.<set-test3>>, value:kotlin.Unit) returnType:kotlin.Unit 
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
+      TYPE_PARAMETER name:T index:0 variance: superTypes:[U of <root>.<set-test3>]
       TYPE_PARAMETER name:U index:1 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:Test1<T, U> flags:
-      VALUE_PARAMETER name:value index:0 type:kotlin.Unit flags:
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.<set-test3>, U of <root>.<set-test3>> 
+      VALUE_PARAMETER name:value index:0 type:kotlin.Unit 
       BLOCK_BODY
-

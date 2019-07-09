@@ -106,7 +106,14 @@ abstract class BinaryJavaMethodBase(
                 else -> 0
             }
 
-            return member to AnnotationsAndParameterCollectorMethodVisitor(member, parentContext, signatureParser, paramIgnoreCount)
+            return member to
+                    AnnotationsAndParameterCollectorMethodVisitor(
+                        member,
+                        parentContext,
+                        signatureParser,
+                        paramIgnoreCount,
+                        Type.getArgumentTypes(desc).size
+                    )
         }
 
         private fun parseMethodDescription(
@@ -162,7 +169,15 @@ class BinaryJavaMethod(
 ) : BinaryJavaMethodBase(
         flags, containingClass, valueParameters, typeParameters, name
 ), JavaMethod {
-    override var hasAnnotationParameterDefaultValue: Boolean = false
+    override var annotationParameterDefaultValue: JavaAnnotationArgument? = null
+        internal set(value) {
+            if (field != null) {
+                throw AssertionError(
+                    "Annotation method cannot have two default values: $this (old=$field, new=$value)"
+                )
+            }
+            field = value
+        }
 }
 
 class BinaryJavaConstructor(

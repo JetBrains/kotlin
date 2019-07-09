@@ -16,36 +16,44 @@
 
 package org.jetbrains.kotlin.backend.jvm
 
+import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.codegen.*
-import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.psi2ir.PsiSourceManager
 
-object JvmIrCodegenFactory : CodegenFactory {
+class JvmIrCodegenFactory(private val phaseConfig: PhaseConfig) : CodegenFactory {
 
-    override fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler) {
-        assert(!files.any { it == null })
-
-        val psi2ir = Psi2IrTranslator(state.languageVersionSettings)
-        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext)
-        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files as Collection<KtFile>)
-        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext)
+    override fun generateModule(state: GenerationState, files: Collection<KtFile>, errorHandler: CompilationErrorHandler) {
+        val psi2ir = Psi2IrTranslator(state.languageVersionSettings, facadeClassGenerator = JvmBackendFacade::facadeClassGenerator)
+        val psi2irContext = psi2ir.createGeneratorContext(state.module, state.bindingContext, extensions = JvmGeneratorExtensions)
+        val irModuleFragment = psi2ir.generateModuleFragment(psi2irContext, files)
+        JvmBackendFacade.doGenerateFilesInternal(state, errorHandler, irModuleFragment, psi2irContext, phaseConfig)
     }
 
-    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen {
-        val impl = PackageCodegenImpl(state, files, fqName, registry)
+    fun generateModuleInFrontendIRMode(
+        state: GenerationState,
+        irModuleFragment: IrModuleFragment,
+        errorHandler: CompilationErrorHandler,
+        symbolTable: SymbolTable,
+        sourceManager: PsiSourceManager
+    ) {
+        JvmBackendFacade.doGenerateFilesInternal(
+            state, errorHandler, irModuleFragment, symbolTable, sourceManager, phaseConfig, firMode = true
+        )
+    }
+
+    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen {
+        val impl = PackageCodegenImpl(state, files, fqName)
 
         return object : PackageCodegen {
             override fun generate(errorHandler: CompilationErrorHandler) {
-                JvmBackendFacade.doGenerateFiles(files, state, errorHandler)
-            }
-
-            override fun generateClassOrObject(classOrObject: KtClassOrObject, packagePartContext: PackageContext) {
-                TODO()
+                JvmBackendFacade.doGenerateFiles(files, state, errorHandler, phaseConfig)
             }
 
             override fun getPackageFragment(): PackageFragmentDescriptor {
@@ -54,7 +62,7 @@ object JvmIrCodegenFactory : CodegenFactory {
         }
     }
 
-    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen {
+    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): MultifileClassCodegen {
         TODO()
     }
 }

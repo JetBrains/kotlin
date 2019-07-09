@@ -1,23 +1,13 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.KtNodeTypes
@@ -34,10 +24,13 @@ import org.jetbrains.kotlin.idea.refactoring.introduce.introduceVariable.KotlinI
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.frontendService
 import org.jetbrains.kotlin.idea.util.getResolutionScope
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -131,8 +124,7 @@ fun KtExpression.convertToIfStatement(condition: KtExpression, thenClause: KtExp
 
 fun KtIfExpression.introduceValueForCondition(occurrenceInThenClause: KtExpression, editor: Editor?) {
     val project = this.project
-    val condition = condition
-    val occurrenceInConditional = when (condition) {
+    val occurrenceInConditional = when (val condition = condition) {
         is KtBinaryExpression -> condition.left
         is KtIsExpression -> condition.leftHandSide
         else -> throw AssertionError("Only binary / is expressions are supported here: ${condition?.text}")
@@ -186,6 +178,8 @@ fun KtExpression.isStableVal(context: BindingContext = this.analyze()): Boolean 
     return this.toDataFlowValue(context)?.kind == DataFlowValue.Kind.STABLE_VALUE
 }
 
+fun elvisPattern(newLine: Boolean): String = if (newLine) "$0\n?: $1" else "$0 ?: $1"
+
 private fun KtExpression.toDataFlowValue(context: BindingContext): DataFlowValue? {
     val expressionType = this.getType(context) ?: return null
     val dataFlowValueFactory = this.getResolutionFacade().frontendService<DataFlowValueFactory>()
@@ -221,14 +215,22 @@ data class IfThenToSelectData(
                         baseClause is KtDotQualifiedExpression -> baseClause.replaceFirstReceiver(
                             factory, newReceiver!!, safeAccess = true
                         )
-                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", newReceiver!!, baseClause).insertSafeCalls(
+                        hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern(
+                            "$0?.$1",
+                            newReceiver!!,
+                            baseClause
+                        ).insertSafeCalls(
                             factory
                         )
                         baseClause is KtCallExpression -> baseClause.replaceCallWithLet(newReceiver!!, factory)
                         else -> error("Illegal state")
                     }
                 }
-                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern("$0?.$1", receiverExpression, baseClause).insertSafeCalls(factory)
+                hasImplicitReceiverReplaceableBySafeCall() -> factory.createExpressionByPattern(
+                    "$0?.$1",
+                    receiverExpression,
+                    baseClause
+                ).insertSafeCalls(factory)
                 baseClause is KtCallExpression -> baseClause.replaceCallWithLet(receiverExpression, factory)
                 else -> baseClause.insertSafeCalls(factory)
             }
@@ -308,15 +310,17 @@ internal fun KtIfExpression.buildSelectTransformationData(): IfThenToSelectData?
 internal fun KtExpression?.isClauseTransformableToLetOnly(receiver: KtExpression?) =
     this is KtCallExpression && (resolveToCall()?.getImplicitReceiverValue() == null || receiver !is KtThisExpression)
 
-internal fun KtIfExpression.shouldBeTransformed(): Boolean {
-    val condition = condition
-    return when (condition) {
-        is KtBinaryExpression -> {
-            val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
-            !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
-        }
-        else -> false
+internal fun KtIfExpression.shouldBeTransformed(): Boolean = when (val condition = condition) {
+    is KtBinaryExpression -> {
+        val baseClause = (if (condition.operationToken == KtTokens.EQEQ) `else` else then)?.unwrapBlockOrParenthesis()
+        !baseClause.isClauseTransformableToLetOnly(condition.checkedExpression())
     }
+    else -> false
+}
+
+fun KtIfExpression.fromIfKeywordToRightParenthesisTextRangeInThis(): TextRange {
+    val rightOffset = rightParenthesis?.endOffset ?: return ifKeyword.textRangeIn(this)
+    return TextRange(ifKeyword.startOffset, rightOffset).shiftLeft(startOffset)
 }
 
 private fun KtExpression.checkedExpression() = when (this) {

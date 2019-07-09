@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
@@ -11,10 +11,14 @@ package org.w3c.notifications
 
 import kotlin.js.*
 import org.khronos.webgl.*
+import org.w3c.css.masking.*
 import org.w3c.dom.*
+import org.w3c.dom.clipboard.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
+import org.w3c.dom.mediacapture.*
 import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
@@ -27,7 +31,7 @@ import org.w3c.xhr.*
  * Exposes the JavaScript [Notification](https://developer.mozilla.org/en/docs/Web/API/Notification) to Kotlin
  */
 public external open class Notification(title: String, options: NotificationOptions = definedExternally) : EventTarget {
-    var onclick: ((Event) -> dynamic)?
+    var onclick: ((MouseEvent) -> dynamic)?
     var onerror: ((Event) -> dynamic)?
     open val title: String
     open val dir: NotificationDirection
@@ -111,7 +115,7 @@ public external interface NotificationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = null, icon: String? = null, badge: String? = null, sound: String? = null, vibrate: dynamic = null, timestamp: Number? = null, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
+public inline fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: dynamic = undefined, timestamp: Number? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: Any? = null, actions: Array<NotificationAction>? = arrayOf()): NotificationOptions {
     val o = js("({})")
 
     o["dir"] = dir
@@ -148,7 +152,7 @@ public external interface NotificationAction {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun NotificationAction(action: String?, title: String?, icon: String? = null): NotificationAction {
+public inline fun NotificationAction(action: String?, title: String?, icon: String? = undefined): NotificationAction {
     val o = js("({})")
 
     o["action"] = action

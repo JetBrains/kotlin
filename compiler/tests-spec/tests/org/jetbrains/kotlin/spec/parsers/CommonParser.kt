@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.parsers
@@ -8,20 +8,21 @@ package org.jetbrains.kotlin.spec.parsers
 import org.jetbrains.kotlin.spec.*
 import org.jetbrains.kotlin.spec.SpecTestInfoElementContent
 import org.jetbrains.kotlin.spec.SpecTestLinkedType
-import org.jetbrains.kotlin.spec.models.LinkedSpecTest
-import org.jetbrains.kotlin.spec.models.LinkedSpecTestFileInfoElementType
-import org.jetbrains.kotlin.spec.models.NotLinkedSpecTest
-import org.jetbrains.kotlin.spec.models.SpecTestInfoElements
+import org.jetbrains.kotlin.spec.models.*
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.testInfoElementPattern
 import org.jetbrains.kotlin.spec.parsers.CommonPatterns.testPathBaseRegexTemplate
 import org.jetbrains.kotlin.spec.parsers.LinkedSpecTestPatterns.testInfoPattern
 import org.jetbrains.kotlin.spec.parsers.TestCasePatterns.testCaseInfoPattern
 import org.jetbrains.kotlin.spec.validators.*
 import java.io.File
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object CommonParser {
-    fun String.withUnderscores() = replace(" ", "_").toUpperCase()
+    fun String.withUnderscores() = replace(" ", "_")
+        .replace(File.separator, "_")
+        .toUpperCase()
+
     fun String.splitByComma() = split(Regex(""",\s*"""))
     fun String.splitByPathSeparator() = split(File.separator)
     fun String.withSpaces() = replace("_", " ")
@@ -38,38 +39,60 @@ object CommonParser {
             throw SpecTestValidationException(SpecTestValidationFailedReason.FILENAME_NOT_VALID)
     }
 
+    private fun createSpecPlace(placeMatcher: Matcher, basePlaceMatcher: Matcher = placeMatcher) =
+        SpecPlace(
+            placeMatcher.group("sections")?.splitByComma() ?: basePlaceMatcher.group("sections").splitByComma(),
+            placeMatcher.group("paragraphNumber")?.toInt() ?: basePlaceMatcher.group("paragraphNumber").toInt(),
+            placeMatcher.group("sentenceNumber").toInt()
+        )
+
     private fun parseLinkedSpecTest(testFilePath: String, testFiles: TestFiles): LinkedSpecTest {
         val parsedTestFile = parseTestInfo(testFilePath, testFiles, SpecTestLinkedType.LINKED)
         val testInfoElements = parsedTestFile.testInfoElements
-        val sentenceMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.SENTENCE]!!.additionalMatcher!!
+        val placeMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.PLACE]!!.additionalMatcher!!
+        val relevantPlacesMatcher = testInfoElements[LinkedSpecTestFileInfoElementType.RELEVANT_PLACES]?.additionalMatcher
+        val relevantPlaces = relevantPlacesMatcher?.let {
+            mutableListOf<SpecPlace>().apply {
+                add(createSpecPlace(it, placeMatcher))
+                while (it.find()) {
+                    add(createSpecPlace(it, placeMatcher))
+                }
+            }
+        }
 
         return LinkedSpecTest(
+            testInfoElements[LinkedSpecTestFileInfoElementType.SPEC_VERSION]!!.content,
             parsedTestFile.testArea,
             parsedTestFile.testType,
-            parsedTestFile.sections,
-            testInfoElements[LinkedSpecTestFileInfoElementType.PARAGRAPH]!!.content.toInt(),
-            sentenceMatcher.group("number").toInt(),
-            sentenceMatcher.group("text"),
+            createSpecPlace(placeMatcher),
+            relevantPlaces,
             parsedTestFile.testNumber,
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,
             parsedTestFile.unexpectedBehavior,
-            parsedTestFile.issues
+            LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR in testInfoElements,
+            parsedTestFile.issues,
+            parsedTestFile.helpers,
+            parsedTestFile.exception
         )
     }
 
     private fun parseNotLinkedSpecTest(testFilePath: String, testFiles: TestFiles): NotLinkedSpecTest {
         val parsedTestFile = parseTestInfo(testFilePath, testFiles, SpecTestLinkedType.NOT_LINKED)
+        val testInfoElements = parsedTestFile.testInfoElements
+        val sectionsMatcher = testInfoElements[NotLinkedSpecTestFileInfoElementType.SECTIONS]!!.additionalMatcher!!
 
         return NotLinkedSpecTest(
             parsedTestFile.testArea,
             parsedTestFile.testType,
-            parsedTestFile.sections,
+            sectionsMatcher.group("sections").splitByComma(),
             parsedTestFile.testNumber,
             parsedTestFile.testDescription,
             parsedTestFile.testCasesSet,
             parsedTestFile.unexpectedBehavior,
-            parsedTestFile.issues
+            parsedTestFile.issues,
+            parsedTestFile.helpers,
+            parsedTestFile.exception
         )
     }
 

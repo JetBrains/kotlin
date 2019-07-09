@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
@@ -25,7 +25,8 @@ fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     bindingContext: BindingContext,
     descriptor: DeclarationDescriptor?,
     languageVersionSettings: LanguageVersionSettings,
-    dataFlowValueFactory: DataFlowValueFactory
+    dataFlowValueFactory: DataFlowValueFactory,
+    defaultType: (KotlinType, Set<KotlinType>) -> KotlinType = { givenType, _ -> givenType }
 ): KotlinType? {
     val givenType = this?.getKotlinTypeForComparison(bindingContext) ?: return null
 
@@ -40,13 +41,13 @@ fun KtExpression?.getKotlinTypeWithPossibleSmartCastToFP(
     if (descriptor != null) {
         val dataFlow = dataFlowValueFactory.createDataFlowValue(this, givenType, bindingContext, descriptor)
         val stableTypes = bindingContext.getDataFlowInfoBefore(this).getStableTypes(dataFlow, languageVersionSettings)
-        stableTypes.firstNotNullResult {
+        return stableTypes.firstNotNullResult {
             when {
                 KotlinBuiltIns.isDoubleOrNullableDouble(it) -> it
                 KotlinBuiltIns.isFloatOrNullableFloat(it) -> it
                 else -> null
             }
-        }?.let { return it }
+        } ?: defaultType(givenType, stableTypes)
     }
     return givenType
 }

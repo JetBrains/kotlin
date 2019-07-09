@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kotlinp.test
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTest
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
+import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -22,8 +23,9 @@ import java.io.File
 import kotlin.test.fail
 
 fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, compareWithTxt: Boolean, readWriteAndCompare: Boolean) {
-    val read = StringBuilder()
-    val readWriteRead = StringBuilder()
+    val main = StringBuilder()
+    val afterVisitors = StringBuilder()
+    val afterNodes = StringBuilder()
 
     val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true))
 
@@ -31,18 +33,24 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
         when (outputFile.extension) {
             "kotlin_module" -> {
                 val moduleFile = kotlinp.readModuleFile(outputFile)!!
-                val moduleFile2 = transformModuleFile(moduleFile)
+                val transformedWithVisitors = transformModuleFileWithReadWriteVisitors(moduleFile)
+                val transformedWithNodes = transformModuleFileWithNodes(moduleFile)
 
-                for ((sb, moduleFileToRender) in listOf(read to moduleFile, readWriteRead to moduleFile2)) {
+                for ((sb, moduleFileToRender) in listOf(
+                    main to moduleFile, afterVisitors to transformedWithVisitors, afterNodes to transformedWithNodes
+                )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
                     sb.append(kotlinp.renderModuleFile(moduleFileToRender))
                 }
             }
             "class" -> {
                 val classFile = kotlinp.readClassFile(outputFile)!!
-                val classFile2 = transformClassFile(classFile)
+                val classFile2 = transformClassFileWithReadWriteVisitors(classFile)
+                val classFile3 = transformClassFileWithNodes(classFile)
 
-                for ((sb, classFileToRender) in listOf(read to classFile, readWriteRead to classFile2)) {
+                for ((sb, classFileToRender) in listOf(
+                    main to classFile, afterVisitors to classFile2, afterNodes to classFile3
+                )) {
                     sb.appendFileName(outputFile.relativeTo(tmpdir))
                     sb.append(kotlinp.renderClassFile(classFileToRender))
                 }
@@ -52,22 +60,22 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
     }
 
     if (compareWithTxt) {
-        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), read.toString())
+        KotlinTestUtils.assertEqualsToFile(File(file.path.replace(".kt", ".txt")), main.toString())
     }
 
     if (readWriteAndCompare) {
-        assertEquals(read.toString(), readWriteRead.toString())
+        assertEquals("Metadata is different after transformation with visitors.", main.toString(), afterVisitors.toString())
+        assertEquals("Metadata is different after transformation with nodes.", main.toString(), afterNodes.toString())
     }
 }
 
 private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOutputFile: (File) -> Unit) {
-    val environment = KotlinCoreEnvironment.createForTests(
-        disposable,
-        KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK),
-        EnvironmentConfigFiles.JVM_CONFIG_FILES
-    )
-    setupLanguageVersionSettingsForCompilerTests(file.readText(), environment)
-    val ktFile = KotlinTestUtils.createFile(file.name, file.readText(), environment.project)
+    val content = file.readText()
+    val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
+    AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
+    val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
+    setupLanguageVersionSettingsForCompilerTests(content, environment)
+    val ktFile = KotlinTestUtils.createFile(file.name, content, environment.project)
     GenerationUtils.compileFileTo(ktFile, environment, tmpdir)
 
     for (outputFile in tmpdir.walkTopDown().sortedBy { it.nameWithoutExtension }) {
@@ -85,7 +93,7 @@ private fun StringBuilder.appendFileName(file: File) {
 // Reads the class file and writes it back with *Writer visitors.
 // The resulting class file should be the same from the point of view of any metadata reader, including kotlinp
 // (the exact bytes may differ though, because there are multiple ways to encode the same metadata)
-private fun transformClassFile(classFile: KotlinClassMetadata): KotlinClassMetadata =
+private fun transformClassFileWithReadWriteVisitors(classFile: KotlinClassMetadata): KotlinClassMetadata =
     when (classFile) {
         is KotlinClassMetadata.Class -> KotlinClassMetadata.Class.Writer().apply(classFile::accept).write()
         is KotlinClassMetadata.FileFacade -> KotlinClassMetadata.FileFacade.Writer().apply(classFile::accept).write()
@@ -102,5 +110,22 @@ private fun transformClassFile(classFile: KotlinClassMetadata): KotlinClassMetad
         else -> classFile
     }
 
-private fun transformModuleFile(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
+// Reads the class file and writes it back with KmClass/KmFunction/... elements.
+private fun transformClassFileWithNodes(classFile: KotlinClassMetadata): KotlinClassMetadata =
+    when (classFile) {
+        is KotlinClassMetadata.Class ->
+            KotlinClassMetadata.Class.Writer().apply(classFile.toKmClass()::accept).write()
+        is KotlinClassMetadata.FileFacade ->
+            KotlinClassMetadata.FileFacade.Writer().apply(classFile.toKmPackage()::accept).write()
+        is KotlinClassMetadata.SyntheticClass ->
+            KotlinClassMetadata.SyntheticClass.Writer().apply { classFile.toKmLambda()?.accept(this) }.write()
+        is KotlinClassMetadata.MultiFileClassPart ->
+            KotlinClassMetadata.MultiFileClassPart.Writer().apply(classFile.toKmPackage()::accept).write(classFile.facadeClassName)
+        else -> classFile
+    }
+
+private fun transformModuleFileWithReadWriteVisitors(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
     KotlinModuleMetadata.Writer().apply(moduleFile::accept).write()
+
+private fun transformModuleFileWithNodes(moduleFile: KotlinModuleMetadata): KotlinModuleMetadata =
+    KotlinModuleMetadata.Writer().apply(moduleFile.toKmModule()::accept).write()

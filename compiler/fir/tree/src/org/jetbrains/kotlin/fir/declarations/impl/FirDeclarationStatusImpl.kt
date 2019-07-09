@@ -1,21 +1,22 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl.Modifier.*
 
 open class FirDeclarationStatusImpl(
-    final override val session: FirSession,
+    session: FirSession,
     override val visibility: Visibility,
     override val modality: Modality?
-) : FirDeclarationStatus {
+) : FirAbstractElement(session, null), FirDeclarationStatus {
     protected var flags: Int = 0
 
     private operator fun get(modifier: Modifier): Boolean = (flags and modifier.mask) != 0
@@ -106,6 +107,18 @@ open class FirDeclarationStatusImpl(
             this[DATA] = value
         }
 
+    override var isSuspend: Boolean
+        get() = this[SUSPEND]
+        set(value) {
+            this[SUSPEND] = value
+        }
+
+    override var isStatic: Boolean
+        get() = this[STATIC]
+        set(value) {
+            this[STATIC] = value
+        }
+
     private enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -119,7 +132,9 @@ open class FirDeclarationStatusImpl(
         LATEINIT(0x200),
         INNER(0x400),
         COMPANION(0x800),
-        DATA(0x1000)
+        DATA(0x1000),
+        SUSPEND(0x2000),
+        STATIC(0x4000)
     }
 
     fun resolved(visibility: Visibility, modality: Modality): FirDeclarationStatus {

@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlinx.metadata.jvm.impl
 
 import kotlinx.metadata.*
 import kotlinx.metadata.impl.*
-import kotlinx.metadata.impl.extensions.MetadataExtensions
+import kotlinx.metadata.impl.extensions.*
 import kotlinx.metadata.jvm.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
@@ -29,6 +29,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             )?.let { property.accept(it, c) }
         }
 
+        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.classModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
+
         ext.visitEnd()
     }
 
@@ -40,6 +42,8 @@ internal class JvmMetadataExtensions : MetadataExtensions {
                 property.flags, c[property.name], property.getPropertyGetterFlags(), property.getPropertySetterFlags()
             )?.let { property.accept(it, c) }
         }
+
+        ext.visitModuleName(proto.getExtensionOrNull(JvmProtoBuf.packageModuleName)?.let(c::get) ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
 
         ext.visitEnd()
     }
@@ -65,6 +69,7 @@ internal class JvmMetadataExtensions : MetadataExtensions {
         val setterSignature =
             if (propertySignature != null && propertySignature.hasSetter()) propertySignature.setter else null
         ext.visit(
+            proto.getExtension(JvmProtoBuf.flags),
             fieldSignature?.wrapAsPublic(),
             getterSignature?.run { JvmMethodSignature(c[name], c[desc]) },
             setterSignature?.run { JvmMethodSignature(c[name], c[desc]) }
@@ -111,6 +116,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.classLocalVariable, it.build())
             }
+
+            override fun visitModuleName(name: String) {
+                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+                    proto.setExtension(JvmProtoBuf.classModuleName, c[name])
+                }
+            }
         }
     }
 
@@ -124,6 +135,12 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             ): KmPropertyVisitor = writeProperty(c, flags, name, getterFlags, setterFlags) {
                 proto.addExtension(JvmProtoBuf.packageLocalVariable, it.build())
             }
+
+            override fun visitModuleName(name: String) {
+                if (name != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
+                    proto.setExtension(JvmProtoBuf.packageModuleName, c[name])
+                }
+            }
         }
     }
 
@@ -132,9 +149,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmFunctionExtensionVisitor? {
         if (type != JvmFunctionExtensionVisitor.TYPE) return null
         return object : JvmFunctionExtensionVisitor() {
-            override fun visit(desc: JvmMethodSignature?) {
-                if (desc != null) {
-                    proto.setExtension(JvmProtoBuf.methodSignature, desc.toJvmMethodSignature(c))
+            override fun visit(signature: JvmMethodSignature?) {
+                if (signature != null) {
+                    proto.setExtension(JvmProtoBuf.methodSignature, signature.toJvmMethodSignature(c))
                 }
             }
 
@@ -149,41 +166,52 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmPropertyExtensionVisitor? {
         if (type != JvmPropertyExtensionVisitor.TYPE) return null
         return object : JvmPropertyExtensionVisitor() {
+            var jvmFlags: Flags = ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)
             var signature: JvmProtoBuf.JvmPropertySignature.Builder? = null
 
-            override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-                if (fieldDesc == null && getterDesc == null && setterDesc == null) return
+            override fun visit(
+                jvmFlags: Flags,
+                fieldSignature: JvmFieldSignature?,
+                getterSignature: JvmMethodSignature?,
+                setterSignature: JvmMethodSignature?
+            ) {
+                this.jvmFlags = jvmFlags
+
+                if (fieldSignature == null && getterSignature == null && setterSignature == null) return
 
                 if (signature == null) {
                     signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
                 }
                 signature!!.apply {
-                    if (fieldDesc != null) {
+                    if (fieldSignature != null) {
                         field = JvmProtoBuf.JvmFieldSignature.newBuilder().also { field ->
-                            field.name = c[fieldDesc.name]
-                            field.desc = c[fieldDesc.desc]
+                            field.name = c[fieldSignature.name]
+                            field.desc = c[fieldSignature.desc]
                         }.build()
                     }
-                    if (getterDesc != null) {
-                        getter = getterDesc.toJvmMethodSignature(c)
+                    if (getterSignature != null) {
+                        getter = getterSignature.toJvmMethodSignature(c)
                     }
-                    if (setterDesc != null) {
-                        setter = setterDesc.toJvmMethodSignature(c)
+                    if (setterSignature != null) {
+                        setter = setterSignature.toJvmMethodSignature(c)
                     }
                 }
             }
 
-            override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
-                if (desc == null) return
+            override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
+                if (signature == null) return
 
-                if (signature == null) {
-                    signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
+                if (this.signature == null) {
+                    this.signature = JvmProtoBuf.JvmPropertySignature.newBuilder()
                 }
 
-                signature!!.syntheticMethod = desc.toJvmMethodSignature(c)
+                this.signature!!.syntheticMethod = signature.toJvmMethodSignature(c)
             }
 
             override fun visitEnd() {
+                if (jvmFlags != ProtoBuf.Property.getDefaultInstance().getExtension(JvmProtoBuf.flags)) {
+                    proto.setExtension(JvmProtoBuf.flags, jvmFlags)
+                }
                 if (signature != null) {
                     proto.setExtension(JvmProtoBuf.propertySignature, signature!!.build())
                 }
@@ -196,9 +224,9 @@ internal class JvmMetadataExtensions : MetadataExtensions {
     ): KmConstructorExtensionVisitor? {
         if (type != JvmConstructorExtensionVisitor.TYPE) return null
         return object : JvmConstructorExtensionVisitor() {
-            override fun visit(desc: JvmMethodSignature?) {
-                if (desc != null) {
-                    proto.setExtension(JvmProtoBuf.constructorSignature, desc.toJvmMethodSignature(c))
+            override fun visit(signature: JvmMethodSignature?) {
+                if (signature != null) {
+                    proto.setExtension(JvmProtoBuf.constructorSignature, signature.toJvmMethodSignature(c))
                 }
             }
         }
@@ -229,6 +257,20 @@ internal class JvmMetadataExtensions : MetadataExtensions {
             }
         }
     }
+
+    override fun createClassExtension(): KmClassExtension = JvmClassExtension()
+
+    override fun createPackageExtension(): KmPackageExtension = JvmPackageExtension()
+
+    override fun createFunctionExtension(): KmFunctionExtension = JvmFunctionExtension()
+
+    override fun createPropertyExtension(): KmPropertyExtension = JvmPropertyExtension()
+
+    override fun createConstructorExtension(): KmConstructorExtension = JvmConstructorExtension()
+
+    override fun createTypeParameterExtension(): KmTypeParameterExtension = JvmTypeParameterExtension()
+
+    override fun createTypeExtension(): KmTypeExtension = JvmTypeExtension()
 
     private fun JvmMemberSignature.toJvmMethodSignature(c: WriteContext): JvmProtoBuf.JvmMethodSignature =
         JvmProtoBuf.JvmMethodSignature.newBuilder().apply {

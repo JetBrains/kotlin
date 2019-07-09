@@ -38,7 +38,6 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
         declaration.also { it.transformChildren(this, data) }
 
     override fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
     override fun visitFunction(declaration: IrFunction, data: D) = visitDeclaration(declaration, data)
     override fun visitSimpleFunction(declaration: IrSimpleFunction, data: D) = visitFunction(declaration, data)
     override fun visitConstructor(declaration: IrConstructor, data: D) = visitFunction(declaration, data)
@@ -88,6 +87,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitMemberAccess(expression: IrMemberAccessExpression, data: D): IrElement = visitExpression(expression, data)
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D): IrElement = visitMemberAccess(expression, data)
     override fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: D): IrElement = visitFunctionAccess(expression, data)
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     override fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
@@ -132,6 +132,10 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
 
     override fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
     override fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
+
+    override fun visitDynamicExpression(expression: IrDynamicExpression, data: D) = visitExpression(expression, data)
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: D) = visitDynamicExpression(expression, data)
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: D) = visitDynamicExpression(expression, data)
 
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
     override fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)

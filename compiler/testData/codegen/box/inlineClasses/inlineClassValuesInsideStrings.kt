@@ -1,5 +1,4 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 
 inline class Augmented(val x: Int) {
     override fun toString(): String = (x + 1).toString()

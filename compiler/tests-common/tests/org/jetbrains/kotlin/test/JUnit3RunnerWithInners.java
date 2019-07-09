@@ -31,12 +31,17 @@ import java.lang.reflect.Modifier;
  * Works differently for Gradle and JPS. Default is Gradle for now.
  */
 public class JUnit3RunnerWithInners extends Runner implements Filterable, Sortable {
+
+    static {
+        IdeaSystemPropertiesForParallelRunConfigurator.setProperties();
+    }
+
     private final Runner delegateRunner;
 
     public JUnit3RunnerWithInners(Class<?> klass) {
         super();
 
-        if ("true".equals(System.getProperty("use.pill"))) {
+        if ("true".equals(System.getProperty("use.jps"))) {
             delegateRunner = new JUnit3RunnerWithInnersForJPS(klass);
         }
         else {

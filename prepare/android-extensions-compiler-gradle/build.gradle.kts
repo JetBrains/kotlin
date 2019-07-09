@@ -17,6 +17,9 @@ dependencies {
     runtime(projectRuntimeJar(":kotlin-compiler-embeddable"))
     compileOnly(commonDep("com.google.android", "android"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+
+    embedded(project(":plugins:android-extensions-compiler")) { isTransitive = false }
+    embedded(project(":kotlin-android-extensions-runtime")) { isTransitive = false }
 }
 
 sourceSets {
@@ -24,18 +27,12 @@ sourceSets {
     "test" {}
 }
 
-// fixes a deadlock in projects evaluation order for :plugins:android-extensions-compiler
-evaluationDependsOn(":plugins")
+publish()
 
 val jar: Jar by tasks
-jar.apply {
-    from(getSourceSetsFrom(":plugins:android-extensions-compiler")["main"].output)
-    from(getSourceSetsFrom(":kotlin-android-extensions-runtime")["main"].output)
-    duplicatesStrategy = DuplicatesStrategy.FAIL
-}
-
 runtimeJar(rewriteDepsToShadedCompiler(jar))
+
 sourcesJar()
+
 javadocJar()
 
-publish()

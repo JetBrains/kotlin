@@ -68,7 +68,7 @@ public final class LibKt {
     }
 
     public static final int func(@org.jetbrains.annotations.NotNull()
-    java.lang.String $receiver) {
+    java.lang.String $this$func) {
         return 0;
     }
 }

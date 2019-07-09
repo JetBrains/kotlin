@@ -1,14 +1,14 @@
 // "Create extension property 'Int.foo'" "true"
 // WITH_RUNTIME
 
-class A<T>(val n: T)
-
-fun test() {
-    2.foo = A("2")
-}
-
 private var Int.foo: A<String>
     get() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     set() {}
+
+class A<T>(val n: T)
+
+fun test() {
+    2.foo = A("2")
+}

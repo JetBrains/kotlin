@@ -71,7 +71,7 @@ class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeri
     override fun serializeProperty(
             descriptor: PropertyDescriptor,
             proto: ProtoBuf.Property.Builder,
-            versionRequirementTable: MutableVersionRequirementTable,
+            versionRequirementTable: MutableVersionRequirementTable?,
             childSerializer: DescriptorSerializer
     ) {
         super.serializeProperty(descriptor, proto, versionRequirementTable, childSerializer)

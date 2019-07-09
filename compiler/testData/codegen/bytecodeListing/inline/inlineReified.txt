@@ -1,0 +1,12 @@
+@kotlin.Metadata
+public final class Foo {
+    public method <init>(): void
+    public final method bar(): void
+    public synthetic final method baz(): void
+}
+
+@kotlin.Metadata
+public final class InlineReifiedKt {
+    public final static method bar(): void
+    public synthetic final static method baz(): void
+}

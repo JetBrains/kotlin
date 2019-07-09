@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions
+// !LANGUAGE: +NewInference +SamConversionForKotlinFunctions +SamConversionPerArgument
 // !CHECK_TYPE
 // FILE: Fn.java
 public interface Fn<T, R> {

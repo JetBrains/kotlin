@@ -1,0 +1,57 @@
+FILE: qualifiedExpressions.kt
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|a/b/C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final object D : R|kotlin/Any| {
+            private constructor(): R|a/b/C.D| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            private constructor(): R|a/b/C.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun foo(): R|kotlin/Unit| {
+            }
+
+        }
+
+        public final fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final enum class E : R|kotlin/Enum| {
+        private constructor(): R|a/b/E| {
+            super<R|kotlin/Enum|>()
+        }
+
+        public final enum entry entry : R|kotlin/Any| {
+            public constructor(): R|a/b/E.entry| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final val f: R|kotlin/Int| = Int(10)
+        public get(): R|kotlin/Int|
+    public final fun main(): R|kotlin/Unit| {
+        Q|a/b|.R|a/b/foo|()
+        Q|a/b/C|.R|a/b/C.Companion.foo|()
+        Q|a/b/C.D|.R|a/b/C.D.foo|()
+        lval x: R|kotlin/Int| = Q|a/b|.R|a/b/f|
+        Q|a/b/C|.R|a/b/C.Companion.foo|()
+        R|a/b/C.C|().R|a/b/C.foo|()
+        lval e: R|a/b/E| = Q|a/b/E.entry|
+        lval e1: R|a/b/E| = Q|a/b/E.entry|
+    }

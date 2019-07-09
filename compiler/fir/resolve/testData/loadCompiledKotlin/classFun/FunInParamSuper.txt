@@ -1,0 +1,11 @@
+public open class Base<T> : R|kotlin/Any| {
+    public final fun foo(): R|T|
+
+    public constructor<T>(): R|test/Base<T>|
+
+}
+
+public final class Inh : R|test/Base<kotlin/String>| {
+    public constructor(): R|test/Inh|
+
+}

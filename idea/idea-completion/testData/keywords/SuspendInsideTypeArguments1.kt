@@ -5,7 +5,7 @@ class Su() {
 }
 
 
-// EXIST: suspend
+// EXIST: suspend fun
 
 /* TODO: items below are not valid here */
 // EXIST: class

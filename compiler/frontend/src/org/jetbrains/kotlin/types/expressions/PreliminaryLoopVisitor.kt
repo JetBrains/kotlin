@@ -73,5 +73,20 @@ class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher()
             tryExpression.tryBlock.accept(visitor, null)
             return visitor
         }
+
+        @JvmStatic
+        fun visitCatchBlocks(tryExpression: KtTryExpression): PreliminaryLoopVisitor =
+            visitCatchBlocks(tryExpression, tryExpression.catchClauses.map { true })
+
+        @JvmStatic
+        fun visitCatchBlocks(tryExpression: KtTryExpression, isBlockShouldBeVisited: List<Boolean>): PreliminaryLoopVisitor {
+            val catchClauses = tryExpression.catchClauses
+            assert(catchClauses.size == isBlockShouldBeVisited.size)
+            val visitor = PreliminaryLoopVisitor()
+            catchClauses.zip(isBlockShouldBeVisited)
+                .filter { (_, shouldBeVisited) -> shouldBeVisited }
+                .forEach { (clause, _) -> clause.catchBody?.accept(visitor, null) }
+            return visitor
+        }
     }
 }

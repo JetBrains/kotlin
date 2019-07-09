@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -14,9 +14,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes.*
 import java.io.File
 
 abstract class AbstractBytecodeListingTest : CodegenTestCase() {
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
-
-        compile(files, javaFilesDir)
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        compile(files)
         val actualTxt = BytecodeListingTextCollectingVisitor.getText(classFileFactory, withSignatures = isWithSignatures(wholeFile))
 
         val prefixes =
@@ -34,40 +33,29 @@ abstract class AbstractBytecodeListingTest : CodegenTestCase() {
     }
 
     private fun isWithSignatures(wholeFile: File): Boolean =
-            WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
+        WITH_SIGNATURES.containsMatchIn(wholeFile.readText())
 
     companion object {
         private val WITH_SIGNATURES = Regex.fromLiteral("// WITH_SIGNATURES")
     }
 }
 
-class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean) : ClassVisitor(ASM5) {
+class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignatures: Boolean, api: Int = API_VERSION) : ClassVisitor(api) {
     companion object {
         @JvmOverloads
         fun getText(
-                factory: ClassFileFactory,
-                filter: Filter = Filter.EMPTY,
-                replaceHash: Boolean = true,
-                withSignatures: Boolean = false
-        ) =
-                factory.getClassFiles()
-                        .sortedBy { it.relativePath }
-                        .mapNotNull {
-                            val cr = ClassReader(it.asByteArray())
-                            val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
-                            cr.accept(visitor, ClassReader.SKIP_CODE)
+            factory: ClassFileFactory,
+            filter: Filter = Filter.EMPTY,
+            withSignatures: Boolean = false
+        ) = factory.getClassFiles()
+            .sortedBy { it.relativePath }
+            .mapNotNull {
+                val cr = ClassReader(it.asByteArray())
+                val visitor = BytecodeListingTextCollectingVisitor(filter, withSignatures)
+                cr.accept(visitor, ClassReader.SKIP_CODE)
 
-                            if (!filter.shouldWriteClass(cr.access, cr.className)) {
-                                return@mapNotNull null
-                            }
-
-                            if (replaceHash) {
-                                KotlinTestUtils.replaceHash(visitor.text, "HASH")
-                            }
-                            else {
-                                visitor.text
-                            }
-                        }.joinToString("\n\n", postfix = "\n")
+                if (!filter.shouldWriteClass(cr.access, cr.className)) null else visitor.text
+            }.joinToString("\n\n", postfix = "\n")
     }
 
     interface Filter {
@@ -143,13 +131,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
             }
         }.toString()
 
-    override fun visitMethod(
-            access: Int,
-            name: String,
-            desc: String,
-            signature: String?,
-            exceptions: Array<out String>?
-    ): MethodVisitor? {
+    override fun visitMethod(access: Int, name: String, desc: String, signature: String?, exceptions: Array<out String>?): MethodVisitor? {
         if (!filter.shouldWriteMethod(access, name, desc)) {
             return null
         }
@@ -162,7 +144,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         handleModifiers(access, methodAnnotations)
         val methodParamCount = Type.getArgumentTypes(desc).size
 
-        return object : MethodVisitor(ASM5) {
+        return object : MethodVisitor(API_VERSION) {
             private var visibleAnnotableParameterCount = methodParamCount
             private var invisibleAnnotableParameterCount = methodParamCount
 
@@ -187,7 +169,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
                 declarationsInsideClass.add(
-                        Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
+                    Declaration("${signatureIfRequired}method $name($parameterWithAnnotations): $returnType", methodAnnotations)
                 )
                 super.visitEnd()
             }
@@ -215,7 +197,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         handleModifiers(access)
         if (access and ACC_VOLATILE != 0) addModifier("volatile", fieldDeclaration.annotations)
 
-        return object : FieldVisitor(ASM5) {
+        return object : FieldVisitor(API_VERSION) {
             override fun visitAnnotation(desc: String, visible: Boolean): AnnotationVisitor? {
                 addAnnotation(desc)
                 return super.visitAnnotation(desc, visible)
@@ -229,14 +211,7 @@ class BytecodeListingTextCollectingVisitor(val filter: Filter, val withSignature
         return super.visitAnnotation(desc, visible)
     }
 
-    override fun visit(
-            version: Int,
-            access: Int,
-            name: String,
-            signature: String?,
-            superName: String?,
-            interfaces: Array<out String>?
-    ) {
+    override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<out String>?) {
         className = name
         classAccess = access
         classSignature = signature

@@ -1,5 +1,3 @@
-// !WITH_CONTRACT_FUNCTIONS
-// !WITH_BASIC_TYPES
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -8,6 +6,7 @@
  * SECTIONS: contracts, analysis, smartcasts
  * NUMBER: 9
  * DESCRIPTION: Smartcast using complex condition with some contract functions (Returns effect).
+ * HELPERS: typesProvider, contractFunctions
  */
 
 // FILE: contracts.kt

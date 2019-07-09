@@ -19,18 +19,18 @@ package kotlin.reflect.jvm.internal.components
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import kotlin.reflect.jvm.internal.structure.ReflectJavaClass
 import kotlin.reflect.jvm.internal.structure.ReflectJavaPackage
 
 class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFinder {
-    override fun findClass(classId: ClassId): JavaClass? {
+    override fun findClass(request: JavaClassFinder.Request): JavaClass? {
+        val classId = request.classId
         val packageFqName = classId.packageFqName
         val relativeClassName = classId.relativeClassName.asString().replace('.', '$')
         val name =
-                if (packageFqName.isRoot) relativeClassName
-                else packageFqName.asString() + "." + relativeClassName
+            if (packageFqName.isRoot) relativeClassName
+            else packageFqName.asString() + "." + relativeClassName
 
         val klass = classLoader.tryLoadClass(name)
         return if (klass != null) ReflectJavaClass(klass) else null
@@ -45,9 +45,8 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
 }
 
 fun ClassLoader.tryLoadClass(fqName: String) =
-        try {
-            loadClass(fqName)
-        }
-        catch (e: ClassNotFoundException) {
-            null
-        }
+    try {
+        loadClass(fqName)
+    } catch (e: ClassNotFoundException) {
+        null
+    }

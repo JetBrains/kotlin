@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1314
 package foo
 
@@ -37,7 +36,7 @@ fun spreadInObjectMethodCall(size: Int, vararg args: Int) = obj.test(size, *args
 
 fun spreadInPackageMethodCall(size: Int, vararg args: Int) = test3(Bar(size), 1, *args)
 
-external fun testNativeVarargWithFunLit(vararg args: Int, f: (a: IntArray) -> Boolean): Boolean = definedExternally
+external fun testNativeVarargWithFunLit(vararg args: Int, f: (a: Array<Int>) -> Boolean): Boolean = definedExternally
 
 fun testSpreadOperatorWithSafeCall(a: Bar?, expected: Boolean?, vararg args: Int): Boolean {
     return a?.test(0, 1, *args) == expected

@@ -1,0 +1,1 @@
+Unclassified usage 3 System.out.println(new Test("").foo);

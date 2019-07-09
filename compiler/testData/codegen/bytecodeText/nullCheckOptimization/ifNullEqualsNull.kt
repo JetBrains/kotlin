@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun test1() {
     val a = null
 

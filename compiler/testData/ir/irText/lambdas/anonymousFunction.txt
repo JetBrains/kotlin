@@ -1,15 +1,14 @@
 FILE fqName:<root> fileName:/anonymousFunction.kt
-  PROPERTY name:anonymous visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:anonymous type:() -> kotlin.Unit visibility:public flags:final,static
+  PROPERTY name:anonymous visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
-        BLOCK type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
-          FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit flags:
+        BLOCK type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+          FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
-              CALL 'println(): Unit' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE '<no name provided>(): Unit' type=() -> kotlin.Unit origin=ANONYMOUS_FUNCTION
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:() -> kotlin.Unit flags:
-      correspondingProperty: PROPERTY name:anonymous visibility:public modality:FINAL flags:val
+              CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+          FUNCTION_REFERENCE 'local final fun <no name provided> (): kotlin.Unit declared in <root>.anonymous' type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
+      correspondingProperty: PROPERTY name:anonymous visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-anonymous>(): () -> Unit'
-          GET_FIELD 'anonymous: () -> Unit' type=() -> kotlin.Unit origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-anonymous> (): kotlin.Function0<kotlin.Unit> declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] ' type=kotlin.Function0<kotlin.Unit> origin=null

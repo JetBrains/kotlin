@@ -5,7 +5,7 @@
  * In this example we show how to describe an HTML page in Kotlin.
  *
  * See this page for details:
- * http://confluence.jetbrains.net/display/Kotlin/Type-safe+Groovy-style+builders
+ * https://confluence.jetbrains.net/display/Kotlin/Type-safe+Groovy-style+builders
  */
 
 fun main(args: Array<String>) {
@@ -19,14 +19,14 @@ fun main(args: Array<String>) {
                     p { +"this format can be used as an alternative markup to XML" }
 
                     // an element with attributes and text content
-                    a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                    a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
 
                     // mixed content
                     p {
                         +"This is some"
                         b { +"mixed" }
                         +"text. For more see the"
-                        a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                        a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
                         +"project"
                     }
                     p { +"some text" }

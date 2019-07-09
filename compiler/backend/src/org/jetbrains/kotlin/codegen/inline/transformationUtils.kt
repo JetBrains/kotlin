@@ -25,7 +25,7 @@ class NewJavaField(val name: String, val type: Type, val skip: Boolean)
 fun getNewFieldsToGenerate(params: List<CapturedParamInfo>): List<NewJavaField> {
     return params.filter {
         //not inlined
-        it.lambda == null
+        it.functionalArgument !is LambdaInfo
     }.map {
         NewJavaField(it.newFieldName, it.type, it.isSkipInConstructor)
     }

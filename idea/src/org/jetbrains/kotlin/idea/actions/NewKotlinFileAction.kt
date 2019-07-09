@@ -42,6 +42,8 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinIcons
+import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
+import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
@@ -115,7 +117,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
     override fun startInWriteAction() = false
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
-        Companion.createFileFromTemplate(name, template, dir)
+        createFileFromTemplateWithStat(name, template, dir)
 
     companion object {
         private object NameValidator : InputValidatorEx {
@@ -190,6 +192,12 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
 
         private val FILE_SEPARATORS = charArrayOf('/', '\\')
         private val FQNAME_SEPARATORS = charArrayOf('/', '\\', '.')
+
+        fun createFileFromTemplateWithStat(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
+            KotlinFUSLogger.log(FUSEventGroups.NewFileTemplate, template.name)
+            return createFileFromTemplate(name, template, dir)
+        }
+
 
         fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory): PsiFile? {
             val directorySeparators = if (template.name == "Kotlin File") FILE_SEPARATORS else FQNAME_SEPARATORS

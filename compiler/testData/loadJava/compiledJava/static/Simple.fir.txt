@@ -1,0 +1,8 @@
+public open class Simple : R|kotlin/Any| {
+    public open static operator fun bar(): R|kotlin/Unit|
+
+    public open operator fun foo(): R|kotlin/Unit|
+
+    public constructor(): R|test/Simple|
+
+}

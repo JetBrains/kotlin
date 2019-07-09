@@ -28,80 +28,71 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
-data class InjectionSplitResult(val isUnparsable: Boolean, val ranges: List<Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>>)
+typealias Injection = Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>
+
+data class InjectionSplitResult(val isUnparsable: Boolean, val ranges: List<Injection>)
 
 fun splitLiteralToInjectionParts(injection: BaseInjection, literal: KtStringTemplateExpression): InjectionSplitResult? {
     InjectorUtils.getLanguage(injection) ?: return null
 
-    val children = literal.children.toList()
-    val len = children.size
-
-    if (children.isEmpty()) return null
-
-    val result = ArrayList<Trinity<PsiLanguageInjectionHost, InjectedLanguage, TextRange>>()
-
-    fun addInjectionRange(range: TextRange, prefix: String, suffix: String) {
+    fun injectionRange(range: TextRange, prefix: String, suffix: String): Injection {
         TextRange.assertProperRange(range, injection)
         val injectedLanguage = InjectedLanguage.create(injection.injectedLanguageId, prefix, suffix, true)!!
-        result.add(Trinity.create(literal, injectedLanguage, range))
+        return Trinity.create(literal, injectedLanguage, range)
     }
 
-    var unparsable = false
-
-    var prefix = injection.prefix
-    val lastChild = children.lastOrNull()
-
-    var i = 0
-    while (i < len) {
-        val child = children[i]
+    tailrec fun collectInjections(
+        children: List<PsiElement>,
+        pendingPrefix: String,
+        unparseable: Boolean,
+        collected: MutableList<Injection>
+    ): InjectionSplitResult {
+        val child = children.firstOrNull() ?: return InjectionSplitResult(unparseable, collected)
+        val tail = children.subList(1, children.size)
         val partOffsetInParent = child.startOffsetInParent
 
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        val part = when (child) {
-            is KtLiteralStringTemplateEntry, is KtEscapeStringTemplateEntry -> {
-                val partSize = children.subList(i, len).asSequence()
-                    .takeWhile { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
-                    .count()
-                i += partSize - 1
-                children[i]
+        if (child is KtLiteralStringTemplateEntry || child is KtEscapeStringTemplateEntry) {
+            val consequentStringsCount = tail.asSequence()
+                .takeWhile { it is KtLiteralStringTemplateEntry || it is KtEscapeStringTemplateEntry }
+                .count()
+
+            val lastChild = children[consequentStringsCount]
+            val remaining = tail.subList(consequentStringsCount, tail.size)
+
+            collected += injectionRange(
+                TextRange.create(partOffsetInParent, lastChild.startOffsetInParent + lastChild.textLength),
+                pendingPrefix,
+                if (remaining.isEmpty()) injection.suffix else ""
+            )
+            return collectInjections(remaining, "", unparseable, collected)
+        } else {
+            if (pendingPrefix.isNotEmpty() || collected.isEmpty()) {
+                // Store pending prefix before creating a new one,
+                // or if it is a first part then create a dummy injection to distinguish "inner" prefixes
+                collected += injectionRange(TextRange.from(partOffsetInParent, 0), pendingPrefix, "")
             }
-            is KtSimpleNameStringTemplateEntry ->
-                tryEvaluateConstant(child.expression) ?: run {
-                    unparsable = true
-                    child.expression?.text ?: NO_VALUE_NAME
-                }
-            is KtBlockStringTemplateEntry ->
-                tryEvaluateConstant(child.expression) ?: run {
-                    unparsable = true
-                    NO_VALUE_NAME
-                }
-            else -> {
-                unparsable = true
-                child
+
+            val (prefix, myUnparseable) = makePlaceholder(child)
+
+            if (tail.isEmpty()) {
+                // There won't be more elements, so create part with prefix right away
+                collected += injectionRange(TextRange.from(partOffsetInParent + child.textLength, 0), prefix, injection.suffix)
             }
+            return collectInjections(tail, prefix, unparseable || myUnparseable, collected)
         }
-
-        val suffix = if (child == lastChild) injection.suffix else ""
-
-        if (part is PsiElement) {
-            addInjectionRange(TextRange.create(partOffsetInParent, part.startOffsetInParent + part.textLength), prefix, suffix)
-        }
-        else if (!prefix.isEmpty() || i == 0) {
-            addInjectionRange(TextRange.from(partOffsetInParent, 0), prefix, suffix)
-        }
-
-        prefix = part as? String ?: ""
-        i++
     }
 
-    if (lastChild != null && !prefix.isEmpty()) {
-        // Last element was interpolated part, need to add a range after it
-        addInjectionRange(TextRange.from(lastChild.startOffsetInParent + lastChild.textLength, 0), prefix, injection.suffix)
-    }
+    return collectInjections(literal.children.toList(), injection.prefix, false, ArrayList())
+}
 
-    return InjectionSplitResult(unparsable, result)
+private fun makePlaceholder(child: PsiElement): Pair<String, Boolean> = when (child) {
+    is KtSimpleNameStringTemplateEntry ->
+        tryEvaluateConstant(child.expression)?.let { it to false } ?: ((child.expression?.text ?: NO_VALUE_NAME) to true)
+    is KtBlockStringTemplateEntry ->
+        tryEvaluateConstant(child.expression)?.let { it to false } ?: (NO_VALUE_NAME to true)
+    else ->
+        ((child.text ?: NO_VALUE_NAME) to true)
 }
 
 private fun tryEvaluateConstant(ktExpression: KtExpression?) =
@@ -112,4 +103,4 @@ private fun tryEvaluateConstant(ktExpression: KtExpression?) =
             ?.safeAs<String>()
     }
 
-private val NO_VALUE_NAME = "missingValue"
+private const val NO_VALUE_NAME = "missingValue"

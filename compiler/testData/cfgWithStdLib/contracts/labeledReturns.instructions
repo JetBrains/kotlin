@@ -142,7 +142,7 @@ fun threeLayersReturn(x: Int?): Int? {
     // Inner always jumps to outer
     // And middle always calls inner
     // So, in fact, middle never finished normally
-    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initalization
+    // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initialization
     // Hence, outer doesn't performs definite initialization
     val y: Int
     myRun outer@ {
@@ -167,7 +167,7 @@ L0:
     v(x: Int?)
     magic[FAKE_INITIALIZER](x: Int?) -> <v0>
     w(x|<v0>)
-  2 mark({ // Inner always jumps to outer // And middle always calls inner // So, in fact, middle never finished normally // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initalization // Hence, outer doesn't performs definite initialization val y: Int myRun outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 } return y.inc() })
+  2 mark({ // Inner always jumps to outer // And middle always calls inner // So, in fact, middle never finished normally // Hence 'y = 54' in middle is unreachable, and middle doesn't performs definite initialization // Hence, outer doesn't performs definite initialization val y: Int myRun outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 } return y.inc() })
     v(val y: Int)
     mark(outer@ { myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 })
     mark({ myRun middle@ { x.myLet inner@ { if (it == null) { return@outer Unit } else { return@outer Unit } } } // Possible to report unreachable here y = 54 })
@@ -183,11 +183,11 @@ L3 [after inlined declaration]:
     call(inc(), inc|<v3>) -> <v4>
     ret(*|<v4>) L1
 L1:
-  1 <END>                                                                                                                                                                                                                                                                                                                                                                                                                                                                              NEXT:[<SINK>]
+  1 <END>                                                                                                                                                                                                                                                                                                                                                                                                                                                                               NEXT:[<SINK>]
 error:
-    <ERROR>                                                                                                                                                                                                                                                                                                                                                                                                                                                                            PREV:[]
+    <ERROR>                                                                                                                                                                                                                                                                                                                                                                                                                                                                             PREV:[]
 sink:
-    <SINK>                                                                                                                                                                                                                                                                                                                                                                                                                                                                             PREV:[<ERROR>, <END>]
+    <SINK>                                                                                                                                                                                                                                                                                                                                                                                                                                                                              PREV:[<ERROR>, <END>]
 =====================
 == inlined anonymous_2 ==
 {

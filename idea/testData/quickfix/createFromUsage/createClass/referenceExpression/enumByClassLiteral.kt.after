@@ -5,6 +5,6 @@
     }
 }
 
-<caret>enum class Foo {
+enum class <caret>Foo {
 
 }

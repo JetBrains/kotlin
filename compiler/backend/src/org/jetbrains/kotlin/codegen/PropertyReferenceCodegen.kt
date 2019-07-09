@@ -92,7 +92,9 @@ class PropertyReferenceCodegen(
         v.defineClass(
             element,
             state.classFileVersion,
-            ACC_FINAL or ACC_SUPER or AsmUtil.getVisibilityAccessFlagForClass(classDescriptor),
+            ACC_FINAL or ACC_SUPER or
+                    AsmUtil.getVisibilityAccessFlagForClass(classDescriptor) or
+                    AsmUtil.getSyntheticAccessFlagForLambdaClass(classDescriptor),
             asmType.internalName,
             null,
             superAsmType.internalName,

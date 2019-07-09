@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.translate.context.Namer
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils.*
 import java.util.*
 
-fun expandIsCalls(fragments: List<JsProgramFragment>) {
+fun expandIsCalls(fragments: Iterable<JsProgramFragment>) {
     val visitor = TypeCheckRewritingVisitor()
     for (fragment in fragments) {
         visitor.accept(fragment.declarationBlock)

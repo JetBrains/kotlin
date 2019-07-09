@@ -22,9 +22,9 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
 import org.jetbrains.kotlin.resolve.calls.tasks.isDynamic
 
 class RenameDynamicMemberHandler: KotlinVariableInplaceRenameHandler() {
@@ -36,8 +36,11 @@ class RenameDynamicMemberHandler: KotlinVariableInplaceRenameHandler() {
         return calleeDescriptor.isDynamic()
     }
 
-    override fun invoke(project: Project, editor: Editor, file: PsiFile, dataContext: DataContext?) {
-        CodeInsightUtils.showErrorHint(project, editor, "Rename is not applicable to dynamically invoked members", "Rename", null)
+    override fun invoke(project: Project, editor: Editor?, file: PsiFile?, dataContext: DataContext) {
+        super.invoke(project, editor, file, dataContext)
+        editor?.let {
+            CodeInsightUtils.showErrorHint(project, it, "Rename is not applicable to dynamically invoked members", "Rename", null)
+        }
     }
 
     override fun invoke(project: Project, elements: Array<out PsiElement>, dataContext: DataContext) {

@@ -238,7 +238,7 @@ object PositioningStrategies {
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
                         element.returnTypeReference
-                                ?: element.rightParenthesis?.psi
+                                ?: element.rightParenthesis
                                 ?: element.namePlaceholder
 
                     return markRange(element, endOfSignatureElement)

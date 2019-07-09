@@ -1,0 +1,2 @@
+val test = "some"
+val other = "text $te<caret>st text"

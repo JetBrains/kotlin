@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.deprecation
@@ -8,6 +8,9 @@ package org.jetbrains.kotlin.resolve.deprecation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
+import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
+import org.jetbrains.kotlin.container.PlatformSpecificExtension
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.annotations.argumentValue
@@ -60,7 +63,7 @@ internal fun createDeprecationDiagnostic(
 }
 
 @DefaultImplementation(CoroutineCompatibilitySupport::class)
-class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
+class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) : PlatformSpecificExtension<CoroutineCompatibilitySupport>{
     @Suppress("unused")
     constructor() : this(true)
 
@@ -68,5 +71,14 @@ class CoroutineCompatibilitySupport private constructor(val enabled: Boolean) {
         val ENABLED = CoroutineCompatibilitySupport(true)
 
         val DISABLED = CoroutineCompatibilitySupport(false)
+    }
+}
+
+@DefaultImplementation(DeprecationSettings.Default::class)
+interface DeprecationSettings {
+    fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor): Boolean
+
+    object Default : DeprecationSettings {
+        override fun propagatedToOverrides(deprecationAnnotation: AnnotationDescriptor) = true
     }
 }

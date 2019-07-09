@@ -40,6 +40,7 @@ fun main(args: Array<String>) {
     C(1)
     D()
     E(1)
+    F("foo")
 }
 
 // EXPRESSION: 1 + 1
@@ -53,7 +54,7 @@ class A
 class B()
 
 // EXPRESSION: a
-// RESULT: 0: I
+// RESULT: 1: I
 //Breakpoint!
 class C(val a: Int)
 
@@ -69,3 +70,8 @@ class E {
     //Breakpoint!
     constructor(i: Int)
 }
+
+// EXPRESSION: a
+// RESULT: "foo": Ljava/lang/String;
+//Breakpoint!
+class F(val a: String)

@@ -20,12 +20,10 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
-import org.jetbrains.kotlin.config.TargetPlatformVersion
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.ProjectContext
@@ -37,11 +35,11 @@ import org.jetbrains.kotlin.descriptors.impl.ModuleDependencies
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
-import org.jetbrains.kotlin.resolve.MultiTargetPlatform
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import java.util.*
@@ -93,27 +91,27 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val projectContext: ProjectContext,
     modules: Collection<M>,
     private val modulesContent: (M) -> ModuleContent<M>,
-    private val modulePlatforms: (M) -> MultiTargetPlatform?,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
+    private val invalidateOnOOCB: Boolean,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val firstDependency: M? = null,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val invalidateOnOOCB: Boolean = true,
     private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
 
     private class ModuleData(
         val moduleDescriptor: ModuleDescriptorImpl,
-        val modificationTracker: ModificationTracker?,
-        val modificationCount: Long?
+        val modificationTracker: ModificationTracker?
     ) {
+        val modificationCount: Long = modificationTracker?.modificationCount ?: Long.MIN_VALUE
+
         fun isOutOfDate(): Boolean {
             val currentModCount = modificationTracker?.modificationCount
-            return currentModCount != null && currentModCount > modificationCount!!
+            return currentModCount != null && currentModCount > modificationCount
         }
     }
 
@@ -123,6 +121,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     // Protected by ("projectContext.storageManager.lock")
     private val moduleInfoByDescriptor = mutableMapOf<ModuleDescriptorImpl, M>()
 
+    @Suppress("UNCHECKED_CAST")
     private val moduleInfoToResolvableInfo: Map<M, M> =
         modules.flatMap { module -> module.flatten().map { modulePart -> modulePart to module } }.toMap() as Map<M, M>
 
@@ -183,21 +182,22 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                 ResolverForModuleComputationTracker.getInstance(projectContext.project)?.onResolverComputed(module)
 
                 val moduleContent = modulesContent(module)
-                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
 
                 val languageVersionSettings =
                     moduleLanguageSettingsProvider.getLanguageVersionSettings(module, projectContext.project, isReleaseCoroutines)
+
+                // FIXME(dsavvinov): make sure that module.platform returns platform with the same JvmTarget as this one
                 val targetPlatformVersion = moduleLanguageSettingsProvider.getTargetPlatform(module, projectContext.project)
 
+                val resolverForModuleFactory = resolverForModuleFactoryByPlatform(module.platform)
                 resolverForModuleFactory.createResolverForModule(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     moduleContent,
-                    platformParameters(resolverForModuleFactory.targetPlatform),
+                    platformParameters(module.platform),
                     targetEnvironment,
                     this@ResolverForProjectImpl,
-                    languageVersionSettings,
-                    targetPlatformVersion
+                    languageVersionSettings
                 )
             }
         }
@@ -256,15 +256,18 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             module.name,
             projectContext.storageManager,
             builtIns,
-            modulePlatforms(module),
+            module.platform,
             module.capabilities,
             module.stableName
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
-        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker()
-                ?: (PsiModificationTracker.SERVICE.getInstance(projectContext.project).outOfCodeBlockModificationTracker.takeIf { invalidateOnOOCB })
-        return ModuleData(moduleDescriptor, modificationTracker, modificationTracker?.modificationCount)
+        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: if (invalidateOnOOCB) {
+            KotlinModificationTrackerService.getInstance(projectContext.project).outOfBlockModificationTracker
+        } else {
+            null
+        }
+        return ModuleData(moduleDescriptor, modificationTracker)
     }
 }
 
@@ -278,39 +281,9 @@ interface PlatformAnalysisParameters {
     object Empty : PlatformAnalysisParameters
 }
 
-interface ModuleInfo {
-    val name: Name
-    val displayedName: String get() = name.asString()
-    fun dependencies(): List<ModuleInfo>
-    val expectedBy: List<ModuleInfo> get() = emptyList()
-    val platform: TargetPlatform? get() = null
-    fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
-    val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
-        get() = mapOf(Capability to this)
-    val stableName: Name?
-        get() = null
-
-    // For common modules, we add built-ins at the beginning of the dependencies list, after the SDK.
-    // This is needed because if a JVM module depends on the common module, we should use JVM built-ins for resolution of both modules.
-    // The common module usually depends on kotlin-stdlib-common which may or may not have its own (common, non-JVM) built-ins,
-    // but if they are present, they should come after JVM built-ins in the dependencies list, because JVM built-ins contain
-    // additional members dependent on the JDK
-    fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns =
-        if (platform == TargetPlatform.Common)
-            ModuleInfo.DependencyOnBuiltIns.AFTER_SDK
-        else
-            ModuleInfo.DependencyOnBuiltIns.LAST
-
-    //TODO: (module refactoring) provide dependency on builtins after runtime in IDEA
-    enum class DependencyOnBuiltIns { NONE, AFTER_SDK, LAST }
-
-    companion object {
-        val Capability = ModuleDescriptor.Capability<ModuleInfo>("ModuleInfo")
-    }
-}
-
 interface CombinedModuleInfo : ModuleInfo {
     val containedModules: List<ModuleInfo>
+    val platformModule: ModuleInfo
 }
 
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
@@ -318,8 +291,16 @@ fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
     else -> listOf(this)
 }
 
+fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) platformModule else this
+
 interface TrackableModuleInfo : ModuleInfo {
     fun createModificationTracker(): ModificationTracker
+}
+
+interface LibraryModuleInfo : ModuleInfo {
+    override val platform: TargetPlatform
+
+    fun getLibraryRoots(): Collection<String>
 }
 
 abstract class ResolverForModuleFactory {
@@ -330,11 +311,8 @@ abstract class ResolverForModuleFactory {
         platformParameters: PlatformAnalysisParameters,
         targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
-        languageVersionSettings: LanguageVersionSettings,
-        targetPlatformVersion: TargetPlatformVersion
+        languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule
-
-    abstract val targetPlatform: TargetPlatform
 }
 
 class LazyModuleDependencies<M : ModuleInfo>(
@@ -353,6 +331,7 @@ class LazyModuleDependencies<M : ModuleInfo>(
                 yield(moduleDescriptor.builtIns.builtInsModule)
             }
             for (dependency in module.dependencies()) {
+                @Suppress("UNCHECKED_CAST")
                 yield(resolverForProject.descriptorForModule(dependency as M))
             }
             if (module.dependencyOnBuiltIns() == ModuleInfo.DependencyOnBuiltIns.LAST) {
@@ -364,12 +343,16 @@ class LazyModuleDependencies<M : ModuleInfo>(
     override val allDependencies: List<ModuleDescriptorImpl> get() = dependencies()
 
     override val expectedByDependencies by storageManager.createLazyValue {
-        module.expectedBy.map { resolverForProject.descriptorForModule(it as M) }
+        module.expectedBy.map {
+            @Suppress("UNCHECKED_CAST")
+            resolverForProject.descriptorForModule(it as M)
+        }
     }
 
     override val modulesWhoseInternalsAreVisible: Set<ModuleDescriptorImpl>
         get() =
             module.modulesWhoseInternalsAreVisible().mapTo(LinkedHashSet()) {
+                @Suppress("UNCHECKED_CAST")
                 resolverForProject.descriptorForModule(it as M)
             }
 
@@ -425,12 +408,6 @@ interface LanguageSettingsProvider {
         project: Project,
         isReleaseCoroutines: Boolean? = null
     ): LanguageVersionSettings
-
-    @Deprecated("Use `getLanguageVersionSettings` method with default parameter instead", level = DeprecationLevel.HIDDEN)
-    fun getLanguageVersionSettings(
-        moduleInfo: ModuleInfo,
-        project: Project
-    ) = getLanguageVersionSettings(moduleInfo, project, null)
 
     fun getTargetPlatform(moduleInfo: ModuleInfo, project: Project): TargetPlatformVersion
 

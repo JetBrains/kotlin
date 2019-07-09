@@ -3,7 +3,7 @@ import java.util.stream.Stream
 public final class LambdasKt {
     public static final fun foo() : void {
         Stream.empty().filter({
-            it.isEmpty()
+            return it.isEmpty()
         })
     }
     public static final fun doSelectItem(@org.jetbrains.annotations.NotNull selectItemFunction: kotlin.jvm.functions.Function0<kotlin.Unit>) : void {

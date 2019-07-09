@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 // FILE: Custom.java
 
 class Custom {

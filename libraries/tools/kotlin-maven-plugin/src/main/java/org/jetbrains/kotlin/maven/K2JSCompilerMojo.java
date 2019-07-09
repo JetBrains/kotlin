@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.maven;
 
 import com.intellij.openapi.util.text.StringUtil;
+import kotlin.collections.CollectionsKt;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -94,6 +95,9 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
     @Parameter(defaultValue = "plain")
     private String moduleKind;
 
+    @Parameter(defaultValue = "false")
+    private boolean useIrBackend;
+
     @Override
     protected void configureSpecificCompilerArguments(@NotNull K2JSCompilerArguments arguments, @NotNull List<File> sourceRoots) throws MojoExecutionException {
         arguments.setOutputFile(outputFile);
@@ -101,6 +105,8 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         arguments.setMetaInfo(metaInfo);
         arguments.setModuleKind(moduleKind);
         arguments.setMain(main);
+        arguments.setIrBackend(useIrBackend);
+        arguments.setIrLegacyGradlePluginCompatibility(true);
 
         List<String> libraries;
         try {
@@ -138,6 +144,10 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         return project.getCompileClasspathElements();
     }
 
+    private boolean checkIsKotlinJavascriptLibrary(File file) {
+        return useIrBackend ? LibraryUtils.isKotlinJavascriptIrLibrary(file) : LibraryUtils.isKotlinJavascriptLibrary(file);
+    }
+
     /**
      * Returns all Kotlin Javascript dependencies that this project has, including transitive ones.
      *
@@ -150,7 +160,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
         for (String path : getClassPathElements()) {
             File file = new File(path);
 
-            if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+            if (file.exists() && checkIsKotlinJavascriptLibrary(file)) {
                 libraries.add(file.getAbsolutePath());
             }
             else {
@@ -162,7 +172,7 @@ public class K2JSCompilerMojo extends KotlinCompileMojoBase<K2JSCompilerArgument
             for (String path : paths) {
                 File file = new File(path);
 
-                if (file.exists() && LibraryUtils.isKotlinJavascriptLibrary(file)) {
+                if (file.exists() && checkIsKotlinJavascriptLibrary(file)) {
                     libraries.add(file.getAbsolutePath());
                 }
                 else {

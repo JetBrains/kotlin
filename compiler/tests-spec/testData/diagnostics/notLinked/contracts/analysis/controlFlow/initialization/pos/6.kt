@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -9,6 +8,7 @@
  * DESCRIPTION: Check the lack of CallsInPlace effect on the lambda in the parentheses.
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26229
+ * HELPERS: contractFunctions
  */
 
 // FILE: contracts.kt

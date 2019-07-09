@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class Introspector {
     inner class SchemaRetriever(val transaction: String) {
         inline fun inSchema(crossinline modifier: (String) -> Unit) =

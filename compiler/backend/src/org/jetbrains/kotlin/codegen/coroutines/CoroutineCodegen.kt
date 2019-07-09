@@ -1,17 +1,20 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.coroutines
 
 import com.intellij.util.ArrayUtil
-import org.jetbrains.kotlin.backend.common.CodegenUtil
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
 import org.jetbrains.kotlin.codegen.*
+import org.jetbrains.kotlin.codegen.binding.CalculatedClosure
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_SUSPEND_LAMBDA
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CAPTURES_CROSSINLINE_LAMBDA
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE
 import org.jetbrains.kotlin.codegen.context.ClosureContext
 import org.jetbrains.kotlin.codegen.context.MethodContext
+import org.jetbrains.kotlin.codegen.inline.coroutines.SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -23,10 +26,8 @@ import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
-import org.jetbrains.kotlin.psi.KtDeclarationWithBody
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFunction
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -39,11 +40,13 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.sure
+import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 abstract class AbstractCoroutineCodegen(
     outerExpressionCodegen: ExpressionCodegen,
@@ -64,7 +67,7 @@ abstract class AbstractCoroutineCodegen(
         if (languageVersionSettings.isReleaseCoroutines())
             createImplMethod(
                 INVOKE_SUSPEND_METHOD_NAME,
-                "result" to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
+                SUSPEND_CALL_RESULT_NAME to classDescriptor.module.getResult(classDescriptor.builtIns.anyType)
             )
         else
             createImplMethod(
@@ -176,6 +179,8 @@ class CoroutineCodegenForLambda private constructor(
     private val createCoroutineDescriptor by lazy {
         if (generateErasedCreate) getErasedCreateFunction() else getCreateFunction()
     }
+
+    private val endLabel = Label()
 
     private fun getCreateFunction(): SimpleFunctionDescriptor = SimpleFunctionDescriptorImpl.create(
         funDescriptor.containingDeclaration,
@@ -426,12 +431,21 @@ class CoroutineCodegenForLambda private constructor(
 
             val newIndex = myFrameMap.enter(parameter, mappedType)
             v.store(newIndex, mappedType)
+
+            val name =
+                if (parameter is ReceiverParameterDescriptor)
+                    AsmUtil.getNameForReceiverParameter(originalSuspendFunctionDescriptor, bindingContext, languageVersionSettings)
+                else
+                    (getNameForDestructuredParameterOrNull(parameter as ValueParameterDescriptor) ?: parameter.name.asString())
+            val label = Label()
+            v.mark(label)
+            v.visitLocalVariable(name, mappedType.descriptor, null, label, endLabel, newIndex)
         }
 
-        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters)
+        initializeVariablesForDestructuredLambdaParameters(this, originalSuspendFunctionDescriptor.valueParameters, endLabel)
     }
 
-    private fun allFunctionParameters() =
+    private fun allFunctionParameters(): List<ParameterDescriptor> =
         originalSuspendFunctionDescriptor.extensionReceiverParameter.let(::listOfNotNull) +
                 originalSuspendFunctionDescriptor.valueParameters
 
@@ -453,8 +467,7 @@ class CoroutineCodegenForLambda private constructor(
             object : FunctionGenerationStrategy.FunctionDefault(state, element as KtDeclarationWithBody) {
 
                 override fun wrapMethodVisitor(mv: MethodVisitor, access: Int, name: String, desc: String): MethodVisitor {
-                    if (forInline) return super.wrapMethodVisitor(mv, access, name, desc)
-                    return CoroutineTransformerMethodVisitor(
+                    val stateMachineBuilder = CoroutineTransformerMethodVisitor(
                         mv, access, name, desc, null, null,
                         obtainClassBuilderForCoroutineState = { v },
                         element = element,
@@ -462,12 +475,25 @@ class CoroutineCodegenForLambda private constructor(
                         shouldPreserveClassInitialization = constructorCallNormalizationMode.shouldPreserveClassInitialization,
                         containingClassInternalName = v.thisName,
                         isForNamedFunction = false,
-                        languageVersionSettings = languageVersionSettings,
-                        sourceFile = element.containingFile.name
+                        languageVersionSettings = languageVersionSettings
                     )
+                    return if (forInline) AddEndLabelMethodVisitor(
+                        MethodNodeCopyingMethodVisitor(
+                            SurroundSuspendLambdaCallsWithSuspendMarkersMethodVisitor(
+                                stateMachineBuilder, access, name, desc, v.thisName,
+                                isCapturedSuspendLambda = { isCapturedSuspendLambda(closure, it.name, state.bindingContext) }
+                            ), access, name, desc,
+                            newMethod = { origin, newAccess, newName, newDesc ->
+                                functionCodegen.newMethod(origin, newAccess, newName, newDesc, null, null)
+                            }
+                        ), access, name, desc, endLabel
+                    ) else AddEndLabelMethodVisitor(stateMachineBuilder, access, name, desc, endLabel)
                 }
 
                 override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
+                    if (element is KtFunctionLiteral) {
+                        recordCallLabelForLambdaArgument(element, state.bindingTrace)
+                    }
                     codegen.initializeCoroutineParameters()
                     super.doGenerateBody(codegen, signature)
                 }
@@ -498,9 +524,40 @@ class CoroutineCodegenForLambda private constructor(
                 classBuilder,
                 originalSuspendLambdaDescriptor,
                 // Local suspend lambdas, which call crossinline suspend parameters of containing functions must be generated after inlining
-                expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_SUSPEND_LAMBDA, originalSuspendLambdaDescriptor] == true
+                expressionCodegen.bindingContext[CAPTURES_CROSSINLINE_LAMBDA, originalSuspendLambdaDescriptor] == true
             )
         }
+    }
+}
+
+fun isCapturedSuspendLambda(closure: CalculatedClosure, name: String, bindingContext: BindingContext): Boolean {
+    for ((param, value) in closure.captureVariables) {
+        if (param !is ValueParameterDescriptor) continue
+        if (value.fieldName != name) continue
+        return param.type.isSuspendFunctionTypeOrSubtype
+    }
+    val classDescriptor = closure.capturedOuterClassDescriptor ?: return false
+    return isCapturedSuspendLambda(classDescriptor, name, bindingContext)
+}
+
+fun isCapturedSuspendLambda(classDescriptor: ClassDescriptor, name: String, bindingContext: BindingContext): Boolean {
+    val closure = bindingContext[CLOSURE, classDescriptor] ?: return false
+    return isCapturedSuspendLambda(closure, name, bindingContext)
+}
+
+private class AddEndLabelMethodVisitor(
+    delegate: MethodVisitor,
+    access: Int,
+    name: String,
+    desc: String,
+    private val endLabel: Label
+) : TransformationMethodVisitor(delegate, access, name, desc, null, null) {
+    override fun performTransformations(methodNode: MethodNode) {
+        methodNode.instructions.add(
+            withInstructionAdapter {
+                mark(endLabel)
+            }
+        )
     }
 }
 
@@ -652,7 +709,8 @@ class CoroutineCodegenForNamedFunction private constructor(
     override fun generateKotlinMetadataAnnotation() {
         writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0) { av ->
             val serializer = DescriptorSerializer.createForLambda(JvmSerializerExtension(v.serializationBindings, state))
-            val functionProto = serializer.functionProto(createFreeFakeLambdaDescriptor(suspendFunctionJvmView)).build()
+            val functionProto =
+                serializer.functionProto(createFreeFakeLambdaDescriptor(suspendFunctionJvmView))?.build() ?: return@writeKotlinMetadata
             AsmUtil.writeAnnotationData(av, serializer, functionProto)
         }
     }

@@ -3,7 +3,7 @@
 import kotlin.reflect.KProperty
 
 class A {
-    var a by <!OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()
+    var a by <!NI;NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, OI;TYPE_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>MyProperty<!>()
 }
 
 class MyProperty<T, R> {

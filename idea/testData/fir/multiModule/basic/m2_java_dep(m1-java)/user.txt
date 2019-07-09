@@ -1,0 +1,4 @@
+FILE: user.kt
+    public final fun foo(hello: R|hello/Hello|): R|kotlin/String| {
+        ^foo R|<local>/hello|.R|hello/Hello.msg|
+    }

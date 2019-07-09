@@ -125,12 +125,6 @@ The following declaration is incompatible because number of type parameters is d
 
 actual fun <K, V> f7() {}
            ^
-compiler/testData/multiplatform/incompatibleCallables/jvm.kt:16:1: error: actual function 'f8' has no corresponding expected declaration
-The following declaration is incompatible because visibility is different:
-    internal expect fun f8(): Unit
-
-public actual fun f8() {}
-^
 compiler/testData/multiplatform/incompatibleCallables/jvm.kt:17:1: error: actual function 'f10' has no corresponding expected declaration
 The following declaration is incompatible because visibility is different:
     public expect fun f10(): Unit

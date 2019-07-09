@@ -18,14 +18,10 @@ package org.jetbrains.kotlin.sourceSections
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension
-import org.jetbrains.kotlin.extensions.PreprocessedVirtualFileFactoryExtension.Companion
 
 object SourceSectionsConfigurationKeys {
     val SECTIONS_OPTION: CompilerConfigurationKey<List<String>> =
@@ -43,13 +39,13 @@ class SourceSectionsCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(SECTIONS_OPTION)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         SECTIONS_OPTION -> {
             val paths = configuration.getList(SourceSectionsConfigurationKeys.SECTIONS_OPTION).toMutableList()
             paths.add(value)
             configuration.put(SourceSectionsConfigurationKeys.SECTIONS_OPTION, paths)
         }
-        else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+        else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
 

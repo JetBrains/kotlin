@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor;
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention;
 import org.jetbrains.kotlin.js.backend.ast.*;
 import org.jetbrains.kotlin.js.backend.ast.metadata.MetadataProperties;
+import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction;
 import org.jetbrains.kotlin.js.naming.NameSuggestion;
 import org.jetbrains.kotlin.js.translate.context.TranslationContext;
 import org.jetbrains.kotlin.js.translate.declaration.ClassTranslator;
@@ -267,11 +268,13 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
         DoubleColonLHS lhs = context.bindingContext().get(DOUBLE_COLON_LHS, receiverExpression);
         assert lhs != null : "Class literal expression should have LHS resolved";
 
+        ClassifierDescriptor descriptor = lhs.getType().getConstructor().getDeclarationDescriptor();
+
         if (lhs instanceof DoubleColonLHS.Expression && !((DoubleColonLHS.Expression) lhs).isObjectQualifier()) {
             JsExpression receiver = translateAsExpression(receiverExpression, context);
             receiver = TranslationUtils.coerce(context, receiver, context.getCurrentModule().getBuiltIns().getAnyType());
             if (isPrimitiveClassLiteral(lhs.getType())) {
-                JsExpression primitiveExpression = getPrimitiveClass(context, lhs.getType());
+                JsExpression primitiveExpression = getPrimitiveClass(context, descriptor);
                 if (primitiveExpression != null) {
                     return JsAstUtils.newSequence(Arrays.asList(receiver, primitiveExpression));
                 }
@@ -279,54 +282,65 @@ public final class ExpressionVisitor extends TranslatorVisitor<JsNode> {
             return new JsInvocation(context.namer().kotlin(GET_KCLASS_FROM_EXPRESSION), receiver);
         }
 
-        JsExpression primitiveExpression = getPrimitiveClass(context, lhs.getType());
-        if (primitiveExpression != null) return primitiveExpression;
-        return new JsInvocation(context.getReferenceToIntrinsic(GET_KCLASS), UtilsKt.getReferenceToJsClass(lhs.getType(), context));
+        return getObjectKClass(context, descriptor);
     }
 
-    private static JsExpression getPrimitiveClass(@NotNull TranslationContext context, @NotNull KotlinType type) {
+    @NotNull
+    public static JsExpression getObjectKClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor descriptor) {
+        JsExpression primitiveExpression = getPrimitiveClass(context, descriptor);
+        if (primitiveExpression != null) return primitiveExpression;
+
+        // getKClass should be imported as intrinsic when used outside of inline context, otherwise bootstrap fails.
+        // Inside an inline function it should however be marked as SpecialFunction to support T::class when T -> Int (KT-32215)
+        JsName kClassName = context.getNameForIntrinsic(SpecialFunction.GET_KCLASS.getSuggestedName());
+        MetadataProperties.setSpecialFunction(kClassName, SpecialFunction.GET_KCLASS);
+
+        return new JsInvocation(kClassName.makeRef(), UtilsKt.getReferenceToJsClass(descriptor, context));
+    }
+
+    @Nullable
+    public static JsExpression getPrimitiveClass(@NotNull TranslationContext context, @Nullable ClassifierDescriptor classifierDescriptor) {
         if (!context.getConfig().isAtLeast(LanguageVersion.KOTLIN_1_2) || findPrimitiveClassesObject(context) == null) return null;
+        if (!(classifierDescriptor instanceof ClassDescriptor)) return null;
+        ClassDescriptor descriptor = (ClassDescriptor) classifierDescriptor;
 
-        ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
-        if (descriptor instanceof ClassDescriptor) {
-            FqName fqName = DescriptorUtilsKt.getFqNameSafe(descriptor);
-            switch (fqName.asString()) {
-                case "kotlin.Boolean":
-                case "kotlin.Byte":
-                case "kotlin.Short":
-                case "kotlin.Int":
-                case "kotlin.Float":
-                case "kotlin.Double":
-                case "kotlin.String":
-                case "kotlin.Array":
-                case "kotlin.Any":
-                case "kotlin.Throwable":
-                case "kotlin.Number":
-                case "kotlin.Nothing":
-                case "kotlin.BooleanArray":
-                case "kotlin.CharArray":
-                case "kotlin.ByteArray":
-                case "kotlin.ShortArray":
-                case "kotlin.IntArray":
-                case "kotlin.LongArray":
-                case "kotlin.FloatArray":
-                case "kotlin.DoubleArray":
-                    return getKotlinPrimitiveClassRef(context, StringUtil.decapitalize(fqName.shortName().asString()) + "Class");
+        FqName fqName = DescriptorUtilsKt.getFqNameSafe(descriptor);
+        switch (fqName.asString()) {
+            case "kotlin.Boolean":
+            case "kotlin.Byte":
+            case "kotlin.Short":
+            case "kotlin.Int":
+            case "kotlin.Float":
+            case "kotlin.Double":
+            case "kotlin.String":
+            case "kotlin.Array":
+            case "kotlin.Any":
+            case "kotlin.Throwable":
+            case "kotlin.Number":
+            case "kotlin.Nothing":
+            case "kotlin.BooleanArray":
+            case "kotlin.CharArray":
+            case "kotlin.ByteArray":
+            case "kotlin.ShortArray":
+            case "kotlin.IntArray":
+            case "kotlin.LongArray":
+            case "kotlin.FloatArray":
+            case "kotlin.DoubleArray":
+                return getKotlinPrimitiveClassRef(context, StringUtil.decapitalize(fqName.shortName().asString()) + "Class");
 
-                default: {
-                    if (descriptor instanceof FunctionClassDescriptor) {
-                        FunctionClassDescriptor functionClassDescriptor = (FunctionClassDescriptor) descriptor;
-                        if (functionClassDescriptor.getFunctionKind() == FunctionClassDescriptor.Kind.Function) {
-                            ClassDescriptor primitivesObject = findPrimitiveClassesObject(context);
-                            assert primitivesObject != null;
-                            FunctionDescriptor function = DescriptorUtils.getFunctionByName(
-                                    primitivesObject.getUnsubstitutedMemberScope(), Name.identifier("functionClass"));
-                            JsExpression functionRef = pureFqn(context.getInlineableInnerNameForDescriptor(function), null);
-                            return new JsInvocation(functionRef, new JsIntLiteral(functionClassDescriptor.getArity()));
-                        }
+            default: {
+                if (descriptor instanceof FunctionClassDescriptor) {
+                    FunctionClassDescriptor functionClassDescriptor = (FunctionClassDescriptor) descriptor;
+                    if (functionClassDescriptor.getFunctionKind() == FunctionClassDescriptor.Kind.Function) {
+                        ClassDescriptor primitivesObject = findPrimitiveClassesObject(context);
+                        assert primitivesObject != null;
+                        FunctionDescriptor function = DescriptorUtils.getFunctionByName(
+                                primitivesObject.getUnsubstitutedMemberScope(), Name.identifier("functionClass"));
+                        JsExpression functionRef = pureFqn(context.getInlineableInnerNameForDescriptor(function), null);
+                        return new JsInvocation(functionRef, new JsIntLiteral(functionClassDescriptor.getArity()));
                     }
-                    break;
                 }
+                break;
             }
         }
         return null;

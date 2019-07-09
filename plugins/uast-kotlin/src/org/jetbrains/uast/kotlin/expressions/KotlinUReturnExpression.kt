@@ -23,10 +23,10 @@ import org.jetbrains.uast.UExpression
 import org.jetbrains.uast.UReturnExpression
 
 class KotlinUReturnExpression(
-        override val psi: KtReturnExpression,
+        override val sourcePsi: KtReturnExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UReturnExpression, KotlinUElementWithType {
-    override val returnExpression by lz { KotlinConverter.convertOrNull(psi.returnedExpression, this) }
+    override val returnExpression by lz { KotlinConverter.convertOrNull(sourcePsi.returnedExpression, this) }
 }
 
 class KotlinUImplicitReturnExpression(

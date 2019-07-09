@@ -7,16 +7,22 @@ public abstract interface A : kotlin/Any {
   // nested class: B
 
   // nested class: D
+
+  // module name: test-module
 }
 // A$B.class
 // ------------------------------------------
 public abstract interface A.B : kotlin/Any {
 
   // nested class: C
+
+  // module name: test-module
 }
 // A$B$C.class
 // ------------------------------------------
 public abstract interface A.B.C : kotlin/Any {
+
+  // module name: test-module
 }
 // A$D.class
 // ------------------------------------------
@@ -28,6 +34,8 @@ public final companion object A.D : kotlin/Any {
   // nested class: E
 
   // nested class: F
+
+  // module name: test-module
 }
 // A$D$E.class
 // ------------------------------------------
@@ -39,6 +47,8 @@ public final enum class A.D.E : kotlin/Enum<A.D.E> {
   E1,
 
   E2,
+
+  // module name: test-module
 }
 // A$D$F.class
 // ------------------------------------------
@@ -50,6 +60,8 @@ public sealed class A.D.F : kotlin/Any {
   // nested class: G
 
   // sealed subclass: A.D.F.G
+
+  // module name: test-module
 }
 // A$D$F$G.class
 // ------------------------------------------
@@ -57,6 +69,8 @@ public final class A.D.F.G : A.D.F {
 
   // signature: <init>()V
   public /* primary */ constructor()
+
+  // module name: test-module
 }
 // META-INF/test-module.kotlin_module
 // ------------------------------------------

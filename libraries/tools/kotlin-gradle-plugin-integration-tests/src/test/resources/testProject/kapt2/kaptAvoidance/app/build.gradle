@@ -1,0 +1,13 @@
+apply plugin: "kotlin"
+apply plugin: "kotlin-kapt"
+
+dependencies {
+    compile project(":lib")
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+    compile "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+    kapt "org.jetbrains.kotlin:annotation-processor-example:$kotlin_version"
+
+    // actually unused, but kapt skips AP when annotation processing classpath is empty (see checkOptions)
+    kapt "com.google.auto.service:auto-service:1.0-rc4"
+}

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("IncompatibleAPI")
@@ -14,16 +14,16 @@ import org.jdom.Element
 
 // Generalized in 183
 // BUNCH: 183
-typealias RunConfigurationBaseAny = RunConfigurationBase
+typealias RunConfigurationBaseAny = RunConfigurationBase<*>
 
 // Generalized in 183
 // BUNCH: 183
-typealias ModuleBasedConfigurationAny = ModuleBasedConfiguration<*>
+typealias ModuleBasedConfigurationAny = ModuleBasedConfiguration<*, *>
 
 // Generalized in 183
 // BUNCH: 183
-typealias LocatableConfigurationBaseAny = LocatableConfigurationBase
+typealias LocatableConfigurationBaseAny = LocatableConfigurationBase<Any>
 
 // Generalized in 183
 // BUNCH: 183
-typealias ModuleBasedConfigurationElement<T> = ModuleBasedConfiguration<T>
+typealias ModuleBasedConfigurationElement<T> = ModuleBasedConfiguration<T, Element>

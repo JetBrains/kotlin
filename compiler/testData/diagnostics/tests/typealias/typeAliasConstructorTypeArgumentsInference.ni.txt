@@ -3,7 +3,7 @@ package
 public val test0: N<kotlin.Int> /* = Num<kotlin.Int> */
 public val test1: N<kotlin.String> /* = Num<kotlin.String> */
 public val test2: C<kotlin.Int> /* = Cons<kotlin.Int> */
-public val test3: CC<kotlin.Any?> /* = Cons<Cons<kotlin.Any?>> */
+public val test3: [ERROR : Type for CC(1, 2)]
 public val test4: CC<kotlin.Int> /* = Cons<Cons<kotlin.Int>> */
 public val test5: PL<kotlin.Int> /* = Pair<kotlin.Int, kotlin.collections.List<kotlin.Int>> */
 public fun testProjections1(/*0*/ x: Pair<in kotlin.Int, out kotlin.String>): Foo<out kotlin.String>

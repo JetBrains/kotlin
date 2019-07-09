@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 package whats.the.difference
 
 fun iarray(vararg a : Int) = a // BUG

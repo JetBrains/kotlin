@@ -3,7 +3,6 @@
 
   <target name="build">
     <kotlin2js src="${test.data}/root1"
-               noStdlib="true"
                output="${temp}/out.js"
                outputPrefix="${test.data}/prefix"
                outputPostfix="${test.data}/postfix" />

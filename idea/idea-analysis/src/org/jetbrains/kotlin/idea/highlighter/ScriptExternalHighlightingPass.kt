@@ -31,7 +31,11 @@ import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.progress.ProgressIndicator
 import com.intellij.openapi.project.DumbAware
+import com.intellij.openapi.ui.MessageType
+import com.intellij.openapi.wm.WindowManager
+import com.intellij.openapi.wm.ex.StatusBarEx
 import com.intellij.psi.PsiFile
+import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.dependencies.ScriptReport
@@ -44,6 +48,8 @@ class ScriptExternalHighlightingPass(
 
     override fun doApplyInformationToEditor() {
         val document = document ?: return
+
+        if (!file.isScript()) return
 
         val reports = file.virtualFile.getUserData(IdeScriptReportSink.Reports) ?: return
 
@@ -93,6 +99,21 @@ class ScriptExternalHighlightingPass(
             ScriptReport.Severity.WARNING -> WARNING
             ScriptReport.Severity.INFO -> INFORMATION
             ScriptReport.Severity.DEBUG -> if (ApplicationManager.getApplication().isInternal) INFORMATION else null
+        }
+    }
+
+    private fun showNotification(file: KtFile, message: String) {
+        UIUtil.invokeLaterIfNeeded {
+            val ideFrame = WindowManager.getInstance().getIdeFrame(file.project)
+            if (ideFrame != null) {
+                val statusBar = ideFrame.statusBar as StatusBarEx
+                statusBar.notifyProgressByBalloon(
+                    MessageType.WARNING,
+                    message,
+                    null,
+                    null
+                )
+            }
         }
     }
 

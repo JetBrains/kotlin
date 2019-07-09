@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 fun PsiMethod.getJavaMethodDescriptor(): FunctionDescriptor? = javaResolutionFacade()?.let { getJavaMethodDescriptor(it) }
@@ -149,10 +149,12 @@ private fun <T : DeclarationDescriptorWithSource> Collection<T>.findByJavaElemen
     }
 }
 
+fun PsiElement.hasJavaResolutionFacade(): Boolean = this.originalElement.containingFile != null
+
 fun PsiElement.javaResolutionFacade() =
     KotlinCacheService.getInstance(project).getResolutionFacadeByFile(
         this.originalElement.containingFile ?: reportCouldNotCreateJavaFacade(),
-        JvmPlatform
+        JvmPlatforms.unspecifiedJvmPlatform
     )
 
 private fun PsiElement.reportCouldNotCreateJavaFacade(): Nothing =

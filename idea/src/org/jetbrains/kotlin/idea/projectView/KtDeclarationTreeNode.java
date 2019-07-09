@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.idea.projectView;
 
+import com.intellij.application.options.CodeStyle;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.projectView.ViewSettings;
 import com.intellij.ide.projectView.impl.nodes.AbstractPsiBasedNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.codeStyle.CodeStyleSettingsManager;
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings;
 import org.jetbrains.kotlin.psi.*;
 
@@ -54,7 +54,7 @@ public class KtDeclarationTreeNode extends AbstractPsiBasedNode<KtDeclaration> {
             String text = declaration instanceof KtAnonymousInitializer ? CLASS_INITIALIZER : declaration.getName();
             if (text == null) return;
 
-            KotlinCodeStyleSettings settings = CodeStyleSettingsManager.getInstance(getProject()).getCurrentSettings()
+            KotlinCodeStyleSettings settings = CodeStyle.getSettings(getProject())
                     .getCustomSettings(KotlinCodeStyleSettings.class);
 
             if (declaration instanceof KtProperty) {

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.multiplatform;
@@ -681,6 +681,11 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
             runTest("compiler/testData/multiplatform/regressions/kt17001/");
         }
 
+        @TestMetadata("kt28385")
+        public void testKt28385() throws Exception {
+            runTest("compiler/testData/multiplatform/regressions/kt28385/");
+        }
+
         @TestMetadata("compiler/testData/multiplatform/regressions/incompatibleClassScopesWithImplTypeAlias")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -704,6 +709,19 @@ public class MultiPlatformIntegrationTestGenerated extends AbstractMultiPlatform
 
             public void testAllFilesPresentInKt17001() throws Exception {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt17001"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+            }
+        }
+
+        @TestMetadata("compiler/testData/multiplatform/regressions/kt28385")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Kt28385 extends AbstractMultiPlatformIntegrationTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInKt28385() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/multiplatform/regressions/kt28385"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
             }
         }
     }

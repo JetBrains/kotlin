@@ -30,8 +30,7 @@ class SMAPAndMethodNode(val node: MethodNode, val classSMAP: SMAP) {
 
 private fun createLineNumberSequence(node: MethodNode, classSMAP: SMAP): Sequence<RangeMapping> {
     return InsnSequence(node.instructions.first, null).filterIsInstance<LineNumberNode>().map { lineNumber ->
-        val index = classSMAP.intervals.binarySearch(RangeMapping(lineNumber.line, lineNumber.line, 1), Comparator {
-            value, key ->
+        val index = classSMAP.intervals.binarySearch(RangeMapping(lineNumber.line, lineNumber.line, 1), Comparator { value, key ->
             if (key.dest in value) 0 else RangeMapping.Comparator.compare(value, key)
         })
         if (index < 0) {

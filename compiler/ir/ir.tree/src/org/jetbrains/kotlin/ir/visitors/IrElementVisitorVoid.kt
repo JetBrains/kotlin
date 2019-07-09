@@ -43,9 +43,6 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitClass(declaration: IrClass) = visitDeclaration(declaration)
     override fun visitClass(declaration: IrClass, data: Nothing?) = visitClass(declaration)
 
-    fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
-    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
-
     fun visitFunction(declaration: IrFunction) = visitDeclaration(declaration)
     override fun visitFunction(declaration: IrFunction, data: Nothing?) = visitFunction(declaration)
 
@@ -161,6 +158,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitCall(expression: IrCall) = visitFunctionAccess(expression)
     override fun visitCall(expression: IrCall, data: Nothing?) = visitCall(expression)
 
+    fun visitConstructorCall(expression: IrConstructorCall) = visitFunctionAccess(expression)
+    override fun visitConstructorCall(expression: IrConstructorCall, data: Nothing?) = visitConstructorCall(expression)
+
     fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = visitFunctionAccess(expression)
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?) =
         visitDelegatingConstructorCall(expression)
@@ -232,6 +232,17 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
 
     fun visitThrow(expression: IrThrow) = visitExpression(expression)
     override fun visitThrow(expression: IrThrow, data: Nothing?) = visitThrow(expression)
+
+    fun visitDynamicExpression(expression: IrDynamicExpression) = visitExpression(expression)
+    override fun visitDynamicExpression(expression: IrDynamicExpression, data: Nothing?) = visitDynamicExpression(expression)
+
+    fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression) = visitDynamicExpression(expression)
+    override fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: Nothing?) =
+        visitDynamicOperatorExpression(expression)
+
+    fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression) = visitDynamicExpression(expression)
+    override fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: Nothing?) =
+        visitDynamicMemberExpression(expression)
 
     fun visitErrorDeclaration(declaration: IrErrorDeclaration) = visitDeclaration(declaration)
     override fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: Nothing?) = visitErrorDeclaration(declaration)

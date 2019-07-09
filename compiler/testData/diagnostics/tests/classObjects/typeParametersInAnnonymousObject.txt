@@ -1,0 +1,8 @@
+package
+
+public val x: kotlin.Any
+public fun case_1(): kotlin.Unit
+public fun case_2(): kotlin.Unit
+public fun case_3(): kotlin.Unit
+public fun case_4(): kotlin.Unit
+public inline fun </*0*/ reified T> case_5(): kotlin.Unit

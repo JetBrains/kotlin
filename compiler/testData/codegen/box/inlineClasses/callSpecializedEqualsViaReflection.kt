@@ -1,6 +1,7 @@
 // WITH_REFLECT
 // FULL_JDK
-// IGNORE_BACKEND: JVM_IR, JS_IR, JS, NATIVE
+// IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
 
 import java.lang.reflect.InvocationTargetException
 
@@ -12,7 +13,7 @@ fun box(): String {
     var s = ""
     val name = "equals-impl0"
     val specializedEquals =
-        Class.forName("Simple").getDeclaredMethod(name, String::class.java, String::class.java)
+        Simple::class.java.getDeclaredMethod(name, String::class.java, String::class.java)
             ?: return "$name not found"
 
     try {

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS, NATIVE
@@ -19,7 +18,7 @@ inline fun <reified T> reifiedAsFailsWithCCE(x: Any, operation: String) {
     try {
         x as T
     }
-    catch (e: java.lang.ClassCastException) {
+    catch (e: ClassCastException) {
         return
     }
     catch (e: Throwable) {

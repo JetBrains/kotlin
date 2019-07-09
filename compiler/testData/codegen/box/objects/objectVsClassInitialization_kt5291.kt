@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// KJS_WITH_FULL_RUNTIME
 public inline fun <T> T.with(f: T.() -> Unit): T {
     this.f()
     return this

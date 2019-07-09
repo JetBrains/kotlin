@@ -21,6 +21,7 @@ import com.intellij.codeInsight.intention.HighPriorityAction
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.codeInspection.*
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
 import com.intellij.openapi.fileEditor.FileDocumentManager
@@ -42,7 +43,7 @@ import kotlin.reflect.KClass
 // thus making the original purpose useless.
 // The class still can be used, if you want to create a pair for existing intention with additional checker
 abstract class IntentionBasedInspection<TElement : PsiElement> private constructor(
-        private val intentionInfo: IntentionBasedInspection.IntentionData<TElement>,
+        private val intentionInfo: IntentionData<TElement>,
         protected open val problemText: String?
 ) : AbstractKotlinInspection() {
 
@@ -82,6 +83,8 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
     open fun additionalFixes(element: TElement): List<LocalQuickFix>? = null
 
     open fun inspectionTarget(element: TElement): PsiElement? = null
+    
+    open fun inspectionProblemText(element: TElement): String? = null
 
     private fun PsiElement.toRange(baseElement: PsiElement): TextRange {
         val start = getStartOffsetIn(baseElement)
@@ -125,7 +128,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
                     if (!allFixes.isEmpty()) {
                         holder.registerProblemWithoutOfflineInformation(
                                 targetElement,
-                                problemText ?: allFixes.first().name,
+                                inspectionProblemText(element) ?: problemText ?: allFixes.first().name,
                                 isOnTheFly,
                                 problemHighlightType(targetElement),
                                 range,
@@ -172,7 +175,11 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 
         override fun isAvailable(project: Project, file: PsiFile, startElement: PsiElement, endElement: PsiElement): Boolean {
             assert(startElement == endElement)
-            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(startElement, this@IntentionBasedInspection)
+            @Suppress("UNCHECKED_CAST")
+            return intention.applicabilityRange(startElement as TElement) != null && additionalChecker(
+                startElement,
+                this@IntentionBasedInspection
+            )
         }
 
         override fun invoke(project: Project, editor: Editor?, file: PsiFile?) {
@@ -187,6 +194,7 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 
             val editor = startElement.findExistingEditor()
             editor?.caretModel?.moveToOffset(startElement.textOffset)
+            @Suppress("UNCHECKED_CAST")
             intention.applyTo(startElement as TElement, editor)
         }
     }
@@ -205,6 +213,10 @@ abstract class IntentionBasedInspection<TElement : PsiElement> private construct
 }
 
 fun PsiElement.findExistingEditor(): Editor? {
+    ApplicationManager.getApplication().assertReadAccessAllowed()
+
+    if (!containingFile.isValid) return null
+
     val file = containingFile?.virtualFile ?: return null
     val document = FileDocumentManager.getInstance().getDocument(file) ?: return null
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.annotations.CompositeAnnotations;
 import org.jetbrains.kotlin.descriptors.annotations.FilteredAnnotations;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedTypeConstructorKt;
+import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker;
 import org.jetbrains.kotlin.types.typeUtil.TypeUtilsKt;
 import org.jetbrains.kotlin.types.typesApproximation.CapturedTypeApproximationKt;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class TypeSubstitutor {
+public class TypeSubstitutor implements TypeSubstitutorMarker {
 
     private static final int MAX_RECURSION_DEPTH = 100;
 

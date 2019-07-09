@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.configuration.ui
 
 import com.intellij.notification.*
 import com.intellij.openapi.actionSystem.ActionManager
-import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.impl.SimpleDataContext
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.configuration.MigrationInfo
 import org.jetbrains.kotlin.idea.migration.CodeMigrationAction
-import org.jetbrains.kotlin.idea.migration.CodeMigrationToggleAction
 
 internal fun showMigrationNotification(project: Project, migrationInfo: MigrationInfo) {
     val detectedChangeMessage = buildString {
@@ -38,16 +36,12 @@ internal fun showMigrationNotification(project: Project, migrationInfo: Migratio
             null
         )
         .also { notification ->
-            notification.addAction(object : NotificationAction("Run migrations") {
-                // Replace with NotificationAction.createSimple after abandoning 173 and as31
-                // BUNCH: 181
-                override fun actionPerformed(e: AnActionEvent, notification: Notification) {
-                    val projectContext = SimpleDataContext.getProjectContext(project)
-                    val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
-                    Notification.fire(notification, action, projectContext)
+            notification.addAction(NotificationAction.createSimple("Run migrations") {
+                val projectContext = SimpleDataContext.getProjectContext(project)
+                val action = ActionManager.getInstance().getAction(CodeMigrationAction.ACTION_ID)
+                Notification.fire(notification, action, projectContext)
 
-                    notification.expire()
-                }
+                notification.expire()
             })
         }
         .notify(project)

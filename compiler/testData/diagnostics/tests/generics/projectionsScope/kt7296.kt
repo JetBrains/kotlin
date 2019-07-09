@@ -9,7 +9,7 @@ fun main() {
     val a : ArrayList<ArrayList<String>> = ArrayList()
     val b : ListOfLists<String> = ListOfLists(a)
     val c : ListOfLists<*> = b
-    val d : ArrayList<ArrayList<*>> = <!TYPE_MISMATCH!>c.<!NI;TYPE_MISMATCH!>x<!><!>
+    val d : ArrayList<ArrayList<*>> = <!TYPE_MISMATCH!>c.x<!>
 
     c.x checkType { _<ArrayList<out ArrayList<*>>>() }
 }

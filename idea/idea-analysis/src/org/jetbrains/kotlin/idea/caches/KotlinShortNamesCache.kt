@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.caches
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -23,6 +24,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiField
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.stubs.StubIndex
 import com.intellij.util.ArrayUtil
 import com.intellij.util.Processor
@@ -45,15 +47,26 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
-class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWrapper() {
+class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCache() {
+    companion object {
+        private val LOG = Logger.getInstance(KotlinShortNamesCache::class.java)
+    }
+
+    //hacky way to avoid searches for Kotlin classes, when looking for Java (from Kotlin)
+    val disableSearch: ThreadLocal<Boolean> = object : ThreadLocal<Boolean>() {
+        override fun initialValue(): Boolean = false
+    }
+
     //region Classes
 
     override fun processAllClassNames(processor: Processor<String>): Boolean {
+        if (disableSearch.get()) return true
         return KotlinClassShortNameIndex.getInstance().processAllKeys(project, processor) &&
                 KotlinFileFacadeShortNameIndex.INSTANCE.processAllKeys(project, processor)
     }
 
     override fun processAllClassNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+        if (disableSearch.get()) return true
         return processAllClassNames(processor)
     }
 
@@ -61,6 +74,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
      * Return kotlin class names from project sources which should be visible from java.
      */
     override fun getAllClassNames(): Array<String> {
+        if (disableSearch.get()) return ArrayUtil.EMPTY_STRING_ARRAY
         return withArrayProcessor(ArrayUtil.EMPTY_STRING_ARRAY) { processor ->
             processAllClassNames(processor)
         }
@@ -72,13 +86,20 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
         scope: GlobalSearchScope,
         filter: IdFilter?
     ): Boolean {
+        if (disableSearch.get()) return true
         val effectiveScope = kotlinDeclarationsVisibleFromJavaScope(scope)
         val fqNameProcessor = Processor<FqName> { fqName: FqName? ->
             if (fqName == null) return@Processor true
 
             val isInterfaceDefaultImpl = name == JvmAbi.DEFAULT_IMPLS_CLASS_NAME && fqName.shortName().asString() != name
-            assert(fqName.shortName().asString() == name || isInterfaceDefaultImpl) {
-                "A declaration obtained from index has non-matching name:\nin index: $name\ndeclared: ${fqName.shortName()}($fqName)"
+
+            if (fqName.shortName().asString() != name && !isInterfaceDefaultImpl) {
+                LOG.error(
+                    "A declaration obtained from index has non-matching name:" +
+                            "\nin index: $name" +
+                            "\ndeclared: ${fqName.shortName()}($fqName)")
+
+                return@Processor true
             }
 
             val fqNameToSearch = if (isInterfaceDefaultImpl) fqName.defaultImplsChild() else fqName
@@ -119,6 +140,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
      * Return class names form kotlin sources in given scope which should be visible as Java classes.
      */
     override fun getClassesByName(name: String, scope: GlobalSearchScope): Array<PsiClass> {
+        if (disableSearch.get()) return PsiClass.EMPTY_ARRAY
         return withArrayProcessor(PsiClass.EMPTY_ARRAY) { processor ->
             processClassesWithName(name, processor, scope, null)
         }
@@ -138,16 +160,19 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
     //region Methods
 
     override fun processAllMethodNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+        if (disableSearch.get()) return true
         return processAllMethodNames(processor)
     }
 
     override fun getAllMethodNames(): Array<String> {
+        if (disableSearch.get()) ArrayUtil.EMPTY_STRING_ARRAY
         return withArrayProcessor(ArrayUtil.EMPTY_STRING_ARRAY) { processor ->
             processAllMethodNames(processor)
         }
     }
 
     private fun processAllMethodNames(processor: Processor<String>): Boolean {
+        if (disableSearch.get()) return true
         if (!KotlinFunctionShortNameIndex.getInstance().processAllKeys(project, processor)) {
             return false
         }
@@ -163,6 +188,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
         scope: GlobalSearchScope,
         filter: IdFilter?
     ): Boolean {
+        if (disableSearch.get()) return true
         val allFunctionsProcessed = StubIndex.getInstance().processElements(
             KotlinFunctionShortNameIndex.getInstance().key,
             name,
@@ -208,12 +234,14 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
     }
 
     override fun getMethodsByName(name: String, scope: GlobalSearchScope): Array<PsiMethod> {
+        if (disableSearch.get()) return PsiMethod.EMPTY_ARRAY
         return withArrayProcessor(PsiMethod.EMPTY_ARRAY) { processor ->
             processMethodsWithName(name, processor, scope, null)
         }
     }
 
     override fun getMethodsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiMethod> {
+        if (disableSearch.get()) return PsiMethod.EMPTY_ARRAY
         require(maxCount >= 0)
 
         return withArrayProcessor(PsiMethod.EMPTY_ARRAY) { processor ->
@@ -228,23 +256,28 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
         }
     }
 
-    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean =
-        ContainerUtil.process(getMethodsByName(name, scope), processor)
+    override fun processMethodsWithName(name: String, scope: GlobalSearchScope, processor: Processor<PsiMethod>): Boolean {
+        if (disableSearch.get()) return true
+        return ContainerUtil.process(getMethodsByName(name, scope), processor)
+    }
     //endregion
 
     //region Fields
 
     override fun processAllFieldNames(processor: Processor<String>, scope: GlobalSearchScope, filter: IdFilter?): Boolean {
+        if (disableSearch.get()) return true
         return processAllFieldNames(processor)
     }
 
     override fun getAllFieldNames(): Array<String> {
+        if (disableSearch.get()) return ArrayUtil.EMPTY_STRING_ARRAY
         return withArrayProcessor(ArrayUtil.EMPTY_STRING_ARRAY) { processor ->
             processAllFieldNames(processor)
         }
     }
 
     private fun processAllFieldNames(processor: Processor<String>): Boolean {
+        if (disableSearch.get()) return true
         return KotlinPropertyShortNameIndex.getInstance().processAllKeys(project, processor)
     }
 
@@ -254,6 +287,7 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
         scope: GlobalSearchScope,
         filter: IdFilter?
     ): Boolean {
+        if (disableSearch.get()) return true
         return StubIndex.getInstance().processElements(
             KotlinPropertyShortNameIndex.getInstance().key,
             name,
@@ -270,12 +304,14 @@ class KotlinShortNamesCache(private val project: Project) : PsiShortNamesCacheWr
     }
 
     override fun getFieldsByName(name: String, scope: GlobalSearchScope): Array<PsiField> {
+        if (disableSearch.get()) return PsiField.EMPTY_ARRAY
         return withArrayProcessor(PsiField.EMPTY_ARRAY) { processor ->
             processFieldsWithName(name, processor, scope, null)
         }
     }
 
     override fun getFieldsByNameIfNotMoreThan(name: String, scope: GlobalSearchScope, maxCount: Int): Array<PsiField> {
+        if (disableSearch.get()) return PsiField.EMPTY_ARRAY
         require(maxCount >= 0)
 
         return withArrayProcessor(PsiField.EMPTY_ARRAY) { processor ->

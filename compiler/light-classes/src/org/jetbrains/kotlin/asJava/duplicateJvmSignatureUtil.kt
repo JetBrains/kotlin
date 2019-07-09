@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.asJava
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.asJava.builder.InvalidLightClassDataHolder
+import org.jetbrains.kotlin.asJava.builder.LightClassDataProviderForFileFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -36,9 +38,14 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
 fun getJvmSignatureDiagnostics(element: PsiElement, otherDiagnostics: Diagnostics, moduleScope: GlobalSearchScope): Diagnostics? {
     fun getDiagnosticsForFileFacade(file: KtFile): Diagnostics? {
         val project = file.project
-        val cache = KtLightClassForFacade.FacadeStubCache.getInstance(project)
+
         val facadeFqName = JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
-        return cache[facadeFqName, moduleScope].value?.extraDiagnostics
+
+        //TODO Maybe it is better to cache this item
+        return LightClassDataProviderForFileFacade.ByProjectSource(project, facadeFqName, moduleScope)
+            .compute()
+            ?.value
+            ?.extraDiagnostics
     }
 
     fun getDiagnosticsForClass(ktClassOrObject: KtClassOrObject): Diagnostics {

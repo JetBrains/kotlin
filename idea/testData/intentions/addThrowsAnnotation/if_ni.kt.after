@@ -1,0 +1,7 @@
+// COMPILER_ARGUMENTS: -XXLanguage:+NewInference
+// WITH_RUNTIME
+
+@Throws(Exception::class)
+fun a(b: Boolean) {
+    throw if (b) RuntimeException() else Exception()
+}

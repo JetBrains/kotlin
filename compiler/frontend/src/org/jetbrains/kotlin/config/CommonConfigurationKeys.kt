@@ -41,6 +41,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val METADATA_VERSION = CompilerConfigurationKey.create<BinaryVersion>("metadata version")
+
+    @JvmField
+    val USE_FIR = CompilerConfigurationKey.create<Boolean>("front-end IR")
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings

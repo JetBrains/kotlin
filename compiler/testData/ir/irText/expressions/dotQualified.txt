@@ -1,25 +1,24 @@
 FILE fqName:<root> fileName:/dotQualified.kt
-  FUN name:length visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Int flags:
-    VALUE_PARAMETER name:s index:0 type:kotlin.String flags:
+  FUN name:length visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Int 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='length(String): Int'
-        CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-          $this: GET_VAR 'value-parameter s: String' type=kotlin.String origin=null
-  FUN name:lengthN visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int? flags:
-    VALUE_PARAMETER name:s index:0 type:kotlin.String? flags:
+      RETURN type=kotlin.Nothing from='public final fun length (s: kotlin.String): kotlin.Int declared in <root>'
+        CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+          $this: GET_VAR 's: kotlin.String declared in <root>.length' type=kotlin.String origin=null
+  FUN name:lengthN visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int? 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String? 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='lengthN(String?): Int?'
+      RETURN type=kotlin.Nothing from='public final fun lengthN (s: kotlin.String?): kotlin.Int? declared in <root>'
         BLOCK type=kotlin.Int? origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? flags:val
-            GET_VAR 'value-parameter s: String?' type=kotlin.String? origin=null
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.String? [val] 
+            GET_VAR 's: kotlin.String? declared in <root>.lengthN' type=kotlin.String? origin=null
           WHEN type=kotlin.Int? origin=null
             BRANCH
-              if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-                arg0: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
+              if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+                arg0: GET_VAR 'val tmp0_safe_receiver: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL '<get-length>(): Int' type=kotlin.Int origin=GET_PROPERTY
-                $this: GET_VAR 'tmp0_safe_receiver: String?' type=kotlin.String? origin=null
-
+              then: CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
+                $this: GET_VAR 'val tmp0_safe_receiver: kotlin.String? [val] declared in <root>.lengthN' type=kotlin.String? origin=null

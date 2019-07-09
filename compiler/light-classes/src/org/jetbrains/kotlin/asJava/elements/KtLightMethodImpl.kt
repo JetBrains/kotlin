@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.asJava.elements
 
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
 import com.intellij.psi.impl.compiled.ClsTypeElementImpl
 import com.intellij.psi.scope.PsiScopeProcessor
@@ -57,14 +58,17 @@ open class KtLightMethodImpl protected constructor(
         }
     }
 
-    protected open fun buildParametersForList(): List<PsiParameter> =
-        clsDelegate.parameterList.parameters.mapIndexed { index, clsParameter ->
+    protected open fun buildParametersForList(): List<PsiParameter> {
+        val clsParameters by lazyPub { clsDelegate.parameterList.parameters }
+        return (dummyDelegate?.parameterList?.parameters ?: clsParameters).mapIndexed { index, dummyParameter ->
             KtLightParameter(
-                clsParameter,
+                dummyParameter,
+                { clsParameters.getOrNull(index) },
                 index,
                 this@KtLightMethodImpl
             )
         }
+    }
 
     private val typeParamsList: PsiTypeParameterList? by lazyPub { buildTypeParameterList() }
 
@@ -134,6 +138,8 @@ open class KtLightMethodImpl protected constructor(
     override fun getTypeParameters(): Array<PsiTypeParameter> =
             typeParameterList?.typeParameters ?: PsiTypeParameter.EMPTY_ARRAY
 
+    override fun hasTypeParameters() = typeParameters.isNotEmpty()
+
     override fun getSignature(substitutor: PsiSubstitutor): MethodSignature {
         if (substitutor == PsiSubstitutor.EMPTY) {
             return clsDelegate.getSignature(substitutor)
@@ -149,7 +155,7 @@ open class KtLightMethodImpl protected constructor(
         return typeParameters.all { processor.execute(it, state) }
     }
 
-    private val _memberIndex: MemberIndex?
+    protected open val memberIndex: MemberIndex?
         get() = (dummyDelegate ?: clsDelegate).memberIndex
 
     /* comparing origin and member index should be enough to determine equality:
@@ -162,9 +168,9 @@ open class KtLightMethodImpl protected constructor(
              this.name == other.name &&
              this.containingClass == other.containingClass &&
              this.lightMemberOrigin == other.lightMemberOrigin &&
-             this._memberIndex == other._memberIndex)
+             this.memberIndex == other.memberIndex)
 
-    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (_memberIndex?.hashCode() ?: 0)
+    override fun hashCode(): Int = ((getName().hashCode() * 31 + (lightMemberOrigin?.hashCode() ?: 0)) * 31 + containingClass.hashCode()) * 31 + (memberIndex?.hashCode() ?: 0)
 
     override fun getDefaultValue() = (clsDelegate as? PsiAnnotationMethod)?.defaultValue
 
@@ -182,11 +188,33 @@ open class KtLightMethodImpl protected constructor(
         }
     }
 
+    override fun getTextOffset(): Int {
+        val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
+        if (auxiliaryOrigin is KtPropertyAccessor) {
+            return auxiliaryOrigin.textOffset
+        }
+
+        return super.getTextOffset()
+    }
+
+    override fun getTextRange(): TextRange {
+        val auxiliaryOrigin = lightMemberOrigin?.auxiliaryOriginalElement
+        if (auxiliaryOrigin is KtPropertyAccessor) {
+            return auxiliaryOrigin.textRange
+        }
+
+        return super.getTextRange()
+    }
+
     companion object Factory {
         private fun adjustMethodOrigin(origin: LightMemberOriginForDeclaration?): LightMemberOriginForDeclaration? {
             val originalElement = origin?.originalElement
             if (originalElement is KtPropertyAccessor) {
-                return origin.copy(originalElement.getStrictParentOfType<KtProperty>()!!, origin.originKind)
+                return origin.copy(
+                    originalElement = originalElement.getStrictParentOfType<KtProperty>()!!,
+                    originKind = origin.originKind,
+                    auxiliaryOriginalElement = originalElement
+                )
             }
             return origin
         }
@@ -214,8 +242,6 @@ open class KtLightMethodImpl protected constructor(
     }
 
     override fun getThrowsList() = clsDelegate.throwsList
-
-    override fun hasTypeParameters() = clsDelegate.hasTypeParameters()
 
     override fun isVarArgs() = (dummyDelegate ?: clsDelegate).isVarArgs
 

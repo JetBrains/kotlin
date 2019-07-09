@@ -1,0 +1,7 @@
+FILE: simpleReturns.kt
+    public? final? fun foo(): kotlin/Unit {
+        ^foo Unit
+    }
+    public? final? fun bar(): String {
+        ^bar String(Hello)
+    }

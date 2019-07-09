@@ -1,2 +1,0 @@
-FILE: simpleStarImport.kt
-    public final function foo(arg: R|b/d/Other|): R|b/d/Another|

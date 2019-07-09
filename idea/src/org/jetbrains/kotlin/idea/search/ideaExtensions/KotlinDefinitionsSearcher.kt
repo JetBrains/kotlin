@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.asJava.unwrapped
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.caches.lightClasses.KtFakeLightClass
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachImplementation
 import org.jetbrains.kotlin.idea.search.declarationsSearch.forEachOverridingMethod
@@ -43,8 +42,8 @@ import org.jetbrains.kotlin.psi.psiUtil.contains
 import java.util.*
 
 class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSearch.SearchParameters> {
-    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: ExecutorProcessor<PsiElement>): Boolean {
-        val consumer = skipDelegatedMethodsConsumer(consumer)
+    override fun execute(queryParameters: DefinitionsScopedSearch.SearchParameters, consumer: Processor<in PsiElement>): Boolean {
+        val processor = skipDelegatedMethodsConsumer(consumer)
         val element = queryParameters.element
         val scope = queryParameters.scope
 
@@ -52,35 +51,35 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
             is KtClass -> {
                 val isExpectEnum = runReadAction { element.isEnum() && element.isExpectDeclaration() }
                 if (isExpectEnum) {
-                    processActualDeclarations(element, consumer)
+                    processActualDeclarations(element, processor)
                 } else {
-                    processClassImplementations(element, consumer) && processActualDeclarations(element, consumer)
+                    processClassImplementations(element, processor) && processActualDeclarations(element, processor)
                 }
             }
 
             is KtObjectDeclaration -> {
-                processActualDeclarations(element, consumer)
+                processActualDeclarations(element, processor)
             }
 
             is KtLightClass -> {
                 val useScope = runReadAction { element.useScope }
                 if (useScope is LocalSearchScope)
-                    processLightClassLocalImplementations(element, useScope, consumer)
+                    processLightClassLocalImplementations(element, useScope, processor)
                 else
                     true
             }
 
             is KtNamedFunction, is KtSecondaryConstructor -> {
-                processFunctionImplementations(element as KtFunction, scope, consumer) && processActualDeclarations(element, consumer)
+                processFunctionImplementations(element as KtFunction, scope, processor) && processActualDeclarations(element, processor)
             }
 
             is KtProperty -> {
-                processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                processPropertyImplementations(element, scope, processor) && processActualDeclarations(element, processor)
             }
 
             is KtParameter -> {
                 if (isFieldParameter(element)) {
-                    processPropertyImplementations(element, scope, consumer) && processActualDeclarations(element, consumer)
+                    processPropertyImplementations(element, scope, processor) && processActualDeclarations(element, processor)
                 } else {
                     true
                 }
@@ -92,7 +91,7 @@ class KotlinDefinitionsSearcher : QueryExecutor<PsiElement, DefinitionsScopedSea
 
     companion object {
 
-        private fun skipDelegatedMethodsConsumer(baseConsumer: ExecutorProcessor<PsiElement>): Processor<PsiElement> {
+        private fun skipDelegatedMethodsConsumer(baseConsumer: Processor<in PsiElement>): Processor<PsiElement> {
             return Processor { element ->
                 if (isDelegated(element)) {
                     return@Processor true

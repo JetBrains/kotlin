@@ -27,7 +27,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.refactoring.rename.PsiElementRenameHandler
 import com.intellij.refactoring.rename.RenameHandler
 import com.intellij.refactoring.rename.inplace.MemberInplaceRenameHandler
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtSimpleNameExpression
@@ -70,8 +70,7 @@ abstract class AbstractReferenceSubstitutionRenameHandler(
         // Can't provide new name for inplace refactoring in unit test mode
         if (!ApplicationManager.getApplication().isUnitTestMode && delegateHandler.isAvailableOnDataContext(wrappingContext)) {
             delegateHandler.invoke(project, editor, file, wrappingContext)
-        }
-        else {
+        } else {
             super.invoke(project, editor, file, wrappingContext)
         }
     }

@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -8,6 +7,7 @@
  * SECTIONS: contracts, analysis, controlFlow, unreachableCode
  * NUMBER: 1
  * DESCRIPTION: Using not allowed break and continue inside lambda of contract function
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

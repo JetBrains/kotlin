@@ -4,8 +4,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
@@ -14,18 +12,18 @@ dependencies {
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.java"))
     compile(project(":compiler:cli"))
+    compile(project(":compiler:cli-js"))
     compile(project(":kotlin-build-common"))
-    compile(project(":compiler:daemon-common"))
+    compile(project(":daemon-common"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    compileOnly(intellijDep()) { includeJars("annotations") }
 
     testCompile(commonDep("junit:junit"))
     testCompile(project(":kotlin-test:kotlin-test-junit"))
-    testCompile(project(":kotlin-stdlib"))
+    testCompile(kotlinStdlib())
     testCompile(projectTests(":kotlin-build-common"))
     testCompile(projectTests(":compiler:tests-common"))
-    testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
-    testCompile(intellijDep()) { includeJars("annotations", "log4j", "jdom") }
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
+    testCompile(intellijDep()) { includeJars("log4j", "jdom") }
 }
 
 sourceSets {
@@ -33,7 +31,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 

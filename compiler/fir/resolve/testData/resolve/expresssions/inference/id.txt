@@ -1,0 +1,9 @@
+FILE: id.kt
+    public final fun <T> id(t: R|T|): R|T| {
+        ^id R|<local>/t|
+    }
+    public final fun main(): R|kotlin/Unit| {
+        lval a: R|kotlin/String| = R|/id|<R|kotlin/String|>(String(string))
+        lval b: R|kotlin/Nothing|? = R|/id|<R|kotlin/Nothing|?>(Null(null))
+        lval c: R|kotlin/String| = R|/id|<R|kotlin/String|>(R|/id|<R|kotlin/String|>(R|<local>/a|))
+    }

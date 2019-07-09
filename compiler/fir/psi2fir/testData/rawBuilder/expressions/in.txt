@@ -1,0 +1,12 @@
+FILE: in.kt
+    public? final? fun foo(x: Int, y: Int, c: Collection<Int>): <implicit> {
+        ^foo when () {
+            c#.contains#(x#) ->  {
+                c#.contains#(y#).not#()
+            }
+            else ->  {
+                Boolean(false)
+            }
+        }
+
+    }

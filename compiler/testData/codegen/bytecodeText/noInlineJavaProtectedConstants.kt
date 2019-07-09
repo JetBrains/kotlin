@@ -1,4 +1,5 @@
-// LANGUAGE_VERSION: 1.0
+// !LANGUAGE: -InlineConstVals
+// IGNORE_BACKEND: JVM_IR
 // FILE: first/Foo.java
 
 package first;

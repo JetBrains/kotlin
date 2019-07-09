@@ -21,7 +21,7 @@ import com.intellij.lang.surroundWith.Surrounder;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils;
 
 public class KotlinStatementSurroundDescriptor implements SurroundDescriptor {
 

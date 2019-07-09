@@ -16,15 +16,15 @@
 
 package org.jetbrains.kotlin.generators.builtins.test
 
-import java.io.PrintWriter
-import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.generateBuiltIns
-import java.io.StringWriter
-import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.openapi.util.text.StringUtil
+import junit.framework.TestCase
+import org.jetbrains.kotlin.generators.builtins.generateBuiltIns.generateBuiltIns
 import org.junit.Assert
-import com.intellij.testFramework.UsefulTestCase
+import java.io.PrintWriter
+import java.io.StringWriter
 
-class GenerateBuiltInsTest : UsefulTestCase() {
+class GenerateBuiltInsTest : TestCase() {
     fun testBuiltInsAreUpToDate() {
         generateBuiltIns { file, generator ->
             val sw = StringWriter()

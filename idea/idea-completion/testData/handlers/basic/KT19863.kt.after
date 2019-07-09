@@ -1,0 +1,9 @@
+package test
+
+fun `backticked`() {}
+
+fun test() {
+    backticked()<caret>
+}
+
+// ELEMENT: backticked

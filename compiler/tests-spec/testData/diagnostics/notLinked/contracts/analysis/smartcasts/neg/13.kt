@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -7,6 +6,7 @@
  * SECTIONS: contracts, analysis, smartcasts
  * NUMBER: 13
  * DESCRIPTION: Smartcast using many of the various Returns effects on the same values.
+ * HELPERS: contractFunctions
  */
 
 // FILE: contracts.kt

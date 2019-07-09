@@ -18,18 +18,17 @@ package org.jetbrains.kotlin.idea.inspections.branchedTransformations
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspection
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.getSubjectToIntroduce
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceSubject
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.psi.KtWhenExpression
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 
 class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWhenExpression>(KtWhenExpression::class.java) {
 
     override fun isApplicable(element: KtWhenExpression) = element.getSubjectToIntroduce() != null
 
-    override fun inspectionTarget(element: KtWhenExpression) = element.whenKeyword
+    override fun inspectionHighlightRangeInElement(element: KtWhenExpression) = element.whenKeyword.textRangeIn(element)
 
     override fun inspectionText(element: KtWhenExpression) = "'when' with subject should be used"
 
@@ -40,7 +39,7 @@ class IntroduceWhenSubjectInspection : AbstractApplicabilityBasedInspection<KtWh
         return "Introduce '${subject.text}' as subject of 'when'"
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        element.getParentOfType<KtWhenExpression>(strict = true)?.introduceSubject()
+    override fun applyTo(element: KtWhenExpression, project: Project, editor: Editor?) {
+        element.introduceSubject()
     }
 }

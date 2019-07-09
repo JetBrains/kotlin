@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeInContext
 import org.jetbrains.kotlin.idea.analysis.computeTypeInfoInContext
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.intentions.ConvertToBlockBodyIntention
 import org.jetbrains.kotlin.idea.refactoring.*
@@ -67,13 +67,14 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
-import org.jetbrains.kotlin.types.checker.TypeCheckerContext
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
+import kotlin.math.min
 
 object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     val INTRODUCE_VARIABLE = KotlinRefactoringBundle.message("introduce.variable")
@@ -85,7 +86,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
     private var KtExpression.isOccurrence: Boolean by NotNullablePsiCopyableUserDataProperty(Key.create("OCCURRENCE"), false)
 
     private class TypeCheckerImpl(private val project: Project) : KotlinTypeChecker by KotlinTypeChecker.DEFAULT {
-        private inner class ContextImpl : TypeCheckerContext(false) {
+        private inner class ContextImpl : ClassicTypeCheckerContext(false) {
             override fun areEqualTypeConstructors(a: TypeConstructor, b: TypeConstructor): Boolean {
                 return compareDescriptors(project, a.declarationDescriptor, b.declarationDescriptor)
             }
@@ -213,7 +214,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         }
                     }
                     //ugly logic to make sure we are working with right actual expression
-                    var actualExpression = reference!!
+                    var actualExpression = reference ?: return
                     var diff = actualExpression.textRange.startOffset - oldElement.textRange.startOffset
                     var actualExpressionText = actualExpression.text
                     val newElement = emptyBody.addAfter(oldElement, firstChild)
@@ -224,7 +225,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
                     property = emptyBody.addAfter(property, firstChild) as KtProperty
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
-                    actualExpression = reference!!
+                    actualExpression = reference ?: return
                     diff = actualExpression.textRange.startOffset - emptyBody.textRange.startOffset
                     actualExpressionText = actualExpression.text
                     emptyBody = anchor.replace(emptyBody) as KtBlockExpression
@@ -324,14 +325,14 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                 } ?: newReplace
             }
 
-            runRefactoring(isVar, newExpression, newCommonContainer, newCommonParent, newAllReplaces)
+            runRefactoring(isVar, newExpression ?: return, newCommonContainer, newCommonParent, newAllReplaces)
         }
     }
 
     private fun calculateAnchor(commonParent: PsiElement, commonContainer: PsiElement, allReplaces: List<KtExpression>): PsiElement? {
         if (commonParent != commonContainer) return commonParent.parentsWithSelf.firstOrNull { it.parent == commonContainer }
 
-        val startOffset = allReplaces.fold(commonContainer.endOffset) { offset, expr -> Math.min(offset, expr.substringContextOrThis.startOffset) }
+        val startOffset = allReplaces.fold(commonContainer.endOffset) { offset, expr -> min(offset, expr.substringContextOrThis.startOffset) }
         return commonContainer.allChildren.lastOrNull { it.textRange.contains(startOffset) } ?: return null
     }
 

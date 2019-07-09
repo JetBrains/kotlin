@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.core.KotlinIndicesHelper
 import org.jetbrains.kotlin.idea.core.Tail
 import org.jetbrains.kotlin.idea.core.multipleFuzzyTypes
 import org.jetbrains.kotlin.idea.core.overrideImplement.ImplementMembersHandler
+import org.jetbrains.kotlin.idea.formatter.ktCodeStyleSettings
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -185,13 +186,16 @@ class TypeInstantiationItems(
 
             val constructorParenthesis = if (classifier.kind != ClassKind.INTERFACE) "()" else ""
             itemText += constructorParenthesis
-            itemText = "object: $itemText{...}"
+            itemText = "object : $itemText{...}"
             lookupString = "object"
             allLookupStrings = setOf(lookupString, lookupElement.lookupString)
             insertHandler = InsertHandler<LookupElement> { context, _ ->
                 val startOffset = context.startOffset
 
-                val text1 = "object: $typeText"
+                val settings = ktCodeStyleSettings(context.project)?.custom
+                val spaceBefore = if (settings?.SPACE_BEFORE_EXTEND_COLON == true) " " else ""
+                val spaceAfter = if (settings?.SPACE_AFTER_EXTEND_COLON == true) " " else ""
+                val text1 = "object$spaceBefore:$spaceAfter$typeText"
                 val text2 = "$constructorParenthesis {}"
                 val text = if (allTypeArgsKnown)
                     text1 + IdeDescriptorRenderers.SOURCE_CODE.renderTypeArguments(typeArgsToUse) + text2
@@ -269,8 +273,8 @@ class TypeInstantiationItems(
                 presentation.itemText = itemText
 
                 presentation.clearTail()
-                if (signatureText != null) {
-                    presentation.appendTailText(signatureText!!, false)
+                signatureText?.let {
+                    presentation.appendTailText(it, false)
                 }
                 presentation.appendTailText(" (" + DescriptorUtils.getFqName(classifier.containingDeclaration) + ")", true)
             }

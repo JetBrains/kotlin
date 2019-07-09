@@ -1,0 +1,23 @@
+package
+
+public fun foo(/*0*/ sample: [ERROR : JavaSample], /*1*/ alias: test.kot.JavaAlias /* = test.jv.JavaSample */): kotlin.Unit
+
+package test {
+
+    package test.jv {
+
+        public open class JavaSample {
+            public constructor JavaSample()
+            public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+            public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+            public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+            // Static members
+            public open fun member(): kotlin.Unit
+        }
+    }
+
+    package test.kot {
+        public typealias JavaAlias = test.jv.JavaSample
+    }
+}

@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen
 
-import com.google.common.collect.Sets
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -25,9 +24,11 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.psi.KtFile
 
 interface CodegenFactory {
-    fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler)
-    fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): PackageCodegen
-    fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry): MultifileClassCodegen
+    fun generateModule(state: GenerationState, files: Collection<KtFile>, errorHandler: CompilationErrorHandler)
+
+    fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): PackageCodegen
+
+    fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName): MultifileClassCodegen
 
     companion object {
         fun doCheckCancelled(state: GenerationState) {
@@ -39,13 +40,11 @@ interface CodegenFactory {
 }
 
 object DefaultCodegenFactory : CodegenFactory {
-    override fun generateModule(state: GenerationState, files: Collection<KtFile?>, errorHandler: CompilationErrorHandler) {
+    override fun generateModule(state: GenerationState, files: Collection<KtFile>, errorHandler: CompilationErrorHandler) {
         val filesInPackages = MultiMap<FqName, KtFile>()
         val filesInMultifileClasses = MultiMap<FqName, KtFile>()
 
         for (file in files) {
-            if (file == null) throw IllegalArgumentException("A null file given for compilation")
-
             val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
 
             if (fileClassInfo.withJvmMultifileClass) {
@@ -69,11 +68,11 @@ object DefaultCodegenFactory : CodegenFactory {
         }
     }
 
-    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry) =
-            PackageCodegenImpl(state, files, fqName, registry)
+    override fun createPackageCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName) =
+            PackageCodegenImpl(state, files, fqName)
 
-    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName, registry: PackagePartRegistry) =
-            MultifileClassCodegenImpl(state, files, fqName, registry)
+    override fun createMultifileClassCodegen(state: GenerationState, files: Collection<KtFile>, fqName: FqName) =
+            MultifileClassCodegenImpl(state, files, fqName)
 
     private fun generateMultifileClass(
             state: GenerationState,
@@ -96,5 +95,4 @@ object DefaultCodegenFactory : CodegenFactory {
         val codegen = state.factory.forPackage(packageFqName, jetFiles)
         codegen.generate(errorHandler)
     }
-
 }

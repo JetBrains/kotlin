@@ -2,18 +2,6 @@ LineBreakpoint created at evFunctionDeclaration.kt:5
 Run Java
 Connected to the target VM
 evFunctionDeclaration.kt:5
-package evFunctionDeclaration
-
-class A(val a: Int) {
-    //Breakpoint!
-    fun foo() = a
-}
-
-fun main(args: Array<String>) {
-    A(1).foo()
-}
-
-// PRINT_FRAME
 Compile bytecode for a
  frame    = foo:5, A {evFunctionDeclaration}
    this     = this = {evFunctionDeclaration.A@uniqueID}

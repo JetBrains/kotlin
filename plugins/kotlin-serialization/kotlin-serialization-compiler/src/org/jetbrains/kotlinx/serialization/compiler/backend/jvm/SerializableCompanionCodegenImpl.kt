@@ -18,26 +18,34 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.jvm
 
 import org.jetbrains.kotlin.codegen.ImplementationBodyCodegen
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerializableCompanionCodegen
-import org.jetbrains.kotlinx.serialization.compiler.resolve.*
+import org.jetbrains.kotlinx.serialization.compiler.resolve.classSerializer
+import org.jetbrains.kotlinx.serialization.compiler.resolve.getSerializableClassDescriptorByCompanion
+import org.jetbrains.kotlinx.serialization.compiler.resolve.shouldHaveGeneratedMethodsInCompanion
 
-class SerializableCompanionCodegenImpl(private val codegen: ImplementationBodyCodegen) :
-        SerializableCompanionCodegen(codegen.descriptor, codegen.bindingContext) {
+class SerializableCompanionCodegenImpl(private val classCodegen: ImplementationBodyCodegen) :
+    SerializableCompanionCodegen(classCodegen.descriptor, classCodegen.bindingContext) {
 
     companion object {
         fun generateSerializableExtensions(codegen: ImplementationBodyCodegen) {
             val serializableClass = getSerializableClassDescriptorByCompanion(codegen.descriptor) ?: return
-            if (serializableClass.isInternalSerializable)
+            if (serializableClass.shouldHaveGeneratedMethodsInCompanion)
                 SerializableCompanionCodegenImpl(codegen).generate()
         }
     }
 
     override fun generateSerializerGetter(methodDescriptor: FunctionDescriptor) {
-        val serial = serializableDescriptor.classSerializer?.toClassDescriptor ?: return
-        codegen.generateMethod(methodDescriptor) { _, _ ->
-            stackValueSerializerInstance(codegen, serializableDescriptor.module, serializableDescriptor.defaultType, serial, this, null) {
+        val serial = serializableDescriptor.classSerializer ?: return
+        classCodegen.generateMethod(methodDescriptor) { _, _ ->
+            stackValueSerializerInstance(
+                classCodegen,
+                serializableDescriptor.module,
+                serializableDescriptor.defaultType,
+                serial,
+                this,
+                null
+            ) {
                 load(it + 1, kSerializerType)
             }
             areturn(kSerializerType)

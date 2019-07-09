@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.module
-import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -38,7 +38,7 @@ class KotlinMultiplatformJUnitRecognizer : JUnitRecognizer() {
     override fun isTestAnnotated(method: PsiMethod): Boolean {
         if (method !is KtLightMethod) return false
         val origin = method.kotlinOrigin ?: return false
-        if (!origin.module?.platform.isCommon) return false
+        if (!origin.module?.platform.isCommon()) return false
 
         val moduleDescriptor = origin.containingKtFile.findModuleDescriptor()
         val implModules = moduleDescriptor.implementingDescriptors

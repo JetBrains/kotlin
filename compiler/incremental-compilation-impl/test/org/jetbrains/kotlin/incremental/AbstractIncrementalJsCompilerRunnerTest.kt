@@ -35,9 +35,9 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
         get() = super.buildLogFinder.copy(isJsEnabled = true)
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
-            K2JSCompilerArguments().apply {
-                outputFile = File(destinationDir, "${testDir.name}.js").path
-                sourceMap = true
-                metaInfo = true
-            }
+        K2JSCompilerArguments().apply {
+            outputFile = File(destinationDir, "${testDir.name}.js").path
+            sourceMap = true
+            metaInfo = true
+        }
 }

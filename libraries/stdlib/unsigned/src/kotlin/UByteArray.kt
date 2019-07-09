@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // Auto-generated file. DO NOT EDIT!
@@ -17,10 +17,20 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
     /** Creates a new array of the specified [size], with all elements initialized to zero. */
     public constructor(size: Int) : this(ByteArray(size))
 
-    /** Returns the array element at the given [index]. This method can be called using the index operator. */
+    /**
+     * Returns the array element at the given [index]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun get(index: Int): UByte = storage[index].toUByte()
 
-    /** Sets the element at the given [index] to the given [value]. This method can be called using the index operator. */
+    /**
+     * Sets the element at the given [index] to the given [value]. This method can be called using the index operator.
+     *
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
+     * where the behavior is unspecified.
+     */
     public operator fun set(index: Int, value: UByte) {
         storage[index] = value.toByte()
     }
@@ -37,9 +47,17 @@ internal constructor(@PublishedApi internal val storage: ByteArray) : Collection
         override fun nextUByte() = if (index < array.size) array[index++].toUByte() else throw NoSuchElementException(index.toString())
     }
 
-    override fun contains(element: UByte): Boolean = storage.contains(element.toByte())
+    override fun contains(element: UByte): Boolean {
+        // TODO: Eliminate this check after KT-30016 gets fixed.
+        // Currently JS BE does not generate special bridge method for this method.
+        if ((element as Any?) !is UByte) return false
 
-    override fun containsAll(elements: Collection<UByte>): Boolean = elements.all { storage.contains(it.toByte()) }
+        return storage.contains(element.toByte())
+    }
+
+    override fun containsAll(elements: Collection<UByte>): Boolean {
+        return (elements as Collection<*>).all { it is UByte && storage.contains(it.toByte()) }
+    }
 
     override fun isEmpty(): Boolean = this.storage.size == 0
 }

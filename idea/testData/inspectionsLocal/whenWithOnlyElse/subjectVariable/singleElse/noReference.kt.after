@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+fun test() {
+    run {
+        val a = create()
+        use("")
+    }
+}
+
+fun create(): String = ""
+
+fun use(s: String) {}

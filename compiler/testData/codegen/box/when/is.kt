@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 fun typeName(a: Any?) : String {
     return when(a) {
         is ArrayList<*> -> "array list"

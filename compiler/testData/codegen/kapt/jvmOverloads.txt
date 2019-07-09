@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public final class Test {
     public method <init>(): void
-    public synthetic static @kotlin.jvm.JvmOverloads method b$default(p0: Test, p1: java.lang.String, p2: int, p3: char, p4: int, p5: java.lang.Object): void
+    public synthetic static method b$default(p0: Test, p1: java.lang.String, p2: int, p3: char, p4: int, p5: java.lang.Object): void
     public final @kotlin.jvm.JvmOverloads @synthetic.kotlin.jvm.GeneratedByJvmOverloads method b(): void
     public final @kotlin.jvm.JvmOverloads @synthetic.kotlin.jvm.GeneratedByJvmOverloads method b(@org.jetbrains.annotations.NotNull p0: java.lang.String): void
     public final @kotlin.jvm.JvmOverloads @synthetic.kotlin.jvm.GeneratedByJvmOverloads method b(@org.jetbrains.annotations.NotNull p0: java.lang.String, p1: int): void

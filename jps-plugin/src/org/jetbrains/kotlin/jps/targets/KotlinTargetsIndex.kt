@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.targets
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.jps.build.ModuleBuildTarget
 import org.jetbrains.kotlin.jps.model.platform
 import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
 import org.jetbrains.kotlin.platform.IdePlatformKind
+import org.jetbrains.kotlin.platform.idePlatformKind
 import org.jetbrains.kotlin.platform.impl.*
 import org.jetbrains.kotlin.utils.LibraryUtils
 import kotlin.system.measureTimeMillis
@@ -134,7 +135,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
 
     private fun ensureLoaded(target: ModuleBuildTarget): KotlinModuleBuildTarget<*> {
         return byJpsModuleBuildTarget.computeIfAbsent(target) {
-            val platform = target.module.platform?.kind ?: detectTargetPlatform(target)
+            val platform = target.module.platform?.idePlatformKind ?: detectTargetPlatform(target)
 
             when {
                 platform.isCommon -> KotlinCommonModuleBuildTarget(uninitializedContext, target)
@@ -152,7 +153,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
     private fun detectTargetPlatform(target: ModuleBuildTarget): IdePlatformKind<*> {
         if (hasJsStdLib(target)) return JsIdePlatformKind
 
-        return DefaultIdeTargetPlatformKindProvider.defaultPlatform.kind
+        return DefaultIdeTargetPlatformKindProvider.defaultPlatform.idePlatformKind
     }
 
     private fun hasJsStdLib(target: ModuleBuildTarget): Boolean {

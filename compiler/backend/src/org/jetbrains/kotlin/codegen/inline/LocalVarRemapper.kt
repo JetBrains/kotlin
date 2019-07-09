@@ -35,12 +35,11 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             val shift = params.getDeclarationSlot(info)
             if (!info.isSkippedOrRemapped) {
                 remapValues[shift] = StackValue.local(realSize, AsmTypes.OBJECT_TYPE)
-                realSize += info.getType().size
-            }
-            else {
+                realSize += info.type.size
+            } else {
                 remapValues[shift] = if (info.isRemapped) info.remapValue else null
                 if (CapturedParamInfo.isSynthetic(info)) {
-                    realSize += info.getType().size
+                    realSize += info.type.size
                 }
             }
         }
@@ -59,12 +58,10 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
             }
             if (info.isRemapped) {
                 return RemapInfo(info, remapped, REMAPPED)
-            }
-            else {
+            } else {
                 remappedIndex = (remapped as StackValue.Local).index
             }
-        }
-        else {
+        } else {
             //captured params are not used directly in this inlined method, they are used in closure
             //except captured ones for default lambdas, they are generated in default body
             remappedIndex = actualParamsSize - params.argsSizeOnStack + index
@@ -99,24 +96,23 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
     }
 
     fun visitVarInsn(opcode: Int, `var`: Int, mv: InstructionAdapter) {
-        var opcode = opcode
         val remapInfo = remap(`var`)
         val value = remapInfo.value
         if (value is StackValue.Local) {
             val isStore = isStoreInstruction(opcode)
-            if (remapInfo.parameterInfo != null) {
+            val localOpcode = if (remapInfo.parameterInfo != null) {
                 //All remapped value parameters can't be rewritten except case of default ones.
                 //On remapping default parameter to actual value there is only one instruction that writes to it according to mask value
                 //but if such parameter remapped then it passed and this mask branch code never executed
                 //TODO add assertion about parameter default value: descriptor is required
-                opcode = value.type.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
-            }
-            mv.visitVarInsn(opcode, value.index)
+                value.type.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)
+            } else opcode
+            
+            mv.visitVarInsn(localOpcode, value.index)
             if (remapInfo.parameterInfo != null && !isStore) {
                 StackValue.coerce(value.type, remapInfo.parameterInfo.type, mv)
             }
-        }
-        else {
+        } else {
             assert(remapInfo.parameterInfo != null) { "Non local value should have parameter info" }
             value!!.put(remapInfo.parameterInfo!!.type, mv)
         }
@@ -129,8 +125,8 @@ class LocalVarRemapper(private val params: Parameters, private val additionalShi
     }
 
     class RemapInfo(
-            @JvmField val parameterInfo: ParameterInfo?,
-            @JvmField val value: StackValue? = null,
-            @JvmField val status: RemapStatus = FAIL
+        @JvmField val parameterInfo: ParameterInfo?,
+        @JvmField val value: StackValue? = null,
+        @JvmField val status: RemapStatus = FAIL
     )
 }

@@ -1,14 +1,12 @@
-// !WITH_BASIC_TYPES
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 7
- * SENTENCE: [3] Contains test condition: containment operator followed by an expression.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 7 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: 'When' with bound value and containment operator.
+ * HELPERS: typesProvider, classes
  */
 
 // TESTCASE NUMBER: 1
@@ -24,9 +22,9 @@ fun case_1(value_1: Int, value_2: Int, value_3: Short): String {
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: Int, value_2: List<IntArray>, value_3: _Class) = when (value_1) {
+fun case_2(value_1: Int, value_2: List<IntArray>, value_3: Class) = when (value_1) {
     in value_2[0] -> ""
     !in listOf(0, 1, 2, 3, 4) -> ""
-    !in value_3.getIntArray(90) -> ""
+    !in value_3.getIntArray() -> ""
     else -> ""
 }

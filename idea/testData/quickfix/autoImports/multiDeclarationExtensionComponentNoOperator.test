@@ -3,6 +3,7 @@
 // ERROR: Destructuring declaration initializer of type Some must have a 'component1()' function
 // ACTION: Create extension function 'Some.component1'
 // ACTION: Create member function 'Some.component1'
+// ACTION: Introduce import alias
 
 
 package testing

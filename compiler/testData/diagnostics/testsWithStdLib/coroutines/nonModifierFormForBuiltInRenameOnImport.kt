@@ -1,6 +1,6 @@
 // !LANGUAGE: +ReleaseCoroutines
-// !API_VERSION: 1.3
 // SKIP_TXT
+
 import kotlin.suspend as suspendLambda
 
 fun bar() {

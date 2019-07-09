@@ -22,9 +22,9 @@ fun main() {
         foo(x<!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>)
         foo(<!DEBUG_INFO_SMARTCAST!>x<!>)
     } else {
-        foo(<!TYPE_MISMATCH, DEBUG_INFO_CONSTANT!>x<!>)
-        <!OI;UNREACHABLE_CODE!>foo(<!><!ALWAYS_NULL!>x<!>!!<!OI;UNREACHABLE_CODE!>)<!>
-        <!OI;UNREACHABLE_CODE!>foo(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
+        foo(<!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
+        <!UNREACHABLE_CODE!>foo(<!><!ALWAYS_NULL!>x<!>!!<!UNREACHABLE_CODE!>)<!>
+        <!UNREACHABLE_CODE!>foo(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>
     }
 
     foo(<!DEBUG_INFO_SMARTCAST!>x<!>)

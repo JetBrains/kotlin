@@ -21,16 +21,18 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 
 internal class FictitiousArrayConstructor(arrayClass: ClassDescriptor) : SimpleFunctionDescriptorImpl(
-        arrayClass.containingDeclaration, null, Annotations.EMPTY, arrayClass.name, CallableMemberDescriptor.Kind.SYNTHESIZED,
-        SourceElement.NO_SOURCE
+    arrayClass.containingDeclaration, null, Annotations.EMPTY, arrayClass.name, CallableMemberDescriptor.Kind.SYNTHESIZED,
+    SourceElement.NO_SOURCE
 ) {
     companion object Factory {
         @JvmStatic
         fun create(arrayConstructor: ConstructorDescriptor): FictitiousArrayConstructor {
             val arrayClass = arrayConstructor.constructedClass
             return FictitiousArrayConstructor(arrayClass).apply {
-                this.initialize(null, null, arrayConstructor.typeParameters, arrayConstructor.valueParameters, arrayClass.defaultType,
-                                Modality.FINAL, Visibilities.PUBLIC)
+                this.initialize(
+                    null, null, arrayConstructor.typeParameters, arrayConstructor.valueParameters, arrayClass.defaultType,
+                    Modality.FINAL, Visibilities.PUBLIC
+                )
                 this.isInline = true
             }
         }

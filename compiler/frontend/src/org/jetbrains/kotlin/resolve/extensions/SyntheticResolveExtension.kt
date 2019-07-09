@@ -16,16 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.extensions
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.LazyClassContext
 import org.jetbrains.kotlin.resolve.lazy.declarations.ClassMemberDeclarationProvider
+import org.jetbrains.kotlin.resolve.lazy.declarations.PackageMemberDeclarationProvider
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -37,17 +35,6 @@ interface SyntheticResolveExtension {
     companion object : ProjectExtensionDescriptor<SyntheticResolveExtension>(
         "org.jetbrains.kotlin.syntheticResolveExtension", SyntheticResolveExtension::class.java
     ) {
-        private val logger = Logger.getInstance(this::class.java)
-
-        private inline fun <T : Any, R> withLinkageErrorLogger(receiver: T, block: T.() -> R): R {
-            try {
-                return receiver.block()
-            } catch (e: LinkageError) {
-                logger.error("${receiver::class.java.name} caused LinkageError", e)
-                throw e
-            }
-        }
-
         fun getInstance(project: Project): SyntheticResolveExtension {
             val instances = getInstances(project)
             if (instances.size == 1) return instances.single()
@@ -66,13 +53,18 @@ interface SyntheticResolveExtension {
                 ) =
                     instances.forEach {
                         withLinkageErrorLogger(it) {
-                            generateSyntheticClasses(
-                                thisDescriptor,
-                                name,
-                                ctx,
-                                declarationProvider,
-                                result
-                            )
+                            generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result)
+                        }
+                    }
+
+                override fun generateSyntheticClasses(
+                    thisDescriptor: PackageFragmentDescriptor, name: Name,
+                    ctx: LazyClassContext, declarationProvider: PackageMemberDeclarationProvider,
+                    result: MutableSet<ClassDescriptor>
+                ) =
+                    instances.forEach {
+                        withLinkageErrorLogger(it) {
+                            generateSyntheticClasses(thisDescriptor, name, ctx, declarationProvider, result)
                         }
                     }
 
@@ -118,6 +110,22 @@ interface SyntheticResolveExtension {
                             )
                         }
                     }
+
+                override fun generateSyntheticSecondaryConstructors(
+                    thisDescriptor: ClassDescriptor,
+                    bindingContext: BindingContext,
+                    result: MutableCollection<ClassConstructorDescriptor>
+                ) {
+                    instances.forEach {
+                        withLinkageErrorLogger(it) {
+                            generateSyntheticSecondaryConstructors(
+                                thisDescriptor,
+                                bindingContext,
+                                result
+                            )
+                        }
+                    }
+                }
             }
         }
     }
@@ -139,6 +147,15 @@ interface SyntheticResolveExtension {
     ) {
     }
 
+    fun generateSyntheticClasses(
+        thisDescriptor: PackageFragmentDescriptor,
+        name: Name,
+        ctx: LazyClassContext,
+        declarationProvider: PackageMemberDeclarationProvider,
+        result: MutableSet<ClassDescriptor>
+    ) {
+    }
+
     fun generateSyntheticMethods(
         thisDescriptor: ClassDescriptor,
         name: Name,
@@ -154,6 +171,13 @@ interface SyntheticResolveExtension {
         bindingContext: BindingContext,
         fromSupertypes: ArrayList<PropertyDescriptor>,
         result: MutableSet<PropertyDescriptor>
+    ) {
+    }
+
+    fun generateSyntheticSecondaryConstructors(
+        thisDescriptor: ClassDescriptor,
+        bindingContext: BindingContext,
+        result: MutableCollection<ClassConstructorDescriptor>
     ) {
     }
 }

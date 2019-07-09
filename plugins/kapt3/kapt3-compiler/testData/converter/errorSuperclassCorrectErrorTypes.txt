@@ -176,7 +176,7 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
-public final class TFooBar extends Foo implements Bar, test.Intf {
+public final class TFooBar extends Foo implements test.Intf, Bar {
     @org.jetbrains.annotations.NotNull()
     private final X a = null;
 
@@ -310,7 +310,7 @@ package test;
 import java.lang.System;
 
 @kotlin.Metadata()
-public final class TxFooxBarxBaz extends x.Foo implements x.Bar, x.Baz, test.Intf {
+public final class TxFooxBarxBaz extends x.Foo implements test.Intf, x.Bar, x.Baz {
 
     public TxFooxBarxBaz() {
         super();

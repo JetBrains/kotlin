@@ -1,0 +1,4 @@
+
+fun foo(`object`: Any) {
+    val bar = "$`object`"
+}

@@ -19,16 +19,17 @@ package org.jetbrains.kotlin.gradle.tasks
 import org.jetbrains.kotlin.gradle.plugin.SubpluginOption
 
 class CompilerPluginOptions {
-    private val mutableArguments = arrayListOf<String>()
-
     internal val subpluginOptionsByPluginId =
         mutableMapOf<String, MutableList<SubpluginOption>>()
 
     val arguments: List<String>
-        get() = mutableArguments
+        get() = subpluginOptionsByPluginId.flatMap { (pluginId, subplubinOptions) ->
+            subplubinOptions.map { option ->
+                "plugin:$pluginId:${option.key}=${option.value}"
+            }
+        }
 
     fun addPluginArgument(pluginId: String, option: SubpluginOption) {
-        mutableArguments.add("plugin:$pluginId:${option.key}=${option.value}")
         subpluginOptionsByPluginId.getOrPut(pluginId) { mutableListOf() }.add(option)
     }
 }

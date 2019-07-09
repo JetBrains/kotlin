@@ -23,11 +23,11 @@ import org.jetbrains.uast.UWhileExpression
 import org.jetbrains.uast.kotlin.declarations.KotlinUIdentifier
 
 class KotlinUWhileExpression(
-        override val psi: KtWhileExpression,
+        override val sourcePsi: KtWhileExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UWhileExpression {
-    override val condition by lz { KotlinConverter.convertOrEmpty(psi.condition, this) }
-    override val body by lz { KotlinConverter.convertOrEmpty(psi.body, this) }
+    override val condition by lz { KotlinConverter.convertOrEmpty(sourcePsi.condition, this) }
+    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.body, this) }
 
     override val whileIdentifier: UIdentifier
         get() = KotlinUIdentifier(null, this)

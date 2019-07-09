@@ -107,8 +107,6 @@
                         <artifactId>maven-invoker-plugin</artifactId>
                         <version>2.0.0</version>
                         <configuration>
-                            <projectsDirectory>src/it</projectsDirectory>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
                             </pomIncludes>
@@ -131,6 +129,10 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk7:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-stdlib-jdk8:${project.version}:jar:modular</artifact>
+                                <artifact>org.jetbrains.kotlin:kotlin-reflect:${project.version}:jar:modular</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-annotations-common:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test:${project.version}</artifact>
@@ -152,7 +154,23 @@
                         <executions>
                             <execution>
                                 <id>integration-test</id>
+                                <configuration>
+                                    <projectsDirectory>src/it</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                </configuration>
                                 <!--<phase>package</phase>-->
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>integration-test-java9</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java9</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
+                                    <javaHome>${env.JDK_9}</javaHome>
+                                </configuration>
                                 <goals>
                                     <goal>install</goal>
                                     <goal>run</goal>

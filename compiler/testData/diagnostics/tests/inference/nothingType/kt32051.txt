@@ -1,0 +1,28 @@
+package
+
+public fun </*0*/ X> adjustIt(/*0*/ fn: () -> X): X
+public fun </*0*/ X> adjustIt(/*0*/ f1: () -> X, /*1*/ f2: () -> X): X
+public fun </*0*/ X> callAdjustIt(/*0*/ t: BiType<*, *>, /*1*/ x: X, /*2*/ level: LevelA): kotlin.Unit
+
+public final class BiType</*0*/ out X, /*1*/ out Y> {
+    public constructor BiType</*0*/ out X, /*1*/ out Y>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ X> pullXb(/*0*/ x: X): BiType<X, LevelB>
+    public final fun </*0*/ X> pullXn(/*0*/ x: X): BiType<X, kotlin.Nothing>
+    public final fun </*0*/ Y> pullYb(/*0*/ y: Y): BiType<LevelB, Y>
+    public final fun </*0*/ Y> pullYn(/*0*/ y: Y): BiType<kotlin.Nothing, Y>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface LevelA {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface LevelB : LevelA {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

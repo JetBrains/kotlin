@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS_IR
+// KJS_WITH_FULL_RUNTIME
 // EXPECTED_REACHABLE_NODES: 1681
 /*
  * Copy of JVM-backend test
@@ -23,14 +23,14 @@ inline fun testAllInline(f: () -> String) : String {
                     p { +"this format can be used as an alternative markup to XML" }
 
                     // an element with attributes and text content
-                    a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                    a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
 
                     // mixed content
                     p {
                         +"This is some"
                         b { +"mixed" }
                         +"text. For more see the"
-                        a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                        a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
                         +"project"
                     }
                     p { +"some text" }
@@ -63,14 +63,14 @@ inline fun testHtmlNoInline(crossinline f: () -> String) : String {
                     p { +"this format can be used as an alternative markup to XML" }
 
                     // an element with attributes and text content
-                    a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                    a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
 
                     // mixed content
                     p {
                         +"This is some"
                         b { +"mixed" }
                         +"text. For more see the"
-                        a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                        a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
                         +"project"
                     }
                     p { +"some text" }
@@ -103,14 +103,14 @@ inline fun testBodyNoInline(crossinline f: () -> String) : String {
                     p { +"this format can be used as an alternative markup to XML" }
 
                     // an element with attributes and text content
-                    a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                    a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
 
                     // mixed content
                     p {
                         +"This is some"
                         b { +"mixed" }
                         +"text. For more see the"
-                        a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                        a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
                         +"project"
                     }
                     p { +"some text" }
@@ -143,14 +143,14 @@ inline fun testBodyHtmlNoInline(crossinline f: () -> String) : String {
                     p { +"this format can be used as an alternative markup to XML" }
 
                     // an element with attributes and text content
-                    a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                    a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
 
                     // mixed content
                     p {
                         +"This is some"
                         b { +"mixed" }
                         +"text. For more see the"
-                        a(href = "http://jetbrains.com/kotlin") { +"Kotlin" }
+                        a(href = "https://jetbrains.com/kotlin") { +"Kotlin" }
                         +"project"
                     }
                     p { +"some text" }
@@ -171,7 +171,7 @@ inline fun testBodyHtmlNoInline(crossinline f: () -> String) : String {
 
 fun box(): String {
     var expected = testAllInline({"x"});
-    print(expected + " " + testHtmlNoInline({"x"}))
+    expected + " " + testHtmlNoInline({"x"})
 
     if (expected != testHtmlNoInline({"x"})) return "fail 1: ${testHtmlNoInline({"x"})}\nbut expected\n${expected} "
     if (expected != testBodyNoInline({"x"})) return "fail 2: ${testBodyNoInline({"x"})}\nbut expected\n${expected} "

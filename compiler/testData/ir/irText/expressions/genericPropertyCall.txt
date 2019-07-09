@@ -1,21 +1,20 @@
 FILE fqName:<root> fileName:/genericPropertyCall.kt
-  PROPERTY name:id visibility:public modality:FINAL flags:val
-    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T) returnType:T flags:
-      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL flags:val
+  PROPERTY name:id visibility:public modality:FINAL [val] 
+    FUN name:<get-id> visibility:public modality:FINAL <T> ($receiver:T of <root>.<get-id>) returnType:T of <root>.<get-id> 
+      correspondingProperty: PROPERTY name:id visibility:public modality:FINAL [val] 
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $receiver: VALUE_PARAMETER name:<this> type:T flags:
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.<get-id> 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-id>() on T: T'
-          GET_VAR 'this@id: T' type=T origin=null
-  PROPERTY name:test visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public flags:final,static
+        RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'
+          GET_VAR '<this>: T of <root>.<get-id> declared in <root>.<get-id>' type=T of <root>.<get-id> origin=null
+  PROPERTY name:test visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
-        CALL '<get-id>() on T: T' type=kotlin.String origin=GET_PROPERTY
-          <`0>: kotlin.String
+        CALL 'public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>' type=kotlin.String origin=GET_PROPERTY
+          <T>: kotlin.String
           $receiver: CONST String type=kotlin.String value="abc"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.String flags:
-      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test> visibility:public modality:FINAL <> () returnType:kotlin.String 
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test>(): String'
-          GET_FIELD 'test: String' type=kotlin.String origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null

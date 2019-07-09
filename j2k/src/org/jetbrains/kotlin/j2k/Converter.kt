@@ -162,7 +162,7 @@ class Converter private constructor(
         }
 
         val annotations = convertAnnotations(psiClass)
-        var modifiers = convertModifiers(psiClass, false, false)
+        var modifiers = convertModifiers(psiClass, isMethodInOpenClass = false, isInObject = false)
         val typeParameters = convertTypeParameterList(psiClass.typeParameterList)
         val extendsTypes = convertToNotNullableTypes(psiClass.extendsList)
         val implementsTypes = convertToNotNullableTypes(psiClass.implementsList)
@@ -293,14 +293,20 @@ class Converter private constructor(
         classBody = ClassBody(null, constructorSignature, classBody.baseClassParams, classBody.members,
                               classBody.companionObjectMembers, classBody.lBrace, classBody.rBrace, classBody.classKind)
 
-        return Class(psiClass.declarationIdentifier(),
-                     convertAnnotations(psiClass),
-                     convertModifiers(psiClass, false, false).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
-                     TypeParameterList.Empty,
-                     listOf(),
-                     null,
-                     listOf(),
-                     classBody).assignPrototype(psiClass)
+        return Class(
+            psiClass.declarationIdentifier(),
+            convertAnnotations(psiClass),
+            convertModifiers(
+                psiClass,
+                isMethodInOpenClass = false,
+                isInObject = false
+            ).with(Modifier.ANNOTATION).without(Modifier.ABSTRACT),
+            TypeParameterList.Empty,
+            listOf(),
+            null,
+            listOf(),
+            classBody
+        ).assignPrototype(psiClass)
     }
 
     fun convertInitializer(initializer: PsiClassInitializer): Initializer {

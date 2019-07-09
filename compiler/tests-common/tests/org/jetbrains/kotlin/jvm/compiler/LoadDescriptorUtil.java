@@ -51,10 +51,8 @@ import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class LoadDescriptorUtil {
@@ -84,10 +82,38 @@ public class LoadDescriptorUtil {
             boolean useJavacWrapper,
             @Nullable LanguageVersionSettings explicitLanguageVersionSettings
     ) {
+        return loadTestPackageAndBindingContextFromJavaRoot(
+                javaRoot,
+                disposable,
+                testJdkKind,
+                configurationKind,
+                isBinaryRoot,
+                useFastClassReading,
+                useJavacWrapper,
+                explicitLanguageVersionSettings,
+                Collections.emptyList(),
+                (configuration) -> {}
+        );
+    }
+
+    @NotNull
+    public static Pair<PackageViewDescriptor, BindingContext> loadTestPackageAndBindingContextFromJavaRoot(
+            @NotNull File javaRoot,
+            @NotNull Disposable disposable,
+            @NotNull TestJdkKind testJdkKind,
+            @NotNull ConfigurationKind configurationKind,
+            boolean isBinaryRoot,
+            boolean useFastClassReading,
+            boolean useJavacWrapper,
+            @Nullable LanguageVersionSettings explicitLanguageVersionSettings,
+            @NotNull List<File> additionalClasspath,
+            @NotNull Consumer<KotlinCoreEnvironment> configureEnvironment
+    ) {
         List<File> javaBinaryRoots = new ArrayList<>();
         // TODO: use the same additional binary roots as those were used for compilation
         javaBinaryRoots.add(KotlinTestUtils.getAnnotationsJar());
         javaBinaryRoots.add(ForTestCompileRuntime.jvmAnnotationsForTests());
+        javaBinaryRoots.addAll(additionalClasspath);
 
         List<File> javaSourceRoots = new ArrayList<>();
         javaSourceRoots.add(new File("compiler/testData/loadJava/include"));
@@ -106,6 +132,7 @@ public class LoadDescriptorUtil {
         }
         KotlinCoreEnvironment environment =
                 KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES);
+        configureEnvironment.accept(environment);
         if (useJavacWrapper) {
             JavacRegistrarForTests.INSTANCE.registerJavac(environment);
         }

@@ -147,27 +147,7 @@ class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
     }
 
     @Override
-    public int getErrorsCount(CharSequence seq, Language fileLanguage, Project project) {
-        Lexer lexer = new KotlinLexer();
-
-        lexer.start(seq);
-        if (lexer.getTokenType() != KtTokens.LBRACE) return IErrorCounterReparseableElementType.FATAL_ERROR;
-        lexer.advance();
-        int balance = 1;
-        while (true) {
-            IElementType type = lexer.getTokenType();
-            if (type == null) break;
-            if (balance == 0) {
-                return IErrorCounterReparseableElementType.FATAL_ERROR;
-            }
-            if (type == KtTokens.LBRACE) {
-                balance++;
-            }
-            else if (type == KtTokens.RBRACE) {
-                balance--;
-            }
-            lexer.advance();
-        }
-        return balance;
+    public int getErrorsCount(CharSequence seq, Language fileLanguage, Project project){
+        return ElementTypeUtils.getKotlinBlockImbalanceCount(seq);
     }
 }

@@ -1,8 +1,6 @@
 // !LANGUAGE: +JvmStaticInInterface
 // JVM_TARGET: 1.8
-// IGNORE_BACKEND: JS_IR
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 
 // WITH_RUNTIME
 // FILE: Test.java

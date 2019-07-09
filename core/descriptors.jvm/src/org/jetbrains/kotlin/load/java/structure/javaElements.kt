@@ -48,6 +48,8 @@ interface JavaTypeParameterListOwner : JavaElement {
 interface JavaAnnotation : JavaElement {
     val arguments: Collection<JavaAnnotationArgument>
     val classId: ClassId?
+    val isIdeExternalAnnotation: Boolean
+        get() = false
 
     fun resolve(): JavaClass?
 }
@@ -105,7 +107,12 @@ interface JavaMethod : JavaMember, JavaTypeParameterListOwner {
     val valueParameters: List<JavaValueParameter>
     val returnType: JavaType
 
+    // WARNING: computing the default value may lead to an exception in the compiler because of IDEA-207252.
+    // If you only need to check default value presence, use `hasAnnotationParameterDefaultValue` instead.
+    val annotationParameterDefaultValue: JavaAnnotationArgument?
+
     val hasAnnotationParameterDefaultValue: Boolean
+        get() = annotationParameterDefaultValue != null
 }
 
 interface JavaField : JavaMember {

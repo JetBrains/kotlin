@@ -22,9 +22,9 @@ class TypeParameter(val oldName: String, val newName: String?, val isReified: Bo
 
 //typeMapping data could be changed outside through method processing
 class TypeRemapper private constructor(
-        private val typeMapping: MutableMap<String, String?>,
-        val parent: TypeRemapper? = null,
-        private val isRootInlineLambda: Boolean = false
+    private val typeMapping: MutableMap<String, String?>,
+    val parent: TypeRemapper? = null,
+    private val isRootInlineLambda: Boolean = false
 ) {
     private val additionalMappings = hashMapOf<String, String>()
     private val typeParametersMapping = hashMapOf<String, TypeParameter>()
@@ -54,7 +54,7 @@ class TypeRemapper private constructor(
 
     fun registerTypeParameter(mapping: TypeParameterMapping) {
         typeParametersMapping[mapping.name] = TypeParameter(
-                mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
+            mapping.name, mapping.reificationArgument?.parameterName, mapping.isReified, mapping.signature
         )
     }
 

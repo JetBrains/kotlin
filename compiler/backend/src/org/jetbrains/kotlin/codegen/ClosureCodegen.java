@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -52,7 +52,7 @@ import java.util.List;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConst;
 import static org.jetbrains.kotlin.codegen.binding.CodegenBinding.CLOSURE;
-import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtils2Kt.initDefaultSourceMappingIfNeeded;
+import static org.jetbrains.kotlin.codegen.inline.InlineCodegenUtilsKt.initDefaultSourceMappingIfNeeded;
 import static org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.METHOD_FOR_FUNCTION;
 import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin.NO_ORIGIN;
@@ -142,13 +142,14 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             sw.writeInterfaceEnd();
         }
 
-        v.defineClass(element,
-                      state.getClassFileVersion(),
-                      ACC_FINAL | ACC_SUPER | visibilityFlag,
-                      asmType.getInternalName(),
-                      sw.makeJavaGenericSignature(),
-                      superClassAsmType.getInternalName(),
-                      superInterfaceAsmTypes
+        v.defineClass(
+                element,
+                state.getClassFileVersion(),
+                ACC_FINAL | ACC_SUPER | visibilityFlag | getSyntheticAccessFlagForLambdaClass(classDescriptor),
+                asmType.getInternalName(),
+                sw.makeJavaGenericSignature(),
+                superClassAsmType.getInternalName(),
+                superInterfaceAsmTypes
         );
 
         initDefaultSourceMappingIfNeeded(context, this, state);
@@ -245,7 +246,9 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
         DescriptorSerializer serializer =
                 DescriptorSerializer.createForLambda(new JvmSerializerExtension(v.getSerializationBindings(), state));
 
-        ProtoBuf.Function functionProto = serializer.functionProto(freeLambdaDescriptor).build();
+        ProtoBuf.Function.Builder builder = serializer.functionProto(freeLambdaDescriptor);
+        if (builder == null) return;
+        ProtoBuf.Function functionProto = builder.build();
 
         WriteAnnotationUtilKt.writeKotlinMetadata(v, state, KotlinClassHeader.Kind.SYNTHETIC_CLASS, 0, av -> {
             writeAnnotationData(av, serializer, functionProto);
@@ -396,14 +399,17 @@ public class ClosureCodegen extends MemberCodegen<KtElement> {
             @NotNull CallableDescriptor descriptor,
             @NotNull GenerationState state
     ) {
+        KotlinTypeMapper typeMapper = state.getTypeMapper();
         DeclarationDescriptor container = descriptor.getContainingDeclaration();
 
         if (container instanceof ClassDescriptor) {
             // TODO: would it work for arrays?
-            putJavaLangClassInstance(iv, state.getTypeMapper().mapClass((ClassDescriptor) container));
+            SimpleType containerKotlinType = ((ClassDescriptor) container).getDefaultType();
+            Type containerType = typeMapper.mapClass((ClassDescriptor) container);
+            putJavaLangClassInstance(iv, containerType, containerKotlinType, typeMapper);
         }
         else if (container instanceof PackageFragmentDescriptor) {
-            iv.aconst(state.getTypeMapper().mapOwner(descriptor));
+            iv.aconst(typeMapper.mapOwner(descriptor));
         }
         else if (descriptor instanceof VariableDescriptorWithAccessors) {
             iv.aconst(state.getBindingContext().get(

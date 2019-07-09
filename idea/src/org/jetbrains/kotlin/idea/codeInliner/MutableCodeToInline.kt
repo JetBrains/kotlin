@@ -95,10 +95,10 @@ internal fun MutableCodeToInline.toNonMutable(): CodeToInline {
 }
 
 internal inline fun <reified T : PsiElement> MutableCodeToInline.collectDescendantsOfType(noinline predicate: (T) -> Boolean = { true }): List<T> {
-    return expressions.flatMap { it.collectDescendantsOfType<T>({ true }, predicate) }
+    return expressions.flatMap { it.collectDescendantsOfType({ true }, predicate) }
 }
 
 internal inline fun <reified T : PsiElement> MutableCodeToInline.forEachDescendantOfType(noinline action: (T) -> Unit) {
-    expressions.forEach { it.forEachDescendantOfType<T>(action) }
+    expressions.forEach { it.forEachDescendantOfType(action) }
 }
 

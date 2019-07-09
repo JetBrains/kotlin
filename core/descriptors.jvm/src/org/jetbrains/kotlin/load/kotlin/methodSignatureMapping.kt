@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.load.kotlin
@@ -49,12 +49,12 @@ fun forceSingleValueParameterBoxing(f: CallableDescriptor): Boolean {
     if ((f.original.valueParameters.single().type.mapToJvmType() as? JvmType.Primitive)?.jvmPrimitiveType != JvmPrimitiveType.INT) return false
 
     val overridden =
-            BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f)
+        BuiltinMethodsWithSpecialGenericSignature.getOverriddenBuiltinFunctionWithErasedValueParametersInJava(f)
             ?: return false
 
     val overriddenParameterType = overridden.original.valueParameters.single().type.mapToJvmType()
     return overridden.containingDeclaration.fqNameUnsafe == KotlinBuiltIns.FQ_NAMES.mutableCollection.toUnsafe()
-           && overriddenParameterType is JvmType.Object && overriddenParameterType.internalName == "java/lang/Object"
+            && overriddenParameterType is JvmType.Object && overriddenParameterType.internalName == "java/lang/Object"
 }
 
 // This method only returns not-null for class methods
@@ -65,8 +65,8 @@ internal fun CallableDescriptor.computeJvmSignature(): String? = signatures {
     if (classDescriptor.name.isSpecial) return null
 
     signature(
-            classDescriptor,
-            (original as? SimpleFunctionDescriptor ?: return null).computeJvmDescriptor()
+        classDescriptor,
+        (original as? SimpleFunctionDescriptor ?: return null).computeJvmDescriptor()
     )
 }
 
@@ -79,7 +79,7 @@ internal val ClassDescriptor.internalName: String
         return computeInternalName(this, isIrBackend = false)
     }
 
-internal val ClassId.internalName: String
+val ClassId.internalName: String
     get() {
         return JvmClassName.byClassId(JavaToKotlinClassMap.mapKotlinToJava(asSingleFqName().toUnsafe()) ?: this).internalName
     }
@@ -101,6 +101,7 @@ internal fun KotlinType.mapToJvmType() =
 sealed class JvmType {
     // null means 'void'
     class Primitive(val jvmPrimitiveType: JvmPrimitiveType?) : JvmType()
+
     class Object(val internalName: String) : JvmType()
     class Array(val elementType: JvmType) : JvmType()
 
@@ -109,16 +110,16 @@ sealed class JvmType {
 
 private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
     override fun boxType(possiblyPrimitiveType: JvmType) =
-            when {
-                possiblyPrimitiveType is JvmType.Primitive && possiblyPrimitiveType.jvmPrimitiveType != null ->
-                    createObjectType(
-                            JvmClassName.byFqNameWithoutInnerClasses(
-                                    possiblyPrimitiveType.jvmPrimitiveType.wrapperFqName).internalName)
-                else -> possiblyPrimitiveType
-            }
+        when {
+            possiblyPrimitiveType is JvmType.Primitive && possiblyPrimitiveType.jvmPrimitiveType != null ->
+                createObjectType(
+                    JvmClassName.byFqNameWithoutInnerClasses(possiblyPrimitiveType.jvmPrimitiveType.wrapperFqName).internalName
+                )
+            else -> possiblyPrimitiveType
+        }
 
     override fun createFromString(representation: String): JvmType {
-        assert(representation.length > 0) { "empty string as JvmType" }
+        assert(representation.isNotEmpty()) { "empty string as JvmType" }
         val firstChar = representation[0]
 
         JvmPrimitiveType.values().firstOrNull { it.desc[0] == firstChar }?.let {
@@ -141,11 +142,11 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
     override fun createObjectType(internalName: String) = JvmType.Object(internalName)
 
     override fun toString(type: JvmType): String =
-            when (type) {
-                is JvmType.Array -> "[" + toString(type.elementType)
-                is JvmType.Primitive -> type.jvmPrimitiveType?.desc ?: "V"
-                is JvmType.Object -> "L" + type.internalName + ";"
-            }
+        when (type) {
+            is JvmType.Array -> "[" + toString(type.elementType)
+            is JvmType.Primitive -> type.jvmPrimitiveType?.desc ?: "V"
+            is JvmType.Object -> "L" + type.internalName + ";"
+        }
 
     override val javaLangClassType: JvmType
         get() = createObjectType("java/lang/Class")
@@ -157,12 +158,10 @@ internal object TypeMappingConfigurationImpl : TypeMappingConfiguration<JvmType>
         throw AssertionError("There should be no intersection type in existing descriptors, but found: " + types.joinToString())
     }
 
-    override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor) = null
+    override fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): JvmType? = null
     override fun getPredefinedInternalNameForClass(classDescriptor: ClassDescriptor): String? = null
 
     override fun processErrorType(kotlinType: KotlinType, descriptor: ClassDescriptor) {
         // DO nothing
     }
-
-    override fun releaseCoroutines() = false
 }

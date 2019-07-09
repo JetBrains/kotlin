@@ -20,7 +20,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
-import com.intellij.psi.search.searches.ReferencesSearch
 import com.intellij.util.Processor
 import com.intellij.util.Query
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator
 import org.jetbrains.kotlin.idea.core.isVisible
+import org.jetbrains.kotlin.idea.findUsages.ReferencesSearchScopeHelper
 import org.jetbrains.kotlin.idea.inspections.IntentionBasedInspection
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
@@ -204,7 +204,7 @@ class DestructureIntention : SelfTargetingRangeIntention<KtDeclaration>(
                             Name.identifier(it), NoLookupLocation.FROM_BUILTINS).single())
                 }
 
-                ReferencesSearch.search(declaration).iterateOverMapEntryPropertiesUsages(
+                ReferencesSearchScopeHelper.search(declaration).iterateOverMapEntryPropertiesUsages(
                         context,
                         { index, usageData -> noBadUsages = usagesToRemove[index].add(usageData, index) && noBadUsages },
                         { noBadUsages = false }

@@ -1,10 +1,8 @@
-// IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS, NATIVE
+// TARGET_BACKEND: JVM
 // WITH_REFLECT
 
 import kotlin.reflect.*
-import kotlin.reflect.jvm.*
+import kotlin.reflect.jvm.isAccessible
 import kotlin.test.*
 
 abstract class Base {

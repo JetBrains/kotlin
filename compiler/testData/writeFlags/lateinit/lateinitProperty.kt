@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 class My {
     lateinit var s: String
         private set

@@ -1,0 +1,2 @@
+// FIX: Specify explicit lambda signature
+fun test(a: Int, b: Int) = { -> a + b }

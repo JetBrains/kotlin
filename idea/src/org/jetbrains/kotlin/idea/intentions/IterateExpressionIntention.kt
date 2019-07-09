@@ -86,11 +86,11 @@ class IterateExpressionIntention : SelfTargetingIntention<KtExpression>(KtExpres
                 var forExpression = psiFactory.createExpressionByPattern("for($0 in $1) {\nx\n}", paramPattern, element) as KtForExpression
                 forExpression = element.replaced(forExpression)
 
-                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(forExpression)?.let { forExpression ->
-                    val bodyPlaceholder = (forExpression.body as KtBlockExpression).statements.single()
-                    val parameters = forExpression.destructuringDeclaration?.entries ?: listOf(forExpression.loopParameter!!)
+                CodeInsightUtilCore.forcePsiPostprocessAndRestoreElement(forExpression)?.let { expression ->
+                    val bodyPlaceholder = (expression.body as KtBlockExpression).statements.single()
+                    val parameters = expression.destructuringDeclaration?.entries ?: listOf(expression.loopParameter!!)
 
-                    val templateBuilder = TemplateBuilderImpl(forExpression)
+                    val templateBuilder = TemplateBuilderImpl(expression)
                     for ((parameter, parameterNames) in (parameters zip names)) {
                         templateBuilder.replaceElement(parameter, ChooseStringExpression(parameterNames))
                     }

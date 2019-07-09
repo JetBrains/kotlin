@@ -1,21 +1,30 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
 
+import com.intellij.codeInsight.actions.OptimizeImportsProcessor
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
+import org.jetbrains.kotlin.idea.core.ShortenReferences
+import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 
-class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(KtCallExpression::class.java) {
-
+class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBasedInspection<KtCallExpression>(
+    KtCallExpression::class.java
+) {
     override fun inspectionText(element: KtCallExpression) = "Replace assert boolean with assert equality"
 
     override val defaultFixText = "Replace assert boolean with assert equality"
@@ -29,20 +38,23 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
         return (element.replaceableAssertion() != null)
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element as? KtCallExpression ?: return
-        val condition = expression.valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return
+    override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {
+        val valueArguments = element.valueArguments
+        val condition = valueArguments.firstOrNull()?.getArgumentExpression() as? KtBinaryExpression ?: return
         val left = condition.left ?: return
         val right = condition.right ?: return
-        val assertion = expression.replaceableAssertion() ?: return
-        val factory = KtPsiFactory(project)
+        val assertion = element.replaceableAssertion() ?: return
 
-        if (expression.valueArguments.size == 1) {
-            expression.replace(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
-        } else if (expression.valueArguments.size == 2) {
-            val message = expression.valueArguments[1].getArgumentExpression() ?: return
-            expression.replace(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
+        val file = element.containingKtFile
+        val factory = KtPsiFactory(project)
+        val replaced = if (valueArguments.size == 2) {
+            val message = valueArguments[1].getArgumentExpression() ?: return
+            element.replaced(factory.createExpressionByPattern("$assertion($0, $1, $2)", left, right, message))
+        } else {
+            element.replaced(factory.createExpressionByPattern("$assertion($0, $1)", left, right))
         }
+        ShortenReferences.DEFAULT.process(replaced)
+        OptimizeImportsProcessor(project, file).run()
     }
 
     private fun KtCallExpression.replaceableAssertion(): String? {
@@ -51,25 +63,39 @@ class ReplaceAssertBooleanWithAssertEqualityInspection : AbstractApplicabilityBa
             return null
         }
 
-        if (getCallableDescriptor()?.containingDeclaration?.fqNameSafe != FqName("kotlin.test")) {
+        val context = analyze(BodyResolveMode.PARTIAL)
+        if (descriptor(context)?.containingDeclaration?.fqNameSafe != FqName(kotlinTestPackage)) {
             return null
         }
 
         if (valueArguments.size != 1 && valueArguments.size != 2) return null
         val binaryExpression = valueArguments.first().getArgumentExpression() as? KtBinaryExpression ?: return null
+        val leftType = binaryExpression.left?.type(context) ?: return null
+        val rightType = binaryExpression.right?.type(context) ?: return null
+        if (!leftType.isSubtypeOf(rightType) && !rightType.isSubtypeOf(leftType)) return null
         val operationToken = binaryExpression.operationToken
 
         return assertionMap[Pair(referencedName, operationToken)]
     }
 
+    private fun KtExpression.descriptor(context: BindingContext): CallableDescriptor? {
+        return getResolvedCall(context)?.resultingDescriptor
+    }
+
+    private fun KtExpression.type(context: BindingContext): KotlinType? {
+        return descriptor(context)?.returnType
+    }
+
     companion object {
+        private const val kotlinTestPackage = "kotlin.test"
+
         private val assertions = setOf("assertTrue", "assertFalse")
 
         private val assertionMap = mapOf(
-            Pair("assertTrue", KtTokens.EQEQ) to "assertEquals",
-            Pair("assertTrue", KtTokens.EQEQEQ) to "assertSame",
-            Pair("assertFalse", KtTokens.EQEQ) to "assertNotEquals",
-            Pair("assertFalse", KtTokens.EQEQEQ) to "assertNotSame"
+            Pair("assertTrue", KtTokens.EQEQ) to "$kotlinTestPackage.assertEquals",
+            Pair("assertTrue", KtTokens.EQEQEQ) to "$kotlinTestPackage.assertSame",
+            Pair("assertFalse", KtTokens.EQEQ) to "$kotlinTestPackage.assertNotEquals",
+            Pair("assertFalse", KtTokens.EQEQEQ) to "$kotlinTestPackage.assertNotSame"
         )
     }
 }

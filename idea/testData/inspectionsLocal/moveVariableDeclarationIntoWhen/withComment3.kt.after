@@ -1,0 +1,6 @@
+fun foo(style: Int?): Int {
+    return when (val a = style ?: 0) { // comment
+        0 -> 0
+        else -> a
+    }
+}

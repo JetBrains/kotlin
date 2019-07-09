@@ -1,0 +1,31 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+    <application-components>
+        <component>
+            <implementation-class>org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache</implementation-class>
+        </component>
+    </application-components>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <psi.classFileDecompiler implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetadataDecompiler"/>
+
+        <fileType.fileViewProviderFactory filetype="KNM"
+                                          implementationClass="com.intellij.psi.ClassFileViewProviderFactory"/>
+        <filetype.stubBuilder filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileStubBuilder"/>
+        <filetype.decompiler filetype="KNM" implementationClass="com.intellij.psi.impl.compiled.ClassFileDecompiler"/>
+        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaFileTypeFactory"/>
+        <fileTypeFactory implementation="org.jetbrains.kotlin.ide.konan.KotlinNativeFileTypeFactory"/>
+        <fileBasedIndex implementation="org.jetbrains.kotlin.ide.konan.index.KotlinNativeMetaFileIndex"/>
+        <library.type implementation="org.jetbrains.kotlin.ide.konan.NativeLibraryType"/>
+        <lang.parserDefinition language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsParserDefinition"/>
+        <lang.syntaxHighlighterFactory language="KND" implementationClass="org.jetbrains.kotlin.ide.konan.NativeDefinitionsSyntaxHighlighterFactory"/>
+        <languageInjector implementation="org.jetbrains.kotlin.ide.konan.CLanguageInjector"/>
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <binaryExtension implementation="org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeMetaBinary"/>
+        <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind"/>
+        <idePlatformKindTooling implementation="org.jetbrains.kotlin.ide.konan.NativeIdePlatformKindTooling"/>
+        <idePlatformKindResolution implementation="org.jetbrains.kotlin.ide.konan.NativePlatformKindResolution"/>
+        <projectConfigurator implementation="org.jetbrains.kotlin.ide.konan.gradle.KotlinNativeGradleConfigurator"/>
+      </extensions>
+</idea-plugin>

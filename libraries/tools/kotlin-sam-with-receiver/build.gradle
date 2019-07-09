@@ -1,4 +1,5 @@
 apply plugin: 'kotlin'
+apply plugin: 'jps-compatible'
 
 configureJvmProject(project)
 configurePublishing(project)
@@ -9,16 +10,15 @@ compileJava {
     options.fork = false
 }
 
-repositories {
-    mavenLocal()
-    jcenter()
+pill {
+    variant = 'FULL'
 }
 
 dependencies {
     compile project(':kotlin-gradle-plugin-api')
     compile project(':kotlin-gradle-plugin-model')
 
-    compile project(':kotlin-stdlib')
+    compile kotlinStdlib()
     compileOnly project(':compiler')
     compileOnly project(':kotlin-sam-with-receiver-compiler-plugin')
 
@@ -26,9 +26,9 @@ dependencies {
 
     testCompile gradleApi()
     testCompile "junit:junit:4.12"
-}
 
-evaluationDependsOn(":kotlin-sam-with-receiver-compiler-plugin")
+    embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { transitive = false }
+}
 
 tasks.withType(project.compileKotlin.class) {
     kotlinOptions.languageVersion = "1.2"
@@ -37,8 +37,6 @@ tasks.withType(project.compileKotlin.class) {
 }
 
 jar {
-    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.classesDirs)
-    from(project(":kotlin-sam-with-receiver-compiler-plugin").sourceSets.main.output.resourcesDir)
     manifestAttributes(manifest, project)
 }
 
@@ -46,7 +44,8 @@ ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
 }
+
+javadocJar()
 
 test.executable = "${JDK_18}/bin/java"

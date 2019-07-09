@@ -38,7 +38,10 @@ abstract class NodeIndentStrategy {
         private var indentCallback: (CodeStyleSettings) -> Indent = { Indent.getNoneIndent() }
 
         private val within = ArrayList<IElementType>()
+        private var withinCallback: ((ASTNode) -> Boolean)? = null
+
         private val notIn = ArrayList<IElementType>()
+
         private val forElement = ArrayList<IElementType>()
         private val notForElement = ArrayList<IElementType>()
         private var forElementCallback: ((ASTNode) -> Boolean)? = null
@@ -69,6 +72,11 @@ abstract class NodeIndentStrategy {
 
         fun within(parentType: IElementType, vararg orParentTypes: IElementType): PositionStrategy {
             fillTypes(within, parentType, orParentTypes)
+            return this
+        }
+
+        fun within(callback: (ASTNode) -> Boolean): PositionStrategy {
+            withinCallback = callback
             return this
         }
 
@@ -127,6 +135,10 @@ abstract class NodeIndentStrategy {
                 }
 
                 if (notIn.contains(parent.elementType)) {
+                    return null
+                }
+
+                if (withinCallback?.invoke(parent) == false) {
                     return null
                 }
             }

@@ -1,0 +1,17 @@
+FILE: simple.kt
+    public final fun foo(first: R|kotlin/Int|, second: R|kotlin/Double|, third: R|kotlin/Boolean|, fourth: R|kotlin/String|): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        R|/foo|(Int(1), Double(2.0), Boolean(true), String())
+        R|/foo|(Int(1), Double(2.0), Boolean(true), fourth = String(!))
+        R|/foo|(Int(1), Double(2.0), fourth = String(???), third = Boolean(false))
+        R|/foo|(Int(1), second = Double(3.14), third = Boolean(false), fourth = String(!?))
+        R|/foo|(third = Boolean(false), second = Double(2.71), fourth = String(?!), first = Int(0))
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#()
+        <Inapplicable(INAPPLICABLE): [/foo]>#(Double(0.0), Boolean(false), Int(0), String())
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(1), Double(2.0), third = Boolean(true), String())
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(second = Double(0.0), first = Int(0), fourth = String())
+        <Inapplicable(INAPPLICABLE): [/foo]>#(first = Double(0.0), second = Int(0), third = String(), fourth = Boolean(false))
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(first = Int(0), second = Double(0.0), third = Boolean(false), fourth = String(), first = Int(1))
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(0), Double(0.0), Boolean(false), foth = String())
+    }

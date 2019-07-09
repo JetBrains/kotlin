@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.random
@@ -10,7 +10,7 @@ import kotlin.math.nextDown
 /**
  * An abstract class that is implemented by random number generator algorithms.
  *
- * The companion object [Random.Companion] is the default instance of [Random].
+ * The companion object [Random.Default] is the default instance of [Random].
  *
  * To get a seeded instance of random generator use [Random] function.
  *
@@ -36,7 +36,7 @@ public abstract class Random {
     public open fun nextInt(): Int = nextBits(32)
 
     /**
-     * Gets the next random non-negative `Int` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Int` from the random number generator less than the specified [until] bound.
      *
      * Generates an `Int` random value uniformly distributed between `0` (inclusive) and the specified [until] bound (exclusive).
      *
@@ -85,7 +85,7 @@ public abstract class Random {
     public open fun nextLong(): Long = nextInt().toLong().shl(32) + nextInt()
 
     /**
-     * Gets the next random non-negative `Long` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Long` from the random number generator less than the specified [until] bound.
      *
      * Generates a `Long` random value uniformly distributed between `0` (inclusive) and the specified [until] bound (exclusive).
      *
@@ -152,7 +152,7 @@ public abstract class Random {
     public open fun nextDouble(): Double = doubleFromParts(nextBits(26), nextBits(27))
 
     /**
-     * Gets the next random non-negative `Double` from the random number generator not greater than the specified [until] bound.
+     * Gets the next random non-negative `Double` from the random number generator less than the specified [until] bound.
      *
      * Generates a `Double` random value uniformly distributed between 0 (inclusive) and [until] (exclusive).
      *
@@ -336,8 +336,10 @@ public fun Random.nextLong(range: LongRange): Long = when {
 
 
 internal expect fun defaultPlatformRandom(): Random
-internal expect fun fastLog2(value: Int): Int //  31 - Integer.numberOfLeadingZeros(value)
 internal expect fun doubleFromParts(hi26: Int, low27: Int): Double
+
+@UseExperimental(ExperimentalStdlibApi::class)
+internal fun fastLog2(value: Int): Int = 31 - value.countLeadingZeroBits()
 
 /** Takes upper [bitCount] bits (0..32) from this number. */
 internal fun Int.takeUpperBits(bitCount: Int): Int =

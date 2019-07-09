@@ -46,8 +46,9 @@
 
 package org.jetbrains.kotlin.codegen.inline;
 
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.utils.SmartSet;
+import org.jetbrains.kotlin.utils.SmartIdentityTable;
 import org.jetbrains.org.objectweb.asm.*;
 
 import java.util.*;
@@ -61,6 +62,7 @@ import java.util.*;
  */
 public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     private static final int[] FRAME_SIZE_CHANGE_BY_OPCODE;
+
     static {
         // copy-pasted from org.jetbrains.org.objectweb.asm.Frame
         int i;
@@ -105,7 +107,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     private int maxStack;
 
     private final Collection<ExceptionHandler> exceptionHandlers = new LinkedList<>();
-    private final Map<Label, LabelWrapper> labelWrappersMap = new HashMap<>();
+    private final SmartIdentityTable<Label, LabelWrapper> labelWrappersTable = new SmartIdentityTable<>();
 
     public MaxStackFrameSizeAndLocalsCalculator(int api, int access, String descriptor, MethodVisitor mv) {
         super(api, access, descriptor, mv);
@@ -335,7 +337,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
          */
         int max = 0;
         Stack<LabelWrapper> stack = new Stack<>();
-        Set<LabelWrapper> pushed = new HashSet<>();
+        Set<LabelWrapper> pushed = SmartSet.create();
 
         stack.push(firstLabel);
         pushed.add(firstLabel);
@@ -375,7 +377,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
             @NotNull Label handler, String type
     ) {
         ExceptionHandler exceptionHandler = new ExceptionHandler(
-            getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)
+                getLabelWrapper(start), getLabelWrapper(end), getLabelWrapper(handler)
         );
 
         exceptionHandlers.add(exceptionHandler);
@@ -418,6 +420,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
 
         private int outputStackMax = 0;
         private int inputStackSize = 0;
+
         public LabelWrapper(Label label) {
             this.label = label;
         }
@@ -432,7 +435,7 @@ public class MaxStackFrameSizeAndLocalsCalculator extends MaxLocalsCalculator {
     // ------------------------------------------------------------------------
 
     private LabelWrapper getLabelWrapper(Label label) {
-        return ContainerUtil.<Label, LabelWrapper>getOrCreate(labelWrappersMap, label, () -> new LabelWrapper(label));
+        return labelWrappersTable.getOrCreate(label, () -> new LabelWrapper(label));
     }
 
     private void increaseStackSize(int variation) {

@@ -2,21 +2,6 @@ LineBreakpoint created at evProperty.kt:10
 Run Java
 Connected to the target VM
 evProperty.kt:10
-package evProperty
-
-class A {
-    var prop = 1
-}
-
-fun main(args: Array<String>) {
-    val a = A()
-    //Breakpoint!
-    if (a.prop == 1) {
-
-    }
-}
-
-// PRINT_FRAME
 Compile bytecode for a.prop
  frame    = main:10, EvPropertyKt {evProperty}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = evProperty.kt, 7)

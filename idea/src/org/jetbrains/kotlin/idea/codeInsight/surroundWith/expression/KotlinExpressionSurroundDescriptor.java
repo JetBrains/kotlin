@@ -16,15 +16,11 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.surroundWith.expression;
 
-import com.intellij.lang.surroundWith.SurroundDescriptor;
 import com.intellij.lang.surroundWith.Surrounder;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils;
-import org.jetbrains.kotlin.psi.KtExpression;
+import org.jetbrains.kotlin.idea.core.surroundWith.KotlinExpressionSurroundDescriptorBase;
 
-public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
+public class KotlinExpressionSurroundDescriptor extends KotlinExpressionSurroundDescriptorBase {
     private static final Surrounder[] SURROUNDERS = {
             new KotlinNotSurrounder(),
             new KotlinStringTemplateSurrounder(),
@@ -37,15 +33,6 @@ public class KotlinExpressionSurroundDescriptor implements SurroundDescriptor {
             new KotlinIfElseExpressionSurrounder(/* withBraces = */false),
             new KotlinIfElseExpressionSurrounder(/* withBraces = */true)
     };
-
-    @Override
-    @NotNull
-    public PsiElement[] getElementsToSurround(PsiFile file, int startOffset, int endOffset) {
-        KtExpression expression = (KtExpression) CodeInsightUtils.findElement(
-                file, startOffset, endOffset, CodeInsightUtils.ElementKind.EXPRESSION);
-
-        return expression == null ? PsiElement.EMPTY_ARRAY : new PsiElement[] {expression};
-    }
 
     @Override
     @NotNull

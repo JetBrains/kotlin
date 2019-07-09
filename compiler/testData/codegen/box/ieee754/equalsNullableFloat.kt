@@ -1,6 +1,6 @@
 // !LANGUAGE: -ProperIeee754Comparisons
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
+// DONT_TARGET_EXACT_BACKEND: JS_IR
 
 fun equals1(a: Float, b: Float?) = a == b
 

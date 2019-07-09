@@ -13,7 +13,7 @@ class Problem<F>(){
 
     fun createStateMachine(): StateMachine<F> = stateMachine {
         val letter = getInputStub()
-        if (<!NI;USELESS_IS_CHECK!>letter is Any<!>)
+        if (letter is Any)
             println("yes")
     }
 }

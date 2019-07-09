@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 inline class Foo(val x: Int) {
     inline fun inlineInc(): Foo = Foo(x + 1)

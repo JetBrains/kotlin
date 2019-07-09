@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "module": "ESNext",
+    "strict": true,
+    "sourceMap": true,
+    "allowSyntheticDefaultImports": true,
+    "inlineSourceMap": true
+  },
+  "exclude": [
+    "**/*Debug.ts"
+  ]
+}

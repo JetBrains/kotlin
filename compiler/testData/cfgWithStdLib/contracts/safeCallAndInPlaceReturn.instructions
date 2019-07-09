@@ -1,0 +1,104 @@
+== myRun ==
+inline fun Any?.myRun(block: () -> Unit): Unit {
+    contract {
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+    return block()
+}
+---------------------
+L0:
+  1 <START>
+    v(block: () -> Unit)
+    magic[FAKE_INITIALIZER](block: () -> Unit) -> <v0>
+    w(block|<v0>)
+  2 mark({ contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) } return block() })
+    mark({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    jmp?(L2)                                                                                      NEXT:[r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+    d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })                                       NEXT:[<SINK>]
+L2 [after local declaration]:
+    r({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) }) -> <v1>                               PREV:[jmp?(L2)]
+    mark(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) })
+    call(contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }, contract|<v1>) -> <v2>
+    r(block) -> <v3>
+    mark(block())
+    call(block(), invoke|<v3>) -> <v4>
+    ret(*|<v4>) L1
+L1:
+  1 <END>                                                                                         NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                       PREV:[]
+sink:
+    <SINK>                                                                                        PREV:[<ERROR>, <END>, d({ callsInPlace(block, InvocationKind.EXACTLY_ONCE) })]
+=====================
+== anonymous_0 ==
+{
+        callsInPlace(block, InvocationKind.EXACTLY_ONCE)
+    }
+---------------------
+L3:
+  3 <START>
+  4 mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    magic[IMPLICIT_RECEIVER](callsInPlace(block, InvocationKind.EXACTLY_ONCE)) -> <v0>
+    r(block) -> <v1>
+    mark(InvocationKind.EXACTLY_ONCE)
+    r(EXACTLY_ONCE) -> <v2>
+    mark(callsInPlace(block, InvocationKind.EXACTLY_ONCE))
+    call(callsInPlace(block, InvocationKind.EXACTLY_ONCE), callsInPlace|<v0>, <v1>, <v2>) -> <v3>
+L4:
+  3 <END>                                                                                            NEXT:[<SINK>]
+error:
+    <ERROR>                                                                                          PREV:[]
+sink:
+    <SINK>                                                                                           PREV:[<ERROR>, <END>]
+=====================
+== test ==
+fun test(): String {
+    val x: String? = null
+
+    x?.myRun {
+        return ""
+    }
+}
+---------------------
+L0:
+  1 <START>
+  2 mark({ val x: String? = null x?.myRun { return "" } })
+    v(val x: String? = null)
+    r(null) -> <v0>
+    w(x|<v0>)
+    mark(x?.myRun { return "" })
+    jf(L2)                                                    NEXT:[<END>, r(x) -> <v1>]
+    r(x) -> <v1>
+    mark({ return "" })
+    r({ return "" }) -> <v2>
+    mark(myRun { return "" })
+    call(myRun { return "" }, myRun|<v1>, <v2>) -> <v3>
+L3 [before inlined declaration]:
+    inlined({ return "" })                                    NEXT:[<SINK>]
+L1:
+L2 [result of call]:
+L4 [after inlined declaration]:
+  1 <END>                                                     NEXT:[<SINK>]                                                    PREV:[jf(L2), ret(*|<v0>) L1]
+error:
+    <ERROR>                                                   PREV:[]
+sink:
+    <SINK>                                                    PREV:[<ERROR>, <END>, inlined({ return "" })]
+=====================
+== inlined anonymous_1 ==
+{
+        return ""
+    }
+---------------------
+L5:
+  3 <START>
+  4 mark(return "")
+    mark("")
+    r("") -> <v0>
+    ret(*|<v0>) L1     NEXT:[<END>]
+L6:
+- 3 <END>              NEXT:[<SINK>]             PREV:[]
+error:
+-   <ERROR>            PREV:[]
+sink:
+-   <SINK>             PREV:[]
+=====================

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.caches.resolve
@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.caches.resolve
 import com.intellij.openapi.roots.libraries.PersistentLibraryKind
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analyzer.ResolverForModuleFactory
-import org.jetbrains.kotlin.analyzer.common.CommonAnalyzerFacade
+import org.jetbrains.kotlin.analyzer.common.CommonResolverForModuleFactory
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.context.ProjectContext
@@ -28,7 +28,7 @@ class CommonPlatformKindResolution : IdePlatformKindResolution {
     override val kind get() = CommonIdePlatformKind
 
     override val resolverForModuleFactory: ResolverForModuleFactory
-        get() = CommonAnalyzerFacade
+        get() = CommonResolverForModuleFactory(shouldCheckExpectActual = true)
 
     override fun createBuiltIns(settings: PlatformAnalysisSettings, projectContext: ProjectContext): KotlinBuiltIns {
         return DefaultBuiltIns.Instance

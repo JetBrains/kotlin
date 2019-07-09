@@ -50,7 +50,10 @@ class RemoteReplCompilerStateHistory(private val state: RemoteReplCompilerState)
     override val lock: ReentrantReadWriteLock get() = state.lock
 }
 
-class RemoteReplCompilerState(internal val replStateFacade: ReplStateFacade, override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()) : IReplStageState<Unit> {
+class RemoteReplCompilerState(
+    internal val replStateFacade: ReplStateFacade,
+    override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
+) : IReplStageState<Unit> {
 
     override val currentGeneration: Int get() = (history as RemoteReplCompilerStateHistory).currentGeneration.get()
 

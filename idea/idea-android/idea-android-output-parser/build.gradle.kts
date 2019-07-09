@@ -1,4 +1,3 @@
-
 plugins {
     kotlin("jvm")
 }
@@ -14,12 +13,14 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    if (Ide.IJ() && Platform[183].orLower()) {
+        "main" {
+            projectDefault()
+        }
+    } else {
+        "main" {}
+    }
     "test" {}
 }
 
-runtimeJar {
-    archiveName = "android-output-parser-ide.jar"
-}
-
-ideaPlugin()
+runtimeJar()

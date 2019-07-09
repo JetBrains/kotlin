@@ -1,6 +1,6 @@
 open class C0<X>(val x: X) {}
 
-open class C1<T: Any> (var _x1: T? = null, _x2: Double?, val _x3: ((Int) -> Int)?) : C0<((Int) -> Int)?>(_x3){
+open class C1<T: Any>(var _x1: T? = null, _x2: Double?, val _x3: ((Int) -> Int)?) : C0<((Int) -> Int)?>(_x3){
     fun bar() {
         val y1 = _x1;
         val y2 = _x2;

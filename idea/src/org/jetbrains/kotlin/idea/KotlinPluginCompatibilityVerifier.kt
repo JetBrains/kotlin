@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea
@@ -34,7 +34,7 @@ internal data class KotlinPluginVersion(
     val patchNumber: String // usually '1'
 ) {
     companion object {
-        private val KOTLIN_VERSION_REGEX = "^([\\d\\.]+)\\-([A-Za-z]+)\\-(\\d+)\\-([A-Za-z0-9\\.]+)\\-(\\d+)$".toRegex()
+        private val KOTLIN_VERSION_REGEX = "^([\\d.]+)-([A-Za-z]+)-(\\d+)-([A-Za-z0-9.]+)-(\\d+)$".toRegex()
 
         fun parse(version: String): KotlinPluginVersion? {
             val matchResult = KOTLIN_VERSION_REGEX.matchEntire(version) ?: return null

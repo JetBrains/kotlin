@@ -20,10 +20,7 @@ import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.allopen.AllOpenCommandLineProcessor.Companion.SUPPORTED_PRESETS
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.ANNOTATION
 import org.jetbrains.kotlin.allopen.AllOpenConfigurationKeys.PRESET
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.extensions.DeclarationAttributeAltererExtension
@@ -37,13 +34,17 @@ object AllOpenConfigurationKeys {
 
 class AllOpenCommandLineProcessor : CommandLineProcessor {
     companion object {
-        val SUPPORTED_PRESETS = mapOf("spring" to listOf(
-                "org.springframework.stereotype.Component",
-                "org.springframework.transaction.annotation.Transactional",
-                "org.springframework.scheduling.annotation.Async",
-                "org.springframework.cache.annotation.Cacheable",
-                "org.springframework.boot.test.context.SpringBootTest",
-                "org.springframework.validation.annotation.Validated"))
+        val SUPPORTED_PRESETS = mapOf(
+                "spring" to listOf(
+                    "org.springframework.stereotype.Component",
+                    "org.springframework.transaction.annotation.Transactional",
+                    "org.springframework.scheduling.annotation.Async",
+                    "org.springframework.cache.annotation.Cacheable",
+                    "org.springframework.boot.test.context.SpringBootTest",
+                    "org.springframework.validation.annotation.Validated"),
+                "quarkus" to listOf(
+                    "javax.enterprise.context.ApplicationScoped",
+                    "javax.enterprise.context.RequestScoped"))
 
         val ANNOTATION_OPTION = CliOption("annotation", "<fqname>", "Annotation qualified names",
                                           required = false, allowMultipleOccurrences = true)
@@ -57,10 +58,10 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
     override val pluginId = PLUGIN_ID
     override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) = when (option) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(ANNOTATION, value)
         PRESET_OPTION -> configuration.appendList(PRESET, value)
-        else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+        else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
     }
 }
 

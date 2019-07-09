@@ -47,6 +47,7 @@ inline fun <K, V> MutableMap<K, V>.getOrPutNullable(key: K, defaultValue: () -> 
         put(key, answer)
         answer
     } else {
+        @Suppress("UNCHECKED_CAST")
         get(key) as V
     }
 }

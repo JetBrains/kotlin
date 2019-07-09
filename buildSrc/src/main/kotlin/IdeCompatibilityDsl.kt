@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 import org.gradle.api.Project
@@ -26,7 +26,7 @@ fun CompatibilityPredicate.or(other: CompatibilityPredicate): CompatibilityPredi
 }
 
 enum class Platform : CompatibilityPredicate {
-    P173, P181, P182, P183, P191;
+    P181, P182, P183, P191, P192;
 
     val version: Int = name.drop(1).toInt()
 
@@ -41,16 +41,16 @@ enum class Platform : CompatibilityPredicate {
 }
 
 enum class Ide(val platform: Platform) : CompatibilityPredicate {
-    IJ173(Platform.P173),
     IJ181(Platform.P181),
     IJ182(Platform.P182),
     IJ183(Platform.P183),
     IJ191(Platform.P191),
+    IJ192(Platform.P192),
 
-    AS31(Platform.P173),
     AS32(Platform.P181),
     AS33(Platform.P182),
-    AS34(Platform.P183);
+    AS34(Platform.P183),
+    AS35(Platform.P183);
 
     val kind = Kind.values().first { it.shortName == name.take(2) }
     val version = name.dropWhile { !it.isDigit() }.toInt()

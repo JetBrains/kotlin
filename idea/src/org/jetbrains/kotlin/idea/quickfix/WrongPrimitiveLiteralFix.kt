@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
+import kotlin.math.floor
 
 private val valueRanges = mapOf(
         KotlinBuiltIns.FQ_NAMES._byte to Byte.MIN_VALUE.toLong()..Byte.MAX_VALUE.toLong(),
@@ -45,11 +47,13 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
     private val typeName = DescriptorUtils.getFqName(type.constructor.declarationDescriptor!!)
     private val expectedTypeIsFloat = KotlinBuiltIns.isFloat(type)
     private val expectedTypeIsDouble = KotlinBuiltIns.isDouble(type)
+    private val expectedTypeIsUnsigned = type.isUnsignedNumberType()
 
     private val constValue = run {
-        val shouldInlineCosntVals = element.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
+        val shouldInlineConstVals = element.languageVersionSettings.supportsFeature(LanguageFeature.InlineConstVals)
         ExpressionCodegen.getPrimitiveOrStringCompileTimeConstant(
-                element, element.analyze(BodyResolveMode.PARTIAL), shouldInlineCosntVals)?.value as? Number
+            element, element.analyze(BodyResolveMode.PARTIAL), shouldInlineConstVals
+        )?.value as? Number
     }
 
     private val fixedExpression = buildString {
@@ -57,17 +61,17 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
             append(constValue)
             if (expectedTypeIsFloat) {
                 append('F')
-            }
-            else if ('.' !in this) {
+            } else if ('.' !in this) {
                 append(".0")
             }
-        }
-        else {
+        } else if (expectedTypeIsUnsigned) {
+            append(constValue)
+            append('u')
+        } else {
             if (constValue is Float || constValue is Double) {
                 append(constValue.toLong())
-            }
-            else {
-                append(element.text.trimEnd('l', 'L'))
+            } else {
+                append(element.text.trimEnd('l', 'L', 'u'))
             }
 
             if (KotlinBuiltIns.isLong(type)) {
@@ -78,11 +82,11 @@ class WrongPrimitiveLiteralFix(element: KtConstantExpression, type: KotlinType) 
 
     override fun isAvailable(project: Project, editor: Editor?, file: KtFile): Boolean {
         if (constValue == null) return false
-        if (expectedTypeIsFloat || expectedTypeIsDouble) return true
+        if (expectedTypeIsFloat || expectedTypeIsDouble || expectedTypeIsUnsigned) return true
 
         if (constValue is Float || constValue is Double) {
             val value = constValue.toDouble()
-            if (value != Math.floor(value)) return false
+            if (value != floor(value)) return false
             if (value !in Long.MIN_VALUE.toDouble()..Long.MAX_VALUE.toDouble()) return false
         }
 

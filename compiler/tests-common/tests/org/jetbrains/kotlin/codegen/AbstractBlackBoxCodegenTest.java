@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -9,11 +9,12 @@ import com.intellij.openapi.util.io.FileUtil;
 import kotlin.io.FilesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.TestsRuntimeError;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.resolve.BindingContext;
+import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.test.InTextDirectivesUtils;
+import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.utils.ExceptionUtilsKt;
 
 import java.io.File;
@@ -26,26 +27,26 @@ import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getBoxM
 import static org.jetbrains.kotlin.test.clientserver.TestProcessServerKt.getGeneratedClass;
 
 public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
-
     @Override
-    protected void doMultiFileTest(
-        @NotNull File wholeFile,
-        @NotNull List<TestFile> files,
-        @Nullable File javaFilesDir
-    ) throws Exception {
+    protected void doMultiFileTest(@NotNull File wholeFile, @NotNull List<TestFile> files) throws Exception {
+        boolean isIgnored = InTextDirectivesUtils.isIgnoredTarget(getBackend(), wholeFile);
+
+        compile(files, !isIgnored);
+
         try {
-            compile(files, javaFilesDir);
-            blackBox();
+            blackBox(!isIgnored);
         }
         catch (Throwable t) {
-            try {
-                // To create .txt file in case of failure
-                doBytecodeListingTest(wholeFile);
-            }
-            catch (Throwable ignored) {
+            if (!isIgnored) {
+                try {
+                    // To create .txt file in case of failure
+                    doBytecodeListingTest(wholeFile);
+                }
+                catch (Throwable ignored) {
+                }
             }
 
-            throw t;
+            throw new TestsRuntimeError(t);
         }
 
         doBytecodeListingTest(wholeFile);
@@ -89,11 +90,11 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
         assertEqualsToFile(expectedFile, text, s -> s.replace("COROUTINES_PACKAGE", coroutinesPackage));
     }
 
-    protected void blackBox() {
+    protected void blackBox(boolean reportProblems) {
         // If there are many files, the first 'box(): String' function will be executed.
-        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader();
+        GeneratedClassLoader generatedClassLoader = generateAndCreateClassLoader(reportProblems);
         for (KtFile firstFile : myFiles.getPsiFiles()) {
-            String className = getFacadeFqName(firstFile, classFileFactory.getGenerationState().getBindingContext());
+            String className = getFacadeFqName(firstFile);
             if (className == null) continue;
             Class<?> aClass = getGeneratedClass(generatedClassLoader, className);
             try {
@@ -104,7 +105,9 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                 }
             }
             catch (Throwable e) {
-                System.out.println(generateToText());
+                if (reportProblems) {
+                    System.out.println(generateToText());
+                }
                 throw ExceptionUtilsKt.rethrow(e);
             }
             finally {
@@ -115,12 +118,13 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
     }
 
     @Nullable
-    private static String getFacadeFqName(@NotNull KtFile firstFile, @NotNull BindingContext bindingContext) {
-        for (KtDeclaration declaration : CodegenUtil.getDeclarationsToGenerate(firstFile, bindingContext)) {
-            if (declaration instanceof KtProperty || declaration instanceof KtNamedFunction || declaration instanceof KtTypeAlias) {
-                return JvmFileClassUtil.getFileClassInfoNoResolve(firstFile).getFacadeClassFqName().asString();
-            }
-        }
-        return null;
+    private static String getFacadeFqName(@NotNull KtFile file) {
+        return CodegenUtil.getMemberDeclarationsToGenerate(file).isEmpty()
+               ? null
+               : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
+    }
+
+    protected TargetBackend getBackend() {
+        return TargetBackend.JVM;
     }
 }

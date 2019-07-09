@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 
 inline fun <R, T> foo(x : R, y : R, block : (R, R) -> T) : T {
     return block(x, y)
@@ -16,19 +17,20 @@ fun bar() {
 
 // 0 valueOf
 // 0 Value\s\(\)
-// 1 LOCALVARIABLE x I (.*) 5
-// 1 LOCALVARIABLE y I (.*) 4
-// 1 LOCALVARIABLE x J (.*) 6
-// 1 LOCALVARIABLE y J (.*) 4
-// 1 LOCALVARIABLE x F (.*) 5
-// 1 LOCALVARIABLE y F (.*) 4
-// 1 LOCALVARIABLE x D (.*) 6
-// 1 LOCALVARIABLE y D (.*) 4
-// 1 LOCALVARIABLE x B (.*) 5
-// 1 LOCALVARIABLE y B (.*) 4
-// 1 LOCALVARIABLE x S (.*) 5
-// 1 LOCALVARIABLE y S (.*) 4
-// 1 LOCALVARIABLE x C (.*) 5
-// 1 LOCALVARIABLE y C (.*) 4
-// 1 LOCALVARIABLE x Z (.*) 5
-// 1 LOCALVARIABLE y Z (.*) 4
+// 1 LOCALVARIABLE x I (.*) 6
+// 1 LOCALVARIABLE y I (.*) 5
+// 1 LOCALVARIABLE x J (.*) 7
+// 1 LOCALVARIABLE y J (.*) 5
+// 1 LOCALVARIABLE x F (.*) 6
+// 1 LOCALVARIABLE y F (.*) 5
+// 1 LOCALVARIABLE x D (.*) 7
+// 1 LOCALVARIABLE y D (.*) 5
+// 1 LOCALVARIABLE x B (.*) 6
+// 1 LOCALVARIABLE y B (.*) 5
+// 1 LOCALVARIABLE x S (.*) 6
+// 1 LOCALVARIABLE y S (.*) 5
+// 1 LOCALVARIABLE x C (.*) 6
+// 1 LOCALVARIABLE y C (.*) 5
+// 1 LOCALVARIABLE x Z (.*) 6
+// 1 LOCALVARIABLE y Z (.*) 5
+

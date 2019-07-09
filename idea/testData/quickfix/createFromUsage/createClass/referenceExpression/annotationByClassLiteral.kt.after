@@ -5,4 +5,4 @@
     }
 }
 
-<caret>annotation class Foo
+annotation class <caret>Foo

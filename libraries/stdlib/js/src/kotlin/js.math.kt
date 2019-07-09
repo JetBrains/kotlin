@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.js
@@ -48,7 +48,7 @@ public external object Math {
     public fun tan(value: Double): Double
     @Deprecated("Use kotlin.math.ln instead.", ReplaceWith("ln(value)", "kotlin.math.ln"), level = DeprecationLevel.ERROR)
     public fun log(value: Double): Double
-    @Deprecated("Use kotlin.math.pow instead.", ReplaceWith("pow(base, exp)", "kotlin.math.pow"), level = DeprecationLevel.ERROR)
+    @Deprecated("Use kotlin.math.pow instead.", ReplaceWith("base.pow(exp)", "kotlin.math.pow"), level = DeprecationLevel.ERROR)
     public fun pow(base: Double, exp: Double): Double
     @Deprecated("Use kotlin.math.round instead.", ReplaceWith("round(value)", "kotlin.math.round"), level = DeprecationLevel.ERROR)
     public fun round(value: Number): Int
@@ -87,6 +87,9 @@ public external object Math {
     internal fun log2(value: Double): Double
     @PublishedApi
     internal fun log1p(value: Double): Double
+
+    @PublishedApi
+    internal fun clz32(value: Int): Int
 }
 
 /**

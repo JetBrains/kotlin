@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 class A
 
 fun foo(x: List<A>, f: (<selection>A</selection>) -> Int) {

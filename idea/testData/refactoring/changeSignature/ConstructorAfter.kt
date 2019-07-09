@@ -1,6 +1,6 @@
 open class C0(val x: Any?) {}
 
-open class C1 (var _x1: Int = 1, _x2: Float?, val _x3: ((Int) -> Int)?) : C0(_x3){
+open class C1(var _x1: Int = 1, _x2: Float?, val _x3: ((Int) -> Int)?) : C0(_x3){
     fun bar() {
         val y1 = _x1;
         val y2 = _x2;

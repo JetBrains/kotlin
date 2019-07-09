@@ -18,7 +18,12 @@ object TT {
     val x: String
         inline get() = baz
 
+    inline val y: String
+        get() = qux
+
     fun bar(s: String) = s
 
     val baz = ""
+
+    val qux = ""
 }

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.quickfix
 import com.intellij.codeInsight.daemon.QuickFixBundle
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.Messages
@@ -36,11 +37,11 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
         REMOVE_ALL, KEEP_INITIALIZE, CANCEL
     }
 
-    private fun showDialog(variable: KtProperty): RemoveMode {
-        if (ApplicationManager.getApplication().isUnitTestMode) return RemoveMode.KEEP_INITIALIZE
+    private fun showDialog(variable: KtProperty, project: Project, element: KtBinaryExpression, rhs: KtExpression) {
+        if (ApplicationManager.getApplication().isUnitTestMode) return doRemove(RemoveMode.KEEP_INITIALIZE, element, rhs)
 
         val message =
-                """<html>
+            """<html>
                     <body>
                         There are possible side effects found in expressions assigned to the variable '${variable.name}'<br>
                         You can:<br>
@@ -48,7 +49,9 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
                         -&nbsp;<b>Transform</b> assignment right-hand side into the statement on its own.<br>
                     </body>
                 </html>"""
-        val exitCode = Messages.showYesNoCancelDialog(
+
+        ApplicationManager.getApplication().invokeLater {
+            val exitCode = Messages.showYesNoCancelDialog(
                 variable.project,
                 message,
                 QuickFixBundle.message("side.effects.warning.dialog.title"),
@@ -56,13 +59,25 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
                 QuickFixBundle.message("side.effect.action.transform"),
                 QuickFixBundle.message("side.effect.action.cancel"),
                 Messages.getWarningIcon()
-        )
-        return RemoveMode.values()[exitCode]
+            )
+            WriteCommandAction.runWriteCommandAction(project) {
+                doRemove(RemoveMode.values()[exitCode], element, rhs)
+            }
+        }
     }
 
     override fun getFamilyName() = "Remove redundant assignment"
 
     override fun getText() = familyName
+
+    private fun doRemove(mode: RemoveMode, element: KtBinaryExpression, rhs: KtExpression) {
+        when (mode) {
+            RemoveMode.REMOVE_ALL -> element.delete()
+            RemoveMode.KEEP_INITIALIZE -> element.replace(rhs)
+            else -> {
+            }
+        }
+    }
 
     override fun invoke(project: Project, editor: Editor?, file: KtFile) {
         val element = element ?: return
@@ -71,16 +86,12 @@ class RemoveUnusedValueFix(expression: KtBinaryExpression) : KotlinQuickFixActio
         val variable = lhs.mainReference.resolve() as? KtProperty ?: return
         val pseudocode = rhs.getContainingPseudocode(element.analyze(BodyResolveMode.PARTIAL))
         val isSideEffectFree = pseudocode?.getElementValue(rhs)?.createdAt?.sideEffectFree ?: false
-        var removeMode = RemoveMode.REMOVE_ALL
         if (!isSideEffectFree) {
-            removeMode = showDialog(variable)
+            showDialog(variable, project, element, rhs)
+        } else {
+            doRemove(RemoveMode.REMOVE_ALL, element, rhs)
         }
 
-        when (removeMode) {
-            RemoveMode.REMOVE_ALL -> element.delete()
-            RemoveMode.KEEP_INITIALIZE -> element.replace(rhs)
-            else -> {}
-        }
     }
 
     companion object : KotlinSingleIntentionActionFactory() {

@@ -1,2 +1,0 @@
-open class Klass private constructor(private val s: String) {
-}

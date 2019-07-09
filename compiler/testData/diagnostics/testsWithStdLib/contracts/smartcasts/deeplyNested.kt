@@ -99,6 +99,6 @@ fun branchedAndNestedWithNativeOperators(x: Any?, y: Any?) {
     )
     <!DEBUG_INFO_SMARTCAST!>x<!>.length
     y.<!UNRESOLVED_REFERENCE!>length<!>
-    y.<!NI;NONE_APPLICABLE, OI;UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
+    y.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>inc<!>()
 }
 

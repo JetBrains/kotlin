@@ -3,7 +3,7 @@ enum class A(val c: Int) {
     ONE(1),
     TWO(2),
     THREE(3),
-    FOURTY_TWO();
+    FORTY_TWO();
 
     constructor(): this(42)   
 }

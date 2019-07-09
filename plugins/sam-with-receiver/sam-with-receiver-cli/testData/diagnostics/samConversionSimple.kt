@@ -1,3 +1,4 @@
+// !WITH_NEW_INFERENCE
 // !DIAGNOSTICS: -UNUSED_PARAMETER,-UNUSED_VARIABLE
 
 // FILE: Sam.java
@@ -17,6 +18,6 @@ annotation class SamWithReceiver
 fun test() {
     val e = Exec()
 
-    e.exec <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE!>a<!> -> System.out.println(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>) }<!>
+    e.exec <!TYPE_MISMATCH!>{ <!CANNOT_INFER_PARAMETER_TYPE, NI;EXPECTED_PARAMETERS_NUMBER_MISMATCH!>a<!> -> System.out.<!NI;OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(<!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>a<!>) }<!>
     e.exec { System.out.println(this) }
 }

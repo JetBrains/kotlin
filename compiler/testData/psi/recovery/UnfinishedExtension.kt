@@ -1,0 +1,4 @@
+fun Any.
+
+fun goodFunction() {
+}

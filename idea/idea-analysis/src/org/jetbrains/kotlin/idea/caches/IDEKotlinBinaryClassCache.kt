@@ -60,7 +60,7 @@ object IDEKotlinBinaryClassCache {
             return null
         }
 
-        val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClass(file, fileContent)
+        val kotlinBinaryClass = KotlinBinaryClassCache.getKotlinBinaryClassOrClassFileContent(file, fileContent)?.toKotlinJvmBinaryClass()
 
         val isKotlinBinaryClass = kotlinBinaryClass != null
         if (file is VirtualFileWithId) {

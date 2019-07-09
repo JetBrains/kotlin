@@ -26,12 +26,23 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.replace
 
+val String.synthesizedName: Name get() = Name.identifier(this.synthesizedString)
+
+val String.synthesizedString: String get() = "\$$this"
+
+val DeclarationDescriptor.propertyIfAccessor: DeclarationDescriptor
+    get() = if (this is PropertyAccessorDescriptor)
+        this.correspondingProperty
+    else this
+
 val CallableDescriptor.isSuspend: Boolean
     get() = this is FunctionDescriptor && isSuspend
 
 /**
  * @return naturally-ordered list of all parameters available inside the function body.
  */
+// Used in Kotlin/Native
+@Suppress("unused")
 val CallableDescriptor.allParameters: List<ParameterDescriptor>
     get() = if (this is ConstructorDescriptor) {
         listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
@@ -59,57 +70,16 @@ val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
         return result
     }
 
-fun KotlinType.replace(types: List<KotlinType>) = this.replace(types.map(::TypeProjectionImpl))
-
+// Used in Kotlin/Native
+@Suppress("unused")
 fun FunctionDescriptor.substitute(vararg types: KotlinType): FunctionDescriptor {
     val typeSubstitutor = TypeSubstitutor.create(
-            typeParameters
-                    .withIndex()
-                    .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-    )
-    return substitute(typeSubstitutor)!!
-}
-
-fun FunctionDescriptor.substitute(typeArguments: Map<TypeParameterDescriptor, KotlinType>): FunctionDescriptor {
-    val typeSubstitutor = TypeSubstitutor.create(
-            typeParameters.associateBy({ it.typeConstructor }, { TypeProjectionImpl(typeArguments[it]!!) })
-    )
-    return substitute(typeSubstitutor)!!
-}
-
-fun ClassDescriptor.getFunction(name: String, types: List<KotlinType>): FunctionDescriptor {
-    val typeSubstitutor = TypeSubstitutor.create(
-            declaredTypeParameters
-                    .withIndex()
-                    .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-    )
-    return unsubstitutedMemberScope
-            .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single().substitute(typeSubstitutor)!!
-}
-
-fun ClassDescriptor.getStaticFunction(name: String, types: List<KotlinType>): FunctionDescriptor {
-    val typeSubstitutor = TypeSubstitutor.create(
-        declaredTypeParameters
+        typeParameters
             .withIndex()
             .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
     )
-    return staticScope
-        .getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).single().substitute(typeSubstitutor)!!
+    return substitute(typeSubstitutor)!!
 }
-
-fun ClassDescriptor.getProperty(name: String, types: List<KotlinType>): PropertyDescriptor {
-    val typeSubstitutor = TypeSubstitutor.create(
-        declaredTypeParameters
-            .withIndex()
-            .associateBy({ it.value.typeConstructor }, { TypeProjectionImpl(types[it.index]) })
-    )
-    return unsubstitutedMemberScope
-        .getContributedVariables(
-            Name.identifier(name),
-            NoLookupLocation.FROM_BACKEND
-        ).single().substitute(typeSubstitutor) as PropertyDescriptor
-}
-
 
 val KotlinType.isFunctionOrKFunctionType: Boolean
     get() {

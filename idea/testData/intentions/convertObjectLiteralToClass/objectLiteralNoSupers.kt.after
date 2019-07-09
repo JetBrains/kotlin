@@ -1,7 +1,7 @@
 fun foo(n: Int) {
-    val x = <caret>O(n)
+    val x = O(n)
 }
 
-class O(private val n: Int) {
+class O<caret>(private val n: Int) {
     fun bar() = n
 }

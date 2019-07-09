@@ -1,6 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
-// LANGUAGE_VERSION: 1.2
-
 enum class A {
     X {
         val x = "OK"

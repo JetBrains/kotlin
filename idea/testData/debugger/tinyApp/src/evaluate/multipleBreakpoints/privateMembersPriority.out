@@ -1,13 +1,13 @@
-LineBreakpoint created at privateMembersPriority.kt:22
-LineBreakpoint created at privateMembersPriority.kt:34
-LineBreakpoint created at privateMembersPriority.kt:41
+LineBreakpoint created at privateMembersPriority.kt:21
+LineBreakpoint created at privateMembersPriority.kt:33
+LineBreakpoint created at privateMembersPriority.kt:40
 Run Java
 Connected to the target VM
-privateMembersPriority.kt:22
+privateMembersPriority.kt:21
 Compile bytecode for privateFun()
-privateMembersPriority.kt:34
+privateMembersPriority.kt:33
 Compile bytecode for javaClass.size
-privateMembersPriority.kt:41
+privateMembersPriority.kt:40
 Compile bytecode for TwoPrivateFun().foo(1)
 Disconnected from the target VM
 

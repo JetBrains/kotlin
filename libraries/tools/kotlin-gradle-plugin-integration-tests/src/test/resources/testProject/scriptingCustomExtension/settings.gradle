@@ -1,0 +1,1 @@
+include ':script-template', ':app'

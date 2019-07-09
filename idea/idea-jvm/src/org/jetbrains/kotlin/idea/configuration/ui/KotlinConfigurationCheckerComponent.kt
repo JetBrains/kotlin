@@ -16,59 +16,29 @@
 
 package org.jetbrains.kotlin.idea.configuration.ui
 
-import com.intellij.ProjectTopics
 import com.intellij.notification.NotificationDisplayType
 import com.intellij.notification.NotificationsConfiguration
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootEvent
-import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.startup.StartupManager
-import org.jetbrains.kotlin.idea.configuration.checkHideNonConfiguredNotifications
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
 import org.jetbrains.kotlin.idea.configuration.notifyOutdatedBundledCompilerIfNecessary
-import org.jetbrains.kotlin.idea.configuration.showConfigureKotlinNotificationIfNeeded
 import org.jetbrains.kotlin.idea.configuration.ui.notifications.notifyKotlinStyleUpdateIfNeeded
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
-import org.jetbrains.kotlin.idea.versions.collectModulesWithOutdatedRuntime
-import org.jetbrains.kotlin.idea.versions.findOutdatedKotlinLibraries
 import java.util.concurrent.atomic.AtomicInteger
 
 class KotlinConfigurationCheckerComponent(val project: Project) : ProjectComponent {
     private val syncDepth = AtomicInteger()
-
-    @Volatile
-    private var notificationPostponed = false
 
     init {
         NotificationsConfiguration.getNotificationsConfiguration()
             .register(CONFIGURE_NOTIFICATION_GROUP_ID, NotificationDisplayType.STICKY_BALLOON, true)
 
         val connection = project.messageBus.connect()
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                if (!project.isInitialized) return
-
-                if (notificationPostponed && !isSyncing) {
-                    ApplicationManager.getApplication().executeOnPooledThread {
-                        DumbService.getInstance(project).waitForSmartMode()
-                        if (!isSyncing) {
-                            notificationPostponed = false
-                            showConfigureKotlinNotificationIfNeeded(
-                                project,
-                                collectModulesWithOutdatedRuntime(findOutdatedKotlinLibraries(project))
-                            )
-                        }
-                    }
-                }
-
-                checkHideNonConfiguredNotifications(project)
-            }
-        })
-
         connection.subscribe(ProjectDataImportListener.TOPIC, ProjectDataImportListener {
             notifyOutdatedBundledCompilerIfNecessary(project)
         })
@@ -91,14 +61,6 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
             for (module in getModulesWithKotlinFiles(project)) {
                 module.getAndCacheLanguageLevelByDependencies()
             }
-
-            if (!isSyncing) {
-                val libraries = findOutdatedKotlinLibraries(project)
-                val excludeModules = collectModulesWithOutdatedRuntime(libraries)
-                showConfigureKotlinNotificationIfNeeded(project, excludeModules)
-            } else {
-                notificationPostponed = true
-            }
         }
     }
 
@@ -115,7 +77,15 @@ class KotlinConfigurationCheckerComponent(val project: Project) : ProjectCompone
     companion object {
         const val CONFIGURE_NOTIFICATION_GROUP_ID = "Configure Kotlin in Project"
 
-        fun getInstance(project: Project): KotlinConfigurationCheckerComponent =
-            project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+        fun getInstanceIfNotDisposed(project: Project): KotlinConfigurationCheckerComponent? {
+            return runReadAction {
+                if (!project.isDisposed) {
+                    project.getComponent(KotlinConfigurationCheckerComponent::class.java)
+                        ?: error("Can't find ${KotlinConfigurationCheckerComponent::class} component")
+                } else {
+                    null
+                }
+            }
+        }
     }
 }

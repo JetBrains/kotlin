@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.formatter
@@ -18,8 +18,8 @@ import kotlin.reflect.KProperty
 class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvider() {
     override fun getLanguage() = KotlinLanguage.INSTANCE
 
-    override fun getCodeSample(settingsType: LanguageCodeStyleSettingsProvider.SettingsType): String = when (settingsType) {
-        LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
+    override fun getCodeSample(settingsType: SettingsType): String = when (settingsType) {
+        SettingsType.WRAPPING_AND_BRACES_SETTINGS ->
             """
                @Deprecated("Foo") public class ThisIsASampleClass : Comparable<*>, Appendable {
                    val test =
@@ -71,7 +71,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                fun veryLongExpressionBodyMethod() = "abc"
             """.trimIndent()
 
-        LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS ->
+        SettingsType.BLANK_LINES_SETTINGS ->
             """
                 class Foo {
                    private var field1: Int = 1
@@ -169,13 +169,13 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
 
     override fun getLanguageName(): String = KotlinLanguage.NAME
 
-    override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: LanguageCodeStyleSettingsProvider.SettingsType) {
+    override fun customizeSettings(consumer: CodeStyleSettingsCustomizable, settingsType: SettingsType) {
         fun showCustomOption(field: KProperty<*>, title: String, groupName: String? = null, vararg options: Any) {
             consumer.showCustomOption(KotlinCodeStyleSettings::class.java, field.name, title, groupName, *options)
         }
 
         when (settingsType) {
-            LanguageCodeStyleSettingsProvider.SettingsType.SPACING_SETTINGS -> {
+            SettingsType.SPACING_SETTINGS -> {
                 consumer.showStandardOptions(
                     "SPACE_AROUND_ASSIGNMENT_OPERATORS",
                     "SPACE_AROUND_LOGICAL_OPERATORS",
@@ -190,7 +190,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "SPACE_BEFORE_WHILE_PARENTHESES",
                     "SPACE_BEFORE_FOR_PARENTHESES",
                     "SPACE_BEFORE_CATCH_PARENTHESES"
-                );
+                )
 
                 showCustomOption(
                     KotlinCodeStyleSettings::SPACE_AROUND_RANGE,
@@ -252,9 +252,11 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.SPACES_BEFORE_PARENTHESES
                 )
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
+            SettingsType.WRAPPING_AND_BRACES_SETTINGS -> {
                 consumer.showStandardOptions(
                     // "ALIGN_MULTILINE_CHAINED_METHODS",
+                    "RIGHT_MARGIN",
+                    "WRAP_ON_TYPING",
                     "KEEP_FIRST_COLUMN_COMMENT",
                     "KEEP_LINE_BREAKS",
                     "ALIGN_MULTILINE_EXTENDS_LIST",
@@ -285,6 +287,12 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                 )
                 consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_SWITCH_STATEMENT, "'when' statements")
                 consumer.renameStandardOption("FIELD_ANNOTATION_WRAP", "Property annotations")
+                consumer.renameStandardOption("METHOD_PARAMETERS_WRAP", "Function declaration parameters")
+                consumer.renameStandardOption("CALL_PARAMETERS_WRAP", "Function call arguments")
+                consumer.renameStandardOption("METHOD_CALL_CHAIN_WRAP", "Chained function calls")
+                consumer.renameStandardOption("METHOD_ANNOTATION_WRAP", "Function annotations")
+                consumer.renameStandardOption(CodeStyleSettingsCustomizable.WRAPPING_METHOD_PARENTHESES, "Function parentheses")
+
                 showCustomOption(
                     KotlinCodeStyleSettings::ALIGN_IN_COLUMNS_CASE_BRANCH,
                     "Align 'when' branches in columns",
@@ -356,7 +364,7 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     CodeStyleSettingsCustomizable.WRAPPING_IF_STATEMENT
                 )
             }
-            LanguageCodeStyleSettingsProvider.SettingsType.BLANK_LINES_SETTINGS -> {
+            SettingsType.BLANK_LINES_SETTINGS -> {
                 consumer.showStandardOptions(
                     "KEEP_BLANK_LINES_IN_CODE",
                     "KEEP_BLANK_LINES_IN_DECLARATIONS",
@@ -368,6 +376,9 @@ class KotlinLanguageCodeStyleSettingsProvider : LanguageCodeStyleSettingsProvide
                     "Around 'when' branches with {}",
                     CodeStyleSettingsCustomizable.BLANK_LINES
                 )
+            }
+            SettingsType.COMMENTER_SETTINGS -> {
+                consumer.showAllStandardOptions()
             }
             else -> consumer.showStandardOptions()
         }

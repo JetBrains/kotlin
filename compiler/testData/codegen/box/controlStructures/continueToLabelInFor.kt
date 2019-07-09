@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 fun for_int_range(): Int {
     var c = 0
     loop@ for (i in 1..10) {

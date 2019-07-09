@@ -34,7 +34,7 @@ public class StorageManagerTest extends TestCase {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        m = new LockBasedStorageManager();
+        m = new LockBasedStorageManager("StorageManagerTest");
     }
 
     public static <T> void doTestComputesOnce(Function0<T> v, T expected, Counter counter) throws Exception {
@@ -416,7 +416,7 @@ public class StorageManagerTest extends TestCase {
     public void testExceptionHandlingStrategyForLazyValues() throws Exception {
         class RethrownException extends RuntimeException {}
 
-        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(throwable -> {
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling("StorageManagerTest", throwable -> {
             throw new RethrownException();
         });
         try {
@@ -432,7 +432,7 @@ public class StorageManagerTest extends TestCase {
     public void testExceptionHandlingStrategyForMemoizedFunctions() throws Exception {
         class RethrownException extends RuntimeException {}
 
-        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling(throwable -> {
+        LockBasedStorageManager m = LockBasedStorageManager.createWithExceptionHandling("StorageManagerTest", throwable -> {
             throw new RethrownException();
         });
         try {

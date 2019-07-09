@@ -22,7 +22,7 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analyzer.ModuleInfo
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 
 interface KotlinCacheService {
@@ -31,6 +31,7 @@ interface KotlinCacheService {
     }
 
     fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade
+    fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade
     fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade?
 
     fun getSuppressionCache(): KotlinSuppressCache

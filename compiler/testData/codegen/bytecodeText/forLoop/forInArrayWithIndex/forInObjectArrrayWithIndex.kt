@@ -1,5 +1,4 @@
-// WITH_RUNTIME
-
+// IGNORE_BACKEND: JVM_IR
 val arr = arrayOf("a", "b", "c", "d")
 
 fun box(): String {

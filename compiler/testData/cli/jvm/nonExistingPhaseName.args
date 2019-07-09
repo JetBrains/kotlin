@@ -1,0 +1,5 @@
+-d
+$TEMP_DIR$
+-Xuse-ir
+-Xverbose-phases=qz,qq
+$TESTDATA_DIR$/simple.kt

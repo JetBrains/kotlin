@@ -1,11 +1,10 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.builtins.jvm
 
-import org.jetbrains.kotlin.builtins.BuiltInsInitializer
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -494,19 +493,15 @@ open class JvmBuiltInsSettings(
     }
 }
 
-private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager()) {
+private class FallbackBuiltIns private constructor() : KotlinBuiltIns(LockBasedStorageManager("FallbackBuiltIns")) {
     init {
-        createBuiltInsModule()
+        createBuiltInsModule(true)
     }
 
     companion object {
-        private val initializer = BuiltInsInitializer {
-            FallbackBuiltIns()
-        }
-
         @JvmStatic
-        val Instance: KotlinBuiltIns
-            get() = initializer.get()
+        val Instance: KotlinBuiltIns =
+            FallbackBuiltIns()
     }
 
     override fun getPlatformDependentDeclarationFilter() = PlatformDependentDeclarationFilter.All

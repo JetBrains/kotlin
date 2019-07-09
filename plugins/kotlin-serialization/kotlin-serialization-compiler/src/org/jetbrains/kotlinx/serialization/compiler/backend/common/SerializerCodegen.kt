@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver.findSerializerConstructorForTypeArgumentsSerializers
 
 abstract class SerializerCodegen(
     protected val serializerDescriptor: ClassDescriptor,
@@ -32,11 +31,16 @@ abstract class SerializerCodegen(
 ) : AbstractSerialGenerator(bindingContext, serializerDescriptor) {
     val serializableDescriptor: ClassDescriptor = getSerializableClassDescriptorBySerializer(serializerDescriptor)!!
     protected val serialName: String = serializableDescriptor.annotations.serialNameValue ?: serializableDescriptor.fqNameUnsafe.asString()
-    protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
-    protected val orderedProperties = properties.serializableProperties
+    protected val properties = bindingContext.serializablePropertiesFor(serializableDescriptor)
+    protected val serializableProperties = properties.serializableProperties
+
+    private fun checkSerializability() {
+        check(properties.isExternallySerializable) {
+            "Class ${serializableDescriptor.name} have constructor parameters which are not properties and therefore it is not serializable automatically"
+        }
+    }
 
     fun generate() {
-        check(properties.isExternallySerializable) { "Class ${serializableDescriptor.name} is not externally serializable" }
         val prop = generateSerializableClassPropertyIfNeeded()
         if (prop)
             generateSerialDesc()
@@ -65,7 +69,8 @@ abstract class SerializerCodegen(
 
     protected val generatedSerialDescPropertyDescriptor = getPropertyToGenerate(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
-                                                                       serializerDescriptor::checkSerializableClassPropertyResult)
+        serializerDescriptor::checkSerializableClassPropertyResult
+    )
     protected val anySerialDescProperty = getProperty(
         serializerDescriptor, SerialEntityNames.SERIAL_DESC_FIELD,
         serializerDescriptor::checkSerializableClassPropertyResult
@@ -97,31 +102,30 @@ abstract class SerializerCodegen(
 
     private fun generateSerializableClassPropertyIfNeeded(): Boolean {
         val property = generatedSerialDescPropertyDescriptor
-                       ?: return false
+            ?: return false
+        checkSerializability()
         generateSerializableClassProperty(property)
         return true
     }
 
     private fun generateSaveIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.SAVE,
-                                           serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters)
-                       ?: return false
+        val function = getSyntheticSaveMember(serializerDescriptor) ?: return false
+        checkSerializability()
         generateSave(function)
         return true
     }
 
     private fun generateLoadIfNeeded(): Boolean {
-        val function = getMemberToGenerate(serializerDescriptor, SerialEntityNames.LOAD,
-                                           serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters)
-                       ?: return false
+        val function = getSyntheticLoadMember(serializerDescriptor) ?: return false
+        checkSerializability()
         generateLoad(function)
         return true
     }
 
-    fun getPropertyToGenerate(
-            classDescriptor: ClassDescriptor,
-            name: String,
-            isReturnTypeOk: (PropertyDescriptor) -> Boolean
+    private fun getPropertyToGenerate(
+        classDescriptor: ClassDescriptor,
+        name: String,
+        isReturnTypeOk: (PropertyDescriptor) -> Boolean
     ): PropertyDescriptor? = getProperty(
         classDescriptor,
         name,
@@ -130,7 +134,7 @@ abstract class SerializerCodegen(
         kind == CallableMemberDescriptor.Kind.SYNTHESIZED || kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE
     }
 
-    fun getProperty(
+    private fun getProperty(
         classDescriptor: ClassDescriptor,
         name: String,
         isReturnTypeOk: (PropertyDescriptor) -> Boolean,
@@ -146,5 +150,17 @@ abstract class SerializerCodegen(
         }
 
     protected fun ClassDescriptor.getFuncDesc(funcName: String): Sequence<FunctionDescriptor> =
-            unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
+        unsubstitutedMemberScope.getDescriptorsFiltered { it == Name.identifier(funcName) }.asSequence().filterIsInstance<FunctionDescriptor>()
+
+    companion object {
+        fun getSyntheticLoadMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.LOAD,
+            serializerDescriptor::checkLoadMethodResult, serializerDescriptor::checkLoadMethodParameters
+        )
+
+        fun getSyntheticSaveMember(serializerDescriptor: ClassDescriptor): FunctionDescriptor? = getMemberToGenerate(
+            serializerDescriptor, SerialEntityNames.SAVE,
+            serializerDescriptor::checkSaveMethodResult, serializerDescriptor::checkSaveMethodParameters
+        )
+    }
 }

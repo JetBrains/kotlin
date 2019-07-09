@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 package d
 
 fun box(): String {

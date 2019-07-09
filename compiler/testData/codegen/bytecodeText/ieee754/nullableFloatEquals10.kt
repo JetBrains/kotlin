@@ -1,4 +1,6 @@
-// LANGUAGE_VERSION: 1.0
+// !API_VERSION: 1.0
+// IGNORE_BACKEND: JVM_IR
+
 fun myEquals(a: Float?, b: Float?) = a == b
 
 fun myEquals1(a: Float?, b: Float) = a == b
@@ -25,4 +27,4 @@ fun box(): String {
     return "OK"
 }
 
-// 0 areEquals
+// 0 areEqual

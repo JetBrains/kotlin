@@ -1,7 +1,8 @@
+// KJS_WITH_FULL_RUNTIME
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
-// LANGUAGE_VERSION: 1.3
+
 import helpers.*
 import kotlin.coroutines.*
 

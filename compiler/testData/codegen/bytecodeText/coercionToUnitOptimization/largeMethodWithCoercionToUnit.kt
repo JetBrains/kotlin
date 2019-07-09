@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun inlineFunVoid(f: () -> Unit): Unit {
     return f()
 }

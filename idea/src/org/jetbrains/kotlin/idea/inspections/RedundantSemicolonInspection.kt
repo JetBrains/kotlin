@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalInspectionTool {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession): PsiElementVisitor {
@@ -76,6 +77,11 @@ class RedundantSemicolonInspection : AbstractKotlinInspection(), CleanupLocalIns
 
         (semicolon.prevLeaf()?.parent as? KtLoopExpression)?.let {
             if (it !is KtDoWhileExpression && it.body == null)
+                return false
+        }
+
+        semicolon.prevLeaf()?.parent?.safeAs<KtIfExpression>()?.also { ifExpression ->
+            if (ifExpression.then == null)
                 return false
         }
 

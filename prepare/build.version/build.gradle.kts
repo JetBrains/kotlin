@@ -1,8 +1,8 @@
+@file:Suppress("HasPlatformType")
 
 import java.io.File
 
-val buildVersionFilePath = "${rootProject.extra["distDir"]}/build.txt"
-
+val buildVersionFilePath = "$buildDir/build.txt"
 val buildVersion by configurations.creating
 val buildNumber: String by rootProject.extra
 val kotlinVersion: String by rootProject.extra
@@ -15,6 +15,10 @@ val writeBuildNumber by tasks.creating {
         versionFile.parentFile.mkdirs()
         versionFile.writeText(buildNumber)
     }
+}
+
+artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
+    builtBy(writeBuildNumber)
 }
 
 fun replaceVersion(versionFile: File, versionPattern: String, replacement: (MatchResult) -> String) {
@@ -53,7 +57,7 @@ val writeCompilerVersion by tasks.creating {
 }
 
 val writePluginVersion by tasks.creating {
-    val versionFile = project(":idea").projectDir.resolve("src/META-INF/plugin.xml")
+    val versionFile = project(":idea").projectDir.resolve("resources/META-INF/plugin.xml")
     val pluginVersion = rootProject.findProperty("pluginVersion") as String?
     inputs.property("version", pluginVersion)
     outputs.file(versionFile)
@@ -68,16 +72,4 @@ val writePluginVersion by tasks.creating {
 
 val writeVersions by tasks.creating {
     dependsOn(writeBuildNumber, writeStdlibVersion, writeCompilerVersion)
-}
-
-
-artifacts.add(buildVersion.name, file(buildVersionFilePath)) {
-    builtBy(writeBuildNumber)
-}
-
-val distKotlinHomeDir: String by rootProject.extra
-
-val dist by task<Copy> {
-    from(writeBuildNumber)
-    into(File(distKotlinHomeDir))
 }

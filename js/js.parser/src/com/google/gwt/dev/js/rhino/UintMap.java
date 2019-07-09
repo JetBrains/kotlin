@@ -452,6 +452,6 @@ class UintMap implements Serializable {
     // values associated with keys
     private transient int ivaluesShift;
 
-// If true, enables consitency checks
+// If true, enables consistency checks
     private static final boolean check = false;
 }

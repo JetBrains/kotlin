@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -15,10 +15,10 @@ abstract class AbstractDumpDeclarationsTest : CodegenTestCase() {
 
     private lateinit var dumpToFile: File
 
-    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>, javaFilesDir: File?) {
+    override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         val expectedResult = KotlinTestUtils.replaceExtension(wholeFile, "json")
-        dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve(name + ".json")
-        compile(files, null)
+        dumpToFile = KotlinTestUtils.tmpDirForTest(this).resolve("$name.json")
+        compile(files)
         classFileFactory.generationState.destroy()
         KotlinTestUtils.assertEqualsToFile(expectedResult, dumpToFile.readText()) {
             it.replace("COROUTINES_PACKAGE", coroutinesPackage)

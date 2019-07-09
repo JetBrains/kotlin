@@ -4,11 +4,11 @@ import testing.rename.*;
 
 class GroovyClient {
     public void foo(AP ap, DP dp) {
-        ap.getSecond
-        new BP().getSecond
-        new CP().getSecond
+        ap.second
+        new BP().second
+        new CP().second
 
-        dp.getSecond
+        dp.second
         new EP().second
         new FP().second
     }

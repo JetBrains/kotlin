@@ -1,10 +1,11 @@
 /*
-* Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
-* that can be found in the license/LICENSE.txt file.
-*/
+* Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import org.jetbrains.annotations.TestOnly
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -22,7 +23,7 @@ private const val BACKSLASH = '\\'
  * This is done prior to *any* arguments parsing, and result of preprocessing
  * will be used instead of actual passed arguments.
  */
-internal fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
+fun preprocessCommandLineArguments(args: List<String>, errors: ArgumentParseErrors): List<String> =
     args.flatMap { arg ->
         if (arg.isArgfileArgument) {
             File(arg.argfilePath).expand(errors)
@@ -34,6 +35,12 @@ internal fun preprocessCommandLineArguments(args: List<String>, errors: Argument
             listOf(arg)
         }
     }
+
+@TestOnly
+fun readArgumentsFromArgFile(content: String): List<String> {
+    val reader = content.reader()
+    return generateSequence { reader.parseNextArgument() }.toList()
+}
 
 private fun File.expand(errors: ArgumentParseErrors): List<String> {
     return try {

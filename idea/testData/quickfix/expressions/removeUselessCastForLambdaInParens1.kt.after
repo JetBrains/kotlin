@@ -1,0 +1,4 @@
+// "Remove useless cast" "true"
+fun test() {
+    { "" }
+}

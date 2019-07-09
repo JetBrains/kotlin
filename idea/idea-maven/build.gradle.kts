@@ -19,6 +19,12 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
 
     compileOnly(intellijDep())
+    Platform[192].orHigher {
+        compileOnly(intellijPluginDep("java"))
+        testCompileOnly(intellijPluginDep("java"))
+        testRuntime(intellijPluginDep("java"))
+    }
+    
     excludeInAndroidStudio(rootProject) { compileOnly(intellijPluginDep("maven")) }
 
     testCompile(projectTests(":idea"))
@@ -26,7 +32,10 @@ dependencies {
     testCompile(projectTests(":idea:idea-test-framework"))
 
     testCompileOnly(intellijDep())
-    testCompileOnly(intellijPluginDep("maven"))
+    if (Ide.IJ()) {
+        testCompileOnly(intellijPluginDep("maven"))
+        testRuntime(intellijPluginDep("maven"))
+    }
 
     testCompile(project(":idea:idea-native")) { isTransitive = false }
     testRuntime(project(":kotlin-native:kotlin-native-library-reader")) { isTransitive = false }
@@ -51,24 +60,28 @@ dependencies {
     testRuntime(intellijPluginDep("gradle"))
     testRuntime(intellijPluginDep("Groovy"))
     testRuntime(intellijPluginDep("coverage"))
-    testRuntime(intellijPluginDep("maven"))
     testRuntime(intellijPluginDep("android"))
     testRuntime(intellijPluginDep("smali"))
 }
 
-sourceSets {
-    "main" { projectDefault() }
-    "test" { projectDefault() }
+if (Ide.IJ()) {
+    sourceSets {
+        "main" { projectDefault() }
+        "test" { projectDefault() }
+    }
+} else {
+    sourceSets {
+        "main" { }
+        "test" { }
+    }
 }
 
 testsJar()
 
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-runtimeJar {
-    archiveName = "maven-ide.jar"
+if (Ide.IJ()) {
+    runtimeJar()
 }
-
-ideaPlugin()

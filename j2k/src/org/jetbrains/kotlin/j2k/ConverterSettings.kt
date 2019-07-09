@@ -20,7 +20,8 @@ data class ConverterSettings(
         var forceNotNullTypes: Boolean,
         var specifyLocalVariableTypeByDefault: Boolean,
         var specifyFieldTypeByDefault: Boolean,
-        var openByDefault: Boolean
+        var openByDefault: Boolean,
+        var noInternalForMembersOfInternal: Boolean
 ) {
 
     companion object {
@@ -28,7 +29,8 @@ data class ConverterSettings(
                 forceNotNullTypes = true,
                 specifyLocalVariableTypeByDefault = false,
                 specifyFieldTypeByDefault = false,
-                openByDefault = false
+                openByDefault = false,
+                noInternalForMembersOfInternal = true
         )
     }
 }

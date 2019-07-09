@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+fun main() {
+    run label@{
+        <caret>if (true) {
+            return@label 42
+        } else {
+            return@label 42
+        }
+    }
+}

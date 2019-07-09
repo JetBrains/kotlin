@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.inline
@@ -28,15 +28,17 @@ class ParametersBuilder private constructor() {
     }
 
     fun addNextValueParameter(type: Type, skipped: Boolean, remapValue: StackValue?, parameterIndex: Int): ParameterInfo {
-        return addParameter(ParameterInfo(
+        return addParameter(
+            ParameterInfo(
                 type, skipped, nextParameterOffset, remapValue,
                 if (parameterIndex == -1) nextValueParameterIndex else parameterIndex + valueParamFirstIndex
-        ))
+            )
+        )
     }
 
     fun addCapturedParam(original: CapturedParamInfo, newFieldName: String): CapturedParamInfo {
         val info = CapturedParamInfo(original.desc, newFieldName, original.isSkipped, nextParameterOffset, original.index)
-        info.lambda = original.lambda
+        info.functionalArgument = original.functionalArgument
         return addParameter(info)
     }
 
@@ -49,25 +51,25 @@ class ParametersBuilder private constructor() {
     }
 
     fun addCapturedParam(
-            containingLambdaType: Type,
-            fieldName: String,
-            newFieldName: String,
-            type: Type,
-            skipped: Boolean,
-            original: ParameterInfo?
+        containingLambdaType: Type,
+        fieldName: String,
+        newFieldName: String,
+        type: Type,
+        skipped: Boolean,
+        original: ParameterInfo?
     ): CapturedParamInfo {
         val info = CapturedParamInfo(
-                CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
+            CapturedParamDesc(containingLambdaType, fieldName, type), newFieldName, skipped, nextParameterOffset, original?.index ?: -1
         )
         if (original != null) {
-            info.lambda = original.lambda
+            info.functionalArgument = original.functionalArgument
         }
         return addParameter(info)
     }
 
-    private fun <T: ParameterInfo> addParameter(info: T): T {
+    private fun <T : ParameterInfo> addParameter(info: T): T {
         params.add(info)
-        nextParameterOffset += info.getType().size
+        nextParameterOffset += info.type.size
         if (info !is CapturedParamInfo) {
             nextValueParameterIndex++
         }
@@ -94,8 +96,7 @@ class ParametersBuilder private constructor() {
         return Parameters(params.map { param ->
             if (param is CapturedParamInfo) {
                 param.cloneWithNewDeclarationIndex(nextDeclarationIndex++)
-            }
-            else {
+            } else {
                 param
             }
         })
@@ -110,12 +111,12 @@ class ParametersBuilder private constructor() {
         @JvmOverloads
         @JvmStatic
         fun initializeBuilderFrom(
-                objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null
+            objectType: Type, descriptor: String, inlineLambda: LambdaInfo? = null, isStatic: Boolean = false
         ): ParametersBuilder {
             val builder = newBuilder()
-            if (inlineLambda?.hasDispatchReceiver != false) {
+            if (inlineLambda?.hasDispatchReceiver != false && !isStatic) {
                 //skipped this for inlined lambda cause it will be removed
-                builder.addThis(objectType, inlineLambda != null).lambda = inlineLambda
+                builder.addThis(objectType, inlineLambda != null).functionalArgument = inlineLambda
             }
 
             for (type in Type.getArgumentTypes(descriptor)) {

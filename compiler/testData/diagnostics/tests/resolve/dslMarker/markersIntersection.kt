@@ -60,7 +60,7 @@ fun test() {
         bar1t(this) {
             a()
             bar1 {
-                <!OI;DSL_SCOPE_VIOLATION!>a<!>()
+                <!DSL_SCOPE_VIOLATION!>a<!>()
                 b()
             }
 
@@ -76,7 +76,7 @@ fun test() {
         foo2 {
             bar1t(this) {
                 a()
-                <!OI;DSL_SCOPE_VIOLATION!>b<!>()
+                <!DSL_SCOPE_VIOLATION!>b<!>()
             }
         }
     }

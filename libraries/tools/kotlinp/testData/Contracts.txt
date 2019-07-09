@@ -1,0 +1,71 @@
+// ContractsKt.class
+// ------------------------------------------
+package {
+
+  // signature: callsInPlaceAtMostOnce(Lkotlin/jvm/functions/Function0;)V
+  public final inline fun callsInPlaceAtMostOnce(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    contract {
+      callsInPlace(p#1, InvocationKind.AT_MOST_ONCE)
+    }
+
+  // signature: callsInPlaceUnknown(Lkotlin/jvm/functions/Function0;)V
+  public final inline fun callsInPlaceUnknown(block: kotlin/Function0<kotlin/Unit>): kotlin/Unit
+    contract {
+      callsInPlace(p#1)
+    }
+
+  // signature: complexBoolean(Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;Ljava/lang/Object;)V
+  public final fun complexBoolean(a: kotlin/Any?, b: kotlin/Any?, c: kotlin/Any?, d: kotlin/Any?): kotlin/Unit
+    contract {
+      returns() implies ((p#1 != null && p#3 != null) || (p#2 == null && p#4 != null))
+    }
+
+  // signature: conjunction(ZZZ)V
+  public final fun conjunction(a: kotlin/Boolean, b: kotlin/Boolean, c: kotlin/Boolean): kotlin/Unit
+    contract {
+      returns() implies (p#1 && p#2 && p#3)
+    }
+
+  // signature: disjunction(ZZZ)V
+  public final fun disjunction(a: kotlin/Boolean, b: kotlin/Boolean, c: kotlin/Boolean): kotlin/Unit
+    contract {
+      returns() implies (p#1 || p#2 || p#3)
+    }
+
+  // signature: negatedIsAndConjunction(Ljava/lang/Object;ZLjava/lang/Object;)V
+  public final fun negatedIsAndConjunction(a: kotlin/Any?, b: kotlin/Boolean, c: kotlin/Any?): kotlin/Unit
+    contract {
+      returns() implies (p#1 !is kotlin/collections/List<*> && p#2 && p#3 == null)
+    }
+
+  // signature: returnsNotNull(Z)V
+  public final fun returnsNotNull(condition: kotlin/Boolean): kotlin/Unit
+    contract {
+      returnsNotNull() implies (p#1)
+    }
+
+  // signature: returnsNull(Z)V
+  public final fun returnsNull(condition: kotlin/Boolean): kotlin/Unit
+    contract {
+      returns(null) implies (p#1)
+    }
+
+  // signature: returnsTrue(Z)V
+  public final fun returnsTrue(condition: kotlin/Boolean): kotlin/Unit
+    contract {
+      returns(true) implies (p#1)
+    }
+
+  // signature: receiverIsNotNull(Ljava/lang/Object;)Z
+  public final fun kotlin/Any?.receiverIsNotNull(): kotlin/Boolean
+    contract {
+      returns(true) implies (p#0 != null)
+    }
+}
+// META-INF/test-module.kotlin_module
+// ------------------------------------------
+module {
+  package <root> {
+    ContractsKt
+  }
+}

@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -41,7 +40,7 @@ class AddDataModifierFix(element: KtClass, private val fqName: String) : AddModi
 
     companion object : KotlinSingleIntentionActionFactory() {
 
-        override fun createAction(diagnostic: Diagnostic): KotlinQuickFixAction<KtModifierListOwner>? {
+        override fun createAction(diagnostic: Diagnostic): AddDataModifierFix? {
             val element = diagnostic.psiElement as? KtExpression ?: return null
             val context = element.analyze()
 

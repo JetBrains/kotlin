@@ -11,7 +11,7 @@ public class C {
         open fun m() {}
     }
 
-    // Note that Data is resolved succesfully here because we don't step on error-scope
+    // Note that Data is resolved successfully here because we don't step on error-scope
     val data: Data = Data()
 
     companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract() {

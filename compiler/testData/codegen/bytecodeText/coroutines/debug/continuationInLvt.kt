@@ -1,5 +1,4 @@
-// LANGUAGE_VERSION: 1.3
-
+// IGNORE_BACKEND: JVM_IR
 suspend fun dummy() {}
 
 suspend fun tailCall() {

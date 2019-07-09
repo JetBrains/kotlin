@@ -1,4 +1,4 @@
-// "Replace with 'newFun<T>()'" "true"
+// "Replace with 'newFun<kotlin.Int>()'" "true"
 
 @Deprecated("", ReplaceWith("newFun<T>()"))
 fun <T> oldFun() {

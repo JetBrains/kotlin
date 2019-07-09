@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ K> select2(/*0*/ x: K, /*1*/ y: K): K
+public fun </*0*/ K> select3(/*0*/ x: K, /*1*/ y: K, /*2*/ z: K): K
+public fun test2(/*0*/ f: ((kotlin.String) -> kotlin.Int)?): kotlin.Unit

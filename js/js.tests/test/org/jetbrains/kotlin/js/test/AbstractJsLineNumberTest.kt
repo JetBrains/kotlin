@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test
@@ -55,7 +55,7 @@ abstract class AbstractJsLineNumberTest : KotlinTestWithEnvironment() {
             orderedModules.asReversed().forEach { module ->
                 val baseOutputPath = module.outputFileName(file)
 
-                val translator = K2JSTranslator(createConfig(module, file, modules))
+                val translator = K2JSTranslator(createConfig(module, file, modules), false)
                 val units = module.files.map { TranslationUnit.SourceFile(createPsiFile(it.fileName)) }
                 val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, MainCallParameters.noCall())
 

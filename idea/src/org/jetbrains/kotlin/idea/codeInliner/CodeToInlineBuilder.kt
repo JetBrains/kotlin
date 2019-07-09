@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.idea.imports.importableFqName
 import org.jetbrains.kotlin.idea.intentions.InsertExplicitTypeArgumentsIntention
 import org.jetbrains.kotlin.idea.intentions.SpecifyExplicitLambdaSignatureIntention
 import org.jetbrains.kotlin.idea.references.canBeResolvedViaImport
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.getResolutionScope
@@ -46,17 +45,17 @@ import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
 class CodeToInlineBuilder(
-        private val targetCallable: CallableDescriptor,
-        private val resolutionFacade: ResolutionFacade
+    private val targetCallable: CallableDescriptor,
+    private val resolutionFacade: ResolutionFacade
 ) {
     private val psiFactory = KtPsiFactory(resolutionFacade.project)
 
     //TODO: document that code will be modified
     fun prepareCodeToInline(
-            mainExpression: KtExpression?,
-            statementsBefore: List<KtExpression>,
-            analyze: () -> BindingContext,
-            reformat: Boolean
+        mainExpression: KtExpression?,
+        statementsBefore: List<KtExpression>,
+        analyze: () -> BindingContext,
+        reformat: Boolean
     ): CodeToInline {
         var bindingContext = analyze()
 
@@ -114,8 +113,8 @@ class CodeToInlineBuilder(
     }
 
     private fun needToAddParameterTypes(
-            lambdaExpression: KtLambdaExpression,
-            resolutionFacade: ResolutionFacade
+        lambdaExpression: KtLambdaExpression,
+        resolutionFacade: ResolutionFacade
     ): Boolean {
         val functionLiteral = lambdaExpression.functionLiteral
         val context = resolutionFacade.analyze(lambdaExpression, BodyResolveMode.PARTIAL_WITH_DIAGNOSTICS)
@@ -123,15 +122,19 @@ class CodeToInlineBuilder(
             val factory = diagnostic.factory
             val element = diagnostic.psiElement
             val hasCantInferParameter = factory == Errors.CANNOT_INFER_PARAMETER_TYPE &&
-                                        element.parent.parent == functionLiteral
+                    element.parent.parent == functionLiteral
             val hasUnresolvedItOrThis = factory == Errors.UNRESOLVED_REFERENCE &&
-                                        element.text == "it" &&
-                                        element.getStrictParentOfType<KtFunctionLiteral>() == functionLiteral
+                    element.text == "it" &&
+                    element.getStrictParentOfType<KtFunctionLiteral>() == functionLiteral
             hasCantInferParameter || hasUnresolvedItOrThis
         }
     }
 
-    private fun insertExplicitTypeArguments(codeToInline: MutableCodeToInline, bindingContext: BindingContext, analyze: () -> BindingContext): BindingContext {
+    private fun insertExplicitTypeArguments(
+        codeToInline: MutableCodeToInline,
+        bindingContext: BindingContext,
+        analyze: () -> BindingContext
+    ): BindingContext {
         val typeArgsToAdd = ArrayList<Pair<KtCallExpression, KtTypeArgumentList>>()
         codeToInline.forEachDescendantOfType<KtCallExpression> {
             if (InsertExplicitTypeArgumentsIntention.isApplicableTo(it, bindingContext)) {
@@ -156,15 +159,14 @@ class CodeToInlineBuilder(
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
 
             //TODO: other types of references ('[]' etc)
-            if (expression.mainReference.canBeResolvedViaImport(target, bindingContext)) {
+            if (expression.canBeResolvedViaImport(target, bindingContext)) {
                 codeToInline.fqNamesToImport.add(target.importableFqName!!)
             }
 
             if (expression.getReceiverExpression() == null) {
                 if (target is ValueParameterDescriptor && target.containingDeclaration == targetCallable) {
                     expression.putCopyableUserData(CodeToInline.PARAMETER_USAGE_KEY, target.name)
-                }
-                else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
+                } else if (target is TypeParameterDescriptor && target.containingDeclaration == targetCallable) {
                     expression.putCopyableUserData(CodeToInline.TYPE_PARAMETER_USAGE_KEY, target.name)
                 }
 
@@ -188,9 +190,13 @@ class CodeToInlineBuilder(
         // add receivers in reverse order because arguments of a call were processed after the callee's name
         for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            codeToInline.replaceExpression(expressionToReplace,
-                                           psiFactory.createExpressionByPattern("$0.$1", receiverExpression, expressionToReplace,
-                                                                                reformat = reformat))
+            codeToInline.replaceExpression(
+                expressionToReplace,
+                psiFactory.createExpressionByPattern(
+                    "$0.$1", receiverExpression, expressionToReplace,
+                    reformat = reformat
+                )
+            )
         }
     }
 }

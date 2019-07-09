@@ -11,9 +11,16 @@ dependencies {
     compileOnly(project(":compiler:frontend"))
     compileOnly(intellijCoreDep()) { includeJars("intellij-core") }
 
-    runtime(project(":kotlin-stdlib"))
+    runtime(kotlinStdlib())
 
-    testRuntimeOnly(projectRuntimeJar(":kotlin-compiler"))
+    testRuntimeOnly(intellijDep()) {
+        includeJars("guava", rootProject = rootProject)
+    }
+
+    testRuntimeOnly(project(":kotlin-compiler"))
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijDep()) { includeJars("platform-concurrency") }
+    }
 
     testCompile(project(":compiler:backend"))
     testCompile(project(":compiler:cli"))
@@ -26,18 +33,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-val jar = runtimeJar {
-    from(fileTree("$projectDir/src")) { include("META-INF/**") }
-}
+runtimeJar()
 
-testsJar {}
+testsJar()
 
-dist(targetName = the<BasePluginConvention>().archivesBaseName.removePrefix("kotlin-") + ".jar")
-
-ideaPlugin {
-    from(jar)
-}
-
-projectTest {
+projectTest(parallel = true) {
     workingDir = rootDir
 }

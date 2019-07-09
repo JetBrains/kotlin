@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.editor
@@ -19,7 +19,7 @@ import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.psi.tree.TokenSet
 import com.intellij.util.IncorrectOperationException
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtFile
@@ -30,19 +30,19 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isSingleQuoted
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
-class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
+class KotlinEnterHandler : EnterHandlerDelegateAdapter() {
     companion object {
         private val LOG = Logger.getInstance(KotlinEnterHandler::class.java)
         private val FORCE_INDENT_IN_LAMBDA_AFTER = TokenSet.create(KtTokens.ARROW, KtTokens.LBRACE)
     }
 
     override fun preprocessEnter(
-            file: PsiFile,
-            editor: Editor,
-            caretOffsetRef: Ref<Int>,
-            caretAdvance: Ref<Int>,
-            dataContext: DataContext,
-            originalHandler: EditorActionHandler?
+        file: PsiFile,
+        editor: Editor,
+        caretOffsetRef: Ref<Int>,
+        caretAdvance: Ref<Int>,
+        dataContext: DataContext,
+        originalHandler: EditorActionHandler?
     ): EnterHandlerDelegate.Result? {
         if (file !is KtFile) return EnterHandlerDelegate.Result.Continue
 
@@ -74,8 +74,7 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
 
             try {
                 CodeStyleManager.getInstance(file.getProject())!!.adjustLineIndent(file, editor.caretModel.offset)
-            }
-            catch (e: IncorrectOperationException) {
+            } catch (e: IncorrectOperationException) {
                 LOG.error(e)
             }
 
@@ -88,10 +87,12 @@ class KotlinEnterHandler: EnterHandlerDelegateAdapter() {
     // We can't use the core platform logic (EnterInStringLiteralHandler) because it assumes that the string
     // is a single token and the first character of the token is an opening quote. In the case of Kotlin,
     // the opening quote is a separate token and the first character of the string token is just a random letter.
-    private fun preprocessEnterInStringLiteral(psiFile: PsiFile,
-                                               editor: Editor,
-                                               caretOffsetRef: Ref<Int>,
-                                               caretAdvanceRef: Ref<Int>): Boolean {
+    private fun preprocessEnterInStringLiteral(
+        psiFile: PsiFile,
+        editor: Editor,
+        caretOffsetRef: Ref<Int>,
+        caretAdvanceRef: Ref<Int>
+    ): Boolean {
         var caretOffset = caretOffsetRef.get()
         val psiAtOffset = psiFile.findElementAt(caretOffset) ?: return false
         val stringTemplate = psiAtOffset.getStrictParentOfType<KtStringTemplateExpression>() ?: return false

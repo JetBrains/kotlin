@@ -38,6 +38,11 @@ class C(val x: Int, val y: Int) {
 }
 
 // Not redundant
+suspend fun bar(): Int {
+    return C(1, 2)()
+}
+
+// Not redundant
 suspend fun foo(c1: C, c2: C): Int {
     return c1() + c2()
 }

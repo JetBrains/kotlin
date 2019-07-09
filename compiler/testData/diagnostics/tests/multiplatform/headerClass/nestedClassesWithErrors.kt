@@ -5,14 +5,14 @@
 expect class B {
     class N {
         <!EXPECTED_DECLARATION_WITH_BODY, JVM:EXPECTED_DECLARATION_WITH_BODY!>fun body()<!> {}
-        <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
+        <!JVM:WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>expect<!> fun extraHeader()
     }
 }
 
 expect class C {
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> class N
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> enum class E
-    <!WRONG_MODIFIER_TARGET, JVM:WRONG_MODIFIER_TARGET!>expect<!> inner class I
+    <!JVM:WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>expect<!> class N
+    <!JVM:WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>expect<!> enum class E
+    <!JVM:WRONG_MODIFIER_TARGET, WRONG_MODIFIER_TARGET!>expect<!> inner class I
 }
 
 expect class D {

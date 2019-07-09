@@ -30,15 +30,18 @@ import java.io.IOException
 import java.util.*
 
 
-open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
+open class LookupStorage(
+    targetDataDir: File,
+    pathConverter: FileToPathConverter
+) : BasicMapsOwner(targetDataDir) {
     companion object {
         private val DELETED_TO_SIZE_TRESHOLD = 0.5
         private val MINIMUM_GARBAGE_COLLECTIBLE_SIZE = 10000
     }
 
     private val countersFile = "counters".storageFile
-    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile))
-    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile))
+    private val idToFile = registerMap(IdToFileMap("id-to-file".storageFile, pathConverter))
+    private val fileToId = registerMap(FileToIdMap("file-to-id".storageFile, pathConverter))
     private val lookupMap = registerMap(LookupMap("lookups".storageFile))
 
     @Volatile
@@ -152,7 +155,7 @@ open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
         size = 0
         deletedCount = 0
 
-        for ((file, oldId) in oldFileToId.entries) {
+        for ((file, oldId) in oldFileToId.entries.sortedBy { it.key.path }) {
             val newId = addFileIfNeeded(file)
             oldIdToNewId[oldId] = newId
         }
@@ -174,11 +177,19 @@ open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
         flush(false)
     }
 
-    @TestOnly fun dump(lookupSymbols: Set<LookupSymbol>, basePath: File? = null): String {
+    @TestOnly
+    fun dump(lookupSymbols: Set<LookupSymbol>): String {
         flush(false)
 
         val sb = StringBuilder()
         val p = Printer(sb)
+
+        p.println("====== File to id map")
+        p.println(fileToId.dump())
+
+        p.println("====== Id to file map")
+        p.println(idToFile.dump())
+
         val lookupsStrings = lookupSymbols.groupBy { LookupSymbolKey(it.name, it.scope) }
 
         for (lookup in lookupMap.keys.sorted()) {
@@ -186,12 +197,11 @@ open class LookupStorage(targetDataDir: File) : BasicMapsOwner(targetDataDir) {
 
             val key = if (lookup in lookupsStrings) {
                 lookupsStrings[lookup]!!.map { "${it.scope}#${it.name}" }.sorted().joinToString(", ")
-            }
-            else {
+            } else {
                 lookup.toString()
             }
 
-            val value = fileIds.map { idToFile[it]?.let { if (basePath == null) it.absolutePath else it.toRelativeString(basePath) } ?: it.toString() }.sorted().joinToString(", ")
+            val value = fileIds.map { it.toString() }.sorted().joinToString(", ")
             p.println("$key -> $value")
         }
 

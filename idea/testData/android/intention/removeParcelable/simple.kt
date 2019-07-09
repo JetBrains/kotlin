@@ -2,3 +2,5 @@
 import android.os.Parcelable
 
 class <caret>Simple : Parcelable
+
+fun foo() {}

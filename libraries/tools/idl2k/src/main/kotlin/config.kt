@@ -17,15 +17,21 @@ package org.jetbrains.idl2k
 
 val urls = listOf(
         "https://raw.githubusercontent.com/whatwg/html-mirror/master/source" to "org.w3c.dom",
-        "http://html.spec.whatwg.org/" to "org.w3c.dom",
+        "https://html.spec.whatwg.org/" to "org.w3c.dom",
         "https://raw.githubusercontent.com/whatwg/dom/master/dom.html" to "org.w3c.dom",
         "https://dvcs.w3.org/hg/editing/raw-file/tip/editing.html" to "org.w3c.dom",
-        "http://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
-        "http://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
-        "http://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
-        "http://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
+        "https://www.w3.org/TR/animation-timing/" to "org.w3c.dom",
+        "https://www.w3.org/TR/geometry-1/" to "org.w3c.dom",
+        "https://www.w3.org/TR/cssom-view/" to "org.w3c.dom",
+        "https://www.w3.org/TR/uievents/" to "org.w3c.dom.events",
+        "https://www.w3.org/TR/pointerevents/" to "org.w3c.dom.pointerevents",
+
         "https://drafts.csswg.org/cssom/" to "org.w3c.dom.css",
-        "http://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+        "https://www.w3.org/TR/css-masking-1/" to "org.w3c.css.masking",
+
+        "https://w3c.github.io/mediacapture-main/" to "org.w3c.dom.mediacapture",
+        "https://www.w3.org/TR/DOM-Parsing/" to "org.w3c.dom.parsing",
+        "https://w3c.github.io/clipboard-apis" to "org.w3c.dom.clipboard",
         "https://raw.githubusercontent.com/whatwg/url/master/url.html" to "org.w3c.dom.url",
 
         "https://www.w3.org/TR/SVG2/single-page.html" to "org.w3c.dom.svg",
@@ -38,10 +44,10 @@ val urls = listOf(
 
         "https://raw.githubusercontent.com/whatwg/notifications/master/notifications.html" to "org.w3c.notifications",
         "https://raw.githubusercontent.com/whatwg/fullscreen/master/fullscreen.html" to "org.w3c.fullscreen",
-        "http://www.w3.org/TR/vibration/" to "org.w3c.vibration",
+        "https://www.w3.org/TR/vibration/" to "org.w3c.vibration",
 
-        "http://www.w3.org/TR/hr-time/" to "org.w3c.performance",
-        "http://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
+        "https://www.w3.org/TR/hr-time/" to "org.w3c.performance",
+        "https://www.w3.org/TR/2012/REC-navigation-timing-20121217/" to "org.w3c.performance",
 
         "https://w3c.github.io/ServiceWorker/" to "org.w3c.workers"
 )
@@ -79,14 +85,101 @@ val inheritanceExclude = mapOf(
 )
 
 val kotlinBuiltinInterfaces = mapOf(
-        "ItemArrayLike" to GenerateTraitOrClass("ItemArrayLike", "org.w3c.dom", GenerateDefinitionKind.INTERFACE, emptyList(),
-                memberAttributes = mutableListOf(GenerateAttribute("length", SimpleType("Int", false), null, false, AttributeKind.VAL, false, false, false, false)),
-                memberFunctions = mutableListOf(GenerateFunction("item", DynamicType, listOf(
+        "ItemArrayLike" to GenerateClass("ItemArrayLike", "org.w3c.dom", GenerateDefinitionKind.INTERFACE, emptyList(),
+                                         memberAttributes = mutableListOf(GenerateAttribute("length", SimpleType("Int", false), null, false, AttributeKind.VAL, false, false, false, false)),
+                                         memberFunctions = mutableListOf(GenerateFunction("item", DynamicType, listOf(
                         GenerateAttribute("index", SimpleType("Int", false), null, false, AttributeKind.ARGUMENT, false, false, false, false)
                 ), NativeGetterOrSetter.NONE, false, false)),
-                constants = emptyList(),
-                generateBuilderFunction = false,
-                primaryConstructor = null,
-                secondaryConstructors = emptyList()
+                                         constants = emptyList(),
+                                         generateBuilderFunction = false,
+                                         primaryConstructor = null,
+                                         secondaryConstructors = emptyList()
                 )
+)
+
+val eventSpecifierMapper = mapOf<String, String>(
+    "onbeforeunload" to "BeforeUnloadEvent",
+
+    "ondrag" to "DragEvent",
+    "ondragend" to "DragEvent",
+    "ondragenter" to "DragEvent",
+    "ondragexit" to "DragEvent",
+    "ondragleave" to "DragEvent",
+    "ondragover" to "DragEvent",
+    "ondragstart" to "DragEvent",
+    "ondrop" to "DragEvent",
+
+    "oncopy" to "ClipboardEvent",
+    "oncut" to "ClipboardEvent",
+    "onpaste" to "ClipboardEvent",
+
+
+    "onfetch" to "FetchEvent",
+
+    "onblur" to "FocusEvent",
+    "onfocus" to "FocusEvent",
+
+    "onhashchange" to "HashChangeEvent",
+
+    "oninput" to "InputEvent",
+
+    "onkeydown" to "KeyboardEvent",
+    "onkeypress" to "KeyboardEvent",
+    "onkeyup" to "KeyboardEvent",
+
+    "onmessage" to "MessageEvent",
+
+    "onclick" to "MouseEvent",
+    "oncontextmenu" to "MouseEvent",
+    "ondblclick" to "MouseEvent",
+    "onmousedown" to "MouseEvent",
+    "onmouseenter" to "MouseEvent",
+    "onmouseleave" to "MouseEvent",
+    "onmousemove" to "MouseEvent",
+    "onmouseout" to "MouseEvent",
+    "onmouseover" to "MouseEvent",
+    "onmouseup" to "MouseEvent",
+
+    "onnotificationclick" to "NotificationEvent",
+    "onnotificationclose" to "NotificationEvent",
+
+    "onpagehide" to "PageTransitionEvent",
+    "onpageshow" to "PageTransitionEvent",
+
+    "ongotpointercapture" to "PointerEvent",
+    "onlostpointercapture" to "PointerEvent",
+    "onpointercancel" to "PointerEvent",
+    "onpointerdown" to "PointerEvent",
+    "onpointerenter" to "PointerEvent",
+    "onpointerleave" to "PointerEvent",
+    "onpointermove" to "PointerEvent",
+    "onpointerout" to "PointerEvent",
+    "onpointerover" to "PointerEvent",
+    "onpointerup" to "PointerEvent",
+
+    "onpopstate" to "PopStateEvent",
+
+    "onloadstart" to "ProgressEvent",
+    "onprogress" to "ProgressEvent",
+
+    "onunhandledrejection" to "PromiseRejectionEvent",
+
+    "onstorage" to "StorageEvent",
+
+    "onwheel" to "WheelEvent"
+)
+
+
+data class EventMapKey(val name: String, val context: String)
+
+val eventSpecifierMapperWithContext = mapOf<EventMapKey, String>(
+    EventMapKey("onaddtrack", "MediaStream") to "MediaStreamTrackEvent",
+    EventMapKey("onremovetrack", "MediaStream") to "MediaStreamTrackEvent",
+
+    EventMapKey("onaddtrack", "AudioTrackList") to "TrackEvent",
+    EventMapKey("onaddtrack", "TextTrackList") to "TrackEvent",
+    EventMapKey("onaddtrack", "VideoTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "AudioTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "TextTrackList") to "TrackEvent",
+    EventMapKey("onremovetrack", "VideoTrackList") to "TrackEvent"
 )

@@ -1,6 +1,5 @@
 // !CHECK_TYPE
 // !LANGUAGE: +ReleaseCoroutines
-// !API_VERSION: 1.3
 // SKIP_TXT
 
 import kotlin.reflect.KSuspendFunction0

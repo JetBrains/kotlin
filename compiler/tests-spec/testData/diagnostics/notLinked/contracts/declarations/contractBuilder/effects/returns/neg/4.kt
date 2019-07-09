@@ -19,7 +19,7 @@ fun case_1(x: Any?): Boolean {
 
 // TESTCASE NUMBER: 2
 fun case_2(x: Any?) {
-    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract<!> { returns() implies (x == "...") }
+    contract { returns() implies (x == <!ERROR_IN_CONTRACT_DESCRIPTION!>"..."<!>) }
     if (x != "...") throw Exception()
 }
 

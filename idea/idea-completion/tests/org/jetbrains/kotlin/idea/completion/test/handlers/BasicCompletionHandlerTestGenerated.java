@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.completion.test.handlers;
@@ -112,6 +112,16 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
     @TestMetadata("KT14130.kt")
     public void testKT14130() throws Exception {
         runTest("idea/idea-completion/testData/handlers/basic/KT14130.kt");
+    }
+
+    @TestMetadata("KT19863.kt")
+    public void testKT19863() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT19863.kt");
+    }
+
+    @TestMetadata("KT19864.kt")
+    public void testKT19864() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/basic/KT19864.kt");
     }
 
     @TestMetadata("KT23627.kt")
@@ -398,6 +408,21 @@ public class BasicCompletionHandlerTestGenerated extends AbstractBasicCompletion
         @TestMetadata("ReplaceByLambdaTemplateNoClosingParenth.kt")
         public void testReplaceByLambdaTemplateNoClosingParenth() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ReplaceByLambdaTemplateNoClosingParenth.kt");
+        }
+
+        @TestMetadata("SameTypeParameters.kt")
+        public void testSameTypeParameters() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters.kt");
+        }
+
+        @TestMetadata("SameTypeParameters2.kt")
+        public void testSameTypeParameters2() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters2.kt");
+        }
+
+        @TestMetadata("SameTypeParameters3.kt")
+        public void testSameTypeParameters3() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters3.kt");
         }
 
         @TestMetadata("WithArgsEmptyLambdaAfter.kt")

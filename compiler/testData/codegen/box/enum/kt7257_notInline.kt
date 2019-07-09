@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun <T, R> T.letNoInline(fn: (T) -> R) =
         fn(this)
 

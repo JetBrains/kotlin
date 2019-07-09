@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrProperty
+import org.jetbrains.kotlin.ir.declarations.MetadataSource
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -69,17 +71,6 @@ class IrFieldImpl(
     ) :
             this(startOffset, endOffset, origin, IrFieldSymbolImpl(descriptor), type)
 
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: PropertyDescriptor,
-        type: IrType,
-        initializer: IrExpressionBody?
-    ) : this(startOffset, endOffset, origin, descriptor, type) {
-        this.initializer = initializer
-    }
-
     init {
         symbol.bind(this)
     }
@@ -87,8 +78,19 @@ class IrFieldImpl(
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
     override var initializer: IrExpressionBody? = null
-    override var correspondingProperty: IrProperty? = null
+
+    @Suppress("OverridingDeprecatedMember")
+    override var correspondingProperty: IrProperty?
+        get() = correspondingPropertySymbol?.owner
+        set(value) {
+            correspondingPropertySymbol = value?.symbol
+        }
+
+    override var correspondingPropertySymbol: IrPropertySymbol? = null
+
     override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()
+
+    override var metadata: MetadataSource.Property? = null
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitField(this, data)

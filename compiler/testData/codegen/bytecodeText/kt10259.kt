@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     var encl1 = "fail";
     var encl2 = "fail";

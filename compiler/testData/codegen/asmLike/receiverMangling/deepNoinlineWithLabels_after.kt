@@ -1,5 +1,5 @@
+// !LANGUAGE: +NewCapturedReceiverFieldNamingConvention
 // LOCAL_VARIABLE_TABLE
-// LANGUAGE_VERSION: 1.3
 
 fun String.foo(count: Int) {
     val x = false

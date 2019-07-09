@@ -1,0 +1,39 @@
+plugins {
+    id 'kotlin-multiplatform'
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        minSdkVersion 15
+        targetSdkVersion 26
+        versionCode 1
+        versionName "1.0"
+
+    }
+}
+
+kotlin {
+    android("android")
+    jvm("jvm")
+
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation kotlin('stdlib-common')
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation kotlin('stdlib')
+            }
+        }
+        jvmMain {
+            dependencies {
+                implementation kotlin('stdlib')
+            }
+        }
+    }
+}

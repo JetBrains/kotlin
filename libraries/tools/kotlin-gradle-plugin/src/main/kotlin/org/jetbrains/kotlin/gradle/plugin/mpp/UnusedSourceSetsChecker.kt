@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
@@ -37,7 +37,7 @@ object UnusedSourceSetsChecker {
     fun checkSourceSets(project: Project) {
         // TODO once Android compilations are configured eagerly, move this to afterEvaluate { ... } instead of taskGraph.whenReady { ... }
         project.gradle.taskGraph.whenReady { _ ->
-            val compilationsBySourceSet = compilationsBySourceSet(project)
+            val compilationsBySourceSet = CompilationSourceSetUtil.compilationsBySourceSets(project)
             val unusedSourceSets = project.kotlinExtension.sourceSets.filter {
                 compilationsBySourceSet[it]?.isEmpty() ?: true
             }

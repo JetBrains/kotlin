@@ -1,0 +1,12 @@
+package my.simple.name
+
+class Inner {
+    fun a() {
+        fun say(i: Inner) {}
+        say()
+    }
+
+    companion object {
+        fun say() {}
+    }
+}

@@ -1,15 +1,19 @@
+import java.util.Properties
+
+extra["versions.shadow"] = "4.0.3"
+extra["versions.native-platform"] = "0.14"
 
 buildscript {
     val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
 
     val buildSrcKotlinVersion: String by extra(findProperty("buildSrc.kotlin.version")?.toString() ?: embeddedKotlinVersion)
     val buildSrcKotlinRepo: String? by extra(findProperty("buildSrc.kotlin.repo") as String?)
-    extra["versions.shadow"] = "2.0.2"
-    extra["versions.native-platform"] = "0.14"
 
     repositories {
         if (cacheRedirectorEnabled) {
             maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
+        } else {
+            jcenter()
         }
 
         buildSrcKotlinRepo?.let {
@@ -59,12 +63,15 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 }
 
 rootProject.apply {
-    from(rootProject.file("../versions.gradle.kts"))
+    from(rootProject.file("../gradle/versions.gradle.kts"))
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-val intellijUltimateEnabled by extra(project.getBooleanProperty("intellijUltimateEnabled") ?: isTeamcityBuild)
+val flags = LocalBuildProperties(project)
+
+val isTeamcityBuild = flags.isTeamcityBuild
+val intellijUltimateEnabled by extra(flags.intellijUltimateEnabled)
 val intellijSeparateSdks by extra(project.getBooleanProperty("intellijSeparateSdks") ?: false)
+val verifyDependencyOutput by extra( getBooleanProperty("kotlin.build.dependency.output.verification") ?: isTeamcityBuild)
 
 extra["intellijReleaseType"] = if (extra["versions.intellijSdk"]?.toString()?.endsWith("SNAPSHOT") == true)
     "snapshots"
@@ -73,28 +80,29 @@ else
 
 extra["versions.androidDxSources"] = "5.0.0_r2"
 
-extra["customDepsOrg"] = "kotlin.build.custom.deps"
+extra["customDepsOrg"] = "kotlin.build"
 
 repositories {
-    if (cacheRedirectorEnabled) {
-        maven("https://cache-redirector.jetbrains.com/jcenter.bintray.com")
-    }
+    maven("https://jetbrains.bintray.com/intellij-third-party-dependencies/")
+    maven("https://plugins.gradle.org/m2/")
+    jcenter()
 
     extra["buildSrcKotlinRepo"]?.let {
         maven(url = it)
     }
-
-    jcenter()
 }
 
 dependencies {
+    compile(kotlin("stdlib", embeddedKotlinVersion))
     compile("net.rubygrapefruit:native-platform:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-amd64:${property("versions.native-platform")}")
     compile("net.rubygrapefruit:native-platform-windows-i386:${property("versions.native-platform")}")
     compile("com.jakewharton.dex:dex-method-list:3.0.0")
 
     compile("com.github.jengelman.gradle.plugins:shadow:${property("versions.shadow")}")
-    compile("org.ow2.asm:asm-all:6.0_BETA")
+    compile("org.jetbrains.intellij.deps:asm-all:7.0.1")
+
+    compile("gradle.plugin.org.jetbrains.gradle.plugin.idea-ext:gradle-idea-ext:0.5")
 }
 
 samWithReceiver {
@@ -104,4 +112,39 @@ samWithReceiver {
 fun Project.`samWithReceiver`(configure: org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverExtension.() -> Unit): Unit =
         extensions.configure("samWithReceiver", configure)
 
-tasks["build"].dependsOn(":prepare-deps:android-dx:build", ":prepare-deps:intellij-sdk:build")
+tasks["build"].dependsOn(":prepare-deps:build")
+
+allprojects {
+    tasks.register("checkBuild")
+
+    afterEvaluate {
+        apply(from = "$rootDir/../gradle/cacheRedirector.gradle.kts")
+    }
+}
+
+// TODO: hide these classes in special gradle plugin for kotlin-ultimate which will support local.properties
+class LocalBuildPropertiesProvider(private val project: Project) {
+    private val localProperties: Properties = Properties()
+
+    val rootProjectDir: File = project.rootProject.rootDir.parentFile
+
+    init {
+        rootProjectDir.resolve("local.properties").takeIf { it.isFile }?.let {
+            it.reader().use(localProperties::load)
+        }
+    }
+
+    fun getString(name: String): String? = project.findProperty(name)?.toString() ?: localProperties[name]?.toString()
+
+    fun getBoolean(name: String): Boolean = getString(name)?.toBoolean() == true
+}
+
+class LocalBuildProperties(project: Project) {
+    val propertiesProvider = LocalBuildPropertiesProvider(project)
+
+    val isTeamcityBuild = propertiesProvider.getString("teamcity") != null || System.getenv("TEAMCITY_VERSION") != null
+
+    val intellijUltimateEnabled =
+        (propertiesProvider.getBoolean("intellijUltimateEnabled") || isTeamcityBuild)
+                && propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
+}

@@ -17,33 +17,36 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiNamedElement
+import com.intellij.psi.ResolveResult
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
 import org.jetbrains.kotlin.resolve.BindingContext.DOUBLE_COLON_LHS
-import org.jetbrains.uast.UCallableReferenceExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.UExpression
+import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.internal.getResolveResultVariants
 
 class KotlinUCallableReferenceExpression(
-        override val psi: KtCallableReferenceExpression,
+        override val sourcePsi: KtCallableReferenceExpression,
         givenParent: UElement?
-) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, KotlinUElementWithType {
+) : KotlinAbstractUExpression(givenParent), UCallableReferenceExpression, UMultiResolvable, KotlinUElementWithType {
     override val qualifierExpression: UExpression?
         get() {
             if (qualifierType != null) return null
-            val receiverExpression = psi.receiverExpression ?: return null
-            return KotlinConverter.convertExpression(receiverExpression, this)
+            val receiverExpression = sourcePsi.receiverExpression ?: return null
+            return KotlinConverter.convertExpression(receiverExpression, this, DEFAULT_EXPRESSION_TYPES_LIST)
         }
 
     override val qualifierType by lz {
-        val ktType = psi.analyze()[DOUBLE_COLON_LHS, psi.receiverExpression]?.type ?: return@lz null
-        ktType.toPsiType(this, psi, boxed = true)
+        val ktType = sourcePsi.analyze()[DOUBLE_COLON_LHS, sourcePsi.receiverExpression]?.type ?: return@lz null
+        ktType.toPsiType(this, sourcePsi, boxed = true)
     }
 
     override val callableName: String
-        get() = psi.callableReference.getReferencedName()
+        get() = sourcePsi.callableReference.getReferencedName()
 
     override val resolvedName: String?
         get() = (resolve() as? PsiNamedElement)?.name
 
-    override fun resolve() = psi.callableReference.resolveCallToDeclaration(this)
+    override fun resolve() = sourcePsi.callableReference.resolveCallToDeclaration()
+
+    override fun multiResolve(): Iterable<ResolveResult> = getResolveResultVariants(sourcePsi.callableReference)
+
 }

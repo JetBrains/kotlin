@@ -26,8 +26,8 @@ class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
 }
 
 class PredefinedFunctionEnhancementInfo(
-        val returnTypeInfo: TypeEnhancementInfo? = null,
-        val parametersInfo: List<TypeEnhancementInfo?> = emptyList()
+    val returnTypeInfo: TypeEnhancementInfo? = null,
+    val parametersInfo: List<TypeEnhancementInfo?> = emptyList()
 )
 
 /** Type is always nullable: `T?` */
@@ -37,6 +37,7 @@ private val NOT_PLATFORM = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, nul
 /** Type is always non-nullable: `T & Any` */
 private val NOT_NULLABLE = JavaTypeQualifiers(NullabilityQualifier.NOT_NULL, null, isNotNullTypeParameter = true)
 
+@Suppress("LocalVariableName")
 val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
     val JLObject = javaLang("Object")
     val JFPredicate = javaFunction("Predicate")
@@ -196,14 +197,14 @@ val PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE = signatures {
 }
 
 
-private inline fun enhancement(block: SignatureEnhancementBuilder.() -> Unit): Map<String, PredefinedFunctionEnhancementInfo>
-        = SignatureEnhancementBuilder().apply(block).build()
+private inline fun enhancement(block: SignatureEnhancementBuilder.() -> Unit): Map<String, PredefinedFunctionEnhancementInfo> =
+    SignatureEnhancementBuilder().apply(block).build()
 
 private class SignatureEnhancementBuilder {
     private val signatures = mutableMapOf<String, PredefinedFunctionEnhancementInfo>()
 
     inline fun forClass(internalName: String, block: ClassEnhancementBuilder.() -> Unit) =
-            ClassEnhancementBuilder(internalName).block()
+        ClassEnhancementBuilder(internalName).block()
 
     inner class ClassEnhancementBuilder(val className: String) {
         fun function(name: String, block: FunctionEnhancementBuilder.() -> Unit) {
@@ -218,20 +219,29 @@ private class SignatureEnhancementBuilder {
                 parameters += type to
                         if (pairs.isEmpty()) null else TypeEnhancementInfo(*pairs)
             }
+
             fun parameter(type: String, vararg qualifiers: JavaTypeQualifiers) {
                 parameters += type to
-                        if (qualifiers.isEmpty()) null else TypeEnhancementInfo(qualifiers.withIndex().associateBy({it.index}, {it.value}))
+                        if (qualifiers.isEmpty()) null else TypeEnhancementInfo(
+                            qualifiers.withIndex().associateBy(
+                                { it.index },
+                                { it.value })
+                        )
             }
+
             fun returns(type: String, vararg pairs: Pair<Int, JavaTypeQualifiers>) {
                 returnType = type to TypeEnhancementInfo(*pairs)
             }
+
             fun returns(type: String, vararg qualifiers: JavaTypeQualifiers) {
-                returnType = type to TypeEnhancementInfo(qualifiers.withIndex().associateBy({it.index}, {it.value}))
+                returnType = type to TypeEnhancementInfo(qualifiers.withIndex().associateBy({ it.index }, { it.value }))
             }
+
             fun returns(type: JvmPrimitiveType) {
                 returnType = type.desc to null
             }
-            fun build() = with (SignatureBuildingComponents) {
+
+            fun build() = with(SignatureBuildingComponents) {
                 signature(className, jvmDescriptor(functionName, parameters.map { it.first }, returnType.first)) to
                         PredefinedFunctionEnhancementInfo(returnType.second, parameters.map { it.second })
             }
@@ -241,5 +251,3 @@ private class SignatureEnhancementBuilder {
 
     fun build(): Map<String, PredefinedFunctionEnhancementInfo> = signatures
 }
-
-

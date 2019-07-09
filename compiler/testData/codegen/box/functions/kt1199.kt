@@ -1,16 +1,11 @@
-// IGNORE_BACKEND: JS_IR
-// TODO: muted automatically, investigate should it be ran for JS or not
-// IGNORE_BACKEND: JS, NATIVE
-
-
 interface MyIterator<T> {
     operator fun hasNext() : Boolean
     operator fun next() : T
 }
 
 operator fun <T : Any> T?.iterator() = object : MyIterator<T> {
-    var hasNext = this@iterator != null
-      private set
+    private var hasNext = this@iterator != null
+
     override fun hasNext() = hasNext
 
     override fun next() : T {
@@ -18,7 +13,7 @@ operator fun <T : Any> T?.iterator() = object : MyIterator<T> {
             hasNext = false
             return this@iterator!!
         }
-        throw java.util.NoSuchElementException()
+        throw NoSuchElementException()
     }
 }
 

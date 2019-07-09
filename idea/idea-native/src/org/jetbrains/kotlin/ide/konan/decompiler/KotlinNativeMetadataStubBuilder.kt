@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan.decompiler
@@ -12,19 +12,16 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.ide.konan.createFileStub
-import org.jetbrains.kotlin.ide.konan.decompiler.FileWithMetadata
-import org.jetbrains.kotlin.ide.konan.decompiler.decompiledText
 import org.jetbrains.kotlin.idea.decompiler.stubBuilder.createIncompatibleAbiVersionFileStub
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.defaultDecompilerRendererOptions
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.jetbrains.kotlin.resolve.konan.platform.KonanPlatform
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.konan.NullFlexibleTypeDeserializer
 
 open class KotlinNativeMetadataStubBuilder(
     private val version: Int,
     private val fileType: FileType,
-    private val serializerProtocol: SerializerExtensionProtocol,
+    private val serializerProtocol: () -> SerializerExtensionProtocol,
     private val readFile: (VirtualFile) -> FileWithMetadata?
 ) : ClsStubBuilder() {
 
@@ -42,8 +39,7 @@ open class KotlinNativeMetadataStubBuilder(
                 val renderer = DescriptorRenderer.withOptions { defaultDecompilerRendererOptions() }
                 val ktFileText = decompiledText(
                     file,
-                    KonanPlatform,
-                    serializerProtocol,
+                    serializerProtocol(),
                     NullFlexibleTypeDeserializer,
                     renderer
                 )

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.codegen.range
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -30,23 +31,26 @@ class PrimitiveNumberUntilRangeValue(rangeCall: ResolvedCall<out CallableDescrip
     PrimitiveNumberRangeIntrinsicRangeValue(rangeCall), ReversableRangeValue {
 
     override fun getBoundedValue(codegen: ExpressionCodegen) =
-        SimpleBoundedValue(
-            codegen.asmType(rangeCall.resultingDescriptor.returnType!!),
-            codegen.generateCallReceiver(rangeCall),
-            true,
-            codegen.generateCallSingleArgument(rangeCall),
-            false
+        BoundedValue(
+            lowBound = codegen.generateCallReceiver(rangeCall).coerceToRangeElementTypeIfRequired(),
+            isLowInclusive = true,
+            highBound = codegen.generateCallSingleArgument(rangeCall).coerceToRangeElementTypeIfRequired(),
+            isHighInclusive = false
         )
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
-        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+        ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
+            codegen, forExpression, getBoundedValue(codegen),
+            getComparisonGeneratorForKotlinType(elementKotlinType)
+        )
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) =
         createConstBoundedForInReversedUntilGenerator(codegen, forExpression)
-                ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
-                    codegen, forExpression, getBoundedValue(codegen),
-                    inverseBoundsEvaluationOrder = true
-                )
+            ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                codegen, forExpression, getBoundedValue(codegen),
+                getComparisonGeneratorForKotlinType(elementKotlinType),
+                inverseBoundsEvaluationOrder = true
+            )
 
     private fun createConstBoundedForInReversedUntilGenerator(
         codegen: ExpressionCodegen,

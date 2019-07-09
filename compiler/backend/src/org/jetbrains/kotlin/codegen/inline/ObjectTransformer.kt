@@ -64,7 +64,7 @@ class WhenMappingTransformer(
         /*MAPPING File could contains mappings for several enum classes, we should filter one*/
         val methodNodes = arrayListOf<MethodNode>()
         val fieldNode = transformationInfo.fieldNode
-        classReader.accept(object : ClassVisitor(API, classBuilder.visitor) {
+        classReader.accept(object : ClassVisitor(Opcodes.API_VERSION, classBuilder.visitor) {
             override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<String>) {
                 classBuilder.defineClass(null, version, access, name, signature, superName, interfaces)
             }

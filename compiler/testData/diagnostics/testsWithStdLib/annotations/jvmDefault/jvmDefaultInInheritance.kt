@@ -1,5 +1,5 @@
-// !API_VERSION: 1.3
 // !JVM_TARGET: 1.8
+
 interface A {
     <!JVM_DEFAULT_IN_DECLARATION!>@JvmDefault
     fun test()<!> {

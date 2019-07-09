@@ -1,7 +1,7 @@
 ================ Step #1 =================
 
 Building module1
-Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module1' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module1' production) are INVALID
 Marked as dirty by Kotlin:
   module1/src/a.kt
 Cleaning output files:
@@ -15,7 +15,7 @@ End of files
 Exit code: OK
 ------------------------------------------
 Building module2
-Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module2' production) are INVALID: actual=CacheVersion(version=777) -> expected=CacheVersion(version=9011001)
+Local cache for KotlinChunk<KotlinJvmModuleBuildTarget>(Module 'module2' production) are INVALID
 Marked as dirty by Kotlin:
   module2/src/b.kt
 Cleaning output files:

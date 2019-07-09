@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 operator fun <K, V> MutableMap<K, V>.set(k : K, v : V) = put(k, v)
 
 fun box() : String {

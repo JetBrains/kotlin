@@ -1,16 +1,21 @@
-@file:Suppress("unused") // usages in build scripts are not tracked properly
+@file:Suppress("unused")
 
+// usages in build scripts are not tracked properly
+
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.tasks.AbstractCopyTask
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
+val Project.isSnapshotIntellij get() = rootProject.extra["versions.intellijSdk"].toString().endsWith("SNAPSHOT")
+
+val Project.intellijRepo get() = "https://www.jetbrains.com/intellij-repository/" + if (isSnapshotIntellij) "snapshots" else "releases"
 
 fun Project.commonDep(coord: String): String {
     val parts = coord.split(':')
@@ -28,13 +33,18 @@ fun Project.commonDep(group: String, artifact: String, vararg suffixesAndClassif
 }
 
 fun Project.commonVer(group: String, artifact: String) =
-        when {
-            rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
-            rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
-            else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
-        }
+    when {
+        rootProject.extra.has("versions.$artifact") -> rootProject.extra["versions.$artifact"]
+        rootProject.extra.has("versions.$group") -> rootProject.extra["versions.$group"]
+        else -> throw GradleException("Neither versions.$artifact nor versions.$group is defined in the root project's extra")
+    }
 
-fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File(rootDir, "dependencies"), subdir: String? = null, optional: Boolean = false): ConfigurableFileCollection {
+fun Project.preloadedDeps(
+    vararg artifactBaseNames: String,
+    baseDir: File = File(rootDir, "dependencies"),
+    subdir: String? = null,
+    optional: Boolean = false
+): ConfigurableFileCollection {
     val dir = if (subdir != null) File(baseDir, subdir) else baseDir
     if (!dir.exists() || !dir.isDirectory) {
         if (optional) return files()
@@ -42,9 +52,17 @@ fun Project.preloadedDeps(vararg artifactBaseNames: String, baseDir: File = File
     }
     val matchingFiles = dir.listFiles { file -> artifactBaseNames.any { file.matchMaybeVersionedArtifact(it) } }
     if (matchingFiles == null || matchingFiles.size < artifactBaseNames.size) {
-        throw GradleException("Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
-                              "(missing: ${artifactBaseNames.filterNot { request -> matchingFiles.any { it.matchMaybeVersionedArtifact(request) } }.joinToString()};" +
-                              " found: ${matchingFiles?.joinToString { it.name }})")
+        throw GradleException(
+            "Not all matching artifacts '${artifactBaseNames.joinToString()}' found in the '$dir' " +
+                    "(missing: ${artifactBaseNames.filterNot { request ->
+                        matchingFiles.any {
+                            it.matchMaybeVersionedArtifact(
+                                request
+                            )
+                        }
+                    }.joinToString()};" +
+                    " found: ${matchingFiles?.joinToString { it.name }})"
+        )
     }
     return files(*matchingFiles.map { it.canonicalPath }.toTypedArray())
 }
@@ -55,23 +73,34 @@ fun Project.ideaUltimatePreloadedDeps(vararg artifactBaseNames: String, subdir: 
     else files()
 }
 
-fun Project.kotlinDep(artifactBaseName: String, version: String): String = "org.jetbrains.kotlin:kotlin-$artifactBaseName:$version"
+fun Project.kotlinDep(artifactBaseName: String, version: String, classifier: String? = null): String =
+    listOfNotNull("org.jetbrains.kotlin:kotlin-$artifactBaseName:$version", classifier).joinToString(":")
 
-@Deprecated("Depend on the default configuration instead", ReplaceWith("project(name)"))
-fun DependencyHandler.projectDist(name: String): ProjectDependency = project(name)
+fun Project.kotlinStdlib(suffix: String? = null, classifier: String? = null): Any {
+    return if (kotlinBuildProperties.useBootstrapStdlib)
+        kotlinDep(listOfNotNull("stdlib", suffix).joinToString("-"), bootstrapKotlinVersion, classifier)
+    else
+        dependencies.project(listOfNotNull(":kotlin-stdlib", suffix).joinToString("-"), classifier)
+}
+
+fun Project.kotlinBuiltins(): Any =
+    if (kotlinBuildProperties.useBootstrapStdlib) "org.jetbrains.kotlin:builtins:$bootstrapKotlinVersion"
+    else dependencies.project(":core:builtins")
+
 fun DependencyHandler.projectTests(name: String): ProjectDependency = project(name, configuration = "tests-jar")
 fun DependencyHandler.projectRuntimeJar(name: String): ProjectDependency = project(name, configuration = "runtimeJar")
 fun DependencyHandler.projectArchives(name: String): ProjectDependency = project(name, configuration = "archives")
-fun DependencyHandler.projectClasses(name: String): ProjectDependency = project(name, configuration = "classes-dirs")
 
-val protobufLiteProject = ":custom-dependencies:protobuf-lite"
-val protobufRelocatedProject = ":custom-dependencies:protobuf-relocated"
-fun DependencyHandler.protobufLite(): ProjectDependency =
-        project(protobufLiteProject, configuration = "default").apply { isTransitive = false }
-val protobufLiteTask = "$protobufLiteProject:prepare"
+val Project.protobufVersion: String get() = findProperty("versions.protobuf") as String
 
-fun DependencyHandler.protobufFull(): ProjectDependency =
-        project(protobufRelocatedProject, configuration = "default").apply { isTransitive = false }
+val Project.protobufRepo: String
+    get() =
+        "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/buildType:(id:Kotlin_Protobuf),status:SUCCESS,pinned:true,tag:$protobufVersion/artifacts/content/internal/repo/"
+
+fun Project.protobufLite(): String = "org.jetbrains.kotlin:protobuf-lite:$protobufVersion"
+fun Project.protobufFull(): String = "org.jetbrains.kotlin:protobuf-relocated:$protobufVersion"
+
+val Project.kotlinNativeVersion: String get() = property("versions.kotlin-native") as String
 
 fun File.matchMaybeVersionedArtifact(baseName: String) = name.matches(baseName.toMaybeVersionedJarRegex())
 
@@ -93,8 +122,6 @@ private fun String.toMaybeVersionedJarRegex(): Regex {
     return Regex(if (hasJarExtension) escaped else "$escaped(-\\d.*)?\\.jar") // TODO: consider more precise version part of the regex
 }
 
-
-
 fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = File(this.property("JDK_18") as String)): File? =
     paths.map { File(jdkHome, it) }.firstOrNull { it.exists() }.also {
         if (it == null)
@@ -104,46 +131,9 @@ fun Project.firstFromJavaHomeThatExists(vararg paths: String, jdkHome: File = Fi
 fun Project.toolsJar(jdkHome: File = File(this.property("JDK_18") as String)): File? =
     firstFromJavaHomeThatExists("lib/tools.jar", jdkHome = jdkHome)
 
+val compilerManifestClassPath
+    get() = "annotations-13.0.jar kotlin-stdlib.jar kotlin-reflect.jar kotlin-script-runtime.jar trove4j.jar"
+
 object EmbeddedComponents {
-    val CONFIGURATION_NAME = "embeddedComponents"
+    val CONFIGURATION_NAME = "embedded"
 }
-
-fun AbstractCopyTask.fromEmbeddedComponents() {
-    val embeddedComponents = project.configurations.getByName(EmbeddedComponents.CONFIGURATION_NAME)
-    if (this is ShadowJar) {
-        from(embeddedComponents)
-    } else {
-        dependsOn(embeddedComponents)
-        from {
-            embeddedComponents.map { file ->
-                if (file.isDirectory)
-                    project.files(file)
-                else
-                    project.zipTree(file)
-            }
-        }
-    }
-}
-
-// TODO: it seems incomplete, find and add missing dependencies
-val testDistProjects = listOf(
-    "", // for root project
-    ":kotlin-stdlib:jvm-minimal-for-test",
-    ":kotlin-compiler",
-    ":kotlin-script-runtime",
-    ":kotlin-stdlib",
-    ":kotlin-stdlib-jre7",
-    ":kotlin-stdlib-jre8",
-    ":kotlin-stdlib-jdk7",
-    ":kotlin-stdlib-jdk8",
-    ":kotlin-stdlib-js",
-    ":kotlin-reflect",
-    ":kotlin-test:kotlin-test-jvm",
-    ":kotlin-test:kotlin-test-junit",
-    ":kotlin-test:kotlin-test-js",
-    ":kotlin-preloader",
-    ":plugins:android-extensions-compiler",
-    ":kotlin-ant",
-    ":kotlin-annotations-jvm",
-    ":kotlin-annotations-android"
-)

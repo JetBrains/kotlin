@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test() {
     val a = inlineFunInt { 1 }
     val b = simpleFunInt { 1 }
@@ -23,4 +24,4 @@ fun simpleFunVoid(f: () -> Unit): Unit {
     return f()
 }
 
-// 7 NOP
+// 3 NOP

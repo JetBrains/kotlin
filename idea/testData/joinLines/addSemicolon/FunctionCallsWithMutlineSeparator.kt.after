@@ -1,4 +1,4 @@
 fun foo() {
-    println()<caret>
+    println()<selection><caret></selection>
     println()
 }

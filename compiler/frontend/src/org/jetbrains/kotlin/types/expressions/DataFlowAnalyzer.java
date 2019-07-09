@@ -373,7 +373,9 @@ public class DataFlowAnalyzer {
     public KotlinTypeInfo illegalStatementType(@NotNull KtExpression expression, @NotNull ExpressionTypingContext context, @NotNull ExpressionTypingInternals facade) {
         facade.checkStatementType(
                 expression, context.replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceContextDependency(INDEPENDENT));
-        context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
+        if (!context.isDebuggerContext) {
+            context.trace.report(EXPRESSION_EXPECTED.on(expression, expression));
+        }
         return TypeInfoFactoryKt.noTypeInfo(context);
     }
 

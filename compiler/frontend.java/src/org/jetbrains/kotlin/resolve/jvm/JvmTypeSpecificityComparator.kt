@@ -16,30 +16,29 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.asFlexibleType
-import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContextDelegate
 
-object JvmTypeSpecificityComparator : TypeSpecificityComparator {
+class JvmTypeSpecificityComparator(val context: TypeSystemInferenceExtensionContextDelegate) : TypeSpecificityComparator {
 
-    override fun isDefinitelyLessSpecific(specific: KotlinType, general: KotlinType): Boolean {
-        if (!specific.isFlexible() || general.isFlexible()) return false
+    override fun isDefinitelyLessSpecific(specific: KotlinTypeMarker, general: KotlinTypeMarker): Boolean = with(context) {
+        val simpleGeneral = general.asSimpleType()
+        if (!specific.isFlexible() || simpleGeneral == null) return false
 
         // general is inflexible
-        val flexibility = specific.asFlexibleType()
+        val flexibility = specific.asFlexibleType()!!
 
         // For primitive types we have to take care of the case when there are two overloaded methods like
         //    foo(int) and foo(Integer)
         // if we do not discriminate one of them, any call to foo(kotlin.Int) will result in overload resolution ambiguity
         // so, for such cases, we discriminate Integer in favour of int
-        if (!KotlinBuiltIns.isPrimitiveType(general) || !KotlinBuiltIns.isPrimitiveType(flexibility.lowerBound)) {
+        if (!simpleGeneral.isPrimitiveType() || !flexibility.lowerBound().isPrimitiveType()) {
             return false
         }
 
         // Int? >< Int!
-        if (general.isMarkedNullable) return false
+        if (simpleGeneral.isMarkedNullable()) return false
         // Int! lessSpecific Int
         return true
     }

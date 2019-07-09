@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.renderer
@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
-import org.jetbrains.kotlin.resolve.descriptorUtil.isAnnotationConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.ErrorUtils.UninferredParameterTypeConstructor
 import org.jetbrains.kotlin.types.TypeUtils.CANT_INFER_FUNCTION_PARAM_TYPE
@@ -463,10 +462,13 @@ internal class DescriptorRendererImpl(
         return when (value) {
             is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
-            is KClassValue -> {
-                var type = value.classId.asSingleFqName().asString()
-                repeat(value.arrayDimensions) { type = "kotlin.Array<$type>" }
-                "$type::class"
+            is KClassValue -> when (val classValue = value.value) {
+                is KClassValue.Value.LocalClass -> "${classValue.type}::class"
+                is KClassValue.Value.NormalClass -> {
+                    var type = classValue.classId.asSingleFqName().asString()
+                    repeat(classValue.arrayDimensions) { type = "kotlin.Array<$type>" }
+                    "$type::class"
+                }
             }
             else -> value.toString()
         }
@@ -815,7 +817,9 @@ internal class DescriptorRendererImpl(
         renderModifier(builder, valueParameter.isCrossinline, "crossinline")
         renderModifier(builder, valueParameter.isNoinline, "noinline")
 
-        if (renderAnnotationPropertiesInPrimaryConstructor && valueParameter.containingDeclaration.isAnnotationConstructor()) {
+        if (renderPrimaryConstructorParametersAsProperties &&
+            (valueParameter.containingDeclaration as? ClassConstructorDescriptor)?.isPrimary == true
+        ) {
             renderModifier(builder, actualPropertiesInPrimaryConstructor, "actual")
             renderModifier(builder, true, "val")
         }

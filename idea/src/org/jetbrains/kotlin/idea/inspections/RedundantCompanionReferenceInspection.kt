@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections
@@ -12,18 +12,21 @@ import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.intentions.getCallableDescriptor
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
-import org.jetbrains.kotlin.psi.psiUtil.findFunctionByName
-import org.jetbrains.kotlin.psi.psiUtil.findPropertyByName
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
+import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
+import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperInterfaces
 import org.jetbrains.kotlin.resolve.scopes.utils.findFunction
 import org.jetbrains.kotlin.resolve.scopes.utils.findVariable
 
@@ -39,37 +42,34 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             if (!objectDeclaration.isCompanion()) return
             if (expression.text != objectDeclaration.name) return
 
+            val context = expression.analyze()
+
             val containingClass = objectDeclaration.containingClass() ?: return
             if (expression.containingClass() != containingClass && expression == parent.receiverExpression) return
             val containingClassDescriptor = containingClass.descriptor as? ClassDescriptor ?: return
-            val selectorDescriptor = selectorExpression?.getCallableDescriptor()
+            val selectorDescriptor = selectorExpression?.getResolvedCall(context)?.resultingDescriptor
             when (selectorDescriptor) {
                 is PropertyDescriptor -> {
                     val name = selectorDescriptor.name
-                    if (containingClass.findPropertyByName(name.asString()) != null) return
+                    if (containingClassDescriptor.findMemberVariable(name) != null) return
                     val variable = expression.getResolutionScope().findVariable(name, NoLookupLocation.FROM_IDE)
                     if (variable != null && variable.isLocalOrExtension(containingClassDescriptor)) return
                 }
                 is FunctionDescriptor -> {
                     val name = selectorDescriptor.name
-                    val function = containingClass.findFunctionByName(name.asString())?.descriptor
-                        ?: expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)?.takeIf {
-                            it.isLocalOrExtension(containingClassDescriptor)
-                        }
-                    if (function is FunctionDescriptor) {
-                        val functionParams = function.valueParameters
-                        val calleeParams =
-                            (selectorExpression as? KtCallExpression)?.calleeExpression?.getCallableDescriptor()?.valueParameters.orEmpty()
-                        if (functionParams.size == calleeParams.size &&
-                            functionParams.zip(calleeParams).all { it.first.type == it.second.type }
-                        ) return
-                    }
+                    if (containingClassDescriptor.findMemberFunction(name) != null) return
+                    val function = expression.getResolutionScope().findFunction(name, NoLookupLocation.FROM_IDE)
+                    if (function != null && function.isLocalOrExtension(containingClassDescriptor)) return
                 }
             }
 
+            (expression as? KtSimpleNameExpression)?.getReceiverExpression()?.getQualifiedElementSelector()
+                ?.mainReference?.resolveToDescriptors(context)?.firstOrNull()
+                ?.let { if (it != containingClassDescriptor) return }
+
             val grandParent = parent.parent as? KtQualifiedExpression
             if (grandParent != null) {
-                val grandParentDescriptor = grandParent.resolveToCall()?.resultingDescriptor ?: return
+                val grandParentDescriptor = grandParent.getResolvedCall(context)?.resultingDescriptor ?: return
                 if (grandParentDescriptor is ConstructorDescriptor || grandParentDescriptor is FakeCallableDescriptorForObject) return
             }
 
@@ -81,6 +81,29 @@ class RedundantCompanionReferenceInspection : AbstractKotlinInspection() {
             )
         })
     }
+}
+
+private fun <D : MemberDescriptor> ClassDescriptor.findMemberByName(name: Name, find: ClassDescriptor.(Name) -> D?): D? {
+    val member = find(name)
+    if (member != null) return member
+
+    val memberInSuperClass = getSuperClassNotAny()?.findMemberByName(name, find)
+    if (memberInSuperClass != null) return memberInSuperClass
+
+    getSuperInterfaces().forEach {
+        val memberInInterface = it.findMemberByName(name, find)
+        if (memberInInterface != null) return memberInInterface
+    }
+
+    return null
+}
+
+private fun ClassDescriptor.findMemberVariable(name: Name): PropertyDescriptor? = findMemberByName(name) {
+    unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_IDE).firstOrNull()
+}
+
+private fun ClassDescriptor.findMemberFunction(name: Name): FunctionDescriptor? = findMemberByName(name) {
+    unsubstitutedMemberScope.getContributedFunctions(it, NoLookupLocation.FROM_IDE).firstOrNull()
 }
 
 private fun CallableDescriptor.isLocalOrExtension(extensionClassDescriptor: ClassDescriptor): Boolean {

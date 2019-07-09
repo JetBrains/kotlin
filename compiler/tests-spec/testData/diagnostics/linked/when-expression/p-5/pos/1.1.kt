@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: when-expression
- * PARAGRAPH: 5
- * SENTENCE: [1] The else entry is also special in the sense that it must be the last entry in the expression, otherwise a compiler error must be generated.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: when-expression -> paragraph 5 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: 'When' without bound value and with else branch in the last position.
  */

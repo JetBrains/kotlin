@@ -1,6 +1,6 @@
 // "Safe delete 'Imported'" "false"
 // ACTION: Create test
-// ACTION: Move 'ImportedClass' to separate file
+// ACTION: Extract 'ImportedClass' from current file
 // ACTION: Rename file to ImportedClass.kt
 import ImportedClass as ClassAlias
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 public inline fun <T> Iterable(crossinline iterator: () -> Iterator<T>): Iterable<T> = object : Iterable<T> {
     override fun iterator(): Iterator<T> = iterator()
 }

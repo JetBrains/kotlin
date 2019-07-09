@@ -20,8 +20,8 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.searches.ClassesWithAnnotatedMembersSearch
 import com.intellij.psi.search.searches.ScopedQueryExecutor
+import com.intellij.util.Processor
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -32,7 +32,7 @@ class KotlinClassesWithAnnotatedMembersSearcher : ScopedQueryExecutor<PsiClass, 
         return GlobalSearchScope.getScopeRestrictedByFileTypes(param.annotationClass.project.allScope(), KotlinFileType.INSTANCE)
     }
 
-    override fun execute(queryParameters: ClassesWithAnnotatedMembersSearch.Parameters, consumer: ExecutorProcessor<PsiClass>): Boolean {
+    override fun execute(queryParameters: ClassesWithAnnotatedMembersSearch.Parameters, consumer: Processor<in PsiClass>): Boolean {
         val processed = hashSetOf<KtClassOrObject>()
         return KotlinAnnotatedElementsSearcher.processAnnotatedMembers(queryParameters.annotationClass,
                                                                        queryParameters.scope,

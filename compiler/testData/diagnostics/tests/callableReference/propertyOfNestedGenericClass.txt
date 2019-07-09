@@ -1,0 +1,22 @@
+package
+
+public fun </*0*/ K> id(/*0*/ x: K): K
+public fun justResolve(): kotlin.Unit
+public fun simple(/*0*/ a: kotlin.Any?): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public final class Scope {
+    public constructor Scope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public abstract class Nested</*0*/ T> {
+        public constructor Nested</*0*/ T>()
+        public abstract val key: kotlin.Int
+        public abstract val keyT: T
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}

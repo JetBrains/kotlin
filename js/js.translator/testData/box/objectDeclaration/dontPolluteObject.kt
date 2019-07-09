@@ -1,5 +1,6 @@
 // IGNORE_BACKEND: JS_IR
 // EXPECTED_REACHABLE_NODES: 1545
+// KJS_WITH_FULL_RUNTIME
 package foo
 
 object EmptyObject {}

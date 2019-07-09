@@ -14,14 +14,14 @@ class A0<T1, T2> {
 
 class A1<T1, T2> : B<T1, T2> {
     constructor(x: T1, y: T2): super(x, y)
-    constructor(x: T1, y: Int): super(x, <!TYPE_MISMATCH(T2; Int)!>y<!>)
-    constructor(x: T1, y: T1, z: T1): super(x, <!TYPE_MISMATCH(T2; T1)!>y<!>)
+    constructor(x: T1, y: Int): super(x, <!TYPE_MISMATCH("T2", "Int")!>y<!>)
+    constructor(x: T1, y: T1, z: T1): super(x, <!TYPE_MISMATCH("T2", "T1")!>y<!>)
 }
 
 class A2<T1, T2> : B<T1, Int> {
-    constructor(x: T1, y: T2): super(x, <!TYPE_MISMATCH(Int; T2)!>y<!>)
+    constructor(x: T1, y: T2): super(x, <!TYPE_MISMATCH("Int", "T2")!>y<!>)
     constructor(x: T1, y: Int): super(x, y)
-    constructor(x: T1, y: T1, z: T1): super(x, <!TYPE_MISMATCH(Int; T1)!>y<!>)
-    constructor(x: T1, y: T2, z: String): super(<!TYPE_MISMATCH(T1; T2)!>y<!>, 1)
+    constructor(x: T1, y: T1, z: T1): super(x, <!TYPE_MISMATCH("Int", "T1")!>y<!>)
+    constructor(x: T1, y: T2, z: String): super(<!TYPE_MISMATCH("T1", "T2")!>y<!>, 1)
 }
 

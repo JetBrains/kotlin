@@ -1,3 +1,5 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
+
 fun <R> String.fold(initial: R, operation: (acc: R, Char) -> R): R = TODO()
 
 fun foo(p: Int) {

@@ -33,11 +33,16 @@ import javax.xml.parsers.ParserConfigurationException
 
 class CodegenTestsOnAndroidRunner private constructor(private val pathManager: PathManager) {
 
+    private val isTeamcity = System.getProperty("kotlin.test.android.teamcity") != null || System.getenv("TEAMCITY_VERSION") != null
+
     private fun runTestsInEmulator(): TestSuite {
         val rootSuite = TestSuite("Root")
 
         downloadDependencies()
-        val emulator = Emulator(pathManager, Emulator.ARM)
+
+        val emulatorType = if (isTeamcity) Emulator.ARM else Emulator.X86
+        println("Using $emulatorType emulator!")
+        val emulator = Emulator(pathManager, emulatorType)
         emulator.createEmulator()
 
         val gradleRunner = GradleRunner(pathManager)

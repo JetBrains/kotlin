@@ -1,6 +1,6 @@
-// LANGUAGE_VERSION: 1.3
-// WITH_RUNTIME
+// IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
+
 import helpers.*
 // TREAT_AS_ONE_FILE
 import kotlin.coroutines.*
@@ -26,7 +26,6 @@ fun box(): String {
         var s: String
 
         // We shout not spill 's' to continuation field because it's not effectively initialized
-        // But we do this because it's not illegal (at least in Android/OpenJDK VM's)
         if (suspendHere() == "OK") {
             s = "OK"
         }
@@ -45,5 +44,4 @@ fun box(): String {
 // 1 PUTFIELD VarValueConflictsWithTableSameSortKt\$box\$1.L\$0 : Ljava/lang/Object;
 /* 1 load in try/finally */
 /* 1 load in result = s */
-/* 1 load before suspension point */
-// 3 ALOAD 3
+// 2 ALOAD 3

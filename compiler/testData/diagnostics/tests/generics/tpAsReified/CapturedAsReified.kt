@@ -5,5 +5,5 @@ class A<F>
 inline fun <reified T> foo(x: A<T>) {}
 
 fun test(x: A<out CharSequence>) {
-    <!OI;REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!>(x)
+    <!REIFIED_TYPE_FORBIDDEN_SUBSTITUTION!>foo<!>(x)
 }

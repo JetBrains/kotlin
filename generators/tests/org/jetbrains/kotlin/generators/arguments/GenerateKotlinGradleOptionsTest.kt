@@ -17,11 +17,14 @@
 package org.jetbrains.kotlin.generators.arguments.test
 
 import com.intellij.testFramework.UsefulTestCase
+import junit.framework.TestCase
 import org.jetbrains.kotlin.generators.arguments.generateKotlinGradleOptions
 import org.jetbrains.kotlin.utils.Printer
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 
-class GenerateKotlinGradleOptionsTest : UsefulTestCase() {
+class GenerateKotlinGradleOptionsTest : TestCase() {
     fun testKotlinGradleOptionsAreUpToDate() {
         fun getPrinter(file: File, fn: Printer.()->Unit) {
             val bytesOut = ByteArrayOutputStream()

@@ -1,0 +1,12 @@
+package
+
+public inline fun </*0*/ R> myRun(/*0*/ block: () -> R): R
+public fun test(/*0*/ s: Simple?): Simple?
+public inline fun </*0*/ K, /*1*/ V> K.let(/*0*/ block: (K) -> V): V
+
+public final class Simple {
+    public constructor Simple()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -21,6 +21,7 @@ import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -43,6 +44,8 @@ class GroovyBuildScriptManipulator(
     override val scriptFile: GroovyFile,
     override val preferNewSyntax: Boolean
 ) : GradleBuildScriptManipulator<GroovyFile> {
+    private val gradleVersion = fetchGradleVersion(scriptFile)
+
     override fun isConfiguredWithOldSyntax(kotlinPluginName: String): Boolean {
         val fileText = runReadAction { scriptFile.text }
         return containsDirective(fileText, getApplyPluginDirective(kotlinPluginName)) &&
@@ -67,7 +70,7 @@ class GroovyBuildScriptManipulator(
     ): Boolean {
         val oldText = scriptFile.text
 
-        val useNewSyntax = useNewSyntax(kotlinPluginName)
+        val useNewSyntax = useNewSyntax(kotlinPluginName, gradleVersion)
         if (useNewSyntax) {
             scriptFile
                 .getPluginsBlock()
@@ -84,8 +87,7 @@ class GroovyBuildScriptManipulator(
                     }
                 }
             }
-        }
-        else {
+        } else {
             val applyPluginDirective = getGroovyApplyPluginDirective(kotlinPluginName)
             if (!containsDirective(scriptFile.text, applyPluginDirective)) {
                 val apply = GroovyPsiElementFactory.getInstance(scriptFile.project).createExpressionFromText(applyPluginDirective)
@@ -109,7 +111,11 @@ class GroovyBuildScriptManipulator(
         }
 
         scriptFile.getDependenciesBlock().apply {
-            addExpressionOrStatementInBlockIfNeeded(getGroovyDependencySnippet(stdlibArtifactName, !useNewSyntax), false, false)
+            addExpressionOrStatementInBlockIfNeeded(
+                getGroovyDependencySnippet(stdlibArtifactName, !useNewSyntax, gradleVersion),
+                isStatement = false,
+                isFirst = false
+            )
         }
 
         if (jvmTarget != null) {
@@ -121,7 +127,7 @@ class GroovyBuildScriptManipulator(
     }
 
     override fun configureProjectBuildScript(kotlinPluginName: String, version: String): Boolean {
-        if (useNewSyntax(kotlinPluginName)) return false
+        if (useNewSyntax(kotlinPluginName, gradleVersion)) return false
 
         val oldText = scriptFile.text
         scriptFile.apply {
@@ -239,11 +245,11 @@ class GroovyBuildScriptManipulator(
             .getBlockOrCreate("resolutionStrategy")
             .getBlockOrCreate("eachPlugin")
             .addLastStatementInBlockIfNeeded(
-                    """
-                        if (requested.id.id == "$pluginId") {
-                            useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
-                        }
-                    """.trimIndent()
+                """
+                    if (requested.id.id == "$pluginId") {
+                        useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
+                    }
+                """.trimIndent()
             )
     }
 
@@ -347,8 +353,9 @@ class GroovyBuildScriptManipulator(
 
     private fun getGroovyDependencySnippet(
         artifactName: String,
-        withVersion: Boolean
-    ) = "compile \"org.jetbrains.kotlin:$artifactName${if (withVersion) ":\$kotlin_version" else ""}\""
+        withVersion: Boolean,
+        gradleVersion: GradleVersion
+    ) = "${gradleVersion.scope("implementation")} \"org.jetbrains.kotlin:$artifactName${if (withVersion) ":\$kotlin_version" else ""}\""
 
     private fun getApplyPluginDirective(pluginName: String) = "apply plugin: '$pluginName'"
 
@@ -407,9 +414,9 @@ class GroovyBuildScriptManipulator(
     }
 
     companion object {
-        private val VERSION_TEMPLATE = "\$VERSION$"
+        private const val VERSION_TEMPLATE = "\$VERSION$"
         private val VERSION = String.format("ext.kotlin_version = '%s'", VERSION_TEMPLATE)
-        private val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
+        private const val GRADLE_PLUGIN_ID = "kotlin-gradle-plugin"
         private val CLASSPATH = "classpath \"$KOTLIN_GROUP_ID:$GRADLE_PLUGIN_ID:\$kotlin_version\""
 
         private fun PsiElement.getBlockByName(name: String): GrClosableBlock? {
@@ -446,13 +453,13 @@ class GroovyBuildScriptManipulator(
         }
 
         fun GrClosableBlock.addLastExpressionInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, false, false)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = false, isFirst = false)
 
         fun GrClosableBlock.addLastStatementInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, true, false)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = true, isFirst = false)
 
         private fun GrClosableBlock.addFirstExpressionInBlockIfNeeded(expressionText: String): Boolean =
-            addExpressionOrStatementInBlockIfNeeded(expressionText, false, true)
+            addExpressionOrStatementInBlockIfNeeded(expressionText, isStatement = false, isFirst = true)
 
         private fun GrClosableBlock.addExpressionOrStatementInBlockIfNeeded(text: String, isStatement: Boolean, isFirst: Boolean): Boolean {
             if (statements.any { StringUtil.equalsIgnoreWhitespaces(it.text, text) }) return false

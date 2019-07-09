@@ -8,6 +8,6 @@ public enum MyJavaEnum {}
 
 enum class MyEnum2() {}
 
-class MyClass(): <!INVISIBLE_MEMBER, FINAL_SUPERTYPE!>MyEnum2<!>() {}
+class MyClass(): <!FINAL_SUPERTYPE, INVISIBLE_MEMBER!>MyEnum2<!>() {}
 
 class MyClass2(): <!FINAL_SUPERTYPE!>MyJavaEnum<!>() {}

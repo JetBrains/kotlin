@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.codegen.context.EnclosedValueDescriptor;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
+import org.jetbrains.kotlin.descriptors.CallableDescriptor;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor;
 import org.jetbrains.kotlin.resolve.BindingContext;
@@ -52,4 +53,7 @@ public interface CalculatedClosure {
     boolean isSuspend();
 
     boolean isSuspendLambda();
+
+    @Nullable
+    CallableDescriptor getEnclosingCallableDescriptorWithReceiver();
 }

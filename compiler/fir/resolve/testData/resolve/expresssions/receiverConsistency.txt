@@ -1,0 +1,33 @@
+FILE: receiverConsistency.kt
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final class C : R|kotlin/Any| {
+        public constructor(): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun bar(): R|kotlin/Unit| {
+        }
+
+        public final fun err(): R|kotlin/Unit| {
+        }
+
+        public final class Nested : R|kotlin/Any| {
+            public constructor(): R|C.Nested| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final fun test(): R|kotlin/Unit| {
+                <Unresolved name: err>#()
+            }
+
+        }
+
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval c: R|C| = R|/C.C|()
+        R|/foo|()
+        R|<local>/c|.R|/C.bar|()
+        lval err: R|C| = R|/C.C|()
+        R|<local>/err|.<Unresolved name: foo>#()
+    }

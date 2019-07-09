@@ -1,39 +1,39 @@
 FILE fqName:<root> fileName:/unresolvedReference.kt
-  PROPERTY name:test1 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:[ERROR : Type for unresolved] visibility:public flags:final,static
+  PROPERTY name:test1 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL '' type=[ERROR : ]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:[ERROR : Type for unresolved] flags:
-      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL flags:val
+        ERROR_CALL '' type=IrErrorType
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test1>(): [ERROR : Type for unresolved]'
-          GET_FIELD 'test1: [ERROR : Type for unresolved]' type=[ERROR : Type for unresolved] origin=null
-  PROPERTY name:test2 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:[ERROR : Unresolved] visibility:public flags:final,static
+        RETURN type=kotlin.Nothing from='public final fun <get-test1> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+  PROPERTY name:test2 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL '' type=[ERROR : ]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:[ERROR : Unresolved] flags:
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL flags:val
+        ERROR_CALL '' type=IrErrorType
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test2>(): [ERROR : Unresolved]'
-          GET_FIELD 'test2: [ERROR : Unresolved]' type=[ERROR : Unresolved] origin=null
-  PROPERTY name:test3 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:[ERROR : Type for 42.unresolved(56)] visibility:public flags:final,static
+        RETURN type=kotlin.Nothing from='public final fun <get-test2> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+  PROPERTY name:test3 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL '' type=[ERROR : ]
+        ERROR_CALL '' type=IrErrorType
           receiver: CONST Int type=kotlin.Int value=42
           CONST Int type=kotlin.Int value=56
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:[ERROR : Type for 42.unresolved(56)] flags:
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL flags:val
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test3>(): [ERROR : Type for 42.unresolved(56)]'
-          GET_FIELD 'test3: [ERROR : Type for 42.unresolved(56)]' type=[ERROR : Type for 42.unresolved(56)] origin=null
-  PROPERTY name:test4 visibility:public modality:FINAL flags:val
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:[ERROR : Type for 42 *] visibility:public flags:final,static
+        RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+  PROPERTY name:test4 visibility:public modality:FINAL [val] 
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_EXPR '' type=[ERROR : ]
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:[ERROR : Type for 42 *] flags:
-      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL flags:val
+        ERROR_EXPR '' type=IrErrorType
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:IrErrorType 
+      correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test4>(): [ERROR : Type for 42 *]'
-          GET_FIELD 'test4: [ERROR : Type for 42 *]' type=[ERROR : Type for 42 *] origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test4> (): IrErrorType declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null

@@ -16,8 +16,11 @@
 
 package org.jetbrains.kotlin.script.util
 
-import org.jetbrains.kotlin.script.InvalidScriptResolverAnnotation
-import org.jetbrains.kotlin.script.util.resolvers.*
+import org.jetbrains.kotlin.script.util.resolvers.DirectResolver
+import org.jetbrains.kotlin.script.util.resolvers.FlatLibDirectoryResolver
+import org.jetbrains.kotlin.script.util.resolvers.MavenResolver
+import org.jetbrains.kotlin.script.util.resolvers.Resolver
+import org.jetbrains.kotlin.scripting.resolve.InvalidScriptResolverAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.util.concurrent.Future

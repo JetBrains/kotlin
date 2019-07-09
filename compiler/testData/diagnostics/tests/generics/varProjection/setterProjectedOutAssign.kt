@@ -8,7 +8,7 @@ interface Tr<T> {
 
 fun test(t: Tr<*>) {
     t.v = null!!
-    <!OI;SETTER_PROJECTED_OUT!>t.v<!> = ""
-    <!OI;SETTER_PROJECTED_OUT!>t.v<!> = null
+    <!SETTER_PROJECTED_OUT!>t.v<!> = ""
+    <!SETTER_PROJECTED_OUT!>t.v<!> = null
     t.v checkType { _<Any?>() }
 }

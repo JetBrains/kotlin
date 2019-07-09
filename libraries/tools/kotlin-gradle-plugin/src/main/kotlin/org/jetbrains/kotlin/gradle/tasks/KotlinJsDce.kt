@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.Project
+import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileTree
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
@@ -24,8 +25,7 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
 import org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments
 import org.jetbrains.kotlin.cli.js.dce.K2JSDce
-import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
-import org.jetbrains.kotlin.compilerRunner.createLoggingMessageCollector
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptions
@@ -33,15 +33,17 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceOptionsImpl
 import java.io.File
 
 @CacheableTask
-open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
+ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJsDce {
 
     init {
         cacheOnlyIfEnabledForKotlin()
     }
 
+    override fun localStateDirectories(): FileCollection = project.files()
+
     override fun createCompilerArgs(): K2JSDceArguments = K2JSDceArguments()
 
-    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean) {
+    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
         dceOptionsImpl.updateArguments(args)
         args.declarationsToKeep = keep.toTypedArray()
     }
@@ -73,11 +75,11 @@ open class KotlinJsDce : AbstractKotlinCompileTool<K2JSDceArguments>(), KotlinJs
 
         val argsArray = serializedCompilerArguments.toTypedArray()
 
-        val log = GradleKotlinLogger(project.logger)
+        val log = GradleKotlinLogger(logger)
         val allArgs = argsArray + outputDirArgs + inputFiles
         val exitCode = runToolInSeparateProcess(
             allArgs, K2JSDce::class.java.name, computedCompilerClasspath,
-            log, createLoggingMessageCollector(log)
+            log
         )
         throwGradleExceptionIfError(exitCode)
     }

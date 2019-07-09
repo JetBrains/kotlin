@@ -1,0 +1,3 @@
+{
+    "inspectionClass": "org.jetbrains.kotlin.idea.refactoring.move.changePackage.PackageDirectoryMismatchInspection"
+}

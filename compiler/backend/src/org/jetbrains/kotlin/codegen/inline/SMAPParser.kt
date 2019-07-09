@@ -25,15 +25,15 @@ object SMAPParser {
         }
 
         val mapping =
-                if (source == null || source.isEmpty() || methodStartLine > methodEndLine)
-                    FileMapping.SKIP
-                else
-                    FileMapping(source, path).apply {
-                        if (methodStartLine <= methodEndLine) {
-                            //one to one
-                            addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
-                        }
+            if (source == null || source.isEmpty() || methodStartLine > methodEndLine)
+                FileMapping.SKIP
+            else
+                FileMapping(source, path).apply {
+                    if (methodStartLine <= methodEndLine) {
+                        //one to one
+                        addRangeMapping(RangeMapping(methodStartLine, methodStartLine, methodEndLine - methodStartLine + 1))
                     }
+                }
 
         return SMAP(listOf(mapping))
     }

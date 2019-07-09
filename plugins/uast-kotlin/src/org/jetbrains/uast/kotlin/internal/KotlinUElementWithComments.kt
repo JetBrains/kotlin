@@ -28,7 +28,7 @@ interface KotlinUElementWithComments : JvmDeclarationUElementPlaceholder {
 
     override val comments: List<UComment>
         get() {
-            val psi = psi ?: return emptyList()
+            val psi = sourcePsi ?: return emptyList()
             val childrenComments = psi.children.filterIsInstance<PsiComment>().map { UComment(it, this) }
             if (this !is UExpression) return childrenComments
             val childrenAndSiblingComments = childrenComments +

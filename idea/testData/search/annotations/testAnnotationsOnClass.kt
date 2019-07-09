@@ -6,6 +6,9 @@
 
 @java.lang.Deprecated class TestClass4 {}
 
+@java.lang.Deprecated
+object TestObject {}
+
 class TestClass5 {
     @java.lang.Deprecated class innerTestClass5() {}
 }
@@ -13,4 +16,5 @@ class TestClass5 {
 // ANNOTATION: java.lang.Deprecated
 // SEARCH: class:TestClass1, class:TestClass2, class:TestClass3
 // SEARCH: class:TestClass4
+// SEARCH: class:TestObject
 // SEARCH: class:innerTestClass5

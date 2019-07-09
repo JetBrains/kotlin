@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.FILE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.LINE_SECTION
 import org.jetbrains.kotlin.codegen.inline.SMAP.Companion.STRATA_SECTION
 import java.util.*
+import kotlin.math.max
 
 const val KOTLIN_STRATA_NAME = "Kotlin"
 const val KOTLIN_DEBUG_STRATA_NAME = "KotlinDebug"
@@ -109,7 +110,7 @@ open class NestedSourceMapper(
         } else {
             val rangeForMapping =
                 (if (lastVisitedRange?.contains(lineNumber) == true) lastVisitedRange!! else findMappingIfExists(lineNumber))
-                        ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
+                    ?: error("Can't find range to map line $lineNumber in ${sourceInfo.source}: ${sourceInfo.pathOrCleanFQN}")
             val sourceLineNumber = rangeForMapping.mapDestToSource(lineNumber)
             val newLineNumber = parent.mapLineNumber(sourceLineNumber, rangeForMapping.parent!!.name, rangeForMapping.parent!!.path)
             if (newLineNumber > 0) {
@@ -217,7 +218,7 @@ open class DefaultSourceMapper(val sourceInfo: SourceInfo) : SourceMapper {
                 val newFileMapping = getOrRegisterNewSource(fileMapping.name, fileMapping.path)
                 fileMapping.lineMappings.forEach {
                     newFileMapping.mapNewInterval(it.source, it.dest, it.range)
-                    maxUsedValue = Math.max(it.maxDest, maxUsedValue)
+                    maxUsedValue = max(it.maxDest, maxUsedValue)
                 }
             }
     }

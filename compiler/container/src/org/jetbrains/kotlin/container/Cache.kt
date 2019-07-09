@@ -21,7 +21,7 @@ import java.lang.reflect.*
 import java.util.*
 
 private object ClassTraversalCache {
-    private val cache = ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
+    private val cache = ContainerUtil.newConcurrentMap<Class<*>, ClassInfo>()
 
     fun getClassInfo(c: Class<*>): ClassInfo {
         val classInfo = cache.get(c)

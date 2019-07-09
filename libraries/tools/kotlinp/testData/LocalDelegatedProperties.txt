@@ -19,6 +19,8 @@ public final class Class : kotlin/Any {
   // local delegated property #2
   // local final /* delegated */ val local6: kotlin/Int
   //   local final get
+
+  // module name: test-module
 }
 // Class$f$1.class
 // ------------------------------------------
@@ -41,6 +43,8 @@ public final class Delegate<T#0 /* T */> : kotlin/Any {
   // getter: getValue()Ljava/lang/Object;
   public final val value: T#0?
     public final get
+
+  // module name: test-module
 }
 // LocalDelegatedPropertiesKt.class
 // ------------------------------------------

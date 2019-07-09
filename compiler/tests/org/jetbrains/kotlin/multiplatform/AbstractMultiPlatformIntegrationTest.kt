@@ -92,6 +92,9 @@ abstract class AbstractMultiPlatformIntegrationTest : KtUsefulTestCase() {
 
     private fun findStdlibCommon(): File {
         // Take kotlin-stdlib-common.jar from dist/ when it's there
+        val fromDist = File("dist/kotlinc/lib/kotlin-stdlib-common.jar")
+        if (fromDist.isFile) return fromDist
+
         val stdlibCommonLibsDir = "libraries/stdlib/common/build/libs"
         val commonLibs = Files.newDirectoryStream(Paths.get(stdlibCommonLibsDir)).use(Iterable<Path>::toList)
         return commonLibs.sorted().findLast {

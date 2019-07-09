@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.utils
@@ -20,8 +20,8 @@ object TestsJsonMapBuilder {
 
     fun buildJsonElement(testInfo: LinkedSpecTest, testsMap: JsonObject) {
         val sectionElement = addJsonIfNotExist(testsMap, testInfo.sections[0])
-        val paragraphElement = addJsonIfNotExist(sectionElement, testInfo.paragraphNumber)
-        val sentenceElement = addJsonIfNotExist(paragraphElement, testInfo.sentenceNumber)
+        val paragraphElement = addJsonIfNotExist(sectionElement, testInfo.place.paragraphNumber)
+        val sentenceElement = addJsonIfNotExist(paragraphElement, testInfo.place.sentenceNumber)
         val testAreaElement = addJsonIfNotExist(sentenceElement, testInfo.testArea.name.toLowerCase())
         val testTypeElement = addJsonIfNotExist(testAreaElement, testInfo.testType.type)
         val testNumberElement = addJsonIfNotExist(testTypeElement, testInfo.testNumber)

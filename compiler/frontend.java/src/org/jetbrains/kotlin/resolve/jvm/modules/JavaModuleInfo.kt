@@ -65,11 +65,11 @@ class JavaModuleInfo(
             val exports = arrayListOf<Exports>()
 
             try {
-                ClassReader(contents).accept(object : ClassVisitor(Opcodes.ASM6) {
+                ClassReader(contents).accept(object : ClassVisitor(Opcodes.API_VERSION) {
                     override fun visitModule(name: String, access: Int, version: String?): ModuleVisitor {
                         moduleName = name
 
-                        return object : ModuleVisitor(Opcodes.ASM6) {
+                        return object : ModuleVisitor(Opcodes.API_VERSION) {
                             override fun visitRequire(module: String, access: Int, version: String?) {
                                 requires.add(Requires(module, (access and ACC_TRANSITIVE) != 0))
                             }

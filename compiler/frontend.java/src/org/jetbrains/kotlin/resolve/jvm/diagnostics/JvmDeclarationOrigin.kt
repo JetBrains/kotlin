@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.jvm.diagnostics
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.jvm.diagnostics
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureElement
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind.*
@@ -31,13 +32,15 @@ enum class JvmDeclarationOriginKind {
     COLLECTION_STUB,
     AUGMENTED_BUILTIN_API,
     ERASED_INLINE_CLASS,
-    UNBOX_METHOD_OF_INLINE_CLASS
+    UNBOX_METHOD_OF_INLINE_CLASS,
+    JVM_OVERLOADS
 }
 
 class JvmDeclarationOrigin(
     val originKind: JvmDeclarationOriginKind,
     val element: PsiElement?,
-    val descriptor: DeclarationDescriptor?
+    val descriptor: DeclarationDescriptor?,
+    val parametersForJvmOverload: List<KtParameter?>? = null
 ) {
     companion object {
         @JvmField
@@ -56,7 +59,8 @@ fun OtherOrigin(element: PsiElement?, descriptor: DeclarationDescriptor? = null)
 fun OtherOriginFromPure(element: KtPureElement?, descriptor: DeclarationDescriptor? = null) =
     OtherOrigin(element?.psiOrParent, descriptor)
 
-fun OtherOrigin(descriptor: DeclarationDescriptor) = JvmDeclarationOrigin(OTHER, null, descriptor)
+fun OtherOrigin(descriptor: DeclarationDescriptor): JvmDeclarationOrigin =
+    JvmDeclarationOrigin(OTHER, DescriptorToSourceUtils.descriptorToDeclaration(descriptor), descriptor)
 
 fun Bridge(
     descriptor: DeclarationDescriptor,

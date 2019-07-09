@@ -8,7 +8,7 @@ fun test(bal: Array<Int>) {
 
     val <!UNUSED_VARIABLE!>c<!>: () -> <!UNRESOLVED_REFERENCE!>UNRESOLVED<!> = { bal[2] = 3 }
 
-    val <!UNUSED_VARIABLE!>d<!>: () -> Int = { <!ASSIGNMENT_TYPE_MISMATCH(Int)!>bar += 4<!> }
+    val <!UNUSED_VARIABLE!>d<!>: () -> Int = { <!ASSIGNMENT_TYPE_MISMATCH("Int")!>bar += 4<!> }
 
     val <!UNUSED_VARIABLE!>e<!>: Unit = run { bar += 4 }
 

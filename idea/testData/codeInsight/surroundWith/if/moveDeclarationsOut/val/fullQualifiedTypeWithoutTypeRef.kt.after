@@ -3,9 +3,8 @@ package test
 class A {}
 
 fun foo() {
-    val a: A
-    if (<caret>) {
-        a = test.A()
+    val a = if (<caret>) {
+        test.A()
     }
 
     a.hashCode()

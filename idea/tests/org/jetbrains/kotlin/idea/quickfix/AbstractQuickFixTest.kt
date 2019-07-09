@@ -1,24 +1,16 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.codeInsight.daemon.quickFix.ActionHint
 import com.intellij.codeInsight.intention.IntentionAction
+import com.intellij.codeInsight.intention.IntentionActionDelegate
+import com.intellij.codeInsight.intention.impl.config.IntentionActionWrapper
 import com.intellij.codeInspection.SuppressableProblemGroup
+import com.intellij.codeInspection.ex.QuickFixWrapper
 import com.intellij.openapi.command.CommandProcessor
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.text.StringUtil
@@ -29,6 +21,8 @@ import com.intellij.testFramework.LightProjectDescriptor
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.util.ui.UIUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.idea.caches.resolve.ResolveInWriteActionException
+import org.jetbrains.kotlin.idea.caches.resolve.forceResolveInWriteActionCheckInTests
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.test.*
 import org.jetbrains.kotlin.psi.KtFile
@@ -39,6 +33,25 @@ import java.io.File
 import java.io.IOException
 
 abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), QuickFixTest {
+    companion object {
+        private val quickFixesAllowedToResolveInWriteAction = AllowedToResolveUnderWriteActionData(
+            "idea/testData/quickfix/allowResolveInWriteAction.txt",
+            """
+                # Actions that are allowed to resolve in write action. Normally this list shouldn't be extended and eventually should 
+                # be dropped. Please consider rewriting a quick-fix and remove resolve from it before adding a new entry to this list.
+            """.trimIndent()
+        )
+
+        private fun unwrapIntention(action: Any): Any {
+            return when (action) {
+                is IntentionActionDelegate -> unwrapIntention(action.delegate)
+                is IntentionActionWrapper -> unwrapIntention(action.delegate)
+                is QuickFixWrapper -> unwrapIntention(action.fix)
+                else -> action
+            }
+        }
+    }
+
     @Throws(Exception::class)
     protected fun doTest(beforeFileName: String) {
         val beforeFileText = FileUtil.loadFile(File(beforeFileName))
@@ -96,7 +109,7 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
 
                 fixtureClasses = InTextDirectivesUtils.findListWithPrefixes(fileText, "// FIXTURE_CLASS: ")
                 for (fixtureClass in fixtureClasses) {
-                    TestFixtureExtension.loadFixture(fixtureClass, LightPlatformTestCase.getModule())
+                    TestFixtureExtension.loadFixture(fixtureClass, module)
                 }
 
                 expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(fileText, "// SHOULD_FAIL_WITH: ")
@@ -155,12 +168,25 @@ abstract class AbstractQuickFixTest : KotlinLightCodeInsightFixtureTestCase(), Q
         val intention = findActionWithText(actionHint.expectedText)
         if (actionHint.shouldPresent()) {
             if (intention == null) {
-                fail("Action with text '" + actionHint.expectedText + "' not found\nAvailable actions: " +
-                     myFixture.availableIntentions.joinToString(prefix = "[", postfix = "]") { it.text })
+                fail(
+                    "Action with text '" + actionHint.expectedText + "' not found\nAvailable actions: " +
+                            myFixture.availableIntentions.joinToString(prefix = "[", postfix = "]") { it.text })
+                return
+            }
+
+            val writeActionResolveHandler: () -> Unit = {
+                val unwrappedIntention = unwrapIntention(intention)
+
+                val intentionClassName = unwrappedIntention.javaClass.name
+                if (!quickFixesAllowedToResolveInWriteAction.isWriteActionAllowed(intentionClassName)) {
+                    throw ResolveInWriteActionException()
+                }
             }
 
             val stubComparisonFailure: ComparisonFailure? = try {
-                myFixture.launchAction(intention!!)
+                forceResolveInWriteActionCheckInTests(writeActionResolveHandler) {
+                    myFixture.launchAction(intention)
+                }
                 null
             } catch (comparisonFailure: ComparisonFailure) {
                 comparisonFailure

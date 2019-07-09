@@ -88,6 +88,7 @@ class MainFunctionDetector {
         return isMain(functionDescriptor, checkJvmStaticAnnotation, allowParameterless = allowParameterless)
     }
 
+    @JvmOverloads
     fun isMain(
         descriptor: DeclarationDescriptor,
         checkJvmStaticAnnotation: Boolean = true,

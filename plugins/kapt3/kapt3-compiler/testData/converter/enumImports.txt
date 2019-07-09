@@ -1,0 +1,13 @@
+package kapt;
+
+import kotlin.annotation.Repeatable;
+
+@kotlin.Metadata()
+public enum Options {
+    /*public static final*/ A /* = new Options() */,
+    /*public static final*/ B /* = new Options() */,
+    /*public static final*/ C /* = new Options() */;
+
+    Options() {
+    }
+}

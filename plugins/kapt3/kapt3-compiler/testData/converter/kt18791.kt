@@ -110,6 +110,20 @@ class MyActivity {
 
     @Bind(B.id.textView)
     fun plainIntConstant() {}
+
+    const val propA = B.id.textView
+    val propB = B.id.textView
+    var propC = B.id.textView
+    @JvmField
+    val propD = B.id.textView
+    @JvmField
+    var propE = B.id.textView
+    val propF = JJ.b.length
+}
+
+object JJ {
+    val b = c()
+    fun c() = "42"
 }
 
 // EXPECTED_ERROR class B is public, should be declared in a file named B.java

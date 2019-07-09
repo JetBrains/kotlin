@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun box(): String {
     val zero: Any = 0.0
     val floatZero: Any = -0.0F

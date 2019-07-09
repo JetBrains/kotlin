@@ -1,0 +1,9 @@
+LineBreakpoint created at localFunctionMangling.kt:7
+Run Java
+Connected to the target VM
+localFunctionMangling.kt:7
+Compile bytecode for 1
+ frame    = main:7, LocalFunctionManglingKt {localFunctionMangling}
+Disconnected from the target VM
+
+Process finished with exit code 0

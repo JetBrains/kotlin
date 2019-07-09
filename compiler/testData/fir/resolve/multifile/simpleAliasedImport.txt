@@ -1,5 +1,0 @@
-FILE: simpleAliasedImport.kt
-    public final class YourClass : R|b/MyClass| {
-        public constructor(): super<R|b/MyClass|>()
-
-    }

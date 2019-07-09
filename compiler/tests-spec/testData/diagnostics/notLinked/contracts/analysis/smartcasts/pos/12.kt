@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -10,6 +9,7 @@
  * DESCRIPTION: Smartcasts after non-null assertions or not-null value assignment in lambdas of contract function with 'exactly once' or 'at least once' CallsInPlace effects.
  * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-26148
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

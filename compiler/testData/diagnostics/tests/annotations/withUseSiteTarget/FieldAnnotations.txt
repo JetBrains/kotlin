@@ -17,8 +17,8 @@ public final class CustomDelegate {
 
 @Ann public final class SomeClass {
     public constructor SomeClass()
-    protected final val delegatedProperty: kotlin.String
-    public final val propertyWithCustomGetter: kotlin.Int
+    @field:Ann protected final val delegatedProperty: kotlin.String
+    @field:Ann public final val propertyWithCustomGetter: kotlin.Int
     @field:Ann protected final val simpleProperty: kotlin.String = "text"
     @field:Ann protected final val simplePropertyWithAnnotationList: kotlin.String = "text"
     public final fun anotherFun(/*0*/ s: kotlin.String): kotlin.Unit

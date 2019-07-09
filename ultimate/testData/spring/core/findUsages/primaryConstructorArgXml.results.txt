@@ -1,2 +1,0 @@
-Usage in XML descriptor 6 <constructor-arg name="value" value="2"/>
-Usage in XML descriptor 7 <property name="value"/>

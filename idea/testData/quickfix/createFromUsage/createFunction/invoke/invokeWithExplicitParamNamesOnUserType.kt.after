@@ -1,4 +1,5 @@
 // "Create member function 'A.invoke'" "true"
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 class A<T>(val n: T) {
     operator fun invoke(abc: T, ghi: A<T>, def: String): A<T> {

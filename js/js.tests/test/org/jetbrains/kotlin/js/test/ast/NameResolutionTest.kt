@@ -20,6 +20,7 @@ import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.inline.clean.renameLabels
 import org.jetbrains.kotlin.js.inline.clean.resolveTemporaryNames
 import org.jetbrains.kotlin.js.parser.parse
 import org.jetbrains.kotlin.js.test.BasicBoxTest
@@ -69,21 +70,21 @@ class NameResolutionTest {
                     node.name = node.name?.let { name ->
                         if (name.ident.startsWith("$")) {
                             cache.getOrPut(name) { JsScope.declareTemporaryName("x") }
-                        }
-                        else {
+                        } else {
                             name
                         }
                     }
                 }
             }
         })
+        renameLabels(originalAst)
         originalAst.resolveTemporaryNames()
 
         assertEquals(expectedAst.toString(), originalAst.toString())
     }
 
     private val errorReporter = object : ErrorReporter {
-        override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) { }
+        override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {}
 
         override fun error(message: String, startPosition: CodePosition, endPosition: CodePosition) {
             fail("Error parsing JS file: $message at $startPosition")

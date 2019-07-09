@@ -1,27 +1,27 @@
 FILE fqName:<root> fileName:/arrayAssignment.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:x type:kotlin.IntArray flags:val
-        CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
+      VAR name:x type:kotlin.IntArray [val] 
+        CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
             CONST Int type=kotlin.Int value=2
             CONST Int type=kotlin.Int value=3
-      CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=EQ
-        $this: GET_VAR 'x: IntArray' type=kotlin.IntArray origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
+        $this: GET_VAR 'val x: kotlin.IntArray [val] declared in <root>.test' type=kotlin.IntArray origin=null
         index: CONST Int type=kotlin.Int value=1
         value: CONST Int type=kotlin.Int value=0
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='foo(): Int'
+      RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      CALL 'set(Int, Int): Unit' type=kotlin.Unit origin=EQ
-        $this: CALL 'intArrayOf(vararg Int): IntArray' type=kotlin.IntArray origin=null
+      CALL 'public final fun set (index: kotlin.Int, value: kotlin.Int): kotlin.Unit declared in kotlin.IntArray' type=kotlin.Unit origin=EQ
+        $this: CALL 'public final fun intArrayOf (vararg elements: kotlin.Int): kotlin.IntArray declared in kotlin' type=kotlin.IntArray origin=null
           elements: VARARG type=kotlin.IntArray varargElementType=kotlin.Int
             CONST Int type=kotlin.Int value=1
             CONST Int type=kotlin.Int value=2
             CONST Int type=kotlin.Int value=3
-        index: CALL 'foo(): Int' type=kotlin.Int origin=null
+        index: CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int value=1

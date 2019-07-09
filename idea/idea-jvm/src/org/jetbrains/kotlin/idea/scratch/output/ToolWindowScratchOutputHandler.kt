@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.idea.scratch.output
 
 import com.intellij.execution.filters.OpenFileHyperlinkInfo
 import com.intellij.execution.impl.ConsoleViewImpl
+import com.intellij.execution.runners.ExecutionUtil
 import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.ide.scratch.ScratchFileType
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
@@ -30,19 +32,23 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
+
+fun getToolwindowHandler(): ScratchOutputHandler {
+    return if (ApplicationManager.getApplication().isUnitTestMode) {
+        TestOutputHandler
+    } else {
+        ToolWindowScratchOutputHandler
+    }
+}
+
+private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            return testPrint(file, output.text, expression)
-        }
-
-        printToConsole(file.project) {
+        printToConsole(file) {
             val psiFile = file.getPsiFile()
             if (psiFile != null) {
                 printHyperlink(
@@ -60,18 +66,17 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
     }
 
     override fun error(file: ScratchFile, message: String) {
-        if (ApplicationManager.getApplication().isUnitTestMode) {
-            return testPrint(file, message)
-        }
-
-        printToConsole(file.project) {
+        printToConsole(file) {
             print(message, ConsoleViewContentType.ERROR_OUTPUT)
         }
     }
 
-    private fun printToConsole(project: Project, print: ConsoleViewImpl.() -> Unit) {
+    private fun printToConsole(file: ScratchFile, print: ConsoleViewImpl.() -> Unit) {
         ApplicationManager.getApplication().invokeLater {
-            val toolWindow = getToolWindow(project) ?: createToolWindow(project)
+            val project = file.project.takeIf { !it.isDisposed } ?: return@invokeLater
+
+            val toolWindow = getToolWindow(project) ?: createToolWindow(file)
+
             val contents = toolWindow.contentManager.contents
             for (content in contents) {
                 val component = content.component
@@ -80,14 +85,18 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
                     component.print("\n", ConsoleViewContentType.NORMAL_OUTPUT)
                 }
             }
+
             toolWindow.setAvailable(true, null)
-            toolWindow.show(null)
+
+            if (!file.options.isInteractiveMode) {
+                toolWindow.show(null)
+            }
+
+            toolWindow.icon = ExecutionUtil.getLiveIndicator(ScratchFileType.INSTANCE.icon)
         }
     }
 
     override fun clear(file: ScratchFile) {
-        if (ApplicationManager.getApplication().isUnitTestMode) return
-
         ApplicationManager.getApplication().invokeLater {
             val toolWindow = getToolWindow(file.project) ?: return@invokeLater
             val contents = toolWindow.contentManager.contents
@@ -97,13 +106,14 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
                     component.clear()
                 }
             }
-            toolWindow.setAvailable(false, null)
-            toolWindow.hide(null)
+
+            if (!file.options.isInteractiveMode) {
+                toolWindow.hide(null)
+            }
+
+            toolWindow.icon = ScratchFileType.INSTANCE.icon
         }
     }
-
-    private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
-        "${psiFile.name}:${expression.lineStart + 1}"
 
     private fun ScratchOutputType.convert() = when (this) {
         ScratchOutputType.OUTPUT -> ConsoleViewContentType.SYSTEM_OUTPUT
@@ -116,29 +126,23 @@ object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         return toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
     }
 
-    private fun createToolWindow(project: Project): ToolWindow {
+    private fun createToolWindow(file: ScratchFile): ToolWindow {
+        val project = file.project
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
+        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, false, ToolWindowAnchor.BOTTOM)
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
+
+        Disposer.register(file.editor, Disposable {
+            window.setAvailable(false, null)
+        })
+
         return window
     }
-
-    @TestOnly
-    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
-        ApplicationManager.getApplication().invokeLater {
-            WriteCommandAction.runWriteCommandAction(file.project) {
-                val psiFile = file.getPsiFile()!!
-                psiFile.addAfter(
-                    KtPsiFactory(file.project).createComment(
-                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
-                    ),
-                    psiFile.lastChild
-                )
-            }
-        }
-    }
 }
+
+private fun getLineInfo(psiFile: PsiFile, expression: ScratchExpression) =
+    "${psiFile.name}:${expression.lineStart + 1}"
 
 private class ScratchToolWindowFactory : ToolWindowFactory {
     companion object {
@@ -149,6 +153,7 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
         val consoleView = ConsoleViewImpl(project, true)
         toolWindow.isToHideOnEmptyContent = true
         toolWindow.icon = ScratchFileType.INSTANCE.icon
+        toolWindow.hide(null)
 
         val contentManager = toolWindow.contentManager
         val content = contentManager.factory.createContent(consoleView.component, null, false)
@@ -159,5 +164,47 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
         }
 
         Disposer.register(project, consoleView)
+    }
+}
+
+private object TestOutputHandler : ScratchOutputHandlerAdapter() {
+    private val errors = arrayListOf<String>()
+    private val inlays = arrayListOf<Pair<ScratchExpression, String>>()
+
+    override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        inlays.add(expression to output.text)
+    }
+
+    override fun error(file: ScratchFile, message: String) {
+        errors.add(message)
+    }
+
+    override fun onFinish(file: ScratchFile) {
+        ApplicationManager.getApplication().invokeLater {
+            if (inlays.isNotEmpty()) {
+                val psiFile = file.getPsiFile()!!
+                testPrint(file, inlays.map { (expression, text) ->
+                    "/** ${getLineInfo(psiFile, expression)} $text */"
+                })
+                inlays.clear()
+            }
+
+            if (errors.isNotEmpty()) {
+                testPrint(file, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
+                errors.clear()
+            }
+        }
+    }
+
+    private fun testPrint(file: ScratchFile, comments: List<String>) {
+        WriteCommandAction.runWriteCommandAction(file.project) {
+            val psiFile = file.getPsiFile()!!
+            for (comment in comments) {
+                psiFile.addAfter(
+                    KtPsiFactory(file.project).createComment(comment),
+                    psiFile.lastChild
+                )
+            }
+        }
     }
 }

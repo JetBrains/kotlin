@@ -5,7 +5,9 @@ buildscript {
         maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
     }
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0-rc-146"
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.3.10')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
     }
 }
 

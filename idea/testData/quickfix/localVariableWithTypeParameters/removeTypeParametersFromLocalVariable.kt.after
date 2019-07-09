@@ -1,0 +1,5 @@
+// "Remove type parameters" "true"
+
+fun test() {
+    val x = 0
+}

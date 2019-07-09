@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.utils
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
+import org.jetbrains.jps.model.java.impl.JavaSdkUtil
 
 import java.io.File
 import java.util.regex.Pattern
@@ -27,9 +28,12 @@ object PathUtil {
     const val JS_LIB_JAR_NAME = "$JS_LIB_NAME.jar"
 
     const val JS_LIB_10_JAR_NAME = "kotlin-jslib.jar"
-    const val ALLOPEN_PLUGIN_JAR_NAME = "allopen-compiler-plugin.jar"
-    const val NOARG_PLUGIN_JAR_NAME = "noarg-compiler-plugin.jar"
-    const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "sam-with-receiver-compiler-plugin.jar"
+    const val ALLOPEN_PLUGIN_NAME = "allopen-compiler-plugin"
+    const val ALLOPEN_PLUGIN_JAR_NAME = "$ALLOPEN_PLUGIN_NAME.jar"
+    const val NOARG_PLUGIN_NAME = "noarg-compiler-plugin"
+    const val NOARG_PLUGIN_JAR_NAME = "$NOARG_PLUGIN_NAME.jar"
+    const val SAM_WITH_RECEIVER_PLUGIN_NAME = "sam-with-receiver-compiler-plugin"
+    const val SAM_WITH_RECEIVER_PLUGIN_JAR_NAME = "$SAM_WITH_RECEIVER_PLUGIN_NAME.jar"
     const val JS_LIB_SRC_JAR_NAME = "kotlin-stdlib-js-sources.jar"
 
     const val KOTLIN_JAVA_RUNTIME_JRE7_NAME = "kotlin-stdlib-jre7"
@@ -56,11 +60,26 @@ object PathUtil {
     const val KOTLIN_JAVA_REFLECT_JAR = "$KOTLIN_JAVA_REFLECT_NAME.jar"
     const val KOTLIN_REFLECT_SRC_JAR = "$KOTLIN_JAVA_REFLECT_NAME-sources.jar"
 
-    const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "kotlin-script-runtime.jar"
-    const val KOTLIN_SCRIPTING_COMMON_JAR = "kotlin-scripting-common.jar"
-    const val KOTLIN_SCRIPTING_JVM_JAR = "kotlin-scripting-jvm.jar"
+    const val KOTLIN_JAVA_SCRIPT_RUNTIME_NAME = "kotlin-script-runtime"
+    const val KOTLIN_JAVA_SCRIPT_RUNTIME_JAR = "$KOTLIN_JAVA_SCRIPT_RUNTIME_NAME.jar"
+    const val KOTLIN_SCRIPTING_COMMON_NAME = "kotlin-scripting-common"
+    const val KOTLIN_SCRIPTING_COMMON_JAR = "$KOTLIN_SCRIPTING_COMMON_NAME.jar"
+    const val KOTLIN_SCRIPTING_JVM_NAME = "kotlin-scripting-jvm"
+    const val KOTLIN_SCRIPTING_JVM_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
+    const val KOTLIN_DAEMON_NAME = "kotlin-daemon"
+    const val KTOR_NAME = "ktor-network-1.0.1"
+    const val KOTLIN_DAEMON_JAR = "$KOTLIN_SCRIPTING_JVM_NAME.jar"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME = "kotlin-scripting-compiler"
     const val KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR = "$KOTLIN_SCRIPTING_COMPILER_PLUGIN_NAME.jar"
+    const val KOTLINX_COROUTINES_CORE_NAME = "kotlinx-coroutines-core"
+    const val KOTLINX_COROUTINES_CORE_JAR = "$KOTLINX_COROUTINES_CORE_NAME.jar"
+    const val KOTLIN_SCRIPTING_COMPILER_IMPL_NAME = "kotlin-scripting-compiler-impl"
+    const val KOTLIN_SCRIPTING_COMPILER_IMPL_JAR = "$KOTLIN_SCRIPTING_COMPILER_IMPL_NAME.jar"
+
+    val KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS = arrayOf(
+        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
+        KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+    )
 
     const val KOTLIN_TEST_NAME = "kotlin-test"
     const val KOTLIN_TEST_JAR = "$KOTLIN_TEST_NAME.jar"
@@ -70,6 +89,9 @@ object PathUtil {
     const val KOTLIN_TEST_JS_JAR = "$KOTLIN_TEST_JS_NAME.jar"
 
     const val KOTLIN_JAVA_STDLIB_SRC_JAR_OLD = "kotlin-runtime-sources.jar"
+
+    const val TROVE4J_NAME = "trove4j"
+    const val TROVE4J_JAR = "$TROVE4J_NAME.jar"
 
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"

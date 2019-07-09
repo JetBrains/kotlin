@@ -9,7 +9,7 @@ inline fun asFailsWithCCE(operation: String, block: () -> Unit) {
     try {
         block()
     }
-    catch (e: java.lang.ClassCastException) {
+    catch (e: ClassCastException) {
         return
     }
     catch (e: Throwable) {

@@ -1,0 +1,7 @@
+// "Safe delete constructor" "true"
+fun main() {
+    class LocalClass(val number: Int) {
+    }
+
+    val l = LocalClass(42)
+}

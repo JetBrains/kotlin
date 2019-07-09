@@ -18,6 +18,9 @@ package org.jetbrains.kotlin.codegen.range.forLoop
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.codegen.StackValue
+import org.jetbrains.kotlin.codegen.range.comparison.SignedIntegerComparisonGenerator
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
+import org.jetbrains.kotlin.codegen.range.getRangeOrProgressionElementType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtForExpression
@@ -25,21 +28,33 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
 
-abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression) :
-    AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
+abstract class AbstractForInProgressionLoopGenerator(
+    codegen: ExpressionCodegen,
+    forExpression: KtForExpression
+) : AbstractForInProgressionOrRangeLoopGenerator(codegen, forExpression) {
+
     protected var incrementVar: Int = -1
     protected val asmLoopRangeType: Type
-    protected val kotlinLoopRangeType: KotlinType
+    protected val rangeKotlinType = bindingContext.getType(forExpression.loopRange!!)!!
+    private val rangeElementKotlinType = getRangeOrProgressionElementType(rangeKotlinType)
+        ?: throw AssertionError("Unexpected loop range type: $rangeKotlinType")
+    private val incrementKotlinType: KotlinType
     protected val incrementType: Type
 
     init {
-        kotlinLoopRangeType = bindingContext.getType(forExpression.loopRange!!)!!
-        asmLoopRangeType = codegen.asmType(kotlinLoopRangeType)
+        asmLoopRangeType = codegen.asmType(rangeKotlinType)
 
-        val incrementProp = kotlinLoopRangeType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
-        assert(incrementProp.size == 1) { kotlinLoopRangeType.toString() + " " + incrementProp.size }
-        incrementType = codegen.asmType(incrementProp.iterator().next().type)
+        val incrementProp = rangeKotlinType.memberScope.getContributedVariables(Name.identifier("step"), NoLookupLocation.FROM_BACKEND)
+        assert(incrementProp.size == 1) { rangeKotlinType.toString() + " " + incrementProp.size }
+        incrementKotlinType = incrementProp.single().type
+        incrementType = codegen.asmType(incrementKotlinType)
     }
+
+    private val incrementComparisonGenerator =
+        getComparisonGeneratorForKotlinType(incrementKotlinType) as? SignedIntegerComparisonGenerator
+            ?: throw AssertionError("Unexpected increment type: $incrementKotlinType")
+
+    private val elementComparisonGenerator = getComparisonGeneratorForKotlinType(rangeElementKotlinType)
 
     override fun beforeLoop() {
         super.beforeLoop()
@@ -59,33 +74,12 @@ abstract class AbstractForInProgressionLoopGenerator(codegen: ExpressionCodegen,
         val negativeIncrement = Label()
         val afterIf = Label()
 
-        if (asmElementType.sort == Type.LONG) {
-            v.lconst(0L)
-            v.lcmp()
-            v.ifle(negativeIncrement) // if increment < 0, jump
-
-            // increment > 0
-            v.lcmp()
-            v.ifgt(loopExit)
-            v.goTo(afterIf)
-
-            // increment < 0
-            v.mark(negativeIncrement)
-            v.lcmp()
-            v.iflt(loopExit)
-            v.mark(afterIf)
-        } else {
-            v.ifle(negativeIncrement) // if increment < 0, jump
-
-            // increment > 0
-            v.ificmpgt(loopExit)
-            v.goTo(afterIf)
-
-            // increment < 0
-            v.mark(negativeIncrement)
-            v.ificmplt(loopExit)
-            v.mark(afterIf)
-        }
+        incrementComparisonGenerator.jumpIfLessThanZero(v, negativeIncrement)
+        elementComparisonGenerator.jumpIfGreater(v, loopExit)
+        v.goTo(afterIf)
+        v.mark(negativeIncrement)
+        elementComparisonGenerator.jumpIfLess(v, loopExit)
+        v.mark(afterIf)
     }
 
     override fun assignToLoopParameter() {}

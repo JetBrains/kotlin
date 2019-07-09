@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.decompiler.stubBuilder
@@ -32,8 +21,11 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassElementType
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
+import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
+import org.junit.runner.RunWith
 
+@RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase() {
     private val classFileDecompiler = KotlinClassFileDecompiler()
     private val builtInsDecompiler = KotlinBuiltInDecompiler()
@@ -73,7 +65,7 @@ class BuiltInDecompilerConsistencyTest : KotlinLightCodeInsightFixtureTestCase()
             val fileContent = FileContentImpl.createByFile(classFile)
             if (IDEKotlinBinaryClassCache.getKotlinBinaryClassHeaderData(fileContent.file) == null) continue
             val fileStub = classFileDecompiler.stubBuilder.buildFileStub(fileContent) ?: continue
-            val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) as? KotlinClassStub ?: continue
+            val classStub = fileStub.findChildStubByType(KtClassElementType.getStubType(false)) ?: continue
             val classFqName = classStub.getFqName()!!
             val builtInClassStub = builtInFileStub.childrenStubs.firstOrNull {
                 it is KotlinClassStub && it.getFqName() == classFqName

@@ -16,8 +16,8 @@
 
 package org.jetbrains.kotlin.js.test.semantics
 
+import com.eclipsesource.v8.V8ScriptException
 import org.jetbrains.kotlin.js.test.BasicBoxTest
-import org.jetbrains.kotlin.js.test.NashornJsTestChecker
 import java.io.File
 import javax.script.ScriptException
 
@@ -44,9 +44,10 @@ class MultiModuleOrderTest : BasicBoxTest(pathToTestGroupDir, testGroupDir) {
         val mainJsFile = File(parentDir, "$name-main_v5.js").path
         val libJsFile = File(parentDir, "$name-lib_v5.js").path
         try {
-            NashornJsTestChecker.run(listOf(mainJsFile, libJsFile))
+            testChecker.run(listOf(mainJsFile, libJsFile))
         }
-        catch (e: ScriptException) {
+        catch (e: RuntimeException) {
+            assertTrue(e is ScriptException || e is V8ScriptException)
             val message = e.message!!
             assertTrue("Exception message should contain reference to dependency (lib)", "'lib'" in message)
             assertTrue("Exception message should contain reference to module that failed to load (main)", "'main'" in message)

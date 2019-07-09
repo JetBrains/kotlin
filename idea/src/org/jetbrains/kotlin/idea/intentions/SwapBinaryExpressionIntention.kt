@@ -18,22 +18,26 @@ package org.jetbrains.kotlin.idea.intentions
 
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
+import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.idea.util.PsiPrecedences
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.createExpressionByPattern
-import org.jetbrains.kotlin.idea.core.copied
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 
 class SwapBinaryExpressionIntention : SelfTargetingIntention<KtBinaryExpression>(KtBinaryExpression::class.java, "Flip binary expression"), LowPriorityAction {
     companion object {
-        private val SUPPORTED_OPERATIONS = setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
+        private val SUPPORTED_OPERATIONS: Set<KtSingleValueToken> by lazy {
+            setOf(PLUS, MUL, OROR, ANDAND, EQEQ, EXCLEQ, EQEQEQ, EXCLEQEQEQ, GT, LT, GTEQ, LTEQ)
+        }
 
-        private val SUPPORTED_OPERATION_NAMES =
+        private val SUPPORTED_OPERATION_NAMES: Set<String> by lazy {
             SUPPORTED_OPERATIONS.asSequence().mapNotNull { OperatorConventions.BINARY_OPERATION_NAMES[it]?.asString() }.toSet() +
                     setOf("xor", "or", "and", "equals")
+        }
     }
 
     override fun isApplicableTo(element: KtBinaryExpression, caretOffset: Int): Boolean {

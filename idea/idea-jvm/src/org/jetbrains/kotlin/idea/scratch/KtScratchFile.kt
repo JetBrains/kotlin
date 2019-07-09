@@ -18,46 +18,73 @@ package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
-import com.intellij.psi.util.PsiUtil
-import org.jetbrains.kotlin.idea.codeInsight.CodeInsightUtils
-import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.refactoring.getLineStartOffset
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.AnalyzingUtils
 
 class KtScratchFile(project: Project, editor: TextEditor) : ScratchFile(project, editor) {
     override fun getExpressions(psiFile: PsiFile): List<ScratchExpression> {
         // todo multiple expressions at one line
-        val doc = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile) ?: return emptyList()
+        val doc = PsiDocumentManager.getInstance(psiFile.project).getLastCommittedDocument(psiFile) ?: return emptyList()
         var line = 0
         val result = arrayListOf<ScratchExpression>()
         while (line < doc.lineCount) {
-            val start = psiFile.getLineStartOffset(line) ?: continue
-            val elementAtOffset = CodeInsightUtils.getTopmostElementAtOffset(
-                PsiUtil.getElementAtOffset(psiFile, start),
-                start,
-                KtImportDirective::class.java,
-                KtDeclaration::class.java
+            var start = doc.getLineStartOffset(line)
+            var element = psiFile.findElementAt(start)
+            if (element is PsiWhiteSpace || element is PsiComment) {
+                start = PsiTreeUtil.skipSiblingsForward(
+                    element,
+                    PsiWhiteSpace::class.java,
+                    PsiComment::class.java
+                )?.startOffset ?: start
+                element = psiFile.findElementAt(start)
+            }
+
+            element = element?.let {
+                CodeInsightUtils.getTopmostElementAtOffset(
+                    it,
+                    start,
+                    KtImportDirective::class.java,
+                    KtDeclaration::class.java
+                )
+            }
+
+            if (element == null) {
+                line++
+                continue
+            }
+
+            val scratchExpression = ScratchExpression(
+                element,
+                doc.getLineNumber(element.startOffset),
+                doc.getLineNumber(element.endOffset)
             )
+            result.add(scratchExpression)
 
-            if (elementAtOffset is PsiWhiteSpace) {
-                line = doc.getLineNumber(elementAtOffset.endOffset) + 1
-                continue
-            }
-
-            if (elementAtOffset == null) {
-                line += 1
-                continue
-            }
-
-            result.add(ScratchExpression(elementAtOffset, elementAtOffset.getLineNumber(true), elementAtOffset.getLineNumber(false)))
-            line = elementAtOffset.getLineNumber(false) + 1
+            line = scratchExpression.lineEnd + 1
         }
 
         return result
+    }
+
+    override fun hasErrors(): Boolean {
+        val psiFile = getPsiFile() as? KtFile ?: return false
+        try {
+            AnalyzingUtils.checkForSyntacticErrors(psiFile)
+        } catch (e: IllegalArgumentException) {
+            return true
+        }
+        return psiFile.analyzeWithContent().diagnostics.any { it.severity == Severity.ERROR }
     }
 }

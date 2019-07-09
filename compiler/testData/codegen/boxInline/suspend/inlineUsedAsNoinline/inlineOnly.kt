@@ -1,9 +1,8 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: JS_IR
-// FILE: inlined.kt
 // WITH_RUNTIME
 // WITH_COROUTINES
 // NO_CHECK_LAMBDA_INLINING
+// FILE: inlined.kt
 
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

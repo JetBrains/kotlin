@@ -36,6 +36,7 @@ class UnfoldPropertyToIfIntention : SelfTargetingRangeIntention<KtProperty>(KtPr
 
     override fun applyTo(element: KtProperty, editor: Editor?) {
         val assignment = splitPropertyDeclaration(element)
+            ?: return // if element initializer is null the apply should not be invoked. If suddenly invoked splitPropertyDeclaration will return null
         BranchedUnfoldingUtils.unfoldAssignmentToIf(assignment, editor)
     }
 }

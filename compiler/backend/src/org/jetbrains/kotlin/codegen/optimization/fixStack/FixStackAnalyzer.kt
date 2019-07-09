@@ -31,6 +31,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.tree.analysis.BasicValue
 import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
+import kotlin.math.max
 
 internal class FixStackAnalyzer(
     owner: String,
@@ -133,7 +134,7 @@ internal class FixStackAnalyzer(
                     super.push(value)
                 } else {
                     extraStack.add(value)
-                    maxExtraStackSize = Math.max(maxExtraStackSize, extraStack.size)
+                    maxExtraStackSize = max(maxExtraStackSize, extraStack.size)
                 }
             }
 

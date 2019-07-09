@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.semantics;
@@ -87,6 +87,11 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
     @TestMetadata("kt14564_2.kt")
     public void testKt14564_2() throws Exception {
         runTest("compiler/testData/codegen/boxInline/defaultValues/kt14564_2.kt");
+    }
+
+    @TestMetadata("kt16496.kt")
+    public void testKt16496() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/defaultValues/kt16496.kt");
     }
 
     @TestMetadata("kt18689.kt")
@@ -176,29 +181,44 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/defaultLambdaInNoInline.kt");
         }
 
+        @TestMetadata("differentInvokeSignature.kt")
+        public void testDifferentInvokeSignature() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/differentInvokeSignature.kt");
+        }
+
         @TestMetadata("genericLambda.kt")
         public void testGenericLambda() throws Exception {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/genericLambda.kt");
         }
 
-        @TestMetadata("instanceCapuredInClass.kt")
-        public void testInstanceCapuredInClass() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInClass.kt");
+        @TestMetadata("instanceCapturedInClass.kt")
+        public void testInstanceCapturedInClass() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInClass.kt");
         }
 
-        @TestMetadata("instanceCapuredInInterface.kt")
-        public void testInstanceCapuredInInterface() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapuredInInterface.kt");
-        }
-
-        @TestMetadata("jvmStaticDefault.kt")
-        public void testJvmStaticDefault() throws Exception {
-            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/jvmStaticDefault.kt");
+        @TestMetadata("instanceCapturedInInterface.kt")
+        public void testInstanceCapturedInInterface() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/instanceCapturedInInterface.kt");
         }
 
         @TestMetadata("kt21827.kt")
         public void testKt21827() throws Exception {
             runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21827.kt");
+        }
+
+        @TestMetadata("kt21946.kt")
+        public void testKt21946() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt21946.kt");
+        }
+
+        @TestMetadata("kt24477.kt")
+        public void testKt24477() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt24477.kt");
+        }
+
+        @TestMetadata("kt25106.kt")
+        public void testKt25106() throws Exception {
+            runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/kt25106.kt");
         }
 
         @TestMetadata("noInline.kt")
@@ -316,6 +336,16 @@ public class InlineDefaultValuesTestsGenerated extends AbstractInlineDefaultValu
             @TestMetadata("constuctorReference.kt")
             public void testConstuctorReference() throws Exception {
                 runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/constuctorReference.kt");
+            }
+
+            @TestMetadata("differentInvokeSignature.kt")
+            public void testDifferentInvokeSignature() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature.kt");
+            }
+
+            @TestMetadata("differentInvokeSignature2.kt")
+            public void testDifferentInvokeSignature2() throws Exception {
+                runTest("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences/differentInvokeSignature2.kt");
             }
 
             @TestMetadata("functionImportedFromObject.kt")

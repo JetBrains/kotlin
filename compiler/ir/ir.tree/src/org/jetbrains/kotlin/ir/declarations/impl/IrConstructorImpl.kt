@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.name.Name
@@ -35,13 +34,14 @@ class IrConstructorImpl(
     override val symbol: IrConstructorSymbol,
     name: Name,
     visibility: Visibility,
+    returnType: IrType,
     isInline: Boolean,
     isExternal: Boolean,
     override val isPrimary: Boolean
 ) :
     IrFunctionBase(
         startOffset, endOffset, origin, name,
-        visibility, isInline, isExternal
+        visibility, isInline, isExternal, returnType
     ),
     IrConstructor {
 
@@ -50,33 +50,17 @@ class IrConstructorImpl(
         endOffset: Int,
         origin: IrDeclarationOrigin,
         symbol: IrConstructorSymbol,
+        returnType: IrType,
         body: IrBody? = null
     ) : this(
         startOffset, endOffset, origin, symbol,
         symbol.descriptor.name,
         symbol.descriptor.visibility,
+        returnType,
         symbol.descriptor.isInline,
         symbol.descriptor.isEffectivelyExternal(),
         symbol.descriptor.isPrimary
     ) {
-        this.body = body
-    }
-
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor
-    ) : this(startOffset, endOffset, origin, IrConstructorSymbolImpl(descriptor))
-
-    @Deprecated("Use constructor which takes symbol instead of descriptor")
-    constructor(
-        startOffset: Int,
-        endOffset: Int,
-        origin: IrDeclarationOrigin,
-        descriptor: ClassConstructorDescriptor,
-        body: IrBody?
-    ) : this(startOffset, endOffset, origin, descriptor) {
         this.body = body
     }
 

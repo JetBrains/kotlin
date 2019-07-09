@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.setType
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.util.OperatorChecks
 
 fun KtContainerNode.description(): String? {
     when (node.elementType) {
@@ -76,10 +79,10 @@ fun getLambdaByImplicitItReference(expression: KtNameReferenceExpression) =
     resolveToAutoCreatedItDescriptor(expression)?.containingDeclaration?.source?.getPsi() as? KtFunctionLiteral
 
 // returns assignment which replaces initializer
-fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression {
+fun splitPropertyDeclaration(property: KtProperty): KtBinaryExpression? {
     val parent = property.parent
 
-    val initializer = property.initializer!!
+    val initializer = property.initializer ?: return null
 
     val explicitTypeToSet = if (property.typeReference != null) null else initializer.analyze().getType(initializer)
 
@@ -329,4 +332,21 @@ fun KtDotQualifiedExpression.isToString(): Boolean {
     val resolvedCall = toResolvedCall(BodyResolveMode.PARTIAL) ?: return false
     val callableDescriptor = resolvedCall.resultingDescriptor as? CallableMemberDescriptor ?: return false
     return callableDescriptor.getDeepestSuperDeclarations().any { it.fqNameUnsafe.asString() == "kotlin.Any.toString" }
+}
+
+val FunctionDescriptor.isOperatorOrCompatible: Boolean
+    get() {
+        if (this is JavaMethodDescriptor) {
+            return OperatorChecks.check(this).isSuccess
+        }
+        return isOperator
+    }
+
+fun KtPsiFactory.appendSemicolonBeforeLambdaContainingElement(element: PsiElement) {
+    val previousElement = KtPsiUtil.skipSiblingsBackwardByPredicate(element) {
+        it!!.node.elementType in KtTokens.WHITE_SPACE_OR_COMMENT_BIT_SET
+    }
+    if (previousElement != null && previousElement is KtExpression) {
+        previousElement.parent.addAfter(createSemicolon(), previousElement)
+    }
 }

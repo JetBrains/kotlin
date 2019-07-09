@@ -1,0 +1,14 @@
+<html>
+<body>
+This inspection reports redundant enum entry constructor invocation:
+
+<pre>
+enum class Foo {
+    A(), // This '()' is redundant.
+    B(),
+    C
+}
+</pre>
+
+</body>
+</html>

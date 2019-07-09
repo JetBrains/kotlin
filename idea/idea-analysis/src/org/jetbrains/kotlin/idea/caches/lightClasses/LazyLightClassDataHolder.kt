@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.caches.lightClasses
@@ -110,7 +110,7 @@ sealed class LazyLightClassDataHolder(
             return dummyDelegate!!.fields.map { dummyField ->
                 val fieldOrigin = KtLightFieldImpl.getOrigin(dummyField)
 
-                val fieldName = dummyField.name!!
+                val fieldName = dummyField.name
                 KtLightFieldImpl.lazy(dummyField, fieldOrigin, containingClass) {
                     clsDelegate.findFieldByName(fieldName, false).assertMatches(dummyField, containingClass)
                 }
@@ -142,7 +142,8 @@ sealed class LazyLightClassDataHolder(
     }
 
     private fun <T : PsiMember> T?.assertMatches(dummyMember: T, containingClass: KtLightClass): T {
-        if (this == null) throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
+        if (this == null)
+            throw LazyLightClassMemberMatchingError.NoMatch(dummyMember, containingClass)
 
         val parameterCountMatches = (this as? PsiMethod)?.parameterList?.parametersCount ?: 0 ==
                 (dummyMember as? PsiMethod)?.parameterList?.parametersCount ?: 0

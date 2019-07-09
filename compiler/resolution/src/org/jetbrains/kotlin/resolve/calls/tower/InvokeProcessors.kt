@@ -214,7 +214,7 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
             ?: error("No single synthesized invoke for $invokeDescriptor: $synthesizedInvokes")
 
     // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
-    return CandidateWithBoundDispatchReceiverImpl(extensionFunctionReceiver, synthesizedInvoke, listOf())
+    return CandidateWithBoundDispatchReceiver(extensionFunctionReceiver, synthesizedInvoke, listOf())
 }
 
 // case 1.(foo())() or (foo())()

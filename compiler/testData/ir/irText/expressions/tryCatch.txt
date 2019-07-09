@@ -1,30 +1,28 @@
 FILE fqName:<root> fileName:/tryCatch.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       TRY type=kotlin.Unit
         try: BLOCK type=kotlin.Unit origin=null
-          CALL 'println(): Unit' type=kotlin.Unit origin=null
-        CATCH parameter=e: Throwable
-          VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
+          CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+        CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test1
+          VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val] 
           BLOCK type=kotlin.Unit origin=null
-            CALL 'println(): Unit' type=kotlin.Unit origin=null
+            CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
         finally: BLOCK type=kotlin.Unit origin=null
-          CALL 'println(): Unit' type=kotlin.Unit origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+          CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Int 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test2(): Int'
+      RETURN type=kotlin.Nothing from='public final fun test2 (): kotlin.Int declared in <root>'
         TRY type=kotlin.Int
           try: BLOCK type=kotlin.Int origin=null
-            CALL 'println(): Unit' type=kotlin.Unit origin=null
+            CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             CONST Int type=kotlin.Int value=42
-          CATCH parameter=e: Throwable
-            VAR CATCH_PARAMETER name:e type:kotlin.Throwable flags:val
+          CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.test2
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val] 
             BLOCK type=kotlin.Int origin=null
-              CALL 'println(): Unit' type=kotlin.Unit origin=null
+              CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=24
           finally: TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-            typeOperand: CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public flags: superTypes:[kotlin.Any]
             BLOCK type=kotlin.Int origin=null
-              CALL 'println(): Unit' type=kotlin.Unit origin=null
+              CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               CONST Int type=kotlin.Int value=555
-

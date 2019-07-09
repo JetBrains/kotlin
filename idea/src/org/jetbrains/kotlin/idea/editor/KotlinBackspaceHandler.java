@@ -30,7 +30,7 @@ public class KotlinBackspaceHandler extends BackspaceHandlerDelegate {
     @Override
     public void beforeCharDeleted(char c, PsiFile file, Editor editor) {
         int offset = editor.getCaretModel().getOffset() - 1;
-        deleteGt = c =='<' && file instanceof KtFile &&
+        deleteGt = c == '<' && file instanceof KtFile &&
                    (isAfterToken(offset, editor, KtTokens.FUN_KEYWORD) ||
                     isAfterToken(offset, editor, KtTokens.IDENTIFIER));
     }

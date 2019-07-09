@@ -55,6 +55,7 @@ internal object CompilerArgumentsGradleInput {
         K2JVMCompilerArguments::buildFile, // in Gradle build, these XMLs are transient and provide no useful info
         K2JVMCompilerArguments::pluginOptions, // handled specially in the task
         K2JVMCompilerArguments::pluginClasspaths, // handled in the task as classpath
+        K2JVMCompilerArguments::javaSourceRoots, // handled in inputs
 
         K2JSCompilerArguments::outputFile, // already handled by Gradle task property
         K2JSCompilerArguments::libraries, // defined by by classpath and friendDependency of the Gradle task

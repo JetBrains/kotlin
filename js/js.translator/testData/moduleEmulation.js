@@ -1,4 +1,4 @@
-
+var kotlin;
 var emulatedModules = { kotlin: kotlin };
 var module = { exports: {} };
 var currentModuleId;

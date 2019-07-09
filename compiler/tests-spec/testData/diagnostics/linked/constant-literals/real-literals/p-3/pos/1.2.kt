@@ -1,9 +1,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, real-literals
- * PARAGRAPH: 3
- * SENTENCE: [1] The whole-number part and the exponent part may be omitted.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, real-literals -> paragraph 3 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Real literals with omitted a whole-number part and an exponent mark.
  */

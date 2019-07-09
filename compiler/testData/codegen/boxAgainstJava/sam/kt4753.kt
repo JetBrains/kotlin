@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 // FILE: Base.java
 
 interface Base<T> {

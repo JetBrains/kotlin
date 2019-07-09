@@ -1,5 +1,5 @@
-// !API_VERSION: 1.3
 // !JVM_TARGET: 1.8
+
 abstract class A {
 
     <!JVM_DEFAULT_NOT_IN_INTERFACE!>@JvmDefault<!>

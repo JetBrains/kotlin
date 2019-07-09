@@ -16,9 +16,10 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorNonRoot
 
-
+@DefaultImplementation(impl = OverloadFilter.Default::class)
 interface OverloadFilter {
     fun filterPackageMemberOverloads(overloads: Collection<DeclarationDescriptorNonRoot>): Collection<DeclarationDescriptorNonRoot>
 

@@ -1,0 +1,24 @@
+FILE: typeFromGetter.kt
+    public final val x: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public final val y: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public final val z: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int| {
+            ^ F|/z|
+        }
+    public final val w: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+    public abstract interface Some : R|kotlin/Any| {
+        public open val bar: R|kotlin/Int|
+            public get(): R|kotlin/Int| {
+                ^ Int(1)
+            }
+
+    }

@@ -1,0 +1,7 @@
+// "Remove useless cast" "true"
+open class A
+
+fun test() {
+    class B : A()
+    ({ "" })
+}

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.test.semantics;
 
+import com.eclipsesource.v8.V8ScriptException;
 import org.jetbrains.annotations.NotNull;
 
 import javax.script.ScriptException;
@@ -52,11 +53,18 @@ public final class WebDemoCanvasExamplesTest extends AbstractWebDemoExamplesTest
             fail();
         }
         catch (ScriptException e) {
-            String expectedErrorMessage = "ReferenceError: \"" + firstUnknownSymbolEncountered + "\" is not defined";
-            assertTrue("Unexpected error when running compiled canvas examples with rhino.\n" +
-                       "Expected: " + expectedErrorMessage + "\n" +
-                       "Actual: " + e.getMessage(),
-                       e.getMessage().startsWith(expectedErrorMessage));
+            verifyException("\"" + firstUnknownSymbolEncountered + "\"", e.getMessage());
         }
+        catch (V8ScriptException e) {
+            verifyException(firstUnknownSymbolEncountered, e.getJSMessage());
+        }
+    }
+
+    private static void verifyException(@NotNull String firstUnknownSymbolEncountered, @NotNull String message) {
+        String expectedErrorMessage = "ReferenceError: " + firstUnknownSymbolEncountered + " is not defined";
+        assertTrue("Unexpected error when running compiled canvas examples with rhino.\n" +
+                   "Expected: " + expectedErrorMessage + "\n" +
+                   "Actual: " + message,
+                   message.startsWith(expectedErrorMessage));
     }
 }

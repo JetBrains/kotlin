@@ -3,7 +3,6 @@ package frameInlineFunCallInsideInlineFun
 class A {
     inline fun inlineFun(s: (Int) -> Unit) {
         val element = 1.0
-        //TODO breakpoint here doesn't work (not only in tests)
         s(1)
     }
 

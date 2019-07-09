@@ -4,9 +4,8 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SECTIONS: constant-literals, integer-literals, long-integer-literals
- * PARAGRAPH: 1
- * SENTENCE: [2] An integer literal with the long literal mark has type kotlin.Long; an integer literal without it has one of the types kotlin.Int/kotlin.Short/kotlin.Byte (the selected type is dependent on the context), if its value is in range of the corresponding type, or type kotlin.Long otherwise.
+ * SPEC VERSION: 0.1-draft
+ * PLACE: constant-literals, integer-literals, long-integer-literals -> paragraph 1 -> sentence 2
  * NUMBER: 2
  * DESCRIPTION: Type checking of decimal integer literals.
  */

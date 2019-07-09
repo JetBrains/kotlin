@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 @file:kotlin.jvm.JvmName("UnsignedKt")
 @file:UseExperimental(ExperimentalUnsignedTypes::class)
@@ -61,6 +61,33 @@ internal fun ulongRemainder(v1: ULong, v2: ULong): ULong {
     val rem = dividend - quotient * divisor
     return ULong(rem - if (ULong(rem) >= ULong(divisor)) divisor else 0)
 }
+
+@PublishedApi
+internal fun doubleToUInt(v: Double): UInt = when {
+    v.isNaN() -> 0u
+    v <= UInt.MIN_VALUE.toDouble() -> UInt.MIN_VALUE
+    v >= UInt.MAX_VALUE.toDouble() -> UInt.MAX_VALUE
+    v <= Int.MAX_VALUE -> v.toInt().toUInt()
+    else -> (v - Int.MAX_VALUE).toInt().toUInt() + Int.MAX_VALUE.toUInt()      // Int.MAX_VALUE < v < UInt.MAX_VALUE
+}
+
+@PublishedApi
+internal fun doubleToULong(v: Double): ULong = when {
+    v.isNaN() -> 0u
+    v <= ULong.MIN_VALUE.toDouble() -> ULong.MIN_VALUE
+    v >= ULong.MAX_VALUE.toDouble() -> ULong.MAX_VALUE
+    v < Long.MAX_VALUE -> v.toLong().toULong()
+
+    // Real values from Long.MAX_VALUE to (Long.MAX_VALUE + 1) are not representable in Double, so don't handle them.
+    else -> (v - 9223372036854775808.0).toLong().toULong() + 9223372036854775808uL      // Long.MAX_VALUE + 1 < v < ULong.MAX_VALUE
+}
+
+
+@PublishedApi
+internal fun uintToDouble(v: Int): Double = (v and Int.MAX_VALUE).toDouble() + (v ushr 31 shl 30).toDouble() * 2
+
+@PublishedApi
+internal fun ulongToDouble(v: Long): Double = (v ushr 11).toDouble() * 2048 + (v and 2047)
 
 
 internal fun ulongToString(v: Long): String = ulongToString(v, 10)

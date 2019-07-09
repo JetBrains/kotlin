@@ -16,7 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model
 
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.contracts.model.structure.ESType
 
 /**
  * Generic abstraction of static information about some part of program.
@@ -27,7 +27,7 @@ interface Computation {
      * If type is unknown or computation doesn't have a type (e.g. if
      * it is some construction, like "for"-loop), then type is 'null'
      */
-    val type: KotlinType?
+    val type: ESType?
 
     /**
      * List of all possible effects of this computation.

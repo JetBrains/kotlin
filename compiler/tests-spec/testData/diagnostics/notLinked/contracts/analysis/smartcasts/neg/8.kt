@@ -1,4 +1,3 @@
-// !WITH_CONTRACT_FUNCTIONS
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 
 /*
@@ -7,6 +6,7 @@
  * SECTIONS: contracts, analysis, smartcasts
  * NUMBER: 8
  * DESCRIPTION: Smartcasts using some Returns effects.
+ * HELPERS: contractFunctions
  */
 
 // FILE: contracts.kt
@@ -103,7 +103,7 @@ fun case_4(value_1: Number, value_2: (() -> Unit)?) {
     } else if (contracts.case_4(value_1, value_2) == false) {
         println(value_2)
     } else if (contracts.case_4(value_1, value_2) == null) {
-        <!UNSAFE_IMPLICIT_INVOKE_CALL, DEBUG_INFO_CONSTANT!>value_2<!>()
+        <!DEBUG_INFO_CONSTANT, UNSAFE_IMPLICIT_INVOKE_CALL!>value_2<!>()
     }
 }
 

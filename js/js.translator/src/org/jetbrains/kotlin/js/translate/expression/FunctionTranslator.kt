@@ -102,9 +102,6 @@ fun TranslationContext.wrapWithInlineMetadata(
 ): JsExpression {
     val sourceInfo = descriptor.source.getPsi()
     return if (descriptor.isInline) {
-        val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
-        incrementalResults?.reportInlineFunction(descriptor, function, sourceInfo)
-
         if (descriptor.shouldBeExported(config)) {
             val metadata = InlineMetadata.compose(function, descriptor, this)
             metadata.functionWithMetadata(outerContext, sourceInfo)
@@ -116,6 +113,9 @@ fun TranslationContext.wrapWithInlineMetadata(
                         JsReturn(function))
                 }
             InlineMetadata.wrapFunction(outerContext, FunctionWithWrapper(function, block), sourceInfo)
+        }.also {
+            val incrementalResults = config.configuration[JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER]
+            incrementalResults?.reportInlineFunction(descriptor, it, sourceInfo)
         }
     }
     else {

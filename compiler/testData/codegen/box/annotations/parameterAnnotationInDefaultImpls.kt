@@ -3,6 +3,8 @@
 // FULL_JDK
 // WITH_REFLECT
 
+package test
+
 annotation class Anno(val value: String)
 
 interface Test {
@@ -10,7 +12,7 @@ interface Test {
 }
 
 fun box(): String {
-    val testMethod = Class.forName("Test\$DefaultImpls").declaredMethods.single()
+    val testMethod = Class.forName("test.Test\$DefaultImpls").declaredMethods.single()
     //return (::test.parameters.single().annotations.single() as Simple).value
     val receiverAnnotations = (testMethod.parameters[0]).annotations
     if (receiverAnnotations.isNotEmpty()) return "fail: receiver parameter should not have any annotations, but: ${receiverAnnotations.joinToString()}"

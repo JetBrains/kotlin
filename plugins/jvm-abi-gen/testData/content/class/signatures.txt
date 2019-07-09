@@ -1,0 +1,58 @@
+@kotlin.Metadata
+public final class test/BaseClass$Companion {
+    inner class test/BaseClass$Companion
+    public synthetic method <init>(p0: kotlin.jvm.internal.DefaultConstructorMarker): void
+}
+@kotlin.Metadata
+public class test/BaseClass {
+    public final static field Companion: test.BaseClass$Companion
+    public final static field basePublicConst: int
+    inner class test/BaseClass$Companion
+    public method <init>(): void
+    public final method baseClassInternalFun$main(): int
+    protected final method baseClassProtectedFun(): int
+    public method baseClassPublicFun(): int
+    public final method getBaseClassInternalVal$main(): int
+    protected final method getBaseClassProtectedVal(): int
+    public method getBaseClassPublicVal(): int
+}
+@kotlin.Metadata
+public final class test/Class$NestedInnerClass$NestedNestedInnerClass {
+    inner class test/Class$NestedInnerClass
+    inner class test/Class$NestedInnerClass$NestedNestedInnerClass
+    public method <init>(): void
+}
+@kotlin.Metadata
+final class test/Class$NestedInnerClass {
+    inner class test/Class$NestedInnerClass
+    inner class test/Class$NestedInnerClass$NestedNestedInnerClass
+    public method <init>(): void
+}
+@kotlin.Metadata
+final class test/Class$classPublicMethod$publicMethodLambda$1 {
+    public final static field INSTANCE: test.Class$classPublicMethod$publicMethodLambda$1
+    inner class test/Class$classPublicMethod$publicMethodLambda$1
+    method <init>(): void
+    public final method invoke(p0: int): int
+    public synthetic method invoke(p0: java.lang.Object): java.lang.Object
+}
+@kotlin.Metadata
+public final class test/Class$classPublicMethod$publicMethodLocalClass {
+    inner class test/Class$classPublicMethod$publicMethodLocalClass
+    public method <init>(): void
+    public final method getX(): int
+}
+@kotlin.Metadata
+public final class test/Class {
+    inner class test/Class$NestedInnerClass
+    inner class test/Class$classPublicMethod$publicMethodLambda$1
+    inner class test/Class$classPublicMethod$publicMethodLocalClass
+    public method <init>(): void
+    public final method classPublicMethod(): void
+}
+@kotlin.Metadata
+public interface test/Interface
+@kotlin.Metadata
+final class test/PrivateClass {
+    public method <init>(): void
+}

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 // FILE: test.kt
 
 fun test1() {

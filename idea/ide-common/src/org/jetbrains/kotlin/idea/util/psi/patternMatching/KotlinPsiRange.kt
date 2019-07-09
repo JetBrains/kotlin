@@ -92,7 +92,8 @@ interface KotlinPsiRange {
 }
 
 fun List<PsiElement>.toRange(significantOnly: Boolean = true): KotlinPsiRange {
-    return if (isEmpty()) KotlinPsiRange.Empty else KotlinPsiRange.ListRange(if (significantOnly) filter(SIGNIFICANT_FILTER) else this)
+    val elements = if (significantOnly) filter(SIGNIFICANT_FILTER) else this
+    return if (elements.isEmpty()) KotlinPsiRange.Empty else KotlinPsiRange.ListRange(elements)
 }
 
 fun PsiElement?.toRange(): KotlinPsiRange = this?.let { KotlinPsiRange.ListRange(Collections.singletonList(it)) } ?: KotlinPsiRange.Empty

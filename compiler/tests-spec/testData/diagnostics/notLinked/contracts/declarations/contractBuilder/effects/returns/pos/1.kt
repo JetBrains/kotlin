@@ -1,6 +1,5 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
 // !DIAGNOSTICS: -FINAL_UPPER_BOUND
-// !WITH_CLASSES
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (POSITIVE)
@@ -8,6 +7,7 @@
  * SECTIONS: contracts, declarations, contractBuilder, effects, returns
  * NUMBER: 1
  * DESCRIPTION: Returns effect with simple conditions.
+ * HELPERS: classes
  */
 
 import kotlin.contracts.*
@@ -50,8 +50,8 @@ fun Any?.case_7() {
 
 // TESTCASE NUMBER: 8
 fun <T>T?.case_8() {
-    contract { returns() implies (this@case_8 !is _ClassLevel3?) }
-    if (this is _ClassLevel3?) throw Exception()
+    contract { returns() implies (this@case_8 !is ClassLevel3?) }
+    if (this is ClassLevel3?) throw Exception()
 }
 
 // TESTCASE NUMBER: 9

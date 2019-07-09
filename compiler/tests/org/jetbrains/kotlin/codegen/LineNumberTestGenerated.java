@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen;
@@ -67,6 +67,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
     @TestMetadata("inlineSimpleCall.kt")
     public void testInlineSimpleCall() throws Exception {
         runTest("compiler/testData/lineNumber/inlineSimpleCall.kt");
+    }
+
+    @TestMetadata("lineNumberAfterInline.kt")
+    public void testLineNumberAfterInline() throws Exception {
+        runTest("compiler/testData/lineNumber/lineNumberAfterInline.kt");
     }
 
     @TestMetadata("localFunction.kt")
@@ -176,9 +181,19 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
             runTest("compiler/testData/lineNumber/custom/ifThenElse.kt");
         }
 
+        @TestMetadata("ifThenElseFalse.kt")
+        public void testIfThenElseFalse() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/ifThenElseFalse.kt");
+        }
+
         @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
         public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
             runTest("compiler/testData/lineNumber/custom/inTheEndOfLambdaArgumentOfInlineCall.kt");
+        }
+
+        @TestMetadata("initBlocks.kt")
+        public void testInitBlocks() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/initBlocks.kt");
         }
 
         @TestMetadata("multilineFunctionCall.kt")
@@ -194,6 +209,11 @@ public class LineNumberTestGenerated extends AbstractLineNumberTest {
         @TestMetadata("noParametersArgumentCallInExpression.kt")
         public void testNoParametersArgumentCallInExpression() throws Exception {
             runTest("compiler/testData/lineNumber/custom/noParametersArgumentCallInExpression.kt");
+        }
+
+        @TestMetadata("primitiveNullChecks.kt")
+        public void testPrimitiveNullChecks() throws Exception {
+            runTest("compiler/testData/lineNumber/custom/primitiveNullChecks.kt");
         }
 
         @TestMetadata("smapInlineAsArgument.kt")

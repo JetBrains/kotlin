@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
-  PROPERTY name:test visibility:public modality:FINAL flags:val
-    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field!>? flags:
-      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL flags:val
-      $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*> flags:
+  PROPERTY name:test visibility:public modality:FINAL [val] 
+    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field?>? 
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
+      $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*> 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='<get-test>() on Class<*>: Array<(out) Field!>!'
-          CALL 'getDeclaredFields(): Array<(out) Field!>!' type=kotlin.Array<out java.lang.reflect.Field!>? origin=GET_PROPERTY
-            <`0>: kotlin.Any?
-            $this: GET_VAR 'this@test: Class<*>' type=java.lang.Class<*> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
+          CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY
+            <1>: kotlin.Any?
+            $this: GET_VAR '<this>: java.lang.Class<*> declared in <root>.<get-test>' type=java.lang.Class<*> origin=null

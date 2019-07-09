@@ -1,5 +1,6 @@
 // !DIAGNOSTICS_NUMBER: 1
 // !DIAGNOSTICS: TYPE_INFERENCE_CANNOT_CAPTURE_TYPES
+// !LANGUAGE: -NewInference
 
 fun <R : Any> bar(a: Array<R>): Array<R?> =  null!!
 

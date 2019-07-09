@@ -19,23 +19,14 @@ package org.jetbrains.kotlin.renderer
 import com.intellij.openapi.editor.impl.DocumentImpl
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
-import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.frontend.di.createContainerForLazyResolve
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.TargetEnvironment
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
-import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
@@ -55,21 +46,8 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
         val fileText = FileUtil.loadFile(File(path), true)
         val psiFile = KtPsiFactory(project).createFile(fileText)
 
-        val context = TopDownAnalyzerFacadeForJVM.createContextWithSealedModule(project, environment.configuration)
-
-        val container = createContainerForLazyResolve(
-            context,
-            FileBasedDeclarationProviderFactory(context.storageManager, listOf(psiFile)),
-            NoScopeRecordCliBindingTrace(),
-            JvmPlatform,
-            JvmTarget.JVM_1_6,
-            targetEnvironment,
-            LanguageVersionSettingsImpl.DEFAULT
-        )
-
-        val resolveSession = container.get<ResolveSession>()
-
-        context.initializeModuleContents(resolveSession.packageFragmentProvider)
+        val container = JvmResolveUtil.createContainer(environment, listOf(psiFile), targetEnvironment)
+        val module = container.get<ModuleDescriptor>()
 
         val descriptors = ArrayList<DeclarationDescriptor>()
 
@@ -77,8 +55,7 @@ abstract class AbstractDescriptorRendererTest : KotlinTestWithEnvironment() {
             override fun visitKtFile(file: KtFile) {
                 val fqName = file.packageFqName
                 if (!fqName.isRoot) {
-                    val packageDescriptor = context.module.getPackage(fqName)
-                    descriptors.add(packageDescriptor)
+                    descriptors.add(module.getPackage(fqName))
                 }
                 file.acceptChildren(this)
             }

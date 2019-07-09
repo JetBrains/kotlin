@@ -1,3 +1,4 @@
+// WITH_RUNTIME
 // FILE: JavaInterface.java
 
 interface JavaInterface {

@@ -1,9 +1,11 @@
 // IGNORE_BACKEND: JVM_IR
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FILE: inline.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
 // WITH_RUNTIME
 // NO_CHECK_LAMBDA_INLINING
+
+package test
 
 inline fun call(c: () -> Unit) {
     c()
@@ -11,6 +13,8 @@ inline fun call(c: () -> Unit) {
 
 // FILE: inlineSite.kt
 // KOTLIN_CONFIGURATION_FLAGS: ASSERTIONS_MODE=jvm
+
+import test.*
 
 interface Checker {
     fun checkTrue(): Boolean

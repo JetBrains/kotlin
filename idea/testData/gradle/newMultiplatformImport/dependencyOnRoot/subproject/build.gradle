@@ -1,0 +1,12 @@
+apply plugin: 'kotlin-multiplatform'
+
+kotlin {
+	targets {
+		fromPreset(presets.jvm, 'jvm')
+	}
+}
+
+dependencies {
+	commonMainApi rootProject
+}
+ 

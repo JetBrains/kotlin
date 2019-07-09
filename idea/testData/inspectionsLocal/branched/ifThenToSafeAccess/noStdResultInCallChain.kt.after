@@ -1,0 +1,7 @@
+// DISABLE-ERRORS
+class Result<T> {
+    fun getOrNull(): Any = TODO()
+}
+val someNullableString: String? = ""
+fun String.bar(): Result<String> = Result.success("")
+val result = someNullableString?.bar()?.getOrNull()?.let { }

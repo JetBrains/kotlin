@@ -1,19 +1,11 @@
-// VERSION: $VERSION$
-buildscript {
-    ext.kotlin_version = '$VERSION$'
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '$VERSION$'
 }
-apply plugin: 'kotlin'
 repositories {
     mavenCentral()
 }
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8"
 }
 compileKotlin {
     kotlinOptions {
@@ -24,5 +16,5 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
+}// VERSION: $VERSION$
 // JDK: 1.8

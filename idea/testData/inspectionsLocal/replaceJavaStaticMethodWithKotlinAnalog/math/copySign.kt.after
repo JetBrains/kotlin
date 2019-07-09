@@ -1,0 +1,6 @@
+import kotlin.math.withSign
+
+// WITH_RUNTIME
+fun test(x: Double, y: Double) {
+    x.withSign(y)
+}

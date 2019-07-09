@@ -4,7 +4,6 @@ apply plugin: 'kotlin'
 apply plugin: 'pill-configurable'
 
 configureJvm6Project(project)
-configureDist(project)
 configurePublishing(project)
 
 pill {
@@ -19,14 +18,16 @@ sourceSets {
     }
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
+dependencies {
+    compile DependenciesKt.kotlinBuiltins(project)
 }
 
-dist {
-    from (jar, sourcesJar)
+artifacts {
+    archives sourcesJar
+    sources sourcesJar
 }
+
+javadocJar()
 
 tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
     kotlinOptions.jdkHome = JDK_16

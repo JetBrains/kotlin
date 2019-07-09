@@ -1,0 +1,15 @@
+FILE: classReference.kt
+    public? final? class A : kotlin/Any {
+        public? constructor(): R|test/A| {
+            super<kotlin/Any>()
+        }
+
+    }
+    public? final? fun test(): kotlin/Unit {
+        <getClass>(A#)
+        <getClass>(test#.A#)
+        <getClass>(A#())
+        <getClass>(A#).java#
+        <getClass>(test#.A#).java#
+        <getClass>(A#()).java#
+    }

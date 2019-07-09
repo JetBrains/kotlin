@@ -25,6 +25,10 @@ fun File.modify(transform: (String) -> String) {
     writeText(transform(readText()))
 }
 
+fun File.addNewLine() {
+    modify { "$it\n" }
+}
+
 fun createTempDir(prefix: String): File =
     Files.createTempDirectory(prefix).toFile().apply {
         deleteOnExit()

@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
@@ -48,6 +47,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
+import java.io.ObjectOutputStream
 
 fun makeIncrementally(
         cachesDir: File,
@@ -62,25 +62,31 @@ fun makeIncrementally(
     val files = rootsWalk.filter(File::isFile)
     val sourceFiles = files.filter { it.extension.toLowerCase() in allExtensions }.toList()
     val buildHistoryFile = File(cachesDir, "build-history.bin")
+    args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
 
     withIC {
         val compiler = IncrementalJvmCompilerRunner(
-                cachesDir,
-                sourceRoots.map { JvmSourceRoot(it, null) }.toSet(),
-                reporter,
-                // Use precise setting in case of non-Gradle build
-                usePreciseJavaTracking = true,
-                localStateDirs = emptyList(),
-                buildHistoryFile = buildHistoryFile,
-                modulesApiHistory = EmptyModulesApiHistory,
-                kotlinSourceFilesExtensions = kotlinExtensions
+            cachesDir,
+            reporter,
+            // Use precise setting in case of non-Gradle build
+            usePreciseJavaTracking = true,
+            outputFiles = emptyList(),
+            buildHistoryFile = buildHistoryFile,
+            modulesApiHistory = EmptyModulesApiHistory,
+            kotlinSourceFilesExtensions = kotlinExtensions
         )
         compiler.compile(sourceFiles, args, messageCollector, providedChangedFiles = null)
     }
 }
 
-object EmptyICReporter : ICReporter {
+object EmptyICReporter : ICReporterBase() {
+    override fun reportCompileIteration(incremental: Boolean, sourceFiles: Collection<File>, exitCode: ExitCode) {
+    }
+
     override fun report(message: () -> String) {
+    }
+
+    override fun reportVerbose(message: () -> String) {
     }
 }
 
@@ -98,19 +104,18 @@ inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
 
 class IncrementalJvmCompilerRunner(
     workingDir: File,
-    private val javaSourceRoots: Set<JvmSourceRoot>,
     reporter: ICReporter,
     private val usePreciseJavaTracking: Boolean,
     buildHistoryFile: File,
-    localStateDirs: Collection<File>,
+    outputFiles: Collection<File>,
     private val modulesApiHistory: ModulesApiHistory,
     override val kotlinSourceFilesExtensions: List<String> = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 ) : IncrementalCompilerRunner<K2JVMCompilerArguments, IncrementalJvmCachesManager>(
     workingDir,
     "caches-jvm",
     reporter,
-    localStateDirs = localStateDirs,
-        buildHistoryFile = buildHistoryFile
+    outputFiles = outputFiles,
+    buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
             IncrementalCompilation.isEnabledForJvm()
@@ -120,6 +125,8 @@ class IncrementalJvmCompilerRunner(
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
             args.destinationAsFile
+
+    private var dirtyClasspathChanges: Collection<FqName> = emptySet<FqName>()
 
     private val psiFileFactory: PsiFileFactory by lazy {
         val rootDisposable = Disposer.newDisposable()
@@ -146,7 +153,7 @@ class IncrementalJvmCompilerRunner(
         initDirtyFiles(dirtyFiles, changedFiles)
 
         val lastBuildInfo = BuildInfo.read(lastBuildInfoFile) ?: return CompilationMode.Rebuild { "No information on previous build" }
-        reporter.report { "Last Kotlin Build info -- $lastBuildInfo" }
+        reporter.reportVerbose { "Last Kotlin Build info -- $lastBuildInfo" }
 
         val classpathChanges = getClasspathChanges(args.classpathAsList, changedFiles, lastBuildInfo, modulesApiHistory, reporter)
 
@@ -158,6 +165,7 @@ class IncrementalJvmCompilerRunner(
             }
             is ChangesEither.Known -> {
                 dirtyFiles.addByDirtySymbols(classpathChanges.lookupSymbols)
+                dirtyClasspathChanges = classpathChanges.fqNames
                 dirtyFiles.addByDirtyClasses(classpathChanges.fqNames)
             }
         }
@@ -335,33 +343,12 @@ class IncrementalJvmCompilerRunner(
             messageCollector: MessageCollector
     ): ExitCode {
         val compiler = K2JVMCompiler()
-        val outputDir = args.destinationAsFile
-        val classpath = args.classpathAsList
-        val moduleFile = makeModuleFile(
-            args.moduleName!!,
-            isTest = false,
-            outputDir = outputDir,
-            sourcesToCompile = sourcesToCompile,
-            commonSources = args.commonSources?.map(::File).orEmpty(),
-            javaSourceRoots = javaSourceRoots,
-            classpath = classpath,
-            friendDirs = listOf()
-        )
-        val destination = args.destination
-        args.destination = null
-        args.buildFile = moduleFile.absolutePath
-
-        try {
-            reporter.report { "compiling with args: ${ArgumentUtils.convertArgumentsToStringList(args)}" }
-            reporter.report { "compiling with classpath: ${classpath.toList().sorted().joinToString()}" }
-            val exitCode = compiler.exec(messageCollector, services, args)
-            reporter.reportCompileIteration(sourcesToCompile, exitCode)
-            return exitCode
-        }
-        finally {
-            args.destination = destination
-            moduleFile.delete()
-        }
+        val freeArgsBackup = args.freeArgs.toList()
+        args.freeArgs += sourcesToCompile.map { it.absolutePath }
+        args.allowNoSourceFiles = true
+        val exitCode = compiler.exec(messageCollector, services, args)
+        args.freeArgs = freeArgsBackup
+        return exitCode
     }
 }
 

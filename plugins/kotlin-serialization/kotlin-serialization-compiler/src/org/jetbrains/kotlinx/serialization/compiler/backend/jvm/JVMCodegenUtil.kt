@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.AbstractSerialGenerator
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.SerialTypeInfo
+import org.jetbrains.kotlinx.serialization.compiler.backend.common.findAddOnSerializer
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.DECODER_CLASS
@@ -101,14 +102,15 @@ fun InstructionAdapter.genKOutputMethodCall(
     val sti = generator.getSerialTypeInfo(property, propertyType)
     val useSerializer = if (fromClassStartVar == null) stackValueSerializerInstanceFromSerializer(classCodegen, sti, generator)
     else stackValueSerializerInstanceFromClass(classCodegen, sti, fromClassStartVar, generator)
-    if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
+    val actualType = if (!sti.unit) ImplementationBodyCodegen.genPropertyOnStack(
         this,
         expressionCodegen.context,
         property.descriptor,
         propertyOwnerType,
         ownerVar,
         classCodegen.state
-    )
+    ) else null
+    actualType?.type?.let { type -> StackValue.coerce(type, sti.type, this) }
     invokeinterface(
         kOutputType.internalName,
         CallingConventions.encode + sti.elementMethodPrefix + (if (useSerializer) "Serializable" else "") + CallingConventions.elementPostfix,
@@ -118,9 +120,17 @@ fun InstructionAdapter.genKOutputMethodCall(
     )
 }
 
-internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int, bitMaskBase: Int, codegen: ClassBodyCodegen, args: List<SerializableProperty>): String {
-    val constructorDesc = StringBuilder("(I")
-    load(bitMaskBase, OPT_MASK_TYPE)
+internal fun InstructionAdapter.buildInternalConstructorDesc(
+    propsStartVar: Int,
+    bitMaskBase: Int,
+    codegen: ClassBodyCodegen,
+    args: List<SerializableProperty>
+): String {
+    val constructorDesc = StringBuilder("(")
+    repeat(args.bitMaskSlotCount()) {
+        constructorDesc.append("I")
+        load(bitMaskBase + it, Type.INT_TYPE)
+    }
     var propVar = propsStartVar
     for (property in args) {
         val propertyType = codegen.typeMapper.mapType(property.type)
@@ -133,8 +143,10 @@ internal fun InstructionAdapter.buildInternalConstructorDesc(propsStartVar: Int,
     return constructorDesc.toString()
 }
 
-internal fun ImplementationBodyCodegen.generateMethod(function: FunctionDescriptor,
-                                                      block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit) {
+internal fun ImplementationBodyCodegen.generateMethod(
+    function: FunctionDescriptor,
+    block: InstructionAdapter.(JvmMethodSignature, ExpressionCodegen) -> Unit
+) {
     this.functionCodegen.generateMethod(OtherOrigin(this.myClass.psiOrParent, function), function,
                                         object : FunctionGenerationStrategy.CodegenBased(this.state) {
                                             override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
@@ -179,7 +191,6 @@ internal fun InstructionAdapter.stackValueSerializerInstanceFromSerializerWithou
             ?: if (!property.type.isTypeParameter()) serializerCodegen.findTypeSerializerOrContext(
                 property.module,
                 property.type,
-                property.descriptor.annotations,
                 property.descriptor.findPsi()
             ) else null
     return serializerCodegen.stackValueSerializerInstance(
@@ -251,22 +262,9 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         dup()
         // instantiate all arg serializers on stack
         val signature = StringBuilder("(")
-        when (serializer.classId) {
-            enumSerializerId, contextSerializerId -> {
-                // a special way to instantiate enum -- need a enum KClass reference
-                aconst(codegen.typeMapper.mapType(kType))
-                AsmUtil.wrapJavaClassIntoKClass(this)
-                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-            }
-            referenceArraySerializerId -> {
-                // a special way to instantiate reference array serializer -- need an element KClass reference
-                aconst(codegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
-                AsmUtil.wrapJavaClassIntoKClass(this)
-                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
-            }
-        }
-        // all serializers get arguments with serializers of their generic types
-        argSerializers.forEach { (argType, argSerializer) ->
+
+        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>) {
+            val (argType, argSerializer) = typeArgument
             assert(
                 stackValueSerializerInstance(
                     codegen,
@@ -281,6 +279,26 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
             signature.append(kSerializerType.descriptor)
+        }
+
+        when (serializer.classId) {
+            enumSerializerId, contextSerializerId, polymorphicSerializerId -> {
+                // a special way to instantiate enum -- need a enum KClass reference
+                // GENERIC_ARGUMENT forces boxing in order to obtain KClass
+                aconst(codegen.typeMapper.mapType(kType, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+            }
+            referenceArraySerializerId -> {
+                // a special way to instantiate reference array serializer -- need an element KClass reference
+                aconst(codegen.typeMapper.mapType(kType.arguments[0].type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                AsmUtil.wrapJavaClassIntoKClass(this)
+                signature.append(AsmTypes.K_CLASS_TYPE.descriptor)
+                // Reference array serializer still needs serializer for its argument type
+                instantiate(argSerializers[0])
+            }
+            // all serializers get arguments with serializers of their generic types
+            else -> argSerializers.forEach(::instantiate)
         }
         signature.append(")V")
         // invoke constructor
@@ -309,6 +327,18 @@ class JVMSerialTypeInfo(
 ) : SerialTypeInfo(property, nn, serializer, unit)
 
 fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, type: Type): JVMSerialTypeInfo {
+    fun SerializableInfo(serializer: ClassDescriptor?) =
+        JVMSerialTypeInfo(
+            property,
+            Type.getType("Ljava/lang/Object;"),
+            if (property.type.isMarkedNullable) "Nullable" else "",
+            serializer
+        )
+
+    property.serializableWith?.toClassDescriptor?.let { return SerializableInfo(it) }
+    findAddOnSerializer(property.type, property.module)?.let { return SerializableInfo(it) }
+    property.type.overridenSerializer?.toClassDescriptor?.let { return SerializableInfo(it) }
+
     if (property.type.isTypeParameter()) return JVMSerialTypeInfo(
         property,
         Type.getType("Ljava/lang/Object;"),
@@ -330,6 +360,13 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                         // reference elements
                         serializer = property.module.findClassAcrossModuleDependencies(referenceArraySerializerId)
                     }
+                    else -> {
+                        serializer = findTypeSerializerOrContext(
+                            property.module,
+                            property.type,
+                            property.descriptor.findPsi()
+                        )
+                    }
                     // primitive elements are not supported yet
                 }
             }
@@ -350,7 +387,6 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty, ty
                 ?: findTypeSerializerOrContext(
                     property.module,
                     property.type,
-                    property.descriptor.annotations,
                     property.descriptor.findPsi()
                 )
             return JVMSerialTypeInfo(

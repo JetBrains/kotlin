@@ -25,7 +25,7 @@ class MavenPluginComponent : KotlinMavenPluginExtension {
         return listOf(PluginOption(
                 "test-me",
                 TestCommandLineProcessor.TestPluginId,
-                TestCommandLineProcessor.MyTestOption.name,
+                TestCommandLineProcessor.MyTestOption.optionName,
                 "my-special-value"))
     }
 }

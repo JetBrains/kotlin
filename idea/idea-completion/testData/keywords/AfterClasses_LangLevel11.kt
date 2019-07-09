@@ -14,26 +14,33 @@ class B {
 
 // EXIST:  abstract
 // EXIST:  class
+// EXIST:  class AfterClasses_LangLevel11
 // EXIST:  enum class
+// EXIST:  enum class AfterClasses_LangLevel11
 // EXIST:  final
 // EXIST:  fun
 // EXIST:  internal
 // EXIST:  object
+// EXIST:  object AfterClasses_LangLevel11
 // EXIST:  open
 // EXIST:  private
 // EXIST:  public
 // EXIST:  interface
+// EXIST:  interface AfterClasses_LangLevel11
 // EXIST:  val
 // EXIST:  var
 // EXIST:  operator
 // EXIST:  infix
 // EXIST:  sealed class
-// EXIST:  data
+// EXIST:  sealed class AfterClasses_LangLevel11
+// EXIST:  data class
+// EXIST:  { "lookupString":"data class", "itemText":"data class", "tailText":" AfterClasses_LangLevel11(...)", "attributes":"bold" }
 // EXIST:  inline
 // EXIST:  tailrec
 // EXIST:  external
 // EXIST:  annotation class
+// EXIST:  annotation class AfterClasses_LangLevel11
 // EXIST:  const val
-// EXIST:  suspend
+// EXIST:  suspend fun
 // EXIST:  typealias
 // NOTHING_ELSE

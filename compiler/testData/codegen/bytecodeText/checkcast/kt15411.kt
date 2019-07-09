@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // KT-15411 Unnecessary CHECKCAST bytecode when dealing with null
 
 fun test1(): String? {

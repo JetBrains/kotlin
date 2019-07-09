@@ -1,0 +1,20 @@
+FILE: B.kt
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|A|>()
+        }
+
+        public final override fun foo(): R|B| {
+            ^foo this#
+        }
+
+        public final fun bar(): R|B| {
+            ^bar this#
+        }
+
+        public final fun test(): R|kotlin/Unit| {
+            R|/B.foo|()
+            R|/B.bar|()
+        }
+
+    }

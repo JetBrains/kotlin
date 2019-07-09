@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.addImport;
@@ -59,6 +59,11 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
         runTest("idea/testData/addImport/CommentsNoPackageDirective.kt");
     }
 
+    @TestMetadata("ConflictingLocalRef.kt")
+    public void testConflictingLocalRef() throws Exception {
+        runTest("idea/testData/addImport/ConflictingLocalRef.kt");
+    }
+
     @TestMetadata("ConflictingNameAppearsAndHasUsage1.kt")
     public void testConflictingNameAppearsAndHasUsage1() throws Exception {
         runTest("idea/testData/addImport/ConflictingNameAppearsAndHasUsage1.kt");
@@ -87,6 +92,11 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ConflictingNameAppearsAndHasUsage6.kt")
     public void testConflictingNameAppearsAndHasUsage6() throws Exception {
         runTest("idea/testData/addImport/ConflictingNameAppearsAndHasUsage6.kt");
+    }
+
+    @TestMetadata("ConflictingNameAppearsAndHasUsage7.kt")
+    public void testConflictingNameAppearsAndHasUsage7() throws Exception {
+        runTest("idea/testData/addImport/ConflictingNameAppearsAndHasUsage7.kt");
     }
 
     @TestMetadata("ConflictingNameAppearsButUsageIsQualified.kt")
@@ -127,6 +137,21 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ConflictingNameNoAllUnderImport3.kt")
     public void testConflictingNameNoAllUnderImport3() throws Exception {
         runTest("idea/testData/addImport/ConflictingNameNoAllUnderImport3.kt");
+    }
+
+    @TestMetadata("ConflictsExtensions.kt")
+    public void testConflictsExtensions() throws Exception {
+        runTest("idea/testData/addImport/ConflictsExtensions.kt");
+    }
+
+    @TestMetadata("ConflictsExtensions1.kt")
+    public void testConflictsExtensions1() throws Exception {
+        runTest("idea/testData/addImport/ConflictsExtensions1.kt");
+    }
+
+    @TestMetadata("DoNotDropConflictingOnStar.kt")
+    public void testDoNotDropConflictingOnStar() throws Exception {
+        runTest("idea/testData/addImport/DoNotDropConflictingOnStar.kt");
     }
 
     @TestMetadata("DropExplicitImports.kt")
@@ -172,6 +197,11 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     @TestMetadata("ImportFromObject.kt")
     public void testImportFromObject() throws Exception {
         runTest("idea/testData/addImport/ImportFromObject.kt");
+    }
+
+    @TestMetadata("ImportFromRoot.kt")
+    public void testImportFromRoot() throws Exception {
+        runTest("idea/testData/addImport/ImportFromRoot.kt");
     }
 
     @TestMetadata("ImportFunctionBug.kt")

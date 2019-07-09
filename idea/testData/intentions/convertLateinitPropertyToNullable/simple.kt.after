@@ -1,0 +1,3 @@
+class C {
+    private var bar: String? = null
+}

@@ -1,5 +1,3 @@
-// WITH_RUNTIME
-
 fun findUserId(username: String): Long? = null
 
 fun main(args: Array<String>) {

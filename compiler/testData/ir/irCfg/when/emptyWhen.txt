@@ -2,7 +2,7 @@
 // FUN: empty
 BB 0
 CONTENT
-      1 FUN name:empty visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+      1 FUN name:empty visibility:public modality:FINAL <> () returnType:kotlin.Int 
       2 WHEN type=kotlin.Int origin=WHEN
 OUTGOING -> BB 1
     CONST Boolean type=kotlin.Boolean value=true
@@ -17,9 +17,9 @@ BB 2
 INCOMING <- BB 1
     When exit: WHEN type=kotlin.Int origin=WHEN
 CONTENT
-      1 RETURN type=kotlin.Nothing from='empty(): Int'
+      1 RETURN type=kotlin.Nothing from='public final fun empty (): kotlin.Int declared in <root>'
 OUTGOING -> NONE
-    Function exit: FUN name:empty visibility:public modality:FINAL <> () returnType:kotlin.Int flags:
+    Function exit: FUN name:empty visibility:public modality:FINAL <> () returnType:kotlin.Int 
 
 // END FUN: empty
 

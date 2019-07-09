@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
@@ -11,10 +11,14 @@ package org.w3c.files
 
 import kotlin.js.*
 import org.khronos.webgl.*
+import org.w3c.css.masking.*
 import org.w3c.dom.*
+import org.w3c.dom.clipboard.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
+import org.w3c.dom.mediacapture.*
 import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
@@ -64,7 +68,7 @@ public external interface FilePropertyBag : BlobPropertyBag {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun FilePropertyBag(lastModified: Int? = null, type: String? = ""): FilePropertyBag {
+public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
     val o = js("({})")
 
     o["lastModified"] = lastModified
@@ -89,8 +93,8 @@ public external open class FileReader : EventTarget {
     open val readyState: Short
     open val result: dynamic
     open val error: dynamic
-    var onloadstart: ((Event) -> dynamic)?
-    var onprogress: ((Event) -> dynamic)?
+    var onloadstart: ((ProgressEvent) -> dynamic)?
+    var onprogress: ((ProgressEvent) -> dynamic)?
     var onload: ((Event) -> dynamic)?
     var onabort: ((Event) -> dynamic)?
     var onerror: ((Event) -> dynamic)?

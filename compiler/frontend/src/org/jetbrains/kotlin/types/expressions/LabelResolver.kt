@@ -41,7 +41,7 @@ object LabelResolver {
             if (name != null && name == labelName) {
                 elements.add(getExpressionUnderLabel(parent as KtExpression))
             }
-            parent = parent.parent
+            parent = if (parent is KtCodeFragment) parent.context else parent.parent
         }
         return elements
     }

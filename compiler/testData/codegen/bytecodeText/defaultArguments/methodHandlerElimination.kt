@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 //open modality to method handle check generation
 open class A {
     inline fun test(p: String = "OK"): String {

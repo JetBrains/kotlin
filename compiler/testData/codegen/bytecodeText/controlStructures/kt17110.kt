@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(x: Int, y: Int): String {
     var result: String
     if (x == 6) {

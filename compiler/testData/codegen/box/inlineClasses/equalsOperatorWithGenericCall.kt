@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 inline class IcAny(val x: Any?)
 inline class IcInt(val x: Int)
 inline class IcLong(val x: Long)

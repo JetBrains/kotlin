@@ -73,25 +73,31 @@ object LoopbackNetworkInterface {
         override fun createServerSocket(port: Int): ServerSocket = ServerSocket(port, SERVER_SOCKET_BACKLOG_SIZE, InetAddress.getByName(null))
     }
 
-
-    class ClientLoopbackSocketFactory : RMIClientSocketFactory, Serializable {
+    abstract class AbstractClientLoopbackSocketFactory<SocketType> : Serializable {
         override fun equals(other: Any?): Boolean = other === this || super.equals(other)
         override fun hashCode(): Int = super.hashCode()
 
+        abstract protected fun socketCreate(host: String, port: Int): SocketType
+
         @Throws(IOException::class)
-        override fun createSocket(host: String, port: Int): Socket {
+        fun createSocket(host: String, port: Int): SocketType {
             var attemptsLeft = SOCKET_CONNECT_ATTEMPTS
             while (true) {
                 try {
-                    return Socket(InetAddress.getByName(null), port)
-                }
-                catch (e: ConnectException) {
+                    return socketCreate(host, port)
+                } catch (e: ConnectException) {
                     if (--attemptsLeft <= 0) throw e
                 }
                 Thread.sleep(SOCKET_CONNECT_INTERVAL_MS)
             }
         }
     }
+
+
+    class ClientLoopbackSocketFactory : AbstractClientLoopbackSocketFactory<java.net.Socket>(), RMIClientSocketFactory {
+        override fun socketCreate(host: String, port: Int): Socket = Socket(InetAddress.getByName(null), port)
+    }
+
 }
 
 

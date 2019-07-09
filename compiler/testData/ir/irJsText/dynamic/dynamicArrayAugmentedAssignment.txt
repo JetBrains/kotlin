@@ -1,0 +1,29 @@
+FILE fqName:<root> fileName:/dynamicArrayAugmentedAssignment.kt
+  FUN name:testArrayAugmentedAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:d index:0 type:dynamic 
+    BLOCK_BODY
+      DYN_OP operator=PLUSEQ type=kotlin.Unit
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAugmentedAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST String type=kotlin.String value="+="
+      DYN_OP operator=MINUSEQ type=kotlin.Unit
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAugmentedAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST String type=kotlin.String value="-="
+      DYN_OP operator=MULEQ type=kotlin.Unit
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAugmentedAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST String type=kotlin.String value="*="
+      DYN_OP operator=DIVEQ type=kotlin.Unit
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAugmentedAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST String type=kotlin.String value="/="
+      DYN_OP operator=MODEQ type=kotlin.Unit
+        receiver: DYN_OP operator=ARRAY_ACCESS type=dynamic
+          receiver: GET_VAR 'd: dynamic declared in <root>.testArrayAugmentedAssignment' type=dynamic origin=null
+          0: CONST String type=kotlin.String value="KEY"
+        0: CONST String type=kotlin.String value="%="

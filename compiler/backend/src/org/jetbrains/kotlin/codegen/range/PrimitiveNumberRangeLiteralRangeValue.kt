@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.codegen.range
 
 import org.jetbrains.kotlin.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.codegen.generateCallReceiver
 import org.jetbrains.kotlin.codegen.generateCallSingleArgument
+import org.jetbrains.kotlin.codegen.range.comparison.getComparisonGeneratorForKotlinType
 import org.jetbrains.kotlin.codegen.range.forLoop.ForInSimpleProgressionLoopGenerator
 import org.jetbrains.kotlin.codegen.range.forLoop.ForLoopGenerator
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -35,30 +37,38 @@ class PrimitiveNumberRangeLiteralRangeValue(
 ) : PrimitiveNumberRangeIntrinsicRangeValue(rangeCall),
     ReversableRangeValue {
 
-    override fun getBoundedValue(codegen: ExpressionCodegen): SimpleBoundedValue {
-        val instanceType = codegen.asmType(rangeCall.resultingDescriptor.returnType!!)
+    override fun getBoundedValue(codegen: ExpressionCodegen): BoundedValue {
         val lowBound = codegen.generateCallReceiver(rangeCall)
+
         if (codegen.canBeSpecializedByExcludingHighBound(rangeCall)) {
-            val highBound = (rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left
-            return SimpleBoundedValue(instanceType, lowBound, true, codegen.gen(highBound), false)
+            return BoundedValue(
+                lowBound = lowBound,
+                isLowInclusive = true,
+                highBound = codegen.gen((rangeCall.getFirstArgumentExpression() as KtBinaryExpression).left),
+                isHighInclusive = false
+            )
         }
-        return SimpleBoundedValue(
-            instanceType = instanceType,
-            lowBound = lowBound,
-            highBound = codegen.generateCallSingleArgument(rangeCall)
+
+        return BoundedValue(
+            lowBound = lowBound.coerceToRangeElementTypeIfRequired(),
+            highBound = codegen.generateCallSingleArgument(rangeCall).coerceToRangeElementTypeIfRequired()
         )
     }
 
     override fun createForLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
         createConstBoundedForInRangeLiteralGenerator(codegen, forExpression)
-                ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(codegen, forExpression, getBoundedValue(codegen))
+            ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStep1(
+                codegen, forExpression, getBoundedValue(codegen),
+                getComparisonGeneratorForKotlinType(elementKotlinType)
+            )
 
     override fun createForInReversedLoopGenerator(codegen: ExpressionCodegen, forExpression: KtForExpression): ForLoopGenerator =
         createConstBoundedRangeForInReversedRangeLiteralGenerator(codegen, forExpression)
-                ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
-                    codegen, forExpression, getBoundedValue(codegen),
-                    inverseBoundsEvaluationOrder = true
-                )
+            ?: ForInSimpleProgressionLoopGenerator.fromBoundedValueWithStepMinus1(
+                codegen, forExpression, getBoundedValue(codegen),
+                getComparisonGeneratorForKotlinType(elementKotlinType),
+                inverseBoundsEvaluationOrder = true
+            )
 
     private fun createConstBoundedForInRangeLiteralGenerator(
         codegen: ExpressionCodegen,
@@ -92,16 +102,11 @@ private fun ExpressionCodegen.canBeSpecializedByExcludingHighBound(rangeCall: Re
     return isArraySizeMinusOne(rangeCall.getFirstArgumentExpression()!!)
 }
 
-private fun ExpressionCodegen.isArraySizeMinusOne(expression: KtExpression): Boolean {
-    return when {
-        expression is KtBinaryExpression -> {
+private fun ExpressionCodegen.isArraySizeMinusOne(expression: KtExpression): Boolean =
+    expression is KtBinaryExpression &&
             isArraySizeAccess(expression.left!!) &&
-                    expression.getOperationToken() === org.jetbrains.kotlin.lexer.KtTokens.MINUS &&
-                    isConstantOne(expression.right!!)
-        }
-        else -> false
-    }
-}
+            expression.operationToken === org.jetbrains.kotlin.lexer.KtTokens.MINUS &&
+            isConstantOne(expression.right!!)
 
 private fun ExpressionCodegen.isConstantOne(expression: KtExpression): Boolean {
     val constantValue = getCompileTimeConstant(expression).safeAs<IntegerValueConstant<*>>() ?: return false

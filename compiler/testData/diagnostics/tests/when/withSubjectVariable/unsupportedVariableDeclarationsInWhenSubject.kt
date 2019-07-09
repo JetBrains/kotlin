@@ -13,7 +13,7 @@ fun testSimpleValInWhenSubject() {
 
 fun testValWithoutInitializerWhenSubject() {
     when (<!ILLEGAL_DECLARATION_IN_WHEN_SUBJECT!>val y: Any<!>) {
-        is String -> <!UNINITIALIZED_VARIABLE, DEBUG_INFO_SMARTCAST!>y<!>.length
+        is String -> <!DEBUG_INFO_SMARTCAST, UNINITIALIZED_VARIABLE!>y<!>.length
     }
 }
 

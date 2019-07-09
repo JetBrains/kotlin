@@ -17,6 +17,6 @@ fun main(args: Array<String>) {
     }
 }
 
-// STEP_INTO: 1
+// STEP_OVER: 1
 
 // TODO: Breakpoint on builder {} is now triggered twice. This is because generated line number on suspend function enter.

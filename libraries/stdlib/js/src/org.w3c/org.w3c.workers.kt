@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license 
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 // NOTE: THIS FILE IS AUTO-GENERATED, DO NOT EDIT!
@@ -11,10 +11,14 @@ package org.w3c.workers
 
 import kotlin.js.*
 import org.khronos.webgl.*
+import org.w3c.css.masking.*
 import org.w3c.dom.*
+import org.w3c.dom.clipboard.*
 import org.w3c.dom.css.*
 import org.w3c.dom.events.*
+import org.w3c.dom.mediacapture.*
 import org.w3c.dom.parsing.*
+import org.w3c.dom.pointerevents.*
 import org.w3c.dom.svg.*
 import org.w3c.dom.url.*
 import org.w3c.fetch.*
@@ -48,12 +52,12 @@ public external abstract class ServiceWorkerGlobalScope : WorkerGlobalScope {
     open val registration: ServiceWorkerRegistration
     open var oninstall: ((Event) -> dynamic)?
     open var onactivate: ((Event) -> dynamic)?
-    open var onfetch: ((Event) -> dynamic)?
+    open var onfetch: ((FetchEvent) -> dynamic)?
     open var onforeignfetch: ((Event) -> dynamic)?
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     open var onfunctionalevent: ((Event) -> dynamic)?
-    open var onnotificationclick: ((Event) -> dynamic)?
-    open var onnotificationclose: ((Event) -> dynamic)?
+    open var onnotificationclick: ((NotificationEvent) -> dynamic)?
+    open var onnotificationclose: ((NotificationEvent) -> dynamic)?
     fun skipWaiting(): Promise<Unit>
 }
 
@@ -74,7 +78,7 @@ public external abstract class ServiceWorkerContainer : EventTarget {
     open val controller: ServiceWorker?
     open val ready: Promise<ServiceWorkerRegistration>
     open var oncontrollerchange: ((Event) -> dynamic)?
-    open var onmessage: ((Event) -> dynamic)?
+    open var onmessage: ((MessageEvent) -> dynamic)?
     fun register(scriptURL: String, options: RegistrationOptions = definedExternally): Promise<ServiceWorkerRegistration>
     fun getRegistration(clientURL: String = definedExternally): Promise<Any?>
     fun getRegistrations(): Promise<dynamic>
@@ -91,7 +95,7 @@ public external interface RegistrationOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun RegistrationOptions(scope: String? = null, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
+public inline fun RegistrationOptions(scope: String? = undefined, type: WorkerType? = WorkerType.CLASSIC): RegistrationOptions {
     val o = js("({})")
 
     o["scope"] = scope
@@ -130,7 +134,7 @@ public external interface ServiceWorkerMessageEventInit : EventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ServiceWorkerMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
+public inline fun ServiceWorkerMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ServiceWorkerMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -318,7 +322,7 @@ public external interface ForeignFetchResponse {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ForeignFetchResponse(response: Response?, origin: String? = null, headers: Array<String>? = null): ForeignFetchResponse {
+public inline fun ForeignFetchResponse(response: Response?, origin: String? = undefined, headers: Array<String>? = undefined): ForeignFetchResponse {
     val o = js("({})")
 
     o["response"] = response
@@ -358,7 +362,7 @@ public external interface ExtendableMessageEventInit : ExtendableEventInit {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun ExtendableMessageEventInit(data: Any? = null, origin: String? = null, lastEventId: String? = null, source: UnionClientOrMessagePortOrServiceWorker? = null, ports: Array<MessagePort>? = null, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
+public inline fun ExtendableMessageEventInit(data: Any? = undefined, origin: String? = undefined, lastEventId: String? = undefined, source: UnionClientOrMessagePortOrServiceWorker? = undefined, ports: Array<MessagePort>? = undefined, bubbles: Boolean? = false, cancelable: Boolean? = false, composed: Boolean? = false): ExtendableMessageEventInit {
     val o = js("({})")
 
     o["data"] = data
@@ -402,7 +406,7 @@ public external interface CacheQueryOptions {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = null): CacheQueryOptions {
+public inline fun CacheQueryOptions(ignoreSearch: Boolean? = false, ignoreMethod: Boolean? = false, ignoreVary: Boolean? = false, cacheName: String? = undefined): CacheQueryOptions {
     val o = js("({})")
 
     o["ignoreSearch"] = ignoreSearch
@@ -429,7 +433,7 @@ public external interface CacheBatchOperation {
 }
 
 @kotlin.internal.InlineOnly
-public inline fun CacheBatchOperation(type: String? = null, request: Request? = null, response: Response? = null, options: CacheQueryOptions? = null): CacheBatchOperation {
+public inline fun CacheBatchOperation(type: String? = undefined, request: Request? = undefined, response: Response? = undefined, options: CacheQueryOptions? = undefined): CacheBatchOperation {
     val o = js("({})")
 
     o["type"] = type

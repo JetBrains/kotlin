@@ -1,0 +1,10 @@
+LineBreakpoint created at nestedInlineFun2.kt:15
+Run Java
+Connected to the target VM
+nestedInlineFun2.kt:15
+ frame    = main:15, NestedInlineFun2Kt {nestedInlineFun2}
+   local    = x: int = 3 (sp = nestedInlineFun2.kt, 11)
+   local    = y: int = 2 (sp = nestedInlineFun2.kt, 13)
+Disconnected from the target VM
+
+Process finished with exit code 0

@@ -1,0 +1,6 @@
+import kotlin.math.ceil
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    ceil(x)
+}

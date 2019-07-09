@@ -16,6 +16,7 @@ messages/**)
 
 -dontnote **
 -dontwarn com.intellij.util.ui.IsRetina*
+-dontwarn com.intellij.util.ui.UIUtilities
 -dontwarn com.intellij.util.RetinaImage*
 -dontwarn apple.awt.*
 -dontwarn dk.brics.automaton.*
@@ -52,6 +53,10 @@ messages/**)
 -dontwarn com.intellij.util.io.TarUtil
 -dontwarn com.intellij.util.io.Compressor$Tar
 
+# Annotations from intellijCore/annotations.jar that not presented in org.jetbrains.annotations
+-dontwarn org.jetbrains.annotations.Async*
+-dontwarn org.jetbrains.annotations.Nls$Capitalization
+
 # Nullability annotations used in Guava
 -dontwarn org.checkerframework.checker.nullness.compatqual.NullableDecl
 -dontwarn org.checkerframework.checker.nullness.compatqual.MonotonicNonNullDecl
@@ -63,10 +68,14 @@ messages/**)
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreter
 -dontwarn org.apache.batik.script.rhino.RhinoInterpreterFactory
 
+# The appropriate jar is either loaded separately or added explicitly to the classpath then needed
+-dontwarn org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar
+
 -dontwarn org.jdom.xpath.jaxen.*
 -dontwarn com.intellij.util.io.Decompressor*
 -dontwarn org.w3c.dom.Location
 -dontwarn org.w3c.dom.Window
+-dontwarn org.slf4j.**
 
 
 #-libraryjars '<rtjar>'
@@ -107,8 +116,6 @@ messages/**)
 }
 
 -keep class org.jetbrains.kotlin.container.** { *; }
-
--keep class org.jetbrains.kotlin.codegen.intrinsics.IntrinsicArrayConstructorsKt { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.Opcodes { *; }
 
@@ -189,10 +196,6 @@ messages/**)
     void dispose();
 }
 
--keepclassmembers class org.jetbrains.org.objectweb.asm.Opcodes {
-    *** ASM5;
-}
-
 -keep class org.jetbrains.org.objectweb.asm.tree.AnnotationNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.ClassNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.LocalVariableNode { *; }
@@ -200,6 +203,7 @@ messages/**)
 -keep class org.jetbrains.org.objectweb.asm.tree.FieldNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.ParameterNode { *; }
 -keep class org.jetbrains.org.objectweb.asm.tree.TypeAnnotationNode { *; }
+-keep class org.jetbrains.org.objectweb.asm.tree.InsnList { *; }
 
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureReader { *; }
 -keep class org.jetbrains.org.objectweb.asm.signature.SignatureVisitor { *; }
@@ -236,8 +240,28 @@ messages/**)
 
 # for kapt
 -keep class com.intellij.openapi.project.Project { *; }
+-keepclassmembers class com.intellij.util.PathUtil {
+    public static java.lang.String getJarPathForClass(java.lang.Class);
+}
+
+-keepclassmembers class com.intellij.util.PathUtil {
+    public static java.lang.String getJarPathForClass(java.lang.Class);
+}
 
 # remove when KT-18563 would be fixed
 -keep class org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt { *; }
 
 -keep class net.jpountz.lz4.* { *; }
+
+# used in LazyScriptDescriptor
+-keep class org.jetbrains.kotlin.utils.addToStdlib.AddToStdlibKt { *; }
+
+-keep class com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem { *; }
+
+# used in REPL
+# TODO: pack jline directly to scripting-compiler jars instead
+-keep class org.jline.reader.LineReaderBuilder { *; }
+-keep class org.jline.reader.LineReader { *; }
+-keep class org.jline.reader.History { *; }
+-keep class org.jline.reader.EndOfFileException { *; }
+-keep class org.jline.reader.UserInterruptException { *; }

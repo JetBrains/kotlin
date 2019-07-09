@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.tower
@@ -15,14 +15,13 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext.NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.KotlinCallResolver
 import org.jetbrains.kotlin.resolve.calls.callResolverUtil.isBinaryRemOperator
-import org.jetbrains.kotlin.resolve.calls.callUtil.createLookupLocation
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
-import org.jetbrains.kotlin.resolve.calls.callUtil.getCalleeExpressionIfAny
-import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.*
+import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceResolver
 import org.jetbrains.kotlin.resolve.calls.components.InferenceSession
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
@@ -40,12 +39,11 @@ import org.jetbrains.kotlin.resolve.calls.util.CallMaker
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.SyntheticScopes
+import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.*
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.util.*
@@ -68,7 +66,8 @@ class PSICallResolver(
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
     private val kotlinConstraintSystemCompleter: KotlinConstraintSystemCompleter,
     private val deprecationResolver: DeprecationResolver,
-    private val moduleDescriptor: ModuleDescriptor
+    private val moduleDescriptor: ModuleDescriptor,
+    private val callableReferenceResolver: CallableReferenceResolver
 ) {
     private val givenCandidatesName = Name.special("<given candidates>")
 
@@ -191,9 +190,14 @@ class PSICallResolver(
         tracingStrategy: TracingStrategy
     ): OverloadResolutionResults<D> {
         if (result is AllCandidatesResolutionResult) {
-            val resolvedCalls = result.allCandidates.map {
-                val resultingSubstitutor = it.getSystem().asReadOnlyStorage().buildResultingSubstitutor()
-                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(it.resolvedCall, null, resultingSubstitutor, result.diagnostics)
+            val resolvedCalls = result.allCandidates.map { (candidate, diagnostics) ->
+                val system = candidate.getSystem()
+                val resultingSubstitutor =
+                    system.asReadOnlyStorage().buildResultingSubstitutor(system as TypeSystemInferenceExtensionContext)
+
+                kotlinToResolvedCallTransformer.transformToResolvedCall<D>(
+                    candidate.resolvedCall, null, resultingSubstitutor, diagnostics
+                )
             }
 
             return AllCandidates(resolvedCalls)
@@ -201,7 +205,7 @@ class PSICallResolver(
 
         val trace = context.trace
 
-        handleErrorResolutionResult<D>(trace, result, tracingStrategy)?.let { errorResult ->
+        handleErrorResolutionResult<D>(context, trace, result, tracingStrategy)?.let { errorResult ->
             context.inferenceSession.addErrorCallInfo(PSIErrorCallInfo(result, errorResult))
             return errorResult
         }
@@ -216,6 +220,7 @@ class PSICallResolver(
     }
 
     private fun <D : CallableDescriptor> handleErrorResolutionResult(
+        context: BasicCallResolutionContext,
         trace: BindingTrace,
         result: CallResolutionResult,
         tracingStrategy: TracingStrategy
@@ -223,12 +228,16 @@ class PSICallResolver(
         val diagnostics = result.diagnostics
 
         diagnostics.firstIsInstanceOrNull<NoneCandidatesCallDiagnostic>()?.let {
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
+
             tracingStrategy.unresolvedReference(trace)
             return OverloadResolutionResultsImpl.nameNotFound()
         }
 
         diagnostics.firstIsInstanceOrNull<ManyCandidatesCallDiagnostic>()?.let {
-            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace)
+            kotlinToResolvedCallTransformer.transformAndReport<D>(result, context, tracingStrategy)
+
+            return transformManyCandidatesAndRecordTrace(it, tracingStrategy, trace, context)
         }
 
         if (getResultApplicability(diagnostics) == ResolutionCandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
@@ -246,7 +255,8 @@ class PSICallResolver(
     private fun <D : CallableDescriptor> transformManyCandidatesAndRecordTrace(
         diagnostic: ManyCandidatesCallDiagnostic,
         tracingStrategy: TracingStrategy,
-        trace: BindingTrace
+        trace: BindingTrace,
+        context: BasicCallResolutionContext
     ): ManyCandidates<D> {
         val resolvedCalls = diagnostic.candidates.map {
             kotlinToResolvedCallTransformer.onlyTransform<D>(
@@ -263,14 +273,18 @@ class PSICallResolver(
             }
         } else {
             tracingStrategy.recordAmbiguity(trace, resolvedCalls)
-            if (resolvedCalls.first().status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE) {
-                tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
-            } else {
-                tracingStrategy.ambiguity(trace, resolvedCalls)
+            if (!context.call.hasUnresolvedArguments(context)) {
+                if (resolvedCalls.allIncomplete) {
+                    tracingStrategy.cannotCompleteResolve(trace, resolvedCalls)
+                } else {
+                    tracingStrategy.ambiguity(trace, resolvedCalls)
+                }
             }
         }
         return ManyCandidates(resolvedCalls)
     }
+
+    private val List<ResolvedCall<*>>.allIncomplete: Boolean get() = all { it.status == ResolutionStatus.INCOMPLETE_TYPE_INFERENCE }
 
     private fun ResolvedCall<*>.recordEffects(trace: BindingTrace) {
         val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
@@ -390,7 +404,9 @@ class PSICallResolver(
         override fun factoryForVariable(stripExplicitReceiver: Boolean): CandidateFactory<KotlinResolutionCandidate> {
             val explicitReceiver = if (stripExplicitReceiver) null else kotlinCall.explicitReceiver
             val variableCall = PSIKotlinCallForVariable(kotlinCall, explicitReceiver, kotlinCall.name)
-            return SimpleCandidateFactory(callComponents, scopeTower, variableCall, createResolutionCallbacks(context))
+            return SimpleCandidateFactory(
+                callComponents, scopeTower, variableCall, createResolutionCallbacks(context), callableReferenceResolver
+            )
         }
 
         override fun factoryForInvoke(variable: KotlinResolutionCandidate, useExplicitReceiver: Boolean):
@@ -411,7 +427,7 @@ class PSICallResolver(
             }
 
             return variableCallArgument.receiver to SimpleCandidateFactory(
-                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context)
+                callComponents, scopeTower, callForInvoke, createResolutionCallbacks(context), callableReferenceResolver
             )
         }
 
@@ -447,7 +463,7 @@ class PSICallResolver(
         private fun createReceiverValueWithSmartCastInfo(variable: KotlinResolutionCandidate): ReceiverValueWithSmartCastInfo {
             val callForVariable = variable.resolvedCall.atom as PSIKotlinCallForVariable
             val calleeExpression = callForVariable.baseCall.psiCall.calleeExpression as? KtReferenceExpression
-                    ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
+                ?: error("Unexpected call : ${callForVariable.baseCall.psiCall}")
 
             val temporaryTrace = TemporaryBindingTrace.create(context.trace, "Context for resolve candidate")
 
@@ -461,7 +477,7 @@ class PSICallResolver(
                 variableReceiver,
                 context.dataFlowInfo.getCollectedTypes(dataFlowValue, context.languageVersionSettings),
                 dataFlowValue.isStable
-            )
+            ).prepareReceiverRegardingCaptureTypes()
         }
     }
 
@@ -489,11 +505,10 @@ class PSICallResolver(
 
         val resolvedTypeArguments = resolveTypeArguments(context, oldCall.typeArguments)
 
-        val argumentsInParenthesis = if (oldCall.callType != Call.CallType.ARRAY_SET_METHOD && oldCall.functionLiteralArguments.isEmpty()) {
-            oldCall.valueArguments
-        } else {
-            oldCall.valueArguments.dropLast(1)
-        }
+        val lambdasOutsideParenthesis = oldCall.functionLiteralArguments.size
+        val extraArgumentsNumber = if (oldCall.callType == Call.CallType.ARRAY_SET_METHOD) 1 else lambdasOutsideParenthesis
+
+        val argumentsInParenthesis = oldCall.valueArguments.dropLast(extraArgumentsNumber)
 
         val externalLambdaArguments = oldCall.functionLiteralArguments
         val resolvedArgumentsInParenthesis = resolveArgumentsInParenthesis(context, argumentsInParenthesis)
@@ -504,7 +519,7 @@ class PSICallResolver(
             }
             oldCall.valueArguments.last()
         } else {
-            if (externalLambdaArguments.size > 2) {
+            if (externalLambdaArguments.size > 1) {
                 externalLambdaArguments.drop(1).mapNotNull { it.getLambdaExpression() }.forEach {
                     context.trace.report(Errors.MANY_LAMBDA_EXPRESSION_ARGUMENTS.on(it))
                 }
@@ -525,10 +540,12 @@ class PSICallResolver(
         resolvedArgumentsInParenthesis.forEach { it.setResultDataFlowInfoIfRelevant(resultDataFlowInfo) }
         astExternalArgument?.setResultDataFlowInfoIfRelevant(resultDataFlowInfo)
 
+        val isForImplicitInvoke = oldCall is CallTransformer.CallForImplicitInvoke
+
         return PSIKotlinCallImpl(
             kotlinCallKind, oldCall, tracingStrategy, resolvedExplicitReceiver, dispatchReceiverForInvoke, name,
             resolvedTypeArguments, resolvedArgumentsInParenthesis, astExternalArgument, context.dataFlowInfo, resultDataFlowInfo,
-            context.dataFlowInfoForArguments
+            context.dataFlowInfoForArguments, isForImplicitInvoke
         )
     }
 
@@ -541,8 +558,7 @@ class PSICallResolver(
 
         require(oldCall is CallTransformer.CallForImplicitInvoke) { "Call should be CallForImplicitInvoke, but it is: $oldCall" }
 
-        val dispatchReceiver = oldCall.dispatchReceiver!! // dispatch receiver from CallForImplicitInvoke is always not null
-        return resolveReceiver(context, dispatchReceiver, isSafeCall = false, isForImplicitInvoke = true)
+        return resolveReceiver(context, oldCall.dispatchReceiver, isSafeCall = false, isForImplicitInvoke = true)
     }
 
     private fun resolveReceiver(
@@ -563,7 +579,7 @@ class PSICallResolver(
 
                     val bindingContext = context.trace.bindingContext
                     val call = bindingContext[BindingContext.DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL, ktExpression]
-                            ?: ktExpression?.getCall(bindingContext)
+                        ?: ktExpression?.getCall(bindingContext)
 
                     val onlyResolvedCall = call?.let {
                         bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)
@@ -590,7 +606,7 @@ class PSICallResolver(
             ModifierCheckerCore.check(projection, context.trace, null, languageVersionSettings)
 
             resolveType(context, projection.typeReference, typeResolver)?.let { SimpleTypeArgumentImpl(projection.typeReference!!, it) }
-                    ?: TypeArgumentPlaceholder
+                ?: TypeArgumentPlaceholder
         }
 
     private fun resolveArgumentsInParenthesis(
@@ -633,6 +649,7 @@ class PSICallResolver(
 
         val context = outerCallContext.replaceContextDependency(ContextDependency.DEPENDENT)
             .replaceExpectedType(TypeUtils.NO_EXPECTED_TYPE).replaceDataFlowInfo(startDataFlowInfo)
+            .expandContextForCatchClause(ktExpression)
 
         if (ktExpression is KtCallableReferenceExpression) {
             checkNoSpread(outerCallContext, valueArgument)
@@ -666,11 +683,7 @@ class PSICallResolver(
                 is DoubleColonLHS.Type -> {
                     val qualifiedExpression = ktExpression.receiverExpression!!.let { it.referenceExpression() ?: it }
                     val qualifier = expressionTypingContext.trace.get(BindingContext.QUALIFIER, qualifiedExpression)
-                    if (qualifier is ClassQualifier) {
-                        LHSResult.Type(qualifier, lhsResult.type.unwrap())
-                    } else {
-                        LHSResult.Error
-                    }
+                    LHSResult.Type(qualifier, lhsResult.type.unwrap())
                 }
             }
 
@@ -683,5 +696,21 @@ class PSICallResolver(
         // argumentExpression instead of ktExpression is hack -- type info should be stored also for parenthesized expression
         val typeInfo = expressionTypingServices.getTypeInfo(argumentExpression, context)
         return createSimplePSICallArgument(context, valueArgument, typeInfo) ?: parseErrorArgument
+    }
+
+    private fun BasicCallResolutionContext.expandContextForCatchClause(ktExpression: Any): BasicCallResolutionContext {
+        if (ktExpression !is KtExpression) return this
+
+        val variableDescriptorHolder = trace.bindingContext[NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER, ktExpression] ?: return this
+        val variableDescriptor = variableDescriptorHolder.get() ?: return this
+        variableDescriptorHolder.set(null)
+
+        val redeclarationChecker = expressionTypingServices.createLocalRedeclarationChecker(trace)
+
+        val catchScope = with(scope) {
+            LexicalWritableScope(this, ownerDescriptor, false, redeclarationChecker, LexicalScopeKind.CATCH)
+        }
+        catchScope.addVariableDescriptor(variableDescriptor)
+        return replaceScope(catchScope)
     }
 }

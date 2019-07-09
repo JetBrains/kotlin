@@ -30,19 +30,25 @@ clearCache.kt:42
 clearCache.kt:52
 Compile bytecode for o.test()
 clearCache.kt:60
+Compile bytecode for o.test()
 clearCache.kt:78
 Compile bytecode for c.size
 clearCache.kt:86
+Compile bytecode for c.size
 clearCache.kt:95
+Compile bytecode for c.size
 clearCache.kt:105
+Compile bytecode for c.size
 clearCache.kt:113
 Compile bytecode for c.size
 clearCache.kt:123
 Compile bytecode for o.test()
 clearCache.kt:131
+Compile bytecode for o.test()
 clearCache.kt:149
 Compile bytecode for obj.test()
 clearCache.kt:154
+Compile bytecode for obj.test()
 clearCache.kt:161
 Compile bytecode for o.test()
 clearCache.kt:169

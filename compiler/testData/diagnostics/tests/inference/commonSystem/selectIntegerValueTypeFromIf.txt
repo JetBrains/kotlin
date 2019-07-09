@@ -1,0 +1,4 @@
+package
+
+public fun takeLong(/*0*/ i: kotlin.Long): kotlin.Unit
+public fun test(): kotlin.Unit

@@ -20,7 +20,10 @@ import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.descriptors.*;
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor;
+import org.jetbrains.kotlin.descriptors.ClassDescriptor;
+import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor;
 import org.jetbrains.kotlin.load.java.structure.*;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -119,18 +122,18 @@ public final class DescriptorResolverUtils {
         return member.getContainingClass().isInterface() && member instanceof JavaMethod && isObjectMethod((JavaMethod) member);
     }
 
-    public static boolean isObjectMethod(@NotNull JavaMethod method) {
+    private static boolean isObjectMethod(@NotNull JavaMethod method) {
         String name = method.getName().asString();
         if (name.equals("toString") || name.equals("hashCode")) {
             return method.getValueParameters().isEmpty();
         }
         else if (name.equals("equals")) {
-            return isMethodWithOneParameterWithFqName(method, "java.lang.Object");
+            return isMethodWithOneObjectParameter(method);
         }
         return false;
     }
 
-    private static boolean isMethodWithOneParameterWithFqName(@NotNull JavaMethod method, @NotNull String fqName) {
+    private static boolean isMethodWithOneObjectParameter(@NotNull JavaMethod method) {
         List<JavaValueParameter> parameters = method.getValueParameters();
         if (parameters.size() == 1) {
             JavaType type = parameters.get(0).getType();
@@ -138,7 +141,7 @@ public final class DescriptorResolverUtils {
                 JavaClassifier classifier = ((JavaClassifierType) type).getClassifier();
                 if (classifier instanceof JavaClass) {
                     FqName classFqName = ((JavaClass) classifier).getFqName();
-                    return classFqName != null && classFqName.asString().equals(fqName);
+                    return classFqName != null && classFqName.asString().equals("java.lang.Object");
                 }
             }
         }

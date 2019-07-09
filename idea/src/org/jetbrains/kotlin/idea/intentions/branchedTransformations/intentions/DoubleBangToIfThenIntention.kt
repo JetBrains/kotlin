@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.idea.intentions.branchedTransformations.convertToIfN
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.introduceValueForCondition
 import org.jetbrains.kotlin.idea.intentions.branchedTransformations.isStableSimpleExpression
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.psi.KtPostfixExpression
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtPsiUtil
-import org.jetbrains.kotlin.psi.KtThrowExpression
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
 
-class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"), LowPriorityAction {
+class DoubleBangToIfThenIntention :
+    SelfTargetingRangeIntention<KtPostfixExpression>(KtPostfixExpression::class.java, "Replace '!!' expression with 'if' expression"),
+    LowPriorityAction {
     override fun applicabilityRange(element: KtPostfixExpression): TextRange? {
         return if (element.operationToken == KtTokens.EXCLEXCL && element.baseExpression != null)
             element.operationReference.textRange
@@ -60,12 +60,31 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
 
         val ifStatement = if (isStatement)
             element.convertToIfNullExpression(base, defaultException)
-        else
-            element.convertToIfNotNullExpression(base, base, defaultException)
+        else {
+            val selectorExpression = element.getQualifiedExpressionForReceiver()?.selectorExpression
+            val thenClause = selectorExpression?.let {
+                KtPsiFactory(element).createExpressionByPattern("$0.$1", base, it)
+            } ?: base
+            val hasSelector = thenClause != base
+
+            if (hasSelector) {
+                val prevSibling = selectorExpression?.prevSibling
+                selectorExpression?.delete()
+                prevSibling?.delete()
+            }
+
+            element.convertToIfNotNullExpression(base, thenClause, defaultException).apply {
+                if (hasSelector) {
+                    with(parent) {
+                        firstChild.delete()
+                        lastChild.delete()
+                    }
+                }
+            }
+        }
 
         val thrownExpression =
-                ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression!!
-
+            ((if (isStatement) ifStatement.then else ifStatement.`else`) as KtThrowExpression).thrownExpression!!
         val message = StringUtil.escapeStringCharacters("Expression '$expressionText' must not be null")
         val nullPtrExceptionText = "NullPointerException(\"$message\")"
         val kotlinNullPtrExceptionText = "KotlinNullPointerException()"
@@ -79,7 +98,7 @@ class DoubleBangToIfThenIntention : SelfTargetingRangeIntention<KtPostfixExpress
         PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(editor.document)
         editor.caretModel.moveToOffset(thrownExpression.node!!.startOffset)
 
-        TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object: TemplateEditingAdapter() {
+        TemplateManager.getInstance(project).startTemplate(editor, builder.buildInlineTemplate(), object : TemplateEditingAdapter() {
             override fun templateFinished(template: Template, brokenOff: Boolean) {
                 if (!isStable && !isStatement) {
                     ifStatement.introduceValueForCondition(ifStatement.then!!, editor)

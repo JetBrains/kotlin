@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.semantics;
@@ -27,6 +27,11 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
 
     public void testAllFilesPresentInArrays() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+    }
+
+    @TestMetadata("arrayConstructorWithNonInlineLambda.kt")
+    public void testArrayConstructorWithNonInlineLambda() throws Exception {
+        runTest("compiler/testData/codegen/box/arrays/arrayConstructorWithNonInlineLambda.kt");
     }
 
     @TestMetadata("arrayConstructorsSimple.kt")
@@ -219,11 +224,6 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         runTest("compiler/testData/codegen/box/arrays/kt1291.kt");
     }
 
-    @TestMetadata("kt17134.kt")
-    public void testKt17134() throws Exception {
-        runTest("compiler/testData/codegen/box/arrays/kt17134.kt");
-    }
-
     @TestMetadata("kt238.kt")
     public void testKt238() throws Exception {
         runTest("compiler/testData/codegen/box/arrays/kt238.kt");
@@ -267,11 +267,6 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
     @TestMetadata("kt594.kt")
     public void testKt594() throws Exception {
         runTest("compiler/testData/codegen/box/arrays/kt594.kt");
-    }
-
-    @TestMetadata("kt602.kt")
-    public void testKt602() throws Exception {
-        runTest("compiler/testData/codegen/box/arrays/kt602.kt");
     }
 
     @TestMetadata("kt7009.kt")
@@ -359,6 +354,39 @@ public class JsLegacyPrimitiveArraysBoxTestGenerated extends AbstractJsLegacyPri
         @TestMetadata("arrayOfInlineClassOfArrayOfInlineClass.kt")
         public void testArrayOfInlineClassOfArrayOfInlineClass() throws Exception {
             runTest("compiler/testData/codegen/box/arrays/arraysOfInlineClass/arrayOfInlineClassOfArrayOfInlineClass.kt");
+        }
+    }
+
+    @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ForInReversed extends AbstractJsLegacyPrimitiveArraysBoxTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInForInReversed() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/arrays/forInReversed"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JS, true);
+        }
+
+        @TestMetadata("reversedArrayOriginalUpdatedInLoopBody.kt")
+        public void testReversedArrayOriginalUpdatedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArrayOriginalUpdatedInLoopBody.kt");
+        }
+
+        @TestMetadata("reversedArrayReversedArrayOriginalUpdatedInLoopBody.kt")
+        public void testReversedArrayReversedArrayOriginalUpdatedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedArrayReversedArrayOriginalUpdatedInLoopBody.kt");
+        }
+
+        @TestMetadata("reversedOriginalUpdatedInLoopBody.kt")
+        public void testReversedOriginalUpdatedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedOriginalUpdatedInLoopBody.kt");
+        }
+
+        @TestMetadata("reversedReversedOriginalUpdatedInLoopBody.kt")
+        public void testReversedReversedOriginalUpdatedInLoopBody() throws Exception {
+            runTest("compiler/testData/codegen/box/arrays/forInReversed/reversedReversedOriginalUpdatedInLoopBody.kt");
         }
     }
 

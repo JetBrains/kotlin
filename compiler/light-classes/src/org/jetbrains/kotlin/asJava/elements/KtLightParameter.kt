@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava.elements
@@ -23,11 +23,20 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
 class KtLightParameter(
-        override val clsDelegate: PsiParameter,
-        private val index: Int,
-        method: KtLightMethod
-) : LightParameter(clsDelegate.name ?: "p$index", clsDelegate.type, method, KotlinLanguage.INSTANCE),
+    private val dummyDelegate: PsiParameter,
+    private val clsDelegateProvider: () -> PsiParameter?,
+    private val index: Int,
+    method: KtLightMethod
+) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
         KtLightDeclaration<KtParameter, PsiParameter> {
+
+    private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
+
+    override val clsDelegate: PsiParameter get() = lazyDelegate
+
+    override fun getType(): PsiType = lazyDelegate.type
+
+    override fun getName(): String = dummyDelegate.name ?: lazyDelegate.name ?: super.getName()
 
     private val lightModifierList by lazyPub { KtLightSimpleModifierList(this, emptySet()) }
 
@@ -41,7 +50,7 @@ class KtLightParameter(
             if (jetIndex < 0) return null
 
             if (declaration is KtFunction) {
-                val paramList = declaration.valueParameters
+                val paramList = method.lightMemberOrigin?.parametersForJvmOverloads ?: declaration.valueParameters
                 return if (jetIndex < paramList.size) paramList[jetIndex] else null
             }
 
@@ -93,6 +102,8 @@ class KtLightParameter(
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         val result = ApplicationManager.getApplication().runReadAction(Computable {
             val kotlinOrigin = kotlinOrigin
+            if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
+
             if (another is KtLightParameter && kotlinOrigin != null) {
                 kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
             }

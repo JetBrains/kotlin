@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.utils.PathUtil
 class AllOpenGradleProjectImportHandler : AbstractGradleImportHandler<AllOpenModel>() {
     override val compilerPluginId = AllOpenCommandLineProcessor.PLUGIN_ID
     override val pluginName = "allopen"
-    override val annotationOptionName = AllOpenCommandLineProcessor.ANNOTATION_OPTION.name
+    override val annotationOptionName = AllOpenCommandLineProcessor.ANNOTATION_OPTION.optionName
     override val pluginJarFileFromIdea = PathUtil.kotlinPathsForIdeaPlugin.allOpenPluginJarPath
     override val modelKey = AllOpenProjectResolverExtension.KEY
 

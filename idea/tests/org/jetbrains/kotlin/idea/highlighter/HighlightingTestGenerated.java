@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.highlighter;
@@ -32,6 +32,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("Annotations.kt")
     public void testAnnotations() throws Exception {
         runTest("idea/testData/highlighter/Annotations.kt");
+    }
+
+    @TestMetadata("Destructuring.kt")
+    public void testDestructuring() throws Exception {
+        runTest("idea/testData/highlighter/Destructuring.kt");
     }
 
     @TestMetadata("Dynamic.kt")
@@ -107,6 +112,11 @@ public class HighlightingTestGenerated extends AbstractHighlightingTest {
     @TestMetadata("Todo.kt")
     public void testTodo() throws Exception {
         runTest("idea/testData/highlighter/Todo.kt");
+    }
+
+    @TestMetadata("TopLevelDestructuring.kt")
+    public void testTopLevelDestructuring() throws Exception {
+        runTest("idea/testData/highlighter/TopLevelDestructuring.kt");
     }
 
     @TestMetadata("TopLevelOpenSuspendFun.kt")

@@ -3,24 +3,6 @@ Run Java
 Connected to the target VM
 frameLambda.kt:7
 Compile bytecode for val1
-package frameLambda
-
-fun main(args: Array<String>) {
-    val val1 = 1
-    foo {
-        //Breakpoint!
-        val1
-    }
-}
-
-fun foo(f: () -> Unit) {
-    f()
-}
-
-// PRINT_FRAME
-
-// EXPRESSION: val1
-// RESULT: 1: I
  frame    = invoke:7, FrameLambdaKt$main$1 {frameLambda}
    this     = this = {frameLambda.FrameLambdaKt$main$1@uniqueID}Function0<kotlin.Unit>
      field    = $val1: int = 1 (sp = null)

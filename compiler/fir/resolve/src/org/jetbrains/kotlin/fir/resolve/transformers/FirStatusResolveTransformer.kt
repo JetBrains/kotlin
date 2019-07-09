@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers
@@ -9,22 +9,15 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 
-class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
-    override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
-        @Suppress("UNCHECKED_CAST")
-        return (element.transformChildren(this, data) as E).compose()
-    }
-
+class FirStatusResolveTransformer : FirAbstractTreeTransformer() {
     private val declarationsWithStatuses = mutableListOf<FirDeclaration>()
 
-    private val classes = mutableListOf<FirClass>()
+    private val classes = mutableListOf<FirRegularClass>()
 
     private fun FirDeclaration.resolveVisibility(): Visibility {
         if (this is FirConstructor) {
@@ -39,8 +32,8 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
     private fun FirDeclaration.resolveModality(): Modality {
         return when (this) {
             is FirEnumEntry -> Modality.FINAL
-            is FirClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
-            is FirCallableMember -> {
+            is FirRegularClass -> if (classKind == ClassKind.INTERFACE) Modality.ABSTRACT else Modality.FINAL
+            is FirCallableMemberDeclaration -> {
                 val containingClass = classes.lastOrNull()
                 when {
                     containingClass == null -> Modality.FINAL
@@ -50,7 +43,7 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
                                 Modality.FINAL
                             this is FirNamedFunction && body == null ->
                                 Modality.ABSTRACT
-                            this is FirProperty && initializer == null && getter.body == null && setter.body == null ->
+                            this is FirProperty && initializer == null && getter.body == null && setter?.body == null ->
                                 Modality.ABSTRACT
                             else ->
                                 Modality.OPEN
@@ -94,7 +87,7 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
     }
 
     private inline fun storeClass(
-        klass: FirClass,
+        klass: FirRegularClass,
         computeResult: () -> CompositeTransformResult<FirDeclaration>
     ): CompositeTransformResult<FirDeclaration> {
         classes += klass
@@ -103,9 +96,9 @@ class FirStatusResolveTransformer : FirTransformer<Nothing?>() {
         return result
     }
 
-    override fun transformClass(klass: FirClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return storeClass(klass) {
-            super.transformClass(klass, data)
+    override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): CompositeTransformResult<FirDeclaration> {
+        return storeClass(regularClass) {
+            super.transformRegularClass(regularClass, data)
         }
     }
 

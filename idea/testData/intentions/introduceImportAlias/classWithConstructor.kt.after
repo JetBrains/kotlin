@@ -1,0 +1,16 @@
+import Outer.Middle.Inner as Inner1
+
+class Outer {
+    class Middle {
+        class Inner(val outer: Outer) {
+            constructor() : this(Outer())
+        }
+    }
+}
+
+class Middle {
+    fun test() {
+        val i = Inner1(Outer())
+        val b = Inner1()
+    }
+}

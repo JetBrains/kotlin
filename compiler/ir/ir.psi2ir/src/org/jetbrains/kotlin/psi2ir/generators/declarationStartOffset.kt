@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi2ir.generators
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
 import org.jetbrains.kotlin.psi2ir.getChildTokenStartOffsetOrNull
 
 private val FUNCTION_DECL_TOKENS = TokenSet.create(KtTokens.FUN_KEYWORD)
@@ -26,9 +27,9 @@ internal fun KtPureElement.getStartOffsetOfFunctionDeclarationKeywordOrNull(): I
         else -> null
     }
 
-internal fun KtPureClassOrObject.getStartOffsetOfClassDeclarationKeywordOrNull(): Int? =
+internal fun KtPureClassOrObject.getStartOffsetOfClassDeclarationOrNull(): Int? =
     when (this) {
-        is KtClassOrObject -> getChildTokenStartOffsetOrNull(CLASS_DECL_TOKENS)
+        is KtClassOrObject -> startOffsetSkippingComments
         else -> null
     }
 

@@ -21,7 +21,7 @@ import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.checkers.DebugInfoUtil
+import org.jetbrains.kotlin.checkers.utils.DebugInfoUtil
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil

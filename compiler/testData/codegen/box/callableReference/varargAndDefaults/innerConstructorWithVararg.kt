@@ -1,5 +1,5 @@
 // !LANGUAGE: +NewInference
-// IGNORE_BACKEND: JS, JVM_IR
+// IGNORE_BACKEND: JS
 
 
 class Outer(val o: String) {

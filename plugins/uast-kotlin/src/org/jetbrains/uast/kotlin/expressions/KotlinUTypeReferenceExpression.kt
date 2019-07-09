@@ -14,11 +14,11 @@ open class KotlinUTypeReferenceExpression(
 
 
 class LazyKotlinUTypeReferenceExpression(
-        override val psi: KtTypeReference,
+        override val sourcePsi: KtTypeReference,
         givenParent: UElement?,
         private val typeSupplier: (() -> PsiType)? = null
 ) : KotlinAbstractUExpression(givenParent), UTypeReferenceExpression {
     override val type: PsiType by lz {
-        typeSupplier?.invoke() ?: psi.toPsiType(uastParent ?: this)
+        typeSupplier?.invoke() ?: sourcePsi.toPsiType(uastParent ?: this)
     }
 }

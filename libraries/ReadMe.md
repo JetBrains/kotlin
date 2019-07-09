@@ -22,7 +22,7 @@ You can work with the maven modules of this maven project in IDEA from the [root
 
 ### Building
 
-You need to install a recent (at least 3.3) [Maven](http://maven.apache.org/) distribution.
+You need to install a recent (at least 3.3) [Maven](https://maven.apache.org/) distribution.
 
 Before building this Maven project you need to build and install the required artifacts built with Gradle to the local maven repository, by issuing the following command in the root project:
 

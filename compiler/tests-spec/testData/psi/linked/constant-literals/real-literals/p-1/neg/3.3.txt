@@ -282,4 +282,19 @@ KtFile: 3.3.kt
         PsiElement(INTEGER_LITERAL)('1')
       PsiElement(DOT)('.')
       PsiErrorElement:Expecting an element
-        PsiElement(BAD_CHARACTER)('35f\nval value = 3.5F')
+        PsiElement(BAD_CHARACTER)('')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(FLOAT_CONSTANT)('35f')
+  PsiWhiteSpace('\n')
+  PROPERTY
+    PsiElement(val)('val')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('value')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    INTEGER_CONSTANT
+      PsiElement(INTEGER_LITERAL)('3')
+    PsiErrorElement:Property getter or setter expected
+      PsiElement(BAD_CHARACTER)('')
+      PsiElement(FLOAT_CONSTANT)('.5F')

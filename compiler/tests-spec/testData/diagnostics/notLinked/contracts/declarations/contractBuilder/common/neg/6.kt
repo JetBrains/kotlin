@@ -1,6 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -UNREACHABLE_CODE -UNUSED_EXPRESSION
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_BASIC_TYPES
 
 /*
  * KOTLIN DIAGNOSTICS NOT LINKED SPEC TEST (NEGATIVE)
@@ -8,6 +7,7 @@
  * SECTIONS: contracts, declarations, contractBuilder, common
  * NUMBER: 6
  * DESCRIPTION: contracts with not function parameters in implies.
+ * HELPERS: typesProvider
  */
 
 import kotlin.contracts.*

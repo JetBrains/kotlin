@@ -1,6 +1,6 @@
 package org.jetbrains.uast.test.kotlin
 
-import org.jetbrains.uast.test.common.ValuesTestBase
+import org.jetbrains.uast.test.common.kotlin.ValuesTestBase
 import java.io.File
 
 abstract class AbstractKotlinValuesTest : AbstractKotlinUastTest(), ValuesTestBase {

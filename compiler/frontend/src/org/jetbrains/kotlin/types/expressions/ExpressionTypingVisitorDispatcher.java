@@ -1,12 +1,13 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2017 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.types.expressions;
 
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProcessCanceledException;
+import com.intellij.openapi.project.IndexNotReadyException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.diagnostics.Errors;
@@ -203,7 +204,7 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                 }
                 return result;
             }
-            catch (ProcessCanceledException | KotlinFrontEndException e) {
+            catch (ProcessCanceledException | KotlinFrontEndException | IndexNotReadyException e) {
                 throw e;
             }
             catch (Throwable e) {

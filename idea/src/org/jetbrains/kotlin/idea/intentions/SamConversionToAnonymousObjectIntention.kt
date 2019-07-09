@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -84,9 +85,14 @@ class SamConversionToAnonymousObjectIntention : SelfTargetingRangeIntention<KtCa
             functionName: String
         ) {
             val interfaceName = call.calleeExpression?.text ?: return
-            LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName = functionName) {
+            val typeArguments = call.typeArguments.mapNotNull { it.typeReference }
+            val typeArgumentsText =
+                if (typeArguments.isEmpty()) "" else typeArguments.joinToString(prefix = "<", postfix = ">", separator = ", ") { it.text }
+            val classDescriptor = functionDescriptor.containingDeclaration as? ClassDescriptor
+            val typeParameters = classDescriptor?.declaredTypeParameters?.map { it.name.asString() }?.zip(typeArguments)?.toMap().orEmpty()
+            LambdaToAnonymousFunctionIntention.convertLambdaToFunction(lambda, functionDescriptor, functionName, typeParameters) {
                 it.addModifier(KtTokens.OVERRIDE_KEYWORD)
-                call.replaced(KtPsiFactory(it).createExpression("object : $interfaceName { ${it.text} }"))
+                call.replaced(KtPsiFactory(it).createExpression("object : $interfaceName$typeArgumentsText { ${it.text} }"))
             }
         }
 

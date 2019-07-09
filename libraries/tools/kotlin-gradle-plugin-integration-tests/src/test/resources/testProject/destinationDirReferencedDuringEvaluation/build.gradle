@@ -22,4 +22,4 @@ dependencies {
 }
 
 // important to test that destinationDir is configured before evaluation
-test.testClassesDir = project.tasks.compileTestKotlin.destinationDir
+test.testClassesDirs = files(project.tasks.compileTestKotlin.destinationDir)

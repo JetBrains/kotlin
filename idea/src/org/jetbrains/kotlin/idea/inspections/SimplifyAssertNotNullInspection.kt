@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInsight.CodeInsightUtilCore
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.core.ShortenReferences
@@ -69,35 +68,34 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
     override fun fixText(element: KtCallExpression): String {
         return if (element.valueArguments.size == 1) {
             "Replace with '!!' operator"
-        }
-        else {
+        } else {
             "Replace with '?: error(...)'"
         }
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element as? KtCallExpression ?: return
-        val declaration = findVariableDeclaration(expression)!!
-        val initializer = declaration.initializer!!
-        val message = extractMessage(expression)
+    override fun applyTo(element: KtCallExpression, project: Project, editor: Editor?) {
+        val declaration = findVariableDeclaration(element) ?: return
+        val initializer = declaration.initializer ?: return
+        val message = extractMessage(element)
 
-        val commentSaver = CommentSaver(expression)
+        val commentSaver = CommentSaver(element)
 
         if (message == null) {
-            val newInitializer = KtPsiFactory(expression).createExpressionByPattern("$0!!", initializer)
+            val newInitializer = KtPsiFactory(element).createExpressionByPattern("$0!!", initializer)
             initializer.replace(newInitializer)
-        }
-        else {
-            val newInitializer = KtPsiFactory(expression).createExpressionByPattern("$0 ?: kotlin.error($1)", initializer, message)
+        } else {
+            val newInitializer = KtPsiFactory(element).createExpressionByPattern("$0 ?: kotlin.error($1)", initializer, message)
             val result = initializer.replace(newInitializer)
 
             val qualifiedExpression = (result as KtBinaryExpression).right as KtDotQualifiedExpression
-            ShortenReferences.DEFAULT.process(expression.containingKtFile,
-                                              qualifiedExpression.startOffset,
-                                              (qualifiedExpression.selectorExpression as KtCallExpression).calleeExpression!!.endOffset)
+            ShortenReferences.DEFAULT.process(
+                element.containingKtFile,
+                qualifiedExpression.startOffset,
+                (qualifiedExpression.selectorExpression as KtCallExpression).calleeExpression!!.endOffset
+            )
         }
 
-        expression.delete()
+        element.delete()
 
         commentSaver.restore(declaration)
 
@@ -120,8 +118,8 @@ class SimplifyAssertNotNullInspection : AbstractApplicabilityBasedInspection<KtC
         val arguments = element.valueArguments
         if (arguments.size != 2) return null
         return (arguments[1].getArgumentExpression() as? KtLambdaExpression)
-                              ?.bodyExpression
-                              ?.statements
-                              ?.singleOrNull()
+            ?.bodyExpression
+            ?.statements
+            ?.singleOrNull()
     }
 }

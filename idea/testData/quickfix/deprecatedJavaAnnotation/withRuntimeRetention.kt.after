@@ -1,0 +1,4 @@
+// "Replace annotation with kotlin.annotation.Retention" "true"
+
+@<caret>Retention(AnnotationRetention.RUNTIME)
+annotation class Foo

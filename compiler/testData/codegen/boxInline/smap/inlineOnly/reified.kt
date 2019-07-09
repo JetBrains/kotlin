@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FILE: 1.kt
 // WITH_REFLECT
 package test

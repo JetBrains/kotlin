@@ -1,15 +1,15 @@
 // IGNORE_BACKEND: JVM_IR
+// TARGET_BACKEND: JVM
+// FULL_JDK
 // WITH_RUNTIME
 // WITH_COROUTINES
-// COMMON_COROUTINES_TEST
+// CHECK_TAIL_CALL_OPTIMIZATION
 import helpers.*
-// CHECK_BYTECODE_LISTING
-// CHECK_NEW_COUNT: function=suspendHere count=1
-// CHECK_NEW_COUNT: function=mainSuspend count=1
-import COROUTINES_PACKAGE.*
-import COROUTINES_PACKAGE.intrinsics.*
+import kotlin.coroutines.*
+import kotlin.coroutines.intrinsics.*
 
 inline suspend fun suspendThere(v: String): String = suspendCoroutineUninterceptedOrReturn { x ->
+    TailCallOptimizationChecker.saveStackTrace(x)
     x.resume(v)
     COROUTINE_SUSPENDED
 }
@@ -29,6 +29,8 @@ fun box(): String {
     builder {
         result = mainSuspend()
     }
+
+    TailCallOptimizationChecker.checkStateMachineIn("mainSuspend")
 
     return result
 }

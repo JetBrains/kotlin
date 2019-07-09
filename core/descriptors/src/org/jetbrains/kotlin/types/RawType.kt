@@ -16,4 +16,6 @@
 
 package org.jetbrains.kotlin.types
 
-interface RawType
+import org.jetbrains.kotlin.types.model.RawTypeMarker
+
+interface RawType : RawTypeMarker

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun f() {
     for (c in "123") {
         print(c)
@@ -6,4 +7,4 @@ fun f() {
 
 // 1 ISTORE 0\s+L3
 // 1 ILOAD 0\s+INVOKEVIRTUAL java/io/PrintStream.print \(C\)V
-// 1 LOCALVARIABLE c C L3 L7 0
+// 1 LOCALVARIABLE c C L3 L.* 0

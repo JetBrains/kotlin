@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 fun stringConcat(n : Int) : String? {
   var string : String? = ""
   for (i in 0..(n - 1))

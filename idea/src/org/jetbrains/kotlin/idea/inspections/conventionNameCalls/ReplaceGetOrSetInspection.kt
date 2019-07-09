@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.idea.inspections.AbstractApplicabilityBasedInspectio
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.intentions.isReceiverExpressionWithValue
 import org.jetbrains.kotlin.idea.intentions.toResolvedCall
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -39,7 +40,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.isValidOperator
 
 class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQualifiedExpression>(
-        KtDotQualifiedExpression::class.java
+    KtDotQualifiedExpression::class.java
 ) {
     private fun FunctionDescriptor.isExplicitOperator(): Boolean {
         return if (overriddenDescriptors.isEmpty())
@@ -75,10 +76,9 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
     override fun inspectionText(element: KtDotQualifiedExpression) = "Should be replaced with indexing"
 
     override fun inspectionHighlightType(element: KtDotQualifiedExpression): ProblemHighlightType {
-        return if ((element.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor as FunctionDescriptor).isExplicitOperator()) {
+        return if ((element.toResolvedCall(BodyResolveMode.PARTIAL)?.resultingDescriptor as? FunctionDescriptor)?.isExplicitOperator() == true) {
             ProblemHighlightType.GENERIC_ERROR_OR_WARNING
-        }
-        else {
+        } else {
             ProblemHighlightType.INFORMATION
         }
     }
@@ -92,16 +92,15 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
         return "Replace '${resolvedCall.resultingDescriptor.name.asString()}' call with indexing operator"
     }
 
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element as? KtDotQualifiedExpression ?: element.parent.parent as? KtDotQualifiedExpression ?: return
-        val isSet = expression.toResolvedCall(BodyResolveMode.PARTIAL)!!.resultingDescriptor.name == OperatorNameConventions.SET
-        val allArguments = expression.callExpression!!.valueArguments
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val isSet = element.toResolvedCall(BodyResolveMode.PARTIAL)?.resultingDescriptor?.name == OperatorNameConventions.SET
+        val allArguments = element.callExpression!!.valueArguments
         assert(allArguments.isNotEmpty())
 
-        val newExpression = KtPsiFactory(expression).buildExpression {
-            appendExpression(expression.receiverExpression)
+        val newExpression = KtPsiFactory(element).buildExpression {
+            appendExpression(element.receiverExpression)
 
             appendFixedText("[")
 
@@ -116,7 +115,7 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
             }
         }
 
-        val newElement = expression.replace(newExpression)
+        val newElement = element.replace(newExpression)
 
         if (editor != null) {
             moveCaret(editor, isSet, newElement)
@@ -125,12 +124,11 @@ class ReplaceGetOrSetInspection : AbstractApplicabilityBasedInspection<KtDotQual
 
     private fun moveCaret(editor: Editor, isSet: Boolean, newElement: PsiElement) {
         val arrayAccessExpression = if (isSet) {
-            newElement.getChildOfType<KtArrayAccessExpression>()!!
-        }
-        else {
-            newElement as KtArrayAccessExpression
-        }
+            newElement.getChildOfType()
+        } else {
+            newElement as? KtArrayAccessExpression
+        } ?: return
 
-        editor.caretModel.moveToOffset(arrayAccessExpression.leftBracket!!.startOffset)
+        arrayAccessExpression.leftBracket?.startOffset?.let { editor.caretModel.moveToOffset(it) }
     }
 }

@@ -6,6 +6,6 @@ class Foo: A() {
 
 }
 
-<caret>open class A {
+open class <caret>A {
 
 }

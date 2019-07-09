@@ -18,15 +18,14 @@ package org.jetbrains.kotlin.idea.inspections
 
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.intentions.callExpression
+import org.jetbrains.kotlin.idea.util.calleeTextRangeInThis
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
@@ -63,26 +62,25 @@ class ReplacePutWithAssignmentInspection : AbstractApplicabilityBasedInspection<
         return receiverClass.isSubclassOf(DefaultBuiltIns.Instance.mutableMap)
     }
 
-    override fun applyTo(element: PsiElement, project: Project, editor: Editor?) {
-        val expression = element.getParentOfType<KtDotQualifiedExpression>(strict = false) ?: return
-        val valueArguments = expression.callExpression?.valueArguments ?: return
+    override fun applyTo(element: KtDotQualifiedExpression, project: Project, editor: Editor?) {
+        val valueArguments = element.callExpression?.valueArguments ?: return
         val firstArg = valueArguments[0]?.getArgumentExpression() ?: return
         val secondArg = valueArguments[1]?.getArgumentExpression() ?: return
         val label = if (secondArg is KtLambdaExpression) {
             val returnLabel = secondArg.findDescendantOfType<KtReturnExpression>()?.getLabelName()
             compatibleNames.firstOrNull { it == returnLabel }?.plus("@") ?: ""
         } else ""
-        expression.replace(
-            KtPsiFactory(expression).createExpressionByPattern(
+        element.replace(
+            KtPsiFactory(element).createExpressionByPattern(
                 "$0[$1] = $label$2",
-                expression.receiverExpression,
+                element.receiverExpression,
                 firstArg,
                 secondArg
             )
         )
     }
 
-    override fun inspectionTarget(element: KtDotQualifiedExpression) = element.callExpression?.calleeExpression ?: element
+    override fun inspectionHighlightRangeInElement(element: KtDotQualifiedExpression) = element.calleeTextRangeInThis()
 
     override fun inspectionText(element: KtDotQualifiedExpression): String = "map.put() should be converted to assignment"
 

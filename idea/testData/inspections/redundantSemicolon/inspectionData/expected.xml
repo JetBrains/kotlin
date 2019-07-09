@@ -72,16 +72,7 @@
     </problem>
     <problem>
         <file>Test.kt</file>
-        <line>38</line>
-        <module>light_idea_test_case</module>
-        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
-        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
-        <description>Redundant semicolon</description>
-    </problem>
-
-    <problem>
-        <file>Test.kt</file>
-        <line>43</line>
+        <line>39</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
@@ -108,7 +99,16 @@
 
     <problem>
         <file>Test.kt</file>
-        <line>49</line>
+        <line>46</line>
+        <module>light_idea_test_case</module>
+        <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
+        <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>
+        <description>Redundant semicolon</description>
+    </problem>
+
+    <problem>
+        <file>Test.kt</file>
+        <line>50</line>
         <module>light_idea_test_case</module>
         <entry_point TYPE="file" FQNAME="temp:///src/Test.kt" />
         <problem_class severity="WARNING" attribute_key="NOT_USED_ELEMENT_ATTRIBUTES">Redundant semicolon</problem_class>

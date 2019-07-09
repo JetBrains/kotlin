@@ -1,5 +1,5 @@
 abstract class Foo
 
-var a : Foo = object: Foo() {<caret>}
+var a : Foo = object : Foo() {<caret>}
 
 //ELEMENT: object

@@ -1,11 +1,13 @@
 /*
- * Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen.binding;
 
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +57,13 @@ public class CodegenBinding {
     public static final WritableSlice<FunctionDescriptor, FunctionDescriptor> SUSPEND_FUNCTION_TO_JVM_VIEW =
             Slices.createSimpleSlice();
 
-    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_SUSPEND_LAMBDA =
+    public static final WritableSlice<FunctionDescriptor, Boolean> CAPTURES_CROSSINLINE_LAMBDA =
+            Slices.createSimpleSlice();
+
+    public static final WritableSlice<ValueParameterDescriptor, Boolean> CALL_SITE_IS_SUSPEND_FOR_CROSSINLINE_LAMBDA =
+            Slices.createSimpleSlice();
+
+    public static final WritableSlice<ClassDescriptor, Boolean> RECURSIVE_SUSPEND_CALLABLE_REFERENCE =
             Slices.createSimpleSlice();
 
     public static final WritableSlice<ValueParameterDescriptor, ValueParameterDescriptor> PARAMETER_SYNONYM =
@@ -87,6 +95,15 @@ public class CodegenBinding {
         CodegenAnnotatingVisitor visitor = new CodegenAnnotatingVisitor(state);
         for (KtFile file : allFilesInPackages(state.getBindingContext(), state.getFiles())) {
             file.accept(visitor);
+            if (file instanceof KtCodeFragment) {
+                PsiElement context = file.getContext();
+                if (context != null) {
+                    PsiFile contextFile = context.getContainingFile();
+                    if (contextFile != null) {
+                        contextFile.accept(visitor);
+                    }
+                }
+            }
         }
     }
 
@@ -99,19 +116,11 @@ public class CodegenBinding {
     }
 
     @NotNull
-    public static ClassDescriptor anonymousClassForCallable(
-            @NotNull BindingContext bindingContext,
-            @NotNull CallableDescriptor descriptor
-    ) {
-        //noinspection ConstantConditions
-        return bindingContext.get(CLASS_FOR_CALLABLE, descriptor);
-    }
-
-    @NotNull
     public static Type asmTypeForAnonymousClass(@NotNull BindingContext bindingContext, @NotNull KtElement expression) {
         Type result = asmTypeForAnonymousClassOrNull(bindingContext, expression);
         if (result == null) {
-            throw new IllegalStateException("Type must not be null: " + expression.getText());
+            throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
+                    .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
         }
 
         return result;
@@ -138,8 +147,7 @@ public class CodegenBinding {
             return asmTypeForAnonymousClassOrNull(bindingContext, variableDescriptor);
         }
 
-        throw new KotlinExceptionWithAttachments("Couldn't compute ASM type for expression")
-              .withAttachment("expression.kt", PsiUtilsKt.getElementTextWithContext(expression));
+        return null;
     }
 
     @NotNull
@@ -154,7 +162,11 @@ public class CodegenBinding {
 
     @Nullable
     public static Type asmTypeForAnonymousClassOrNull(@NotNull BindingContext bindingContext, @NotNull CallableDescriptor descriptor) {
-        return bindingContext.get(ASM_TYPE, anonymousClassForCallable(bindingContext, descriptor));
+        ClassDescriptor classForCallable = bindingContext.get(CLASS_FOR_CALLABLE, descriptor);
+        if (classForCallable == null) {
+            return null;
+        }
+        return bindingContext.get(ASM_TYPE, classForCallable);
     }
 
     public static boolean canHaveOuter(@NotNull BindingContext bindingContext, @NotNull ClassDescriptor classDescriptor) {

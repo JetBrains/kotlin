@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.lower
@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.lower.AbstractValueUsageTransformer
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.util.getInlinedClass
-import org.jetbrains.kotlin.ir.util.isInlined
-import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.util.*
 
 
 // Copied and adapted from Kotlin/Native
@@ -24,21 +21,35 @@ import org.jetbrains.kotlin.ir.util.isNullable
 class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsageTransformer(context.irBuiltIns), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid()
+
+        // TODO: Track & insert parents for temporary variables
+        irFile.patchDeclarationParents()
     }
+
+    private tailrec fun IrExpression.isGetUnit(): Boolean =
+        when(this) {
+            is IrContainerExpression ->
+                when (val lastStmt = this.statements.lastOrNull()) {
+                    is IrExpression -> lastStmt.isGetUnit()
+                    else -> false
+                }
+
+            is IrGetObjectValue ->
+                this.symbol == irBuiltIns.unitClass
+
+            else -> false
+        }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {
 
         val actualType = when (this) {
+            is IrConstructorCall -> symbol.owner.returnType
             is IrCall -> {
-                if (this.symbol.owner.let { it is IrSimpleFunction && it.isSuspend }) {
+                val function = this.symbol.owner
+                if (function.let { it is IrSimpleFunction && it.isSuspend }) {
                     irBuiltIns.anyNType
                 } else {
-                    try {
-                        this.symbol.owner.returnType
-                    } catch (e: kotlin.UninitializedPropertyAccessException) {
-                        // TODO: Fix lateinit return types
-                        this.type
-                    }
+                    function.realOverrideTarget.returnType
                 }
             }
             is IrGetField -> this.symbol.owner.type
@@ -71,8 +82,23 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
 
         val expectedType = type
 
+        if (actualType.isUnit() && !expectedType.isUnit()) {
+            // Don't materialize Unit if value is known to be proper Unit on runtime
+            if (!this.isGetUnit()) {
+                val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.symbolTable.referenceClass(context.builtIns.unit))
+                return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
+            }
+        }
+
         val actualInlinedClass = actualType.getInlinedClass()
         val expectedInlinedClass = expectedType.getInlinedClass()
+
+        // Mimicking behaviour of current JS backend
+        // TODO: Revisit
+        if (
+            (actualType is IrDynamicType && expectedType.makeNotNull().isChar()) ||
+            (actualType.makeNotNull().isChar() && expectedType is IrDynamicType)
+        ) return this
 
         val function = when {
             actualInlinedClass == null && expectedInlinedClass == null -> return this
@@ -101,6 +127,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         if (!actualType.isNullable())
             return call(arg)
         return JsIrBuilder.run {
+            // TODO: Set parent of local variables
             val tmp = buildVar(actualType, parent = null, initializer = arg)
             val nullCheck = buildIfElse(
                 type = resultType,
@@ -121,9 +148,39 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
     }
 
+    private val IrFunctionAccessExpression.target: IrFunction
+        get() = when (this) {
+            is IrConstructorCall -> this.symbol.owner
+            is IrDelegatingConstructorCall -> this.symbol.owner
+            is IrCall -> this.callTarget
+            else -> TODO(this.render())
+        }
+
+    private val IrCall.callTarget: IrFunction
+        get() = symbol.owner.realOverrideTarget
+
+
+    override fun IrExpression.useAsDispatchReceiver(expression: IrFunctionAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.dispatchReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsExtensionReceiver(expression: IrFunctionAccessExpression): IrExpression {
+        return this.useAsArgument(expression.target.extensionReceiverParameter!!)
+    }
+
+    override fun IrExpression.useAsValueArgument(
+        expression: IrFunctionAccessExpression,
+        parameter: IrValueParameter
+    ): IrExpression {
+
+        return this.useAsArgument(expression.target.valueParameters[parameter.index])
+    }
+
+
     override fun IrExpression.useAsVarargElement(expression: IrVararg): IrExpression {
         return this.useAs(
-            if (this.type.isInlined())
+            // Do not box primitive inline classes
+            if (this.type.isInlined() && !expression.type.isInlined() && !expression.type.isPrimitiveArray())
                 irBuiltIns.anyNType
             else
                 expression.varargElementType
@@ -141,3 +198,4 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         }
 
 }
+

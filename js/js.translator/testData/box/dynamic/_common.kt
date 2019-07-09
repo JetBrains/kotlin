@@ -11,5 +11,6 @@ object t {
 }
 
 object n {
+    @JsName("valueOf")
     fun valueOf() = 42
 }

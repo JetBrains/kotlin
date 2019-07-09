@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.js.test.semantics;
@@ -62,6 +62,16 @@ public class JsInlineContractsTestsGenerated extends AbstractJsInlineContractsTe
     @TestMetadata("definiteValInitialization.kt")
     public void testDefiniteValInitialization() throws Exception {
         runTest("compiler/testData/codegen/boxInline/contracts/definiteValInitialization.kt");
+    }
+
+    @TestMetadata("exactlyOnceCrossinline.kt")
+    public void testExactlyOnceCrossinline() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceCrossinline.kt");
+    }
+
+    @TestMetadata("exactlyOnceNoinline.kt")
+    public void testExactlyOnceNoinline() throws Exception {
+        runTest("compiler/testData/codegen/boxInline/contracts/exactlyOnceNoinline.kt");
     }
 
     @TestMetadata("nonLocalReturn.kt")

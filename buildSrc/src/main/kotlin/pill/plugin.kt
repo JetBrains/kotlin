@@ -13,51 +13,37 @@ import java.io.File
 
 class PillConfigurablePlugin : Plugin<Project> {
     override fun apply(project: Project) {
-        project.configurations.create(EmbeddedComponents.CONFIGURATION_NAME)
+        project.configurations.maybeCreate(EmbeddedComponents.CONFIGURATION_NAME)
         project.extensions.create("pill", PillExtension::class.java)
     }
 }
 
 class JpsCompatiblePlugin : Plugin<Project> {
     companion object {
-        val MODULE_CONFIGURATIONS = arrayOf("apiElements", "runtimeElements")
-
-        private fun mapper(module: String, vararg configurations: String): DependencyMapper {
-            return DependencyMapper("org.jetbrains.kotlin", module, *configurations) { MappedDependency(PDependency.Library(module)) }
-        }
-
         private fun getDependencyMappers(projectLibraries: List<PLibrary>): List<DependencyMapper> {
             val mappersForKotlinLibrariesExeptStdlib = projectLibraries
                 .filter { it.name != "kotlin-stdlib" }
-                .mapTo(mutableListOf()) { mapper(it.name, "default", "distJar", *MODULE_CONFIGURATIONS) }
+                .map { DependencyMapper.forProject(it.originalName) { MappedDependency(PDependency.Library(it.name)) } }
 
-            return mappersForKotlinLibrariesExeptStdlib + listOf(
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib", "distJar", *MODULE_CONFIGURATIONS) {
+            val disabledModuleMappers = listOf(
+                ":kotlin-stdlib-common",
+                ":core:builtins",
+                ":kotlin-compiler",
+                ":kotlin-compiler-embeddable",
+                ":kotlin-test:kotlin-test-common",
+                ":kotlin-test:kotlin-test-annotations-common"
+            ).map { DependencyMapper.forProject(it) { null } }
+
+            return listOf(
+                DependencyMapper.forProject(":kotlin-stdlib") {
                     MappedDependency(
                         PDependency.Library("kotlin-stdlib"),
                         listOf(PDependency.Library("annotations-13.0"))
                     )
                 },
-                DependencyMapper("org.jetbrains", "annotations", "default", version = "13.0") {
-                    MappedDependency(
-                        null,
-                        listOf(PDependency.Library("annotations-13.0"))
-                    )
-                },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-reflect-api", *MODULE_CONFIGURATIONS) {
-                    MappedDependency(PDependency.Library("kotlin-reflect"))
-                },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler-embeddable", "runtimeJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-stdlib-js", "distJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "kotlin-compiler", "runtimeJar") { null },
-                DependencyMapper("org.jetbrains.kotlin", "compiler", *MODULE_CONFIGURATIONS) { null },
-                DependencyMapper("kotlin.build.custom.deps", "android", "default") { dep ->
-                    val (sdkCommon, otherJars) = dep.moduleArtifacts.map { it.file }.partition { it.name == "sdk-common.jar" }
-                    val mainLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName, otherJars))
-                    val deferredLibrary = PDependency.ModuleLibrary(PLibrary(dep.moduleName + "-deferred", sdkCommon))
-                    MappedDependency(mainLibrary, listOf(deferredLibrary))
-                }
-            )
+                DependencyMapper.forProject(":kotlin-test:kotlin-test-jvm") { MappedDependency(PDependency.Library("kotlin-test-jvm")) },
+                DependencyMapper.forProject(":kotlin-reflect-api") { MappedDependency(PDependency.Library("kotlin-reflect")) }
+            ) + mappersForKotlinLibrariesExeptStdlib + disabledModuleMappers
         }
 
         fun getProjectLibraries(rootProject: Project): List<PLibrary> {
@@ -78,7 +64,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
                     PLibrary(
                         library.name,
                         classes = listOf(File(libraryPath, "$archivesBaseName.jar")).filterExisting(),
-                        sources = listOf(File(libraryPath, "$archivesBaseName-sources.jar")).filterExisting()
+                        sources = listOf(File(libraryPath, "$archivesBaseName-sources.jar")).filterExisting(),
+                        originalName = library.path
                     )
                 }
 
@@ -141,17 +128,20 @@ class JpsCompatiblePlugin : Plugin<Project> {
         }
 
         val projectLibraries = getProjectLibraries(rootProject)
-        val parserContext = ParserContext(getDependencyMappers(projectLibraries), variant)
+        val dependencyMappers = getDependencyMappers(projectLibraries)
+
+        val parserContext = ParserContext(dependencyMappers, variant)
 
         val jpsProject = parse(rootProject, projectLibraries, parserContext)
             .mapLibraries(this::attachPlatformSources, this::attachAsmSources)
 
-        generateKotlinPluginArtifactFile(rootProject).write()
-
         val files = render(jpsProject)
 
         removeExistingIdeaLibrariesAndModules()
-        removeJpsRunConfigurations()
+        removeJpsAndPillRunConfigurations()
+        removeAllArtifactConfigurations()
+
+        generateKotlinPluginArtifactFile(rootProject, dependencyMappers).write()
 
         copyRunConfigurations()
         setOptionsForDefaultJunitRunConfiguration(rootProject)
@@ -163,7 +153,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
         initEnvironment(project)
 
         removeExistingIdeaLibrariesAndModules()
-        removeJpsRunConfigurations()
+        removeJpsAndPillRunConfigurations()
+        removeAllArtifactConfigurations()
     }
 
     private fun removeExistingIdeaLibrariesAndModules() {
@@ -171,10 +162,17 @@ class JpsCompatiblePlugin : Plugin<Project> {
         File(projectDir, ".idea/modules").deleteRecursively()
     }
 
-    private fun removeJpsRunConfigurations() {
+    private fun removeJpsAndPillRunConfigurations() {
         File(projectDir, ".idea/runConfigurations")
             .walk()
-            .filter { it.name.startsWith("JPS_") && it.extension.toLowerCase() == "xml" }
+            .filter { (it.name.startsWith("JPS_") || it.name.startsWith("Pill_")) && it.extension.toLowerCase() == "xml" }
+            .forEach { it.delete() }
+    }
+
+    private fun removeAllArtifactConfigurations() {
+        File(projectDir, ".idea/artifacts")
+            .walk()
+            .filter { it.extension.toLowerCase() == "xml" }
             .forEach { it.delete() }
     }
 
@@ -263,7 +261,8 @@ class JpsCompatiblePlugin : Plugin<Project> {
                 addOrReplaceOptionValue("idea.home.path", platformDirProjectRelative)
                 addOrReplaceOptionValue("ideaSdk.androidPlugin.path", platformDirProjectRelative + "/plugins/android/lib")
                 addOrReplaceOptionValue("robolectric.classpath", robolectricClasspath)
-                addOrReplaceOptionValue("use.pill", "true")
+                addOrReplaceOptionValue("use.jps", "true")
+                addOrReplaceOptionValue("kotlinVersion", project.rootProject.extra["kotlinVersion"].toString())
 
                 val isAndroidStudioBunch = project.findProperty("versions.androidStudioRelease") != null
                 addOrReplaceOptionValue("idea.platform.prefix", if (isAndroidStudioBunch) "AndroidStudio" else null)
@@ -299,7 +298,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     }
 
     private fun attachPlatformSources(library: PLibrary): PLibrary {
-        val platformSourcesJar = File(platformDir, "../sources/ideaIC-$platformVersion-sources.jar")
+        val platformSourcesJar = File(platformDir, "../../../sources/intellij-$platformVersion-sources.jar")
 
         if (library.classes.any { it.startsWith(platformDir) }) {
             return library.attachSource(platformSourcesJar)

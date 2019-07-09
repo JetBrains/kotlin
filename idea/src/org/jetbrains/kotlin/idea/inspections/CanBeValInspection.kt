@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import java.util.*
 
-class CanBeValInspection : AbstractKotlinInspection() {
+class CanBeValInspection @JvmOverloads constructor(val ignoreNotUsedVals: Boolean = true) : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor {
         return object: KtVisitorVoid() {
             private val pseudocodeCache = HashMap<KtDeclaration, Pseudocode>()
@@ -72,7 +72,7 @@ class CanBeValInspection : AbstractKotlinInspection() {
                     hasInitializerOrDelegate: Boolean,
                     allDeclarations: Collection<KtVariableDeclaration>
             ): Boolean {
-                if (allDeclarations.all { ReferencesSearch.search(it, it.useScope).none() }) {
+                if (ignoreNotUsedVals && allDeclarations.all { ReferencesSearch.search(it, it.useScope).none() }) {
                     // do not report for unused var's (otherwise we'll get it highlighted immediately after typing the declaration
                     return false
                 }

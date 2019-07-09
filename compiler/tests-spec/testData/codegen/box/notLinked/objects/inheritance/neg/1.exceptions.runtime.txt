@@ -1,0 +1,2 @@
+java.lang.ExceptionInInitializerError
+_1Kt.box(1.kt:19)

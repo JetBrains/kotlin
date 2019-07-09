@@ -162,7 +162,7 @@
                 <repository>
                   <id>snapshots.fusesource.org</id>
                   <name>FuseSource Snapshots Repository</name>
-                  <url>http://repo.fusesource.com/nexus/content/repositories/snapshots</url>
+                  <url>https://repo.fusesource.com/nexus/content/repositories/snapshots</url>
                   <snapshots>
                     <enabled>false</enabled>
                   </snapshots>

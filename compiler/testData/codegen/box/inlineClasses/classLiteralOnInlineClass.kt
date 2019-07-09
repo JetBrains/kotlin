@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 
 package root
 
@@ -62,6 +61,12 @@ fun box(): String {
 
     val arrU = arrayOf(1u)
     check(arrU[0]::class, "class kotlin.UInt")
+
+    check(IcInt::class, "class root.IcInt")
+    check(IcLong::class, "class root.IcLong")
+    check(IcAny::class, "class root.IcAny")
+    check(IcOverIc::class, "class root.IcOverIc")
+    check(UInt::class, "class kotlin.UInt")
 
     return "OK"
 }

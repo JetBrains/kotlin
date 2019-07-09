@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kapt3
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.resolve.DeclarationSignatureAnonymousTypeTransformer
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -37,9 +38,9 @@ class KaptAnonymousTypeTransformer : DeclarationSignatureAnonymousTypeTransforme
         }
 
         val actualType = when {
-            isAnonymousObject(declaration) -> {
+            isAnonymousObject(declaration) || DescriptorUtils.isLocal(declaration) -> {
                 if (type.constructor.supertypes.size == 1) {
-                    type.constructor.supertypes.iterator().next()
+                    convertPossiblyAnonymousType(type.constructor.supertypes.iterator().next())
                 } else {
                     /*
                         Frontend reports an error on public properties in this case,

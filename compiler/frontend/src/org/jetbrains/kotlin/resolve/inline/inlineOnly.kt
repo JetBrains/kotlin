@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.inline
@@ -14,20 +14,30 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 
 private val INLINE_ONLY_ANNOTATION_FQ_NAME = FqName("kotlin.internal.InlineOnly")
 
-fun MemberDescriptor.isInlineOnlyOrReifiable(): Boolean =
-    this is CallableMemberDescriptor && (isReifiable() || DescriptorUtils.getDirectMember(this).isReifiable() || isInlineOnly())
-
+/**
+ * @return true if it's impossible to observe a call instruction referencing this member in the bytecode.
+ */
 fun MemberDescriptor.isEffectivelyInlineOnly(): Boolean =
-    isInlineOnlyOrReifiable() || (this is FunctionDescriptor && isSuspend && isInline &&
-            (valueParameters.any { it.isCrossinline } || visibility == Visibilities.PRIVATE))
+    isInlineWithReified() || isInlineOnlyPrivateInBytecode()
 
-fun MemberDescriptor.isInlineOnly(): Boolean {
-    if (this !is FunctionDescriptor ||
-        !(hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())) return false
-    assert(isInline) { "Function is not inline: $this" }
-    return true
-}
+/**
+ * @return true if this member should be private in bytecode because it's effectively inline-only.
+ */
+fun MemberDescriptor.isInlineOnlyPrivateInBytecode(): Boolean =
+    isInlineOnly() || isPrivateInlineSuspend()
 
-private fun CallableMemberDescriptor.isReifiable() = typeParameters.any { it.isReified }
+fun MemberDescriptor.isInlineOnly(): Boolean =
+    this is FunctionDescriptor && isInline &&
+            (hasInlineOnlyAnnotation() || DescriptorUtils.getDirectMember(this).hasInlineOnlyAnnotation())
 
-private fun CallableMemberDescriptor.hasInlineOnlyAnnotation() = annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)
+private fun MemberDescriptor.isPrivateInlineSuspend(): Boolean =
+    this is FunctionDescriptor && isSuspend && isInline && visibility == Visibilities.PRIVATE
+
+fun MemberDescriptor.isInlineWithReified(): Boolean =
+    this is CallableMemberDescriptor && (hasReifiedParameters() || DescriptorUtils.getDirectMember(this).hasReifiedParameters())
+
+private fun CallableMemberDescriptor.hasReifiedParameters(): Boolean =
+    typeParameters.any { it.isReified }
+
+private fun CallableMemberDescriptor.hasInlineOnlyAnnotation(): Boolean =
+    annotations.hasAnnotation(INLINE_ONLY_ANNOTATION_FQ_NAME)

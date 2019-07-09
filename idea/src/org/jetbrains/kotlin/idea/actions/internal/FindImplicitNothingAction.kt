@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.builtins.getReturnTypeFromFunctionType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
-import org.jetbrains.kotlin.idea.util.application.progressIndicatorNullable
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -49,24 +48,27 @@ import java.util.*
 import javax.swing.SwingUtilities
 
 class FindImplicitNothingAction : AnAction() {
-    private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction")
+    companion object {
+        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.actions.internal.FindImplicitNothingAction")
+    }
 
     override fun actionPerformed(e: AnActionEvent) {
         val selectedFiles = selectedKotlinFiles(e).toList()
         val project = CommonDataKeys.PROJECT.getData(e.dataContext)!!
 
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                Runnable { find(selectedFiles, project) },
-                "Finding Implicit Nothing's",
-                true,
-                project)
+            { find(selectedFiles, project) },
+            "Finding Implicit Nothing's",
+            true,
+            project
+        )
     }
 
     private fun find(files: Collection<KtFile>, project: Project) {
-        val progressIndicator = ProgressManager.getInstance().progressIndicatorNullable
+        val progressIndicator = ProgressManager.getInstance().progressIndicator
         val found = ArrayList<KtCallExpression>()
         for ((i, file) in files.withIndex()) {
-            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurences found"
+            progressIndicator?.text = "Scanning files: $i of ${files.size} file. ${found.size} occurrences found"
             progressIndicator?.text2 = file.virtualFile.path
 
             val resolutionFacade = file.getResolutionFacade()
@@ -85,11 +87,9 @@ class FindImplicitNothingAction : AnAction() {
                         if (KotlinBuiltIns.isNothing(type) && !expression.hasExplicitNothing(bindingContext)) { //TODO: what about nullable Nothing?
                             found.add(expression)
                         }
-                    }
-                    catch(e: ProcessCanceledException) {
+                    } catch (e: ProcessCanceledException) {
                         throw e
-                    }
-                    catch(t: Throwable) { // do not stop on internal error
+                    } catch (t: Throwable) { // do not stop on internal error
                         LOG.error(t)
                     }
                 }
@@ -104,14 +104,14 @@ class FindImplicitNothingAction : AnAction() {
                 val presentation = UsageViewPresentation()
                 presentation.tabName = "Implicit Nothing's"
                 UsageViewManager.getInstance(project).showUsages(arrayOf<UsageTarget>(), usages, presentation)
-            }
-            else {
+            } else {
                 Messages.showInfoMessage(project, "Not found in ${files.size} file(s)", "Not Found")
             }
         }
     }
 
     private fun KtExpression.hasExplicitNothing(bindingContext: BindingContext): Boolean {
+        @Suppress("MoveVariableDeclarationIntoWhen")
         val callee = getCalleeExpressionIfAny() ?: return false
         when (callee) {
             is KtSimpleNameExpression -> {
@@ -131,18 +131,12 @@ class FindImplicitNothingAction : AnAction() {
 
     private fun KotlinType.isNothingOrNothingFunctionType(): Boolean {
         return KotlinBuiltIns.isNothing(this) ||
-               (isFunctionType && this.getReturnTypeFromFunctionType().isNothingOrNothingFunctionType())
+                (isFunctionType && this.getReturnTypeFromFunctionType().isNothingOrNothingFunctionType())
     }
 
     override fun update(e: AnActionEvent) {
-        if (!ApplicationManager.getApplication().isInternal) {
-            e.presentation.isVisible = false
-            e.presentation.isEnabled = false
-        }
-        else {
-            e.presentation.isVisible = true
-            e.presentation.isEnabled = selectedKotlinFiles(e).any()
-        }
+        e.presentation.isVisible = ApplicationManager.getApplication().isInternal
+        e.presentation.isEnabled = ApplicationManager.getApplication().isInternal
     }
 
     private fun selectedKotlinFiles(e: AnActionEvent): Sequence<KtFile> {
@@ -154,8 +148,8 @@ class FindImplicitNothingAction : AnAction() {
     private fun allKotlinFiles(filesOrDirs: Array<VirtualFile>, project: Project): Sequence<KtFile> {
         val manager = PsiManager.getInstance(project)
         return allFiles(filesOrDirs)
-                .asSequence()
-                .mapNotNull { manager.findFile(it) as? KtFile }
+            .asSequence()
+            .mapNotNull { manager.findFile(it) as? KtFile }
     }
 
     private fun allFiles(filesOrDirs: Array<VirtualFile>): Collection<VirtualFile> {

@@ -2,7 +2,9 @@
 // !LANGUAGE: +NewInference
 // SKIP_TXT
 
-val lock = Any()
+import kotlin.concurrent.withLock
+
+val lock = java.util.concurrent.locks.ReentrantLock()
 
 fun builder(c: suspend () -> Unit) {}
 
@@ -13,14 +15,14 @@ suspend fun suspensionPoint() {}
 fun test() {
     builder {
         synchronized(lock) {
-            <!SUSPENSION_POINT_INSIDE_SYNCHRONIZED!>suspensionPoint<!>()
+            <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>suspensionPoint<!>()
         }
 
         synchronized(lock) label@{
-            <!SUSPENSION_POINT_INSIDE_SYNCHRONIZED!>suspensionPoint<!>()
+            <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>suspensionPoint<!>()
         }
 
-        synchronized(lock, { <!SUSPENSION_POINT_INSIDE_SYNCHRONIZED!>suspensionPoint<!>() })
+        synchronized(lock, { <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>suspensionPoint<!>() })
 
         synchronized(getLock()) {
             println("")
@@ -31,12 +33,15 @@ fun test() {
         synchronized(run { getLock() }) {
             println("")
         }
+        lock.withLock {
+            <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>suspensionPoint<!>()
+        }
     }
 }
 
 suspend fun run() {
     synchronized(lock) {
-        <!SUSPENSION_POINT_INSIDE_SYNCHRONIZED!>suspensionPoint<!>()
+        <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>suspensionPoint<!>()
     }
 }
 
@@ -45,7 +50,7 @@ suspend fun ifWhenAndOtherNonsence() {
         if (lock == Any()) {
             when (1) {
                 is Int -> {
-                    return@synchronized 1 + <!SUSPENSION_POINT_INSIDE_SYNCHRONIZED!>returnsInt<!>()
+                    return@synchronized 1 + <!SUSPENSION_POINT_INSIDE_CRITICAL_SECTION!>returnsInt<!>()
                 }
                 else -> {}
             }

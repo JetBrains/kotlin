@@ -72,7 +72,7 @@ public abstract class AnnotationCodegen {
             new JvmFlagAnnotation(JvmAnnotationUtilKt.SYNCHRONIZED_ANNOTATION_FQ_NAME.asString(), Opcodes.ACC_SYNCHRONIZED)
     );
 
-    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.ASM5) {
+    private static final AnnotationVisitor NO_ANNOTATION_VISITOR = new AnnotationVisitor(Opcodes.API_VERSION) {
         @Override
         public AnnotationVisitor visitAnnotation(String name, @NotNull String desc) {
             return safe(super.visitAnnotation(name, desc));
@@ -244,6 +244,10 @@ public abstract class AnnotationCodegen {
 
         annotationTargetMaps.put(JvmTarget.JVM_1_6, jvm6);
         annotationTargetMaps.put(JvmTarget.JVM_1_8, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_9, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_10, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_11, jvm8);
+        annotationTargetMaps.put(JvmTarget.JVM_12, jvm8);
     }
 
     private void generateTargetAnnotation(

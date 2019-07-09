@@ -2,6 +2,8 @@
 // MODULE: m1-common
 // FILE: common.kt
 
+// See also compiler/testData/codegen/boxAgainstJava/multiplatform/annotationsViaActualTypeAliasFromBinary.kt
+
 import kotlin.reflect.KClass
 
 expect annotation class Anno(

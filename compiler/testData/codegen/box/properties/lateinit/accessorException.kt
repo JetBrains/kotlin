@@ -1,21 +1,32 @@
 public class A {
-
-    fun getMyStr(): String {
+    fun getFromClass(): Boolean {
         try {
             val a = str
+            return false
         } catch (e: RuntimeException) {
-            return "OK"
+            return true
         }
-
-        return "FAIL"
     }
+
+    fun getFromCompanion() = Companion.getFromCompanion()
 
     private companion object {
         private lateinit var str: String
+
+        fun getFromCompanion(): Boolean {
+            try {
+                val a = str
+                return false
+            } catch (e: RuntimeException) {
+                return true
+            }
+        }
     }
 }
 
 fun box(): String {
-    val a = A()
-    return a.getMyStr()
+    if (!A().getFromClass()) return "Fail getFromClass"
+    if (!A().getFromCompanion()) return "Fail getFromCompanion"
+
+    return "OK"
 }

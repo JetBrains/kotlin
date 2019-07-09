@@ -1,0 +1,10 @@
+@kotlin.Metadata
+public final class Foo {
+    public method <init>(): void
+    private final @kotlin.internal.InlineOnly method foo(): void
+}
+
+@kotlin.Metadata
+public final class InlineOnlyKt {
+    private final static @kotlin.internal.InlineOnly method foo(): void
+}

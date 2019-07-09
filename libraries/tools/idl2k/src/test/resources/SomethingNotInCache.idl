@@ -1,0 +1,8 @@
+[Constructor]
+interface SomethingNotInCache {
+ DOMString someEmptyMethod ();
+ DOMString someMethod (SomethingUnknown root);
+ USVString? optionalUsvStringFetcher(USVString name);
+ readonly attribute WhateverUknownParam someReadOnlyParam;
+ attribute WhateverUknownParam someWriteableParam;
+};

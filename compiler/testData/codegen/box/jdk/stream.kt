@@ -1,9 +1,8 @@
-// SKIP_JDK6
-// IGNORE_BACKEND: JVM_IR
+// JVM_TARGET: 1.8
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // WITH_RUNTIME
-// LANGUAGE_VERSION: 1.1
+
 import java.util.stream.*
 
 class B<F> : List<F> {

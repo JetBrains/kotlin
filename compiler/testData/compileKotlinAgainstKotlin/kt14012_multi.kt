@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: NATIVE
+// TARGET_BACKEND: JVM
 // FILE: A.kt
 @file:JvmName("TTest")
 @file:JvmMultifileClass

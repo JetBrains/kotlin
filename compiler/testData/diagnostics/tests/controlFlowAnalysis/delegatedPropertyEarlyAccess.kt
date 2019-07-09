@@ -9,12 +9,12 @@ class CustomDelegate {
 class Kaboom() {
     // Here and below we should have errors for simple AND delegated
     init {
-        <!UNINITIALIZED_VARIABLE, DEBUG_INFO_LEAKING_THIS!>delegated<!>.hashCode()
+        <!DEBUG_INFO_LEAKING_THIS, UNINITIALIZED_VARIABLE!>delegated<!>.hashCode()
         <!UNINITIALIZED_VARIABLE!>simple<!>.hashCode()
         <!DEBUG_INFO_LEAKING_THIS!>withGetter<!>.hashCode()
     }
 
-    val other = <!UNINITIALIZED_VARIABLE, DEBUG_INFO_LEAKING_THIS!>delegated<!>
+    val other = <!DEBUG_INFO_LEAKING_THIS, UNINITIALIZED_VARIABLE!>delegated<!>
 
     val another = <!UNINITIALIZED_VARIABLE!>simple<!>
 

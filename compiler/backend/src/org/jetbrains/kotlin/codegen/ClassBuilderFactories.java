@@ -24,7 +24,6 @@ import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-@SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class ClassBuilderFactories {
     @NotNull
     public static ClassBuilderFactory THROW_EXCEPTION = new ClassBuilderFactory() {

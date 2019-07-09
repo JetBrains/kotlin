@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 interface ATrait {
     open fun foo2(): String = "OK"
 }

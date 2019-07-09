@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.0
-
 public interface Base {
     fun test() = "base fail"
 }

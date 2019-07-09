@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Outer {
     val outerProp: String
     constructor(x: String) {

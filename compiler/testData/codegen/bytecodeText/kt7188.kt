@@ -1,6 +1,3 @@
-// WITH_RUNTIME
-// TARGET_BACKEND: JVM
-
 // FILE: Dummy.kt
 // Empty body to trigger multifile test mode
 

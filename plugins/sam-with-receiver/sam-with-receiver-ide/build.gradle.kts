@@ -6,8 +6,6 @@ plugins {
     id("jps-compatible")
 }
 
-jvmTarget = "1.6"
-
 dependencies {
     compile(project(":kotlin-sam-with-receiver-compiler-plugin"))
     compile(project(":plugins:annotation-based-compiler-plugins-ide-support"))
@@ -23,9 +21,9 @@ dependencies {
     compile(project(":idea"))
     compile(project(":idea:idea-jvm"))
 
-    compile(intellijDep()) { includeJars("openapi", "extensions", "util") }
+    compileOnly(intellijDep()) { includeJars("openapi", "extensions", "util") }
     Platform[181].orHigher {
-        compile(intellijDep()) { includeJars("platform-api") }
+        compileOnly(intellijDep()) { includeJars("platform-api") }
     }
 }
 
@@ -35,6 +33,3 @@ sourceSets {
 }
 
 runtimeJar()
-
-ideaPlugin()
-

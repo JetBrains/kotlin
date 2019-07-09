@@ -18,18 +18,10 @@ package org.jetbrains.kotlin.idea.facet
 
 import com.intellij.facet.Facet
 import com.intellij.facet.ui.FacetEditor
-import com.intellij.openapi.module.JavaModuleType
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.idea.KotlinIcons
-import javax.swing.Icon
 
 class KotlinFacetTypeImpl : KotlinFacetType<KotlinFacetConfiguration>() {
-
-    override fun isSuitableModuleType(moduleType: ModuleType<*>) = moduleType is JavaModuleType
-
-    override fun getIcon(): Icon = KotlinIcons.SMALL_LOGO
 
     override fun createDefaultConfiguration() = KotlinFacetConfigurationImpl()
 

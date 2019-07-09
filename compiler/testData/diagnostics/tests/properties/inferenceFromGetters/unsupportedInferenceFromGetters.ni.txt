@@ -2,12 +2,12 @@ package
 
 public val u: kotlin.String
 public val x: [ERROR : No type, no body]
-public val x1: kotlin.Nothing
+public val x1: [ERROR : Error function type]
 public val x2: kotlin.String
 public var x3: kotlin.Int
 public val x4: [ERROR : Error function type]
 public val x5: kotlin.Nothing?
-public val y1: kotlin.collections.List<kotlin.Nothing>
+public val y1: [ERROR : Error function type]
 public val y2: kotlin.collections.List<kotlin.Int>
 public val y5: kotlin.Nothing
 public val z2: kotlin.collections.List<kotlin.Int>

@@ -21,8 +21,8 @@ import org.jetbrains.uast.UElement
 import org.jetbrains.uast.UParenthesizedExpression
 
 class KotlinUParenthesizedExpression(
-        override val psi: KtParenthesizedExpression,
+        override val sourcePsi: KtParenthesizedExpression,
         givenParent: UElement?
 ) : KotlinAbstractUExpression(givenParent), UParenthesizedExpression, KotlinUElementWithType {
-    override val expression by lz { KotlinConverter.convertOrEmpty(psi.expression, this) }
+    override val expression by lz { KotlinConverter.convertOrEmpty(sourcePsi.expression, this) }
 }

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.konan.library
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 
 const val KLIB_PROPERTY_ABI_VERSION = "abi_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
+const val KLIB_PROPERTY_COMPILER_VERSION = "compiler_version"
 const val KLIB_PROPERTY_LINKED_OPTS = "linkerOpts"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_INTEROP = "interop"

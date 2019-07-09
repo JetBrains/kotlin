@@ -18,7 +18,6 @@ val packagesToRelocate =
                 "org.jdom",
                 "org.picocontainer",
                 "org.jline",
-                "gnu",
                 "org.fusesource",
                 "kotlinx.coroutines")
 

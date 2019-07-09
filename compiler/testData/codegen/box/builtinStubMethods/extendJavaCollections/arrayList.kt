@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // KT-6042 java.lang.UnsupportedOperationException with ArrayList
 // IGNORE_BACKEND: NATIVE
 class A : ArrayList<String>()

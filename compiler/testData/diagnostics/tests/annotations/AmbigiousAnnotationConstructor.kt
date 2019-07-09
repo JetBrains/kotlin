@@ -3,4 +3,4 @@ import java.util.ArrayList
 
 <!NI;NOT_AN_ANNOTATION_CLASS!>@<!OI;NONE_APPLICABLE!>ArrayList<!><Int>(<!NI;TOO_MANY_ARGUMENTS!>1<!>, <!NI;TOO_MANY_ARGUMENTS!>1<!>)<!> fun b() {}
 @<!UNRESOLVED_REFERENCE!>Xoo<!>(<!UNRESOLVED_REFERENCE!>x<!>) fun c() {}
-<!DEPRECATED_JAVA_ANNOTATION!>@java.lang.Deprecated(<!UNRESOLVED_REFERENCE, TOO_MANY_ARGUMENTS!>x<!>)<!> fun a() {}
+<!DEPRECATED_JAVA_ANNOTATION!>@java.lang.Deprecated(<!TOO_MANY_ARGUMENTS, UNRESOLVED_REFERENCE!>x<!>)<!> fun a() {}

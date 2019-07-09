@@ -344,6 +344,7 @@ public class KotlinRunConfiguration extends JetRunConfiguration {
             JavaParametersUtil.configureModule(module, params, classPathType, jreHome);
             setupJavaParameters(params);
 
+            params.setShortenCommandLine(null, module.getProject());
             params.setMainClass(myConfiguration.getRunClass());
             setupModulePath(params, module);
 

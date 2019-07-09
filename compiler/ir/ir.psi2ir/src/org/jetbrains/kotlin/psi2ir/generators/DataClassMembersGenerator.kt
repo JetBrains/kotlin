@@ -275,7 +275,7 @@ class DataClassMembersGenerator(
         private fun MemberFunctionBuilder.getHashCodeOf(kotlinType: KotlinType, irValue: IrExpression): IrExpression {
             val hashCodeFunctionDescriptor = getHashCodeFunction(kotlinType)
             val hashCodeFunctionSymbol = declarationGenerator.context.symbolTable.referenceFunction(hashCodeFunctionDescriptor.original)
-            return irCall(hashCodeFunctionSymbol, hashCodeFunctionDescriptor, context.irBuiltIns.intType).apply {
+            return irCall(hashCodeFunctionSymbol, context.irBuiltIns.intType).apply {
                 if (descriptor.dispatchReceiverParameter != null) {
                     dispatchReceiver = irValue
                 } else {

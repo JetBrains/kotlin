@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.asJava;
@@ -99,6 +99,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         runTest("compiler/testData/asJava/lightClasses/InheritingInterfaceDefaultImpls.kt");
     }
 
+    @TestMetadata("InlineReified.kt")
+    public void testInlineReified() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/InlineReified.kt");
+    }
+
     @TestMetadata("JvmNameOnMember.kt")
     public void testJvmNameOnMember() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/JvmNameOnMember.kt");
@@ -181,6 +186,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/AnnotationModifiers.kt");
         }
 
+        @TestMetadata("EnumNameOverride.kt")
+        public void testEnumNameOverride() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/EnumNameOverride.kt");
+        }
+
         @TestMetadata("ExpectClass.kt")
         public void testExpectClass() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/ExpectClass.kt");
@@ -234,6 +244,11 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
         @TestMetadata("TraitClassObjectField.kt")
         public void testTraitClassObjectField() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/compilationErrors/TraitClassObjectField.kt");
+        }
+
+        @TestMetadata("TwoOverrides.kt")
+        public void testTwoOverrides() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/compilationErrors/TwoOverrides.kt");
         }
 
         @TestMetadata("WrongAnnotations.kt")

@@ -34,8 +34,8 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.types.typeUtil.isNullabilityMismatch
 
 class SurroundWithNullCheckFix(
-        expression: KtExpression,
-        nullableExpression: KtExpression
+    expression: KtExpression,
+    nullableExpression: KtExpression
 ) : KotlinQuickFixAction<KtExpression>(expression), HighPriorityAction {
     private val nullableExpressionPointer = nullableExpression.createSmartPointer()
 
@@ -53,9 +53,9 @@ class SurroundWithNullCheckFix(
 
     companion object : KotlinSingleIntentionActionFactory() {
 
-        private fun KtExpression.hasAcceptableParent() = with (parent) {
+        private fun KtExpression.hasAcceptableParent() = with(parent) {
             this is KtBlockExpression || this.parent is KtIfExpression ||
-            this is KtWhenEntry || this.parent is KtLoopExpression
+                    this is KtWhenEntry || this.parent is KtLoopExpression
         }
 
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
@@ -65,12 +65,12 @@ class SurroundWithNullCheckFix(
 
             val parent = element.parent
             val nullableExpression =
-                    when (parent) {
-                        is KtDotQualifiedExpression -> parent.receiverExpression
-                        is KtBinaryExpression -> parent.left
-                        is KtCallExpression -> parent.calleeExpression
-                        else -> return null
-                    } as? KtReferenceExpression ?: return null
+                when (parent) {
+                    is KtDotQualifiedExpression -> parent.receiverExpression
+                    is KtBinaryExpression -> parent.left
+                    is KtCallExpression -> parent.calleeExpression
+                    else -> return null
+                } as? KtReferenceExpression ?: return null
 
             if (!nullableExpression.isStableSimpleExpression(context)) return null
 
@@ -104,17 +104,22 @@ class SurroundWithNullCheckFix(
         override fun createAction(diagnostic: Diagnostic): IntentionAction? {
             val typeMismatch = Errors.TYPE_MISMATCH.cast(diagnostic)
             val nullableExpression = typeMismatch.psiElement as? KtReferenceExpression ?: return null
-            val argument = nullableExpression.parent as? KtValueArgument ?: return null
-            val call = argument.getParentOfType<KtCallExpression>(true) ?: return null
-
-            val rootCall = call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
-            if (rootCall.parent !is KtBlockExpression) return null
-
+            val parent = nullableExpression.parent
+            val root = when (parent) {
+                is KtValueArgument -> {
+                    val call = parent.getParentOfType<KtCallExpression>(true) ?: return null
+                    call.getLastParentOfTypeInRow<KtQualifiedExpression>() ?: call
+                }
+                is KtBinaryExpression -> {
+                    if (parent.right != nullableExpression) return null
+                    parent
+                }
+                else -> return null
+            }
+            if (root.parent !is KtBlockExpression) return null
             if (!isNullabilityMismatch(expected = typeMismatch.a, actual = typeMismatch.b)) return null
-
             if (!nullableExpression.isStableSimpleExpression()) return null
-
-            return SurroundWithNullCheckFix(rootCall, nullableExpression)
+            return SurroundWithNullCheckFix(root, nullableExpression)
         }
     }
 }

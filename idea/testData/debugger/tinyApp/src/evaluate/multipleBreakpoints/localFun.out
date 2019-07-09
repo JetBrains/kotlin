@@ -5,6 +5,7 @@ LineBreakpoint created at localFun.kt:34
 LineBreakpoint created at localFun.kt:43
 LineBreakpoint created at localFun.kt:54
 LineBreakpoint created at localFun.kt:61
+LineBreakpoint created at localFun.kt:71
 Run Java
 Connected to the target VM
 localFun.kt:9
@@ -21,6 +22,8 @@ localFun.kt:54
 Compile bytecode for myLocalFun6()
 localFun.kt:61
 Compile bytecode for myLocalFun6() + 1
+localFun.kt:71
+Compile bytecode for myLocalFun8<Int>()
 Disconnected from the target VM
 
 Process finished with exit code 0

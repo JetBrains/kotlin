@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 inline fun test(crossinline l: () -> String) {
     {
         l()

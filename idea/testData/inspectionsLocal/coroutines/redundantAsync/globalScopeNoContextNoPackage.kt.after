@@ -1,0 +1,8 @@
+// WITH_RUNTIME
+
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+
+suspend fun test() {
+    withContext(Dispatchers.Default) { 42 }
+}

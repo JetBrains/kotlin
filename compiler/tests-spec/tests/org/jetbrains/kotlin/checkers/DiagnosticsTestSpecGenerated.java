@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.checkers;
@@ -1359,6 +1359,131 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Annotations extends AbstractDiagnosticsTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInAnnotations() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Annotation_classes extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInAnnotation_classes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg/1.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/annotation-classes/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+                }
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Type_annotations extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInType_annotations() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/1.kt");
+                    }
+
+                    @TestMetadata("10.kt")
+                    public void test10() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/10.kt");
+                    }
+
+                    @TestMetadata("11.kt")
+                    public void test11() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/11.kt");
+                    }
+
+                    @TestMetadata("2.kt")
+                    public void test2() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/2.kt");
+                    }
+
+                    @TestMetadata("3.kt")
+                    public void test3() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/3.kt");
+                    }
+
+                    @TestMetadata("4.kt")
+                    public void test4() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/4.kt");
+                    }
+
+                    @TestMetadata("5.kt")
+                    public void test5() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/5.kt");
+                    }
+
+                    @TestMetadata("6.kt")
+                    public void test6() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/6.kt");
+                    }
+
+                    @TestMetadata("7.kt")
+                    public void test7() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/7.kt");
+                    }
+
+                    @TestMetadata("8.kt")
+                    public void test8() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/8.kt");
+                    }
+
+                    @TestMetadata("9.kt")
+                    public void test9() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg/9.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/annotations/type-annotations/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                    }
+                }
+            }
+        }
+
         @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/contracts")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
@@ -2240,6 +2365,679 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         public void testAllFilesPresentInPos() throws Exception {
                             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/contracts/declarations/contractFunction/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                         }
+                    }
+                }
+            }
+        }
+
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Dfa extends AbstractDiagnosticsTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInDfa() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Neg extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                @TestMetadata("1.kt")
+                public void test1() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/1.kt");
+                }
+
+                @TestMetadata("10.kt")
+                public void test10() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/10.kt");
+                }
+
+                @TestMetadata("11.kt")
+                public void test11() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/11.kt");
+                }
+
+                @TestMetadata("12.kt")
+                public void test12() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/12.kt");
+                }
+
+                @TestMetadata("13.kt")
+                public void test13() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/13.kt");
+                }
+
+                @TestMetadata("14.kt")
+                public void test14() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/14.kt");
+                }
+
+                @TestMetadata("15.kt")
+                public void test15() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/15.kt");
+                }
+
+                @TestMetadata("16.kt")
+                public void test16() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/16.kt");
+                }
+
+                @TestMetadata("17.kt")
+                public void test17() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/17.kt");
+                }
+
+                @TestMetadata("18.kt")
+                public void test18() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/18.kt");
+                }
+
+                @TestMetadata("19.kt")
+                public void test19() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/19.kt");
+                }
+
+                @TestMetadata("2.kt")
+                public void test2() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/2.kt");
+                }
+
+                @TestMetadata("20.kt")
+                public void test20() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/20.kt");
+                }
+
+                @TestMetadata("21.kt")
+                public void test21() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/21.kt");
+                }
+
+                @TestMetadata("22.kt")
+                public void test22() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/22.kt");
+                }
+
+                @TestMetadata("23.kt")
+                public void test23() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/23.kt");
+                }
+
+                @TestMetadata("24.kt")
+                public void test24() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/24.kt");
+                }
+
+                @TestMetadata("25.kt")
+                public void test25() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/25.kt");
+                }
+
+                @TestMetadata("26.kt")
+                public void test26() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/26.kt");
+                }
+
+                @TestMetadata("27.kt")
+                public void test27() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/27.kt");
+                }
+
+                @TestMetadata("28.kt")
+                public void test28() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/28.kt");
+                }
+
+                @TestMetadata("29.kt")
+                public void test29() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/29.kt");
+                }
+
+                @TestMetadata("3.kt")
+                public void test3() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/3.kt");
+                }
+
+                @TestMetadata("30.kt")
+                public void test30() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/30.kt");
+                }
+
+                @TestMetadata("31.kt")
+                public void test31() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/31.kt");
+                }
+
+                @TestMetadata("32.kt")
+                public void test32() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/32.kt");
+                }
+
+                @TestMetadata("33.kt")
+                public void test33() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/33.kt");
+                }
+
+                @TestMetadata("34.kt")
+                public void test34() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/34.kt");
+                }
+
+                @TestMetadata("35.kt")
+                public void test35() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/35.kt");
+                }
+
+                @TestMetadata("36.kt")
+                public void test36() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/36.kt");
+                }
+
+                @TestMetadata("37.kt")
+                public void test37() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/37.kt");
+                }
+
+                @TestMetadata("38.kt")
+                public void test38() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/38.kt");
+                }
+
+                @TestMetadata("39.kt")
+                public void test39() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/39.kt");
+                }
+
+                @TestMetadata("4.kt")
+                public void test4() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/4.kt");
+                }
+
+                @TestMetadata("40.kt")
+                public void test40() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/40.kt");
+                }
+
+                @TestMetadata("41.kt")
+                public void test41() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/41.kt");
+                }
+
+                @TestMetadata("42.kt")
+                public void test42() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/42.kt");
+                }
+
+                @TestMetadata("43.kt")
+                public void test43() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/43.kt");
+                }
+
+                @TestMetadata("44.kt")
+                public void test44() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/44.kt");
+                }
+
+                @TestMetadata("45.kt")
+                public void test45() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/45.kt");
+                }
+
+                @TestMetadata("5.kt")
+                public void test5() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/5.kt");
+                }
+
+                @TestMetadata("6.kt")
+                public void test6() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/6.kt");
+                }
+
+                @TestMetadata("7.kt")
+                public void test7() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/7.kt");
+                }
+
+                @TestMetadata("8.kt")
+                public void test8() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/8.kt");
+                }
+
+                @TestMetadata("9.kt")
+                public void test9() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg/9.kt");
+                }
+
+                public void testAllFilesPresentInNeg() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Pos extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                @TestMetadata("1.kt")
+                public void test1() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/1.kt");
+                }
+
+                @TestMetadata("10.kt")
+                public void test10() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/10.kt");
+                }
+
+                @TestMetadata("11.kt")
+                public void test11() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/11.kt");
+                }
+
+                @TestMetadata("12.kt")
+                public void test12() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/12.kt");
+                }
+
+                @TestMetadata("13.kt")
+                public void test13() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/13.kt");
+                }
+
+                @TestMetadata("14.kt")
+                public void test14() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/14.kt");
+                }
+
+                @TestMetadata("15.kt")
+                public void test15() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/15.kt");
+                }
+
+                @TestMetadata("16.kt")
+                public void test16() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/16.kt");
+                }
+
+                @TestMetadata("17.kt")
+                public void test17() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/17.kt");
+                }
+
+                @TestMetadata("18.kt")
+                public void test18() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/18.kt");
+                }
+
+                @TestMetadata("19.kt")
+                public void test19() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/19.kt");
+                }
+
+                @TestMetadata("2.kt")
+                public void test2() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/2.kt");
+                }
+
+                @TestMetadata("20.kt")
+                public void test20() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/20.kt");
+                }
+
+                @TestMetadata("21.kt")
+                public void test21() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/21.kt");
+                }
+
+                @TestMetadata("22.kt")
+                public void test22() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/22.kt");
+                }
+
+                @TestMetadata("23.kt")
+                public void test23() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/23.kt");
+                }
+
+                @TestMetadata("24.kt")
+                public void test24() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/24.kt");
+                }
+
+                @TestMetadata("25.kt")
+                public void test25() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/25.kt");
+                }
+
+                @TestMetadata("26.kt")
+                public void test26() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/26.kt");
+                }
+
+                @TestMetadata("27.kt")
+                public void test27() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/27.kt");
+                }
+
+                @TestMetadata("28.kt")
+                public void test28() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/28.kt");
+                }
+
+                @TestMetadata("29.kt")
+                public void test29() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/29.kt");
+                }
+
+                @TestMetadata("3.kt")
+                public void test3() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/3.kt");
+                }
+
+                @TestMetadata("30.kt")
+                public void test30() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/30.kt");
+                }
+
+                @TestMetadata("31.kt")
+                public void test31() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/31.kt");
+                }
+
+                @TestMetadata("32.kt")
+                public void test32() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/32.kt");
+                }
+
+                @TestMetadata("33.kt")
+                public void test33() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/33.kt");
+                }
+
+                @TestMetadata("34.kt")
+                public void test34() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/34.kt");
+                }
+
+                @TestMetadata("35.kt")
+                public void test35() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/35.kt");
+                }
+
+                @TestMetadata("36.kt")
+                public void test36() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/36.kt");
+                }
+
+                @TestMetadata("37.kt")
+                public void test37() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/37.kt");
+                }
+
+                @TestMetadata("38.kt")
+                public void test38() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/38.kt");
+                }
+
+                @TestMetadata("39.kt")
+                public void test39() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/39.kt");
+                }
+
+                @TestMetadata("4.kt")
+                public void test4() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/4.kt");
+                }
+
+                @TestMetadata("40.kt")
+                public void test40() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/40.kt");
+                }
+
+                @TestMetadata("41.kt")
+                public void test41() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/41.kt");
+                }
+
+                @TestMetadata("42.kt")
+                public void test42() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/42.kt");
+                }
+
+                @TestMetadata("43.kt")
+                public void test43() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/43.kt");
+                }
+
+                @TestMetadata("44.kt")
+                public void test44() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/44.kt");
+                }
+
+                @TestMetadata("45.kt")
+                public void test45() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/45.kt");
+                }
+
+                @TestMetadata("46.kt")
+                public void test46() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/46.kt");
+                }
+
+                @TestMetadata("47.kt")
+                public void test47() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/47.kt");
+                }
+
+                @TestMetadata("48.kt")
+                public void test48() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/48.kt");
+                }
+
+                @TestMetadata("49.kt")
+                public void test49() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/49.kt");
+                }
+
+                @TestMetadata("5.kt")
+                public void test5() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/5.kt");
+                }
+
+                @TestMetadata("50.kt")
+                public void test50() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/50.kt");
+                }
+
+                @TestMetadata("51.kt")
+                public void test51() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/51.kt");
+                }
+
+                @TestMetadata("52.kt")
+                public void test52() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/52.kt");
+                }
+
+                @TestMetadata("53.kt")
+                public void test53() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/53.kt");
+                }
+
+                @TestMetadata("54.kt")
+                public void test54() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/54.kt");
+                }
+
+                @TestMetadata("55.kt")
+                public void test55() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/55.kt");
+                }
+
+                @TestMetadata("56.kt")
+                public void test56() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/56.kt");
+                }
+
+                @TestMetadata("57.kt")
+                public void test57() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/57.kt");
+                }
+
+                @TestMetadata("58.kt")
+                public void test58() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/58.kt");
+                }
+
+                @TestMetadata("59.kt")
+                public void test59() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/59.kt");
+                }
+
+                @TestMetadata("6.kt")
+                public void test6() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/6.kt");
+                }
+
+                @TestMetadata("60.kt")
+                public void test60() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/60.kt");
+                }
+
+                @TestMetadata("61.kt")
+                public void test61() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/61.kt");
+                }
+
+                @TestMetadata("62.kt")
+                public void test62() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/62.kt");
+                }
+
+                @TestMetadata("63.kt")
+                public void test63() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/63.kt");
+                }
+
+                @TestMetadata("64.kt")
+                public void test64() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/64.kt");
+                }
+
+                @TestMetadata("65.kt")
+                public void test65() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/65.kt");
+                }
+
+                @TestMetadata("66.kt")
+                public void test66() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/66.kt");
+                }
+
+                @TestMetadata("67.kt")
+                public void test67() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/67.kt");
+                }
+
+                @TestMetadata("68.kt")
+                public void test68() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/68.kt");
+                }
+
+                @TestMetadata("69.kt")
+                public void test69() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/69.kt");
+                }
+
+                @TestMetadata("7.kt")
+                public void test7() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/7.kt");
+                }
+
+                @TestMetadata("70.kt")
+                public void test70() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/70.kt");
+                }
+
+                @TestMetadata("71.kt")
+                public void test71() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/71.kt");
+                }
+
+                @TestMetadata("72.kt")
+                public void test72() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/72.kt");
+                }
+
+                @TestMetadata("73.kt")
+                public void test73() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/73.kt");
+                }
+
+                @TestMetadata("8.kt")
+                public void test8() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/8.kt");
+                }
+
+                @TestMetadata("9.kt")
+                public void test9() throws Exception {
+                    runTest("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos/9.kt");
+                }
+
+                public void testAllFilesPresentInPos() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/dfa/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+            }
+        }
+
+        @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Local_variables extends AbstractDiagnosticsTestSpec {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInLocal_variables() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+            }
+
+            @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class Type_parameters extends AbstractDiagnosticsTestSpec {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInType_parameters() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class Neg extends AbstractDiagnosticsTestSpec {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    @TestMetadata("1.kt")
+                    public void test1() throws Exception {
+                        runTest("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg/1.kt");
+                    }
+
+                    public void testAllFilesPresentInNeg() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/notLinked/local-variables/type-parameters/neg"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
                 }
             }

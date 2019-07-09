@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
+// WITH_RUNTIME
 // FILE: JavaAnn.java
 
 import java.lang.annotation.Retention;

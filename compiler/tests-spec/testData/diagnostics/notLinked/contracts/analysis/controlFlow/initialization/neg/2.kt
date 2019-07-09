@@ -1,5 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
 // SKIP_TXT
 
 /*
@@ -8,6 +7,7 @@
  * SECTIONS: contracts, analysis, controlFlow, initialization
  * NUMBER: 2
  * DESCRIPTION: val/var reassignment and/or uninitialized variable usages based on nested CallsInPlace effects with wrong invocation kind
+ * HELPERS: contractFunctions
  */
 
 // TESTCASE NUMBER: 1

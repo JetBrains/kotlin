@@ -60,11 +60,16 @@ internal class VariablesHighlightingVisitor(holder: AnnotationHolder, bindingCon
     }
 
     override fun visitParameter(parameter: KtParameter) {
-        val propertyDescriptor = bindingContext.get(BindingContext.PRIMARY_CONSTRUCTOR_PARAMETER, parameter)
+        val propertyDescriptor = bindingContext.get(PRIMARY_CONSTRUCTOR_PARAMETER, parameter)
         if (propertyDescriptor == null) {
             visitVariableDeclaration(parameter)
         }
         super.visitParameter(parameter)
+    }
+
+    override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) {
+        visitVariableDeclaration(multiDeclarationEntry)
+        super.visitDestructuringDeclarationEntry(multiDeclarationEntry)
     }
 
     private fun getSmartCastTarget(expression: KtExpression): PsiElement {

@@ -8,11 +8,11 @@ object WithFunctionInBase {
 
     public class C {
         // error-scope
-        val data: <!DEPRECATED_ACCESS_BY_SHORT_NAME, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Data<!> = Data()
+        val data: <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEPRECATED_ACCESS_BY_SHORT_NAME!>Data<!> = Data()
 
         open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!>() {
             // error-scope
-            fun foo(): <!DEPRECATED_ACCESS_BY_SHORT_NAME, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Int<!> = 42
+            fun foo(): <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEPRECATED_ACCESS_BY_SHORT_NAME!>Int<!> = 42
         }
 
         companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
@@ -30,11 +30,11 @@ object WithPropertyInBase {
 
         open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!>() {
             // error-scope
-            val foo: <!DEPRECATED_ACCESS_BY_SHORT_NAME, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Int<!> = 42
+            val foo: <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEPRECATED_ACCESS_BY_SHORT_NAME!>Int<!> = 42
         }
 
         // error-scope
-        val data: <!DEPRECATED_ACCESS_BY_SHORT_NAME, DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE!>Data<!> = Data()
+        val data: <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, DEPRECATED_ACCESS_BY_SHORT_NAME!>Data<!> = Data()
 
         companion <!CYCLIC_SCOPES_WITH_COMPANION!>object<!> : DerivedAbstract()
     }
@@ -50,7 +50,7 @@ object WithPropertyInBaseDifferentOrder {
     class Data
 
     public class C {
-        // Now it is succesfully resolved (vs. ErrorType like in the previous case)
+        // Now it is successfully resolved (vs. ErrorType like in the previous case)
         val data: Data = Data()
 
         open class <!CYCLIC_SCOPES_WITH_COMPANION!>Base<!>() {

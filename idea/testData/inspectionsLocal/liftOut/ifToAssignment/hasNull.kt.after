@@ -1,0 +1,11 @@
+fun bar(i: Int) {
+    var str: String? = null
+
+    str = if (i == 1) {
+        null
+    } else if (i == 2) {
+        "2"
+    } else {
+        "3"
+    }
+}

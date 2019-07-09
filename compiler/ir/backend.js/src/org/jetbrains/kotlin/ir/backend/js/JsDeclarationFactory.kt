@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.backend.js
 
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
@@ -32,7 +32,7 @@ class JsDeclarationFactory : DeclarationFactory {
     private val outerThisFieldSymbols = HashMap<IrClass, IrField>()
     private val innerClassConstructors = HashMap<IrConstructor, IrConstructor>()
 
-    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, type: IrType): IrField = TODO()
+    override fun getFieldForEnumEntry(enumEntry: IrEnumEntry, entryType: IrType): IrField = TODO()
 
     override fun getOuterThisField(innerClass: IrClass): IrField =
         if (!innerClass.isInner) throw AssertionError("Class is not inner: ${innerClass.dump()}")
@@ -51,7 +51,7 @@ class JsDeclarationFactory : DeclarationFactory {
         }
 
     private fun createPropertyWithBackingField(name: Name, visibility: Visibility, parent: IrClass, fieldType: IrType, origin: IrDeclarationOrigin): IrField {
-        val descriptor = WrappedPropertyDescriptor()
+        val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
 
         return IrFieldImpl(
@@ -95,13 +95,13 @@ class JsDeclarationFactory : DeclarationFactory {
             symbol,
             oldConstructor.name,
             oldConstructor.visibility,
+            oldConstructor.returnType,
             oldConstructor.isInline,
             oldConstructor.isExternal,
             oldConstructor.isPrimary
         ).also {
             descriptor.bind(it)
             it.parent = oldConstructor.parent
-            it.returnType = oldConstructor.returnType
         }
 
         newConstructor.copyTypeParametersFrom(oldConstructor)
@@ -112,7 +112,7 @@ class JsDeclarationFactory : DeclarationFactory {
         val newValueParameters = mutableListOf(outerThisValueParameter)
 
         for (p in oldConstructor.valueParameters) {
-            newValueParameters += p.copyTo(newConstructor, 1)
+            newValueParameters += p.copyTo(newConstructor, index = p.index + 1)
         }
 
         newConstructor.valueParameters += newValueParameters

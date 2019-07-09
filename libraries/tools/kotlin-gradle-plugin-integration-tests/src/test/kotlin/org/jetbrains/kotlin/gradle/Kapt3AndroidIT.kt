@@ -1,10 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
-import org.jetbrains.kotlin.gradle.util.isLegacyAndroidGradleVersion
-import org.jetbrains.kotlin.gradle.util.getFileByName
-import org.jetbrains.kotlin.gradle.util.modify
+import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.junit.Assert
 import org.junit.Test
+import java.io.File
 
 class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
     override fun kaptOptions(): KaptOptions =
@@ -12,19 +12,84 @@ class Kapt3WorkersAndroid32IT : Kapt3Android32IT() {
 }
 
 open class Kapt3Android32IT : Kapt3AndroidIT() {
-    override val androidGradlePluginVersion: String
-        get() = "3.2.0"
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_2_0
 
     override val defaultGradleVersion: GradleVersionRequired
         get() = GradleVersionRequired.AtLeast("4.6")
 }
 
-open class Kapt3AndroidIT : Kapt3BaseIT() {
-    protected open val androidGradlePluginVersion: String
-        get() = "2.3.0"
+open class Kapt3Android33IT : Kapt3AndroidIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_3_2
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.1")
+        get() = GradleVersionRequired.AtLeast("5.2")
+
+    @Test
+    fun testAndroidxNavigationSafeArgs() = with(Project("androidx-navigation-safe-args", directoryPrefix = "kapt2")) {
+        // KT-30735
+        build("assembleDebug") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/navigation-args/debug/test/androidx/navigation/StartFragmentDirections.java")
+            assertFileExists("build/tmp/kotlin-classes/debug/test/androidx/navigation/StartFragmentKt.class")
+        }
+    }
+
+    /** Regression test for Android projects and KT-31127. */
+    @Test
+    fun testKotlinProcessorUsingFiler() {
+        val project = Project("AndroidLibraryKotlinProject").apply {
+            setupWorkingDir()
+            gradleBuildScript().appendText(
+                """
+                apply plugin: 'kotlin-kapt'
+                android {
+                    defaultConfig.javaCompileOptions.annotationProcessorOptions.includeCompileClasspath = false
+
+                    libraryVariants.all {
+                        it.generateBuildConfig.enabled = false
+                    }
+                }
+
+                dependencies {
+                    kapt "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                    implementation "org.jetbrains.kotlin:annotation-processor-example:${"$"}kotlin_version"
+                }
+            """.trimIndent()
+            )
+
+            // The test must not contain any java sources in order to detect the issue.
+            Assert.assertEquals(emptyList<File>(), projectDir.allJavaFiles().toList())
+            projectDir.getFileByName("Dummy.kt").modify {
+                it.replace("class Dummy", "@example.KotlinFilerGenerated class Dummy")
+            }
+        }
+
+        project.build("assembleDebug") {
+            assertSuccessful()
+            assertFileExists("build/generated/source/kapt/debug/demo/DummyGenerated.kt")
+            assertTasksExecuted(":compileDebugKotlin")
+            assertTasksSkipped(":compileDebugJavaWithJavac")
+        }
+    }
+}
+
+class Kapt3Android31IT : Kapt3AndroidIT() {
+    override val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_1_0
+
+    // there is a weird validation exception in testICWithAnonymousClasses with 5.0 todo: fix it
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.InRange("4.4", "4.10.2")
+}
+
+open class Kapt3AndroidIT : Kapt3BaseIT() {
+    protected open val androidGradlePluginVersion: AGPVersion
+        get() = AGPVersion.v3_0_0
+
+    override val defaultGradleVersion: GradleVersionRequired
+        get() = GradleVersionRequired.Until("4.10.2")
 
     override fun defaultBuildOptions() =
         super.defaultBuildOptions().copy(
@@ -42,19 +107,14 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("app/build/generated/source/kapt/debug/org/example/kotlin/butterknife/SimpleActivity\$\$ViewBinder.java")
 
             val butterknifeJavaClassesDir =
-                if (isLegacyAndroidGradleVersion(androidGradlePluginVersion))
-                    "app/build/intermediates/classes/debug/org/example/kotlin/butterknife/"
-                else
+                if (androidGradlePluginVersion >= AGPVersion.v3_2_0)
                     "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/org/example/kotlin/butterknife/"
+                else
+                    "app/build/intermediates/classes/debug/org/example/kotlin/butterknife/"
 
             assertFileExists(butterknifeJavaClassesDir + "SimpleActivity\$\$ViewBinder.class")
 
             assertFileExists("app/build/tmp/kotlin-classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // we don't copy classes with new AGP
-                assertFileExists("app/build/intermediates/classes/debug/org/example/kotlin/butterknife/SimpleAdapter\$ViewHolder.class")
-            }
         }
 
         project.build("assembleDebug") {
@@ -74,18 +134,14 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
             assertFileExists("app/build/generated/source/kapt/debug/com/example/dagger/kotlin/ui/HomeActivity_MembersInjector.java")
 
             val daggerJavaClassesDir =
-                if (isLegacyAndroidGradleVersion(androidGradlePluginVersion))
-                    "app/build/intermediates/classes/debug/com/example/dagger/kotlin/"
-                else
+                if (androidGradlePluginVersion >= AGPVersion.v3_2_0)
                     "app/build/intermediates/javac/debug/compileDebugJavaWithJavac/classes/com/example/dagger/kotlin/"
+                else
+                    "app/build/intermediates/classes/debug/com/example/dagger/kotlin/"
 
             assertFileExists(daggerJavaClassesDir + "DaggerApplicationComponent.class")
 
             assertFileExists("app/build/tmp/kotlin-classes/debug/com/example/dagger/kotlin/AndroidModule.class")
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                // we don't copy classes with new AGP
-                assertFileExists("app/build/intermediates/classes/debug/com/example/dagger/kotlin/AndroidModule.class")
-            }
         }
     }
 
@@ -128,9 +184,36 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
+    fun testInterProjectIC() = with(Project("android-inter-project-ic", directoryPrefix = "kapt2")) {
+        build("assembleDebug") {
+            assertSuccessful()
+            assertKaptSuccessful()
+        }
+
+        fun modifyAndCheck(utilFileName: String, useUtilFileName: String) {
+            val utilKt = projectDir.getFileByName(utilFileName)
+            utilKt.modify {
+                it.checkedReplace("Int", "Number")
+            }
+
+            build("assembleDebug") {
+                assertSuccessful()
+                val affectedFile = projectDir.getFileByName(useUtilFileName)
+                assertCompiledKotlinSources(
+                    relativize(affectedFile),
+                    tasks = listOf("app:kaptGenerateStubsDebugKotlin", "app:compileDebugKotlin")
+                )
+            }
+        }
+
+        modifyAndCheck("libAndroidUtil.kt", "useLibAndroidUtil.kt")
+        modifyAndCheck("libJvmUtil.kt", "useLibJvmUtil.kt")
+    }
+
+    @Test
     fun testICWithAnonymousClasses() {
         val project = Project("icAnonymousTypes", directoryPrefix = "kapt2")
-        setupDataBinding(project, null)
+        setupDataBinding(project)
 
         project.build("assembleDebug") {
             assertSuccessful()
@@ -150,20 +233,29 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
     }
 
     @Test
-    open fun testDatabinding() {
+    fun testDatabinding() {
         val project = Project("android-databinding", directoryPrefix = "kapt2")
-        setupDataBinding(project, "app")
+        setupDataBinding(project)
 
         project.build("assembleDebug", "assembleAndroidTest") {
             assertSuccessful()
             assertKaptSuccessful()
             assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/BR.java")
-            assertFileExists("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
 
-            if (isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
-            } else {
-                assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
+            when {
+                output.contains("-Aandroid.databinding.enableV2=1") -> {
+                    // databinding compiler v2 was introduced in AGP 3.1.0, was enabled by default in AGP 3.2.0
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBindingImpl.java")
+                }
+                androidGradlePluginVersion == AGPVersion.v3_1_0 -> {
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapperImpl.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+                }
+                else -> {
+                    assertNoSuchFile("library/build/generated/source/kapt/debugAndroidTest/android/databinding/DataBinderMapper.java")
+                    assertFileExists("app/build/generated/source/kapt/debug/com/example/databinding/databinding/ActivityTestBinding.java")
+                }
             }
 
             // KT-23866
@@ -171,25 +263,22 @@ open class Kapt3AndroidIT : Kapt3BaseIT() {
         }
     }
 
-    private fun setupDataBinding(project: Project, projectName: String?) {
-        if (!isLegacyAndroidGradleVersion(androidGradlePluginVersion)) {
-            project.setupWorkingDir()
+    private fun setupDataBinding(project: Project) {
+        project.setupWorkingDir()
 
-            // With new AGP, there's no need in the Databinding kapt dependency:
-            project.gradleBuildScript(projectName).modify {
-                it.lines().filterNot {
-                    it.contains("kapt \"com.android.databinding:compiler")
-                }.joinToString("\n")
+        if (androidGradlePluginVersion >= AGPVersion.v3_2_0) {
+            project.gradleBuildScript().modify {
+                it + "\n\n" + """
+                    allprojects {
+                        plugins.withId("kotlin-kapt") {
+                            println("${'$'}project android.databinding.enableV2=${'$'}{project.findProperty('android.databinding.enableV2')}")
+
+                            // With new AGP, there's no need in the Databinding kapt dependency:
+                            configurations.kapt.exclude group: "com.android.databinding", module: "compiler"
+                        }
+                    }
+                """.trimIndent()
             }
-
-            // Workaround for KT-24915
-            project.gradleBuildScript(projectName).appendText(
-                "\n" + """
-               afterEvaluate {
-                    kaptDebugKotlin.dependsOn dataBindingExportFeaturePackageIdsDebug
-               }
-            """.trimIndent()
-            )
         }
     }
 }

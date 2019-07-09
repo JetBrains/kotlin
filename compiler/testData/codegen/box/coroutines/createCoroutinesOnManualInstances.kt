@@ -1,6 +1,4 @@
-// LANGUAGE_VERSION: 1.3
 // IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
 import helpers.ContinuationAdapter

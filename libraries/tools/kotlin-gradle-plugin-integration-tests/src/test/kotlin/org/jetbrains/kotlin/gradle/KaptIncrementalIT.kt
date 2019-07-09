@@ -6,12 +6,12 @@ import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
 import org.junit.Test
 
-class KaptIncrementalIT : BaseGradleIT() {
+open class KaptIncrementalIT : BaseGradleIT() {
     companion object {
         private val EXAMPLE_ANNOTATION_REGEX = "@(field:)?example.ExampleAnnotation".toRegex()
     }
 
-    private fun getProject() =
+    open fun getProject() =
         Project(
             "kaptIncrementalCompilationProject",
             GradleVersionRequired.None
@@ -25,13 +25,13 @@ class KaptIncrementalIT : BaseGradleIT() {
 
     @Test
     fun testAddNewLine() {
-        val project = Project("simple", directoryPrefix = "kapt2")
+        val project = getProject()
 
         project.build("clean", "build") {
             assertSuccessful()
         }
 
-        project.projectFile("test.kt").modify { "\n$it" }
+        project.projectFile("useB.kt").modify { "\n$it" }
         project.build("build") {
             assertSuccessful()
             assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
@@ -68,6 +68,32 @@ class KaptIncrementalIT : BaseGradleIT() {
                 ":kaptKotlin",
                 ":kaptGenerateStubsKotlin"
             )
+        }
+    }
+
+    @Test
+    fun testCompileError() {
+        val project = getProject()
+
+        project.build("build") {
+            assertSuccessful()
+        }
+
+        val bKt = project.projectDir.getFileByName("B.kt")
+        val errorKt = bKt.resolveSibling("error.kt")
+        errorKt.writeText("<COMPILE_ERROR_MARKER>")
+
+        project.build("build") {
+            assertFailed()
+            assertTasksFailed(":kaptGenerateStubsKotlin")
+        }
+
+        errorKt.delete()
+        bKt.modify { "$it\n" }
+        project.build("build") {
+            assertSuccessful()
+            assertCompiledKotlinSources(project.relativize(bKt))
+            assertTasksExecuted(":kaptGenerateStubsKotlin", ":compileKotlin")
         }
     }
 

@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ide.konan.gradle
@@ -19,13 +19,16 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     private val nativeSourceName get() = "$nativeTargetName$productionSuffix"
     val nativeTestName get() = "$nativeTargetName$testSuffix"
 
+    private val nativeReleaseExecutableRunTaskame get() = ":runReleaseExecutable${nativeTargetName.capitalize()}"
+    private val nativeDebugExecutableRunTaskame get() = ":runDebugExecutable${nativeTargetName.capitalize()}"
+
     override fun getNodeIcon(): Icon = KotlinIcons.NATIVE
 
     override fun getBuilderId() = "kotlin.gradle.multiplatform.native"
 
-    override fun getPresentableName() = "Kotlin/Native"
+    override fun getPresentableName() = "Native | Gradle"
 
-    override fun getDescription() = "Kotlin module for native binaries"
+    override fun getDescription() = "Gradle-based Kotlin project for native binaries"
 
     override val notImportedCommonSourceSets = true
 
@@ -70,17 +73,18 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
     override fun buildMultiPlatformPart(): String {
         return """
             kotlin {
-                targets {
-                    // For ARM, preset should be changed to presets.iosArm32 or presets.iosArm64
-                    // For Linux, preset should be changed to e.g. presets.linuxX64
-                    // For MacOS, preset should be changed to e.g. presets.macosX64
-                    fromPreset(presets.$nativePresetName, '$nativeTargetName')
-
-                    configure([$nativeTargetName]) {
-                        // Comment to generate Kotlin/Native library (KLIB) instead of executable file:
-                        compilations.main.outputKinds 'EXECUTABLE'
-                        // Change to specify fully qualified name of your application's entry point:
-                        compilations.main.entryPoint 'sample.main'
+                // For ARM, should be changed to iosArm32 or iosArm64
+                // For Linux, should be changed to e.g. linuxX64
+                // For MacOS, should be changed to e.g. macosX64
+                // For Windows, should be changed to e.g. mingwX64
+                $nativePresetName("$nativeTargetName") {
+                    binaries {
+                        executable {
+                            // Change to specify fully qualified name of your application's entry point:
+                           entryPoint = 'sample.main'
+                            // Specify command-line arguments, if necessary:
+                            runTask?.args('')
+                        }
                     }
                 }
                 sourceSets {
@@ -93,17 +97,9 @@ class KotlinGradleNativeMultiplatformModuleBuilder : KotlinGradleAbstractMultipl
                 }
             }
 
-            task runProgram {
-                def buildType = 'RELEASE' // Change to 'DEBUG' to run application with debug symbols.
-                dependsOn kotlin.targets.$nativeTargetName.compilations.main.linkTaskName('EXECUTABLE', buildType)
-                doLast {
-                    def programFile = kotlin.targets.$nativeTargetName.compilations.main.getBinary('EXECUTABLE', buildType)
-                    exec {
-                        executable programFile
-                        args ''
-                    }
-                }
-            }
+            // Use the following Gradle tasks to run your application:
+            // $nativeReleaseExecutableRunTaskame - without debug symbols
+            // $nativeDebugExecutableRunTaskame - with debug symbols
         """.trimIndent()
     }
 }

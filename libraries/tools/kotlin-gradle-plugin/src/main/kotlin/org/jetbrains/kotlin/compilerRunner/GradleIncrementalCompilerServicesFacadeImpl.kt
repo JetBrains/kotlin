@@ -1,21 +1,24 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.compilerRunner
 
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.reportFromDaemon
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.GradleBufferingMessageCollector
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import java.io.Serializable
 import java.rmi.Remote
 import java.rmi.server.UnicastRemoteObject
 
 internal open class GradleCompilerServicesFacadeImpl(
     private val log: KotlinLogger,
-    private val compilerMessageCollector: MessageCollector,
+    // RMI messages are reported from RMI threads.
+    // Messages reported from non-Gradle threads are not grouped and not shown in build scans.
+    // To fix this, we store all messages in a buffer, then report them from a Gradle thread
+    private val compilerMessageCollector: GradleBufferingMessageCollector,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : UnicastRemoteObject(port, LoopbackNetworkInterface.clientLoopbackSocketFactory, LoopbackNetworkInterface.serverLoopbackSocketFactory),
     CompilerServicesFacadeBase,
@@ -44,7 +47,7 @@ internal open class GradleCompilerServicesFacadeImpl(
 
 internal class GradleIncrementalCompilerServicesFacadeImpl(
     log: KotlinLogger,
-    messageCollector: MessageCollector,
+    messageCollector: GradleBufferingMessageCollector,
     port: Int = SOCKET_ANY_FREE_PORT
 ) : GradleCompilerServicesFacadeImpl(log, messageCollector, port),
     IncrementalCompilerServicesFacade

@@ -5,7 +5,7 @@ class Num<Tn : Number>(val x: Tn)
 typealias N<T> = Num<T>
 
 val test0 = N(1)
-val test1 = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>N<!>("1")
+val test1 = <!OI;TYPE_INFERENCE_UPPER_BOUND_VIOLATED!>N<!>(<!NI;TYPE_MISMATCH!>"1"<!>)
 
 
 class Cons<T>(val head: T, val tail: Cons<T>?)

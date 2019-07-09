@@ -1,7 +1,0 @@
-fun test() {
-    val x =
-            <spot>"""
-                |a
-                |b
-            """.trimMargin()</spot>
-}

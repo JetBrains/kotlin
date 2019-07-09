@@ -196,6 +196,102 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     )
     var allowResultReturnType: Boolean by FreezableVar(false)
 
+    @Argument(
+        value = "-Xlist-phases",
+        description = "List backend phases"
+    )
+    var listPhases: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xdisable-phases",
+        description = "Disable backend phases"
+    )
+    var disablePhases: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xverbose-phases",
+        description = "Be verbose while performing these backend phases"
+    )
+    var verbosePhases: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-dump-before",
+        description = "Dump backend state before these phases"
+    )
+    var phasesToDumpBefore: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-dump-after",
+        description = "Dump backend state after these phases"
+    )
+    var phasesToDumpAfter: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-dump",
+        description = "Dump backend state both before and after these phases"
+    )
+    var phasesToDump: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xexclude-from-dumping",
+        description = "Names of elements that should not be dumped"
+    )
+    var namesExcludedFromDumping: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xdump-directory",
+        description = "Dump backend state into directory"
+    )
+    var dumpDirectory: String? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xdump-fqname",
+        description = "FqName of declaration that should be dumped"
+    )
+    var dumpOnlyFqName: String? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-validate-before",
+        description = "Validate backend state before these phases"
+    )
+    var phasesToValidateBefore: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-validate-after",
+        description = "Validate backend state after these phases"
+    )
+    var phasesToValidateAfter: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xphases-to-validate",
+        description = "Validate backend state both before and after these phases"
+    )
+    var phasesToValidate: Array<String>? by FreezableVar(null)
+
+    @Argument(
+        value = "-Xprofile-phases",
+        description = "Profile backend phases"
+    )
+    var profilePhases: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xcheck-phase-conditions",
+        description = "Check pre- and postconditions on phases"
+    )
+    var checkPhaseConditions: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xcheck-sticky-phase-conditions",
+        description = "Run sticky condition checks on subsequent phases as well. Implies -Xcheck-phase-conditions"
+    )
+    var checkStickyPhaseConditions: Boolean by FreezableVar(false)
+
+    @Argument(
+        value = "-Xuse-fir",
+        description = "Compile using Front-end IR. Warning: this feature is far from being production-ready"
+    )
+    var useFir: Boolean by FreezableVar(false)
+
     open fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         return HashMap<AnalysisFlag<*>, Any>().apply {
             put(AnalysisFlags.skipMetadataVersionCheck, skipMetadataVersionCheck)
@@ -227,7 +323,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
 
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
-                put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
+                put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
             }
 
             if (legacySmartCastAfterTry) {
@@ -265,20 +361,20 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     private fun HashMap<LanguageFeature, LanguageFeature.State>.configureLanguageFeaturesFromInternalArgs(collector: MessageCollector) {
         val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
 
-        var samConversionsExplicitlyPassed = false
+        var standaloneSamConversionFeaturePassedExplicitly = false
         for ((feature, state) in internalArguments.filterIsInstance<ManualLanguageFeatureSetting>()) {
-            if (feature == LanguageFeature.SamConversionForKotlinFunctions) {
-                samConversionsExplicitlyPassed = true
-            }
-
             put(feature, state)
             if (state == LanguageFeature.State.ENABLED && feature.forcesPreReleaseBinariesIfEnabled()) {
                 featuresThatForcePreReleaseBinaries += feature
             }
+
+            if (feature == LanguageFeature.SamConversionPerArgument) {
+                standaloneSamConversionFeaturePassedExplicitly = true
+            }
         }
 
-        if (!samConversionsExplicitlyPassed && this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
-            put(LanguageFeature.SamConversionForKotlinFunctions, LanguageFeature.State.ENABLED)
+        if (!standaloneSamConversionFeaturePassedExplicitly && this[LanguageFeature.NewInference] == LanguageFeature.State.ENABLED) {
+            put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
         }
 
         if (featuresThatForcePreReleaseBinaries.isNotEmpty()) {
@@ -289,7 +385,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         }
     }
 
-    fun configureLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
+    fun toLanguageVersionSettings(collector: MessageCollector): LanguageVersionSettings {
 
         // If only "-api-version" is specified, language version is assumed to be the latest stable
         val languageVersion = parseVersion(collector, languageVersion, "language") ?: LanguageVersion.LATEST_STABLE

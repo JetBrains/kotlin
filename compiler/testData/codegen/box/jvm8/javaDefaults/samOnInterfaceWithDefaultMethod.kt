@@ -1,5 +1,4 @@
 // SKIP_JDK6
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 // FILE: JavaCall.java
 

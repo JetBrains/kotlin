@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 
 fun box() : String {
   val array = ArrayList<String>()

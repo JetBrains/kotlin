@@ -1,4 +1,3 @@
-
 fun barB(vararg args: Byte) = args
 fun barC(vararg args: Char) = args
 fun barD(vararg args: Double) = args

@@ -15,6 +15,7 @@
  */
 
 @file:JvmName("SpecialBuiltinMembers")
+
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
 import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties.getBuiltinSpecialPropertyGetterName
-import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.load.kotlin.computeJvmSignature
@@ -45,26 +45,27 @@ private fun FqNameUnsafe.childSafe(name: String): FqName = child(Name.identifier
 private data class NameAndSignature(val name: Name, val signature: String)
 
 private fun String.method(name: String, parameters: String, returnType: String) =
-        NameAndSignature(
-                Name.identifier(name),
-                SignatureBuildingComponents.signature(this@method, "$name($parameters)$returnType"))
+    NameAndSignature(
+        Name.identifier(name),
+        SignatureBuildingComponents.signature(this@method, "$name($parameters)$returnType")
+    )
 
 object BuiltinSpecialProperties {
     val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP = mapOf(
-            BUILTIN_NAMES._enum.childSafe("name") to Name.identifier("name"),
-            BUILTIN_NAMES._enum.childSafe("ordinal") to Name.identifier("ordinal"),
-            BUILTIN_NAMES.collection.child("size") to Name.identifier("size"),
-            BUILTIN_NAMES.map.child("size") to Name.identifier("size"),
-            BUILTIN_NAMES.charSequence.childSafe("length") to Name.identifier("length"),
-            BUILTIN_NAMES.map.child("keys") to Name.identifier("keySet"),
-            BUILTIN_NAMES.map.child("values") to Name.identifier("values"),
-            BUILTIN_NAMES.map.child("entries") to Name.identifier("entrySet")
+        BUILTIN_NAMES._enum.childSafe("name") to Name.identifier("name"),
+        BUILTIN_NAMES._enum.childSafe("ordinal") to Name.identifier("ordinal"),
+        BUILTIN_NAMES.collection.child("size") to Name.identifier("size"),
+        BUILTIN_NAMES.map.child("size") to Name.identifier("size"),
+        BUILTIN_NAMES.charSequence.childSafe("length") to Name.identifier("length"),
+        BUILTIN_NAMES.map.child("keys") to Name.identifier("keySet"),
+        BUILTIN_NAMES.map.child("values") to Name.identifier("values"),
+        BUILTIN_NAMES.map.child("entries") to Name.identifier("entrySet")
     )
 
     private val GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP: Map<Name, List<Name>> =
-            PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.entries
-                    .map { Pair(it.key.shortName(), it.value) }
-                    .groupBy({ it.second }, { it.first })
+        PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.entries
+            .map { Pair(it.key.shortName(), it.value) }
+            .groupBy({ it.second }, { it.first })
 
     private val SPECIAL_FQ_NAMES = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
     internal val SPECIAL_SHORT_NAMES = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
@@ -83,7 +84,7 @@ object BuiltinSpecialProperties {
     }
 
     fun getPropertyNameCandidatesBySpecialGetterName(name1: Name): List<Name> =
-            GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
+        GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
 
     fun CallableMemberDescriptor.getBuiltinSpecialPropertyGetterName(): String? {
         assert(KotlinBuiltIns.isBuiltIn(this)) { "This method is defined only for builtin members, but $this found" }
@@ -95,7 +96,7 @@ object BuiltinSpecialProperties {
 
 object BuiltinMethodsWithSpecialGenericSignature {
     private val ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES = setOf(
-            "containsAll", "removeAll", "retainAll"
+        "containsAll", "removeAll", "retainAll"
     ).map { "java/util/Collection".method(it, "Ljava/util/Collection;", JvmPrimitiveType.BOOLEAN.desc) }
 
     private val ERASED_COLLECTION_PARAMETER_SIGNATURES = ERASED_COLLECTION_PARAMETER_NAME_AND_SIGNATURES.map { it.signature }
@@ -112,36 +113,40 @@ object BuiltinMethodsWithSpecialGenericSignature {
     }
 
     private val GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP =
-            signatures {
-                mapOf(
-                    javaUtil("Collection")
-                            .method("contains", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)             to TypeSafeBarrierDescription.FALSE,
-                    javaUtil("Collection")
-                            .method("remove", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)               to TypeSafeBarrierDescription.FALSE,
+        signatures {
+            mapOf(
+                javaUtil("Collection")
+                    .method("contains", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc) to TypeSafeBarrierDescription.FALSE,
+                javaUtil("Collection")
+                    .method("remove", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc) to TypeSafeBarrierDescription.FALSE,
 
-                    javaUtil("Map")
-                            .method("containsKey", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)          to TypeSafeBarrierDescription.FALSE,
-                    javaUtil("Map")
-                            .method("containsValue", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc)        to TypeSafeBarrierDescription.FALSE,
-                    javaUtil("Map")
-                            .method("remove", "Ljava/lang/Object;Ljava/lang/Object;",
-                                    JvmPrimitiveType.BOOLEAN.desc)                                               to TypeSafeBarrierDescription.FALSE,
+                javaUtil("Map")
+                    .method("containsKey", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc) to TypeSafeBarrierDescription.FALSE,
+                javaUtil("Map")
+                    .method("containsValue", "Ljava/lang/Object;", JvmPrimitiveType.BOOLEAN.desc) to TypeSafeBarrierDescription.FALSE,
+                javaUtil("Map")
+                    .method(
+                        "remove", "Ljava/lang/Object;Ljava/lang/Object;",
+                        JvmPrimitiveType.BOOLEAN.desc
+                    ) to TypeSafeBarrierDescription.FALSE,
 
-                    javaUtil("Map")
-                            .method("getOrDefault", "Ljava/lang/Object;Ljava/lang/Object;",
-                                    "Ljava/lang/Object;")                                                        to TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT,
+                javaUtil("Map")
+                    .method(
+                        "getOrDefault", "Ljava/lang/Object;Ljava/lang/Object;",
+                        "Ljava/lang/Object;"
+                    ) to TypeSafeBarrierDescription.MAP_GET_OR_DEFAULT,
 
-                    javaUtil("Map")
-                            .method("get", "Ljava/lang/Object;", "Ljava/lang/Object;")                           to TypeSafeBarrierDescription.NULL,
-                    javaUtil("Map")
-                            .method("remove", "Ljava/lang/Object;", "Ljava/lang/Object;")                        to TypeSafeBarrierDescription.NULL,
+                javaUtil("Map")
+                    .method("get", "Ljava/lang/Object;", "Ljava/lang/Object;") to TypeSafeBarrierDescription.NULL,
+                javaUtil("Map")
+                    .method("remove", "Ljava/lang/Object;", "Ljava/lang/Object;") to TypeSafeBarrierDescription.NULL,
 
-                    javaUtil("List")
-                            .method("indexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)                  to TypeSafeBarrierDescription.INDEX,
-                    javaUtil("List")
-                            .method("lastIndexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc)              to TypeSafeBarrierDescription.INDEX
-                )
-            }
+                javaUtil("List")
+                    .method("indexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc) to TypeSafeBarrierDescription.INDEX,
+                javaUtil("List")
+                    .method("lastIndexOf", "Ljava/lang/Object;", JvmPrimitiveType.INT.desc) to TypeSafeBarrierDescription.INDEX
+            )
+        }
 
     private val SIGNATURE_TO_DEFAULT_VALUES_MAP = GENERIC_PARAMETERS_METHODS_TO_DEFAULT_VALUES_MAP.mapKeys { it.key.signature }
     private val ERASED_VALUE_PARAMETERS_SHORT_NAMES: Set<Name>
@@ -158,7 +163,7 @@ object BuiltinMethodsWithSpecialGenericSignature {
 
     @JvmStatic
     fun getOverriddenBuiltinFunctionWithErasedValueParametersInJava(
-            functionDescriptor: FunctionDescriptor
+        functionDescriptor: FunctionDescriptor
     ): FunctionDescriptor? {
         if (!functionDescriptor.name.sameAsBuiltinMethodWithErasedValueParameters) return null
         return functionDescriptor.firstOverridden { it.hasErasedValueParametersInJava } as FunctionDescriptor?
@@ -191,17 +196,17 @@ object BuiltinMethodsWithSpecialGenericSignature {
         if (name !in ERASED_VALUE_PARAMETERS_SHORT_NAMES) return null
 
         val builtinSignature = firstOverridden { it is FunctionDescriptor && it.hasErasedValueParametersInJava }?.computeJvmSignature()
-                ?: return null
+            ?: return null
 
         if (builtinSignature in ERASED_COLLECTION_PARAMETER_SIGNATURES) return SpecialSignatureInfo.ONE_COLLECTION_PARAMETER
 
-        val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP[builtinSignature]!!
+        val defaultValue = SIGNATURE_TO_DEFAULT_VALUES_MAP.getValue(builtinSignature)
 
         return if (defaultValue == TypeSafeBarrierDescription.NULL)
-                    // return type is some generic type as 'Map.get'
-                    SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
-                else
-                    SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
+            // return type is some generic type as 'Map.get'
+            SpecialSignatureInfo.OBJECT_PARAMETER_GENERIC
+        else
+            SpecialSignatureInfo.OBJECT_PARAMETER_NON_GENERIC
     }
 }
 
@@ -210,31 +215,31 @@ object BuiltinMethodsWithDifferentJvmName {
     // e.g. 'java/lang/CharSequence.get(I)C' does not actually exist in JDK
     // But it doesn't matter here, because signatures are only used to distinguish overloaded built-in definitions
     private val REMOVE_AT_NAME_AND_SIGNATURE =
-            "java/util/List".method("removeAt", JvmPrimitiveType.INT.desc, "Ljava/lang/Object;")
+        "java/util/List".method("removeAt", JvmPrimitiveType.INT.desc, "Ljava/lang/Object;")
 
     private val NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP: Map<NameAndSignature, Name> = signatures {
         mapOf(
-            javaLang("Number").method("toByte", "", JvmPrimitiveType.BYTE.desc)           to Name.identifier("byteValue"),
-            javaLang("Number").method("toShort", "", JvmPrimitiveType.SHORT.desc)         to Name.identifier("shortValue"),
-            javaLang("Number").method("toInt", "", JvmPrimitiveType.INT.desc)             to Name.identifier("intValue"),
-            javaLang("Number").method("toLong", "", JvmPrimitiveType.LONG.desc)           to Name.identifier("longValue"),
-            javaLang("Number").method("toFloat", "", JvmPrimitiveType.FLOAT.desc)         to Name.identifier("floatValue"),
-            javaLang("Number").method("toDouble", "", JvmPrimitiveType.DOUBLE.desc)       to Name.identifier("doubleValue"),
-            REMOVE_AT_NAME_AND_SIGNATURE                                                  to Name.identifier("remove"),
+            javaLang("Number").method("toByte", "", JvmPrimitiveType.BYTE.desc) to Name.identifier("byteValue"),
+            javaLang("Number").method("toShort", "", JvmPrimitiveType.SHORT.desc) to Name.identifier("shortValue"),
+            javaLang("Number").method("toInt", "", JvmPrimitiveType.INT.desc) to Name.identifier("intValue"),
+            javaLang("Number").method("toLong", "", JvmPrimitiveType.LONG.desc) to Name.identifier("longValue"),
+            javaLang("Number").method("toFloat", "", JvmPrimitiveType.FLOAT.desc) to Name.identifier("floatValue"),
+            javaLang("Number").method("toDouble", "", JvmPrimitiveType.DOUBLE.desc) to Name.identifier("doubleValue"),
+            REMOVE_AT_NAME_AND_SIGNATURE to Name.identifier("remove"),
             javaLang("CharSequence")
-                    .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt")
+                .method("get", JvmPrimitiveType.INT.desc, JvmPrimitiveType.CHAR.desc) to Name.identifier("charAt")
         )
     }
 
     private val SIGNATURE_TO_JVM_REPRESENTATION_NAME: Map<String, Name> =
-            NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapKeys { it.key.signature }
+        NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.mapKeys { it.key.signature }
 
     val ORIGINAL_SHORT_NAMES: List<Name> = NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.keys.map { it.name }
 
     private val JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP: Map<Name, List<Name>> =
-            NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.entries
-                    .map { Pair(it.key.name, it.value) }
-                    .groupBy({ it.second }, { it.first })
+        NAME_AND_SIGNATURE_TO_JVM_REPRESENTATION_NAME_MAP.entries
+            .map { Pair(it.key.name, it.value) }
+            .groupBy({ it.second }, { it.first })
 
     val Name.sameAsRenamedInJvmBuiltin: Boolean
         get() = this in ORIGINAL_SHORT_NAMES
@@ -250,7 +255,7 @@ object BuiltinMethodsWithDifferentJvmName {
     }
 
     fun getBuiltinFunctionNamesByJvmName(name: Name): List<Name> =
-            JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
+        JVM_SHORT_NAME_TO_BUILTIN_SHORT_NAMES_MAP[name] ?: emptyList()
 
 
     val SimpleFunctionDescriptor.isRemoveAtByIndex: Boolean
@@ -260,7 +265,8 @@ object BuiltinMethodsWithDifferentJvmName {
 @Suppress("UNCHECKED_CAST")
 fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName(): T? {
     if (name !in BuiltinMethodsWithDifferentJvmName.ORIGINAL_SHORT_NAMES
-            && propertyIfAccessor.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES) return null
+        && propertyIfAccessor.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES
+    ) return null
 
     return when (this) {
         is PropertyDescriptor, is PropertyAccessorDescriptor ->
@@ -304,7 +310,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor
 
 fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
     val overriddenBuiltin = getOverriddenBuiltinThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
-                            ?: return null
+        ?: return null
     return when (overriddenBuiltin) {
         is PropertyDescriptor -> overriddenBuiltin.getBuiltinSpecialPropertyGetterName()
         is SimpleFunctionDescriptor -> BuiltinMethodsWithDifferentJvmName.getJvmName(overriddenBuiltin)?.asString()
@@ -313,13 +319,13 @@ fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor
 }
 
 private fun getOverriddenBuiltinThatAffectsJvmName(
-        callableMemberDescriptor: CallableMemberDescriptor
+    callableMemberDescriptor: CallableMemberDescriptor
 ): CallableMemberDescriptor? =
-        if (KotlinBuiltIns.isBuiltIn(callableMemberDescriptor)) callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName()
-        else null
+    if (KotlinBuiltIns.isBuiltIn(callableMemberDescriptor)) callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName()
+    else null
 
 fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
-        specialCallableDescriptor: CallableDescriptor
+    specialCallableDescriptor: CallableDescriptor
 ): Boolean {
     val builtinContainerDefaultType = (specialCallableDescriptor.containingDeclaration as ClassDescriptor).defaultType
 
@@ -330,7 +336,7 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
             // Kotlin class
 
             val doesOverrideBuiltinDeclaration =
-                    TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
+                TypeCheckingProcedure.findCorrespondingSupertype(superClassDescriptor.defaultType, builtinContainerDefaultType) != null
 
             if (doesOverrideBuiltinDeclaration) {
                 return !KotlinBuiltIns.isBuiltIn(superClassDescriptor)

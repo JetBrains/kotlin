@@ -22,7 +22,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.incremental.IncrementalTaskInputs
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.gradle.incremental.ChangedFiles
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.FilteringSourceRootsContainer
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.SourceRoots
@@ -59,6 +59,13 @@ open class KaptGenerateStubsTask : KotlinCompile() {
     internal val kotlinTaskPluginClasspath
         get() = kotlinCompileTask.pluginClasspath
 
+    @get:Input
+    override var useModuleDetection: Boolean
+        get() = kotlinCompileTask.useModuleDetection
+        set(_) {
+            error("KaptGenerateStubsTask.useModuleDetection setter should not be called!")
+        }
+
     override fun source(vararg sources: Any?): SourceTask? {
         return super.source(sourceRootsContainer.add(sources))
     }
@@ -72,8 +79,8 @@ open class KaptGenerateStubsTask : KotlinCompile() {
                 !stubsDir.isParentOf(source) &&
                 !generatedSourcesDir.isParentOf(source)
 
-    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean) {
-        kotlinCompileTask.setupCompilerArgs(args)
+    override fun setupCompilerArgs(args: K2JVMCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        kotlinCompileTask.setupCompilerArgs(args, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
         val pluginOptionsWithKapt = pluginOptions.withWrappedKaptOptions(withApClasspath = kaptClasspath)
         args.pluginOptions = (pluginOptionsWithKapt.arguments + args.pluginOptions!!).toTypedArray()
@@ -83,24 +90,10 @@ open class KaptGenerateStubsTask : KotlinCompile() {
         args.destinationAsFile = this.destinationDir
     }
 
-    override fun execute(inputs: IncrementalTaskInputs) {
-        val sourceRoots = kotlinCompileTask.getSourceRoots().let {
+    override fun getSourceRoots(): SourceRoots.ForJvm =
+        kotlinCompileTask.getSourceRoots().let {
             val javaSourceRoots = it.javaSourceRoots.filterTo(HashSet()) { isSourceRootAllowed(it) }
             val kotlinSourceFiles = it.kotlinSourceFiles
             SourceRoots.ForJvm(kotlinSourceFiles, javaSourceRoots)
         }
-        val allKotlinSources = sourceRoots.kotlinSourceFiles
-
-        logger.kotlinDebug { "All kotlin sources: ${allKotlinSources.pathsAsStringRelativeTo(project.rootProject.projectDir)}" }
-
-        if (allKotlinSources.isEmpty()) {
-            logger.kotlinDebug { "No Kotlin files found, skipping KaptGenerateStubs task" }
-            return
-        }
-
-        sourceRoots.log(this.name, logger)
-        val args = prepareCompilerArguments()
-
-        callCompilerAsync(args, sourceRoots, ChangedFiles(inputs))
-    }
 }

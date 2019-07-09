@@ -1,0 +1,23 @@
+FILE: generics.kt
+    public abstract interface I : R|kotlin/Any| {
+        public abstract fun <T : R|kotlin/Comparable<T>|> f(t: R|kotlin/collections/List<T>|): R|kotlin/Any|
+
+    }
+    public abstract class Base : R|kotlin/Any| {
+        public constructor(): R|Base| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun <D : R|kotlin/Comparable<D>|> f(t: R|kotlin/collections/List<D>|): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|Base|, R|I| {
+        public constructor(): R|C| {
+            super<R|Base|>()
+        }
+
+    }
+    public final fun f(list: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+        R|/C.C|().R|/Base.f|<R|kotlin/Int|>(R|<local>/list|)
+    }

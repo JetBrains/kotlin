@@ -15,23 +15,23 @@ class Test<in I, out O> {
         this.i = getT()
         with(Test<I, O>()) {
             i = getT() // resolved to this@Test.i
-            this.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!> = getT()
-            this@with.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!> = getT()
+            this.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!> = getT()
+            this@with.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!> = getT()
             this@Test.i  = getT()
         }
     }
 
     fun <I, O> test(t: Test<I, O>) {
-        t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!> = getT()
+        t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!> = getT()
     }
 
     companion object {
         fun <I, O> test(t: Test<I, O>) {
-            t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!> = getT()
+            t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!> = getT()
         }
     }
 }
 
 fun <I, O> test(t: Test<I, O>) {
-    t.<!INVISIBLE_MEMBER(i; private/*private to this*/; 'Test')!>i<!> = getT()
+    t.<!INVISIBLE_MEMBER("i", "private/*private to this*/", "'Test'")!>i<!> = getT()
 }

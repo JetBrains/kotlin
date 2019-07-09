@@ -1,13 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedPropertyDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedFieldDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.ir.DeclarationFactory
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 
 class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrFile) : SharedVariablesManager {
@@ -47,7 +48,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val constructorSymbol = closureBoxConstructorDeclaration.symbol
 
-        val irCall = IrCallImpl(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol).apply {
+        val irCall = IrConstructorCallImpl.fromSymbolDescriptor(initializer.startOffset, initializer.endOffset, closureBoxType, constructorSymbol).apply {
             putValueArgument(0, initializer)
         }
 
@@ -131,6 +132,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         descriptor.bind(declaration)
         declaration.parent = implicitDeclarationsFile
+        // TODO: substitute
         closureBoxType = IrSimpleTypeImpl(declaration.symbol, false, emptyList(), emptyList())
         declaration.thisReceiver =
                 JsIrBuilder.buildValueParameter(Name.special("<this>"), -1, closureBoxType, IrDeclarationOrigin.INSTANCE_RECEIVER).apply {
@@ -142,7 +144,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
     }
 
     private fun createClosureBoxPropertyDeclaration(): IrField {
-        val descriptor = WrappedPropertyDescriptor()
+        val descriptor = WrappedFieldDescriptor()
         val symbol = IrFieldSymbolImpl(descriptor)
         val fieldName = Name.identifier("v")
         return IrFieldImpl(
@@ -169,7 +171,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
 
         val declaration = IrConstructorImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET, JsLoweredDeclarationOrigin.JS_CLOSURE_BOX_CLASS_DECLARATION, symbol,
-            Name.special("<init>"), Visibilities.PUBLIC, false, false, true
+            Name.special("<init>"), Visibilities.PUBLIC, closureBoxClassDeclaration.defaultType, false, false, true
         )
 
         descriptor.bind(declaration)

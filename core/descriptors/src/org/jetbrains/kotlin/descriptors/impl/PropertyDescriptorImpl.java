@@ -334,6 +334,16 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         public PropertyDescriptor build() {
             return doSubstitute(this);
         }
+
+        PropertyGetterDescriptor getOriginalGetter() {
+            if (original == null) return null;
+            return original.getGetter();
+        }
+
+        PropertySetterDescriptor getOriginalSetter() {
+            if (original == null) return null;
+            return original.getSetter();
+        }
     }
 
     @NotNull
@@ -389,7 +399,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
 
         PropertyGetterDescriptorImpl newGetter = getter == null ? null : new PropertyGetterDescriptorImpl(
                 substitutedDescriptor, getter.getAnnotations(), copyConfiguration.modality, normalizeVisibility(getter.getVisibility(), copyConfiguration.kind),
-                getter.isDefault(), getter.isExternal(), getter.isInline(), copyConfiguration.kind, copyConfiguration.original == null ? null : copyConfiguration.original.getGetter(),
+                getter.isDefault(), getter.isExternal(), getter.isInline(), copyConfiguration.kind,
+                copyConfiguration.getOriginalGetter(),
                 SourceElement.NO_SOURCE
         );
         if (newGetter != null) {
@@ -399,7 +410,8 @@ public class PropertyDescriptorImpl extends VariableDescriptorWithInitializerImp
         }
         PropertySetterDescriptorImpl newSetter = setter == null ? null : new PropertySetterDescriptorImpl(
                 substitutedDescriptor, setter.getAnnotations(), copyConfiguration.modality, normalizeVisibility(setter.getVisibility(), copyConfiguration.kind),
-                setter.isDefault(), setter.isExternal(), setter.isInline(), copyConfiguration.kind, copyConfiguration.original == null ? null : copyConfiguration.original.getSetter(),
+                setter.isDefault(), setter.isExternal(), setter.isInline(), copyConfiguration.kind,
+                copyConfiguration.getOriginalSetter(),
                 SourceElement.NO_SOURCE
         );
         if (newSetter != null) {

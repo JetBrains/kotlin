@@ -1,7 +1,7 @@
 @kotlin.Metadata
 public class AbstractStuff {
     public method <init>(): void
-    private final method hello(p0: java.lang.Object, p1: COROUTINES_PACKAGE.Continuation): java.lang.Object
+    public synthetic final @org.jetbrains.annotations.Nullable method hello(p0: java.lang.Object, @org.jetbrains.annotations.NotNull p1: COROUTINES_PACKAGE.Continuation): java.lang.Object
 }
 
 @kotlin.Metadata

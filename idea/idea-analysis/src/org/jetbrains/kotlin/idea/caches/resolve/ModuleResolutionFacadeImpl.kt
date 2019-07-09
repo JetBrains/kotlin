@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.idea.caches.resolve
 
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analyzer.AnalysisResult
@@ -24,6 +26,7 @@ import org.jetbrains.kotlin.container.getService
 import org.jetbrains.kotlin.container.tryGetService
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.project.ResolveElementCache
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
@@ -38,7 +41,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 internal class ModuleResolutionFacadeImpl(
     private val projectFacade: ProjectResolutionFacade,
     private val moduleInfo: IdeaModuleInfo
-) : ResolutionFacade {
+) : ResolutionFacade, ResolutionFacadeModuleDescriptorProvider {
     override val project: Project
         get() = projectFacade.project
 
@@ -47,27 +50,34 @@ internal class ModuleResolutionFacadeImpl(
     override val moduleDescriptor: ModuleDescriptor
         get() = findModuleDescriptor(moduleInfo)
 
-    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo) = projectFacade.findModuleDescriptor(ideaModuleInfo)
+    override fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo) = projectFacade.findModuleDescriptor(ideaModuleInfo)
 
     override fun analyze(element: KtElement, bodyResolveMode: BodyResolveMode): BindingContext {
         return analyze(listOf(element), bodyResolveMode)
     }
 
     override fun analyze(elements: Collection<KtElement>, bodyResolveMode: BodyResolveMode): BindingContext {
+        ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+
         if (elements.isEmpty()) return BindingContext.EMPTY
         val resolveElementCache = getFrontendService(elements.first(), ResolveElementCache::class.java)
         return resolveElementCache.resolveToElements(elements, bodyResolveMode)
     }
 
-    override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult =
-        projectFacade.getAnalysisResultsForElements(elements)
+    override fun analyzeWithAllCompilerChecks(elements: Collection<KtElement>): AnalysisResult {
+        ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+
+        return projectFacade.getAnalysisResultsForElements(elements)
+    }
 
     override fun resolveToDescriptor(declaration: KtDeclaration, bodyResolveMode: BodyResolveMode): DeclarationDescriptor {
         return if (KtPsiUtil.isLocal(declaration)) {
             val bindingContext = analyze(declaration, bodyResolveMode)
             bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration]
-                    ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
+                ?: getFrontendService(moduleInfo, AbsentDescriptorHandler::class.java).diagnoseDescriptorNotFound(declaration)
         } else {
+            ResolveInWriteActionManager.assertNoResolveUnderWriteAction()
+
             val resolveSession = projectFacade.resolverForElement(declaration).componentProvider.get<ResolveSession>()
             resolveSession.resolveToDescriptor(declaration)
         }
@@ -96,6 +106,11 @@ internal class ModuleResolutionFacadeImpl(
     }
 }
 
-fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor? {
-    return (this as? ModuleResolutionFacadeImpl)?.findModuleDescriptor(ideaModuleInfo)
+fun ResolutionFacade.findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor {
+    return (this as ResolutionFacadeModuleDescriptorProvider).findModuleDescriptor(ideaModuleInfo)
+}
+
+
+interface ResolutionFacadeModuleDescriptorProvider {
+    fun findModuleDescriptor(ideaModuleInfo: IdeaModuleInfo): ModuleDescriptor
 }

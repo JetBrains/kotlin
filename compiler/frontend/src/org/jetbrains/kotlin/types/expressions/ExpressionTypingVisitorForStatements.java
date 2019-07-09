@@ -403,7 +403,7 @@ public class ExpressionTypingVisitorForStatements extends ExpressionTypingVisito
 
     @Override
     public KotlinTypeInfo visitIfExpression(@NotNull KtIfExpression expression, ExpressionTypingContext context) {
-        return controlStructures.visitIfExpression(expression, context, true);
+        return controlStructures.visitIfExpression(expression, context);
     }
 
     @Override

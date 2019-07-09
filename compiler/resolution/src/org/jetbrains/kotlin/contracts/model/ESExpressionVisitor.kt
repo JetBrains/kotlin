@@ -28,4 +28,6 @@ interface ESExpressionVisitor<out T> {
 
     fun visitVariable(esVariable: ESVariable): T
     fun visitConstant(esConstant: ESConstant): T
+
+    fun visitReceiver(esReceiver: ESReceiver): T
 }

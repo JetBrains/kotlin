@@ -1,5 +1,4 @@
 // "Import" "true"
-// ERROR: Unresolved reference: Foo
 package bar
 
 import foo.Foo

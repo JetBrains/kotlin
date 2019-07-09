@@ -1,0 +1,27 @@
+package
+
+public fun </*0*/ K> elvis(/*0*/ x: K?, /*1*/ y: K): K
+public fun </*0*/ V> myRun(/*0*/ f: () -> V): V
+public fun </*0*/ K> select(/*0*/ x: K, /*1*/ y: K): K
+public fun </*0*/ S> test1(/*0*/ a: ParameterizedChild<S>?, /*1*/ b: Child): Base<S>
+public fun </*0*/ S> test2(/*0*/ a: S?, /*1*/ b: S): S
+
+public interface Base</*0*/ out T> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Child : Base<kotlin.Nothing> {
+    public constructor Child()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class ParameterizedChild</*0*/ out R> : Base<R> {
+    public constructor ParameterizedChild</*0*/ out R>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

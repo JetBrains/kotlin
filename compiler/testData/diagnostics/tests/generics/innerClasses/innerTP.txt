@@ -1,6 +1,6 @@
 package
 
-public val infered: Outer<kotlin.String>.Inner<kotlin.Int>
+public val inferred: Outer<kotlin.String>.Inner<kotlin.Int>
 public fun factoryString(): Outer<kotlin.String>.Inner<kotlin.String>
 public fun </*0*/ T, /*1*/ Y> infer(/*0*/ x: T, /*1*/ y: Y): Outer<T>.Inner<Y>
 public fun main(): kotlin.Unit

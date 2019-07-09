@@ -72,6 +72,7 @@ class FileAttributeServiceImpl : FileAttributeService {
     override fun <T> read(file: VirtualFile, id: String, readValueFun: (DataInput) -> T): CachedAttributeData<T>? {
         val attribute = attributes[id] ?: throw IllegalArgumentException("Attribute with $id wasn't registered")
         if (file !is VirtualFileWithId) return null
+        if (!file.isValid) return null
 
         val stream = attribute.readAttribute(file) ?: return null
         return stream.use {

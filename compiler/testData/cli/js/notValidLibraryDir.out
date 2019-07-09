@@ -1,4 +1,4 @@
-warning: 'compiler/testData/integration/ant/js/simpleWithStdlibAndJsFileAsAnotherLib' is not a valid Kotlin Javascript library
+warning: 'compiler/testData/integration/ant/js/simpleWithJsFileAsAnotherLib' is not a valid Kotlin Javascript library
 compiler/testData/cli/js/withLib.kt:2:8: error: unresolved reference: library
 import library.sample.*
        ^

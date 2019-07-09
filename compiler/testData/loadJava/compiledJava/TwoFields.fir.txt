@@ -1,0 +1,8 @@
+public final class TwoFields : R|kotlin/Any| {
+    public open field a: R|kotlin/Int|
+
+    public open field b: R|kotlin/Short|
+
+    public constructor(): R|test/TwoFields|
+
+}

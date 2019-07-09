@@ -1,0 +1,4 @@
+public abstract class ClassWithTypePExtendsIterableP<P> : R|kotlin/collections/MutableIterable<P>| {
+    public constructor<P>(): R|test/ClassWithTypePExtendsIterableP<P>|
+
+}

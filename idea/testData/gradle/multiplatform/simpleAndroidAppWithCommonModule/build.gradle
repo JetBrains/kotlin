@@ -5,7 +5,9 @@ buildscript {
     }
 
     dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.41")
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.2.41')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath 'com.android.tools.build:gradle:2.3.3'
     }
 }

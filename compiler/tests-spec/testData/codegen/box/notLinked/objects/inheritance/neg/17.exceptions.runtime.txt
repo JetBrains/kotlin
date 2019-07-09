@@ -1,0 +1,15 @@
+java.lang.VerifyError: Bad type on operand stack
+Exception Details:
+  Location:
+    Foo$Companion.<init>()V @2: checkcast
+  Reason:
+    Type uninitializedThis (current frame, stack[1]) is not assignable to 'java/lang/Object'
+  Current Frame:
+    bci: @2
+    flags: { flagThisUninit }
+    locals: { uninitializedThis }
+    stack: { uninitializedThis, uninitializedThis }
+  Bytecode:
+    0x0000000: 2a2a c000 02b6 000a b700 0db1
+
+Foo.<clinit>(17.kt)

@@ -10,7 +10,7 @@ package test;
 import java.lang.System;
 
 /**
- * * KDoc comment.
+ * KDoc comment.
  */
 @kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
 @kotlin.Metadata()

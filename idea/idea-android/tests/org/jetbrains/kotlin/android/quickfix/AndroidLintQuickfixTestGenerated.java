@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.android.quickfix;
@@ -85,11 +85,6 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
 
         public void testAllFilesPresentInRequiresApi() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/requiresApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("annotation.kt")
-        public void testAnnotation() throws Exception {
-            runTest("idea/testData/android/lintQuickfix/requiresApi/annotation.kt");
         }
 
         @TestMetadata("companion.kt")
@@ -206,11 +201,6 @@ public class AndroidLintQuickfixTestGenerated extends AbstractAndroidLintQuickfi
 
         public void testAllFilesPresentInTargetApi() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/android/lintQuickfix/targetApi"), Pattern.compile("^([\\w\\-_]+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("annotation.kt")
-        public void testAnnotation() throws Exception {
-            runTest("idea/testData/android/lintQuickfix/targetApi/annotation.kt");
         }
 
         @TestMetadata("companion.kt")

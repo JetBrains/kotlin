@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jps.build
@@ -10,7 +10,6 @@ import org.jetbrains.jps.builders.java.JavaBuilderExtension
 import org.jetbrains.jps.builders.java.dependencyView.Callbacks
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.incremental.LookupSymbol
-import org.jetbrains.kotlin.jps.incremental.withLookupStorage
 import java.io.File
 import java.util.concurrent.Executors
 import java.util.concurrent.Future
@@ -24,7 +23,7 @@ class KotlinJavaBuilderExtension : JavaBuilderExtension() {
 
 private class KotlinLookupConstantSearch(context: CompileContext) : Callbacks.ConstantAffectionResolver {
     private val pool = Executors.newSingleThreadExecutor()
-    private val dataManager = context.projectDescriptor.dataManager
+    private val kotlinContext by lazy { context.kotlin }
 
     override fun request(
         ownerClassName: String,
@@ -54,7 +53,7 @@ private class KotlinLookupConstantSearch(context: CompileContext) : Callbacks.Co
         }
         pool.submit {
             if (!future.isCancelled) {
-                dataManager.withLookupStorage { storage ->
+                kotlinContext.lookupStorageManager.withLookupStorage { storage ->
                     val paths = storage.get(LookupSymbol(name = fieldName, scope = ownerClassName))
                     future.result(paths.map { File(it) })
                 }

@@ -38,12 +38,6 @@ val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
 val ResolutionCandidateApplicability.isInapplicable: Boolean
     get() = this in INAPPLICABLE_STATUSES
 
-internal class CandidateWithBoundDispatchReceiverImpl(
-    override val dispatchReceiver: ReceiverValueWithSmartCastInfo?,
-    override val descriptor: CallableDescriptor,
-    override val diagnostics: List<ResolutionDiagnostic>
-) : CandidateWithBoundDispatchReceiver
-
 fun <C : Candidate> C.forceResolution(): C {
     resultingApplicability
     return this

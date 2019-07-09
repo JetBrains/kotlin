@@ -1,0 +1,21 @@
+FILE: unaryOperators.kt
+    public final class U : R|kotlin/Any| {
+        public constructor(): R|U| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun contains(g: R|kotlin/String|): R|kotlin/Boolean| {
+            ^contains Boolean(false)
+        }
+
+    }
+    public final fun foo(u: R|U|): R|kotlin/Unit| {
+        lval b: R|kotlin/Boolean| = Boolean(false)
+        lval i: R|kotlin/Int| = Int(10)
+        lval x: R|kotlin/Int| = R|<local>/i|.R|kotlin/Int.unaryMinus|()
+        lval y: R|kotlin/Boolean| = R|<local>/b|.R|kotlin/Boolean.not|()
+        lval z: R|kotlin/Double| = Double(1.0).R|kotlin/Double.unaryMinus|()
+        lval w: R|kotlin/Int| = R|<local>/i|.R|kotlin/Int.unaryPlus|()
+        lval g: R|kotlin/Boolean| = R|<local>/u|.R|/U.contains|(String()).R|kotlin/Boolean.not|()
+        lval f: R|kotlin/Boolean| = (String() !is R|kotlin/Boolean|)
+    }

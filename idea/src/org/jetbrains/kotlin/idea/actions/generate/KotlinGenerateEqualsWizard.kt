@@ -35,21 +35,21 @@ import javax.swing.JLabel
 import javax.swing.JPanel
 
 class KotlinGenerateEqualsWizard(
-        project: Project,
-        klass: KtClass,
-        properties: List<KtNamedDeclaration>,
-        needEquals: Boolean,
-        needHashCode: Boolean
+    project: Project,
+    klass: KtClass,
+    properties: List<KtNamedDeclaration>,
+    needEquals: Boolean,
+    needHashCode: Boolean
 ) : AbstractGenerateEqualsWizard<KtClass, KtNamedDeclaration, KotlinMemberInfo>(
-        project, KotlinGenerateEqualsWizard.BuilderImpl(klass, properties, needEquals, needHashCode)
+    project, BuilderImpl(klass, properties, needEquals, needHashCode)
 ) {
     private object MemberInfoModelImpl : AbstractMemberInfoModel<KtNamedDeclaration, KotlinMemberInfo>()
 
     private class BuilderImpl(
-            private val klass: KtClass,
-            properties: List<KtNamedDeclaration>,
-            needEquals: Boolean,
-            needHashCode: Boolean
+        private val klass: KtClass,
+        properties: List<KtNamedDeclaration>,
+        needEquals: Boolean,
+        needHashCode: Boolean
     ) : AbstractGenerateEqualsWizard.Builder<KtClass, KtNamedDeclaration, KotlinMemberInfo>() {
         private val equalsPanel: KotlinMemberSelectionPanel?
         private val hashCodePanel: KotlinMemberSelectionPanel?
@@ -60,13 +60,13 @@ class KotlinGenerateEqualsWizard(
 
         init {
             equalsPanel = if (needEquals) {
-                KotlinMemberSelectionPanel("Choose p&roperties to be included in equals()", memberInfos, null).apply {
+                KotlinMemberSelectionPanel("Choose properties to be included in equals()", memberInfos, null).apply {
                     table.memberInfoModel = MemberInfoModelImpl
                 }
             } else null
 
             hashCodePanel = if (needHashCode) {
-                KotlinMemberSelectionPanel("Choose p&roperties to be included in hashCode()", memberInfos, null).apply {
+                KotlinMemberSelectionPanel("Choose properties to be included in hashCode()", memberInfos, null).apply {
                     table.memberInfoModel = MemberInfoModelImpl
                 }
             } else null

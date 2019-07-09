@@ -1,7 +1,10 @@
 apply plugin: 'kotlin'
 
 sourceSets {
-    main.kotlin.srcDir 'src'
+    main {
+        kotlin.srcDir 'src'
+        resources.srcDir "$buildDir/copyright"
+    }
 }
 
 dependencies {
@@ -15,9 +18,20 @@ compileKotlin {
     }
 }
 
+task copyCopyrightProfile(type: Copy) {
+    from "$rootDir/.idea/copyright"
+    into "$buildDir/copyright"
+    include 'apache.xml'
+}
+
+processResources {
+    dependsOn(copyCopyrightProfile)
+}
+
 task run(type: JavaExec) {
     group 'application'
     main 'generators.GenerateStandardLibKt'
     classpath sourceSets.main.runtimeClasspath
     args = ["${rootDir}"]
+    systemProperty 'line.separator', '\n'
 }

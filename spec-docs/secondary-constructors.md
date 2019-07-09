@@ -58,7 +58,7 @@ Every class **must** have a constructor. The following is an error:
 class Parent
 class Child : Parent { }
 ```
-The error is: "superclass must be initialized". This class has a primary constructor, but does not initialize its superclass in teh class header.
+The error is: "superclass must be initialized". This class has a primary constructor, but does not initialize its superclass in the class header.
 ## Syntax for explicit constructors
 
 ```

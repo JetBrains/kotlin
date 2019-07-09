@@ -1,18 +1,22 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.getReceiverTypeFromFunctionType
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
+import org.jetbrains.kotlin.builtins.isFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -21,9 +25,9 @@ import org.jetbrains.kotlin.resolve.calls.tower.InfixCallNoInfixModifier
 import org.jetbrains.kotlin.resolve.calls.tower.InvokeConventionCallNoOperatorModifier
 import org.jetbrains.kotlin.resolve.calls.tower.VisibilityError
 import org.jetbrains.kotlin.types.ErrorUtils
-import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.checker.anySuperTypeConstructor
+import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -44,8 +48,6 @@ internal object CheckVisibility : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val containingDescriptor = scopeTower.lexicalScope.ownerDescriptor
         val dispatchReceiverArgument = resolvedCall.dispatchReceiverArgument
-
-        if (scopeTower.isDebuggerContext) return
 
         val receiverValue = dispatchReceiverArgument?.receiver?.receiverValue ?: Visibilities.ALWAYS_SUITABLE_RECEIVER
         val invisibleMember =
@@ -185,13 +187,42 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             csBuilder.registerVariable(freshVariable)
         }
 
+        fun TypeVariableFromCallableDescriptor.addSubtypeConstraint(
+            upperBound: KotlinType,
+            position: DeclaredUpperBoundConstraintPosition
+        ) {
+            csBuilder.addSubtypeConstraint(defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
+        }
+
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = freshTypeVariables[index]
             val position = DeclaredUpperBoundConstraintPosition(typeParameter)
 
             for (upperBound in typeParameter.upperBounds) {
-                csBuilder.addSubtypeConstraint(freshVariable.defaultType, toFreshVariables.safeSubstitute(upperBound.unwrap()), position)
+                freshVariable.addSubtypeConstraint(upperBound, position)
+            }
+        }
+
+        if (candidateDescriptor is TypeAliasConstructorDescriptor) {
+            val typeAliasDescriptor = candidateDescriptor.typeAliasDescriptor
+            val originalTypes = typeAliasDescriptor.underlyingType.arguments.map { it.type }
+            val originalTypeParameters = candidateDescriptor.underlyingConstructorDescriptor.typeParameters
+            for (index in typeParameters.indices) {
+                val typeParameter = typeParameters[index]
+                val freshVariable = freshTypeVariables[index]
+                val typeMapping = originalTypes.mapIndexedNotNull { i: Int, kotlinType: KotlinType ->
+                    if (kotlinType == typeParameter.defaultType) i else null
+                }
+                for (originalIndex in typeMapping) {
+                    // there can be null in case we already captured type parameter in outer class (in case of inner classes)
+                    // see test innerClassTypeAliasConstructor.kt
+                    val originalTypeParameter = originalTypeParameters.getOrNull(originalIndex) ?: continue
+                    val position = DeclaredUpperBoundConstraintPosition(originalTypeParameter)
+                    for (upperBound in originalTypeParameter.upperBounds) {
+                        freshVariable.addSubtypeConstraint(upperBound, position)
+                    }
+                }
             }
         }
         return toFreshVariables
@@ -205,6 +236,9 @@ internal object PostponedVariablesInitializerResolutionPart : ResolutionPart() {
             val receiverType = parameter.type.getReceiverTypeFromFunctionType() ?: continue
 
             for (freshVariable in resolvedCall.substitutor.freshVariables) {
+                if (resolvedCall.typeArgumentMappingByOriginal.getTypeArgument(freshVariable.originalTypeParameter) is SimpleTypeArgument)
+                    continue
+
                 if (csBuilder.isPostponedTypeVariable(freshVariable)) continue
                 if (receiverType.contains { it.constructor == freshVariable.originalTypeParameter.typeConstructor }) {
                     csBuilder.markPostponedVariable(freshVariable)
@@ -253,24 +287,26 @@ private fun KotlinResolutionCandidate.prepareExpectedType(
         callComponents.languageVersionSettings
     )
     val resultType = knownTypeParametersResultingSubstitutor?.substitute(argumentType) ?: argumentType
-    return resolvedCall.substitutor.substituteKeepAnnotations(resultType)
+    return resolvedCall.substitutor.safeSubstitute(resultType)
 }
 
 private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     argument: KotlinCallArgument,
     candidateParameter: ParameterDescriptor
 ): UnwrappedType? {
+    if (!callComponents.languageVersionSettings.supportsFeature(LanguageFeature.SamConversionPerArgument)) return null
     if (!callComponents.samConversionTransformer.shouldRunSamConversionForFunction(resolvedCall.candidateDescriptor)) return null
 
     val argumentIsFunctional = when (argument) {
-        is SimpleKotlinCallArgument -> argument.receiver.stableType.isSubtypeOfFunctionType()
+        is SimpleKotlinCallArgument -> argument.receiver.stableType.isFunctionType
         is LambdaKotlinCallArgument, is CallableReferenceKotlinCallArgument -> true
         else -> false
     }
     if (!argumentIsFunctional) return null
 
     val originalExpectedType = argument.getExpectedType(candidateParameter.original, callComponents.languageVersionSettings)
-    val convertedTypeByOriginal = callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
+    val convertedTypeByOriginal =
+        callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(originalExpectedType) ?: return null
 
     val candidateExpectedType = argument.getExpectedType(candidateParameter, callComponents.languageVersionSettings)
     val convertedTypeByCandidate = callComponents.samConversionTransformer.getFunctionTypeForPossibleSamType(candidateExpectedType)
@@ -284,10 +320,6 @@ private fun KotlinResolutionCandidate.getExpectedTypeWithSAMConversion(
     resolvedCall.registerArgumentWithSamConversion(argument, SamConversionDescription(convertedTypeByOriginal, convertedTypeByCandidate!!))
 
     return convertedTypeByCandidate
-}
-
-private fun UnwrappedType.isSubtypeOfFunctionType() = anySuperTypeConstructor {
-    it.declarationDescriptor?.getFunctionalClassKind() == FunctionClassDescriptor.Kind.Function
 }
 
 internal object CheckReceivers : ResolutionPart() {
@@ -314,7 +346,7 @@ internal object CheckReceivers : ResolutionPart() {
     override fun KotlinResolutionCandidate.workCount() = 2
 }
 
-internal object CheckArguments : ResolutionPart() {
+internal object CheckArgumentsInParenthesis : ResolutionPart() {
     override fun KotlinResolutionCandidate.process(workIndex: Int) {
         val argument = kotlinCall.argumentsInParenthesis[workIndex]
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
@@ -328,6 +360,16 @@ internal object CheckExternalArgument : ResolutionPart() {
         val argument = kotlinCall.externalArgument ?: return
 
         resolveKotlinArgument(argument, resolvedCall.argumentToCandidateParameter[argument], isReceiver = false)
+    }
+}
+
+internal object EagerResolveOfCallableReferences : ResolutionPart() {
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        getSubResolvedAtoms()
+            .filterIsInstance<EagerCallableReferenceAtom>()
+            .forEach {
+                callableReferenceResolver.processCallableReferenceArgument(csBuilder, it, this)
+            }
     }
 }
 

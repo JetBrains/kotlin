@@ -13,6 +13,7 @@ fun box() : String {
     return foo(Season.SPRING) {
         x -> when (x) {
             Season.SPRING -> "OK"
+            Season.SUMMER -> "fail" // redundant branch to force use of TABLESWITCH instead of IF_ICMPNE
             else -> "fail"
         }
     }

@@ -1,5 +1,3 @@
-// LANGUAGE_VERSION: 1.3
-
 open class TestProtectedCompanionInClass {
     protected companion object
 }

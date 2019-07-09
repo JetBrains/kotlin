@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <linearGradient id="objectkotlin-a" x1="-16.836%" x2="76.219%" y1="91.94%" y2="-1.116%">
+      <stop offset="10.75%" stop-color="#C757BC"/>
+      <stop offset="21.38%" stop-color="#D0609A"/>
+      <stop offset="42.54%" stop-color="#E1725C"/>
+      <stop offset="60.48%" stop-color="#EE7E2F"/>
+      <stop offset="74.3%" stop-color="#F58613"/>
+      <stop offset="82.32%" stop-color="#F88909"/>
+    </linearGradient>
+  </defs>
+  <g fill="none" fill-rule="evenodd">
+    <path fill="#F4AF3D" fill-opacity=".6" d="M8,15 C4.134,15 1,11.866 1,8 C1,4.134 4.134,1 8,1 C11.866,1 15,4.134 15,8 L8,8 L8,15 Z"/>
+    <path fill="#231F20" fill-opacity=".7" d="M11,8 L9.94262295,8 C9.94262295,6.87292818 9.13114754,5.94475138 7.99180328,5.94475138 C6.85245902,5.94475138 6.05737705,6.85635359 6.05737705,7.98342541 L6.05737705,8 C6.05737705,9.12436714 6.86496247,10.0507927 8,10.0552326 L8,10.9999908 C7.997269,10.9999967 7.99453676,11 7.99180328,11 C6.2295082,11 5,9.64917127 5,8.01657459 L5,8 C5,6.36740331 6.24590164,5 8.00819672,5 C9.7704918,5 11,6.35082873 11,7.98342541 L11,8 Z"/>
+    <g transform="translate(9 9)">
+      <polygon fill="#0EAEFF" fill-rule="nonzero" points="0 7 3.512 3.488 7 7"/>
+      <polygon fill="#0EAEFF" fill-rule="nonzero" points="0 0 3.512 0 0 3.792"/>
+      <polygon fill="url(#objectkotlin-a)" fill-rule="nonzero" points="3.512 0 0 3.698 0 7 3.512 3.488 7 0"/>
+    </g>
+  </g>
+</svg>

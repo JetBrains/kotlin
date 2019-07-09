@@ -1,7 +1,8 @@
 // !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
-// IGNORE_BACKEND: JVM_IR, JS_IR
+// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 // WITH_COROUTINES
+// DONT_TARGET_EXACT_BACKEND: JS_IR
 
 import helpers.*
 import kotlin.coroutines.experimental.*

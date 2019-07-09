@@ -23,21 +23,20 @@ KtFile: EnumWithAnnotationKeyword.kt
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
-  MODIFIER_LIST
-    PsiElement(enum)('enum')
-    PsiWhiteSpace(' ')
-    PsiElement(annotation)('annotation')
-  PsiWhiteSpace(' ')
-  PsiErrorElement:Expecting a top level declaration
-    PsiElement(IDENTIFIER)('E1')
-  PsiWhiteSpace(' ')
-  FUN
-    PsiErrorElement:Expecting a top level declaration
+  CLASS
+    MODIFIER_LIST
+      PsiElement(enum)('enum')
+      PsiWhiteSpace(' ')
+      PsiElement(annotation)('annotation')
+    PsiErrorElement:'class' keyword is expected after 'enum'
       <empty list>
-    BLOCK
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('E1')
+    PsiWhiteSpace(' ')
+    CLASS_BODY
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      REFERENCE_EXPRESSION
+      ENUM_ENTRY
         PsiElement(IDENTIFIER)('D')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

@@ -16,15 +16,19 @@
 
 package org.jetbrains.kotlin.kapt.idea
 
-import com.android.tools.idea.gradle.project.model.AndroidModuleModel
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.*
+import org.gradle.api.Named
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.AbstractKotlinGradleModelBuilder
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getCompilations
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getCompileKotlinTaskName
+import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.idea.framework.GRADLE_SYSTEM_ID
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
@@ -76,29 +80,35 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
     override fun getToolingExtensionsClasses() = setOf(KaptModelBuilderService::class.java, Unit::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
-        val kaptModel = resolverCtx.getExtraProject(gradleModule, KaptGradleModel::class.java) ?: return
+        val kaptModel = resolverCtx.getExtraProject(gradleModule, KaptGradleModel::class.java)
 
-        if (kaptModel.isEnabled) {
+        if (kaptModel != null && kaptModel.isEnabled) {
             for (sourceSet in kaptModel.sourceSets) {
-                populateAndroidModuleModelIfNeeded(ideModule, sourceSet)
-
-                val sourceSetDataNode = ideModule.findGradleSourceSet(sourceSet.sourceSetName) ?: continue
+                val parentDataNode = ideModule.findParentForSourceSetDataNode(sourceSet.sourceSetName) ?: continue
 
                 fun addSourceSet(path: String, type: ExternalSystemSourceType) {
                     val contentRootData = ContentRootData(GRADLE_SYSTEM_ID, path)
                     contentRootData.storePath(type, path)
-                    sourceSetDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
+                    parentDataNode.createChild(ProjectKeys.CONTENT_ROOT, contentRootData)
                 }
 
-                val sourceType = if (sourceSet.isTest) ExternalSystemSourceType.TEST_GENERATED else ExternalSystemSourceType.SOURCE_GENERATED
+                val sourceType =
+                    if (sourceSet.isTest) ExternalSystemSourceType.TEST_GENERATED else ExternalSystemSourceType.SOURCE_GENERATED
                 sourceSet.generatedSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
                 sourceSet.generatedKotlinSourcesDirFile?.let { addSourceSet(it.absolutePath, sourceType) }
 
                 sourceSet.generatedClassesDirFile?.let { generatedClassesDir ->
                     val libraryData = LibraryData(GRADLE_SYSTEM_ID, "kaptGeneratedClasses")
-                    libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
-                    val libraryDependencyData = LibraryDependencyData(sourceSetDataNode.data, libraryData, LibraryLevel.MODULE)
-                    sourceSetDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
+                    val existingNode =
+                        parentDataNode.children.map { (it.data as? LibraryDependencyData)?.target }
+                            .firstOrNull { it?.externalName == libraryData.externalName }
+                    if (existingNode != null) {
+                        existingNode.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
+                    } else {
+                        libraryData.addPath(LibraryPathType.BINARY, generatedClassesDir.absolutePath)
+                        val libraryDependencyData = LibraryDependencyData(parentDataNode.data, libraryData, LibraryLevel.MODULE)
+                        parentDataNode.createChild(ProjectKeys.LIBRARY_DEPENDENCY, libraryDependencyData)
+                    }
                 }
             }
         }
@@ -106,53 +116,17 @@ class KaptProjectResolverExtension : AbstractProjectResolverExtension() {
         super.populateModuleExtraModels(gradleModule, ideModule)
     }
 
-    private fun populateAndroidModuleModelIfNeeded(ideModule: DataNode<ModuleData>, sourceSet: KaptSourceSetModel) {
-        ideModule.findAndroidModuleModel()?.let { androidModelAny ->
-            // We can cast to AndroidModuleModel cause we already checked in findAndroidModuleModel() that the class exists
-
-            val generatedKotlinSources = sourceSet.generatedKotlinSourcesDirFile ?: return
-
-            val androidModel = androidModelAny.data as? AndroidModuleModel ?: return
-            val variant = androidModel.findVariantByName(sourceSet.sourceSetName) ?: return
-
-            androidModel.registerExtraGeneratedSourceFolder(generatedKotlinSources)
-
-            // TODO remove this when IDEA eventually migrate to the newer Android plugin
-            try {
-                variant.mainArtifact.generatedSourceFolders += generatedKotlinSources
-            } catch (e: Throwable) {
-                // There was an error being thrown here, but the code above doesn't work for the newer versions of Android Studio 3
-                // (generatedSourceFolders returns a wrapped unmodifiable list), and the thrown exception breaks the import.
-                // The error will be moved back when I find a work-around for AS3.
-            }
-        }
-    }
-
-    private fun DataNode<ModuleData>.findAndroidModuleModel(): DataNode<*>? {
-        val modelClassName = "com.android.tools.idea.gradle.project.model.AndroidModuleModel"
-        val node = children.firstOrNull { it.key.dataType == modelClassName } ?: return null
-        return if (!hasClassInClasspath(modelClassName)) null else node
-    }
-
-    private fun hasClassInClasspath(name: String): Boolean {
-        return try {
-            Class.forName(name) != null
-        } catch (thr: Throwable) {
-            false
-        }
-    }
-
-    private fun DataNode<ModuleData>.findGradleSourceSet(sourceSetName: String): DataNode<GradleSourceSetData>? {
+    private fun DataNode<ModuleData>.findParentForSourceSetDataNode(sourceSetName: String): DataNode<ModuleData>? {
         val moduleName = data.id
         for (child in children) {
             val gradleSourceSetData = child.data as? GradleSourceSetData ?: continue
             if (gradleSourceSetData.id == "$moduleName:$sourceSetName") {
                 @Suppress("UNCHECKED_CAST")
-                return child as DataNode<GradleSourceSetData>?
+                return child as? DataNode<ModuleData>
             }
         }
 
-        return null
+        return this
     }
 }
 
@@ -171,8 +145,12 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
         val sourceSets = mutableListOf<KaptSourceSetModel>()
 
         if (kaptIsEnabled) {
-            project.getAllTasks(false)[project]?.forEach { compileTask ->
-                if (compileTask.javaClass.name !in kotlinCompileTaskClasses) return@forEach
+            val targets = project.getTargets()
+
+            fun handleCompileTask(moduleName: String, compileTask: Task) {
+                if (compileTask.javaClass.name !in kotlinCompileJvmTaskClasses) {
+                    return
+                }
 
                 val sourceSetName = compileTask.getSourceSetName()
                 val isTest = sourceSetName.toLowerCase().endsWith("test")
@@ -181,11 +159,39 @@ class KaptModelBuilderService : AbstractKotlinGradleModelBuilder() {
                 val kaptGeneratedClassesDir = getKaptDirectory("getKaptGeneratedClassesDir", project, sourceSetName)
                 val kaptGeneratedKotlinSourcesDir = getKaptDirectory("getKaptGeneratedKotlinSourcesDir", project, sourceSetName)
                 sourceSets += KaptSourceSetModelImpl(
-                        sourceSetName, isTest, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir)
+                    moduleName, isTest, kaptGeneratedSourcesDir, kaptGeneratedClassesDir, kaptGeneratedKotlinSourcesDir
+                )
+            }
+
+            if (targets != null && targets.isNotEmpty()) {
+                for (target in targets) {
+                    if (!isWithJavaEnabled(target)) {
+                        continue
+                    }
+
+                    val compilations = getCompilations(target) ?: continue
+                    for (compilation in compilations) {
+                        val compileTask = getCompileKotlinTaskName(project, compilation) ?: continue
+                        val moduleName = target.name + compilation.name.capitalize()
+                        handleCompileTask(moduleName, compileTask)
+                    }
+                }
+            } else {
+                project.getAllTasks(false)[project]?.forEach { compileTask ->
+                    val sourceSetName = compileTask.getSourceSetName()
+                    handleCompileTask(sourceSetName, compileTask)
+                }
             }
         }
 
         return KaptGradleModelImpl(kaptIsEnabled, project.buildDir, sourceSets)
+    }
+
+    private fun isWithJavaEnabled(target: Named): Boolean {
+        val getWithJavaEnabledMethod = target.javaClass.methods
+            .firstOrNull { it.name == "getWithJavaEnabled" && it.parameterCount == 0 } ?: return false
+
+        return getWithJavaEnabledMethod.invoke(target) == true
     }
 
     private fun getKaptDirectory(funName: String, project: Project, sourceSetName: String): String {

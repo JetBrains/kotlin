@@ -10,6 +10,7 @@ class FromTextDependenciesResolver : DependenciesResolver {
     @Suppress("UNCHECKED_CAST")
     override fun resolve(scriptContents: ScriptContents, environment: Environment): DependenciesResolver.ResolveResult {
         return ScriptDependencies(
+            javaHome = environment["javaHome"] as? File,
             classpath = (environment["classpath"] as? List<File>).orEmpty(),
             imports = (environment["imports"] as? List<String>).orEmpty(),
             sources = (environment["sources"] as? List<File>).orEmpty()

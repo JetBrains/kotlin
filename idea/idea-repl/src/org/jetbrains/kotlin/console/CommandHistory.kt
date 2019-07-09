@@ -37,7 +37,7 @@ class CommandHistory {
         listeners.forEach { it.onNewEntry(entry) }
     }
 
-    fun lastUnprocessedEntry(): CommandHistory.Entry? {
+    fun lastUnprocessedEntry(): Entry? {
         return if (processedEntriesCount < size) {
             get(processedEntriesCount)
         }

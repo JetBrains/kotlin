@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle
@@ -60,7 +60,7 @@ import java.util.*
 
 abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<AbstractProjectWizard>() {
 
-    private val pluginVersion = "1.3.0-rc-146"
+    private val pluginVersion = "1.3.50-dev-796"
 
     override fun createWizard(project: Project?, directory: File): AbstractProjectWizard {
         return NewProjectWizard(project, ModulesProvider.EMPTY_MODULES_PROVIDER, directory.path)
@@ -83,7 +83,8 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         builder: KotlinGradleAbstractMultiplatformModuleBuilder,
         vararg testClassNames: String,
         metadataInside: Boolean = false,
-        performImport: Boolean = true
+        performImport: Boolean = true,
+        useQualifiedModuleNames: Boolean = false
     ): Project {
         // TODO: check whether it's necessary to have templates in sources
         // Temporary workaround for duplicated bundled template
@@ -133,7 +134,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         println(buildScriptText)
 
         if (!performImport) return project
-        doImportProject(project)
+        doImportProject(project, useQualifiedModuleNames)
         if (testClassNames.isNotEmpty()) {
             doTestProject(project, *testClassNames)
         }
@@ -175,7 +176,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
         }.execute()
     }
 
-    private fun doImportProject(project: Project) {
+    private fun doImportProject(project: Project, useQualifiedModuleNames: Boolean = false) {
         ExternalSystemApiUtil.subscribe(
             project,
             GradleConstants.SYSTEM_ID,
@@ -199,6 +200,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             distributionType = DistributionType.DEFAULT_WRAPPED
             externalProjectPath = project.basePath!!
             gradleJvm = DEFAULT_SDK
+            isUseQualifiedModuleNames = useQualifiedModuleNames
         }
 
         val error = Ref.create<Couple<String>>()
@@ -259,7 +261,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             addSdk(SimpleJavaSdkType().createJdk("_other", javaHome))
 
             println("ProjectWizardTestCase.configureJdk:")
-            println(Arrays.asList(*ProjectJdkTable.getInstance().allJdks))
+            println(listOf(*ProjectJdkTable.getInstance().allJdks))
 
             FileTypeManager.getInstance().associateExtension(GroovyFileType.GROOVY_FILE_TYPE, "gradle")
         }

@@ -1,0 +1,6 @@
+import kotlin.math.asin
+
+// WITH_RUNTIME
+fun test(x: Double) {
+    asin(x)
+}

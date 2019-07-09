@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 var x = 0
 fun inc(): Int {
     x++

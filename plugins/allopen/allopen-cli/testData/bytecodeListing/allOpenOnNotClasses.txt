@@ -8,7 +8,7 @@ public annotation class AllOpen
 public enum class Enum {
     private synthetic final static field $VALUES: Enum[]
     static method <clinit>(): void
-    protected method <init>(p0: java.lang.String, p1: int): void
+    private method <init>(p0: java.lang.String, p1: int): void
     public static method valueOf(p0: java.lang.String): Enum
     public static method values(): Enum[]
 }

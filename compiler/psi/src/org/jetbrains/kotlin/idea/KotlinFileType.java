@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea;
 
 import com.intellij.openapi.fileTypes.LanguageFileType;
-import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.NotNullLazyValue;
 import org.jetbrains.annotations.NotNull;
 
@@ -31,7 +30,7 @@ public class KotlinFileType extends LanguageFileType {
         @NotNull
         @Override
         protected Icon compute() {
-            return IconLoader.getIcon("/org/jetbrains/kotlin/idea/icons/kotlin_file.png");
+            return KotlinIconProviderService.getInstance().getFileIcon();
         }
     };
 

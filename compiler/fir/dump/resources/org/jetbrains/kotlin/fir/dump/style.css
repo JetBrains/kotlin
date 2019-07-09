@@ -1,0 +1,61 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
+ */
+
+pre {
+    counter-reset: line;
+}
+
+.line:after {
+    content: counter(line);
+    -webkit-user-select: none;
+    padding-right: 5px;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.line {
+    counter-increment: line;
+    display: inline-flex;
+}
+
+.unresolved {
+    text-decoration-style: wavy;
+    text-decoration: underline;
+}
+
+.error {
+    text-decoration-style: wavy;
+    text-decoration: underline;
+}
+
+a.container-ref,
+a.package-fqn,
+a.ref {
+    text-decoration: none;
+}
+
+.expression-type, .label, .return-label {
+    border-radius: 5px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.fold-region {
+    display: none;
+}
+
+.fold-container.unfold > .fold-region {
+    display: inline;
+}
+
+.toggle-theme {
+    border-style: solid;
+    border-width: thin;
+    border-radius: 10px;
+}
+
+.line {
+    margin-right: 5px;
+}

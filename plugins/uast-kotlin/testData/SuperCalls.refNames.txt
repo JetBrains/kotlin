@@ -1,0 +1,28 @@
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtDotQualifiedExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression
+toString -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
+param -> USimpleNameReferenceExpression (identifier = param) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression
+String -> USimpleNameReferenceExpression (identifier = String) from KtNameReferenceExpression
+p -> USimpleNameReferenceExpression (identifier = p) from KtNameReferenceExpression
+Int -> USimpleNameReferenceExpression (identifier = Int) from KtNameReferenceExpression
+i -> USimpleNameReferenceExpression (identifier = i) from KtNameReferenceExpression
+println -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0)) from KtNameReferenceExpression
+Long -> USimpleNameReferenceExpression (identifier = Long) from KtNameReferenceExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtDotQualifiedExpression
+foo -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+a -> USimpleNameReferenceExpression (identifier = a) from KtNameReferenceExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtObjectLiteralExpression
+A -> UObjectLiteralExpression from KtNameReferenceExpression
+cons -> UCallExpression (kind = UastCallKind(name='method_call'), argCount = 1)) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtObjectLiteralExpression
+A -> UObjectLiteralExpression from KtNameReferenceExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
+A -> UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) from KtNameReferenceExpression
+A -> USimpleNameReferenceExpression (identifier = A) from KtNameReferenceExpression

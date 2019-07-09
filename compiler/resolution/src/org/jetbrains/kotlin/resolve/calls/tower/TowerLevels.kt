@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCa
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForObject
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
 import org.jetbrains.kotlin.resolve.calls.util.isLowPriorityFromStdlibJre7Or8
-import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasClassValueDescriptor
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasHidesMembersAnnotation
-import org.jetbrains.kotlin.resolve.descriptorUtil.hasLowPriorityInOverloadResolution
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.CastImplicitClassReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
@@ -63,7 +60,7 @@ internal abstract class AbstractScopeTowerLevel(
             }
             if (dispatchReceiverSmartCastType != null) diagnostics.add(UsedSmartCastForDispatchReceiver(dispatchReceiverSmartCastType))
 
-            val shouldSkipVisibilityCheck = scopeTower.isDebuggerContext || scopeTower.isNewInferenceEnabled
+            val shouldSkipVisibilityCheck = scopeTower.isNewInferenceEnabled
             if (!shouldSkipVisibilityCheck) {
                 Visibilities.findInvisibleMember(
                     getReceiverValueWithSmartCast(dispatchReceiver?.receiverValue, dispatchReceiverSmartCastType),
@@ -72,7 +69,7 @@ internal abstract class AbstractScopeTowerLevel(
                 )?.let { diagnostics.add(VisibilityError(it)) }
             }
         }
-        return CandidateWithBoundDispatchReceiverImpl(dispatchReceiver, descriptor, diagnostics)
+        return CandidateWithBoundDispatchReceiver(dispatchReceiver, descriptor, diagnostics)
     }
 
 }
@@ -135,18 +132,18 @@ internal class MemberScopeTowerLevel(
     private fun CallableDescriptor.approximateCapturedTypes(): CallableDescriptor {
         if (!isNewInferenceEnabled) return this
 
-        val approximator = TypeApproximator()
+        val approximator = TypeApproximator(builtIns)
         val wrappedSubstitution = object : TypeSubstitution() {
             override fun get(key: KotlinType): TypeProjection? = null
             override fun prepareTopLevelType(topLevelType: KotlinType, position: Variance) = when (position) {
                 Variance.INVARIANT -> null
                 Variance.OUT_VARIANCE -> approximator.approximateToSuperType(
                     topLevelType.unwrap(),
-                    TypeApproximatorConfiguration.CapturedTypesApproximation
+                    TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
                 )
                 Variance.IN_VARIANCE -> approximator.approximateToSubType(
                     topLevelType.unwrap(),
-                    TypeApproximatorConfiguration.CapturedTypesApproximation
+                    TypeApproximatorConfiguration.CapturedAndIntegerLiteralsTypesApproximation
                 )
             } ?: topLevelType
         }

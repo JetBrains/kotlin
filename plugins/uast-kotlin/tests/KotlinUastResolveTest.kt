@@ -1,7 +1,7 @@
 package org.jetbrains.uast.test.kotlin
 
 import org.jetbrains.uast.UFile
-import org.jetbrains.uast.test.common.ResolveTestBase
+import org.jetbrains.uast.test.common.kotlin.ResolveTestBase
 import org.junit.Test
 
 class KotlinUastResolveTest : AbstractKotlinUastTest(), ResolveTestBase {

@@ -19,11 +19,12 @@ package org.jetbrains.kotlin.idea.editor.fixers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtForExpression
 
-class KotlinForConditionFixer: MissingConditionFixer<KtForExpression>() {
+class KotlinForConditionFixer : MissingConditionFixer<KtForExpression>() {
     override val keyword = "for"
     override fun getElement(element: PsiElement?) = element as? KtForExpression
     override fun getCondition(element: KtForExpression) =
-            element.loopRange ?: element.loopParameter ?: element.destructuringDeclaration
+        element.loopRange ?: element.loopParameter ?: element.destructuringDeclaration
+
     override fun getLeftParenthesis(element: KtForExpression) = element.leftParenthesis
     override fun getRightParenthesis(element: KtForExpression) = element.rightParenthesis
     override fun getBody(element: KtForExpression) = element.body

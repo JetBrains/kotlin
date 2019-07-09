@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.jps.build
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.util.PathUtil
 import org.jetbrains.jps.model.java.JpsJavaExtensionService
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
@@ -66,22 +68,16 @@ class SimpleKotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
 
     // TODO: add JS tests
     fun testDaemon() {
-        System.setProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "")
-        System.setProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "")
-        // spaces in the name to test proper file name handling
-        val flagFile = File.createTempFile("kotlin-jps - tests-", "-is-running")
-        val logFile = File.createTempFile("kotlin-daemon", ".log")
-        System.setProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY, flagFile.absolutePath)
-        System.setProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY, logFile.loggerCompatiblePath)
-        try {
-            testLoadingKotlinFromDifferentModules()
-        }
-        finally {
-            flagFile.delete()
-            System.clearProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)
-            System.clearProperty(COMPILE_DAEMON_CLIENT_ALIVE_PATH_PROPERTY)
-            System.clearProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY)
-            System.clearProperty(COMPILE_DAEMON_ENABLED_PROPERTY)
+        val daemonHome = FileUtil.createTempDirectory("daemon-home", "testJpsDaemonIC")
+
+        withSystemProperty(COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS, daemonHome.absolutePath) {
+            withSystemProperty(COMPILE_DAEMON_ENABLED_PROPERTY, "true") {
+                withSystemProperty(COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY, "true") {
+                    withSystemProperty(JpsKotlinCompilerRunner.FAIL_ON_FALLBACK_PROPERTY, "true") {
+                        testLoadingKotlinFromDifferentModules()
+                    }
+                }
+            }
         }
     }
 }

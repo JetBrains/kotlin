@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import java.util.*
@@ -46,7 +47,7 @@ class SubpluginEnvironment(
         javaTask: AbstractCompile? = null,
         variantData: Any? = null,
         androidProjectHandler: AbstractAndroidProjectHandler<out Any?>? = null,
-        kotlinCompilation: KotlinCompilation? = null
+        kotlinCompilation: KotlinCompilation<*>? = null
     ): List<KotlinGradleSubplugin<AbstractKotlinCompile<C>>> = addSubpluginOptions(
         project,
         kotlinTask,
@@ -57,15 +58,15 @@ class SubpluginEnvironment(
         kotlinCompilation
     )
 
-    fun <C : CommonCompilerArguments> addSubpluginOptions(
+    fun addSubpluginOptions(
         project: Project,
         kotlinTask: AbstractCompile,
         pluginOptions: CompilerPluginOptions,
         javaTask: AbstractCompile? = null,
         variantData: Any? = null,
         androidProjectHandler: AbstractAndroidProjectHandler<out Any?>? = null,
-        kotlinCompilation: KotlinCompilation? = null
-    ): List<KotlinGradleSubplugin<AbstractKotlinCompile<C>>> {
+        kotlinCompilation: KotlinCompilation<*>? = null
+    ): List<KotlinGradleSubplugin<AbstractCompile>> {
         val appliedSubplugins = subplugins.filter { it.isApplicable(project, kotlinTask) }
         for (subplugin in appliedSubplugins) {
             if (!subplugin.isApplicable(project, kotlinTask)) continue

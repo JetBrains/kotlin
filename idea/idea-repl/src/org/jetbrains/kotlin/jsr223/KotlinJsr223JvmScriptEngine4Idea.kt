@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.daemon.client.DaemonReportingTargets
 import org.jetbrains.kotlin.daemon.client.KotlinCompilerClient
 import org.jetbrains.kotlin.daemon.client.KotlinRemoteReplCompilerClient
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -36,44 +37,53 @@ import kotlin.reflect.KClass
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
 class KotlinJsr223JvmScriptEngine4Idea(
-        factory: ScriptEngineFactory,
-        templateClasspath: List<File>,
-        templateClassName: String,
-        private val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
-        private val scriptArgsTypes: Array<out KClass<out Any>>?
+    factory: ScriptEngineFactory,
+    templateClasspath: List<File>,
+    templateClassName: String,
+    private val getScriptArgs: (ScriptContext, Array<out KClass<out Any>>?) -> ScriptArgsWithTypes?,
+    private val scriptArgsTypes: Array<out KClass<out Any>>?
 ) : KotlinJsr223JvmScriptEngineBase(factory) {
 
     private val daemon by lazy {
-        val path = PathUtil.kotlinPathsForIdeaPlugin.compilerPath
-        assert(path.exists())
-        val compilerId = CompilerId.makeCompilerId(path)
+        val classPath = PathUtil.kotlinPathsForIdeaPlugin.classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
+        assert(classPath.all { it.exists() })
+        val compilerId = CompilerId.makeCompilerId(classPath)
         val daemonOptions = configureDaemonOptions()
         val daemonJVMOptions = DaemonJVMOptions()
 
         val daemonReportMessages = arrayListOf<DaemonReportMessage>()
 
-        KotlinCompilerClient.connectToCompileService(compilerId, daemonJVMOptions, daemonOptions, DaemonReportingTargets(null, daemonReportMessages), true, true)
-                ?: throw ScriptException("Unable to connect to repl server:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") { "${it.category.name} ${it.message}" })
+        KotlinCompilerClient.connectToCompileService(
+            compilerId, daemonJVMOptions, daemonOptions,
+            DaemonReportingTargets(null, daemonReportMessages),
+            autostart = true, checkId = true
+        ) ?: throw ScriptException(
+            "Unable to connect to repl server:" + daemonReportMessages.joinToString("\n  ", prefix = "\n  ") {
+                "${it.category.name} ${it.message}"
+            }
+        )
     }
 
     private val messageCollector = MyMessageCollector()
 
     override val replCompiler: ReplCompiler by lazy {
-        daemon.let {
-            KotlinRemoteReplCompilerClient(it,
-                                           makeAutodeletingFlagFile("idea-jsr223-repl-session"),
-                                           CompileService.TargetPlatform.JVM,
-                                           emptyArray(),
-                                           messageCollector,
-                                           templateClasspath,
-                                           templateClassName)
-        }
+        KotlinRemoteReplCompilerClient(
+            daemon,
+            makeAutodeletingFlagFile("idea-jsr223-repl-session"),
+            CompileService.TargetPlatform.JVM,
+            emptyArray(),
+            messageCollector,
+            templateClasspath,
+            templateClassName
+        )
     }
 
     override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
-            getScriptArgs(getContext(), scriptArgsTypes)
+        getScriptArgs(getContext(), scriptArgsTypes)
 
-    private val localEvaluator: ReplFullEvaluator by lazy { GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader) }
+    private val localEvaluator: ReplFullEvaluator by lazy {
+        GenericReplCompilingEvaluator(replCompiler, templateClasspath, Thread.currentThread().contextClassLoader)
+    }
 
     override val replEvaluator: ReplFullEvaluator get() = localEvaluator
 

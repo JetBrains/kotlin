@@ -1,5 +1,4 @@
-// LANGUAGE_VERSION: 1.2
-
+// IGNORE_BACKEND: JVM_IR
 fun almostAlwaysTrue() = true
 
 fun test() {

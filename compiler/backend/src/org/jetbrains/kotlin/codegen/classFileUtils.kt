@@ -27,7 +27,7 @@ fun ClassFileFactory.getClassFiles(): Iterable<OutputFile> {
     return asList().filterClassFiles()
 }
 
-fun List<OutputFile>.filterClassFiles(): Iterable<OutputFile> {
+fun List<OutputFile>.filterClassFiles(): List<OutputFile> {
     return filter { it.relativePath.endsWith(".class") }
 }
 

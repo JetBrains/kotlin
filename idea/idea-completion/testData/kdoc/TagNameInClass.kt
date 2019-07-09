@@ -10,3 +10,4 @@ class C<T> {
 // EXIST: @property
 // ABSENT: @return
 // ABSENT: @receiver
+// INVOCATION_COUNT: 1

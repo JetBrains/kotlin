@@ -60,13 +60,11 @@ class SyntheticKotlinBlock(
         }
 
         val textRange = getTextRange()
-        if (treeNode != null) {
-            val psi = treeNode.psi
-            if (psi != null) {
-                val file = psi.containingFile
-                if (file != null) {
-                    return file.text!!.subSequence(textRange.startOffset, textRange.endOffset).toString() + " " + textRange
-                }
+        val psi = treeNode.psi
+        if (psi != null) {
+            val file = psi.containingFile
+            if (file != null) {
+                return file.text!!.subSequence(textRange.startOffset, textRange.endOffset).toString() + " " + textRange
             }
         }
 

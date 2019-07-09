@@ -3,6 +3,7 @@
 // ERROR: Val cannot be reassigned
 // ERROR: Val cannot be reassigned
 // WITH_RUNTIME
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 
 fun foo() {
     val x = 1

@@ -23,20 +23,19 @@ import com.intellij.psi.search.PsiShortNamesCache
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.*
 import org.jetbrains.kotlin.idea.caches.project.getNullableModuleInfo
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
+import org.jetbrains.kotlin.idea.project.findAnalyzerServices
 import org.jetbrains.kotlin.idea.stubindex.KotlinTypeAliasShortNameIndex
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.KtAnnotationEntry
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtSimpleNameExpression
-import org.jetbrains.kotlin.psi.KtUserType
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfTypeAndBranch
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.resolve.ImportPath
@@ -59,12 +58,16 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
      */
     private val packagesWithTypeAliases = mutableListOf<String>()
     private var forceAmbiguity: Boolean = false
+    private var forceAmbiguityForInnerAnnotations: Boolean = false
     private var forceAmbiguityForNonAnnotations: Boolean = false
 
     companion object {
-        @TestOnly val attempts = AtomicInteger()
-        @TestOnly val trueHits = AtomicInteger()
-        @TestOnly val falseHits = AtomicInteger()
+        @get:TestOnly
+        val attempts = AtomicInteger()
+        @get:TestOnly
+        val trueHits = AtomicInteger()
+        @get:TestOnly
+        val falseHits = AtomicInteger()
 
         private val PSI_BASED_CLASS_RESOLVER_KEY = Key<CachedValue<PsiBasedClassResolver>>("PsiBasedClassResolver")
 
@@ -75,7 +78,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
                 {
                     CachedValueProvider.Result(
                         PsiBasedClassResolver(target),
-                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT
+                        KotlinCodeBlockModificationListener.getInstance(target.project).kotlinOutOfCodeBlockTracker
                     )
                 }, false
             )
@@ -86,7 +89,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         }
     }
 
-    private constructor(target: PsiClass): this(target.qualifiedName ?: "") {
+    private constructor(target: PsiClass) : this(target.qualifiedName ?: "") {
         if (target.qualifiedName == null || target.containingClass != null || targetPackage.isEmpty()) {
             forceAmbiguity = true
             return
@@ -104,9 +107,8 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
             // An inner class can be referenced by short name in subclasses without an explicit import
             if (candidate.containingClass != null && !candidate.hasModifierProperty(PsiModifier.PRIVATE)) {
                 if (candidate.isAnnotationType) {
-                    forceAmbiguity = true
-                }
-                else {
+                    forceAmbiguityForInnerAnnotations = true
+                } else {
                     forceAmbiguityForNonAnnotations = true
                 }
                 break
@@ -118,8 +120,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
                     forceAmbiguity = true
                     break
                 }
-            }
-            else {
+            } else {
                 candidate.qualifiedName?.substringBeforeLast('.', "")?.let { candidatePackage ->
                     if (candidatePackage == "")
                         forceAmbiguity = true
@@ -137,7 +138,8 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         }
     }
 
-    @TestOnly fun addConflict(fqName: String) {
+    @TestOnly
+    fun addConflict(fqName: String) {
         conflictingPackages.add(fqName.substringBeforeLast('.'))
     }
 
@@ -158,23 +160,20 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
         // Names in expressions can conflict with local declarations and methods of implicit receivers,
         // so we can't find out what they refer to without a full resolve.
         val userType = ref.getStrictParentOfType<KtUserType>() ?: return UNSURE
-        if (forceAmbiguityForNonAnnotations && userType.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference } == null) {
-            return UNSURE
-        }
+        val parentAnnotation = userType.getParentOfTypeAndBranch<KtAnnotationEntry> { typeReference }
+        if (forceAmbiguityForNonAnnotations && parentAnnotation == null) return UNSURE
 
-        if (forceAmbiguity) {
-            return UNSURE
-        }
+        //For toplevel declarations it's fine to resolve by imports
+        val declaration = parentAnnotation?.getParentOfType<KtDeclaration>(true)
+        if (forceAmbiguityForInnerAnnotations && declaration?.parent !is KtFile) return UNSURE
+        if (forceAmbiguity) return UNSURE
 
         val qualifiedCheckResult = checkQualifiedReferenceToTarget(ref)
-        if (qualifiedCheckResult != null) {
-            return qualifiedCheckResult.returnValue
-        }
+        if (qualifiedCheckResult != null) return qualifiedCheckResult.returnValue
 
         val file = ref.containingKtFile
         var result: Result = Result.NothingFound
-        val filePackage = file.packageFqName.asString()
-        when (filePackage) {
+        when (file.packageFqName.asString()) {
             targetPackage -> result = result.changeTo(Result.Found)
             in conflictingPackages -> result = result.changeTo(Result.FoundOther)
             in packagesWithTypeAliases -> return UNSURE
@@ -192,8 +191,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 
         if (result.returnValue == MATCH) {
             trueHits.incrementAndGet()
-        }
-        else if (result.returnValue == NO_MATCH) {
+        } else if (result.returnValue == NO_MATCH) {
             falseHits.incrementAndGet()
         }
         return result.returnValue
@@ -202,24 +200,23 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
     private fun analyzeSingleImport(result: Result, importedFqName: FqName?, isAllUnder: Boolean, aliasName: String?): Result {
         if (!isAllUnder) {
             if (importedFqName?.asString() == targetClassFqName &&
-                (aliasName == null || aliasName == targetShortName)) {
+                (aliasName == null || aliasName == targetShortName)
+            ) {
                 return result.changeTo(Result.Found)
-            }
-            else if (importedFqName?.shortName()?.asString() == targetShortName &&
-                     importedFqName.parent().asString() in conflictingPackages &&
-                     aliasName == null) {
+            } else if (importedFqName?.shortName()?.asString() == targetShortName &&
+                importedFqName.parent().asString() in conflictingPackages &&
+                aliasName == null
+            ) {
                 return result.changeTo(Result.FoundOther)
-            }
-            else if (importedFqName?.shortName()?.asString() == targetShortName &&
-                     importedFqName.parent().asString() in packagesWithTypeAliases &&
-                     aliasName == null) {
+            } else if (importedFqName?.shortName()?.asString() == targetShortName &&
+                importedFqName.parent().asString() in packagesWithTypeAliases &&
+                aliasName == null
+            ) {
                 return Result.Ambiguity
-            }
-            else if (aliasName == targetShortName) {
+            } else if (aliasName == targetShortName) {
                 return result.changeTo(Result.FoundOther)
             }
-        }
-        else {
+        } else {
             when {
                 importedFqName?.asString() == targetPackage -> return result.changeTo(Result.Found)
                 importedFqName?.asString() in conflictingPackages -> return result.changeTo(Result.FoundOther)
@@ -258,7 +255,7 @@ class PsiBasedClassResolver @TestOnly constructor(private val targetClassFqName:
 
 private fun KtFile.getDefaultImports(): List<ImportPath> {
     val moduleInfo = getNullableModuleInfo() ?: return emptyList()
-    return TargetPlatformDetector.getPlatform(this).getDefaultImports(
+    return TargetPlatformDetector.getPlatform(this).findAnalyzerServices.getDefaultImports(
         IDELanguageSettingsProvider.getLanguageVersionSettings(moduleInfo, project),
         includeLowPriorityImports = true
     )

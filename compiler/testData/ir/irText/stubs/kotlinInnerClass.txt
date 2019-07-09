@@ -1,8 +1,7 @@
 FILE fqName:<root> fileName:/kotlinInnerClass.kt
-  FUN name:test visibility:public modality:FINAL <> (inner:Outer.Inner) returnType:kotlin.Unit flags:
-    VALUE_PARAMETER name:inner index:0 type:Outer.Inner flags:
+  FUN name:test visibility:public modality:FINAL <> (inner:<root>.Outer.Inner) returnType:kotlin.Unit 
+    VALUE_PARAMETER name:inner index:0 type:<root>.Outer.Inner 
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='test(Outer.Inner): Unit'
-        CALL 'foo(): Unit' type=kotlin.Unit origin=null
-          $this: GET_VAR 'value-parameter inner: Outer.Inner' type=Outer.Inner origin=null
-
+      RETURN type=kotlin.Nothing from='public final fun test (inner: <root>.Outer.Inner): kotlin.Unit declared in <root>'
+        CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer.Inner' type=kotlin.Unit origin=null
+          $this: GET_VAR 'inner: <root>.Outer.Inner declared in <root>.test' type=<root>.Outer.Inner origin=null

@@ -97,3 +97,11 @@ Note that if this directive is present, the NEWER_VERSION_IN_SINCE_KOTLIN diagno
 #### Usage:
 
     // !API_VERSION: 1.0
+    
+### 6. RENDER_DIAGNOSTICS_MESSAGES
+
+This directive forces *Diagnostic printer* prints parametrized diagnostics with all parameters.
+
+#### Usage:
+
+    // !RENDER_DIAGNOSTICS_MESSAGES

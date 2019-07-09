@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvm8RuntimeDescriptorLoaderTest
 import org.jetbrains.kotlin.jvm.runtime.AbstractJvmRuntimeDescriptorLoaderTest
 
-fun main(args: Array<String>) {
+fun main() {
     System.setProperty("java.awt.headless", "true")
 
     testGroup("core/descriptors.runtime/tests", "compiler/testData") {

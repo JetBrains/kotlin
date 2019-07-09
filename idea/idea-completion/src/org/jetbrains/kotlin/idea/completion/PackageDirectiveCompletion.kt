@@ -46,7 +46,7 @@ object PackageDirectiveCompletion {
         val prefixLength = parameters.offset - expression.textOffset
         val prefix = expression.text!!
         val prefixMatcher = PlainPrefixMatcher(prefix.substring(0, prefixLength))
-        val result = result.withPrefixMatcher(prefixMatcher)
+        val resultSet = result.withPrefixMatcher(prefixMatcher)
 
         val resolutionFacade = expression.getResolutionFacade()
 
@@ -57,7 +57,7 @@ object PackageDirectiveCompletion {
         for (variant in variants) {
             val lookupElement = lookupElementFactory.createLookupElement(variant)
             if (!lookupElement.lookupString.contains(DUMMY_IDENTIFIER)) {
-                result.addElement(lookupElement)
+                resultSet.addElement(lookupElement)
             }
         }
 

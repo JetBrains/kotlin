@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.idea.intentions
 
-import com.intellij.codeInsight.intention.LowPriorityAction
 import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -28,11 +27,10 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isUnit
-import java.lang.RuntimeException
 
 class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody>(
-        KtDeclarationWithBody::class.java, "Convert to block body"
-), LowPriorityAction {
+    KtDeclarationWithBody::class.java, "Convert to block body"
+) {
     override fun isApplicableTo(element: KtDeclarationWithBody, caretOffset: Int): Boolean {
         if (element is KtFunctionLiteral || element.hasBlockBody() || !element.hasBody()) return false
 
@@ -66,7 +64,7 @@ class ConvertToBlockBodyIntention : SelfTargetingIntention<KtDeclarationWithBody
                 if (bodyType != null && bodyType.isUnit() && body is KtNameReferenceExpression) return factory.createEmptyBody()
                 val unitWhenAsResult = (bodyType == null || bodyType.isUnit()) && body.resultingWhens().isNotEmpty()
                 val needReturn = returnsValue &&
-                                 (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
+                        (bodyType == null || (!bodyType.isUnit() && !bodyType.isNothing()))
                 val statement = if (needReturn || unitWhenAsResult) factory.createExpressionByPattern("return $0", body) else body
                 return factory.createSingleStatementBlock(statement)
             }

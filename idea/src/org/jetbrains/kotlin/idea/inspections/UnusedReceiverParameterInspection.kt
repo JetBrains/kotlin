@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.idea.refactoring.changeSignature.modify
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.runChangeSignature
 import org.jetbrains.kotlin.idea.refactoring.explicateAsTextForReceiver
 import org.jetbrains.kotlin.idea.refactoring.getThisLabelName
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.util.getThisReceiverOwner
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -119,45 +118,53 @@ class UnusedReceiverParameterInspection : AbstractKotlinInspection() {
                     receiverTypeReference,
                     KotlinBundle.message("unused.receiver.parameter"),
                     ProblemHighlightType.LIKE_UNUSED_SYMBOL,
-                    MyQuickFix(inSameClass)
+                    RemoveReceiverFix(inSameClass)
                 )
             }
         }
     }
 
-    private class MyQuickFix(private val inSameClass: Boolean) : LocalQuickFix {
-        override fun getName(): String = KotlinBundle.message("unused.receiver.parameter.remove")
-
-        private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
-            override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
-            override fun configure(originalDescriptor: KotlinMethodDescriptor) = originalDescriptor.modify { it.removeParameter(0) }
-        }
+    class RemoveReceiverFix(private val inSameClass: Boolean) : LocalQuickFix {
+        override fun getName(): String = actionName
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
             val element = descriptor.psiElement as? KtTypeReference ?: return
             if (!FileModificationService.getInstance().preparePsiElementForWrite(element)) return
 
-            val function = element.parent as? KtCallableDeclaration ?: return
-            val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
-
-            val typeParameters = RemoveUnusedFunctionParameterFix.typeParameters(element)
-            if (inSameClass) {
-                runWriteAction {
-                    val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
-                    function.forEachDescendantOfType<KtThisExpression> {
-                        if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
-                    }
-                    function.setReceiverTypeReference(null)
-                }
-            } else {
-                runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, name)
-            }
-            RemoveUnusedFunctionParameterFix.runRemoveUnusedTypeParameters(typeParameters)
+            apply(element, project, inSameClass)
         }
 
-        override fun getFamilyName(): String = name
+        override fun getFamilyName(): String = actionName
 
         override fun startInWriteAction() = false
+
+        companion object {
+            private val actionName = KotlinBundle.message("unused.receiver.parameter.remove")
+
+            private fun configureChangeSignature() = object : KotlinChangeSignatureConfiguration {
+                override fun performSilently(affectedFunctions: Collection<PsiElement>) = true
+                override fun configure(originalDescriptor: KotlinMethodDescriptor) = originalDescriptor.modify { it.removeParameter(0) }
+            }
+
+            fun apply(element: KtTypeReference, project: Project, inSameClass: Boolean = false) {
+                val function = element.parent as? KtCallableDeclaration ?: return
+                val callableDescriptor = function.resolveToDescriptorIfAny(BodyResolveMode.FULL) as? CallableDescriptor ?: return
+
+                val typeParameters = RemoveUnusedFunctionParameterFix.typeParameters(element)
+                if (inSameClass) {
+                    runWriteAction {
+                        val explicateAsTextForReceiver = callableDescriptor.explicateAsTextForReceiver()
+                        function.forEachDescendantOfType<KtThisExpression> {
+                            if (it.text == explicateAsTextForReceiver) it.labelQualifier?.delete()
+                        }
+                        function.setReceiverTypeReference(null)
+                    }
+                } else {
+                    runChangeSignature(project, callableDescriptor, configureChangeSignature(), element, actionName)
+                }
+                RemoveUnusedFunctionParameterFix.runRemoveUnusedTypeParameters(typeParameters)
+            }
+        }
     }
 }
 

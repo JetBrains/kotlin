@@ -33,10 +33,21 @@ import java.io.PrintStream
 import java.net.URL
 import java.net.URLConnection
 import java.util.function.Predicate
+import kotlin.system.exitProcess
 
 abstract class CLITool<A : CommonToolArguments> {
     fun exec(errStream: PrintStream, vararg args: String): ExitCode {
-        return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_RELATIVE_PATHS, args)
+        val rendererType = System.getProperty(MessageRenderer.PROPERTY_KEY)
+
+        val messageRenderer = when (rendererType) {
+            MessageRenderer.XML.name -> MessageRenderer.XML
+            MessageRenderer.GRADLE_STYLE.name -> MessageRenderer.GRADLE_STYLE
+            MessageRenderer.WITHOUT_PATHS.name -> MessageRenderer.WITHOUT_PATHS
+            MessageRenderer.PLAIN_FULL_PATHS.name -> MessageRenderer.PLAIN_FULL_PATHS
+            else -> MessageRenderer.PLAIN_RELATIVE_PATHS
+        }
+
+        return exec(errStream, Services.EMPTY, messageRenderer, args)
     }
 
     protected fun exec(
@@ -89,7 +100,7 @@ abstract class CLITool<A : CommonToolArguments> {
             messageCollector
         }
 
-        reportArgumentParseProblems(fixedMessageCollector, arguments)
+        fixedMessageCollector.reportArgumentParseProblems(arguments)
         return execImpl(fixedMessageCollector, services, arguments)
     }
 
@@ -118,7 +129,10 @@ abstract class CLITool<A : CommonToolArguments> {
     }
 
     private fun reportArgumentParseProblems(collector: MessageCollector, arguments: A) {
-        val errors = arguments.errors
+        reportUnsafeInternalArgumentsIfAny(arguments, collector)
+
+        val errors = arguments.errors ?: return
+
         for (flag in errors.unknownExtraFlags) {
             collector.report(STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
         }
@@ -139,7 +153,6 @@ abstract class CLITool<A : CommonToolArguments> {
             collector.report(STRONG_WARNING, argfileError)
         }
 
-        reportUnsafeInternalArgumentsIfAny(arguments, collector)
         for (internalArgumentsError in errors.internalArgumentsParsingProblems) {
             collector.report(STRONG_WARNING, internalArgumentsError)
         }
@@ -193,7 +206,7 @@ abstract class CLITool<A : CommonToolArguments> {
             }
             val exitCode = doMainNoExit(compiler, args)
             if (exitCode != ExitCode.OK) {
-                System.exit(exitCode.code)
+                exitProcess(exitCode.code)
             }
         }
 

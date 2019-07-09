@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JS_IR
 open class DeeperBase {
     open fun deeperBaseFun(): String = "DeeperBase.deeperBaseFun()"
 

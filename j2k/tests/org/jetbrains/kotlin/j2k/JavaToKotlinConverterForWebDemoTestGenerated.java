@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.j2k;
@@ -3779,6 +3779,11 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             runTest("j2k/testData/fileOrElement/postProcessing/GetOperator.java");
         }
 
+        @TestMetadata("GuardClause.java")
+        public void testGuardClause() throws Exception {
+            runTest("j2k/testData/fileOrElement/postProcessing/GuardClause.java");
+        }
+
         @TestMetadata("IfNullReturnToElvis.java")
         public void testIfNullReturnToElvis() throws Exception {
             runTest("j2k/testData/fileOrElement/postProcessing/IfNullReturnToElvis.java");
@@ -3792,6 +3797,11 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
         @TestMetadata("IfToSafeCall.java")
         public void testIfToSafeCall() throws Exception {
             runTest("j2k/testData/fileOrElement/postProcessing/IfToSafeCall.java");
+        }
+
+        @TestMetadata("java8MapForEachWithFullJdk.java")
+        public void testJava8MapForEachWithFullJdk() throws Exception {
+            runTest("j2k/testData/fileOrElement/postProcessing/java8MapForEachWithFullJdk.java");
         }
 
         @TestMetadata("NotIs.java")

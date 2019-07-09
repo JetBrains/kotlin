@@ -34,7 +34,7 @@ fun test() {
     platformJ++
 
     1 + platformNN
-    1 <!NI;NONE_APPLICABLE!>+<!> <!OI;TYPE_MISMATCH!>platformN<!>
+    1 + <!TYPE_MISMATCH!>platformN<!>
     1 + platformJ
 
     platformNN + 1
@@ -42,11 +42,11 @@ fun test() {
     platformJ + 1
 
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformNN
-    1 <!NI;NONE_APPLICABLE, OI;INFIX_MODIFIER_REQUIRED!>plus<!> <!OI;TYPE_MISMATCH!>platformN<!>
+    1 <!INFIX_MODIFIER_REQUIRED!>plus<!> <!TYPE_MISMATCH!>platformN<!>
     1 <!INFIX_MODIFIER_REQUIRED!>plus<!> platformJ
 
     platformNN <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
-    platformN <!UNSAFE_INFIX_CALL, INFIX_MODIFIER_REQUIRED!>plus<!> 1
+    platformN <!INFIX_MODIFIER_REQUIRED, UNSAFE_INFIX_CALL!>plus<!> 1
     platformJ <!INFIX_MODIFIER_REQUIRED!>plus<!> 1
 
     platformNN += 1

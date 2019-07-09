@@ -13,11 +13,10 @@ class Receiver1 {
 class Receiver2 {
     fun privateFun() = 2
 
-    // In IDE -> privateFun() will return 2, because privateFun from Receiver is invisible in current scope
     fun test1() {
         with(Receiver1()) {
             // EXPRESSION: privateFun()
-            // RESULT: 1: I
+            // RESULT: 2: I
             //Breakpoint!
             privateFun()
         }

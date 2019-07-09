@@ -1,0 +1,14 @@
+package test
+
+public/*package*/ open class AnnotatedParameterInInnerClassConstructor {
+    public/*package*/ constructor AnnotatedParameterInInnerClassConstructor()
+
+    @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE, AnnotationTarget.VALUE_PARAMETER}) public final annotation class Anno : kotlin.Annotation {
+        public constructor Anno(/*0*/ value: kotlin.String)
+        public final val value: kotlin.String
+    }
+
+    public/*package*/ open inner class JavaEnum {
+        public/*package*/ constructor JavaEnum(/*0*/ @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "a") p0: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "a") kotlin.String!, /*1*/ @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "b") p1: @test.AnnotatedParameterInInnerClassConstructor.Anno(value = "b") kotlin.String!)
+    }
+}

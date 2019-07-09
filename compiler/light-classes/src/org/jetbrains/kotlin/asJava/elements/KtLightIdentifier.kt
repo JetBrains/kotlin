@@ -29,8 +29,9 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 open class KtLightIdentifier(
     private val lightOwner: PsiElement,
     private val ktDeclaration: KtNamedDeclaration?
-) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: ""), PsiCompiledElement {
-    val origin: PsiElement?
+) : LightIdentifier(lightOwner.manager, ktDeclaration?.name ?: ""), PsiCompiledElement,
+    PsiElementWithOrigin<PsiElement> {
+    override val origin: PsiElement?
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
@@ -45,4 +46,5 @@ open class KtLightIdentifier(
     override fun getParent() = lightOwner
     override fun getContainingFile() = lightOwner.containingFile
     override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextOffset(): Int = origin?.textOffset ?: -1
 }

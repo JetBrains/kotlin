@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+// FIX: Replace with 'repeat()'
+
+fun test(list: List<String>) {
+    repeat(list.size) {}
+}

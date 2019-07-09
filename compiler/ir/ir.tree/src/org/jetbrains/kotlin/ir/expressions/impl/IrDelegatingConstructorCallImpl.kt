@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrDelegatingConstructorCall
 import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
@@ -54,25 +53,17 @@ class IrDelegatingConstructorCallImpl(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
-        symbol: IrConstructorSymbol,
-        descriptor: ClassConstructorDescriptor,
-        typeArgumentsCount: Int
-    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size)
+        symbol: IrConstructorSymbol
+    ) : this(startOffset, endOffset, type, symbol, symbol.descriptor)
 
-    @Deprecated("Creates unbound symbol")
     constructor(
         startOffset: Int,
         endOffset: Int,
         type: IrType,
+        symbol: IrConstructorSymbol,
         descriptor: ClassConstructorDescriptor,
         typeArgumentsCount: Int
-    ) : this(
-        startOffset, endOffset, type,
-        IrConstructorSymbolImpl(descriptor.original),
-        descriptor,
-        typeArgumentsCount,
-        descriptor.valueParameters.size
-    )
+    ) : this(startOffset, endOffset, type, symbol, descriptor, typeArgumentsCount, descriptor.valueParameters.size)
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R {
         return visitor.visitDelegatingConstructorCall(this, data)

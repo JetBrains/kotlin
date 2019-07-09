@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlinx.serialization.compiler.resolve.KSerializerDescriptorResolver
-import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializableProperties
+import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
+import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 abstract class SerializableCodegen(
     protected val serializableDescriptor: ClassDescriptor,
     bindingContext: BindingContext
 ) : AbstractSerialGenerator(bindingContext, serializableDescriptor) {
-    protected val properties = SerializableProperties(serializableDescriptor, bindingContext)
+    protected val properties = bindingContext.serializablePropertiesFor(serializableDescriptor)
 
     fun generate() {
         generateSyntheticInternalConstructor()
@@ -35,16 +35,24 @@ abstract class SerializableCodegen(
     }
 
     private fun generateSyntheticInternalConstructor() {
-        val constrDesc = KSerializerDescriptorResolver.createLoadConstructorDescriptor(serializableDescriptor, bindingContext)
-        generateInternalConstructor(constrDesc)
+        val serializerDescriptor = serializableDescriptor.classSerializer ?: return
+        if (isAbstractSerializableClass(serializableDescriptor) || SerializerCodegen.getSyntheticLoadMember(serializerDescriptor) != null) {
+            val constrDesc = serializableDescriptor.secondaryConstructors.find(ClassConstructorDescriptor::isSerializationCtor) ?: return
+            generateInternalConstructor(constrDesc)
+        }
     }
 
     private fun generateSyntheticMethods() {
-        val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
-        generateWriteSelfMethod(func)
+        val serializerDescriptor = serializableDescriptor.classSerializer ?: return
+        if (isAbstractSerializableClass(serializableDescriptor) || SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) != null) {
+            val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
+            generateWriteSelfMethod(func)
+        }
     }
 
     protected abstract fun generateInternalConstructor(constructorDescriptor: ClassConstructorDescriptor)
 
-    protected abstract fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor)
+    protected open fun generateWriteSelfMethod(methodDescriptor: FunctionDescriptor) {
+
+    }
 }

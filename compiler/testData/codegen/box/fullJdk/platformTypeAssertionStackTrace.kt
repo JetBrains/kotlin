@@ -3,6 +3,8 @@
 
 // FULL_JDK
 
+package test
+
 import java.util.*
 
 fun box(): String {
@@ -17,7 +19,7 @@ fun box(): String {
             return "Fail: very small stack trace, should at least have current function and JUnit reflective calls: ${Arrays.toString(st)}"
         }
         val top = st[0]
-        if (!(top.getClassName() == "PlatformTypeAssertionStackTraceKt" && top.getMethodName() == "box")) {
+        if (!(top.getClassName() == "test.PlatformTypeAssertionStackTraceKt" && top.getMethodName() == "box")) {
             return "Fail: top stack trace element should be PlatformTypeAssertionStackTraceKt.box() from default package, but was $top"
         }
         return "OK"

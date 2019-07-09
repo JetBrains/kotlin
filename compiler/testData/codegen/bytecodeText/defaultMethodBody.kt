@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 fun test(a: Int, z: String = try{"1"} catch (e: Exception) {"2"}) {
     "Default body"
 }

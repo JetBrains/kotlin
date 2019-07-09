@@ -1,0 +1,21 @@
+FILE: expectActual.kt
+    public? final? expect class MyClass : kotlin/Any {
+        public? constructor(): R|MyClass| {
+            super<kotlin/Any>()
+        }
+
+    }
+    public? final? expect fun foo(): String
+    public? final? expect val x: Int
+        public? get(): Int
+    public? final? actual class MyClass : kotlin/Any {
+        public? constructor(): R|MyClass| {
+            super<kotlin/Any>()
+        }
+
+    }
+    public? final? actual fun foo(): <implicit> {
+        ^foo String(Hello)
+    }
+    public? final? actual val x: <implicit> = Int(42)
+        public? get(): <implicit>

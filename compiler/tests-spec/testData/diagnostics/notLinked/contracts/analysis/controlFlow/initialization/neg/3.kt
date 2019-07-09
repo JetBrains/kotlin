@@ -1,6 +1,4 @@
 // !USE_EXPERIMENTAL: kotlin.contracts.ExperimentalContracts
-// !WITH_CONTRACT_FUNCTIONS
-// !WITH_ENUM_CLASSES
 // SKIP_TXT
 
 /*
@@ -9,16 +7,17 @@
  * SECTIONS: contracts, analysis, controlFlow, initialization
  * NUMBER: 3
  * DESCRIPTION: val/var reassignment and/or uninitialized variable usages with compelx control flow inside/outside lambda of contract function with CallsInPlace effect
+ * HELPERS: enumClasses, contractFunctions
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: _EnumClass?) {
+fun case_1(value_1: EnumClass?) {
     val value_2: Int
 
     <!NON_EXHAUSTIVE_WHEN!>when<!> (value_1) {
-        _EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
-        _EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
-        _EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }
+        EnumClass.NORTH -> funWithExactlyOnceCallsInPlace { value_2 = 1 }
+        EnumClass.SOUTH -> funWithExactlyOnceCallsInPlace { value_2 = 2 }
+        EnumClass.EAST -> funWithExactlyOnceCallsInPlace { value_2 = 4 }
         null -> funWithExactlyOnceCallsInPlace { value_2 = 5 }
     }
 
@@ -62,12 +61,12 @@ class case_3(value_1: Any?) {
 }
 
 // TESTCASE NUMBER: 4
-fun case_4(value_1: _EnumClassSingle?) {
+fun case_4(value_1: EnumClassSingle?) {
     var value_2: Int
 
     funWithAtMostOnceCallsInPlace {
         when (value_1) {
-            _EnumClassSingle.EVERYTHING -> {
+            EnumClassSingle.EVERYTHING -> {
                 funWithExactlyOnceCallsInPlace { value_2 = 1 }
                 ++value_2
             }

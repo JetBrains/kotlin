@@ -1,26 +1,24 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
 
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.builtins.UnsignedTypes
+import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
 import org.jetbrains.kotlin.codegen.context.FieldOwnerContext
 import org.jetbrains.kotlin.codegen.context.MultifileClassFacadeContext
-import org.jetbrains.kotlin.codegen.context.PackageContext
 import org.jetbrains.kotlin.codegen.coroutines.continuationAsmType
 import org.jetbrains.kotlin.codegen.coroutines.unwrapInitialDescriptorForSuspendFunction
 import org.jetbrains.kotlin.codegen.inline.NUMBERED_FUNCTION_PREFIX
 import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
-import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.descriptors.*
@@ -166,26 +164,17 @@ fun populateCompanionBackingFieldNamesToOuterContextIfNeeded(
 
 }
 
-// TODO: inline and remove then ScriptCodegen is converted to Kotlin
-fun mapSupertypesNames(
-    typeMapper: KotlinTypeMapper,
-    supertypes: List<ClassDescriptor>,
-    signatureVisitor: JvmSignatureWriter?
-): Array<String> =
-    supertypes.map { typeMapper.mapSupertype(it.defaultType, signatureVisitor).internalName }.toTypedArray()
-
-
 // Top level subclasses of a sealed class should be generated before that sealed class,
 // so that we'd generate the necessary accessor for its constructor afterwards
 fun sortTopLevelClassesAndPrepareContextForSealedClasses(
     classOrObjects: List<KtClassOrObject>,
-    packagePartContext: PackageContext,
+    context: CodegenContext<*>,
     state: GenerationState
 ): List<KtClassOrObject> {
     fun prepareContextIfNeeded(descriptor: ClassDescriptor?) {
         if (DescriptorUtils.isSealedClass(descriptor)) {
             // save context for sealed class
-            packagePartContext.intoClass(descriptor!!, OwnerKind.IMPLEMENTATION, state)
+            context.intoClass(descriptor!!, OwnerKind.IMPLEMENTATION, state)
         }
     }
 
@@ -211,8 +200,10 @@ fun sortTopLevelClassesAndPrepareContextForSealedClasses(
     }
 
     // topologicalOrder(listOf(1, 2, 3)) { emptyList() } = listOf(3, 2, 1). Because of this used keys.reversed().
-    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) {
-        it.typeConstructor.supertypes.map { it.constructor.declarationDescriptor as? ClassDescriptor }.filter { it in descriptorToPsi.keys }
+    val sortedDescriptors = DFS.topologicalOrder(descriptorToPsi.keys.reversed()) { descriptor ->
+        descriptor.typeConstructor.supertypes
+            .map { it.constructor.declarationDescriptor as? ClassDescriptor }
+            .filter { it in descriptorToPsi.keys }
     }
     sortedDescriptors.mapTo(result) { descriptorToPsi[it]!! }
     return result
@@ -301,7 +292,7 @@ fun FunctionDescriptor.isGenericToArray(): Boolean {
 
 fun FunctionDescriptor.isNonGenericToArray(): Boolean {
     if (name.asString() != "toArray") return false
-    if (!valueParameters.isEmpty() || !typeParameters.isEmpty()) return false
+    if (valueParameters.isNotEmpty() || typeParameters.isNotEmpty()) return false
 
     val returnType = returnType
     return returnType != null && KotlinBuiltIns.isArray(returnType)
@@ -322,31 +313,44 @@ fun MemberDescriptor.isToArrayFromCollection(): Boolean {
 fun FqName.topLevelClassInternalName() = JvmClassName.byClassId(ClassId(parent(), shortName())).internalName
 fun FqName.topLevelClassAsmType(): Type = Type.getObjectType(topLevelClassInternalName())
 
-fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>) {
-    val savedIsShouldMarkLineNumbers = codegen.isShouldMarkLineNumbers
+fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodegen, valueParameters: List<ValueParameterDescriptor>, endLabel: Label? = null) {
     // Do not write line numbers until destructuring happens
     // (otherwise destructuring variables will be uninitialized in the beginning of lambda)
-    codegen.isShouldMarkLineNumbers = false
+    codegen.runWithShouldMarkLineNumbers(false) {
+        for (parameterDescriptor in valueParameters) {
+            if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
 
-    for (parameterDescriptor in valueParameters) {
-        if (parameterDescriptor !is ValueParameterDescriptorImpl.WithDestructuringDeclaration) continue
+            val variables = parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()
+            val indices = variables.map {
+                codegen.myFrameMap.enter(it, codegen.typeMapper.mapType(it.type))
+            }
 
-        for (entry in parameterDescriptor.destructuringVariables.filterOutDescriptorsWithSpecialNames()) {
-            codegen.myFrameMap.enter(entry, codegen.typeMapper.mapType(entry.type))
+            val destructuringDeclaration =
+                (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
+                    ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
+
+            codegen.initializeDestructuringDeclarationVariables(
+                destructuringDeclaration,
+                TransientReceiver(parameterDescriptor.type),
+                codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
+            )
+
+            if (endLabel != null) {
+                val label = Label()
+                codegen.v.mark(label)
+                for ((index, entry) in indices.zip(variables)) {
+                    codegen.v.visitLocalVariable(
+                        entry.name.asString(),
+                        codegen.typeMapper.mapType(entry.type).descriptor,
+                        null,
+                        label,
+                        endLabel,
+                        index
+                    )
+                }
+            }
         }
-
-        val destructuringDeclaration =
-            (DescriptorToSourceUtils.descriptorToDeclaration(parameterDescriptor) as? KtParameter)?.destructuringDeclaration
-                ?: error("Destructuring declaration for descriptor $parameterDescriptor not found")
-
-        codegen.initializeDestructuringDeclarationVariables(
-            destructuringDeclaration,
-            TransientReceiver(parameterDescriptor.type),
-            codegen.findLocalOrCapturedValue(parameterDescriptor) ?: error("Local var not found for parameter $parameterDescriptor")
-        )
     }
-
-    codegen.isShouldMarkLineNumbers = savedIsShouldMarkLineNumbers
 }
 
 fun <D : CallableDescriptor> D.unwrapFrontendVersion() = unwrapInitialDescriptorForSuspendFunction()
@@ -370,8 +374,8 @@ fun InstructionAdapter.generateNewInstanceDupAndPlaceBeforeStackTop(
     }
 }
 
-fun extractReificationArgument(type: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
-    var type = type
+fun extractReificationArgument(initialType: KotlinType): Pair<TypeParameterDescriptor, ReificationArgument>? {
+    var type = initialType
     var arrayDepth = 0
     val isNullable = type.isMarkedNullable
     while (KotlinBuiltIns.isArray(type)) {
@@ -397,15 +401,6 @@ fun ClassDescriptor.isPossiblyUninitializedSingleton() =
     DescriptorUtils.isEnumEntry(this) ||
             DescriptorUtils.isCompanionObject(this) && JvmCodegenUtil.isJvmInterface(this.containingDeclaration)
 
-val CodegenContext<*>.parentContextsWithSelf
-    get() = generateSequence(this) { it.parentContext }
-
-val CodegenContext<*>.parentContexts
-    get() = parentContext?.parentContextsWithSelf ?: emptySequence()
-
-val CodegenContext<*>.contextStackText
-    get() = parentContextsWithSelf.joinToString(separator = "\n") { it.toString() }
-
 inline fun FrameMap.evaluateOnce(
     value: StackValue,
     asType: Type,
@@ -426,6 +421,8 @@ inline fun FrameMap.evaluateOnce(
 }
 
 // Handy debugging routine. Print all instructions from methodNode.
+@TestOnly
+@Suppress("unused")
 fun MethodNode.textifyMethodNode(): String {
     val text = Textifier()
     val tmv = TraceMethodVisitor(text)
@@ -450,26 +447,25 @@ fun CallableDescriptor.needsExperimentalCoroutinesWrapper() =
     (this as? DeserializedMemberDescriptor)?.coroutinesExperimentalCompatibilityMode == CoroutinesCompatibilityMode.NEEDS_WRAPPER
 
 fun recordCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingTrace: BindingTrace) {
-    fun storeLabelName(labelName: String) {
-        val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
-        bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
-    }
+    val labelName = getCallLabelForLambdaArgument(declaration, bindingTrace.bindingContext) ?: return
+    val functionDescriptor = bindingTrace[BindingContext.FUNCTION, declaration] ?: return
+    bindingTrace.record(CodegenBinding.CALL_LABEL_FOR_LAMBDA_ARGUMENT, functionDescriptor, labelName)
 
-    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return
+}
+
+fun getCallLabelForLambdaArgument(declaration: KtFunctionLiteral, bindingContext: BindingContext): String? {
+    val lambdaExpression = declaration.parent as? KtLambdaExpression ?: return null
     val lambdaExpressionParent = lambdaExpression.parent
 
     if (lambdaExpressionParent is KtLabeledExpression) {
-        lambdaExpressionParent.name?.let { labelName ->
-            storeLabelName(labelName)
-            return
-        }
+        lambdaExpressionParent.name?.let { return it }
     }
 
-    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return
-    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return
-    val call = callExpression.getResolvedCall(bindingTrace.bindingContext) ?: return
+    val lambdaArgument = lambdaExpression.parent as? KtLambdaArgument ?: return null
+    val callExpression = lambdaArgument.parent as? KtCallExpression ?: return null
+    val call = callExpression.getResolvedCall(bindingContext) ?: return null
 
-    storeLabelName(call.resultingDescriptor.name.asString())
+    return call.resultingDescriptor.name.asString()
 }
 
 private val ARRAY_OF_STRINGS_TYPE = Type.getType("[Ljava/lang/String;")
@@ -491,7 +487,7 @@ fun generateBridgeForMainFunctionIfNecessary(
         unwrappedFunctionDescriptor.extensionReceiverParameter == null && unwrappedFunctionDescriptor.valueParameters.isEmpty()
 
     if (!functionDescriptor.isSuspend && !isParameterless) return
-    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, false, true)) return
+    if (!state.mainFunctionDetector.isMain(unwrappedFunctionDescriptor, checkJvmStaticAnnotation = false, checkReturnType = true)) return
 
     val bridgeMethodVisitor = packagePartClassBuilder.newMethod(
         Synthetic(originElement, functionDescriptor),

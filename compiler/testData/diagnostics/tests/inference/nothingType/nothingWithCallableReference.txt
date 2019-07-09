@@ -1,0 +1,10 @@
+package
+
+public fun bar(/*0*/ x: kotlin.Int): kotlin.Unit
+public fun cloneFoo(): kotlin.Unit
+public fun </*0*/ K : S, /*1*/ S> dependantSelect2(/*0*/ x: K, /*1*/ y: S): kotlin.Unit
+public fun </*0*/ K : S, /*1*/ S> dependantSelect3(/*0*/ x: K, /*1*/ y: K, /*2*/ z: S): kotlin.Unit
+public fun foo(): kotlin.Unit
+public fun </*0*/ K> select2(/*0*/ x: K, /*1*/ y: K): K
+public fun </*0*/ K> select3(/*0*/ x: K, /*1*/ y: K, /*2*/ z: K): K
+public fun test(/*0*/ f1: (kotlin.Int) -> kotlin.Unit, /*1*/ f2: (kotlin.Int) -> kotlin.Unit): kotlin.Unit

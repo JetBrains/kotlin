@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.jvm.compiler;
@@ -293,9 +293,39 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedMethod.java");
             }
 
+            @TestMetadata("AnnotatedParameterInEnumClassConstructor.java")
+            public void testAnnotatedParameterInEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInEnumClassConstructor.java");
+            }
+
             @TestMetadata("AnnotatedParameterInInnerClassConstructor.java")
             public void testAnnotatedParameterInInnerClassConstructor() throws Exception {
                 runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedParameterInInnerClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInEnumClassConstructor.java")
+            public void testAnnotatedTypeInEnumClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInEnumClassConstructor2.java")
+            public void testAnnotatedTypeInEnumClassConstructor2() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInEnumClassConstructor2.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInFun.java")
+            public void testAnnotatedTypeInFun() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInFun.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInInnerClassConstructor.java")
+            public void testAnnotatedTypeInInnerClassConstructor() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor.java");
+            }
+
+            @TestMetadata("AnnotatedTypeInInnerClassConstructor2.java")
+            public void testAnnotatedTypeInInnerClassConstructor2() throws Exception {
+                runTest("compiler/testData/loadJava/compiledJava/annotations/AnnotatedTypeInInnerClassConstructor2.java");
             }
 
             @TestMetadata("AnnotatedValueParameter.java")
@@ -4588,6 +4618,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/ConstValInMultifileClass.kt");
             }
 
+            @TestMetadata("JvmFieldInInterfaceCompanion.kt")
+            public void testJvmFieldInInterfaceCompanion() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/JvmFieldInInterfaceCompanion.kt");
+            }
+
             @TestMetadata("WithUnsignedTypeParameters.kt")
             public void testWithUnsignedTypeParameters() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/WithUnsignedTypeParameters.kt");
@@ -5015,6 +5050,11 @@ public class LoadJavaTestGenerated extends AbstractLoadJavaTest {
         @TestMetadata("InheritParameterName.kt")
         public void testInheritParameterName() throws Exception {
             runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/InheritParameterName.kt");
+        }
+
+        @TestMetadata("javaGetterImplementsKotlinProperty.kt")
+        public void testJavaGetterImplementsKotlinProperty() throws Exception {
+            runTest("compiler/testData/loadJava/kotlinAgainstCompiledJavaWithKotlin/javaGetterImplementsKotlinProperty.kt");
         }
 
         @TestMetadata("javaRefersToKotlin.kt")

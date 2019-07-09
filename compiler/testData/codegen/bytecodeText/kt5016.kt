@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // KT-5016 wrong StringBuilder append method invoked
 class kt5016 {
     fun f1(name : String) : String {

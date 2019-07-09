@@ -5,6 +5,7 @@ fun bar(s: String) {}
 
 fun test() {
     foo {
+        bar(it)
         foo { s ->
             foo {
                 bar(it<caret>)

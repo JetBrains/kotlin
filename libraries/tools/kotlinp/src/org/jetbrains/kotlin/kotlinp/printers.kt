@@ -1,6 +1,6 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.kotlinp
@@ -19,8 +19,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         var receiverParameterType: String? = null
         var returnType: String? = null
         val versionRequirements = mutableListOf<String>()
-        var jvmDesc: JvmMemberSignature? = null
+        var jvmSignature: JvmMemberSignature? = null
         var lambdaClassOriginName: String? = null
+        var contract: String? = null
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -39,11 +40,14 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
         override fun visitVersionRequirement(): KmVersionRequirementVisitor? =
             printVersionRequirement { versionRequirements.add(it) }
 
+        override fun visitContract(): KmContractVisitor? =
+            printContract { contract = it }
+
         override fun visitExtensions(type: KmExtensionType): KmFunctionExtensionVisitor? {
             if (type != JvmFunctionExtensionVisitor.TYPE) return null
             return object : JvmFunctionExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    jvmSignature = signature
                 }
 
                 override fun visitLambdaClassOriginName(internalName: String) {
@@ -60,8 +64,8 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmDesc != null) {
-                sb.appendln("  // signature: $jvmDesc")
+            if (jvmSignature != null) {
+                sb.appendln("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, FUNCTION_FLAGS_MAP)
@@ -79,6 +83,9 @@ private fun visitFunction(settings: KotlinpSettings, sb: StringBuilder, flags: F
                 sb.append(": ").append(returnType)
             }
             sb.appendln()
+            if (contract != null) {
+                sb.appendln("    $contract")
+            }
         }
     }
 
@@ -91,10 +98,11 @@ private fun visitProperty(
         var returnType: String? = null
         var setterParameter: String? = null
         val versionRequirements = mutableListOf<String>()
-        var jvmFieldDesc: JvmMemberSignature? = null
-        var jvmGetterDesc: JvmMemberSignature? = null
-        var jvmSetterDesc: JvmMemberSignature? = null
-        var jvmSyntheticMethodForAnnotationsDesc: JvmMemberSignature? = null
+        var jvmFieldSignature: JvmMemberSignature? = null
+        var jvmGetterSignature: JvmMemberSignature? = null
+        var jvmSetterSignature: JvmMemberSignature? = null
+        var jvmSyntheticMethodForAnnotationsSignature: JvmMemberSignature? = null
+        var isMovedFromInterfaceCompanion: Boolean = false
 
         override fun visitReceiverParameterType(flags: Flags): KmTypeVisitor? =
             printType(flags) { receiverParameterType = it }
@@ -114,14 +122,20 @@ private fun visitProperty(
         override fun visitExtensions(type: KmExtensionType): KmPropertyExtensionVisitor? {
             if (type != JvmPropertyExtensionVisitor.TYPE) return null
             return object : JvmPropertyExtensionVisitor() {
-                override fun visit(fieldDesc: JvmFieldSignature?, getterDesc: JvmMethodSignature?, setterDesc: JvmMethodSignature?) {
-                    jvmFieldDesc = fieldDesc
-                    jvmGetterDesc = getterDesc
-                    jvmSetterDesc = setterDesc
+                override fun visit(
+                    jvmFlags: Flags,
+                    fieldSignature: JvmFieldSignature?,
+                    getterSignature: JvmMethodSignature?,
+                    setterSignature: JvmMethodSignature?
+                ) {
+                    isMovedFromInterfaceCompanion = JvmFlag.Property.IS_MOVED_FROM_INTERFACE_COMPANION(jvmFlags)
+                    jvmFieldSignature = fieldSignature
+                    jvmGetterSignature = getterSignature
+                    jvmSetterSignature = setterSignature
                 }
 
-                override fun visitSyntheticMethodForAnnotations(desc: JvmMethodSignature?) {
-                    jvmSyntheticMethodForAnnotationsDesc = desc
+                override fun visitSyntheticMethodForAnnotations(signature: JvmMethodSignature?) {
+                    jvmSyntheticMethodForAnnotationsSignature = signature
                 }
             }
         }
@@ -131,17 +145,20 @@ private fun visitProperty(
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmFieldDesc != null) {
-                sb.appendln("  // field: $jvmFieldDesc")
+            if (jvmFieldSignature != null) {
+                sb.appendln("  // field: $jvmFieldSignature")
             }
-            if (jvmGetterDesc != null) {
-                sb.appendln("  // getter: $jvmGetterDesc")
+            if (jvmGetterSignature != null) {
+                sb.appendln("  // getter: $jvmGetterSignature")
             }
-            if (jvmSetterDesc != null) {
-                sb.appendln("  // setter: $jvmSetterDesc")
+            if (jvmSetterSignature != null) {
+                sb.appendln("  // setter: $jvmSetterSignature")
             }
-            if (jvmSyntheticMethodForAnnotationsDesc != null) {
-                sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsDesc")
+            if (jvmSyntheticMethodForAnnotationsSignature != null) {
+                sb.appendln("  // synthetic method for annotations: $jvmSyntheticMethodForAnnotationsSignature")
+            }
+            if (isMovedFromInterfaceCompanion) {
+                sb.appendln("  // is moved from interface companion")
             }
             sb.append("  ")
             sb.appendFlags(flags, PROPERTY_FLAGS_MAP)
@@ -182,7 +199,7 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
     object : KmConstructorVisitor() {
         val params = mutableListOf<String>()
         val versionRequirements = mutableListOf<String>()
-        var jvmDesc: JvmMemberSignature? = null
+        var jvmSignature: JvmMemberSignature? = null
 
         override fun visitValueParameter(flags: Flags, name: String): KmValueParameterVisitor? =
             printValueParameter(flags, name) { params.add(it) }
@@ -193,8 +210,8 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
         override fun visitExtensions(type: KmExtensionType): KmConstructorExtensionVisitor? {
             if (type != JvmConstructorExtensionVisitor.TYPE) return null
             return object : JvmConstructorExtensionVisitor() {
-                override fun visit(desc: JvmMethodSignature?) {
-                    jvmDesc = desc
+                override fun visit(signature: JvmMethodSignature?) {
+                    jvmSignature = signature
                 }
             }
         }
@@ -204,8 +221,8 @@ private fun visitConstructor(sb: StringBuilder, flags: Flags): KmConstructorVisi
             for (versionRequirement in versionRequirements) {
                 sb.appendln("  // $versionRequirement")
             }
-            if (jvmDesc != null) {
-                sb.appendln("  // signature: $jvmDesc")
+            if (jvmSignature != null) {
+                sb.appendln("  // signature: $jvmSignature")
             }
             sb.append("  ")
             sb.appendFlags(flags, CONSTRUCTOR_FLAGS_MAP)
@@ -514,7 +531,11 @@ private fun StringBuilder.appendFlags(flags: Flags, map: Map<Flag, String>) {
     }
 }
 
-private fun StringBuilder.appendLocalDelegatedProperties(localDelegatedProperties: List<StringBuilder>) {
+private fun StringBuilder.appendDeclarationContainerExtensions(
+    settings: KotlinpSettings,
+    localDelegatedProperties: List<StringBuilder>,
+    moduleName: String?
+) {
     for ((i, sb) in localDelegatedProperties.withIndex()) {
         appendln()
         appendln("  // local delegated property #$i")
@@ -527,7 +548,140 @@ private fun StringBuilder.appendLocalDelegatedProperties(localDelegatedPropertie
             )
         }
     }
+
+    if (settings.isVerbose && moduleName != null) {
+        appendln()
+        appendln("  // module name: $moduleName")
+    }
 }
+
+private fun printContract(output: (String) -> Unit): KmContractVisitor =
+    object : KmContractVisitor() {
+        val effects = mutableListOf<String>()
+
+        override fun visitEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?): KmEffectVisitor =
+            printEffect(type, invocationKind) { effects.add(it) }
+
+        override fun visitEnd() {
+            output(buildString {
+                appendln("contract {")
+                for (effect in effects) {
+                    appendln("      $effect")
+                }
+                append("    }")
+            })
+        }
+    }
+
+private fun printEffect(type: KmEffectType, invocationKind: KmEffectInvocationKind?, output: (String) -> Unit): KmEffectVisitor =
+    object : KmEffectVisitor() {
+        var argument: String? = null
+        var conclusion: String? = null
+
+        override fun visitConstructorArgument(): KmEffectExpressionVisitor =
+            printEffectExpression {
+                // If there are several arguments, only the first is taken, see ContractDeserializerImpl.deserializeSimpleEffect
+                if (argument == null) {
+                    argument = it
+                }
+            }
+
+        override fun visitConclusionOfConditionalEffect(): KmEffectExpressionVisitor =
+            printEffectExpression { conclusion = it }
+
+        override fun visitEnd() {
+            output(buildString {
+                when (type) {
+                    KmEffectType.RETURNS_CONSTANT -> {
+                        append("returns(")
+                        if (argument != null) {
+                            append(argument)
+                        }
+                        append(")")
+                    }
+                    KmEffectType.CALLS -> {
+                        append("callsInPlace($argument")
+                        if (invocationKind != null) {
+                            append(", InvocationKind.${invocationKind.name}")
+                        }
+                        append(")")
+                    }
+                    KmEffectType.RETURNS_NOT_NULL -> {
+                        append("returnsNotNull()")
+                    }
+                }
+                if (conclusion != null) {
+                    append(" implies ($conclusion)")
+                }
+            })
+        }
+    }
+
+private fun printEffectExpression(output: (String) -> Unit): KmEffectExpressionVisitor =
+    object : KmEffectExpressionVisitor() {
+        var flags: Flags = 0
+        var parameterIndex: Int? = null
+        var constantValue: List<Any?>? = null // Single-element list
+        var isInstanceType: String? = null
+        var andArguments = mutableListOf<String>()
+        var orArguments = mutableListOf<String>()
+
+        override fun visit(flags: Flags, parameterIndex: Int?) {
+            this.flags = flags
+            this.parameterIndex = parameterIndex
+        }
+
+        override fun visitConstantValue(value: Any?) {
+            constantValue = listOf(value)
+        }
+
+        override fun visitIsInstanceType(flags: Flags): KmTypeVisitor =
+            printType(flags) { isInstanceType = it }
+
+        override fun visitAndArgument(): KmEffectExpressionVisitor =
+            printEffectExpression { andArguments.add(it) }
+
+        override fun visitOrArgument(): KmEffectExpressionVisitor =
+            printEffectExpression { orArguments.add(it) }
+
+        override fun visitEnd() {
+            output(buildString {
+                append(
+                    when {
+                        constantValue != null -> constantValue!!.single().toString()
+                        parameterIndex != null -> "p#$parameterIndex"
+                        else -> ""
+                    }
+                )
+                if (isInstanceType != null) {
+                    append(" ")
+                    if (Flag.EffectExpression.IS_NEGATED(flags)) append("!")
+                    append("is $isInstanceType")
+                }
+                if (Flag.EffectExpression.IS_NULL_CHECK_PREDICATE(flags)) {
+                    append(if (Flag.EffectExpression.IS_NEGATED(flags)) " != " else " == ")
+                    append("null")
+                }
+
+                if (orArguments.isEmpty()) {
+                    for (andArgument in andArguments) {
+                        if (!isEmpty()) append(" && ")
+                        append(wrapIfNeeded(andArgument))
+                    }
+                }
+                if (andArguments.isEmpty()) {
+                    for (orArgument in orArguments) {
+                        if (!isEmpty()) append(" || ")
+                        append(wrapIfNeeded(orArgument))
+                    }
+                }
+            })
+        }
+
+        private fun wrapIfNeeded(s: String): String =
+            // A simple heuristic to avoid wrapping into unnecessary parentheses
+            if ('&' in s || '|' in s) "($s)" else s
+    }
 
 interface AbstractPrinter<in T : KotlinClassMetadata> {
     fun print(klass: T): String
@@ -615,6 +769,7 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
         if (type != JvmClassExtensionVisitor.TYPE) return null
         return object : JvmClassExtensionVisitor() {
             private val localDelegatedProperties = mutableListOf<StringBuilder>()
+            private var moduleName: String? = null
 
             override fun visitAnonymousObjectOriginName(internalName: String) {
                 anonymousObjectOriginName = internalName
@@ -626,8 +781,12 @@ class ClassPrinter(private val settings: KotlinpSettings) : KmClassVisitor(), Ab
                 settings, StringBuilder().also { localDelegatedProperties.add(it) }, flags, name, getterFlags, setterFlags
             )
 
+            override fun visitModuleName(name: String) {
+                moduleName = name
+            }
+
             override fun visitEnd() {
-                sb.appendLocalDelegatedProperties(localDelegatedProperties)
+                sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
             }
         }
     }
@@ -660,6 +819,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackage
         if (type != JvmPackageExtensionVisitor.TYPE) return null
         return object : JvmPackageExtensionVisitor() {
             private val localDelegatedProperties = mutableListOf<StringBuilder>()
+            private var moduleName: String? = null
 
             override fun visitLocalDelegatedProperty(
                 flags: Flags, name: String, getterFlags: Flags, setterFlags: Flags
@@ -668,7 +828,7 @@ abstract class PackagePrinter(private val settings: KotlinpSettings) : KmPackage
             )
 
             override fun visitEnd() {
-                sb.appendLocalDelegatedProperties(localDelegatedProperties)
+                sb.appendDeclarationContainerExtensions(settings, localDelegatedProperties, moduleName)
             }
         }
     }

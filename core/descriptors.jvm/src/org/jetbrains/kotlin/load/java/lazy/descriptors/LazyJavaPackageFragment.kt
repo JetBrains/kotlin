@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.load.java.lazy.resolveAnnotations
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryPackageSourceElement
+import org.jetbrains.kotlin.load.kotlin.findKotlinClass
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -33,8 +34,8 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.getValue
 
 class LazyJavaPackageFragment(
-        outerContext: LazyJavaResolverContext,
-        private val jPackage: JavaPackage
+    outerContext: LazyJavaResolverContext,
+    private val jPackage: JavaPackage
 ) : PackageFragmentDescriptorImpl(outerContext.module, jPackage.fqName) {
     private val c = outerContext.childForClassOrPackage(this)
 
@@ -48,15 +49,15 @@ class LazyJavaPackageFragment(
     private val scope = JvmPackageScope(c, jPackage, this)
 
     private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
-            { jPackage.subPackages.map(JavaPackage::fqName) },
-            // This breaks infinite recursion between loading Java descriptors and building light classes
-            onRecursiveCall = listOf()
+        { jPackage.subPackages.map(JavaPackage::fqName) },
+        // This breaks infinite recursion between loading Java descriptors and building light classes
+        onRecursiveCall = listOf()
     )
 
     override val annotations =
-            // Do not resolve package annotations if JSR-305 is disabled
-            if (c.components.annotationTypeQualifierResolver.disabled) Annotations.EMPTY
-            else c.resolveAnnotations(jPackage)
+        // Do not resolve package annotations if JSR-305 is disabled
+        if (c.components.annotationTypeQualifierResolver.disabled) Annotations.EMPTY
+        else c.resolveAnnotations(jPackage)
 
     internal fun getSubPackageFqNames(): List<FqName> = subPackages()
 
@@ -64,7 +65,7 @@ class LazyJavaPackageFragment(
 
     private val partToFacade by c.storageManager.createLazyValue {
         val result = hashMapOf<JvmClassName, JvmClassName>()
-        kotlinClasses@for ((partInternalName, kotlinClass) in binaryClasses) {
+        kotlinClasses@ for ((partInternalName, kotlinClass) in binaryClasses) {
             val partName = JvmClassName.byInternalName(partInternalName)
             val header = kotlinClass.classHeader
             when (header.kind) {
@@ -74,7 +75,8 @@ class LazyJavaPackageFragment(
                 KotlinClassHeader.Kind.FILE_FACADE -> {
                     result[partName] = partName
                 }
-                else -> {}
+                else -> {
+                }
             }
         }
         result

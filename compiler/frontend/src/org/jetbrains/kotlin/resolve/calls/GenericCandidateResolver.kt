@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.resolve.calls
@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getBinaryWithTypeParent
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.FunctionDescriptorUtil
 import org.jetbrains.kotlin.resolve.TemporaryBindingTrace
@@ -40,12 +41,12 @@ import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.INCOMPLETE_TYPE_INFERENCE
 import org.jetbrains.kotlin.resolve.calls.results.ResolutionStatus.OTHER_ERROR
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValueFactory
+import org.jetbrains.kotlin.resolve.isFunctionForExpectTypeFromCastFeature
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.DONT_CARE
 import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.ResolveConstruct
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
-import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -124,21 +125,6 @@ class GenericCandidateResolver(
             typeVariableSubstitutors[call.toHandle()]?.substitute(it, Variance.INVARIANT)
         }
 
-    private fun FunctionDescriptor.isFunctionForExpectTypeFromCastFeature(): Boolean {
-        val typeParameter = typeParameters.singleOrNull() ?: return false
-
-        val returnType = returnType ?: return false
-        if (returnType is DeferredType && returnType.isComputing) return false
-
-        if (returnType.constructor != typeParameter.typeConstructor) return false
-
-        fun KotlinType.isBadType() = contains { it.constructor == typeParameter.typeConstructor }
-
-        if (valueParameters.any { it.type.isBadType() } || extensionReceiverParameter?.type?.isBadType() == true) return false
-
-        return true
-    }
-
     private fun addExpectedTypeForExplicitCast(
         context: CallCandidateResolutionContext<*>,
         builder: ConstraintSystem.Builder
@@ -149,7 +135,7 @@ class GenericCandidateResolver(
 
         val candidateDescriptor = context.candidateCall.candidateDescriptor.safeAs<FunctionDescriptor>() ?: return
 
-        val binaryParent = getBinaryWithTypeParent(context.call.calleeExpression) ?: return
+        val binaryParent = context.call.calleeExpression?.getBinaryWithTypeParent() ?: return
         val operationType = binaryParent.operationReference.getReferencedNameElementType().takeIf {
             it == KtTokens.AS_KEYWORD || it == KtTokens.AS_SAFE
         } ?: return
@@ -163,28 +149,6 @@ class GenericCandidateResolver(
 
         context.trace.record(BindingContext.CAST_TYPE_USED_AS_EXPECTED_TYPE, binaryParent)
         builder.addSubtypeConstraint(typeInSystem, expectedType, ConstraintPositionKind.SPECIAL.position())
-    }
-
-    private fun getBinaryWithTypeParent(calleeExpression: KtExpression?): KtBinaryExpressionWithTypeRHS? {
-        val callExpression = calleeExpression?.parent.safeAs<KtCallExpression>() ?: return null
-        val possibleQualifiedExpression = callExpression.parent
-
-        val targetExpression = if (possibleQualifiedExpression is KtQualifiedExpression) {
-            if (possibleQualifiedExpression.selectorExpression != callExpression) return null
-            possibleQualifiedExpression
-        } else {
-            callExpression
-        }
-
-        return targetExpression.topParenthesizedParentOrMe().parent.safeAs<KtBinaryExpressionWithTypeRHS>()
-    }
-
-    private fun KtExpression.topParenthesizedParentOrMe(): KtExpression {
-        var result: KtExpression = this
-        while (KtPsiUtil.deparenthesizeOnce(result.parent.safeAs()) == result) {
-            result = result.parent.safeAs() ?: break
-        }
-        return result
     }
 
     private fun addValidityConstraintsForConstituentTypes(builder: ConstraintSystem.Builder, type: KotlinType) {
@@ -434,7 +398,7 @@ class GenericCandidateResolver(
                 expectedType?.isSuspendFunctionType == true
             )
         }
-        if (expectedType == null || !expectedType.isBuiltinFunctionalTypeOrSubtype || hasUnknownFunctionParameter(expectedType)) {
+        if (expectedType == null || !expectedType.isBuiltinFunctionalType || hasUnknownFunctionParameter(expectedType)) {
             return
         }
         val dataFlowInfoForArguments = context.candidateCall.dataFlowInfoForArguments
@@ -491,7 +455,7 @@ class GenericCandidateResolver(
         val effectiveExpectedType = getEffectiveExpectedType(valueParameterDescriptor, valueArgument, context)
         val expectedType = getExpectedTypeForCallableReference(callableReference, constraintSystem, context, effectiveExpectedType)
                 ?: return
-        if (!ReflectionTypes.isCallableType(expectedType)) return
+        if (!expectedType.isApplicableExpectedTypeForCallableReference()) return
         val resolvedType = getResolvedTypeForCallableReference(callableReference, context, expectedType, valueArgument) ?: return
         val position = VALUE_PARAMETER_POSITION.position(valueParameterDescriptor.index)
         constraintSystem.addSubtypeConstraint(
@@ -554,4 +518,11 @@ fun makeConstantSubstitutor(typeParameterDescriptors: Collection<TypeParameterDe
 
         override fun isEmpty() = false
     })
+}
+
+private fun KotlinType.isApplicableExpectedTypeForCallableReference(): Boolean {
+    return this.isFunctionType ||
+            ReflectionTypes.isBaseTypeForNumberedReferenceTypes(this) ||
+            ReflectionTypes.isNumberedKFunctionOrKSuspendFunction(this) ||
+            ReflectionTypes.isNumberedKPropertyOrKMutablePropertyType(this)
 }

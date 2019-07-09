@@ -1,38 +1,38 @@
 FILE fqName:<root> fileName:/whenReturn.kt
-  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String flags:
-    VALUE_PARAMETER name:grade index:0 type:kotlin.String flags:
+  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
+    VALUE_PARAMETER name:grade index:0 type:kotlin.String 
     BLOCK_BODY
       BLOCK type=kotlin.Nothing origin=WHEN
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String flags:val
-          GET_VAR 'value-parameter grade: String' type=kotlin.String origin=null
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String [val] 
+          GET_VAR 'grade: kotlin.String declared in <root>.toString' type=kotlin.String origin=null
         WHEN type=kotlin.Nothing origin=WHEN
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp0_subject: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="A"
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
+            then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Excellent"
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp0_subject: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="B"
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
+            then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Good"
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp0_subject: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="C"
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
+            then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Mediocre"
           BRANCH
-            if: CALL 'EQEQ(Any?, Any?): Boolean' type=kotlin.Boolean origin=EQEQ
-              arg0: GET_VAR 'tmp0_subject: String' type=kotlin.String origin=null
+            if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
+              arg0: GET_VAR 'val tmp0_subject: kotlin.String [val] declared in <root>.toString' type=kotlin.String origin=null
               arg1: CONST String type=kotlin.String value="D"
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
+            then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Fair"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
-            then: RETURN type=kotlin.Nothing from='toString(String): String'
+            then: RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
               CONST String type=kotlin.String value="Failure"
-      RETURN type=kotlin.Nothing from='toString(String): String'
+      RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="???"

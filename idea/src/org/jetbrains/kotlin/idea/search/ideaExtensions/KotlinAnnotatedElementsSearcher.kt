@@ -25,13 +25,14 @@ import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import com.intellij.psi.search.searches.AnnotatedElementsSearch
 import com.intellij.psi.util.PsiUtilCore
+import com.intellij.util.Processor
 import com.intellij.util.QueryExecutor
 import com.intellij.util.indexing.FileBasedIndex
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.NO_MATCH
 import org.jetbrains.kotlin.asJava.ImpreciseResolveResult.UNSURE
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.toLightClass
-import org.jetbrains.kotlin.compatibility.ExecutorProcessor
+import org.jetbrains.kotlin.asJava.toPsiParameters
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.search.PsiBasedClassResolver
 import org.jetbrains.kotlin.idea.stubindex.KotlinAnnotationsIndex
@@ -45,10 +46,10 @@ import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, AnnotatedElementsSearch.Parameters> {
 
-    override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: ExecutorProcessor<PsiModifierListOwner>): Boolean {
+    override fun execute(p: AnnotatedElementsSearch.Parameters, consumer: Processor<in PsiModifierListOwner>): Boolean {
         return processAnnotatedMembers(p.annotationClass, p.scope) { declaration ->
             when (declaration) {
-                is KtClass -> {
+                is KtClassOrObject -> {
                     val lightClass = declaration.toLightClass()
                     consumer.process(lightClass)
                 }
@@ -62,6 +63,13 @@ class KotlinAnnotatedElementsSearcher : QueryExecutor<PsiModifierListOwner, Anno
                         return@processAnnotatedMembers consumer.process(backingField)
                     }
 
+                    LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
+                }
+                is KtParameter -> {
+                    if (!declaration.toPsiParameters().all { consumer.process(it) }) return@processAnnotatedMembers false
+                    LightClassUtil.getLightClassBackingField(declaration)?.let {
+                        if (!consumer.process(it)) return@processAnnotatedMembers false
+                    }
                     LightClassUtil.getLightClassPropertyMethods(declaration).all { consumer.process(it) }
                 }
                 else -> true

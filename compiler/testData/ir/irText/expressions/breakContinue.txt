@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/breakContinue.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       WHILE label=null origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/breakContinue.kt
           body: COMPOSITE type=kotlin.Unit origin=null
             CONTINUE label=null loop.label=null
           condition: CONST Boolean type=kotlin.Boolean value=true
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       WHILE label=OUTER origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/breakContinue.kt
               CONTINUE label=INNER loop.label=INNER
               CONTINUE label=OUTER loop.label=OUTER
           CONTINUE label=OUTER loop.label=OUTER
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit flags:
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       WHILE label=L origin=WHILE_LOOP
         condition: CONST Boolean type=kotlin.Boolean value=true
@@ -57,4 +57,3 @@ FILE fqName:<root> fileName:/breakContinue.kt
             body: BLOCK type=kotlin.Unit origin=null
               CONTINUE label=L loop.label=L
           CONTINUE label=L loop.label=L
-

@@ -133,7 +133,6 @@ object LightClassUtil {
                     .filter { it.kotlinOrigin === declaration }
 
     private fun getWrappingClass(declaration: KtDeclaration): PsiClass? {
-        var declaration = declaration
         if (declaration is KtParameter) {
             val constructorClass = KtPsiUtil.getClassIfParameterIsProperty(declaration)
             if (constructorClass != null) {
@@ -141,22 +140,23 @@ object LightClassUtil {
             }
         }
 
-        if (declaration is KtPropertyAccessor) {
-            declaration = declaration.property
+        var ktDeclaration = declaration
+        if (ktDeclaration is KtPropertyAccessor) {
+            ktDeclaration = ktDeclaration.property
         }
 
-        if (declaration is KtConstructor<*>) {
-            return declaration.getContainingClassOrObject().toLightClass()
+        if (ktDeclaration is KtConstructor<*>) {
+            return ktDeclaration.getContainingClassOrObject().toLightClass()
         }
 
-        val parent = declaration.parent
+        val parent = ktDeclaration.parent
 
         if (parent is KtFile) {
             // top-level declaration
             return findFileFacade(parent)
         }
         else if (parent is KtClassBody) {
-            assert(parent.parent is KtClassOrObject)
+            assert(parent.parent is KtClassOrObject) { "Bad parent: ${parent.parent?.javaClass}" }
             return (parent.parent as KtClassOrObject).toLightClass()
         }
 

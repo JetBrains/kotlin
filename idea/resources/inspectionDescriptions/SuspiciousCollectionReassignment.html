@@ -1,0 +1,13 @@
+<html>
+<body>
+This inspection reports augmented assignment on read-only <b>Collection</b> that creates a new <b>Collection</b> under the hood.
+Example:
+<br /><br />
+
+<pre>
+<b>var</b> list = listOf(1, 2, 3)
+list <b>+=</b> 4 // A new list is created, better use mutableListOf instead
+</pre>
+
+</body>
+</html>

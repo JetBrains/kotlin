@@ -1,3 +1,4 @@
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 val xs = listOf("a", "b", "c", "d").asSequence()

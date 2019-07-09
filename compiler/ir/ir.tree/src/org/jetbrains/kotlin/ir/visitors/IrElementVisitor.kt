@@ -29,7 +29,6 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitDeclaration(declaration: IrDeclaration, data: D) = visitElement(declaration, data)
     fun visitClass(declaration: IrClass, data: D) = visitDeclaration(declaration, data)
-    fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
     fun visitFunction(declaration: IrFunction, data: D) = visitDeclaration(declaration, data)
     fun visitSimpleFunction(declaration: IrSimpleFunction, data: D) = visitFunction(declaration, data)
     fun visitConstructor(declaration: IrConstructor, data: D) = visitFunction(declaration, data)
@@ -74,6 +73,7 @@ interface IrElementVisitor<out R, in D> {
     fun visitMemberAccess(expression: IrMemberAccessExpression, data: D) = visitExpression(expression, data)
     fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: D) = visitMemberAccess(expression, data)
     fun visitCall(expression: IrCall, data: D) = visitFunctionAccess(expression, data)
+    fun visitConstructorCall(expression: IrConstructorCall, data: D) = visitFunctionAccess(expression, data)
     fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: D) = visitFunctionAccess(expression, data)
     fun visitEnumConstructorCall(expression: IrEnumConstructorCall, data: D) = visitFunctionAccess(expression, data)
     fun visitGetClass(expression: IrGetClass, data: D) = visitExpression(expression, data)
@@ -105,6 +105,10 @@ interface IrElementVisitor<out R, in D> {
 
     fun visitReturn(expression: IrReturn, data: D) = visitExpression(expression, data)
     fun visitThrow(expression: IrThrow, data: D) = visitExpression(expression, data)
+
+    fun visitDynamicExpression(expression: IrDynamicExpression, data: D) = visitExpression(expression, data)
+    fun visitDynamicOperatorExpression(expression: IrDynamicOperatorExpression, data: D) = visitDynamicExpression(expression, data)
+    fun visitDynamicMemberExpression(expression: IrDynamicMemberExpression, data: D) = visitDynamicExpression(expression, data)
 
     fun visitErrorDeclaration(declaration: IrErrorDeclaration, data: D) = visitDeclaration(declaration, data)
     fun visitErrorExpression(expression: IrErrorExpression, data: D) = visitExpression(expression, data)

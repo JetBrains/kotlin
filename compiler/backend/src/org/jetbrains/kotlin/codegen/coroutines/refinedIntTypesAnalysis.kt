@@ -135,10 +135,9 @@ internal fun performRefinedTypeAnalysis(methodNode: MethodNode, thisName: String
         override fun use(frame: VarExpectedTypeFrame, insn: AbstractInsnNode) {
             val (expectedType, sources) = expectedTypeAndSourcesByInsnIndex[insn.index()] ?: return
 
-            sources.flatMap(SourceValue::insns).forEach {
-                insn ->
-                if (insn.isIntLoad()) {
-                    frame.updateExpectedType((insn as VarInsnNode).`var`, expectedType)
+            sources.flatMap(SourceValue::insns).forEach { insnNode ->
+                if (insnNode.isIntLoad()) {
+                    frame.updateExpectedType((insnNode as VarInsnNode).`var`, expectedType)
                 }
             }
         }
@@ -169,7 +168,7 @@ private fun checkUpdatedExpectedType(was: Type?, new: Type) {
     }
 }
 
-private class MySourceInterpreter : SourceInterpreter(OPTIMIZATION_ASM_API_VERSION) {
+private class MySourceInterpreter : SourceInterpreter(Opcodes.API_VERSION) {
     override fun copyOperation(insn: AbstractInsnNode, value: SourceValue) =
             when {
                 insn.isStoreOperation() || insn.isLoadOperation() -> SourceValue(value.size, insn)

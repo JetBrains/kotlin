@@ -5,15 +5,14 @@ fun foo() {
     var d: Long = 0
     var e: Short = 0
     var f: Double = 0.0
-    var g: Float = 0.0f
-    if () {
+    var g: Float = if () {
         a = 1
         b = 1
         c = 1
         d = 1
         e = 1
         f = 1
-        g = 1
+        1
     }
     a = 2
     b = 2

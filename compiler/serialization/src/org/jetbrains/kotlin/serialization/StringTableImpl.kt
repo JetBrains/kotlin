@@ -37,8 +37,8 @@ open class StringTableImpl : DescriptorAwareStringTable {
 
             val otherFqName = other.fqName
             return fqName.parentQualifiedName == otherFqName.parentQualifiedName
-                   && fqName.shortName == otherFqName.shortName
-                   && fqName.kind == otherFqName.kind
+                    && fqName.shortName == otherFqName.shortName
+                    && fqName.kind == otherFqName.kind
         }
     }
 
@@ -55,7 +55,7 @@ open class StringTableImpl : DescriptorAwareStringTable {
         builder.kind = QualifiedName.Kind.CLASS
 
         builder.parentQualifiedName =
-                classId.outerClassId?.let(this::getQualifiedClassNameIndex)
+            classId.outerClassId?.let(this::getQualifiedClassNameIndex)
                 ?: getPackageFqNameIndex(classId.packageFqName)
 
         builder.shortName = getStringIndex(classId.shortClassName.asString())

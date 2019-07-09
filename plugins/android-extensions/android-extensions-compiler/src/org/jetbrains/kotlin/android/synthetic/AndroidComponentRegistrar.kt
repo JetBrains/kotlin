@@ -33,20 +33,17 @@ import org.jetbrains.kotlin.android.synthetic.res.CliAndroidLayoutXmlFileManager
 import org.jetbrains.kotlin.android.synthetic.res.CliAndroidPackageFragmentProviderExtension
 import org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension
 import org.jetbrains.kotlin.codegen.extensions.ExpressionCodegenExtension
-import org.jetbrains.kotlin.compiler.plugin.CliOption
-import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
-import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.extensions.SyntheticResolveExtension
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.utils.decodePluginOptions
 
 object AndroidConfigurationKeys {
@@ -83,10 +80,10 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
 
     override val pluginId: String = ANDROID_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption>
+    override val pluginOptions: Collection<AbstractCliOption>
             = listOf(VARIANT_OPTION, PACKAGE_OPTION, EXPERIMENTAL_OPTION, DEFAULT_CACHE_IMPL_OPTION, CONFIGURATION, FEATURES_OPTION)
 
-    override fun processOption(option: CliOption, value: String, configuration: CompilerConfiguration) {
+    override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             VARIANT_OPTION -> configuration.appendList(AndroidConfigurationKeys.VARIANT, value)
             PACKAGE_OPTION -> configuration.put(AndroidConfigurationKeys.PACKAGE, value)
@@ -99,7 +96,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
                 }
                 configuration.put(AndroidConfigurationKeys.FEATURES, features)
             }
-            else -> throw CliOptionProcessingException("Unknown option: ${option.name}")
+            else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }
 }
@@ -154,7 +151,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
         val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
-        if (isExperimental && AndroidExtensionsFeature.PARCELIZE in features) {
+        if (AndroidExtensionsFeature.PARCELIZE in features) {
             registerParcelExtensions(project)
         }
 
@@ -166,9 +163,9 @@ class AndroidComponentRegistrar : ComponentRegistrar {
 
 class AndroidExtensionPropertiesComponentContainerContributor : StorageComponentContainerContributor {
     override fun registerModuleComponents(
-            container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
+        container: StorageComponentContainer, platform: TargetPlatform, moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
 
         container.useInstance(AndroidExtensionPropertiesCallChecker())
         container.useInstance(ParcelableDeclarationChecker())

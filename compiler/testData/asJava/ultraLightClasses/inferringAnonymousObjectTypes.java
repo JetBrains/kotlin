@@ -1,5 +1,4 @@
 public final class Prop /* Prop*/ {
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object someProp;
 
   @null()
@@ -11,13 +10,11 @@ public final class Fun /* Fun*/ {
   @null()
   public  Fun();
 
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object someFun();
 
 }
 
 public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object[] a1;
 
   @null()
@@ -29,20 +26,17 @@ public final class ArrayOfAnonymous /* ArrayOfAnonymous*/ {
 }
 
 final class C /* C*/ {
-  @null()
   private final int y;
 
-  @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function0<java.lang.Object> initChild;
 
   @null()
-  public  C(@null() int);
-
-  @null()
-  public final int getY();
+  public  C(int);
 
   @org.jetbrains.annotations.NotNull()
   public final kotlin.jvm.functions.Function0<java.lang.Object> getInitChild();
+
+  public final int getY();
 
 }
 
@@ -56,7 +50,6 @@ public abstract class Super /* Super*/ {
 }
 
 public final class Sub /* Sub*/ extends Super {
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Object[] a;
 
   @null()
@@ -68,7 +61,6 @@ public final class Sub /* Sub*/ extends Super {
 }
 
 public final class ValidPublicSupertype /* ValidPublicSupertype*/ {
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Runnable x;
 
   @null()
@@ -86,7 +78,6 @@ public abstract interface I /* I*/ {
 }
 
 public final class InvalidPublicSupertype /* InvalidPublicSupertype*/ {
-  @org.jetbrains.annotations.NotNull()
   private final java.lang.Runnable x;
 
   @null()

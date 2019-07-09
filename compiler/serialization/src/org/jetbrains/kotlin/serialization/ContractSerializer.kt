@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.metadata.deserialization.Flags
 
 class ContractSerializer {
     fun serializeContractOfFunctionIfAny(
-            functionDescriptor: FunctionDescriptor,
-            proto: ProtoBuf.Function.Builder,
-            parentSerializer: DescriptorSerializer
+        functionDescriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        parentSerializer: DescriptorSerializer
     ) {
         val contractDescription = functionDescriptor.getUserData(ContractProviderKey)?.getContractDescription()
         if (contractDescription != null) {
@@ -50,7 +50,11 @@ class ContractSerializer {
             }
         }
 
-        private fun fillEffectProto(builder: ProtoBuf.Effect.Builder, effectDeclaration: EffectDeclaration, contractDescription: ContractDescription) {
+        private fun fillEffectProto(
+            builder: ProtoBuf.Effect.Builder,
+            effectDeclaration: EffectDeclaration,
+            contractDescription: ContractDescription
+        ) {
             when (effectDeclaration) {
                 is ConditionalEffectDeclaration -> {
                     builder.setConclusionOfConditionalEffect(contractExpressionProto(effectDeclaration.condition, contractDescription))
@@ -59,8 +63,10 @@ class ContractSerializer {
 
                 is ReturnsEffectDeclaration -> {
                     when {
-                        effectDeclaration.value == ConstantReference.NOT_NULL -> builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
-                        effectDeclaration.value == ConstantReference.WILDCARD -> builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
+                        effectDeclaration.value == ConstantReference.NOT_NULL ->
+                            builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
+                        effectDeclaration.value == ConstantReference.WILDCARD ->
+                            builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                         else -> {
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                             builder.addEffectConstructorArgument(contractExpressionProto(effectDeclaration.value, contractDescription))
@@ -77,11 +83,14 @@ class ContractSerializer {
                     }
                 }
 
-            // TODO: Add else and do something like reporting issue?
+                // TODO: Add else and do something like reporting issue?
             }
         }
 
-        private fun contractExpressionProto(contractDescriptionElement: ContractDescriptionElement, contractDescription: ContractDescription): ProtoBuf.Expression.Builder {
+        private fun contractExpressionProto(
+            contractDescriptionElement: ContractDescriptionElement,
+            contractDescription: ContractDescription
+        ): ProtoBuf.Expression.Builder {
             return contractDescriptionElement.accept(object : ContractDescriptionVisitor<ProtoBuf.Expression.Builder, Unit> {
                 override fun visitLogicalOr(logicalOr: LogicalOr, data: Unit): ProtoBuf.Expression.Builder {
                     val leftBuilder = logicalOr.left.accept(this, data)
@@ -92,8 +101,7 @@ class ContractSerializer {
                             addOrArgument(leftBuilder)
                             addOrArgument(contractExpressionProto(logicalOr.right, contractDescription))
                         }
-                    }
-                    else {
+                    } else {
                         // we can save some space by re-using left builder instead of nesting new one
                         leftBuilder.apply { addOrArgument(contractExpressionProto(logicalOr.right, contractDescription)) }
                     }
@@ -108,17 +116,16 @@ class ContractSerializer {
                             addAndArgument(leftBuilder)
                             addAndArgument(contractExpressionProto(logicalAnd.right, contractDescription))
                         }
-                    }
-                    else {
+                    } else {
                         // we can save some space by re-using left builder instead of nesting new one
                         leftBuilder.apply { addAndArgument(contractExpressionProto(logicalAnd.right, contractDescription)) }
                     }
                 }
 
                 override fun visitLogicalNot(logicalNot: LogicalNot, data: Unit): ProtoBuf.Expression.Builder =
-                        logicalNot.arg.accept(this, data).apply {
-                            writeFlags(Flags.IS_NEGATED.invert(flags))
-                        }
+                    logicalNot.arg.accept(this, data).apply {
+                        writeFlags(Flags.IS_NEGATED.invert(flags))
+                    }
 
                 override fun visitIsInstancePredicate(isInstancePredicate: IsInstancePredicate, data: Unit): ProtoBuf.Expression.Builder {
                     // write variable
@@ -134,7 +141,7 @@ class ContractSerializer {
                 }
 
                 override fun visitIsNullPredicate(isNullPredicate: IsNullPredicate, data: Unit): ProtoBuf.Expression.Builder {
-                    // get builder with variable embeded into it
+                    // get builder with variable embedded into it
                     val builder = visitVariableReference(isNullPredicate.arg, data)
 
                     // set flags
@@ -188,16 +195,17 @@ class ContractSerializer {
             InvocationKind.UNKNOWN -> null
         }
 
-        private fun constantValueProtobufEnum(constantReference: ConstantReference): ProtoBuf.Expression.ConstantValue? = when (constantReference) {
-            BooleanConstantReference.TRUE -> ProtoBuf.Expression.ConstantValue.TRUE
-            BooleanConstantReference.FALSE -> ProtoBuf.Expression.ConstantValue.FALSE
-            ConstantReference.NULL -> ProtoBuf.Expression.ConstantValue.NULL
-            ConstantReference.NOT_NULL -> throw IllegalStateException(
+        private fun constantValueProtobufEnum(constantReference: ConstantReference): ProtoBuf.Expression.ConstantValue? =
+            when (constantReference) {
+                BooleanConstantReference.TRUE -> ProtoBuf.Expression.ConstantValue.TRUE
+                BooleanConstantReference.FALSE -> ProtoBuf.Expression.ConstantValue.FALSE
+                ConstantReference.NULL -> ProtoBuf.Expression.ConstantValue.NULL
+                ConstantReference.NOT_NULL -> throw IllegalStateException(
                     "Internal error during serialization of function contract: NOT_NULL constant isn't denotable in protobuf format. " +
-                    "Its serialization should be handled at higher level"
-            )
-            ConstantReference.WILDCARD -> null
-            else -> throw IllegalArgumentException("Unknown constant: $constantReference")
-        }
+                            "Its serialization should be handled at higher level"
+                )
+                ConstantReference.WILDCARD -> null
+                else -> throw IllegalArgumentException("Unknown constant: $constantReference")
+            }
     }
 }

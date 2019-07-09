@@ -1,12 +1,12 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.GradleException
-import org.gradle.api.Task
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.compilerRunner.GradleKotlinLogger
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
-import org.jetbrains.kotlin.gradle.plugin.kotlinDebug
-import org.jetbrains.kotlin.gradle.utils.outputsCompatible
+import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
+import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
+import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
+import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import java.io.File
 
 fun throwGradleExceptionIfError(exitCode: ExitCode) {
@@ -20,27 +20,29 @@ fun throwGradleExceptionIfError(exitCode: ExitCode) {
     }
 }
 
-internal fun <T : Task> T.localStateDirectories(): List<File> =
-    outputsCompatible.files.files.filter { it.isDirectory }
-
-internal fun <T : Task> T.clearLocalStateDirectories(reason: String? = null) {
-    clearLocalStateDirectories(GradleKotlinLogger(logger), localStateDirectories(), reason)
+internal fun TaskWithLocalState.clearLocalState(reason: String? = null) {
+    val log = GradleKotlinLogger(logger)
+    clearLocalState(allOutputFiles(), log, reason)
 }
 
-internal fun clearLocalStateDirectories(log: KotlinLogger, localStateDirectories: List<File>, reason: String?) {
+internal fun clearLocalState(outputFiles: Iterable<File>, log: KotlinLogger, reason: String? = null) {
     log.kotlinDebug {
         val suffix = reason?.let { " ($it)" }.orEmpty()
-        "Clearing output directories$suffix:"
+        "Clearing output$suffix:"
     }
-    for (dir in localStateDirectories) {
-        if (!dir.exists()) continue
+
+    for (file in outputFiles) {
+        if (!file.exists()) continue
         when {
-            dir.isDirectory -> {
-                dir.deleteRecursively()
-                dir.mkdirs()
-                log.kotlinDebug { "  deleted $dir" }
+            file.isDirectory -> {
+                log.debug("Deleting output directory: $file")
+                file.deleteRecursively()
+                file.mkdirs()
             }
-            else -> log.kotlinDebug { "  skipping $dir (not a directory)" }
+            file.isFile -> {
+                log.debug("Deleting output file: $file")
+                file.delete()
+            }
         }
     }
 }

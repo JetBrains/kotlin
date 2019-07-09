@@ -1,0 +1,14 @@
+FILE: init.kt
+    public? final? class WithInit : kotlin/Any {
+        public? constructor(x: Int): R|WithInit| {
+            super<kotlin/Any>()
+        }
+
+        public? final? val x: Int
+            public? get(): Int
+
+        init {
+            this#.x# = x#
+        }
+
+    }

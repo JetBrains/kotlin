@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
@@ -8,18 +8,21 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
-import org.jetbrains.kotlin.script.util.scriptCompilationClasspathFromContextOrStlib
-import org.jetbrains.kotlin.scripting.compiler.plugin.configureScriptDefinitions
+import org.jetbrains.kotlin.script.loadScriptingPlugin
+import org.jetbrains.kotlin.scripting.configuration.configureScriptDefinitions
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.PathUtil
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMMON_JAR
+import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_IMPL_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR
 import org.jetbrains.kotlin.utils.PathUtil.KOTLIN_SCRIPTING_JVM_JAR
 import java.io.File
+import java.lang.reflect.Constructor
 import kotlin.reflect.KClass
 import kotlin.script.experimental.annotations.KotlinScript
-
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContextOrStdlib
 
 class CustomScriptCodegenTest : CodegenTestCase() {
 
@@ -44,14 +47,14 @@ class CustomScriptCodegenTest : CodegenTestCase() {
         }
 
         additionalDependencies =
-                scriptCompilationClasspathFromContextOrStlib("tests-common", "kotlin-stdlib") +
-                File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
-                with(PathUtil.kotlinPathsForDistDirectory) {
-                    arrayOf(
-                        KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMMON_JAR,
-                        KOTLIN_SCRIPTING_JVM_JAR
-                    ).mapNotNull { File(libPath, it).also { assertTrue("$it not found", it.exists()) } }
-                }
+            scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
+                    File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
+                    with(PathUtil.kotlinPathsForDistDirectory) {
+                        arrayOf(
+                            KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
+                            KOTLIN_SCRIPTING_COMMON_JAR, KOTLIN_SCRIPTING_JVM_JAR
+                        ).mapNotNull { jarName -> File(libPath, jarName).also { assertTrue("$it not found", it.exists()) } }
+                    }
 
         val configuration = createConfiguration(
             ConfigurationKind.ALL,
@@ -60,23 +63,28 @@ class CustomScriptCodegenTest : CodegenTestCase() {
             emptyList(),
             emptyList()
         )
+
         if (scriptDefinitions.isNotEmpty()) {
             configureScriptDefinitions(
-                scriptDefinitions.asList(), configuration, this::class.java.classLoader, MessageCollector.NONE, emptyMap()
+                scriptDefinitions.asList(), configuration, this::class.java.classLoader,
+                MessageCollector.NONE, defaultJvmScriptingHostConfiguration
             )
         }
+
+        loadScriptingPlugin(configuration)
 
         myEnvironment = KotlinCoreEnvironment.createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
     }
-
 }
 
+@Suppress("UNCHECKED_CAST")
 private fun Class<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
     getAnnotation(classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
 
-private fun java.lang.reflect.Constructor<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
+@Suppress("UNCHECKED_CAST")
+private fun Constructor<*>.safeGetAnnotation(ann: KClass<out Annotation>): Annotation? =
     getAnnotation(this.declaringClass.classLoader.loadClass(ann.qualifiedName) as Class<Annotation>)
 
 @Target(AnnotationTarget.CLASS)
@@ -89,6 +97,5 @@ annotation class MyScriptConstructorAnnotation
 
 @Suppress("unused")
 @KotlinScript
-@MyScriptClassAnnotation()
+@MyScriptClassAnnotation
 abstract class TestScriptWithAnnotatedBaseClass @MyScriptConstructorAnnotation constructor()
-

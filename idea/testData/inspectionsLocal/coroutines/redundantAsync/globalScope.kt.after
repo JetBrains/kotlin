@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+package kotlinx.coroutines
+
+suspend fun test(ctx: CoroutineContext) {
+    withContext(ctx) { 42 }
+}

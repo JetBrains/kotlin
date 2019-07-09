@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
         val arg = argsIterator.next()
 
         when (arg) {
-            "-package", "-pkg", "--package" -> if (argsIterator.hasNext()) packageFilter = argsIterator.next() else throw IllegalArgumentException("argument $arg requires argument")
+            "--pkg" -> if (argsIterator.hasNext()) packageFilter = argsIterator.next() else throw IllegalArgumentException("argument $arg requires argument")
             else -> throw IllegalArgumentException("Argument $arg is unknown")
         }
     }
@@ -49,15 +49,18 @@ fun main(args: Array<String>) {
             w.appendln()
             w.appendln()
 
-            e.value.forEach { pair ->
-                val (url) = pair
+            e.value.forEach { (url) ->
                 println("Loading $url...")
 
                 w.appendln("// Downloaded from $url")
-                if (url.endsWith(".idl")) {
-                    w.appendln(URL(url).readText())
-                } else {
-                    extractIDLText(url, w)
+                val content = fetch(url)
+
+                if (content != null) {
+                    if (url.endsWith(".idl")) {
+                        w.appendln(content)
+                    } else {
+                        extractIDLText(content, w)
+                    }
                 }
             }
 
@@ -66,24 +69,38 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun extractIDLText(url: String, out: Appendable) {
-    //    val soup = Jsoup.connect(url).validateTLSCertificates(false).ignoreHttpErrors(true).get()
-    val soup = Jsoup.parse(URL(url).readText())
-    fun append(it : Element) {
-        if (!it.tag().preserveWhitespace()) {
-            return append(Element(Tag.valueOf("pre"), it.baseUri()).appendChild(it))
-        }
-
-        val text = it.text()
-        out.appendln(text)
-        if (!text.trimEnd().endsWith(";")) {
-            out.appendln(";")
-        }
+private fun fetch(url: String): String? {
+    try {
+        return URL(url).readText()
+    } catch (e: Exception) {
+        println("failed to download ${url}, if it's not a local problem, revisit the list of downloaded entities")
+        e.printStackTrace()
+        return null
     }
+}
+
+private fun Appendable.append(element: Element) {
+    val text = element.text()
+    appendln(text)
+    if (!text.trimEnd().endsWith(";")) {
+        appendln(";")
+    }
+}
+
+
+private fun List<Element>.attachTo(out: Appendable) = map { element ->
+    if (!element.tag().preserveWhitespace()) {
+        Element(Tag.valueOf("pre"), element.baseUri()).appendChild(element)
+    } else element
+}.forEach { out.append(it) }
+
+
+private fun extractIDLText(rawContent: String, out: Appendable) {
+    val soup = Jsoup.parse(rawContent)
 
     soup.select(".dfn-panel").remove()
 
-    soup.select("pre.idl").filter {!it.hasClass("extract")}.forEach(::append)
-    soup.select("code.idl-code").forEach(::append)
-    soup.select("spec-idl").forEach(::append)
+    soup.select("pre.idl").filter {!it.hasClass("extract")}.attachTo(out)
+    soup.select("code.idl-code").attachTo(out)
+    soup.select("spec-idl").attachTo(out)
 }

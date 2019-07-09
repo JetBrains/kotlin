@@ -13,27 +13,28 @@ UFile (package = )
                 UThrowExpression
                     UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
                         UIdentifier (Identifier (UnsupportedOperationException))
-                        USimpleNameReferenceExpression (identifier = <init>)
+                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
         UAnnotationMethod (name = Model)
             UBlockExpression
                 UBlockExpression
                     UCallExpression (kind = UastCallKind(name='method_call'), argCount = 2))
                         UIdentifier (Identifier (crashMe))
-                        USimpleNameReferenceExpression (identifier = crashMe)
+                        USimpleNameReferenceExpression (identifier = crashMe, resolvesTo = null)
                         UQualifiedReferenceExpression
                             UClassLiteralExpression
                             USimpleNameReferenceExpression (identifier = java)
                         ULambdaExpression
                             UBlockExpression
-                                UObjectLiteralExpression
-                                    UClass (name = null)
-                                        UAnnotationMethod (name = onError)
-                                            UParameter (name = throwable)
-                                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-                                            UBlockExpression
-                                                UThrowExpression
-                                                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
-                                                        UIdentifier (Identifier (UnsupportedOperationException))
-                                                        USimpleNameReferenceExpression (identifier = <init>)
-                                                        ULiteralExpression (value = "")
-                                        UAnnotationMethod (name = Model$1$1)
+                                UReturnExpression
+                                    UObjectLiteralExpression
+                                        UClass (name = null)
+                                            UAnnotationMethod (name = onError)
+                                                UParameter (name = throwable)
+                                                    UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                                UBlockExpression
+                                                    UThrowExpression
+                                                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
+                                                            UIdentifier (Identifier (UnsupportedOperationException))
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
+                                                            ULiteralExpression (value = "")
+                                            UAnnotationMethod (name = Model$1$1)

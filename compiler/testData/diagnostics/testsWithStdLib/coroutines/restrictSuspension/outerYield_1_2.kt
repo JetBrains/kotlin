@@ -1,6 +1,8 @@
 // !LANGUAGE: -ReleaseCoroutines -ExperimentalBuilderInference
 // !DIAGNOSTICS: -EXPERIMENTAL_FEATURE_WARNING
+// !WITH_NEW_INFERENCE
 // SKIP_TXT
+
 @kotlin.coroutines.experimental.RestrictsSuspension
 class RestrictedController<T> {
     suspend fun yield(<!UNUSED_PARAMETER!>x<!>: T) {}
@@ -75,13 +77,13 @@ fun test() {
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>(1)
             this@a.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>(1)
 
-            with(this) {
+            <!NI;NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE!>with(this) {
                 <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
                 this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield<!>("")
 
                 <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
                 this@with.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>yield2<!>("")
-            }
+            }<!>
         }
     }
 

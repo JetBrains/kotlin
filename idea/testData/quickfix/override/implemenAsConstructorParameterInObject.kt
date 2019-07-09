@@ -3,7 +3,7 @@
 // ACTION: Implement members
 // ACTION: Make internal
 // ACTION: Make private
-// ACTION: Move 'A' to separate file
+// ACTION: Extract 'A' from current file
 // ERROR: Object 'A' is not abstract and does not implement abstract member public abstract val foo: Int defined in I
 interface I {
     val foo: Int

@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 data class Box(val value: String)
 
 var pr = Box("first")

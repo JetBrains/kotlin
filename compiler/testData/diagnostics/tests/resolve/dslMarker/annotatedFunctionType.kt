@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
+// !WITH_NEW_INFERENCE
 
 @Target(AnnotationTarget.TYPE)
 @DslMarker

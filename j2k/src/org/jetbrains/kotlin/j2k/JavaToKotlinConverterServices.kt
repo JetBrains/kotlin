@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.j2k
 
 import com.intellij.psi.PsiMethod
+import org.jetbrains.kotlin.idea.j2k.DocCommentConverter
+import org.jetbrains.kotlin.idea.j2k.EmptyDocCommentConverter
 
 interface JavaToKotlinConverterServices {
     val referenceSearcher: ReferenceSearcher

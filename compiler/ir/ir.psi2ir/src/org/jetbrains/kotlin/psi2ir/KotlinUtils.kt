@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.psi2ir
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -70,9 +69,6 @@ inline fun MemberScope.findFirstFunction(name: String, predicate: (CallableMembe
 
 fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
     getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
-
-fun KotlinBuiltIns.findSingleFunction(name: Name): FunctionDescriptor =
-    builtInsPackageScope.findSingleFunction(name)
 
 val PsiElement?.startOffsetOrUndefined get() = this?.startOffsetSkippingComments ?: UNDEFINED_OFFSET
 val PsiElement?.endOffsetOrUndefined get() = this?.endOffset ?: UNDEFINED_OFFSET

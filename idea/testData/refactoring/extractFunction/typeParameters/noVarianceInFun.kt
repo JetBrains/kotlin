@@ -1,3 +1,4 @@
+// COMPILER_ARGUMENTS: -XXLanguage:-NewInference
 // PARAM_DESCRIPTOR: val e: T? defined in EntityClass.foo
 // PARAM_TYPES: T?, Entity?
 // SIBLING:

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 fun test1(a: Boolean, b: Boolean) = a && b
 fun test2(a: Boolean, b: Boolean) = a || b
 

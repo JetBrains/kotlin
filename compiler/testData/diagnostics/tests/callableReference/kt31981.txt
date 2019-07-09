@@ -1,0 +1,22 @@
+package
+
+public fun main(/*0*/ intDTO: DTO<kotlin.Int>?): kotlin.Unit
+
+public final class DTO</*0*/ T> {
+    public constructor DTO</*0*/ T>()
+    public final var q: kotlin.Int
+    public final val test: Inv<T>? = null
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun </*0*/ R> get(/*0*/ prop: kotlin.reflect.KProperty1<*, R>): R
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final operator fun </*0*/ R> set(/*0*/ prop: kotlin.reflect.KMutableProperty1<*, R>, /*1*/ value: R): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Inv</*0*/ T> {
+    public constructor Inv</*0*/ T>()
+    public final val size: kotlin.Int = 0
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

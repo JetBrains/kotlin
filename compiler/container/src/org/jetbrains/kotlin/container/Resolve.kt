@@ -20,7 +20,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Member
 import java.lang.reflect.Method
 import java.lang.reflect.Type
-import java.util.ArrayList
+import java.util.*
 
 interface ValueResolver {
     fun resolve(request: Type, context: ValueResolveContext): ValueDescriptor?
@@ -45,7 +45,7 @@ class ConstructorBinding(val constructor: Constructor<*>, val argumentDescriptor
 class MethodBinding(val method: Method, private val argumentDescriptors: List<ValueDescriptor>) {
     fun invoke(instance: Any) {
         val arguments = computeArguments(argumentDescriptors).toTypedArray()
-        method.invoke(instance, *arguments)
+        runWithUnwrappingInvocationException { method.invoke(instance, *arguments) }
     }
 }
 

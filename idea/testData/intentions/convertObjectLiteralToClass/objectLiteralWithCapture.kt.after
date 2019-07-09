@@ -1,9 +1,9 @@
 open class K
 
 fun foo(n: Int) {
-    val x = <caret>O(n)
+    val x = K1(n)
 }
 
-class O(private val n: Int) : K() {
+class K1<caret>(private val n: Int) : K() {
     fun bar() = n
 }

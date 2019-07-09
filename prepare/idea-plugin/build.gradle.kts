@@ -1,5 +1,4 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.jvm.tasks.Jar
+import java.util.regex.Pattern.quote
 
 description = "Kotlin IDEA plugin"
 
@@ -11,45 +10,48 @@ repositories {
     maven("https://jetbrains.bintray.com/markdown")
 }
 
-// Do not rename, used in JPS importer
+// PILL: used in pill importer
 val projectsToShadow by extra(listOf(
         ":plugins:annotation-based-compiler-plugins-ide-support",
+        ":core:type-system",
         ":compiler:backend",
         ":compiler:backend-common",
+        ":compiler:backend.jvm",
         ":compiler:ir.backend.common",
         ":kotlin-build-common",
         ":compiler:cli-common",
         ":compiler:container",
-        ":compiler:daemon-common",
+        ":daemon-common",
+        ":daemon-common-new",
         ":core:metadata",
         ":core:metadata.jvm",
         ":core:descriptors",
         ":core:descriptors.jvm",
         ":core:deserialization",
-        ":eval4j",
+        ":idea:jvm-debugger:eval4j",
+        ":idea:jvm-debugger:jvm-debugger-util",
+        ":idea:jvm-debugger:jvm-debugger-core",
+        ":idea:jvm-debugger:jvm-debugger-evaluation",
+        ":idea:jvm-debugger:jvm-debugger-sequence",
+        ":idea:idea-j2k",
         ":idea:formatter",
         ":compiler:psi",
-        *if (project.findProperty("fir.enabled") == "true") {
-            arrayOf(
-                ":compiler:fir:cones",
-                ":compiler:fir:resolve",
-                ":compiler:fir:tree",
-                ":compiler:fir:psi2fir"
-            )
-        } else {
-            emptyArray()
-        },
+        ":compiler:fir:cones",
+        ":compiler:fir:resolve",
+        ":compiler:fir:tree",
+        ":compiler:fir:java",
+        ":compiler:fir:psi2fir",
+        ":compiler:fir:fir2ir",
+        ":idea:fir-view",
         ":compiler:frontend",
+        ":compiler:frontend.common",
         ":compiler:frontend.java",
-        ":compiler:frontend.script",
         ":idea:ide-common",
         ":idea",
         ":idea:idea-native",
-        ":idea:fir-view",
         ":idea:idea-core",
         ":idea:idea-gradle",
         ":idea:idea-gradle-native",
-        //":idea-ultimate",
         ":compiler:ir.psi2ir",
         ":compiler:ir.tree",
         ":js:js.ast",
@@ -65,43 +67,112 @@ val projectsToShadow by extra(listOf(
         ":compiler:resolution",
         ":compiler:serialization",
         ":compiler:util",
-        ":core:util.runtime"))
+        ":core:util.runtime",
+        ":plugins:lint",
+        ":plugins:uast-kotlin",
+        ":plugins:uast-kotlin-idea",
+        ":j2k",
+        ":nj2k",
+        ":nj2k:nj2k-services",
+        ":kotlin-allopen-compiler-plugin",
+        ":kotlin-noarg-compiler-plugin",
+        ":kotlin-sam-with-receiver-compiler-plugin",
+        ":kotlin-scripting-idea",
+        ":kotlinx-serialization-compiler-plugin",
+        ":kotlinx-serialization-ide-plugin",
+        ":idea:idea-android",
+        ":idea:idea-android-output-parser",
+        ":idea:idea-jvm",
+        ":idea:idea-git",
+        ":idea:idea-jps-common",
+        ":plugins:android-extensions-compiler",
+        *if (Ide.IJ())
+            arrayOf(":idea:idea-maven")
+        else
+            emptyArray<String>()
+))
 
-// Do not rename, used in JPS importer
-val packedJars by configurations.creating
+// Projects published to maven copied to the plugin as separate jars
+val libraryProjects = listOf(
+    ":kotlin-reflect",
+    ":kotlin-compiler-client-embeddable",
+    ":kotlin-daemon-client",
+    ":kotlin-daemon-client-new",
+    ":kotlin-daemon",
+    ":kotlin-script-runtime",
+    ":kotlin-script-util",
+    ":kotlin-scripting-common",
+    ":kotlin-scripting-compiler-impl",
+    ":kotlin-scripting-intellij",
+    ":kotlin-scripting-jvm",
+    ":kotlin-util-io",
+    ":kotlin-util-klib"
+)
 
-val sideJars by configurations.creating
+// Gradle tooling model jars are loaded into Gradle during import and should present in plugin as separate jar
+val gradleToolingModel by configurations.creating
 
-dependencies {
-    packedJars(protobufFull())
-    packedJars(project(":core:builtins", configuration = "builtins"))
-    sideJars(project(":kotlin-script-runtime"))
-    sideJars(project(":kotlin-stdlib"))
-    sideJars(project(":kotlin-stdlib-jdk7"))
-    sideJars(project(":kotlin-stdlib-jdk8"))
-    sideJars(project(":kotlin-reflect"))
-    sideJars(project(":kotlin-compiler-client-embeddable"))
-    sideJars(commonDep("io.javaslang", "javaslang"))
-    sideJars(commonDep("javax.inject"))
-    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
-    sideJars(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
-    sideJars(commonDep("org.jetbrains", "markdown")) { isTransitive = false }
+val libraries by configurations.creating {
+    extendsFrom(gradleToolingModel)
 }
 
-val jar = runtimeJar(task<ShadowJar>("shadowJar")) {
-    from(files("$rootDir/resources/kotlinManifest.properties"))
-    from(packedJars)
-    for (p in projectsToShadow) {
-        dependsOn("$p:classes")
-        from(getSourceSetsFrom(p)["main"].output)
+val jpsPlugin by configurations.creating
+
+configurations.all {
+    resolutionStrategy {
+        preferProjectModules()
     }
+
+    exclude("org.jetbrains.intellij.deps", "trove4j") // Idea already has trove4j
+}
+
+dependencies {
+    projectsToShadow.forEach {
+        embedded(project(it)) { isTransitive = false }
+    }
+    embedded(protobufFull())
+    embedded(kotlinBuiltins())
+
+    libraries(commonDep("javax.inject"))
+    libraries(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8"))
+    libraries(commonDep("org.jetbrains", "markdown"))
+    libraries(commonDep("io.javaslang", "javaslang"))
+
+    libraries(kotlinStdlib("jdk8"))
+
+    libraryProjects.forEach {
+        libraries(project(it)) { isTransitive = false }
+    }
+
+    gradleToolingModel(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
+    gradleToolingModel(project(":sam-with-receiver-ide-plugin")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:kapt3-idea")) { isTransitive = false }
+    gradleToolingModel(project(":plugins:android-extensions-ide")) { isTransitive = false }
+    gradleToolingModel(project(":noarg-ide-plugin")) { isTransitive = false }
+    gradleToolingModel(project(":allopen-ide-plugin")) { isTransitive = false }
+
+    jpsPlugin(project(":kotlin-jps-plugin")) { isTransitive = false }
+}
+
+val jar = runtimeJar {
+    from("$rootDir/resources/kotlinManifest.properties")
     archiveName = "kotlin-plugin.jar"
 }
 
-ideaPlugin {
-    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
+val ideaPluginDir: File by rootProject.extra
+tasks.register<Sync>("ideaPlugin") {
     dependsOn(":dist")
-    from(jar)
-    from(sideJars)
-}
 
+    into(File(ideaPluginDir, "lib"))
+
+    duplicatesStrategy = DuplicatesStrategy.FAIL // Investigation is required if we have multiple jars with same name
+
+    from(jar)
+    from(libraries)
+    from(jpsPlugin) {
+        into("jps")
+    }
+
+    rename(quote("-$version"), "")
+    rename(quote("-$bootstrapKotlinVersion"), "")
+}

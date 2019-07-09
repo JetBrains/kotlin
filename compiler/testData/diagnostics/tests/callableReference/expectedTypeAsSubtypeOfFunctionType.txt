@@ -1,0 +1,13 @@
+package
+
+public fun cr(): kotlin.Unit
+public fun </*0*/ T> takeIt(/*0*/ x: T, /*1*/ f: SubFunction): kotlin.Unit
+public fun test(): kotlin.Unit
+
+public abstract class SubFunction : () -> kotlin.Unit {
+    public constructor SubFunction()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public abstract override /*1*/ /*fake_override*/ fun invoke(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

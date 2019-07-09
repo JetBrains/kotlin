@@ -89,8 +89,7 @@ class DeadCodeElimination(private val logConsumer: (DCELogLevel, String) -> Unit
                     return@map block
                 }
                 val sourceMapParse = file.sourceMapResource
-                        ?.let { InputStreamReader(it.reader(), "UTF-8") }
-                        ?.use { SourceMapParser.parse(it) }
+                        ?.let { SourceMapParser.parse(InputStreamReader(it.reader(), "UTF-8").readText()) }
                 when (sourceMapParse) {
                     is SourceMapError -> {
                         logConsumer(

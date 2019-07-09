@@ -10,3 +10,4 @@ fun Int.f(): Int {
 // EXIST: @receiver
 // ABSENT: @constructor
 // ABSENT: @property
+// INVOCATION_COUNT: 1

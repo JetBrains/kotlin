@@ -1702,14 +1702,26 @@ public final class JvmModuleProtoBuf {
 
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     boolean hasPackageFqName();
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     java.lang.String getPackageFqName();
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes();
@@ -1720,7 +1732,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1731,7 +1744,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     int getShortClassNameCount();
@@ -1741,7 +1755,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     java.lang.String getShortClassName(int index);
@@ -1751,7 +1766,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
@@ -1793,6 +1809,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1802,6 +1821,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     int getMultifileFacadeShortNameCount();
@@ -1810,6 +1832,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     java.lang.String getMultifileFacadeShortName(int index);
@@ -1818,6 +1843,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
@@ -1827,8 +1855,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -1837,8 +1865,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     int getClassWithJvmPackageNameShortNameCount();
@@ -1846,8 +1874,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     java.lang.String getClassWithJvmPackageNameShortName(int index);
@@ -1855,12 +1883,49 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     org.jetbrains.kotlin.protobuf.ByteString
         getClassWithJvmPackageNameShortNameBytes(int index);
+
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    java.util.List<java.lang.Integer> getClassWithJvmPackageNameMultifileFacadeShortNameIdList();
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount();
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    int getClassWithJvmPackageNameMultifileFacadeShortNameId(int index);
 
     /**
      * <code>repeated int32 class_with_jvm_package_name_package_id = 6 [packed = true];</code>
@@ -2004,9 +2069,9 @@ public final class JvmModuleProtoBuf {
               break;
             }
             case 48: {
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
                 classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000040;
               }
               classWithJvmPackageNamePackageId_.add(input.readInt32());
               break;
@@ -2014,12 +2079,33 @@ public final class JvmModuleProtoBuf {
             case 50: {
               int length = input.readRawVarint32();
               int limit = input.pushLimit(length);
-              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
+              if (!((mutable_bitField0_ & 0x00000040) == 0x00000040) && input.getBytesUntilLimit() > 0) {
                 classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>();
-                mutable_bitField0_ |= 0x00000020;
+                mutable_bitField0_ |= 0x00000040;
               }
               while (input.getBytesUntilLimit() > 0) {
                 classWithJvmPackageNamePackageId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
+            case 56: {
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+                classWithJvmPackageNameMultifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              classWithJvmPackageNameMultifileFacadeShortNameId_.add(input.readInt32());
+              break;
+            }
+            case 58: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00000020) == 0x00000020) && input.getBytesUntilLimit() > 0) {
+                classWithJvmPackageNameMultifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00000020;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                classWithJvmPackageNameMultifileFacadeShortNameId_.add(input.readInt32());
               }
               input.popLimit(limit);
               break;
@@ -2044,8 +2130,11 @@ public final class JvmModuleProtoBuf {
         if (((mutable_bitField0_ & 0x00000010) == 0x00000010)) {
           classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_.getUnmodifiableView();
         }
-        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+        if (((mutable_bitField0_ & 0x00000040) == 0x00000040)) {
           classWithJvmPackageNamePackageId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
+        }
+        if (((mutable_bitField0_ & 0x00000020) == 0x00000020)) {
+          classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNameMultifileFacadeShortNameId_);
         }
         try {
           unknownFieldsCodedOutput.flush();
@@ -2077,12 +2166,20 @@ public final class JvmModuleProtoBuf {
     private java.lang.Object packageFqName_;
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     public boolean hasPackageFqName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     public java.lang.String getPackageFqName() {
       java.lang.Object ref = packageFqName_;
@@ -2100,6 +2197,10 @@ public final class JvmModuleProtoBuf {
     }
     /**
      * <code>required string package_fq_name = 1;</code>
+     *
+     * <pre>
+     * Dot-separated Kotlin FQ name of the package.
+     * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
         getPackageFqNameBytes() {
@@ -2123,7 +2224,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -2136,7 +2238,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     public int getShortClassNameCount() {
@@ -2148,7 +2251,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     public java.lang.String getShortClassName(int index) {
@@ -2160,7 +2264,8 @@ public final class JvmModuleProtoBuf {
      * <pre>
      * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
      * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+     * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+     * class_with_jvm_package_name_short_name.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
@@ -2216,6 +2321,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -2227,6 +2335,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     public int getMultifileFacadeShortNameCount() {
@@ -2237,6 +2348,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     public java.lang.String getMultifileFacadeShortName(int index) {
@@ -2247,6 +2361,9 @@ public final class JvmModuleProtoBuf {
      *
      * <pre>
      * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+     * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+     * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+     * otherwise behavior is unspecified.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
@@ -2260,8 +2377,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -2272,8 +2389,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     public int getClassWithJvmPackageNameShortNameCount() {
@@ -2283,8 +2400,8 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     public java.lang.String getClassWithJvmPackageNameShortName(int index) {
@@ -2294,14 +2411,61 @@ public final class JvmModuleProtoBuf {
      * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
      *
      * <pre>
-     * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-     * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+     * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+     * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
      * </pre>
      */
     public org.jetbrains.kotlin.protobuf.ByteString
         getClassWithJvmPackageNameShortNameBytes(int index) {
       return classWithJvmPackageNameShortName_.getByteString(index);
     }
+
+    public static final int CLASS_WITH_JVM_PACKAGE_NAME_MULTIFILE_FACADE_SHORT_NAME_ID_FIELD_NUMBER = 7;
+    private java.util.List<java.lang.Integer> classWithJvmPackageNameMultifileFacadeShortNameId_;
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    public java.util.List<java.lang.Integer>
+        getClassWithJvmPackageNameMultifileFacadeShortNameIdList() {
+      return classWithJvmPackageNameMultifileFacadeShortNameId_;
+    }
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
+      return classWithJvmPackageNameMultifileFacadeShortNameId_.size();
+    }
+    /**
+     * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+     *
+     * <pre>
+     * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+     * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+     * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+     * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+     * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+     * </pre>
+     */
+    public int getClassWithJvmPackageNameMultifileFacadeShortNameId(int index) {
+      return classWithJvmPackageNameMultifileFacadeShortNameId_.get(index);
+    }
+    private int classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize = -1;
 
     public static final int CLASS_WITH_JVM_PACKAGE_NAME_PACKAGE_ID_FIELD_NUMBER = 6;
     private java.util.List<java.lang.Integer> classWithJvmPackageNamePackageId_;
@@ -2356,6 +2520,7 @@ public final class JvmModuleProtoBuf {
       multifileFacadeShortNameId_ = java.util.Collections.emptyList();
       multifileFacadeShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
       classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
+      classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.emptyList();
       classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
     }
     private byte memoizedIsInitialized = -1;
@@ -2400,6 +2565,13 @@ public final class JvmModuleProtoBuf {
       }
       for (int i = 0; i < classWithJvmPackageNamePackageId_.size(); i++) {
         output.writeInt32NoTag(classWithJvmPackageNamePackageId_.get(i));
+      }
+      if (getClassWithJvmPackageNameMultifileFacadeShortNameIdList().size() > 0) {
+        output.writeRawVarint32(58);
+        output.writeRawVarint32(classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < classWithJvmPackageNameMultifileFacadeShortNameId_.size(); i++) {
+        output.writeInt32NoTag(classWithJvmPackageNameMultifileFacadeShortNameId_.get(i));
       }
       output.writeRawBytes(unknownFields);
     }
@@ -2468,6 +2640,20 @@ public final class JvmModuleProtoBuf {
               .computeInt32SizeNoTag(dataSize);
         }
         classWithJvmPackageNamePackageIdMemoizedSerializedSize = dataSize;
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < classWithJvmPackageNameMultifileFacadeShortNameId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(classWithJvmPackageNameMultifileFacadeShortNameId_.get(i));
+        }
+        size += dataSize;
+        if (!getClassWithJvmPackageNameMultifileFacadeShortNameIdList().isEmpty()) {
+          size += 1;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        classWithJvmPackageNameMultifileFacadeShortNameIdMemoizedSerializedSize = dataSize;
       }
       size += unknownFields.size();
       memoizedSerializedSize = size;
@@ -2573,8 +2759,10 @@ public final class JvmModuleProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000008);
         classWithJvmPackageNameShortName_ = org.jetbrains.kotlin.protobuf.LazyStringArrayList.EMPTY;
         bitField0_ = (bitField0_ & ~0x00000010);
-        classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
+        classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000020);
+        classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -2623,8 +2811,13 @@ public final class JvmModuleProtoBuf {
         }
         result.classWithJvmPackageNameShortName_ = classWithJvmPackageNameShortName_;
         if (((bitField0_ & 0x00000020) == 0x00000020)) {
-          classWithJvmPackageNamePackageId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
+          classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNameMultifileFacadeShortNameId_);
           bitField0_ = (bitField0_ & ~0x00000020);
+        }
+        result.classWithJvmPackageNameMultifileFacadeShortNameId_ = classWithJvmPackageNameMultifileFacadeShortNameId_;
+        if (((bitField0_ & 0x00000040) == 0x00000040)) {
+          classWithJvmPackageNamePackageId_ = java.util.Collections.unmodifiableList(classWithJvmPackageNamePackageId_);
+          bitField0_ = (bitField0_ & ~0x00000040);
         }
         result.classWithJvmPackageNamePackageId_ = classWithJvmPackageNamePackageId_;
         result.bitField0_ = to_bitField0_;
@@ -2678,10 +2871,20 @@ public final class JvmModuleProtoBuf {
           }
           
         }
+        if (!other.classWithJvmPackageNameMultifileFacadeShortNameId_.isEmpty()) {
+          if (classWithJvmPackageNameMultifileFacadeShortNameId_.isEmpty()) {
+            classWithJvmPackageNameMultifileFacadeShortNameId_ = other.classWithJvmPackageNameMultifileFacadeShortNameId_;
+            bitField0_ = (bitField0_ & ~0x00000020);
+          } else {
+            ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+            classWithJvmPackageNameMultifileFacadeShortNameId_.addAll(other.classWithJvmPackageNameMultifileFacadeShortNameId_);
+          }
+          
+        }
         if (!other.classWithJvmPackageNamePackageId_.isEmpty()) {
           if (classWithJvmPackageNamePackageId_.isEmpty()) {
             classWithJvmPackageNamePackageId_ = other.classWithJvmPackageNamePackageId_;
-            bitField0_ = (bitField0_ & ~0x00000020);
+            bitField0_ = (bitField0_ & ~0x00000040);
           } else {
             ensureClassWithJvmPackageNamePackageIdIsMutable();
             classWithJvmPackageNamePackageId_.addAll(other.classWithJvmPackageNamePackageId_);
@@ -2723,12 +2926,20 @@ public final class JvmModuleProtoBuf {
       private java.lang.Object packageFqName_ = "";
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public boolean hasPackageFqName() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public java.lang.String getPackageFqName() {
         java.lang.Object ref = packageFqName_;
@@ -2746,6 +2957,10 @@ public final class JvmModuleProtoBuf {
       }
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
           getPackageFqNameBytes() {
@@ -2762,6 +2977,10 @@ public final class JvmModuleProtoBuf {
       }
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public Builder setPackageFqName(
           java.lang.String value) {
@@ -2775,6 +2994,10 @@ public final class JvmModuleProtoBuf {
       }
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public Builder clearPackageFqName() {
         bitField0_ = (bitField0_ & ~0x00000001);
@@ -2784,6 +3007,10 @@ public final class JvmModuleProtoBuf {
       }
       /**
        * <code>required string package_fq_name = 1;</code>
+       *
+       * <pre>
+       * Dot-separated Kotlin FQ name of the package.
+       * </pre>
        */
       public Builder setPackageFqNameBytes(
           org.jetbrains.kotlin.protobuf.ByteString value) {
@@ -2809,7 +3036,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -2822,7 +3050,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public int getShortClassNameCount() {
@@ -2834,7 +3063,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public java.lang.String getShortClassName(int index) {
@@ -2846,7 +3076,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
@@ -2859,7 +3090,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public Builder setShortClassName(
@@ -2878,7 +3110,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public Builder addShortClassName(
@@ -2897,7 +3130,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public Builder addAllShortClassName(
@@ -2914,7 +3148,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public Builder clearShortClassName() {
@@ -2929,7 +3164,8 @@ public final class JvmModuleProtoBuf {
        * <pre>
        * Short names of files, without extension, present in this package. Only single file facades and multi-file _parts_ are listed here
        * (multi-file facades are not present in this list, they are defined below). Only files whose JVM package name is equal to the
-       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here.
+       * Kotlin package name (i.e. it has not been changed with &#64;JvmPackageName) are listed here, the rest are listed in
+       * class_with_jvm_package_name_short_name.
        * </pre>
        */
       public Builder addShortClassNameBytes(
@@ -3063,6 +3299,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -3074,6 +3313,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public int getMultifileFacadeShortNameCount() {
@@ -3084,6 +3326,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public java.lang.String getMultifileFacadeShortName(int index) {
@@ -3094,6 +3339,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
@@ -3105,6 +3353,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public Builder setMultifileFacadeShortName(
@@ -3122,6 +3373,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public Builder addMultifileFacadeShortName(
@@ -3139,6 +3393,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public Builder addAllMultifileFacadeShortName(
@@ -3154,6 +3411,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public Builder clearMultifileFacadeShortName() {
@@ -3167,6 +3427,9 @@ public final class JvmModuleProtoBuf {
        *
        * <pre>
        * Short names of multi-file facades, used in multifile_facade_short_name_id to store the part -&gt; facade mapping.
+       * The package name of the multi-file facade is package_fq_name if this multi-file facade is not affected by &#64;JvmPackageName,
+       * and the JVM package name of any multi-file part otherwise. Note that in the latter case, all parts must have the same JVM package name,
+       * otherwise behavior is unspecified.
        * </pre>
        */
       public Builder addMultifileFacadeShortNameBytes(
@@ -3191,8 +3454,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ProtocolStringList
@@ -3203,8 +3466,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public int getClassWithJvmPackageNameShortNameCount() {
@@ -3214,8 +3477,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public java.lang.String getClassWithJvmPackageNameShortName(int index) {
@@ -3225,8 +3488,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public org.jetbrains.kotlin.protobuf.ByteString
@@ -3237,8 +3500,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public Builder setClassWithJvmPackageNameShortName(
@@ -3255,8 +3518,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public Builder addClassWithJvmPackageNameShortName(
@@ -3273,8 +3536,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public Builder addAllClassWithJvmPackageNameShortName(
@@ -3289,8 +3552,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public Builder clearClassWithJvmPackageNameShortName() {
@@ -3303,8 +3566,8 @@ public final class JvmModuleProtoBuf {
        * <code>repeated string class_with_jvm_package_name_short_name = 5;</code>
        *
        * <pre>
-       * Short names of files (single file facades), whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
-       * The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
+       * Short names of files (single file facades and multi-file _parts_), whose JVM package differs from the Kotlin package because of
+       * &#64;JvmPackageName. The JVM package name of each file is stored at the same index in class_with_jvm_package_name_package_id.
        * </pre>
        */
       public Builder addClassWithJvmPackageNameShortNameBytes(
@@ -3318,11 +3581,133 @@ public final class JvmModuleProtoBuf {
         return this;
       }
 
+      private java.util.List<java.lang.Integer> classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.emptyList();
+      private void ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable() {
+        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+          classWithJvmPackageNameMultifileFacadeShortNameId_ = new java.util.ArrayList<java.lang.Integer>(classWithJvmPackageNameMultifileFacadeShortNameId_);
+          bitField0_ |= 0x00000020;
+         }
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public java.util.List<java.lang.Integer>
+          getClassWithJvmPackageNameMultifileFacadeShortNameIdList() {
+        return java.util.Collections.unmodifiableList(classWithJvmPackageNameMultifileFacadeShortNameId_);
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public int getClassWithJvmPackageNameMultifileFacadeShortNameIdCount() {
+        return classWithJvmPackageNameMultifileFacadeShortNameId_.size();
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public int getClassWithJvmPackageNameMultifileFacadeShortNameId(int index) {
+        return classWithJvmPackageNameMultifileFacadeShortNameId_.get(index);
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public Builder setClassWithJvmPackageNameMultifileFacadeShortNameId(
+          int index, int value) {
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        classWithJvmPackageNameMultifileFacadeShortNameId_.set(index, value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public Builder addClassWithJvmPackageNameMultifileFacadeShortNameId(int value) {
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        classWithJvmPackageNameMultifileFacadeShortNameId_.add(value);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public Builder addAllClassWithJvmPackageNameMultifileFacadeShortNameId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureClassWithJvmPackageNameMultifileFacadeShortNameIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, classWithJvmPackageNameMultifileFacadeShortNameId_);
+        
+        return this;
+      }
+      /**
+       * <code>repeated int32 class_with_jvm_package_name_multifile_facade_short_name_id = 7 [packed = true];</code>
+       *
+       * <pre>
+       * This list is an addition to class_with_jvm_package_name_short_name exactly almost in the same way as
+       * multifile_facade_short_name_id is an addition to short_class_name. The only difference is that this list contains _full_ internal
+       * names of multi-file facades whose JVM package differs from the Kotlin package because of &#64;JvmPackageName.
+       * For each name in class_with_jvm_package_name_short_name, index of the name of the corresponding multi-file facade class in
+       * multifile_facade_short_name + 1, or 0 if the class is not a multi-file part.
+       * </pre>
+       */
+      public Builder clearClassWithJvmPackageNameMultifileFacadeShortNameId() {
+        classWithJvmPackageNameMultifileFacadeShortNameId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00000020);
+        
+        return this;
+      }
+
       private java.util.List<java.lang.Integer> classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
       private void ensureClassWithJvmPackageNamePackageIdIsMutable() {
-        if (!((bitField0_ & 0x00000020) == 0x00000020)) {
+        if (!((bitField0_ & 0x00000040) == 0x00000040)) {
           classWithJvmPackageNamePackageId_ = new java.util.ArrayList<java.lang.Integer>(classWithJvmPackageNamePackageId_);
-          bitField0_ |= 0x00000020;
+          bitField0_ |= 0x00000040;
          }
       }
       /**
@@ -3435,7 +3820,7 @@ public final class JvmModuleProtoBuf {
        */
       public Builder clearClassWithJvmPackageNamePackageId() {
         classWithJvmPackageNamePackageId_ = java.util.Collections.emptyList();
-        bitField0_ = (bitField0_ & ~0x00000020);
+        bitField0_ = (bitField0_ & ~0x00000040);
         
         return this;
       }

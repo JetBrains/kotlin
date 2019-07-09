@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.inspections.collections
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 
 abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
 
@@ -63,14 +62,22 @@ abstract class AbstractCallChainChecker : AbstractKotlinInspection() {
         constructor(first: KtExpression, second: KtExpression) : this(first.text, second.text)
     }
 
-    data class Conversion(val firstFqName: String, val secondFqName: String, val replacement: String) {
+    data class Conversion(
+        val firstFqName: String,
+        val secondFqName: String,
+        val replacement: String,
+        val additionalArgument: String? = null,
+        val withNotNullAssertion: Boolean = false
+    ) {
         private fun String.convertToShort() = takeLastWhile { it != '.' }
 
         val id: ConversionId get() = ConversionId(firstName, secondName)
 
-        val firstName = firstFqName.convertToShort()
+        private val firstName = firstFqName.convertToShort()
 
-        val secondName = secondFqName.convertToShort()
+        private val secondName = secondFqName.convertToShort()
+
+        fun withArgument(argument: String) = Conversion(firstFqName, secondFqName, replacement, argument)
     }
 
     companion object {

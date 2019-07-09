@@ -53,7 +53,7 @@ class KotlinMavenArchetypesProvider(private val kotlinPluginVersion: String, pri
             )
                 .filter { it.second != null }.joinToString(separator = " AND ") { "${it.first}:\"${it.second}\"" }
 
-            return "http://search.maven.org/solrsearch/select?q=${q.encodeURL()}&core=gav&rows=$rowsLimit&wt=json"
+            return "https://search.maven.org/solrsearch/select?q=${q.encodeURL()}&core=gav&rows=$rowsLimit&wt=json"
         }
 
         private fun String.encodeURL() = URLEncoder.encode(this, "UTF-8")

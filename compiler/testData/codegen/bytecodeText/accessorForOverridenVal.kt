@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 package b
 
 abstract class B {

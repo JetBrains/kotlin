@@ -35,7 +35,7 @@ fun outerFinallyInitializes() {
         // Not reported because of repeating diagnostic
         x = outerComputation()
     } catch (e: java.lang.Exception) {
-        // can catch exception thrown by the inner, so x can be not initalized
+        // can catch exception thrown by the inner, so x can be not initialized
         <!UNINITIALIZED_VARIABLE!>x<!>.inc()
         log()
     } finally {

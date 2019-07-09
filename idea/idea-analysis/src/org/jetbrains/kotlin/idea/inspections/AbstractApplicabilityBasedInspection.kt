@@ -19,38 +19,40 @@ package org.jetbrains.kotlin.idea.inspections
 import com.intellij.codeInspection.*
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
+import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 
-abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
-        val elementType: Class<TElement>
+abstract class AbstractApplicabilityBasedInspection<TElement : KtElement>(
+    val elementType: Class<TElement>
 ) : AbstractKotlinInspection() {
 
     final override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean, session: LocalInspectionToolSession) =
-            object : KtVisitorVoid() {
-                override fun visitKtElement(element: KtElement) {
-                    super.visitKtElement(element)
+        object : KtVisitorVoid() {
+            override fun visitKtElement(element: KtElement) {
+                super.visitKtElement(element)
 
-                    if (!elementType.isInstance(element) || element.textLength == 0) return
-                    visitTargetElement(element as TElement, holder, isOnTheFly)
-                }
+                if (!elementType.isInstance(element) || element.textLength == 0) return
+                @Suppress("UNCHECKED_CAST")
+                visitTargetElement(element as TElement, holder, isOnTheFly)
             }
+        }
 
     // This function should be called from visitor built by a derived inspection
     protected fun visitTargetElement(element: TElement, holder: ProblemsHolder, isOnTheFly: Boolean) {
         if (!isApplicable(element)) return
 
         holder.registerProblemWithoutOfflineInformation(
-                inspectionTarget(element),
-                inspectionText(element),
-                isOnTheFly,
-                inspectionHighlightType(element),
-                LocalFix(fixText(element))
+            element,
+            inspectionText(element),
+            isOnTheFly,
+            inspectionHighlightType(element),
+            inspectionHighlightRangeInElement(element),
+            LocalFix(fixText(element))
         )
     }
 
-    open fun inspectionTarget(element: TElement): PsiElement = element
+    open fun inspectionHighlightRangeInElement(element: TElement): TextRange? = null
 
     open fun inspectionHighlightType(element: TElement): ProblemHighlightType = ProblemHighlightType.GENERIC_ERROR_OR_WARNING
 
@@ -62,7 +64,7 @@ abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
 
     abstract fun isApplicable(element: TElement): Boolean
 
-    abstract fun applyTo(element: PsiElement, project: Project = element.project, editor: Editor? = null)
+    abstract fun applyTo(element: TElement, project: Project = element.project, editor: Editor? = null)
 
     open val startFixInWriteAction = true
 
@@ -70,7 +72,8 @@ abstract class AbstractApplicabilityBasedInspection<TElement: KtElement>(
         override fun startInWriteAction() = startFixInWriteAction
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val element = descriptor.psiElement
+            @Suppress("UNCHECKED_CAST")
+            val element = descriptor.psiElement as TElement
             applyTo(element, project, element.findExistingEditor())
         }
 

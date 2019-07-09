@@ -1,0 +1,11 @@
+<html>
+<body>
+This inspection reports guard clause that can be replaced with kotlin's function call. For example:
+<br /><br />
+<pre>
+fun test(foo: Int?) {
+    if (foo == null) throw IllegalArgumentException("foo") // Replace guard clause with kotlin's function call
+}
+</pre>
+</body>
+</html>

@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ K> id1(/*0*/ k: K): K
+public fun </*0*/ V> id2(/*0*/ v: V): V
+public fun test(): kotlin.Unit

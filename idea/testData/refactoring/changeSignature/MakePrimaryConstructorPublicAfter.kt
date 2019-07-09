@@ -1,1 +1,1 @@
-class X (n: Int)
+class X(n: Int)

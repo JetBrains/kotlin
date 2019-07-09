@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
   <defs>
-    <linearGradient id="kotlinnative4-a" x1="-16.836%" x2="76.219%" y1="91.94%" y2="-1.116%">
+    <linearGradient id="kotlin_native-a" x1="-16.836%" x2="76.219%" y1="91.94%" y2="-1.116%">
       <stop offset="10.75%" stop-color="#C757BC"/>
       <stop offset="21.38%" stop-color="#D0609A"/>
       <stop offset="42.54%" stop-color="#E1725C"/>
@@ -9,9 +9,12 @@
       <stop offset="82.32%" stop-color="#F88909"/>
     </linearGradient>
   </defs>
-  <g fill="none" fill-rule="evenodd" transform="translate(1 1)">
-    <polygon fill="#0EAEFF" points="0 0 0 7.39 0 7.392 0 13.998 6 13.998 6 7.987 6.987 6.999 7.051 6.999 7.019 6.968 14 0"/>
-    <polygon fill="url(#kotlinnative4-a)" fill-rule="nonzero" points="7.023 0 0 7.397 0 14 7.023 6.977 14 0"/>
-    <path fill="#9AA7B0" d="M13,14 L13,15 L9,15 L9,14 L7,14 L7,13 L9,13 L9,12 L7,12 L7,11 L9,11 L9,10 L7,10 L7,9 L9,9 L9,8 L13,8 L13,9 L15,9 L15,10 L13,10 L13,11 L15,11 L15,12 L13,12 L13,13 L15,13 L15,14 L13,14 Z"/>
+  <g fill="none" fill-rule="evenodd">
+    <polygon fill="#9AA7B0" points="6 6 6 7 2 7 2 6 0 6 0 5 2 5 2 4 0 4 0 3 2 3 2 2 0 2 0 1 2 1 2 0 6 0 6 1 8 1 8 2 6 2 6 3 8 3 8 4 6 4 6 5 8 5 8 6" transform="translate(8 9)"/>
+    <g fill-rule="nonzero" transform="translate(1 1)">
+      <path fill="#0EAEFF" d="M8.03986711,8 L6,8 L6,14 L0,14 L7.02333333,6.97666667 L8.03986711,8 Z"/>
+      <polygon fill="#0EAEFF" points="0 0 7.023 0 0 7.583"/>
+      <polygon fill="url(#kotlin_native-a)" points="7.023 0 0 7.397 0 14 7.023 6.977 14 0"/>
+    </g>
   </g>
 </svg>

@@ -1,0 +1,16 @@
+<html>
+<body>
+This inspection reports redundant <b>else</b> in <b>if</b> with <b>return</b>:
+
+<pre>
+fun foo(arg: Boolean): Int {
+    if (arg) return 0
+    // This else is redundant, code in braces could be just shifted left
+    else {
+        ...
+    }
+}
+</pre>
+
+</body>
+</html>

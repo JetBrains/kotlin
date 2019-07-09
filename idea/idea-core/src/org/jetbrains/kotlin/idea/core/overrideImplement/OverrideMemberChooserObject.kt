@@ -40,9 +40,12 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.findDocComment.findDocComment
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.renderer.*
+import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
+import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRenderer.Companion.withOptions
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier.*
+import org.jetbrains.kotlin.renderer.OverrideRenderingPolicy
+import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.setSingleOverridden
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
@@ -119,83 +122,77 @@ interface OverrideMemberChooserObject : ClassMember {
     }
 }
 
-fun OverrideMemberChooserObject.generateTopLevelActual(
-    project: Project,
-    copyDoc: Boolean
-) = generateMember(null, copyDoc, project, forceActual = true, forceExpect = false)
-
-fun OverrideMemberChooserObject.generateActualMember(
-    targetClass: KtClassOrObject,
-    copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = true, forceExpect = false)
-
-fun OverrideMemberChooserObject.generateTopLevelExpect(
-    project: Project,
-    copyDoc: Boolean
-) = generateMember(null, copyDoc, project, forceActual = false, forceExpect = true)
-
-fun OverrideMemberChooserObject.generateExpectMember(
-    targetClass: KtClassOrObject,
-    copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = false, forceExpect = true)
+enum class MemberGenerateMode {
+    OVERRIDE,
+    ACTUAL,
+    EXPECT
+}
 
 fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject,
     copyDoc: Boolean
-) = generateMember(targetClass, copyDoc, targetClass.project, forceActual = false, forceExpect = false)
+) = generateMember(targetClass, copyDoc, targetClass.project, mode = MemberGenerateMode.OVERRIDE)
 
-private fun OverrideMemberChooserObject.generateMember(
+fun OverrideMemberChooserObject.generateMember(
     targetClass: KtClassOrObject?,
     copyDoc: Boolean,
     project: Project,
-    forceActual: Boolean,
-    forceExpect: Boolean
+    mode: MemberGenerateMode
 ): KtCallableDeclaration {
     val descriptor = immediateSuper
 
     val bodyType = when {
         targetClass?.hasExpectModifier() == true -> NO_BODY
-        descriptor.extensionReceiverParameter != null && !forceActual && !forceExpect -> FROM_TEMPLATE
+        descriptor.extensionReceiverParameter != null && mode == MemberGenerateMode.OVERRIDE -> FROM_TEMPLATE
         else -> bodyType
     }
 
-    val renderer = when {
-        forceActual -> ACTUAL_RENDERER
-        forceExpect -> EXPECT_RENDERER
-        else -> OVERRIDE_RENDERER
+    val baseRenderer = when (mode) {
+        MemberGenerateMode.OVERRIDE -> OVERRIDE_RENDERER
+        MemberGenerateMode.ACTUAL -> ACTUAL_RENDERER
+        MemberGenerateMode.EXPECT -> EXPECT_RENDERER
+    }
+    val renderer = baseRenderer.withOptions {
+        if (descriptor is ClassConstructorDescriptor && descriptor.isPrimary) {
+            val containingClass = descriptor.containingDeclaration
+            if (containingClass.kind == ClassKind.ANNOTATION_CLASS || containingClass.isInline) {
+                renderPrimaryConstructorParametersAsProperties = true
+            }
+        }
     }
 
     if (preferConstructorParameter && descriptor is PropertyDescriptor) {
-        return generateConstructorParameter(project, descriptor, renderer)
+        return generateConstructorParameter(project, descriptor, renderer, mode == MemberGenerateMode.OVERRIDE)
     }
 
     val newMember: KtCallableDeclaration = when (descriptor) {
-        is FunctionDescriptor -> generateFunction(project, descriptor, renderer, bodyType)
-        is PropertyDescriptor -> generateProperty(project, descriptor, renderer, bodyType)
+        is FunctionDescriptor -> generateFunction(project, descriptor, renderer, bodyType, mode == MemberGenerateMode.OVERRIDE)
+        is PropertyDescriptor -> generateProperty(project, descriptor, renderer, bodyType, mode == MemberGenerateMode.OVERRIDE)
         else -> error("Unknown member to override: $descriptor")
     }
 
-    when {
-        forceActual -> newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
-        forceExpect -> if (targetClass == null) {
+    when (mode) {
+        MemberGenerateMode.ACTUAL -> newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
+        MemberGenerateMode.EXPECT -> if (targetClass == null) {
             newMember.addModifier(KtTokens.EXPECT_KEYWORD)
         }
-        targetClass?.hasActualModifier() == true -> {
-            val expectClassDescriptors =
-                targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
-            if (expectClassDescriptors.any { expectClassDescriptor ->
-                    val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
-                    expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+        MemberGenerateMode.OVERRIDE -> {
+            if (targetClass?.hasActualModifier() == true) {
+                val expectClassDescriptors =
+                    targetClass.resolveToDescriptorIfAny()?.expectedDescriptors()?.filterIsInstance<ClassDescriptor>().orEmpty()
+                if (expectClassDescriptors.any { expectClassDescriptor ->
+                        val expectMemberDescriptor = expectClassDescriptor.findCallableMemberBySignature(immediateSuper)
+                        expectMemberDescriptor?.isExpect == true && expectMemberDescriptor.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE
+                    }
+                ) {
+                    newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
                 }
-            ) {
-                newMember.addModifier(KtTokens.ACTUAL_KEYWORD)
             }
         }
     }
 
     if (copyDoc) {
-        val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement
-        val kDoc = when (superDeclaration) {
+        val kDoc = when (val superDeclaration = DescriptorToSourceUtilsIde.getAnyDeclaration(project, descriptor)?.navigationElement) {
             is KtDeclaration ->
                 findDocComment(superDeclaration)
             is PsiDocCommentOwner -> {
@@ -234,12 +231,11 @@ private val EXPECT_RENDERER = OVERRIDE_RENDERER.withOptions {
     secondaryConstructorsAsPrimary = false
     renderDefaultVisibility = false
     renderDefaultModality = false
-    renderAnnotationPropertiesInPrimaryConstructor = true
     renderTypeExpansions = true
 }
 
 private val ACTUAL_RENDERER = EXPECT_RENDERER.withOptions {
-    modifiers += ACTUAL
+    modifiers = modifiers + ACTUAL
     actualPropertiesInPrimaryConstructor = true
     renderTypeExpansions = false
     renderConstructorDelegation = true
@@ -283,9 +279,10 @@ private fun generateProperty(
     project: Project,
     descriptor: PropertyDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType
+    bodyType: OverrideMemberChooserObject.BodyType,
+    forceOverride: Boolean
 ): KtProperty {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+    val newDescriptor = descriptor.wrap(forceOverride)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
@@ -304,8 +301,13 @@ private fun generateProperty(
     return KtPsiFactory(project).createProperty(renderer.render(newDescriptor) + body)
 }
 
-private fun generateConstructorParameter(project: Project, descriptor: PropertyDescriptor, renderer: DescriptorRenderer): KtParameter {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+private fun generateConstructorParameter(
+    project: Project,
+    descriptor: PropertyDescriptor,
+    renderer: DescriptorRenderer,
+    forceOverride: Boolean
+): KtParameter {
+    val newDescriptor = descriptor.wrap(forceOverride)
     newDescriptor.setSingleOverridden(descriptor)
     return KtPsiFactory(project).createParameter(renderer.render(newDescriptor))
 }
@@ -314,9 +316,10 @@ private fun generateFunction(
     project: Project,
     descriptor: FunctionDescriptor,
     renderer: DescriptorRenderer,
-    bodyType: OverrideMemberChooserObject.BodyType
+    bodyType: OverrideMemberChooserObject.BodyType,
+    forceOverride: Boolean
 ): KtFunction {
-    val newDescriptor = descriptor.wrap(forceOverride = renderer === OVERRIDE_RENDERER)
+    val newDescriptor = descriptor.wrap(forceOverride)
 
     val returnType = descriptor.returnType
     val returnsNotUnit = returnType != null && !KotlinBuiltIns.isUnit(returnType)
@@ -341,14 +344,16 @@ private fun generateFunction(
     }
 }
 
+private fun OverrideMemberChooserObject.BodyType.effectiveBodyType(canBeEmpty: Boolean): OverrideMemberChooserObject.BodyType =
+    if (!canBeEmpty && this == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else this
+
 fun generateUnsupportedOrSuperCall(
     project: Project,
     descriptor: CallableMemberDescriptor,
     bodyType: OverrideMemberChooserObject.BodyType,
     canBeEmpty: Boolean = true
 ): String {
-    val effectiveBodyType = if (!canBeEmpty && bodyType == EMPTY_OR_TEMPLATE) FROM_TEMPLATE else bodyType
-    when (effectiveBodyType) {
+    when (bodyType.effectiveBodyType(canBeEmpty)) {
         EMPTY_OR_TEMPLATE -> return ""
         FROM_TEMPLATE -> {
             val templateKind = if (descriptor is FunctionDescriptor) TemplateKind.FUNCTION else TemplateKind.PROPERTY_INITIALIZER
@@ -361,7 +366,7 @@ fun generateUnsupportedOrSuperCall(
             )
         }
         else -> return buildString {
-            if (bodyType is OverrideMemberChooserObject.BodyType.Delegate) {
+            if (bodyType is Delegate) {
                 append(bodyType.receiverName)
             } else {
                 append("super")
@@ -385,7 +390,11 @@ fun generateUnsupportedOrSuperCall(
     }
 }
 
-fun KtNamedDeclaration.makeNotActual() {
+fun KtModifierListOwner.makeNotActual() {
     removeModifier(KtTokens.ACTUAL_KEYWORD)
     removeModifier(KtTokens.IMPL_KEYWORD)
+}
+
+fun KtModifierListOwner.makeActual() {
+    addModifier(KtTokens.ACTUAL_KEYWORD)
 }
