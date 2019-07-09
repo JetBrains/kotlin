@@ -41,7 +41,7 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
     return findScriptDefinitionByFilePath(project, File(path))
 }
 
-fun findScriptDefinitionByFilePath(project: Project, file: File): ScriptDefinition {
+private fun findScriptDefinitionByFilePath(project: Project, file: File): ScriptDefinition {
     val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
         ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
 
