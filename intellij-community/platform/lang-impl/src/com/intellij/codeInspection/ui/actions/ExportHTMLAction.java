@@ -90,7 +90,7 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
       final Runnable exportRunnable = () -> ApplicationManager.getApplication().runReadAction(() -> {
         if (myView.isDisposed()) return;
         if (!exportToHTML) {
-          dump2xml(outputDirectoryName);
+          dump2xml(outputDirectoryName, myView);
         }
         else {
           try {
@@ -116,7 +116,8 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
     });
   }
 
-  private void dump2xml(final String outputDirectoryName) {
+  public static void dump2xml(@NotNull final String outputDirectoryName,
+                              @NotNull InspectionResultsView view) {
     try {
       final File outputDir = new File(outputDirectoryName);
       if (!outputDir.exists() && !outputDir.mkdirs()) {
@@ -125,14 +126,14 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
       Format format = JDOMUtil.createFormat("\n");
       XMLOutputFactory xmlOutputFactory = XMLOutputFactory.newInstance();
 
-      InspectionProfileImpl profile = myView.getCurrentProfile();
+      InspectionProfileImpl profile = view.getCurrentProfile();
       String singleTool = profile.getSingleTool();
       MultiMap<String, InspectionToolWrapper> shortName2Wrapper = new MultiMap<>();
       if (singleTool != null) {
-        shortName2Wrapper.put(singleTool, getWrappersForAllScopes(singleTool));
+        shortName2Wrapper.put(singleTool, getWrappersForAllScopes(singleTool, view));
       }
       else {
-        InspectionTreeModel model = myView.getTree().getInspectionTreeModel();
+        InspectionTreeModel model = view.getTree().getInspectionTreeModel();
         model
           .traverse(model.getRoot())
           .filter(InspectionNode.class)
@@ -144,33 +145,34 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
       for (Map.Entry<String, Collection<InspectionToolWrapper>> entry : shortName2Wrapper.entrySet()) {
         String shortName = entry.getKey();
         Collection<InspectionToolWrapper> wrappers = entry.getValue();
-        writeInspectionResult(shortName, wrappers, outputDirectoryName, format, xmlOutputFactory);
+        writeInspectionResult(shortName, wrappers, outputDirectoryName, format, xmlOutputFactory, view);
       }
 
-      writeProfileName(outputDirectoryName);
+      writeProfileName(outputDirectoryName, view);
     }
     catch (ProcessCanceledException e) {
       throw e;
     }
     catch (Exception e) {
       LOG.error(e);
-      ApplicationManager.getApplication().invokeLater(() -> Messages.showErrorDialog(myView, e.getMessage()));
+      ApplicationManager.getApplication().invokeLater(() -> Messages.showErrorDialog(view, e.getMessage()));
     }
   }
 
-  private void writeInspectionResult(@NotNull String shortName,
-                                     @NotNull Collection<? extends InspectionToolWrapper> wrappers, String outputDirectoryName,
-                                     @NotNull Format format,
-                                     @NotNull XMLOutputFactory xmlOutputFactory) {
+  private static void writeInspectionResult(@NotNull String shortName,
+                                            @NotNull Collection<? extends InspectionToolWrapper> wrappers, String outputDirectoryName,
+                                            @NotNull Format format,
+                                            @NotNull XMLOutputFactory xmlOutputFactory,
+                                            @NotNull InspectionResultsView view) {
     //dummy entry points tool
     if (wrappers.isEmpty()) return;
-    try (XmlWriterWrapper reportWriter = new XmlWriterWrapper(myView.getProject(), outputDirectoryName, shortName,
+    try (XmlWriterWrapper reportWriter = new XmlWriterWrapper(view.getProject(), outputDirectoryName, shortName,
                                                               xmlOutputFactory, format, GlobalInspectionContextBase.PROBLEMS_TAG_NAME);
-         XmlWriterWrapper aggregateWriter = new XmlWriterWrapper(myView.getProject(), outputDirectoryName, shortName + AGGREGATE,
+         XmlWriterWrapper aggregateWriter = new XmlWriterWrapper(view.getProject(), outputDirectoryName, shortName + AGGREGATE,
                                                                  xmlOutputFactory, format, ROOT)) {
       reportWriter.checkOpen();
       for (InspectionToolWrapper wrapper : wrappers) {
-        InspectionToolPresentation presentation = myView.getGlobalInspectionContext().getPresentation(wrapper);
+        InspectionToolPresentation presentation = view.getGlobalInspectionContext().getPresentation(wrapper);
         presentation.exportResults(reportWriter::writeElement, presentation::isExcluded, presentation::isExcluded);
         if (presentation instanceof AggregateResultsExporter) {
           ((AggregateResultsExporter)presentation).exportAggregateResults(aggregateWriter::writeElement);
@@ -179,9 +181,10 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
     }
   }
 
-  private void writeProfileName(String outputDirectoryName) throws IOException {
+  private static void writeProfileName(@NotNull String outputDirectoryName,
+                                       @NotNull InspectionResultsView view) throws IOException {
     final Element element = new Element(InspectionApplication.INSPECTIONS_NODE);
-    element.setAttribute(InspectionApplication.PROFILE, myView.getCurrentProfileName());
+    element.setAttribute(InspectionApplication.PROFILE, view.getCurrentProfileName());
     JDOMUtil.write(element,
                    new File(outputDirectoryName, InspectionApplication.DESCRIPTIONS + InspectionApplication.XML_EXTENSION),
                    CodeStyle.getDefaultSettings().getLineSeparator());
@@ -205,8 +208,9 @@ public class ExportHTMLAction extends AnAction implements DumbAware {
   }
 
   @NotNull
-  private Collection<InspectionToolWrapper> getWrappersForAllScopes(@NotNull String shortName) {
-    GlobalInspectionContextImpl context = myView.getGlobalInspectionContext();
+  private static Collection<InspectionToolWrapper> getWrappersForAllScopes(@NotNull String shortName,
+                                                                           @NotNull InspectionResultsView view) {
+    GlobalInspectionContextImpl context = view.getGlobalInspectionContext();
     Tools tools = context.getTools().get(shortName);
     if (tools != null) {
       return ContainerUtil.map(tools.getTools(), ScopeToolState::getTool);
