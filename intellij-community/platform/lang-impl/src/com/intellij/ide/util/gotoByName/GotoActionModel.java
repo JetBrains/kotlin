@@ -723,7 +723,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
 
       Color groupFg = isSelected ? UIUtil.getListSelectionForeground(true) : UIUtil.getInactiveTextColor();
 
-      Object value = ((MatchedValue) matchedValue).value;
+      Object value = ((MatchedValue)matchedValue).value;
       String pattern = ((MatchedValue)matchedValue).pattern;
 
       Border eastBorder = JBUI.Borders.emptyRight(2);
@@ -769,7 +769,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         appendWithColoredMatches(nameComponent, name, pattern, fg, isSelected);
         if (StringUtil.isNotEmpty(shortcutText)) {
           nameComponent.append(" " + shortcutText,
-                   new SimpleTextAttributes(SimpleTextAttributes.STYLE_SMALLER | SimpleTextAttributes.STYLE_BOLD, groupFg));
+                               new SimpleTextAttributes(SimpleTextAttributes.STYLE_SMALLER | SimpleTextAttributes.STYLE_BOLD, groupFg));
         }
       }
       else if (value instanceof OptionDescription) {
@@ -778,20 +778,12 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
           panel.setBackground(descriptorBg);
           nameComponent.setBackground(descriptorBg);
         }
-        String hit = ((OptionDescription)value).getHit();
-        if (hit == null) {
-          hit = ((OptionDescription)value).getOption();
-        }
-        hit = StringUtil.unescapeXmlEntities(hit);
-        hit = hit.replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
-        String fullHit = hit;
+        String hit = calcHit((OptionDescription)value);
         Color fg = UIUtil.getListForeground(isSelected, cellHasFocus);
 
         if (showIcon) {
           panel.add(new JLabel(EMPTY_ICON), BorderLayout.WEST);
         }
-        panel.setToolTipText(fullHit);
-
         if (value instanceof BooleanOptionDescription) {
           boolean selected = ((BooleanOptionDescription)value).isOptionEnabled();
           addOnOffButton(panel, selected);
@@ -804,10 +796,19 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
           panel.add(settingsLabel, BorderLayout.EAST);
         }
 
-        String name = cutName(fullHit, null, list, panel, nameComponent);
+        String name = cutName(hit, null, list, panel, nameComponent);
         appendWithColoredMatches(nameComponent, name, pattern, fg, isSelected);
       }
       return panel;
+    }
+
+    @NotNull
+    private static String calcHit(@NotNull OptionDescription value) {
+      if (value instanceof RegistryTextOptionDescriptor) {
+        return value.getHit() + " = " + value.getValue();
+      }
+      String hit = StringUtil.defaultIfEmpty(value.getHit(), value.getOption());
+      return StringUtil.unescapeXmlEntities(hit).replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
     }
 
     private static String cutName(String name, String shortcutText, JList list, JPanel panel, SimpleColoredComponent nameComponent) {
