@@ -13,7 +13,7 @@ versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform192_CIDR_AppCode_Installers
 #versions.appcode.repo=ijplatform_IjPlatform192_CIDR_AppCode_PublicInstallers
 
-versions.clion=192.5570
+versions.clion=192.5715
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_Installers
 #versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_PublicInstallers
