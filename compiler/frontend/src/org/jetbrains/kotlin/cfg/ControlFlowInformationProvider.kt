@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
@@ -97,6 +98,7 @@ class ControlFlowInformationProvider private constructor(
         }
 
         markStatements()
+        markAnnotationArguments()
 
         markUnusedExpressions()
 
@@ -796,6 +798,21 @@ class ControlFlowInformationProvider private constructor(
         for (element in pseudocode.getValueElements(value)) {
             trace.record(USED_AS_EXPRESSION, element, isUsedAsExpression)
             trace.record(USED_AS_RESULT_OF_LAMBDA, element, isUsedAsResultOfLambda)
+        }
+    }
+
+    private fun markAnnotationArguments() {
+        when (subroutine) {
+            is KtAnnotationEntry -> markAnnotationArguments(subroutine)
+            is KtAnnotated -> subroutine.annotationEntries.forEach { markAnnotationArguments(it) }
+        }
+    }
+
+    private fun markAnnotationArguments(entry: KtAnnotationEntry) {
+        for (argument in entry.valueArguments) {
+            argument.getArgumentExpression()?.forEachDescendantOfType<KtExpression> {
+                trace.record(USED_AS_EXPRESSION, it, true)
+            }
         }
     }
 

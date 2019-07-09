@@ -521,6 +521,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/ifInQualifiedExpression.kt");
         }
 
+        @TestMetadata("InAnnotation.kt")
+        public void testInAnnotation() throws Exception {
+            runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/InAnnotation.kt");
+        }
+
         @TestMetadata("InFunctionLiteral.kt")
         public void testInFunctionLiteral() throws Exception {
             runTest("idea/testData/refactoring/inline/inlineVariableOrProperty/InFunctionLiteral.kt");
