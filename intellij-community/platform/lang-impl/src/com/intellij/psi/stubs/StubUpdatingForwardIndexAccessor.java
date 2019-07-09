@@ -1,6 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.psi.stubs;
 
+import com.intellij.openapi.progress.ProgressManager;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.io.ByteArraySequence;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.indexing.*;
@@ -19,13 +21,20 @@ class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, 
   @NotNull
   @Override
   public InputDataDiffBuilder<Integer, SerializedStubTree> getDiffBuilder(int inputId, @Nullable ByteArraySequence sequence) throws IOException {
-    Map<Integer, SerializedStubTree> data;
-    try {
-      data = myIndex.getIndexedFileData(inputId);
+    Ref<Map<Integer, SerializedStubTree>> dataRef = Ref.create();
+    StorageException[] ex = {null};
+    ProgressManager.getInstance().executeNonCancelableSection(() -> {
+      try {
+        dataRef.set(myIndex.getIndexedFileData(inputId));
+      }
+      catch (StorageException e) {
+        ex[0] = e;
+      }
+    });
+    if (ex[0] != null) {
+      throw new IOException(ex[0]);
     }
-    catch (StorageException e) {
-      throw new IOException(e);
-    }
+    Map<Integer, SerializedStubTree> data = dataRef.get();
     SerializedStubTree tree = ContainerUtil.isEmpty(data) ? null : ContainerUtil.getFirstItem(data.values());
     if (tree != null) {
       tree.restoreIndexedStubs(StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE);
