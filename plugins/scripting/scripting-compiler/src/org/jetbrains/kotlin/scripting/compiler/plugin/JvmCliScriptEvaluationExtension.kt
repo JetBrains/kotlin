@@ -50,6 +50,8 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
         val environment =
             KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
+        if (messageCollector.hasErrors()) return COMPILATION_ERROR
+
         val scriptFile = File(sourcePath)
         if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile)) {
             val extensionHint =
