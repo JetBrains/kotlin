@@ -20,20 +20,19 @@ import com.intellij.ui.HintHint;
 import com.intellij.ui.HyperlinkLabel;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import java.awt.*;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class IntentionDescriptionPanel {
+class IntentionDescriptionPanel {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.config.IntentionDescriptionPanel");
   private JPanel myPanel;
 
@@ -47,22 +46,17 @@ public class IntentionDescriptionPanel {
   @NonNls private static final String BEFORE_TEMPLATE = "before.java.template";
   @NonNls private static final String AFTER_TEMPLATE = "after.java.template";
 
-  public IntentionDescriptionPanel() {
+  IntentionDescriptionPanel() {
     myBeforePanel.setBorder(IdeBorderFactory.createTitledBorder("Before:", false, JBUI.insetsTop(8)).setShowLine(false));
     myAfterPanel.setBorder(IdeBorderFactory.createTitledBorder("After:", false, JBUI.insetsTop(8)).setShowLine(false));
     myPoweredByPanel.setBorder(IdeBorderFactory.createTitledBorder(
       CodeInsightBundle.message("powered.by"), false, JBUI.insetsTop(8)).setShowLine(false));
 
-    myDescriptionBrowser.addHyperlinkListener(
-      new HyperlinkListener() {
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-            BrowserUtil.browse(e.getURL());
-          }
-        }
+    myDescriptionBrowser.addHyperlinkListener(e -> {
+      if (e.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+        BrowserUtil.browse(e.getURL());
       }
-    );
+    });
   }
 
   // TODO 134099: see SingleInspectionProfilePanel#readHTML and and PostfixDescriptionPanel#readHtml
@@ -79,7 +73,7 @@ public class IntentionDescriptionPanel {
   // TODO 134099: see SingleInspectionProfilePanel#setHTML and PostfixDescriptionPanel#readHtml
   private String toHTML(String text) {
     final HintHint hintHint = new HintHint(myDescriptionBrowser, new Point(0, 0));
-    hintHint.setFont(UIUtil.getLabelFont());
+    hintHint.setFont(StartupUiUtil.getLabelFont());
     return HintUtil.prepareHintText(text, hintHint);
   }
 
@@ -110,12 +104,9 @@ public class IntentionDescriptionPanel {
     boolean isCustomPlugin = pluginDescriptor != null && pluginDescriptor.isBundled();
     if (isCustomPlugin) {
       HyperlinkLabel label = new HyperlinkLabel(CodeInsightBundle.message("powered.by.plugin", pluginDescriptor.getName()));
-      label.addHyperlinkListener(new HyperlinkListener() {
-        @Override
-        public void hyperlinkUpdate(HyperlinkEvent e) {
-          Project project = ProjectManager.getInstance().getDefaultProject();
-          PluginManagerConfigurableProxy.showPluginConfigurable(null, project, pluginDescriptor);
-        }
+      label.addHyperlinkListener(__ -> {
+        Project project = ProjectManager.getInstance().getDefaultProject();
+        PluginManagerConfigurableProxy.showPluginConfigurable(null, project, pluginDescriptor);
       });
       myPoweredByPanel.add(label, BorderLayout.CENTER);
     }
@@ -183,9 +174,6 @@ public class IntentionDescriptionPanel {
         usagePanel.reset(exampleUsage.getText(), fileType);
 
         if (!reuse) {
-          if (i == exampleUsages.length) {
-            gb.gridwidth = GridBagConstraints.REMAINDER;
-          }
           panel.add(usagePanel, gb);
           gb.gridx++;
         }

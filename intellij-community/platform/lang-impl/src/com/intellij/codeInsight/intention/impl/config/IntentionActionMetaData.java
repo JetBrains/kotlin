@@ -25,6 +25,7 @@ public final class IntentionActionMetaData extends BeforeAfterActionMetaData {
     myCategory = category;
   }
 
+  @Override
   public String toString() {
     return getFamily();
   }

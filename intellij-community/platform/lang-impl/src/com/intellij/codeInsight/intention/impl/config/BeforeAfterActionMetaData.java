@@ -95,14 +95,9 @@ public abstract class BeforeAfterActionMetaData implements BeforeAfterMetaData {
         cause = e;
         children = null;
       }
-      LOG.error("URLs not found for available file types and prefix: '" +
-                prefix +
-                "', suffix: '" +
-                suffix +
-                "';" +
-                " in directory: '" +
-                descriptionDirectory +
-                "'" +
+      LOG.error("URLs not found for available file types and prefix: '" + prefix
+                + "', suffix: '" + suffix + "';" +
+                " in directory: '" + descriptionDirectory + "'" +
                 (children == null ? "" : "; directory contents: " + Arrays.asList(children)), cause);
       return EMPTY_EXAMPLE;
     }

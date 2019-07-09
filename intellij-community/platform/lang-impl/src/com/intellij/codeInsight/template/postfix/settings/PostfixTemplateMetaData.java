@@ -72,6 +72,7 @@ public final class PostfixTemplateMetaData extends BeforeAfterActionMetaData {
           return StringUtil.replace(descriptor.getText(), KEY, key);
         }
 
+        @NotNull
         @Override
         public String getFileName() {
           return descriptor.getFileName();

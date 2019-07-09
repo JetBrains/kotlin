@@ -16,6 +16,8 @@
 
 package com.intellij.codeInsight.intention.impl.config;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.IOException;
 
 /**
@@ -23,5 +25,6 @@ import java.io.IOException;
  */
 public interface TextDescriptor {
   String getText() throws IOException;
+  @NotNull
   String getFileName();
 }
