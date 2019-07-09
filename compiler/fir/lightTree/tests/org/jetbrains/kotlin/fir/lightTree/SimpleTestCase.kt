@@ -5,32 +5,21 @@
 
 package org.jetbrains.kotlin.fir.lightTree
 
-import com.intellij.lang.ParserDefinition
 import com.intellij.lang.impl.PsiBuilderFactoryImpl
-import com.intellij.lexer.Lexer
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.DebugUtil
 import com.intellij.psi.impl.PsiManagerEx
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.TestDataPath
-import com.intellij.util.PathUtil
-import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
-import java.io.File
-import java.nio.file.Path
-import java.nio.file.Paths
-import kotlin.system.measureNanoTime
 
 /*
  * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
@@ -71,7 +60,11 @@ class SimpleTestCase : AbstractRawFirBuilderTestCase() {
         println("AST Tree")
         println(DebugUtil.nodeTreeToString(builder.treeBuilt, false))
 
-        val firFromLightTreeFile = Converter(object : FirSessionBase() {}, true, builder.lightTree).convertFile(builder.lightTree.root)
+        val firFromLightTreeFile = DeclarationsConverter(
+            object : FirSessionBase(null) {},
+            true,
+            builder.lightTree
+        ).convertFile(builder.lightTree.root)
         println("Fir from LightTree")
         println(StringBuilder().also { FirRenderer(it).visitFile(firFromLightTreeFile) }.toString())
 
