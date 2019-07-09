@@ -14,18 +14,22 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrReturnableBlockSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -98,7 +102,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
             DeepCopyIrTreeWithSymbolsForInliner(context, typeArguments, parent)
         }
 
-        val substituteMap = mutableMapOf<IrValueParameter, IrElement>()
+        val substituteMap = mutableMapOf<IrValueParameter, IrExpression>()
 
         fun inline() = inlineFunction(callSite, callee, true)
 
@@ -203,12 +207,9 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                 val newExpression = super.visitGetValue(expression) as IrGetValue
                 val argument = substituteMap[newExpression.symbol.owner] ?: return newExpression
                 argument.transformChildrenVoid(this) // Default argument can contain subjects for substitution.
-                return if (argument is IrVariable) {
-                    IrGetValueImpl(startOffset = newExpression.startOffset,
-                            endOffset = newExpression.endOffset,
-                            symbol = argument.symbol)
-
-                } else (copyIrElement.copy(argument) as IrExpression)
+                return if (argument is IrGetValueWithoutLocation)
+                    argument.withLocation(newExpression.startOffset, newExpression.endOffset)
+                else (copyIrElement.copy(argument) as IrExpression)
             }
 
             //-----------------------------------------------------------------//
@@ -244,8 +245,12 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                             val argument =
                                     if (unboundArgsSet.contains(it))
                                         valueParameters[unboundIndex++].second
-                                    else
-                                        boundFunctionParametersMap[it]!!
+                                    else {
+                                        val arg = boundFunctionParametersMap[it]!!
+                                        if (arg is IrGetValueWithoutLocation)
+                                            arg.withLocation(expression.startOffset, expression.endOffset)
+                                        else arg
+                                    }
                             when (it) {
                                 function.dispatchReceiverParameter ->
                                     this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
@@ -411,7 +416,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
                     evaluationStatements.add(newVariable)
 
-                    IrGetValueImpl(it.argumentExpression.startOffset, it.argumentExpression.endOffset, newVariable.symbol)
+                    IrGetValueWithoutLocation(newVariable.symbol)
                 }
                 when (it.parameter) {
                     referenced.dispatchReceiverParameter -> functionReference.dispatchReceiver = newArgument
@@ -449,9 +454,28 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                         isMutable = false)
 
                 evaluationStatements.add(newVariable)
-                substituteMap[it.parameter] = newVariable
+                substituteMap[it.parameter] = IrGetValueWithoutLocation(newVariable.symbol)
             }
             return evaluationStatements
         }
+    }
+
+    private class IrGetValueWithoutLocation(
+            symbol: IrValueSymbol,
+            override val origin: IrStatementOrigin? = null
+    ) : IrTerminalDeclarationReferenceBase<IrValueSymbol, ValueDescriptor>(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+            symbol.owner.type,
+            symbol, symbol.descriptor
+    ), IrGetValue {
+        override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D) =
+                visitor.visitGetValue(this, data)
+
+        override fun copy(): IrGetValue {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        fun withLocation(startOffset: Int, endOffset: Int) =
+                IrGetValueImpl(startOffset, endOffset, type, symbol, origin)
     }
 }
