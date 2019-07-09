@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -54,6 +55,10 @@ object ConverterUtil {
 
     fun LighterASTNode.getAsString(): String {
         return this.toString()
+    }
+
+    fun LighterASTNode.getAsStringUnescapedValue(): String {
+        return this.toString().replaceFirst("\\", "")
     }
 
     fun LighterASTNode.isExpression(): Boolean {
@@ -139,8 +144,7 @@ object ConverterUtil {
     }
 
     fun <T : FirCallWithArgumentList> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
-        if (!stubMode) {
-            //TODO("not implemented")
+        if (!stubMode || this is FirAnnotationCall) {
             this.arguments += container
         }
         return this
@@ -165,7 +169,8 @@ object ClassNameUtil {
     val currentClassId
         get() = ClassId(
             packageFqName,
-            className, false)
+            className, false
+        )
 
     fun callableIdForName(name: Name, local: Boolean = false) =
         when {
@@ -173,14 +178,16 @@ object ClassNameUtil {
             className == FqName.ROOT -> CallableId(packageFqName, name)
             else -> CallableId(
                 packageFqName,
-                className, name)
+                className, name
+            )
         }
 
     fun callableIdForClassConstructor() =
         if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
         else CallableId(
             packageFqName,
-            className, className.shortName())
+            className, className.shortName()
+        )
 
     var className: FqName = FqName.ROOT
 }
@@ -257,11 +264,13 @@ object DataClassUtil {
         firPrimaryConstructor: FirConstructor,
         properties: List<FirProperty>
     ) {
-        val symbol = FirFunctionSymbol(CallableId(
-            ClassNameUtil.packageFqName,
-            ClassNameUtil.className,
-            copyName
-        ))
+        val symbol = FirFunctionSymbol(
+            CallableId(
+                ClassNameUtil.packageFqName,
+                ClassNameUtil.className,
+                copyName
+            )
+        )
         firClass.addDeclaration(
             FirMemberFunctionImpl(
                 session, null, symbol, copyName,

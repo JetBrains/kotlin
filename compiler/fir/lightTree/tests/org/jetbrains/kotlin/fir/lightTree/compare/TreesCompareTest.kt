@@ -64,6 +64,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         compare(stubMode = true)
     }
 
+    fun testCompareAll() {
+        compare(stubMode = false)
+    }
+
     fun testStubCompareWithoutAnnotations() {
         compare(stubMode = true, visitAnnotation = false)
     }
