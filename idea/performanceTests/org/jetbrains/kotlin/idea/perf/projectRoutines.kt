@@ -13,6 +13,8 @@ import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
+import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl.waitForAllEditorsFinallyLoaded
+import java.util.concurrent.TimeUnit
 
 fun commitAllDocuments() {
     ProjectManagerEx.getInstanceEx().openProjects.forEach { project ->
@@ -44,4 +46,8 @@ fun closeProject(project: Project) {
     dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.forceCloseProject(project, true)
+}
+
+fun waitForAllEditorsFinallyLoaded(project: Project) {
+    waitForAllEditorsFinallyLoaded(project, 30, TimeUnit.SECONDS)
 }

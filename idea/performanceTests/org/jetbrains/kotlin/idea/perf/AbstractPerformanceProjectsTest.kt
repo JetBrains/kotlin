@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.*
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
-import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl.waitForAllEditorsFinallyLoaded
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.IdentifierHighlighterPassFactory
 import com.intellij.ide.highlighter.ModuleFileType
@@ -45,14 +44,15 @@ import com.intellij.openapi.vcs.changes.ChangeListManager
 import com.intellij.openapi.vcs.changes.ChangeListManagerImpl
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import com.intellij.psi.impl.search.IndexPatternBuilder
 import com.intellij.psi.xml.XmlFileNSInfoProvider
 import com.intellij.testFramework.*
-import com.intellij.testFramework.fixtures.EditorTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.testFramework.propertyBased.MadTestingUtil
+import com.intellij.util.ArrayUtilRt
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.indexing.UnindexedFilesUpdater
 import com.intellij.util.io.exists
@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
 import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
 import java.io.File
 import java.nio.file.Paths
-import java.util.concurrent.TimeUnit
 
 abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
@@ -319,8 +318,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
     private fun highlightFile(project: Project, psiFile: PsiFile): List<HighlightInfo> {
         val document = FileDocumentManager.getInstance().getDocument(psiFile.virtualFile)!!
         val editor = EditorFactory.getInstance().getEditors(document).first()
-        val fixture = EditorTestFixture(project, editor, psiFile.virtualFile)
-        return fixture.doHighlighting(true)
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+        return CodeInsightTestFixtureImpl.instantiateAndRun(psiFile, editor, ArrayUtilRt.EMPTY_INT_ARRAY, true)
     }
 
     protected fun perfFileAnalysis(name: String, stats: Stats, note: String = "") =
@@ -410,7 +409,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         assertNotNull("doc not found for $vFile", EditorFactory.getInstance().getEditors(document))
         assertTrue("expected non empty doc", document.text.isNotEmpty())
 
-        waitForAllEditorsFinallyLoaded(project, 30, TimeUnit.SECONDS)
+        waitForAllEditorsFinallyLoaded(project)
 
         return EditorFile(psiFile = psiFile, document = document)
     }

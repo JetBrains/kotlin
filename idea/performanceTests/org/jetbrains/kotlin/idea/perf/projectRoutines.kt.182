@@ -12,6 +12,7 @@ import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.EdtTestUtil
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.kotlin.idea.parameterInfo.HintType
 
 fun commitAllDocuments() {
     ProjectManagerEx.getInstanceEx().openProjects.forEach { project ->
@@ -33,8 +34,18 @@ fun runInEdtAndWait(block: () -> Unit) {
     })
 }
 
+fun dispatchAllInvocationEvents() {
+    runInEdtAndWait {
+        UIUtil.dispatchAllInvocationEvents()
+    }
+}
+
 fun closeProject(project: Project) {
-    UIUtil.dispatchAllInvocationEvents()
+    dispatchAllInvocationEvents()
     val projectManagerEx = ProjectManagerEx.getInstanceEx()
     projectManagerEx.closeAndDispose(project)
+}
+
+fun waitForAllEditorsFinallyLoaded(project: Project) {
+ // 182 does not have this public api
 }
