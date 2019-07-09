@@ -27,7 +27,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract val compilationConfiguration: ScriptCompilationConfiguration
     abstract val evaluationConfiguration: ScriptEvaluationConfiguration?
 
-    abstract fun isScript(fileName: String): Boolean
+    abstract fun isScript(file: File): Boolean
     abstract val fileExtension: String
     abstract val name: String
     // TODO: used in settings, find out the reason and refactor accordingly
@@ -68,7 +68,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             )
         }
 
-        override fun isScript(fileName: String): Boolean = legacyDefinition.isScript(fileName)
+        override fun isScript(file: File): Boolean = legacyDefinition.isScript(file.name)
 
         override val fileExtension: String get() = legacyDefinition.fileExtension
 
@@ -116,7 +116,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             )
         }
 
-        override fun isScript(fileName: String): Boolean = fileName.endsWith(".$fileExtension")
+        override fun isScript(file: File): Boolean = file.name.endsWith(".$fileExtension")
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
 

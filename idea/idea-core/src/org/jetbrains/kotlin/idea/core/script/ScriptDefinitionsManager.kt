@@ -68,25 +68,25 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     private val failedContributorsHashes = HashSet<Int>()
 
     private val scriptDefinitionsCacheLock = ReentrantReadWriteLock()
-    private val scriptDefinitionsCache = SLRUMap<String, ScriptDefinition>(10, 10)
+    private val scriptDefinitionsCache = SLRUMap<File, ScriptDefinition>(10, 10)
 
-    override fun findDefinition(fileName: String): ScriptDefinition? {
-        if (nonScriptFileName(fileName)) return null
+    override fun findDefinition(file: File): ScriptDefinition? {
+        if (nonScriptFileName(file.name)) return null
         if (!isReady()) return null
 
-        val cached = scriptDefinitionsCacheLock.write { scriptDefinitionsCache.get(fileName) }
+        val cached = scriptDefinitionsCacheLock.write { scriptDefinitionsCache.get(file) }
         if (cached != null) return cached
 
-        val definition = super.findDefinition(fileName) ?: return null
+        val definition = super.findDefinition(file) ?: return null
 
         scriptDefinitionsCacheLock.write {
-            scriptDefinitionsCache.put(fileName, definition)
+            scriptDefinitionsCache.put(file, definition)
         }
 
         return definition
     }
 
-    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = findDefinition(fileName)?.legacyDefinition
+    override fun findScriptDefinition(fileName: String): KotlinScriptDefinition? = findDefinition(File(fileName))?.legacyDefinition
 
     fun reloadDefinitionsBy(source: ScriptDefinitionsSource) = lock.write {
         if (definitions == null) return // not loaded yet

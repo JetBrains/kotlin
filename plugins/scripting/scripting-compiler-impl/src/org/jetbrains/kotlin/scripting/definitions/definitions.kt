@@ -15,6 +15,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -26,7 +27,7 @@ fun PsiFile.findScriptDefinition(): ScriptDefinition? {
     val file = virtualFile ?: originalFile.virtualFile ?: return null
     if (file.isNonScript()) return null
 
-    return findScriptDefinitionByFileName(project, file.name)
+    return findScriptDefinitionByFilePath(project, File(file.path))
 }
 
 fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
@@ -37,14 +38,14 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
 
     if (runReadAction { PsiManager.getInstance(project).findFile(this) as? KtFile }/*?.script*/ == null) return null
 
-    return findScriptDefinitionByFileName(project, name)
+    return findScriptDefinitionByFilePath(project, File(path))
 }
 
-fun findScriptDefinitionByFileName(project: Project, fileName: String): ScriptDefinition {
+fun findScriptDefinitionByFilePath(project: Project, file: File): ScriptDefinition {
     val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
         ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
 
-    return scriptDefinitionProvider.findDefinition(fileName) ?: scriptDefinitionProvider.getDefaultDefinition()
+    return scriptDefinitionProvider.findDefinition(file) ?: scriptDefinitionProvider.getDefaultDefinition()
 }
 
 internal fun VirtualFile.isNonScript(): Boolean =

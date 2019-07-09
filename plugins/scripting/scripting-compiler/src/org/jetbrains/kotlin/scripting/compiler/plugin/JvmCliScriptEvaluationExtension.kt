@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
-import org.jetbrains.kotlin.scripting.definitions.StandardScriptDefinition
 import java.io.File
 
 class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
@@ -47,7 +46,7 @@ class JvmCliScriptEvaluationExtension : ScriptEvaluationExtension {
             KotlinCoreEnvironment.createForProduction(projectEnvironment, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
 
         val scriptFile = File(sourcePath)
-        if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile.name)) {
+        if (scriptFile.isDirectory || !scriptDefinitionProvider.isScript(scriptFile)) {
             val extensionHint =
                 if (configuration.get(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS)?.let { it.size == 1 && it.first().isDefault } == true) " (.kts)"
                 else ""
