@@ -71,6 +71,9 @@ class GradleBuildScriptErrorParser : BuildOutputParser {
        reason == "Script compilation error:" ||
        reason.contains("compiler failed")) return false
 
+    // JDK compatibility issues should be handled by org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker
+    if(reason.startsWith("Could not create service of type ") && reason.contains(" using BuildScopeServices.")) return false
+
     if (location != null && filter != null) {
       val filePosition = FilePosition(File(filter.filteredFileName), filter.filteredLineNumber - 1, 0)
       messageConsumer.accept(object : FileMessageEventImpl(
