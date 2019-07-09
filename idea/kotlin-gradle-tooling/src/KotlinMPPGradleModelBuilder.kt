@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
-import org.gradle.api.Named
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.Project
-import org.gradle.api.Task
+import org.gradle.api.*
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
@@ -249,12 +246,45 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
             buildCompilation(it, disambiguationClassifier, sourceSetMap, dependencyResolver, project, dependencyMapper)
         }
         val jar = buildTargetJar(gradleTarget, project)
-        val target = KotlinTargetImpl(gradleTarget.name, targetPresetName, disambiguationClassifier, platform, compilations, jar)
+        val testTasks = buildTestTasks(project, gradleTarget)
+        val target = KotlinTargetImpl(gradleTarget.name, targetPresetName, disambiguationClassifier, platform, compilations, testTasks, jar)
         compilations.forEach {
             it.disambiguationClassifier = target.disambiguationClassifier
             it.platform = target.platform
         }
         return target
+    }
+
+    private fun buildTestTasks(project: Project, gradleTarget: Named): Collection<KotlinTestTask> {
+        // TODO: use the test runs API to extract the test tasks once it is available
+
+        // Otherwise, find the Kotlin test task with names matching the target name. This is a workaround that makes assumptions about
+        // the tasks naming logic and is therefore an unstable and temporary solution until test runs API is implemented:
+        @Suppress("UNCHECKED_CAST")
+        val kotlinTestTaskClass = try {
+            gradleTarget.javaClass.classLoader.loadClass("org.jetbrains.kotlin.gradle.tasks.KotlinTest") as Class<out Task>
+        } catch (_: ClassNotFoundException) {
+            return emptyList()
+        }
+
+        val targetDisambiguationClassifier = run {
+            val getDisambiguationClassifier = gradleTarget.javaClass.getMethodOrNull("getDisambiguationClassifier")
+                ?: return emptyList()
+
+            getDisambiguationClassifier(gradleTarget) as String?
+        }
+
+        // The 'targetName' of a test task matches the target disambiguation classifier, potentially with suffix, e.g. jsBrowser
+        val getTargetName = kotlinTestTaskClass.getDeclaredMethodOrNull("getTargetName") ?: return emptyList()
+
+        return project.tasks.filter { kotlinTestTaskClass.isInstance(it) }.mapNotNull { task ->
+            val testTaskDisambiguationClassifier = getTargetName(task) as String?
+            task.name.takeIf {
+                targetDisambiguationClassifier.isNullOrEmpty() ||
+                        testTaskDisambiguationClassifier != null &&
+                        testTaskDisambiguationClassifier.startsWith(targetDisambiguationClassifier.orEmpty())
+            }
+        }.map(::KotlinTestTaskImpl)
     }
 
     private fun buildTargetJar(gradleTarget: Named, project: Project): KotlinTargetJar? {

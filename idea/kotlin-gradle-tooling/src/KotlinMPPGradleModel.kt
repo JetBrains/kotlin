@@ -140,11 +140,16 @@ interface KotlinTarget : Serializable {
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
+    val testTasks: Collection<KotlinTestTask>
     val jar: KotlinTargetJar?
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
     }
+}
+
+interface KotlinTestTask : Serializable {
+    val taskName: String
 }
 
 interface ExtraFeatures : Serializable {
