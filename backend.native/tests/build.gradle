@@ -2874,6 +2874,11 @@ task inline_genericFunctionReference(type: KonanLocalTest) {
     source = "codegen/inline/genericFunctionReference.kt"
 }
 
+task inline_correctOrderFunctionReference(type: KonanLocalTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/correctOrderFunctionReference.kt"
+}
+
 task classDeclarationInsideInline(type: KonanLocalTest) {
     source = "codegen/inline/classDeclarationInsideInline.kt"
     goldValue = "test1: 1.0\n1\ntest2\n"

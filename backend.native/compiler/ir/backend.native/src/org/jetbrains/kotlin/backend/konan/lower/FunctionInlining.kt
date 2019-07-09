@@ -223,6 +223,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     return super.visitCall(expression)
 
                 if (functionArgument is IrFunctionReference) {
+                    functionArgument.transformChildrenVoid(this)
                     val function = functionArgument.symbol.owner
                     val functionParameters = function.explicitParameters
                     val boundFunctionParameters = functionArgument.getArgumentsWithIr()
@@ -241,10 +242,10 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     }.apply {
                         functionParameters.forEach {
                             val argument =
-                                    if (!unboundArgsSet.contains(it))
-                                        boundFunctionParametersMap[it]!!
-                                    else
+                                    if (unboundArgsSet.contains(it))
                                         valueParameters[unboundIndex++].second
+                                    else
+                                        boundFunctionParametersMap[it]!!
                             when (it) {
                                 function.dispatchReceiverParameter ->
                                     this.dispatchReceiver = argument.implicitCastIfNeededTo(function.dispatchReceiverParameter!!.type)
@@ -318,8 +319,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                 }
         }
 
-        //-------------------------------------------------------------------------//
-
+        // callee might be a copied version of callsite.symbol.owner
         private fun buildParameterToArgument(callSite: IrFunctionAccessExpression, callee: IrFunction): List<ParameterToArgument> {
 
             val parameterToArgument = mutableListOf<ParameterToArgument>()
@@ -395,12 +395,38 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
 
         //-------------------------------------------------------------------------//
 
-        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
-
-            val parameterToArgumentOld = buildParameterToArgument(callSite, callee)
+        private fun evaluateArguments(functionReference: IrFunctionReference): List<IrStatement> {
+            val arguments = functionReference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
             val evaluationStatements = mutableListOf<IrStatement>()
             val substitutor = ParameterSubstitutor()
-            parameterToArgumentOld.forEach {
+            val referenced = functionReference.symbol.owner
+            arguments.forEach {
+                val newArgument = if (it.isImmutableVariableLoad) {
+                    it.argumentExpression.transform(substitutor, data = null)   // Arguments may reference the previous ones - substitute them.
+                } else {
+                    val newVariable = currentScope.scope.createTemporaryVariableWithWrappedDescriptor(  // Create new variable and init it with the parameter expression.
+                            irExpression = it.argumentExpression.transform(substitutor, data = null),   // Arguments may reference the previous ones - substitute them.
+                            nameHint = callee.symbol.owner.name.toString(),
+                            isMutable = false)
+
+                    evaluationStatements.add(newVariable)
+
+                    IrGetValueImpl(it.argumentExpression.startOffset, it.argumentExpression.endOffset, newVariable.symbol)
+                }
+                when (it.parameter) {
+                    referenced.dispatchReceiverParameter -> functionReference.dispatchReceiver = newArgument
+                    referenced.extensionReceiverParameter -> functionReference.extensionReceiver = newArgument
+                    else -> functionReference.putValueArgument(it.parameter.index, newArgument)
+                }
+            }
+            return evaluationStatements
+        }
+
+        private fun evaluateArguments(callSite: IrFunctionAccessExpression, callee: IrFunction): List<IrStatement> {
+            val arguments = buildParameterToArgument(callSite, callee)
+            val evaluationStatements = mutableListOf<IrStatement>()
+            val substitutor = ParameterSubstitutor()
+            arguments.forEach {
                 /*
                  * We need to create temporary variable for each argument except inlinable lambda arguments.
                  * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
@@ -408,6 +434,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                  */
                 if (it.isInlinableLambdaArgument) {
                     substituteMap[it.parameter] = it.argumentExpression
+                    (it.argumentExpression as? IrFunctionReference)?.let { evaluationStatements += evaluateArguments(it) }
                     return@forEach
                 }
 
