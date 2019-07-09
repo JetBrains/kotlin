@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-internal fun String.parseCharacter(): Char? {
+fun String.parseCharacter(): Char? {
     // Strip the quotes
     if (length < 2 || this[0] != '\'' || this[length - 1] != '\'') {
         return null
