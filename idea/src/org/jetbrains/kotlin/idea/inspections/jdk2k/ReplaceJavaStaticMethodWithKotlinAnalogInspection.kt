@@ -9,49 +9,36 @@ import com.intellij.codeInspection.LocalQuickFix
 import com.intellij.codeInspection.ProblemDescriptor
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
-import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.idea.core.ShortenReferences
-import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.idea.inspections.collections.isCalling
-import org.jetbrains.kotlin.idea.intentions.callExpression
-import org.jetbrains.kotlin.idea.util.ImportInsertHelper
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.KtCallExpression
+import org.jetbrains.kotlin.psi.KtSimpleNameExpression
+import org.jetbrains.kotlin.psi.callExpressionVisitor
 import org.jetbrains.kotlin.psi.psiUtil.getReceiverExpression
-import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 
 class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspection() {
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean) = callExpressionVisitor(fun(call) {
         val callee = call.calleeExpression ?: return
-        val dotQualified = call.getStrictParentOfType<KtDotQualifiedExpression>() ?: return
         val replacements = REPLACEMENTS[callee.text]
-            ?.filter { it.filter(call) }
+            ?.filter { it.filter(call) && it.transformation.isApplicable(call) }
             ?.takeIf { it.isNotEmpty() }
             ?.let { list ->
                 val callDescriptor = call.getResolvedCall(call.analyze(BodyResolveMode.PARTIAL)) ?: return
-                list.filter {
-                    callDescriptor.isCalling(FqName(it.javaMethodFqName)) && (!it.toExtensionFunction || call.valueArguments.isNotEmpty())
-                }
+                list.filter { callDescriptor.isCalling(FqName(it.javaMethodFqName)) }
             }
             ?.takeIf { it.isNotEmpty() }
-            ?.map {
-                ReplaceWithKotlinAnalogFunction(
-                    it
-                )
-            }
+            ?.map(::ReplaceWithKotlinAnalogFunction)
             ?.toTypedArray() ?: return
 
         holder.registerProblem(
-            dotQualified,
-            TextRange(0, callee.endOffset - dotQualified.startOffset),
+            call,
+            callee.textRangeIn(call),
             "Should be replaced with Kotlin function",
             *replacements
         )
@@ -63,28 +50,8 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
         override fun getFamilyName() = "Replace with Kotlin analog"
 
         override fun applyFix(project: Project, descriptor: ProblemDescriptor) {
-            val dotQualified = descriptor.psiElement as? KtDotQualifiedExpression ?: return
-            val call = dotQualified.callExpression ?: return
-            val file = dotQualified.containingKtFile
-            val psiFactory = KtPsiFactory(call)
-            val valueArguments = call.valueArguments
-            val typeArguments = call.typeArgumentList?.text ?: ""
-            if (replacement.toExtensionFunction) {
-                val receiverText = valueArguments.first().getArgumentExpression()
-                    ?.run { if (this is KtOperationExpression) "($text)" else text }
-                    ?: valueArguments.first().text
-                val argumentsText = valueArguments.drop(1).joinToString(separator = ", ") { it.text }
-                dotQualified.replaced(psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}$typeArguments($argumentsText)"))
-                file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.let {
-                    ImportInsertHelper.getInstance(project).importDescriptor(file, it)
-                }
-            } else {
-                val argumentsText = valueArguments.joinToString(separator = ", ") { it.text }
-                val replaced = dotQualified.replaced(
-                    psiFactory.createExpression("${replacement.kotlinFunctionFqName}$typeArguments($argumentsText)")
-                )
-                ShortenReferences.DEFAULT.process(replaced)
-            }
+            val callExpression = descriptor.psiElement as? KtCallExpression ?: return
+            replacement.transformation(callExpression, replacement)
         }
     }
 
@@ -99,44 +66,24 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             "Float" to "Float"
         ).flatMap { (javaPrimitive, kotlinPrimitive) ->
             listOf(
-                Replacement(
-                    "java.lang.$javaPrimitive.toString",
-                    "kotlin.text.toString",
-                    toExtensionFunction = true
-                ) { call -> call.valueArguments.size == 2 },
-                Replacement(
-                    "java.lang.$javaPrimitive.toString",
-                    "kotlin.primitives.$kotlinPrimitive.toString",
-                    toExtensionFunction = true
-                ) { call -> call.valueArguments.size == 1 },
-                Replacement(
-                    "java.lang.$javaPrimitive.compare",
-                    "kotlin.primitives.$kotlinPrimitive.compareTo",
-                    toExtensionFunction = true
-                )
+                Replacement("java.lang.$javaPrimitive.toString", "kotlin.text.toString", ToExtensionFunction) {
+                    it.valueArguments.size == 2
+                },
+                Replacement("java.lang.$javaPrimitive.toString", "kotlin.primitives.$kotlinPrimitive.toString", ToExtensionFunction) {
+                    it.valueArguments.size == 1
+                },
+                Replacement("java.lang.$javaPrimitive.compare", "kotlin.primitives.$kotlinPrimitive.compareTo", ToExtensionFunction)
             )
         }
 
         private val JAVA_IO = listOf(
-            Replacement(
-                "java.io.PrintStream.print",
-                "kotlin.io.print",
-                filter = ::isJavaSystemOut
-            ),
-            Replacement(
-                "java.io.PrintStream.println",
-                "kotlin.io.println",
-                filter = ::isJavaSystemOut
-            )
+            Replacement("java.io.PrintStream.print", "kotlin.io.print", filter = ::isJavaSystemOut),
+            Replacement("java.io.PrintStream.println", "kotlin.io.println", filter = ::isJavaSystemOut)
         )
 
         private val JAVA_SYSTEM = listOf(
             Replacement("java.lang.System.exit", "kotlin.system.exitProcess"),
-            Replacement(
-                "java.lang.System.arraycopy",
-                "kotlin.collections.copyInto",
-                toExtensionFunction = true
-            ) // TODO: mapping
+            Replacement("java.lang.System.arraycopy", "kotlin.collections.copyInto", ToExtensionFunction) // TODO: mapping
         )
 
         private val JAVA_MATH = listOf(
@@ -152,137 +99,49 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.lang.Math.expm1", "kotlin.math.expm1"),
             Replacement("java.lang.Math.floor", "kotlin.math.floor"),
             Replacement("java.lang.Math.hypot", "kotlin.math.hypot"),
-            Replacement(
-                "java.lang.Math.IEEEremainder",
-                "kotlin.math.IEEErem",
-                toExtensionFunction = true
-            ),
+            Replacement("java.lang.Math.IEEEremainder", "kotlin.math.IEEErem", ToExtensionFunction),
             Replacement("java.lang.Math.log", "kotlin.math.ln"),
             Replacement("java.lang.Math.log1p", "kotlin.math.ln1p"),
             Replacement("java.lang.Math.log10", "kotlin.math.log10"),
             Replacement("java.lang.Math.max", "kotlin.math.max"),
-            Replacement(
-                "java.lang.Math.max",
-                "kotlin.ranges.coerceAtLeast",
-                toExtensionFunction = true
-            ),
+            Replacement("java.lang.Math.max", "kotlin.ranges.coerceAtLeast", ToExtensionFunction),
             Replacement("java.lang.Math.min", "kotlin.math.min"),
-            Replacement(
-                "java.lang.Math.min",
-                "kotlin.ranges.coerceAtMost",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.lang.Math.nextDown",
-                "kotlin.math.nextDown",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.lang.Math.nextAfter",
-                "kotlin.math.nextTowards",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.lang.Math.nextUp",
-                "kotlin.math.nextUp",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.lang.Math.pow",
-                "kotlin.math.pow",
-                toExtensionFunction = true
-            ),
+            Replacement("java.lang.Math.min", "kotlin.ranges.coerceAtMost", ToExtensionFunction),
+            Replacement("java.lang.Math.nextDown", "kotlin.math.nextDown", ToExtensionFunction),
+            Replacement("java.lang.Math.nextAfter", "kotlin.math.nextTowards", ToExtensionFunction),
+            Replacement("java.lang.Math.nextUp", "kotlin.math.nextUp", ToExtensionFunction),
+            Replacement("java.lang.Math.pow", "kotlin.math.pow", ToExtensionFunction),
             Replacement("java.lang.Math.rint", "kotlin.math.round"),
-            Replacement(
-                "java.lang.Math.round",
-                "kotlin.math.roundToLong",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.lang.Math.round",
-                "kotlin.math.roundToInt",
-                toExtensionFunction = true
-            ),
+            Replacement("java.lang.Math.round", "kotlin.math.roundToLong", ToExtensionFunction),
+            Replacement("java.lang.Math.round", "kotlin.math.roundToInt", ToExtensionFunction),
             Replacement("java.lang.Math.signum", "kotlin.math.sign"),
             Replacement("java.lang.Math.sin", "kotlin.math.sin"),
             Replacement("java.lang.Math.sinh", "kotlin.math.sinh"),
             Replacement("java.lang.Math.sqrt", "kotlin.math.sqrt"),
             Replacement("java.lang.Math.tan", "kotlin.math.tan"),
             Replacement("java.lang.Math.tanh", "kotlin.math.tanh"),
-            Replacement(
-                "java.lang.Math.copySign",
-                "kotlin.math.withSign",
-                toExtensionFunction = true
-            )
+            Replacement("java.lang.Math.copySign", "kotlin.math.withSign", ToExtensionFunction)
         )
 
         private val JAVA_COLLECTIONS = listOf(
-            Replacement(
-                "java.util.Arrays.copyOf",
-                "kotlin.collections.copyOf",
-                toExtensionFunction = true
-            ) {
+            Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", ToExtensionFunction) {
                 it.valueArguments.size == 2
             },
-            Replacement(
-                "java.util.Arrays.copyOfRange",
-                "kotlin.collections.copyOfRange",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.binarySearch",
-                "kotlin.collections.binarySearch",
-                toExtensionFunction = true
-            ), // TODO: mapping
-            Replacement(
-                "java.util.Arrays.equals",
-                "kotlin.collections.contentEquals",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.deepEquals",
-                "kotlin.collections.contentDeepEquals",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.fill",
-                "kotlin.collections.fill",
-                toExtensionFunction = true
-            ),  // TODO: mapping
-            Replacement(
-                "java.util.Arrays.sort",
-                "kotlin.collections.sort",
-                toExtensionFunction = true
-            ) {
+            Replacement("java.util.Arrays.copyOfRange", "kotlin.collections.copyOfRange", ToExtensionFunction),
+            Replacement("java.util.Arrays.binarySearch", "kotlin.collections.binarySearch", ToExtensionFunction), // TODO: mapping
+            Replacement("java.util.Arrays.equals", "kotlin.collections.contentEquals", ToExtensionFunction),
+            Replacement("java.util.Arrays.deepEquals", "kotlin.collections.contentDeepEquals", ToExtensionFunction),
+            Replacement("java.util.Arrays.fill", "kotlin.collections.fill", ToExtensionFunction),  // TODO: mapping
+            Replacement("java.util.Arrays.sort", "kotlin.collections.sort", ToExtensionFunction) {
                 it.valueArguments.size == 3
             }, //TODO: mapping?
-            Replacement(
-                "java.util.Arrays.sort",
-                "kotlin.collections.sortWith",
-                toExtensionFunction = true
-            ) {
+            Replacement("java.util.Arrays.sort", "kotlin.collections.sortWith", ToExtensionFunction) {
                 it.valueArguments.size != 3
             },
-            Replacement(
-                "java.util.Arrays.deepHashCode",
-                "kotlin.collections.contentDeepHashCode",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.hashCode",
-                "kotlin.collections.contentHashCode",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.deepToString",
-                "kotlin.collections.contentDeepToString",
-                toExtensionFunction = true
-            ),
-            Replacement(
-                "java.util.Arrays.toString",
-                "kotlin.collections.contentToString",
-                toExtensionFunction = true
-            ),
+            Replacement("java.util.Arrays.deepHashCode", "kotlin.collections.contentDeepHashCode", ToExtensionFunction),
+            Replacement("java.util.Arrays.hashCode", "kotlin.collections.contentHashCode", ToExtensionFunction),
+            Replacement("java.util.Arrays.deepToString", "kotlin.collections.contentDeepToString", ToExtensionFunction),
+            Replacement("java.util.Arrays.toString", "kotlin.collections.contentToString", ToExtensionFunction),
             Replacement("java.util.Arrays.asList", "kotlin.collections.listOf"),
             Replacement("java.util.Arrays.asList", "kotlin.collections.mutableListOf"),
             Replacement("java.util.Set.of", "kotlin.collections.setOf"),
@@ -291,19 +150,15 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.util.List.of", "kotlin.collections.mutableListOf")
         )
 
-        private val REPLACEMENTS = (JAVA_MATH +
-                JAVA_SYSTEM +
-                JAVA_IO +
-                JAVA_PRIMITIVES +
-                JAVA_COLLECTIONS
-                ).groupBy { it.javaMethodShortName }
+        private val REPLACEMENTS = (JAVA_MATH + JAVA_SYSTEM + JAVA_IO + JAVA_PRIMITIVES + JAVA_COLLECTIONS)
+            .groupBy { it.javaMethodShortName }
     }
 }
 
 data class Replacement(
     val javaMethodFqName: String,
     val kotlinFunctionFqName: String,
-    val toExtensionFunction: Boolean = false,
+    val transformation: Transformation = WithoutAdditionalTransformation,
     val filter: (KtCallExpression) -> Boolean = { true }
 ) {
     private fun String.shortName() = takeLastWhile { it != '.' }
