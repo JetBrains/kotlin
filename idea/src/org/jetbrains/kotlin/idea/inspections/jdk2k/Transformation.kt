@@ -23,11 +23,9 @@ interface Transformation {
 object WithoutAdditionalTransformation : Transformation {
     override fun invoke(callExpression: KtCallExpression, replacement: Replacement) {
         val psiFactory = KtPsiFactory(callExpression)
-        val valueArguments = callExpression.valueArguments
-        val typeArguments = callExpression.typeArgumentList?.text ?: ""
-        val argumentsText = valueArguments.joinToString(separator = ", ") { it.text }
+        val calleeLength = callExpression.calleeExpression?.textLength ?: return
         val replaced = callExpression.getQualifiedExpressionForSelectorOrThis().replaced(
-            psiFactory.createExpression("${replacement.kotlinFunctionFqName}$typeArguments($argumentsText)")
+            psiFactory.createExpression("${replacement.kotlinFunctionFqName}${callExpression.text.substring(calleeLength)}")
         )
         ShortenReferences.DEFAULT.process(replaced)
     }
