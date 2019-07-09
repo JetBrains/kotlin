@@ -94,6 +94,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
     if (!moduleDeps.isEmpty() || !libDeps.isEmpty()) {
       final ExternalSystemNode<?> depNode = new MyDependenciesNode(externalProjectsView);
+      boolean addDepNode = false;
 
       for (DataNode<?> dataNode : moduleDeps) {
         if (!(dataNode.getData() instanceof ModuleDependencyData)) continue;
@@ -105,6 +106,7 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
         }
         else {
           depNode.add(moduleDependencyDataExternalSystemNode);
+          addDepNode = true;
         }
       }
 
@@ -123,13 +125,14 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
         }
         if (dataNode.getParent() != null && dataNode.getParent().getData() instanceof ModuleData) {
           depNode.add(libraryDependencyDataExternalSystemNode);
+          addDepNode = true;
         }
         else {
           result.add(libraryDependencyDataExternalSystemNode);
         }
       }
 
-      if (depNode.hasChildren()) {
+      if (addDepNode) {
         result.add(depNode);
       }
     }
@@ -291,6 +294,11 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       if (data != null) {
         setNameAndTooltip(getName(), null, data.getScope().getDisplayName());
       }
+    }
+
+    @Override
+    public ExternalProjectsStructure.ErrorLevel getChildrenErrorLevel() {
+      return ExternalProjectsStructure.ErrorLevel.NONE;
     }
   }
 
