@@ -149,6 +149,11 @@ public class KeywordCompletionTestGenerated extends AbstractKeywordCompletionTes
         runTest("idea/idea-completion/testData/keywords/FileKeyword.kt");
     }
 
+    @TestMetadata("FixingLayoutAndReturn.kt")
+    public void testFixingLayoutAndReturn() throws Exception {
+        runTest("idea/idea-completion/testData/keywords/FixingLayoutAndReturn.kt");
+    }
+
     @TestMetadata("GlobalPropertyAccessors.kt")
     public void testGlobalPropertyAccessors() throws Exception {
         runTest("idea/idea-completion/testData/keywords/GlobalPropertyAccessors.kt");
