@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.benchmark.firModule
 
 import org.jetbrains.kotlin.fir.lightTree.benchmark.*
-import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.Antlr2FirGenerator
 import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.LightTree2FirGenerator
 import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.Psi2FirGenerator
 import org.jetbrains.kotlin.fir.lightTree.benchmark.generators.TreeGenerator
@@ -21,7 +20,4 @@ open class LightTree2FirBenchmarkFirModule(override val generator: TreeGenerator
     AbstractFirModuleBenchmark()
 
 open class Psi2FirBenchmarkFirModule(override val generator: TreeGenerator = Psi2FirGenerator()) :
-    AbstractFirModuleBenchmark()
-
-open class Antlr2FirBenchmarkFirModule(override val generator: TreeGenerator = Antlr2FirGenerator()) :
     AbstractFirModuleBenchmark()

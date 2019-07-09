@@ -27,7 +27,6 @@ dependencies {
     
     compile("junit", "junit", "4.4")
     compile(projectTests(":compiler:fir:psi2fir"))
-    compile(project(":compiler:fir:antlr2fir"))
 
     compile("org.openjdk.jmh", "jmh-core", jmhVersion)
     compile("org.openjdk.jmh", "jmh-generator-bytecode", jmhVersion)
