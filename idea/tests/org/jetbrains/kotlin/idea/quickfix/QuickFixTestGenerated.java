@@ -6065,6 +6065,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
             public void testStringTemplateUsedTwice2() throws Exception {
                 runTest("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects/stringTemplateUsedTwice2.kt");
             }
+
+            @TestMetadata("withLiteralAndReference.kt")
+            public void testWithLiteralAndReference() throws Exception {
+                runTest("idea/testData/quickfix/deprecatedSymbolUsage/argumentSideEffects/withLiteralAndReference.kt");
+            }
         }
 
         @TestMetadata("idea/testData/quickfix/deprecatedSymbolUsage/classUsages")

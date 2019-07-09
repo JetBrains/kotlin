@@ -333,6 +333,8 @@ class CodeInliner<TCallElement : KtElement>(
                 usageCount
             ) else true
             is KtBinaryExpressionWithTypeRHS -> true
+            is KtClassLiteralExpression -> false
+            is KtCallableReferenceExpression -> false
             null -> false
             else -> true
         }
