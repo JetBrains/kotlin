@@ -1,13 +1,11 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.lightTree
+package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
-import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
@@ -22,17 +20,17 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.extractArgumentsFrom
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.getAsString
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.getAsStringWithoutBacktick
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.isExpression
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.joinTypeParameters
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.toDelegatedSelfType
-import org.jetbrains.kotlin.fir.lightTree.ConverterUtil.toReturn
-import org.jetbrains.kotlin.fir.lightTree.DataClassUtil.generateComponentFunctions
-import org.jetbrains.kotlin.fir.lightTree.DataClassUtil.generateCopyFunction
-import org.jetbrains.kotlin.fir.lightTree.FunctionUtil.removeLast
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringWithoutBacktick
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.joinTypeParameters
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.toDelegatedSelfType
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.toReturn
+import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateComponentFunctions
+import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateCopyFunction
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.fir.ClassWrapper
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
@@ -50,56 +48,11 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
 
-class Converter(
-    val session: FirSession,
-    val stubMode: Boolean,
-    private val tree: FlyweightCapableTreeStructure<LighterASTNode>
-) {
-    private val implicitUnitType = FirImplicitUnitTypeRef(session, null)
-    private val implicitAnyType = FirImplicitAnyTypeRef(session, null)
-    private val implicitEnumType = FirImplicitEnumTypeRef(session, null)
-    private val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
-    private val implicitType = FirImplicitTypeRefImpl(session, null)
-
-    private fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
-        return this?.forEachChildrenReturnList { node, container ->
-            when (node.tokenType) {
-                type -> container += node
-            }
-        } ?: listOf()
-    }
-
-    private fun LighterASTNode?.getChildrenAsArray(): Array<LighterASTNode?> {
-        if (this == null) return arrayOf()
-
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(this, kidsRef)
-        return kidsRef.get()
-    }
-
-    private inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
-        val kidsArray = this.getChildrenAsArray()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
-            f(kid)
-        }
-    }
-
-    private inline fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): List<T> {
-        val kidsArray = this.getChildrenAsArray()
-
-        val container = mutableListOf<T>()
-        for (kid in kidsArray) {
-            if (kid == null) continue
-            val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
-            f(kid, container)
-        }
-
-        return container
-    }
+class DeclarationsConverter(
+    private val session: FirSession,
+    private val stubMode: Boolean,
+    tree: FlyweightCapableTreeStructure<LighterASTNode>
+) : BaseConverter(session, tree) {
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
