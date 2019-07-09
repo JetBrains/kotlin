@@ -1,4 +1,4 @@
 $TESTDATA_DIR$/standaloneSamConversionsAreEnabledWithNewInference.kt
 -d
 $TEMP_DIR$
--Xnew-inference -XXLanguage:-SamConversionPerArgument
+-Xnew-inference -XXLanguage\:-SamConversionPerArgument
