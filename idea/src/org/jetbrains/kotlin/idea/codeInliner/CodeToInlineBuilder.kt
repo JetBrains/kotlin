@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.idea.codeInliner
 
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.asExpression
@@ -41,6 +38,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.sure
 import java.util.*
 
@@ -153,7 +151,9 @@ class CodeToInlineBuilder(
     }
 
     private fun processReferences(codeToInline: MutableCodeToInline, bindingContext: BindingContext, reformat: Boolean) {
-        val receiversToAdd = ArrayList<Pair<KtExpression, KtExpression>>()
+        val receiversToAdd = ArrayList<Triple<KtExpression, KtExpression, KotlinType>>()
+        val targetDispatchReceiverType = targetCallable.dispatchReceiverParameter?.value?.type
+        val targetExtensionReceiverType = targetCallable.extensionReceiverParameter?.value?.type
 
         codeToInline.forEachDescendantOfType<KtSimpleNameExpression> { expression ->
             val target = bindingContext[BindingContext.REFERENCE_TARGET, expression] ?: return@forEachDescendantOfType
@@ -180,7 +180,7 @@ class CodeToInlineBuilder(
                         val resolutionScope = expression.getResolutionScope(bindingContext, resolutionFacade)
                         val receiverExpression = receiver.asExpression(resolutionScope, psiFactory)
                         if (receiverExpression != null) {
-                            receiversToAdd.add(expression to receiverExpression)
+                            receiversToAdd.add(Triple(expression, receiverExpression, receiver.type))
                         }
                     }
                 }
@@ -188,15 +188,18 @@ class CodeToInlineBuilder(
         }
 
         // add receivers in reverse order because arguments of a call were processed after the callee's name
-        for ((expr, receiverExpression) in receiversToAdd.asReversed()) {
+        for ((expr, receiverExpression, receiverType) in receiversToAdd.asReversed()) {
             val expressionToReplace = expr.parent as? KtCallExpression ?: expr
-            codeToInline.replaceExpression(
+            val replaced = codeToInline.replaceExpression(
                 expressionToReplace,
                 psiFactory.createExpressionByPattern(
                     "$0.$1", receiverExpression, expressionToReplace,
                     reformat = reformat
                 )
-            )
+            ) as? KtQualifiedExpression
+            if (receiverType != targetDispatchReceiverType && receiverType != targetExtensionReceiverType) {
+                replaced?.receiverExpression?.putCopyableUserData(CodeToInline.SIDE_RECEIVER_USAGE_KEY, Unit)
+            }
         }
     }
 }

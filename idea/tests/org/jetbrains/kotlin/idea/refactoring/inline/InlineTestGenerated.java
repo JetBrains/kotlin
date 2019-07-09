@@ -86,6 +86,11 @@ public class InlineTestGenerated extends AbstractInlineTest {
             runTest("idea/testData/refactoring/inline/function/ReturnNotInTheEnd.kt");
         }
 
+        @TestMetadata("Sequence.kt")
+        public void testSequence() throws Exception {
+            runTest("idea/testData/refactoring/inline/function/Sequence.kt");
+        }
+
         @TestMetadata("UnitReturnType.kt")
         public void testUnitReturnType() throws Exception {
             runTest("idea/testData/refactoring/inline/function/UnitReturnType.kt");
