@@ -76,7 +76,7 @@ class KotlinBuildProperties(
 
     val relocation: Boolean get() = postProcessing
 
-    val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard")
+    val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard", isTeamcityBuild)
 
     val jsIrDist: Boolean get() = getBoolean("kotlin.stdlib.js.ir.dist")
 }
