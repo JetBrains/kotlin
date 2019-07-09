@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtVisitorVoid
-import java.util.*
 import kotlin.system.measureNanoTime
 import kotlin.test.Ignore
 
@@ -38,9 +37,9 @@ class WholeProjectLightClassTest : WholeProjectPerformanceTest(), WholeProjectKo
                         override fun visitClassOrObject(classOrObject: KtClassOrObject) {
                             if (!predicate(classOrObject)) return
                             val lightClass = classOrObject.toLightClass() as? KtLightClassForSourceDeclaration ?: return
-                            Arrays.hashCode(lightClass.superTypes)
-                            Arrays.hashCode(lightClass.fields)
-                            Arrays.hashCode(lightClass.methods)
+                            lightClass.superTypes.contentHashCode()
+                            lightClass.fields.contentHashCode()
+                            lightClass.methods.contentHashCode()
                             // Just to be sure: access types
                             lightClass.fields.map { it.type }.hashCode()
                             lightClass.methods.map { it.returnType }.hashCode()
