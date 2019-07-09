@@ -261,20 +261,22 @@ class JKJavaNewArrayImpl(initializer: List<JKExpression>, type: JKTypeElement) :
     override fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R = visitor.visitJavaNewArray(this, data)
 }
 
-sealed class JKJavaPrimitiveTypeImpl(override val jvmPrimitiveType: JvmPrimitiveType) : JKJavaPrimitiveType {
-    object BOOLEAN : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BOOLEAN)
-    object CHAR : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.CHAR)
-    object BYTE : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BYTE)
-    object SHORT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.SHORT)
-    object INT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.INT)
-    object FLOAT : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.FLOAT)
-    object LONG : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.LONG)
-    object DOUBLE : JKJavaPrimitiveTypeImpl(JvmPrimitiveType.DOUBLE)
-
+class JKJavaPrimitiveTypeImpl(override val jvmPrimitiveType: JvmPrimitiveType) : JKJavaPrimitiveType {
     companion object {
+        val BOOLEAN = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BOOLEAN)
+        val CHAR = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.CHAR)
+        val BYTE = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.BYTE)
+        val SHORT = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.SHORT)
+        val INT = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.INT)
+        val FLOAT = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.FLOAT)
+        val LONG = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.LONG)
+        val DOUBLE = JKJavaPrimitiveTypeImpl(JvmPrimitiveType.DOUBLE)
+
         val KEYWORD_TO_INSTANCE = listOf(
             BOOLEAN, CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE
-        ).associate { it.jvmPrimitiveType.javaKeywordName to it } + ("void" to JKJavaVoidType)
+        ).associate {
+            it.jvmPrimitiveType.javaKeywordName to it
+        } + ("void" to JKJavaVoidType)
     }
 }
 

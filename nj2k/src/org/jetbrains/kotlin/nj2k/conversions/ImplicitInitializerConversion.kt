@@ -111,7 +111,7 @@ class ImplicitInitializerConversion(private val context: NewJ2kConverterContext)
 
     private fun createPrimitiveTypeInitializer(primitiveType: JKJavaPrimitiveType): JKLiteralExpression =
         when (primitiveType) {
-            is JKJavaPrimitiveTypeImpl.BOOLEAN ->
+            JKJavaPrimitiveTypeImpl.BOOLEAN ->
                 JKBooleanLiteral(false)
             else ->
                 JKJavaLiteralExpressionImpl("0", JKLiteralExpression.LiteralType.INT)
