@@ -5,6 +5,7 @@ import com.intellij.build.issue.BuildIssue
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.openapi.application.ApplicationNamesInfo
 import com.intellij.util.PlatformUtils.getPlatformPrefix
+import com.intellij.util.lang.JavaVersion
 import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.ApiStatus
 import org.jetbrains.plugins.gradle.issue.quickfix.GradleSettingsQuickFix
@@ -31,7 +32,14 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
   override fun check(issueData: GradleIssueData): BuildIssue? {
     val rootCause = getRootCauseAndLocation(issueData.error).first
     val rootCauseText = rootCause.toString()
-    val isToolingClientIssue = rootCauseText.startsWith("java.lang.IllegalArgumentException: Could not determine java version from")
+    var gradleVersionUsed: GradleVersion? = null
+    if (issueData.buildEnvironment != null) {
+      gradleVersionUsed = GradleVersion.version(issueData.buildEnvironment.gradle.gradleVersion)
+    }
+
+    val isToolingClientIssue = rootCauseText.startsWith("java.lang.IllegalArgumentException: Could not determine java version from") ||
+                               causedByJavaVersionWorkaround(gradleVersionUsed, rootCause)
+
     if (!isToolingClientIssue && !rootCauseText.startsWith(
         "org.gradle.api.GradleException: Could not determine Java version using executable")) {
       return null
@@ -40,11 +48,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
     val quickFixes: MutableList<BuildIssueQuickFix>
     quickFixes = ArrayList()
     val issueDescription = StringBuilder(rootCause.message)
-    var gradleVersionUsed: GradleVersion? = null
     val gradleMinimumVersionRequired = GradleVersion.version("4.8.1")
-    if (issueData.buildEnvironment != null) {
-      gradleVersionUsed = GradleVersion.version(issueData.buildEnvironment.gradle.gradleVersion)
-    }
 
     val gradleVersionString = if (gradleVersionUsed != null) gradleVersionUsed.version else "version"
     if (isToolingClientIssue) {
@@ -86,6 +90,18 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
     return object : BuildIssue {
       override val description: String = issueDescription.toString()
       override val quickFixes = quickFixes
+    }
+  }
+
+  companion object {
+    /**
+     * Checks if the error might be caused by applying the workaround for https://github.com/gradle/gradle/issues/8431
+     * @see org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper.workaroundJavaVersionIssueIfNeeded
+     */
+    private fun causedByJavaVersionWorkaround(gradleVersionUsed: GradleVersion?, rootCause: Throwable): Boolean {
+      return JavaVersion.current().feature > 8 && gradleVersionUsed != null &&
+             gradleVersionUsed.baseVersion < GradleVersion.version("3.0") &&
+             rootCause.message?.startsWith("Cannot determine classpath for resource") == true
     }
   }
 }
