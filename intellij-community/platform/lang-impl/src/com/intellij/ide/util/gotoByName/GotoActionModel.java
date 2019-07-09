@@ -299,8 +299,8 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   }
 
   public static Color defaultActionForeground(boolean isSelected, @Nullable Presentation presentation) {
-    if (presentation != null && (!presentation.isEnabled() || !presentation.isVisible())) return UIUtil.getInactiveTextColor();
     if (isSelected) return UIUtil.getListSelectionForeground();
+    if (presentation != null && (!presentation.isEnabled() || !presentation.isVisible())) return UIUtil.getInactiveTextColor();
     return UIUtil.getListForeground();
   }
 
@@ -734,7 +734,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         String groupName = actionWithParentGroup.getAction() instanceof ApplyIntentionAction ? null : actionWithParentGroup.getGroupName();
         Presentation presentation = actionWithParentGroup.getPresentation();
         Color fg = defaultActionForeground(isSelected, presentation);
-        boolean disabled = !presentation.isEnabled() || !presentation.isVisible();
+        boolean disabled = !isSelected && (!presentation.isEnabled() || !presentation.isVisible());
 
         if (disabled) {
           groupFg = UIUtil.getLabelDisabledForeground();
