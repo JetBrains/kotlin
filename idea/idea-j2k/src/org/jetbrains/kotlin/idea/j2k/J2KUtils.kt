@@ -9,8 +9,8 @@ import com.intellij.lang.java.JavaLanguage
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiExpression
 import com.intellij.psi.PsiMember
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.j2k.ConverterSettings
+import org.jetbrains.kotlin.j2k.OldJavaToKotlinConverter
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -21,13 +21,7 @@ fun PsiElement.j2kText(): String? =
 fun PsiElement.convertToKotlin(): org.jetbrains.kotlin.j2k.Result? {
     if (language != JavaLanguage.INSTANCE) return null
 
-    val j2kConverter =
-        JavaToKotlinConverterFactory.createJavaToKotlinConverter(
-            project,
-            module,
-            ConverterSettings.defaultSettings,
-            IdeaJavaToKotlinServices
-        )
+    val j2kConverter = OldJavaToKotlinConverter(project, ConverterSettings.defaultSettings, IdeaJavaToKotlinServices)
     return j2kConverter.elementsToKotlin(listOf(this))
 }
 
