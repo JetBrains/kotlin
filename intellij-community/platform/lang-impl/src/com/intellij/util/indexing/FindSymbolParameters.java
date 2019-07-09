@@ -70,7 +70,7 @@ public class FindSymbolParameters {
 
   public static FindSymbolParameters wrap(@NotNull String pattern, @NotNull Project project, boolean searchInLibraries) {
     return new FindSymbolParameters(pattern, pattern, searchScopeFor(project, searchInLibraries),
-                                    IdFilter.getProjectIdFilter(project, searchInLibraries));
+                                    ((FileBasedIndexImpl) FileBasedIndex.getInstance()).projectIndexableFilesIfCached(project));
   }
 
   public static FindSymbolParameters wrap(@NotNull String pattern, @NotNull GlobalSearchScope scope) {
@@ -79,7 +79,7 @@ public class FindSymbolParameters {
 
   public static FindSymbolParameters simple(@NotNull Project project, boolean searchInLibraries) {
     return new FindSymbolParameters("", "", searchScopeFor(project, searchInLibraries),
-                                    IdFilter.getProjectIdFilter(project, searchInLibraries));
+                                    ((FileBasedIndexImpl) FileBasedIndex.getInstance()).projectIndexableFilesIfCached(project));
   }
 
   @NotNull

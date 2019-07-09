@@ -1062,15 +1062,14 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     if (project == null || myUpdatingFiles.get() > 0) return null;
     if (myProjectsBeingUpdated.contains(project)) return null;
 
-    SoftReference<ProjectIndexableFilesFilter> reference = project.getUserData(ourProjectFilesSetKey);
-    ProjectIndexableFilesFilter data = com.intellij.reference.SoftReference.dereference(reference);
-    int currentFileModCount = myFilesModCount.get();
-    if (data != null && data.myModificationCount == currentFileModCount) return data;
+    ProjectIndexableFilesFilter cachedFilter = projectIndexableFilesIfCached(project);
+    if (cachedFilter != null) return cachedFilter;
 
     if (myCalcIndexableFilesLock.tryLock()) { // make best effort for calculating filter
       try {
-        reference = project.getUserData(ourProjectFilesSetKey);
-        data = com.intellij.reference.SoftReference.dereference(reference);
+        int currentFileModCount = myFilesModCount.get();
+        SoftReference<ProjectIndexableFilesFilter> reference = project.getUserData(ourProjectFilesSetKey);
+        ProjectIndexableFilesFilter data = com.intellij.reference.SoftReference.dereference(reference);
         if (data != null && data.myModificationCount == currentFileModCount) {
           return data;
         }
@@ -1098,6 +1097,18 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
     }
     return null; // ok, no filtering
+  }
+
+  @Nullable
+  public ProjectIndexableFilesFilter projectIndexableFilesIfCached(@Nullable Project project) {
+    if (project == null || myUpdatingFiles.get() > 0) return null;
+    if (myProjectsBeingUpdated.contains(project)) return null;
+
+    SoftReference<ProjectIndexableFilesFilter> reference = project.getUserData(ourProjectFilesSetKey);
+    ProjectIndexableFilesFilter data = com.intellij.reference.SoftReference.dereference(reference);
+    int currentFileModCount = myFilesModCount.get();
+    if (data != null && data.myModificationCount == currentFileModCount) return data;
+    return null;
   }
 
   @Nullable
