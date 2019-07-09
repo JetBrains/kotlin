@@ -97,6 +97,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val frameProxy = context.frameProxy
         val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME) ?: return null
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
+        context.keepReference(continuation)
 
         return collectFrames(continuation)
     }
@@ -160,6 +161,8 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
 
         val rawSpilledVariables = context.invokeMethod(debugMetadataKtType, getSpilledVariableFieldMappingMethod, args) as? ArrayReference
             ?: return null
+
+        context.keepReference(rawSpilledVariables)
 
         val length = rawSpilledVariables.length() / 2
         val spilledVariables = ArrayList<XNamedValue>(length)
