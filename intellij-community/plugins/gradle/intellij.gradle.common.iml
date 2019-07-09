@@ -27,5 +27,6 @@
     <orderEntry type="library" name="Groovy" level="project" />
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
+    <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
   </component>
 </module>

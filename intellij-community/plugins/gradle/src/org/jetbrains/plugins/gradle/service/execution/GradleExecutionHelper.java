@@ -22,12 +22,18 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.lang.JavaVersion;
+import org.gradle.initialization.BuildCancellationToken;
 import org.gradle.initialization.BuildLayoutParameters;
+import org.gradle.internal.classpath.ClassPath;
+import org.gradle.internal.classpath.DefaultClassPath;
+import org.gradle.internal.logging.progress.ProgressLoggerFactory;
 import org.gradle.internal.nativeintegration.services.NativeServices;
 import org.gradle.process.internal.JvmOptions;
 import org.gradle.tooling.*;
 import org.gradle.tooling.events.OperationType;
 import org.gradle.tooling.internal.consumer.DefaultGradleConnector;
+import org.gradle.tooling.internal.consumer.Distribution;
+import org.gradle.tooling.internal.protocol.InternalBuildProgressListener;
 import org.gradle.tooling.model.BuildIdentifier;
 import org.gradle.tooling.model.UnsupportedMethodException;
 import org.gradle.tooling.model.build.BuildEnvironment;
@@ -40,6 +46,7 @@ import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext;
 import org.jetbrains.plugins.gradle.settings.DistributionType;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 import org.jetbrains.plugins.gradle.tooling.internal.init.Init;
+import org.jetbrains.plugins.gradle.tooling.loader.rt.MarkerRt;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 import org.jetbrains.plugins.gradle.util.GradleEnvironment;
 import org.jetbrains.plugins.gradle.util.GradleUtil;
@@ -48,6 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -264,10 +272,9 @@ public class GradleExecutionHelper {
       catch (Exception ignore) {
       }
     }
-    String javaVersionProperty = null;
     ProjectConnection connection = getConnection(projectDir, settings);
     try {
-      javaVersionProperty = setJavaVersionSystemPropertyIfNeeded(connection, taskId, listener, cancellationTokenSource);
+      workaroundJavaVersionIssueIfNeeded(connection, taskId, listener, cancellationTokenSource);
       return f.fun(connection);
     }
     catch (ExternalSystemException e) {
@@ -284,10 +291,6 @@ public class GradleExecutionHelper {
       if (userDir != null) {
         // restore original user.dir property
         System.setProperty("user.dir", userDir);
-      }
-      if (javaVersionProperty != null) {
-        // restore original java.version property
-        System.setProperty("java.version", javaVersionProperty);
       }
       try {
         connection.close();
@@ -845,21 +848,64 @@ public class GradleExecutionHelper {
   }
 
   // workaround for https://github.com/gradle/gradle/issues/8431
-  // TODO should be removed when the issue will be fixed in the Gradle tooling api side
-  private static final boolean ADJUST_JAVA_VERSION = !Boolean.getBoolean("idea.gradle.disable.java.version.workaround");
-  @Nullable
-  private static String setJavaVersionSystemPropertyIfNeeded(@NotNull ProjectConnection connection,
-                                                             @Nullable ExternalSystemTaskId taskId,
-                                                             @Nullable ExternalSystemTaskNotificationListener listener,
-                                                             @Nullable CancellationTokenSource cancellationTokenSource) {
-    if (ADJUST_JAVA_VERSION && taskId != null && listener != null && JavaVersion.current().feature > 8) {
-      BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
-      String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
-      if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
-        return System.setProperty("java.version", "1.8");
+  // TODO should be removed when the issue will be fixed at the Gradle tooling api side
+  private static void workaroundJavaVersionIssueIfNeeded(@NotNull ProjectConnection connection,
+                                                         @Nullable ExternalSystemTaskId taskId,
+                                                         @Nullable ExternalSystemTaskNotificationListener listener,
+                                                         @Nullable CancellationTokenSource cancellationTokenSource) {
+    try {
+      if (!Boolean.getBoolean("idea.gradle.disable.java.version.workaround") &&
+          taskId != null &&
+          listener != null &&
+          JavaVersion.current().feature > 8) {
+        BuildEnvironment environment = getBuildEnvironment(connection, taskId, listener, cancellationTokenSource);
+        String gradleVersion = environment != null ? environment.getGradle().getGradleVersion() : null;
+        if (gradleVersion == null || GradleVersion.version(gradleVersion).getBaseVersion().compareTo(GradleVersion.version("4.7")) < 0) {
+          Object conn = ReflectionUtil.getField(connection.getClass(), connection, null, "connection");
+          Object actionExecutor = ReflectionUtil.getField(Objects.requireNonNull(conn).getClass(), conn, null, "actionExecutor");
+          Object actionExecutorDelegate =
+            ReflectionUtil.getField(Objects.requireNonNull(actionExecutor).getClass(), actionExecutor, null, "delegate");
+          Object delegateActionExecutor = ReflectionUtil
+            .getField(Objects.requireNonNull(actionExecutorDelegate).getClass(), actionExecutorDelegate, null, "actionExecutor");
+          Object delegateActionExecutorDelegate =
+            ReflectionUtil.getField(Objects.requireNonNull(delegateActionExecutor).getClass(), delegateActionExecutor, null, "delegate");
+          Field distributionField =
+            ReflectionUtil.getDeclaredField(Objects.requireNonNull(delegateActionExecutorDelegate).getClass(), "distribution");
+          Objects.requireNonNull(distributionField).set(delegateActionExecutorDelegate, new DistributionWrapper(
+            (Distribution)distributionField.get(delegateActionExecutorDelegate)));
+        }
       }
     }
-    return null;
+    catch (Throwable t) {
+      LOG.debug(t);
+    }
   }
 
+  /**
+   * workaround for https://github.com/gradle/gradle/issues/8431
+   * TODO should be removed when the issue will be fixed at the Gradle tooling api side
+   */
+  static private class DistributionWrapper implements Distribution {
+    private final Distribution myDistribution;
+    private final File myRtJarFile;
+
+    private DistributionWrapper(Distribution distribution) {
+      myDistribution = distribution;
+      myRtJarFile = new File(Objects.requireNonNull(PathUtil.getCanonicalPath(PathManager.getJarPathForClass(MarkerRt.class))));
+    }
+
+    @Override
+    public String getDisplayName() {
+      return myDistribution.getDisplayName();
+    }
+
+    @Override
+    public ClassPath getToolingImplementationClasspath(ProgressLoggerFactory factory,
+                                                       InternalBuildProgressListener listener,
+                                                       File file,
+                                                       BuildCancellationToken token) {
+      ClassPath classpath = myDistribution.getToolingImplementationClasspath(factory, listener, file, token);
+      return DefaultClassPath.of(myRtJarFile).plus(classpath);
+    }
+  }
 }
