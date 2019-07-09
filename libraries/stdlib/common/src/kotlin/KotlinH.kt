@@ -9,11 +9,28 @@ import kotlin.annotation.AnnotationTarget.FIELD
 import kotlin.annotation.AnnotationTarget.PROPERTY
 
 
-
+/**
+ * Provides a comparison function for imposing a total ordering between instances of the type [T].
+ */
 expect interface Comparator<T> {
+    /**
+     * Compares its two arguments for order. Returns zero if the arguments are equal,
+     * a negative number if the first argument is less than the second, or a positive number
+     * if the first argument is greater than the second.
+     */
     fun compare(a: T, b: T): Int
 }
 
+/**
+ * Creates a [Comparator] with the provided [comparison] function.
+ *
+ * @param comparison function that compares its two arguments for order.
+ * Must return zero if the arguments are equal, a negative number
+ * if the first argument is less than the second, or a positive number
+ * if the first argument is greater than the second.
+ *
+ * @return [Comparator] object with the provided implementation of the comparison function.
+ */
 // TODO: Satisfied with SAM-constructor for Comparator interface in JVM
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect inline fun <T> Comparator(crossinline comparison: (a: T, b: T) -> Int): Comparator<T>
