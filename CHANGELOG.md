@@ -1,7 +1,27 @@
-# v1.3.0 (June 2019)
+# v1.3.50 (Aug 2019)
+  * Kotlin/Native versioning now aligned with Kotlin versioning
+  * Exhaustive platform libraries on macOS (GH-3141)
+  * Update to Gradle 5.5 (GH-3166)
+  * Improved debug information correctness (GH-3130)
+  * Major memory manager refactoring (GH-3129)
+  * Embed actual bitcode in produced frameworks (GH-2974)
+  * Compilation speed improvements
+  * Interop:
+    * Support kotlin.Deprecated when producing framework (GH-3114)
+    * Ensure produced Objective-C header does not have warnings (GH-3101)
+    * Speed up interop stub generator (GH-3082, GH-3050)
+    * getOriginalKotlinClass() to get KClass for Kotlin classes in Objective-C (GH-3036)
+    * Implement ObjCExportLazy (GH-2990)
+  * Standard library
+    * API for delayed job execution on worker (GH-2971)
+    * API for running via worker's job queue (GH-3078)
+    * MonoClock and Duration support (GH-3028)
+    * Support typeOf (KT-29917, KT-28625)
+
+# v1.3.0 (Jun 2019)
   * CoreLocation platform library on macOS (GH-3041)
   * Converting Unit type to Void during producing framework for Objective-C/Swift (GH-2549, GH-1271)
-  * Support linux/arm64 targets (GH-1709)
+  * Support linux/arm64 targets (GH-2917)
   * Performance improvements of memory manager (GH-2813)
   * FreezableAtomicReference prototype (GH-2776)
   * Logging and error messages enhancements 
