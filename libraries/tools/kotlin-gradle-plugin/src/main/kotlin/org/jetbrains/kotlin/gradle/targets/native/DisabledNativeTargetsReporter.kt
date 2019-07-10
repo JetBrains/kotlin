@@ -6,12 +6,13 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object DisabledNativeTargetsReporter {
-    private const val EXTENSION_NAME = "org.jetbrains.kotlin.native.disabledTargets"
+    private const val EXTRA_PROPERTY_NAME = "org.jetbrains.kotlin.native.disabledTargets"
 
     internal const val WARNING_PREFIX = "Some Kotlin/Native targets cannot be built on this "
 
@@ -26,12 +27,12 @@ internal object DisabledNativeTargetsReporter {
 
     @Suppress("UNCHECKED_CAST")
     private fun getOrRegisterDisabledTargets(project: Project) =
-        project.rootProject.extensions.run {
-            if (findByName(EXTENSION_NAME) == null) {
-                add(EXTENSION_NAME, mutableListOf<DisabledTarget>())
+        project.rootProject.extensions.getByType(ExtraPropertiesExtension::class.java).run {
+            if (!has(EXTRA_PROPERTY_NAME)) {
+                set(EXTRA_PROPERTY_NAME, mutableListOf<DisabledTarget>())
                 printWarningWhenTaskGraphIsReady(project)
             }
-            getByName(EXTENSION_NAME)
+            get(EXTRA_PROPERTY_NAME)
         } as MutableList<DisabledTarget>
 
     private fun printWarningWhenTaskGraphIsReady(project: Project) {
