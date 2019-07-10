@@ -834,7 +834,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
            : processValuesInScope(indexId, dataKey, false, filter, idFilter, processor);
   }
 
-  public <K, V> long getIndexModificationStamp(ID<K, V> indexId, @NotNull Project project) {
+  @Override
+  public <K, V> long getIndexModificationStamp(@NotNull ID<K, V> indexId, @NotNull Project project) {
     UpdatableIndex<K, V, FileContent> index = getState().getIndex(indexId);
     if (index instanceof MapReduceIndex) {
       ensureUpToDate(indexId, project, GlobalSearchScope.allScope(project));
