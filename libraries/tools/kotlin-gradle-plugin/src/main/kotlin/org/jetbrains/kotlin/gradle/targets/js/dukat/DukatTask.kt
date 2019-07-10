@@ -37,6 +37,7 @@ abstract class AbstractDukatTask : AbstractTask(), RequiresNpmDependencies {
     /**
      * Collection of d.ts files
      */
+    @get:Internal
     abstract val dTsFiles: List<File>
 
     /**

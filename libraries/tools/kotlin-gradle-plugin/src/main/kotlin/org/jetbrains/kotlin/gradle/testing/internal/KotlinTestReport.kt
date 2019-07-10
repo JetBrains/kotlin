@@ -41,7 +41,6 @@ open class KotlinTestReport : TestReport() {
     @Internal
     val testTasks = mutableListOf<AbstractTestTask>()
 
-    @Internal
     private var parent: KotlinTestReport? = null
 
     @Internal
