@@ -48,16 +48,24 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         feature != null && feature >= 11
       } == true
 
-    val unableToStartDaemonProcessForJDK11 =
-      !isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
-      rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
-      rootCauseText.contains("FAILURE: Build failed with an exception.") &&
-      gradleVersionUsed != null &&
-      gradleVersionUsed.baseVersion >= GradleVersion.version("3.0") &&
-      gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")
+    var unableToStartDaemonProcessForJDK9 = false
+    var unableToStartDaemonProcessForJDK11 = false
+    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
+        rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
+        rootCauseText.contains("FAILURE: Build failed with an exception.") &&
+        gradleVersionUsed != null && gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")) {
+      if (gradleVersionUsed.baseVersion < GradleVersion.version("3.0")) {
+        unableToStartDaemonProcessForJDK9 = true
+      }
+      else {
+        unableToStartDaemonProcessForJDK11 = true
+      }
+    }
 
-    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue && !unableToStartDaemonProcessForJDK11 &&
-        !rootCauseText.startsWith("org.gradle.api.GradleException: Could not determine Java version using executable")) {
+    if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
+        !unableToStartDaemonProcessForJDK11 && !unableToStartDaemonProcessForJDK9 &&
+        !rootCauseText.startsWith("org.gradle.api.GradleException: Could not determine Java version using executable") &&
+        rootCauseText != "java.lang.RuntimeException: Could not determine Java version.") {
       return null
     }
 
@@ -75,6 +83,8 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       isRemovedUnsafeDefineClassMethodInJDK11Issue -> issueDescription.append(
         "\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n" +
         "See details at https://github.com/gradle/gradle/issues/4860")
+      unableToStartDaemonProcessForJDK9 -> issueDescription.clear().append("Unable to start the daemon process.").append(
+        "\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 9 or newer.\n")
       unableToStartDaemonProcessForJDK11 -> issueDescription.clear().append("Unable to start the daemon process.").append(
         "\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 11 or newer.\n")
       else -> issueDescription.append("\n\nThe project uses Gradle $gradleVersionString which is incompatible with Java 10 or newer.\n" +
