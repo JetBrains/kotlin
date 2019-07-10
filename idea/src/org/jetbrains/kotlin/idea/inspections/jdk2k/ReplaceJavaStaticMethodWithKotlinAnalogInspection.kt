@@ -90,10 +90,9 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.io.PrintStream.println", "kotlin.io.println", filter = ::isJavaSystemOut)
         )
 
-        // TODO: implement Transformation for mapping
+        // TODO: implement [java.lang.System.arraycopy]
         private val JAVA_SYSTEM = listOf(
             Replacement("java.lang.System.exit", "kotlin.system.exitProcess")
-//            Replacement("java.lang.System.arraycopy", "kotlin.collections.copyInto", ToExtensionFunction)
         )
 
         private val JAVA_MATH = listOf(
@@ -133,21 +132,14 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             Replacement("java.lang.Math.copySign", "kotlin.math.withSign", ToExtensionFunctionWithNonNullableReceiver)
         )
 
+        // TODO: implement [java.util.Arrays.binarySearch, java.util.Arrays.fill, java.util.Arrays.sort]
         private val JAVA_COLLECTIONS = listOf(
             Replacement("java.util.Arrays.copyOf", "kotlin.collections.copyOf", ToExtensionFunctionWithNonNullableReceiver) {
                 it.valueArguments.size == 2
             },
             Replacement("java.util.Arrays.copyOfRange", "kotlin.collections.copyOfRange", ToExtensionFunctionWithNonNullableReceiver),
-//            Replacement("java.util.Arrays.binarySearch", "kotlin.collections.binarySearch", ToExtensionFunction),
             Replacement("java.util.Arrays.equals", "kotlin.collections.contentEquals", ToExtensionFunctionWithNonNullableArguments),
             Replacement("java.util.Arrays.deepEquals", "kotlin.collections.contentDeepEquals", ToExtensionFunctionWithNonNullableArguments),
-//            Replacement("java.util.Arrays.fill", "kotlin.collections.fill", ToExtensionFunction),
-//            Replacement("java.util.Arrays.sort", "kotlin.collections.sort", ToExtensionFunction) {
-//                it.valueArguments.size == 3
-//            },
-//            Replacement("java.util.Arrays.sort", "kotlin.collections.sortWith", ToExtensionFunction) {
-//                it.valueArguments.size != 3
-//            },
             Replacement(
                 "java.util.Arrays.deepHashCode",
                 "kotlin.collections.contentDeepHashCode",
