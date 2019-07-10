@@ -16,7 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 
-public class InjectedReferenceSelectioner extends AbstractWordSelectioner {
+public class InjectedFileReferenceSelectioner extends AbstractWordSelectioner {
   @Override
   public boolean canSelect(@NotNull PsiElement e) {
     return PsiTreeUtil.getParentOfType(e, PsiLanguageInjectionHost.class) != null;
@@ -26,6 +26,7 @@ public class InjectedReferenceSelectioner extends AbstractWordSelectioner {
   public List<TextRange> select(@NotNull PsiElement e, @NotNull CharSequence editorText, final int cursorOffset, @NotNull Editor editor) {
     PsiElement host = PsiTreeUtil.getParentOfType(e, PsiLanguageInjectionHost.class);
     if (host == null) return Collections.emptyList();
+    if (!containsFileSeparators(host.getText())) return Collections.emptyList();
 
     ArrayList<TextRange> ranges = JBIterable.of(host.getReferences())
       .filter(PsiFileReference.class)
@@ -51,6 +52,14 @@ public class InjectedReferenceSelectioner extends AbstractWordSelectioner {
     }
 
     return ranges;
+  }
+
+  private static boolean containsFileSeparators(String text) {
+    for (int i = 0; i < text.length(); i++) {
+      char c = text.charAt(i);
+      if (c == '\\' || c == '/' || c == '.') return true;
+    }
+    return false;
   }
 
 }
