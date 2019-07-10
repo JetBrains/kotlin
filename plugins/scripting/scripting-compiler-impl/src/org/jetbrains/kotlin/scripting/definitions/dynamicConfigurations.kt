@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResu
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOr
+import kotlin.script.experimental.api.valueOrNull
 
 fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration? {
     // Do not use psiFile.script, see comments in findScriptDefinition
@@ -21,7 +22,8 @@ fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration
     if (file.isNonScript()) return null
 
     val provider = ScriptDependenciesProvider.getInstance(project)
-    return provider?.getScriptConfigurationResult(this)?.valueOrError()?.configuration
+    // Ignoring the error here, assuming that it will be reported elsewhere anyway (this is important scenario in IDE)
+    return provider?.getScriptConfigurationResult(this)?.valueOrNull()?.configuration
         ?: findScriptDefinition()?.compilationConfiguration
 }
 
