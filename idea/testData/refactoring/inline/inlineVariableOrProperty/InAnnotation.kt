@@ -21,5 +21,5 @@ annotation class ExprAnn(val value: String)
 val inProperty = TAG
 
 fun foo() {
-    val x = @ExprAnn(TAG) inProperty
+    @InAnn("Local $TAG") val x = @ExprAnn(TAG) inProperty
 }

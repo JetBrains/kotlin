@@ -10,7 +10,7 @@ annotation class InAnn(val value: String)
 
 @InAnn("This is also Tagged") fun bar() {}
 
-fun baz(@InAnn("This is ${} too") x: Int) {}
+fun baz(@InAnn("This is Tagged too") x: Int) {}
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
@@ -19,5 +19,5 @@ annotation class ExprAnn(val value: String)
 val inProperty = "Tagged"
 
 fun foo() {
-    val x = @ExprAnn() inProperty
+    @InAnn("Local Tagged") val x = @ExprAnn("Tagged") inProperty
 }
