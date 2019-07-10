@@ -13,7 +13,7 @@ import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class mainKtsIT {
+class MainKtsIT {
 
     // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
     private fun runWithKotlinc(
@@ -23,7 +23,9 @@ class mainKtsIT {
         workDirectory: File? = null
     ) {
         val executableName = "kotlinc"
-        val executableFileName = if (System.getProperty("os.name").startsWith("windows")) "$executableName.bat" else executableName
+        // TODO:
+        val executableFileName =
+            if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$executableName.bat" else executableName
         val launcherFile = File("dist/kotlinc/bin/$executableFileName")
         assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
