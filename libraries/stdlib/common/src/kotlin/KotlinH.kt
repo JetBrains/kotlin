@@ -10,7 +10,8 @@ import kotlin.annotation.AnnotationTarget.PROPERTY
 
 
 /**
- * Classes which inherit from this interface impose a total ordering between instances of a class.
+ * Provides a [comparison] function for imposing a total ordering between instances of a class.
+ *
  */
 expect interface Comparator<T> {
     /**
