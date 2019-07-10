@@ -399,11 +399,14 @@ class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
         get() = GradleVersionRequired.Until("4.10.2")
 
     @Test
-    fun testOmittedStdlibVersion() = with(Project("AndroidProject", GradleVersionRequired.AtLeast("4.4"))) {
+    fun testOmittedStdlibVersion() = Project(
+        "AndroidProject",
+        defaultGradleVersion.maxVersion?.let { GradleVersionRequired.InRange("4.4", it) } ?: GradleVersionRequired.AtLeast("4.4")
+    ).run {
         setupWorkingDir()
 
         gradleBuildScript("Lib").modify {
-            it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
+            it.checkedReplace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib") + "\n" + """
             apply plugin: 'maven'
             group 'com.example'
             version '1.0'
