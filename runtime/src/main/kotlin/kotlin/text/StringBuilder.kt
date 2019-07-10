@@ -68,7 +68,7 @@ actual class StringBuilder private constructor (
 
     fun ensureCapacity(capacity: Int) {
         if (capacity > array.size) {
-            var newSize = array.size * 3 / 2
+            var newSize = array.size * 2 + 2
             if (capacity > newSize)
                 newSize = capacity
             array = array.copyOf(newSize)
