@@ -1978,7 +1978,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
     private GotoActionItemProvider createActionProvider() {
       GotoActionModel model = new GotoActionModel(project, myFocusComponent, myEditor) {
         @Override
-        protected MatchMode actionMatches(@NotNull String pattern, MinusculeMatcher matcher, @NotNull AnAction anAction) {
+        protected MatchMode actionMatches(@NotNull String pattern, Matcher matcher, @NotNull AnAction anAction) {
           MatchMode mode = super.actionMatches(pattern, matcher, anAction);
           return mode == MatchMode.NAME ? mode : MatchMode.NONE;
         }

@@ -19,14 +19,13 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.psi.codeStyle.MinusculeMatcher;
-import com.intellij.psi.codeStyle.NameUtil;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.text.Matcher;
+import com.intellij.psi.codeStyle.WordPrefixMatcher;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -149,7 +148,7 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
       }
     }
     if (!StringUtil.isEmptyOrSpaces(pattern)) {
-      Matcher matcher = NameUtil.buildMatcher("*" + pattern).build();
+      Matcher matcher = buildMatcher(pattern);
       if (optionDescriptions == null) optionDescriptions = new THashSet<>();
       for (Map.Entry<String, String> entry : map.entrySet()) {
         if (matcher.matches(entry.getValue())) {
@@ -180,7 +179,7 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
   private boolean processActions(String pattern, Processor<? super MatchedValue> consumer, DataContext dataContext) {
     Set<String> ids = ((ActionManagerImpl)myActionManager).getActionIds();
     JBIterable<AnAction> actions = JBIterable.from(ids).filterMap(myActionManager::getAction);
-    MinusculeMatcher matcher = buildMatcher(pattern);
+    Matcher matcher = buildMatcher(pattern);
 
     QuickActionProvider provider = dataContext.getData(QuickActionProvider.KEY);
     if (provider != null) {
@@ -196,12 +195,12 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
   }
 
   @NotNull
-  static MinusculeMatcher buildMatcher(String pattern) {
-    return NameUtil.buildMatcher("*" + pattern, NameUtil.MatchingCaseSensitivity.NONE);
+  static Matcher buildMatcher(String pattern) {
+    return new WordPrefixMatcher(pattern);
   }
 
   private boolean processIntentions(String pattern, Processor<? super MatchedValue> consumer, DataContext dataContext) {
-    MinusculeMatcher matcher = buildMatcher(pattern);
+    Matcher matcher = buildMatcher(pattern);
     Map<String, ApplyIntentionAction> intentionMap = myIntentions.getValue();
     JBIterable<ActionWrapper> intentions = JBIterable.from(intentionMap.keySet())
       .filterMap(intentionText -> {

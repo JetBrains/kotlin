@@ -28,7 +28,6 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
-import com.intellij.psi.codeStyle.MinusculeMatcher;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.OnOffButton;
@@ -384,7 +383,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     return ((MatchedValue) mv).getValueText();
   }
 
-  protected MatchMode actionMatches(@NotNull String pattern, MinusculeMatcher matcher, @NotNull AnAction anAction) {
+  protected MatchMode actionMatches(@NotNull String pattern, com.intellij.util.text.Matcher matcher, @NotNull AnAction anAction) {
     Presentation presentation = anAction.getTemplatePresentation();
     String text = presentation.getText();
     String description = presentation.getDescription();
