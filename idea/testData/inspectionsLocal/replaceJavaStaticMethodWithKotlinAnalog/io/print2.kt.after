@@ -1,0 +1,6 @@
+// WITH_RUNTIME
+import java.lang.System.out
+
+fun x() {
+    print("test")
+}
