@@ -14,6 +14,7 @@ import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.actionSystem.ex.ActionUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.options.Configurable;
@@ -60,6 +61,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
 public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, DumbAware {
+  private static final Logger LOG = Logger.getInstance(GotoActionModel.class);
   private static final Pattern INNER_GROUP_WITH_IDS = Pattern.compile("(.*) \\(\\d+\\)");
 
   @Nullable private final Project myProject;
@@ -73,6 +75,8 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
   private final Map<AnAction, GroupMapping> myActionGroups = new HashMap<>();
 
   private final NotNullLazyValue<Map<String, String>> myConfigurablesNames = VolatileNotNullLazyValue.createValue(() -> {
+    if (SwingUtilities.isEventDispatchThread()) LOG.error("Configurable names must not be loaded on EDT");
+
     Map<String, String> map = new THashMap<>();
     for (Configurable configurable : ShowSettingsUtilImpl.getConfigurables(getProject(), true)) {
       if (configurable instanceof SearchableConfigurable) {
