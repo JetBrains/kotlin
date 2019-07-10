@@ -21,6 +21,7 @@ class FirJavaConstructor(
     session: FirSession,
     override val symbol: FirConstructorSymbol,
     visibility: Visibility,
+    override val isPrimary: Boolean,
     delegatedSelfTypeRef: FirTypeRef
 ) : FirAbstractCallableMember<FirConstructor>(
     session,

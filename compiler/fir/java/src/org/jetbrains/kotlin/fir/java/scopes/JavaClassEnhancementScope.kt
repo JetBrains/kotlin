@@ -180,12 +180,26 @@ class JavaClassEnhancementScope(
             }
         }
         val function: FirMemberFunction<*> = when (firMethod) {
-            is FirJavaConstructor -> FirConstructorImpl(
-                this@JavaClassEnhancementScope.session, null, FirConstructorSymbol(methodId),
-                newReceiverTypeRef, newReturnTypeRef
-            ).apply {
-                this.valueParameters += newValueParameters
-                this.typeParameters += firMethod.typeParameters
+            is FirJavaConstructor -> {
+                val symbol = FirConstructorSymbol(methodId)
+                if (firMethod.isPrimary) {
+                    FirPrimaryConstructorImpl(
+                        this@JavaClassEnhancementScope.session, null, symbol,
+                        firMethod.visibility,
+                        isExpect = false,
+                        isActual = false,
+                        delegatedSelfTypeRef = newReturnTypeRef,
+                        delegatedConstructor = null
+                    )
+                } else {
+                    FirConstructorImpl(
+                        this@JavaClassEnhancementScope.session, null, symbol,
+                        newReceiverTypeRef, newReturnTypeRef
+                    )
+                }.apply {
+                    this.valueParameters += newValueParameters
+                    this.typeParameters += firMethod.typeParameters
+                }
             }
             else -> FirMemberFunctionImpl(
                 this@JavaClassEnhancementScope.session, null,

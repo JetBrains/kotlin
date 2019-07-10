@@ -210,11 +210,14 @@ class JavaSymbolProvider(
                     val javaClassDeclaredConstructors = javaClass.constructors
                     val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
 
-                    fun addJavaConstructor(visibility: Visibility = this.visibility): FirJavaConstructor {
+                    fun addJavaConstructor(
+                        visibility: Visibility = this.visibility,
+                        isPrimary: Boolean = false
+                    ): FirJavaConstructor {
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
-                            this@JavaSymbolProvider.session, constructorSymbol, visibility,
+                            this@JavaSymbolProvider.session, constructorSymbol, visibility, isPrimary,
                             FirResolvedTypeRefImpl(
                                 this@JavaSymbolProvider.session, null,
                                 firSymbol.constructType(
@@ -230,7 +233,7 @@ class JavaSymbolProvider(
                     }
 
                     if (javaClassDeclaredConstructors.isEmpty() && javaClass.classKind == ClassKind.CLASS) {
-                        addJavaConstructor()
+                        addJavaConstructor(isPrimary = true)
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {
                         addJavaConstructor(javaConstructor.visibility).apply {
