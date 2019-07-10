@@ -19,28 +19,12 @@ class IrTypeCheckerContext(override val irBuiltIns: IrBuiltIns) : IrTypeSystemCo
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy.DoCustomTransform {
         require(type is IrSimpleType)
         val parameters = extractTypeParameters((type.classifier as IrClassSymbol).owner).map { it.symbol }
-        val substitution = parameters.zip(type.arguments).toMap()
+        val typeSubstitutor = IrTypeSubstitutor(parameters, type.arguments, irBuiltIns)
+
         return object : SupertypesPolicy.DoCustomTransform() {
             override fun transformType(context: AbstractTypeCheckerContext, type: KotlinTypeMarker): SimpleTypeMarker {
-                require(type is IrSimpleType)
-
-                return substituteArguments(type)
-            }
-
-            private fun substituteArguments(type: IrSimpleType): IrSimpleType {
-                val realArguments = type.arguments.map {
-                    substitute(it)
-                }.toList()
-
-                return IrSimpleTypeImpl(type.classifier, type.hasQuestionMark, realArguments, type.annotations)
-            }
-
-            private fun substitute(type: IrTypeArgument): IrTypeArgument {
-                if (type is IrStarProjection) return type
-
-                val actualType = (type as IrTypeProjection).type as IrSimpleType
-                substitution[actualType.classifier]?.let { return it }
-                return makeTypeProjection(substituteArguments(actualType), type.variance)
+                require(type is IrType)
+                return typeSubstitutor.substitute(type) as IrSimpleType
             }
         }
     }
