@@ -1,18 +1,15 @@
 // Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.startup;
 
-import com.intellij.concurrency.JobScheduler;
 import com.intellij.execution.*;
 import com.intellij.execution.executors.DefaultRunExecutor;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentBuilder;
 import com.intellij.execution.runners.ProgramRunner;
-import com.intellij.ide.startup.StartupManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.util.Alarm;
@@ -20,14 +17,11 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Irina.Chernushina on 8/19/2015.
  */
 public class ProjectStartupRunner implements StartupActivity, DumbAware {
-  public static final int DELAY_MILLIS = 200;
-
   @Override
   public void runActivity(@NotNull final Project project) {
     final ProjectStartupTaskManager projectStartupTaskManager = ProjectStartupTaskManager.getInstance(project);
@@ -52,18 +46,8 @@ public class ProjectStartupRunner implements StartupActivity, DumbAware {
         projectStartupTaskManager.checkOnChange(settings);
       }
     });
-    scheduleRunActivities(project);
-  }
 
-  private static void scheduleRunActivities(@NotNull Project project) {
-    JobScheduler.getScheduler().schedule(() -> {
-      if (!((StartupManagerEx)StartupManager.getInstance(project)).postStartupActivityPassed()) {
-        scheduleRunActivities(project);
-      }
-      else {
-        runActivities(project);
-      }
-    }, DELAY_MILLIS, TimeUnit.MILLISECONDS);
+    projectStartupTaskManager.waitForExecutionReady(() -> runActivities(project));
   }
 
   private static void runActivities(final Project project) {

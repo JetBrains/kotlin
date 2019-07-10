@@ -19,9 +19,12 @@ import com.intellij.execution.RunManager;
 import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.notification.NotificationGroup;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.project.impl.ProjectLifecycleListener;
 import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.util.Disposer;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +49,22 @@ public class ProjectStartupTaskManager {
     myShared = shared;
     myLocal = local;
     verifyState();
+  }
+
+  // This method is called from a post-startup activity so the 'post-startup activities done'
+  // event always happens after this method is done executing
+  public void waitForExecutionReady(Runnable runnable) {
+    Disposable readyDisposable = Disposer.newDisposable();
+    Disposer.register(myProject, readyDisposable);
+    myProject.getMessageBus().connect(readyDisposable).subscribe(ProjectLifecycleListener.TOPIC, new ProjectLifecycleListener() {
+      @Override
+      public void postStartupActivitiesPassed(@NotNull Project project) {
+        if (project == myProject) {
+          runnable.run();
+          Disposer.dispose(readyDisposable);
+        }
+      }
+    });
   }
 
   private void verifyState() {
