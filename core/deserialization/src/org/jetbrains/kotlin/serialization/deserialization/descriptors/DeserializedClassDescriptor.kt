@@ -217,6 +217,11 @@ class DeserializedClassDescriptor(
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         }
 
+        private val refinedSupertypes = c.storageManager.createLazyValue {
+            @UseExperimental(TypeRefinement::class)
+            kotlinTypeRefiner.refineSupertypes(classDescriptor)
+        }
+
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean
         ): Collection<DeclarationDescriptor> = allDescriptors()
@@ -233,7 +238,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
             val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in refinedSupertypes()) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
 
@@ -247,7 +252,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in refinedSupertypes()) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)

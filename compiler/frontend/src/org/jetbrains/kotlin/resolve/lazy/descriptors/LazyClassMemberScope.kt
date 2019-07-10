@@ -76,7 +76,7 @@ open class LazyClassMemberScope(
 
     protected open fun computeExtraDescriptors(location: LookupLocation): Collection<DeclarationDescriptor> {
         val result = ArrayList<DeclarationDescriptor>()
-        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+        for (supertype in supertypes) {
             for (descriptor in supertype.memberScope.getContributedDescriptors()) {
                 if (descriptor is FunctionDescriptor) {
                     result.addAll(getContributedFunctions(descriptor.name, location))
@@ -96,11 +96,16 @@ open class LazyClassMemberScope(
         return result
     }
 
+    val supertypes by storageManager.createLazyValue {
+        @UseExperimental(TypeRefinement::class)
+        kotlinTypeRefiner.refineSupertypes(thisDescriptor)
+    }
+
     private val _variableNames: MutableSet<Name>
             by lazy(LazyThreadSafetyMode.PUBLICATION) {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
-                    thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                    supertypes.flatMapTo(this) {
                         it.memberScope.getVariableNames()
                     }
                 }
@@ -110,7 +115,7 @@ open class LazyClassMemberScope(
             by lazy(LazyThreadSafetyMode.PUBLICATION) {
                 mutableSetOf<Name>().apply {
                     addAll(declarationProvider.getDeclarationNames())
-                    thisDescriptor.typeConstructor.supertypes.flatMapTo(this) {
+                    supertypes.flatMapTo(this) {
                         it.memberScope.getFunctionNames()
                     }
 
@@ -203,7 +208,7 @@ open class LazyClassMemberScope(
         val location = NoLookupLocation.FOR_ALREADY_TRACKED
 
         val fromSupertypes = arrayListOf<SimpleFunctionDescriptor>()
-        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+        for (supertype in supertypes) {
             fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, location))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_FUNCTIONS, result))
@@ -345,7 +350,7 @@ open class LazyClassMemberScope(
 
         // Members from supertypes
         val fromSupertypes = ArrayList<PropertyDescriptor>()
-        for (supertype in thisDescriptor.typeConstructor.supertypes) {
+        for (supertype in supertypes) {
             fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
         }
         result.addAll(generateDelegatingDescriptors(name, EXTRACT_PROPERTIES, result))
