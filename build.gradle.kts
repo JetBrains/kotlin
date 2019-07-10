@@ -441,12 +441,28 @@ val dist = tasks.register("dist") {
     dependsOn(":kotlin-compiler:dist")
 }
 
+val printing by task<Task> {
+    doLast {
+        file(distDir).listFiles()?.forEach {
+            println(it)
+        }
+
+        val dir = "$distDir/kotlinc"
+        if (!file(dir).exists()) {
+            throw GradleException("Directory '$dir' doesn't exist")
+        }
+    }
+}
+
 val copyCompilerToIdeaPlugin by task<Copy> {
     if (!isTeamcityBuild) {
         dependsOn(dist)
+    } else {
+        dependsOn(printing)
     }
-    into(ideaPluginDir)
+
     from(distDir) { include("kotlinc/**") }
+    into(ideaPluginDir)
 }
 
 val ideaPlugin by task<Task> {
