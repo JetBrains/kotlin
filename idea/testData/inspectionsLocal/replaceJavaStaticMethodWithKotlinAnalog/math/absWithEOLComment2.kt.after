@@ -1,0 +1,7 @@
+import kotlin.math.abs
+
+// WITH_RUNTIME
+fun x() {
+    // comment
+    abs(5)
+}

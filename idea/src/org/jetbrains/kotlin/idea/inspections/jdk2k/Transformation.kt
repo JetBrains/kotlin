@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.inspections.jdk2k
 import org.jetbrains.kotlin.idea.caches.resolve.resolveImportReference
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.replaced
+import org.jetbrains.kotlin.idea.util.CommentSaver
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -45,9 +46,15 @@ object ToExtensionFunctionWithNonNullableReceiver : Transformation {
             ?.run { if (this is KtOperationExpression) "($text)" else text }
             ?: valueArguments.first().text
         val argumentsText = valueArguments.drop(1).joinToString(separator = ", ") { it.text }
-        callExpression.getQualifiedExpressionForSelectorOrThis().replaced(
+
+        val oldExpression = callExpression.getQualifiedExpressionForSelectorOrThis()
+        val commentSaver = CommentSaver(oldExpression)
+
+        val replaced = oldExpression.replaced(
             psiFactory.createExpression("$receiverText.${replacement.kotlinFunctionShortName}$typeArguments($argumentsText)")
         )
+        commentSaver.restore(replaced)
+
         file.resolveImportReference(FqName(replacement.kotlinFunctionFqName)).firstOrNull()?.let {
             ImportInsertHelper.getInstance(callExpression.project).importDescriptor(file, it)
         }
