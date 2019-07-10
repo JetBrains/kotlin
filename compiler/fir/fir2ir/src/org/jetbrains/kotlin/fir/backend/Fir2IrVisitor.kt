@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableRefer
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildUseSiteScope
+import org.jetbrains.kotlin.fir.resolve.calls.SyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -632,13 +632,27 @@ internal class Fir2IrVisitor(
         return wrappedArgumentExpression.expression.toIrExpression()
     }
 
+    private fun FirReference.statementOrigin(): IrStatementOrigin? {
+        return when (this) {
+            is FirPropertyFromParameterCallableReference -> IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
+            is FirResolvedCallableReference -> when (coneSymbol) {
+                is FirAccessorSymbol, is SyntheticPropertySymbol -> IrStatementOrigin.GET_PROPERTY
+                else -> null
+            }
+            else -> null
+        }
+    }
+
     private fun FirQualifiedAccess.toIrExpression(typeRef: FirTypeRef): IrExpression {
         val type = typeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         val symbol = calleeReference.toSymbol(declarationStorage)
         return typeRef.convertWithOffsets { startOffset, endOffset ->
             when {
                 symbol is IrConstructorSymbol -> IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, type, symbol)
-                symbol is IrSimpleFunctionSymbol -> IrCallImpl(startOffset, endOffset, type, symbol)
+                symbol is IrSimpleFunctionSymbol -> IrCallImpl(
+                    startOffset, endOffset, type, symbol, symbol.descriptor,
+                    origin = calleeReference.statementOrigin()
+                )
                 symbol is IrPropertySymbol && symbol.isBound -> {
                     val getter = symbol.owner.getter
                     if (getter != null) {
@@ -650,9 +664,7 @@ internal class Fir2IrVisitor(
                 symbol is IrFieldSymbol -> IrGetFieldImpl(startOffset, endOffset, symbol, type, origin = IrStatementOrigin.GET_PROPERTY)
                 symbol is IrValueSymbol -> IrGetValueImpl(
                     startOffset, endOffset, type, symbol,
-                    if (calleeReference is FirPropertyFromParameterCallableReference) {
-                        IrStatementOrigin.INITIALIZE_PROPERTY_FROM_PARAMETER
-                    } else null
+                    origin = calleeReference.statementOrigin()
                 )
                 else -> IrErrorCallExpressionImpl(startOffset, endOffset, type, "Unresolved reference: ${calleeReference.render()}")
             }
