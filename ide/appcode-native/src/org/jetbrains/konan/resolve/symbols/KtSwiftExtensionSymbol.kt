@@ -26,8 +26,6 @@ class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftTypeSymbol.TypeState, Ob
     override val docString: String?
         get() = null
 
-    override val requirements: List<SwiftRequirementInfo>
-        get() = emptyList()
 
     override fun computeState(stub: ObjCInterface, project: Project): TypeState {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.

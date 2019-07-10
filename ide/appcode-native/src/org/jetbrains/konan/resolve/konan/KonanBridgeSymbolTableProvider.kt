@@ -25,7 +25,7 @@ class KonanBridgeSymbolTableProvider : SymbolTableProvider() {
         return file is KonanBridgePsiFile
     }
 
-    override fun isSource(file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
+    override fun isSource(project: Project, file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
         return file is KonanBridgeVirtualFile
     }
 

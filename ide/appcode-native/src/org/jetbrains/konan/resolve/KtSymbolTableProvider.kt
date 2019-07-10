@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.psi.KtFile
 class KtSymbolTableProvider : SymbolTableProvider() {
     override fun isSource(file: PsiFile): Boolean = file is KtFile
 
-    override fun isSource(file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
+    override fun isSource(project: Project, file: VirtualFile, cachedFileType: Lazy<FileType>): Boolean {
         //todo[medvedev] check if the source is from common or ios module
         return cachedFileType.value == KotlinFileType.INSTANCE
     }
