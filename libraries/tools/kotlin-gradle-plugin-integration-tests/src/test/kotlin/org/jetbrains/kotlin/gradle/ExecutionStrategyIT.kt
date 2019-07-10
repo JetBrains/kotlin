@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
@@ -64,11 +66,24 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
         val strategyCLIArg = "-Dkotlin.compiler.execution.strategy=$executionStrategy"
         val finishMessage = "Finished executing kotlin compiler using $executionStrategy strategy"
 
+        val isGradleAtLeast50 = project.testGradleVersionAtLeast("5.0")
+
         project.build("build", strategyCLIArg) {
             assertSuccessful()
             assertContains(finishMessage)
             checkOutput()
             assertNoWarnings()
+
+            if (executionStrategy == "daemon" && isGradleAtLeast50) {
+                val m = "Kotlin compile daemon JVM options: \\[(.*?)\\]".toRegex().find(output)
+                    ?: error("Could not find Kotlin compile daemon JVM options in Gradle's output")
+                val kotlinDaemonJvmArgs = m.groupValues[1].split(",").map { it.trim() }
+                val maxMetaspaceArg = "-XX:MaxMetaspaceSize=256m"
+                Assert.assertTrue(
+                    "Kotlin daemon JVM args do not contain '$maxMetaspaceArg': $kotlinDaemonJvmArgs",
+                    maxMetaspaceArg in kotlinDaemonJvmArgs
+                )
+            }
         }
 
         val classesKt = project.projectDir.getFileByName("classes.kt")
