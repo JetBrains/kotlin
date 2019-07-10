@@ -636,7 +636,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private static void prepareCSS(HTMLEditorKit editorKit) {
-    Color borderColor = ColorUtil.mix(DOCUMENTATION_COLOR, BORDER_COLOR, 0.5);
+    Color borderColor = UIUtil.getTooltipSeparatorColor();
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
     boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
     int leftPadding = newLayout ? 8 : 7;
