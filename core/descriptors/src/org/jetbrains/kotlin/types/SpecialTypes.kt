@@ -127,13 +127,7 @@ private fun KotlinType.makeIntersectionTypeDefinitelyNotNullOrNotNull(): SimpleT
     val typeConstructor = constructor as? IntersectionTypeConstructor ?: return null
     val definitelyNotNullConstructor = typeConstructor.makeDefinitelyNotNullOrNotNull() ?: return null
 
-    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        annotations,
-        definitelyNotNullConstructor,
-        listOf(),
-        false,
-        definitelyNotNullConstructor.createScopeForKotlinType()
-    )
+    return definitelyNotNullConstructor.createType()
 }
 
 private fun IntersectionTypeConstructor.makeDefinitelyNotNullOrNotNull(): IntersectionTypeConstructor? {
