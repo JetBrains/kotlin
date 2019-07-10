@@ -62,6 +62,13 @@ internal constructor(@PublishedApi internal val storage: ShortArray) : Collectio
     override fun isEmpty(): Boolean = this.storage.size == 0
 }
 
+/**
+ * Creates a new array of the specified [size], where each element is calculated by calling the specified
+ * [init] function.
+ *
+ * The function [init] is called for each array element sequentially starting from the first one.
+ * It should return the value for an array element given its index.
+ */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly

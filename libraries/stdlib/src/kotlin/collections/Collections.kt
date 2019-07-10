@@ -125,7 +125,11 @@ public fun <T : Any> listOfNotNull(vararg elements: T?): List<T> = elements.filt
 
 /**
  * Creates a new read-only list with the specified [size], where each element is calculated by calling the specified
- * [init] function. The [init] function returns a list element given its index.
+ * [init] function.
+ *
+ * The function [init] is called for each list element sequentially starting from the first one.
+ * It should return the value for a list element given its index.
+ *
  * @sample samples.collections.Collections.Lists.readOnlyListFromInitializer
  */
 @SinceKotlin("1.1")
@@ -134,7 +138,11 @@ public inline fun <T> List(size: Int, init: (index: Int) -> T): List<T> = Mutabl
 
 /**
  * Creates a new mutable list with the specified [size], where each element is calculated by calling the specified
- * [init] function. The [init] function returns a list element given its index.
+ * [init] function.
+ *
+ * The function [init] is called for each list element sequentially starting from the first one.
+ * It should return the value for a list element given its index.
+ *
  * @sample samples.collections.Collections.Lists.mutableListFromInitializer
  */
 @SinceKotlin("1.1")

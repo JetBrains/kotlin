@@ -15,7 +15,10 @@ package kotlin
 public class Array<T> {
     /**
      * Creates a new array with the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> T)
 
