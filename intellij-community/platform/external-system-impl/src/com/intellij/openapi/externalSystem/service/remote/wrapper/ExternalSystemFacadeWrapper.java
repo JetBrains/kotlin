@@ -4,7 +4,10 @@ import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutio
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskType;
 import com.intellij.openapi.externalSystem.service.RemoteExternalSystemFacade;
-import com.intellij.openapi.externalSystem.service.remote.*;
+import com.intellij.openapi.externalSystem.service.remote.RawExternalSystemProjectResolver;
+import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProgressNotificationManager;
+import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemProjectResolver;
+import com.intellij.openapi.externalSystem.service.remote.RemoteExternalSystemTaskManager;
 import org.jetbrains.annotations.NotNull;
 
 import java.rmi.RemoteException;
@@ -17,7 +20,7 @@ import java.util.Set;
  * Check service wrapper contracts for more details.
  * <p/>
  * Thread-safe.
- * 
+ *
  * @author Denis Zhdanov
  */
 public class ExternalSystemFacadeWrapper<S extends ExternalSystemExecutionSettings> implements RemoteExternalSystemFacade<S> {
@@ -40,9 +43,7 @@ public class ExternalSystemFacadeWrapper<S extends ExternalSystemExecutionSettin
   @NotNull
   @Override
   public RemoteExternalSystemProjectResolver<S> getResolver() throws RemoteException, IllegalStateException {
-    RemoteExternalSystemProjectResolver<S> resolver =
-      new CustomClassDeserializingResolver<>(myDelegate.getRawProjectResolver(), myDelegate.getResolver());
-    return new ExternalSystemProjectResolverWrapper<>(resolver, myProgressManager);
+    return new ExternalSystemProjectResolverWrapper<>(myDelegate.getResolver(), myProgressManager);
   }
 
   @NotNull
