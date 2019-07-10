@@ -1,4 +1,5 @@
-import java.util.Locale
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.util.*
 
 plugins {
     kotlin("jvm")
@@ -27,3 +28,7 @@ else
     System.getProperty("os.name")!!.toLowerCase(Locale.US).takeIf { "windows" in it }?.let {
         disableBuildTasks("Can't build AppCode plugin under Windows")
     }
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xjvm-default=enable"
+}
