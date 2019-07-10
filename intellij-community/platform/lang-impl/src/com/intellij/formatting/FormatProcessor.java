@@ -71,7 +71,7 @@ public class FormatProcessor {
     FormatTextRanges ranges = options.myAffectedRanges;
     
     if (ranges != null && myReformatContext) {
-      AdjustFormatRangesState adjustRangesState = new AdjustFormatRangesState(block, ranges);
+      AdjustFormatRangesState adjustRangesState = new AdjustFormatRangesState(block, ranges, model);
       myStateProcessor = new StateProcessor(adjustRangesState);
       myStateProcessor.setNextState(myWrapState);
     }

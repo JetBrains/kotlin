@@ -141,7 +141,7 @@ public class InitialInfoBuilder {
     final int blockStartOffset = textRange.getStartOffset();
 
     if (parent != null) {
-      checkRanges(parent, textRange);
+      ASSERT.checkChildRange(new TextRange(parent.getStartOffset(), parent.getEndOffset()), textRange, myModel);
     }
 
     myCurrentWhiteSpace.changeEndOffset(blockStartOffset, myModel, myOptions);
@@ -177,26 +177,6 @@ public class InitialInfoBuilder {
 
     if (rootBlock.getAlignment() != null) {
       myBlocksToAlign.putValue(rootBlock.getAlignment(), rootBlock);
-    }
-  }
-
-  private void checkRanges(@NotNull CompositeBlockWrapper parent, TextRange textRange) {
-    if (textRange.getStartOffset() < parent.getStartOffset()) {
-      ASSERT.assertInvalidRanges(
-        textRange.getStartOffset(),
-        parent.getStartOffset(),
-        myModel,
-        "child block start is less than parent block start"
-      );
-    }
-
-    if (textRange.getEndOffset() > parent.getEndOffset()) {
-      ASSERT.assertInvalidRanges(
-        textRange.getEndOffset(),
-        parent.getEndOffset(),
-        myModel,
-        "child block end is after parent block end"
-      );
     }
   }
 
