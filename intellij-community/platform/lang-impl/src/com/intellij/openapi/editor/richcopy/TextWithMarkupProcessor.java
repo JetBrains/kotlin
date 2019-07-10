@@ -55,9 +55,10 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
     }
 
     EditorHighlighter highlighter = null;
+    EditorColorsScheme editorColorsScheme = editor.getColorsScheme();
+    EditorColorsScheme schemeToUse = RichCopySettings.getInstance().getColorsScheme(editorColorsScheme);
 
     try {
-      RichCopySettings settings = RichCopySettings.getInstance();
       List<Caret> carets = editor.getCaretModel().getAllCarets();
       Caret firstCaret = carets.get(0);
       final int indentSymbolsToStrip;
@@ -73,8 +74,10 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
       }
       logInitial(editor, startOffsets, endOffsets, indentSymbolsToStrip, firstLineStartOffset);
       CharSequence text = editor.getDocument().getCharsSequence();
-      EditorColorsScheme schemeToUse = settings.getColorsScheme(editor.getColorsScheme());
       highlighter = ((EditorEx)editor).getHighlighter();
+      if (editorColorsScheme != schemeToUse) {
+        highlighter.setColorScheme(schemeToUse);
+      }
       MarkupModel markupModel = DocumentMarkupModel.forDocument(editor.getDocument(), file.getProject(), false);
       Context context = new Context(text, schemeToUse, indentSymbolsToStrip);
       int endOffset = 0;
@@ -122,6 +125,11 @@ public class TextWithMarkupProcessor extends CopyPastePostProcessor<RawTextWithM
       LOG.error("Error generating text with markup",
                 new Attachment("exception", t),
                 new Attachment("highlighter.txt", String.valueOf(highlighter)));
+    }
+    finally {
+      if (highlighter != null && editorColorsScheme != schemeToUse) {
+        highlighter.setColorScheme(editorColorsScheme);
+      }
     }
     return Collections.emptyList();
   }
