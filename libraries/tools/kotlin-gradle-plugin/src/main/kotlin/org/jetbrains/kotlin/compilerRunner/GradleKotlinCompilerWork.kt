@@ -179,6 +179,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         val (daemon, sessionId) = connection
+
+        if (log.isDebugEnabled) {
+            daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
+                log.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+            }
+        }
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS
