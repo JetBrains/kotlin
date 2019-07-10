@@ -158,5 +158,9 @@ class NewCapturedTypeConstructor(override val projection: TypeProjection, privat
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.builtIns
 
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        NewCapturedTypeConstructor(projection.refine(kotlinTypeRefiner), supertypes?.map { it.refine(kotlinTypeRefiner) })
+
     override fun toString() = "CapturedType($projection)"
 }

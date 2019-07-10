@@ -16,11 +16,57 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.refineTypes
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 abstract class AbstractTypeConstructor(storageManager: StorageManager) : TypeConstructor {
     override fun getSupertypes() = supertypes().supertypesWithoutCycles
+
+    abstract override fun getDeclarationDescriptor(): ClassifierDescriptor
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor = ModuleViewTypeConstructor(kotlinTypeRefiner)
+
+    @TypeRefinement
+    private inner class ModuleViewTypeConstructor(
+        private val kotlinTypeRefiner: KotlinTypeRefiner
+    ) : TypeConstructor {
+        /* NB: it is important to use PUBLICATION here instead of 'storageManager.createLazyValue { ... }'
+
+        The reason is that 'storageManager' can be a storage manager from DefaultBuiltIns (e.g. is this type constructor
+        is type constructor of some built-in class like 'Int'). Therefore, call to refined supertypes would result in
+        the following order of acquiring locks: DefaultBuiltIns lock -> Sources lock
+
+        Obviously, a lot of code acquires locks in different order (sources lock first, then built-ins lock), so that would
+        result in deadlock
+         */
+        private val refinedSupertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
+            @UseExperimental(TypeRefinement::class)
+            kotlinTypeRefiner.refineTypes(this@AbstractTypeConstructor.getSupertypes())
+        }
+
+        override fun getParameters(): List<TypeParameterDescriptor> = this@AbstractTypeConstructor.parameters
+
+        override fun getSupertypes(): List<KotlinType> = refinedSupertypes
+
+        override fun isFinal(): Boolean = this@AbstractTypeConstructor.isFinal
+        override fun isDenotable(): Boolean = this@AbstractTypeConstructor.isDenotable
+
+        override fun getDeclarationDescriptor() = this@AbstractTypeConstructor.declarationDescriptor
+
+        override fun getBuiltIns(): KotlinBuiltIns = this@AbstractTypeConstructor.builtIns
+
+        override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor =
+            this@AbstractTypeConstructor.refine(kotlinTypeRefiner)
+
+        override fun equals(other: Any?) = this@AbstractTypeConstructor.equals(other)
+        override fun hashCode() = this@AbstractTypeConstructor.hashCode()
+        override fun toString() = this@AbstractTypeConstructor.toString()
+    }
 
     // In current version diagnostic about loops in supertypes is reported on each vertex (supertype reference) that lies on the cycle.
     // To achieve that we store both versions of supertypes --- before and after loops disconnection.

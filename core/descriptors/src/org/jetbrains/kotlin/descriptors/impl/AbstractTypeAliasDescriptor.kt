@@ -112,5 +112,10 @@ abstract class AbstractTypeAliasDescriptor(
             declarationDescriptor.builtIns
 
         override fun toString(): String = "[typealias ${declarationDescriptor.name.asString()}]"
+
+        // There must be @TypeRefinement, but there is a bug with anonymous objects and experimental annotations
+        // See KT-31728
+        @UseExperimental(TypeRefinement::class)
+        override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeConstructor? = this
     }
 }

@@ -62,6 +62,10 @@ class CapturedTypeConstructorImpl(
     override fun toString() = "CapturedTypeConstructor($projection)"
 
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.constructor.builtIns
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        CapturedTypeConstructorImpl(projection.refine(kotlinTypeRefiner))
 }
 
 class CapturedType(
