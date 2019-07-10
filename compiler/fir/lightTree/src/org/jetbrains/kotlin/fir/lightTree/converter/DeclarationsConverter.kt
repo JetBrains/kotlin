@@ -880,7 +880,8 @@ class DeclarationsConverter(
      */
     private fun visitBlock(block: LighterASTNode?): FirBlock {
         return if (!stubMode) {
-            TODO("not implemented")
+            //TODO("not implemented")
+            FirBlockImpl(session, null)
             //visitStatements(ctx.statements())
         } else {
             FirSingleExpressionBlock(

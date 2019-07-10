@@ -34,7 +34,7 @@ class ExpressionsConverter(
                 STRING_TEMPLATE -> return convertStringTemplate(expression)
                 is KtConstantExpressionElementType -> return convertConstantExpression(expression)
             }
-            TODO("not implemented")
+            //TODO("not implemented")
         }
 
         return FirExpressionStub(session, null)

@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
+import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -22,10 +23,7 @@ import java.io.File
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    private fun compare(
-        stubMode: Boolean,
-        visitAnnotation: Boolean = true
-    ) {
+    private fun compareBase(stubMode: Boolean, compareFir: (File, LightTree2Fir) -> Boolean) {
         val path = System.getProperty("user.dir")
         var counter = 0
         var errorCounter = 0
@@ -33,42 +31,126 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         val parserDefinition = KotlinParserDefinition()
         val lexer = parserDefinition.createLexer(myProject)
         val lightTreeConverter = LightTree2Fir(stubMode, parserDefinition, lexer)
-        val firVisitor = FirPartialTransformer(visitAnnotation = visitAnnotation)
 
         println("BASE PATH: $path")
         path.walkTopDown { file ->
-            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-
-            //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
-            val treeFromLightTree =
-                StringBuilder().also { FirRenderer(it).visitFile(firVisitor.transformFile(firFileFromLightTree, null).single) }.toString()
-
-            //psi
-            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-            val firFileFromPsi = ktFile.toFirFile(stubMode)
-            val treeFromPsi =
-                StringBuilder().also { FirRenderer(it).visitFile(firVisitor.transformFile(firFileFromPsi, null).single) }.toString()
-
-            if (treeFromLightTree != treeFromPsi) {
-                errorCounter++
-                //TestCase.assertEquals(treeFromPsi, treeFromLightTree)
-            }
+            if (!compareFir(file, lightTreeConverter)) errorCounter++
             counter++
         }
         println("All scanned files: $counter")
         println("Files that aren't equal to FIR: $errorCounter")
+        TestCase.assertEquals(0, errorCounter)
+    }
+
+    private fun compareAll(stubMode: Boolean) {
+        compareBase(stubMode) { file, lightTreeConverter ->
+            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+
+            //light tree
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
+
+            //psi
+            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
+            val firFileFromPsi = ktFile.toFirFile(stubMode)
+            val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
+
+            return@compareBase treeFromLightTree == treeFromPsi
+        }
+    }
+
+    private fun compare(
+        stubMode: Boolean,
+        visitAnonymousFunction: Boolean = false,
+        visitNamedFunction: Boolean = false,
+        visitMemberDeclaration: Boolean = false,
+        visitVariable: Boolean = false,
+        visitAnnotation: Boolean = false,
+        visitOperationCall: Boolean = false,
+        visitTypeOperatorCall: Boolean = false,
+        visitStringConcatenationCall: Boolean = false,
+        visitArrayOfCall: Boolean = false,
+        visitFunctionCall: Boolean = false,
+        visitGetClassCall: Boolean = false,
+        visitBreakExpression: Boolean = false,
+        visitContinueExpression: Boolean = false,
+        visitReturnExpression: Boolean = false,
+        visitThrowExpression: Boolean = false,
+        visitForLoop: Boolean = false,
+        visitClassReferenceExpression: Boolean = false,
+        visitConstExpression: Boolean = false,
+        visitQualifiedAccessExpression: Boolean = false,
+        visitCallableReferenceAccess: Boolean = false,
+        visitTryExpression: Boolean = false,
+        visitWhenExpression: Boolean = false,
+        visitNamedArgumentExpression: Boolean = false,
+        visitSpreadArgumentExpression: Boolean = false,
+        visitAnonymousObject: Boolean = false,
+        visitDoWhileLoop: Boolean = false,
+        visitWhileLoop: Boolean = false,
+        visitAssignment: Boolean = false
+    ) {
+        val firVisitor = FirPartialTransformer(
+            visitAnonymousFunction = visitAnonymousFunction,
+            visitNamedFunction = visitNamedFunction,
+            visitMemberDeclaration = visitMemberDeclaration,
+            visitVariable = visitVariable,
+            visitAnnotation = visitAnnotation,
+            visitOperationCall = visitOperationCall,
+            visitTypeOperatorCall = visitTypeOperatorCall,
+            visitStringConcatenationCall = visitStringConcatenationCall,
+            visitArrayOfCall = visitArrayOfCall,
+            visitFunctionCall = visitFunctionCall,
+            visitGetClassCall = visitGetClassCall,
+            visitBreakExpression = visitBreakExpression,
+            visitContinueExpression = visitContinueExpression,
+            visitReturnExpression = visitReturnExpression,
+            visitThrowExpression = visitThrowExpression,
+            visitForLoop = visitForLoop,
+            visitClassReferenceExpression = visitClassReferenceExpression,
+            visitConstExpression = visitConstExpression,
+            visitQualifiedAccessExpression = visitQualifiedAccessExpression,
+            visitCallableReferenceAccess = visitCallableReferenceAccess,
+            visitTryExpression = visitTryExpression,
+            visitWhenExpression = visitWhenExpression,
+            visitNamedArgumentExpression = visitNamedArgumentExpression,
+            visitSpreadArgumentExpression = visitSpreadArgumentExpression,
+            visitAnonymousObject = visitAnonymousObject,
+            visitDoWhileLoop = visitDoWhileLoop,
+            visitWhileLoop = visitWhileLoop,
+            visitAssignment = visitAssignment
+        )
+        compareBase(stubMode) { file, lightTreeConverter ->
+            val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+
+            //light tree
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            firVisitor.transformFile(firFileFromLightTree, null)
+            //val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firVisitor.transformFile(firFileFromLightTree, null).single) }.toString()
+
+            //psi
+            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
+            val firFileFromPsi = ktFile.toFirFile(stubMode)
+            firVisitor.transformFile(firFileFromPsi, null)
+            //val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firVisitor.transformFile(firFileFromPsi, null).single) }.toString()
+
+            return@compareBase firFileFromPsi.areEqualTo(firFileFromLightTree)
+        }
     }
 
     fun testStubCompareAll() {
-        compare(stubMode = true)
+        compareAll(stubMode = true)
     }
 
     fun testCompareAll() {
-        compare(stubMode = false)
+        compareAll(stubMode = false)
     }
 
     fun testStubCompareWithoutAnnotations() {
         compare(stubMode = true, visitAnnotation = false)
+    }
+
+    fun testConstExpression() {
+        compare(stubMode = false, visitConstExpression = true, visitAnnotation = true)
     }
 }
