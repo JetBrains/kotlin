@@ -761,7 +761,7 @@ public class DependencyResolverImpl implements DependencyResolver {
                                                    @Nullable final String scope) {
     Set<ExternalDependency> result = new LinkedHashSet<ExternalDependency>();
 
-    Set<ResolvedArtifact> resolvedArtifacts = myIsPreview ? new HashSet<ResolvedArtifact>() :
+    Set<ResolvedArtifact> resolvedArtifacts = myIsPreview ? Collections.<ResolvedArtifact>emptySet() :
                                               configuration.getResolvedConfiguration().getLenientConfiguration()
                                                 .getArtifacts(Specs.SATISFIES_ALL);
 

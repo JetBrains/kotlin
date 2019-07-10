@@ -28,7 +28,7 @@ public class DefaultExternalProjectDependency extends AbstractExternalDependency
     configurationName = dependency.getConfigurationName();
     projectDependencyArtifacts =
       dependency.getProjectDependencyArtifacts() == null
-      ? new ArrayList<File>()
+      ? new ArrayList<File>(0)
       : new ArrayList<File>(dependency.getProjectDependencyArtifacts());
   }
 
