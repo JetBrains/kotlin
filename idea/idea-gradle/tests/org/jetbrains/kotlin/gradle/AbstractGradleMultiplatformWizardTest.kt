@@ -93,7 +93,7 @@ abstract class AbstractGradleMultiplatformWizardTest : ProjectWizardTestCase<Abs
             }
         }
 
-        val oldFactory = Logger.getFactory()
+        val oldFactory = getLoggerFactory()
 
         try {
             Logger.setFactory(PrintingFactory::class.java)
