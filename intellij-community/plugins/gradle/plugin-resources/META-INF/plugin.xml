@@ -121,6 +121,8 @@
     <externalSystem.runConfigurationImporter
         implementation="org.jetbrains.plugins.gradle.service.execution.GradleRunConfigurationImporter"/>
 
+    <search.optionContributor implementation="org.jetbrains.plugins.gradle.config.GradleSearchableOptionContributor"/>
+
     <registryKey key="gradle.settings.showDeprecatedSettings" defaultValue="false"
                  description="Enables some deprecated setting in the Gradle settings dialog for troubleshooting"/>
     <registryKey key="gradle.java11.issue.workaround" defaultValue="true"
