@@ -53,7 +53,7 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
       rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
       rootCauseText.contains("FAILURE: Build failed with an exception.") &&
       gradleVersionUsed != null &&
-      gradleVersionUsed.baseVersion >= GradleVersion.version("4.5") &&
+      gradleVersionUsed.baseVersion >= GradleVersion.version("3.0") &&
       gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")
 
     if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue && !unableToStartDaemonProcessForJDK11 &&
