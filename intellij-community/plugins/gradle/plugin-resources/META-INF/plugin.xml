@@ -50,6 +50,7 @@
     <projectResolve implementation="org.jetbrains.plugins.gradle.service.project.BaseGradleProjectResolverExtension"/>
     <issueChecker implementation="org.jetbrains.plugins.gradle.issue.IncompatibleGradleJdkIssueChecker"/>
     <issueChecker implementation="org.jetbrains.plugins.gradle.issue.GradleDaemonStartupIssueChecker"/>
+    <issueChecker implementation="org.jetbrains.plugins.gradle.issue.UnsupportedGradleVersionIssueChecker"/>
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
