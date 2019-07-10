@@ -20,9 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
+import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
@@ -45,11 +43,7 @@ data class CallableReferenceKey(
 
 // TODO: generate $metadata$ property and fill it with corresponding KFunction/KProperty interface
 class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    private val callableNameConst get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KCALLABLE_NAME)
-    private val getterConst get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KPROPERTY_GET)
-    private val setterConst get() = JsIrBuilder.buildString(context.irBuiltIns.stringType, Namer.KPROPERTY_SET)
     private val callableToFactoryFunction = context.callableReferencesCache
-
     private val newDeclarations = mutableListOf<IrDeclaration>()
     private val implicitDeclarationFile = context.implicitDeclarationFile
 
@@ -170,11 +164,10 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
             val irVar = JsIrBuilder.buildVar(irClosureReference.type, factoryFunction, initializer = irClosureReference)
 
             // TODO: fill other fields of callable reference (returnType, parameters, isFinal, etc.)
-            val irSetName = JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(irVar.symbol))
-                putValueArgument(1, callableNameConst)
-                putValueArgument(2, JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration)))
+            val irSetName = setDynamicProperty(irVar.symbol, Namer.KCALLABLE_NAME) {
+                JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration))
             }
+
             Pair(listOf(closureFunction, irVar, irSetName), irVar.symbol)
         }
 
@@ -221,10 +214,8 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
             statements += irVar
 
-            statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(irVar.symbol))
-                putValueArgument(1, getterConst)
-                putValueArgument(2, JsIrBuilder.buildGetValue(irVar.symbol))
+            statements += setDynamicProperty(irVar.symbol, Namer.KPROPERTY_GET) {
+                JsIrBuilder.buildGetValue(irVar.symbol)
             }
 
             if (setterFunction != null) {
@@ -232,22 +223,14 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 val setterFunctionTypeSymbol = context.ir.symbols.functionN(setterFunction.valueParameters.size + 1)
                 val setterFunctionIrType = IrSimpleTypeImpl(setterFunctionTypeSymbol, false, emptyList(), emptyList())
                 val irSetReference = JsIrBuilder.buildFunctionReference(setterFunctionIrType, setterFunction.symbol)
-                statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                    putValueArgument(0, JsIrBuilder.buildGetValue(irVar.symbol))
-                    putValueArgument(1, setterConst)
-                    putValueArgument(2, irSetReference)
-                }
+                statements += setDynamicProperty(irVar.symbol, Namer.KPROPERTY_SET) { irSetReference }
             }
 
             // TODO: fill other fields of callable reference (returnType, parameters, isFinal, etc.)
-            statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(irVar.symbol))
-                putValueArgument(1, callableNameConst)
-                putValueArgument(
-                    2, JsIrBuilder.buildString(
-                        context.irBuiltIns.stringType,
-                        getReferenceName(getterDeclaration.correspondingPropertySymbol!!.owner)
-                    )
+            statements += setDynamicProperty(irVar.symbol, Namer.KCALLABLE_NAME) {
+                JsIrBuilder.buildString(
+                    context.irBuiltIns.stringType,
+                    getReferenceName(getterDeclaration.correspondingPropertySymbol!!.owner)
                 )
             }
 
@@ -291,16 +274,12 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
             statements += irVar
 
-            statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(irVarSymbol))
-                putValueArgument(1, getterConst)
-                putValueArgument(2, JsIrBuilder.buildGetValue(irVarSymbol))
+            statements += setDynamicProperty(irVarSymbol, Namer.KPROPERTY_GET) {
+                JsIrBuilder.buildGetValue(irVarSymbol)
             }
 
-            statements += JsIrBuilder.buildCall(context.intrinsics.jsSetJSField.symbol).apply {
-                putValueArgument(0, JsIrBuilder.buildGetValue(irVarSymbol))
-                putValueArgument(1, callableNameConst)
-                putValueArgument(2, JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration)))
+            statements += setDynamicProperty(irVarSymbol, Namer.KCALLABLE_NAME) {
+                JsIrBuilder.buildString(context.irBuiltIns.stringType, getReferenceName(declaration))
             }
 
             Pair(statements, irVarSymbol)
@@ -571,5 +550,12 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
         closureFunction.body = JsIrBuilder.buildBlockBody(listOf(irClosureReturn))
 
         return closureFunction
+    }
+
+    private inline fun setDynamicProperty(r: IrValueSymbol, property: String, value: () -> IrExpression): IrStatement {
+        return IrDynamicOperatorExpressionImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.unitType, IrDynamicOperator.EQ).apply {
+            receiver = IrDynamicMemberExpressionImpl(startOffset, endOffset, context.dynamicType, property, JsIrBuilder.buildGetValue(r))
+            arguments += value()
+        }
     }
 }
