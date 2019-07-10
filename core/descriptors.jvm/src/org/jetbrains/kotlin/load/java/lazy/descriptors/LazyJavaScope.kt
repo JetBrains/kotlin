@@ -45,6 +45,8 @@ import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
+import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
@@ -54,7 +56,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
-abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberScopeImpl() {
+abstract class LazyJavaScope(
+    protected val c: LazyJavaResolverContext,
+    protected val mainScope: LazyJavaScope? = null
+) : MemberScopeImpl() {
     protected abstract val ownerDescriptor: DeclarationDescriptor
 
     // this lazy value is not used at all in LazyPackageFragmentScopeForJavaPackage because we do not use caching there
@@ -79,16 +84,37 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
 
     protected abstract fun getDispatchReceiverParameter(): ReceiverParameterDescriptor?
 
-    private val functions = c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> { name ->
-        val result = LinkedHashSet<SimpleFunctionDescriptor>()
+    private val declaredFunctions: MemoizedFunctionToNotNull<Name, Collection<SimpleFunctionDescriptor>> =
+        c.storageManager.createMemoizedFunction { name ->
+            if (mainScope != null) return@createMemoizedFunction mainScope.declaredFunctions(name)
 
-        for (method in declaredMemberIndex().findMethodsByName(name)) {
-            val descriptor = resolveMethodToFunctionDescriptor(method)
-            if (!descriptor.isVisibleAsFunction()) continue
+            val result = mutableListOf<SimpleFunctionDescriptor>()
 
-            c.components.javaResolverCache.recordMethod(method, descriptor)
-            result.add(descriptor)
+            for (method in declaredMemberIndex().findMethodsByName(name)) {
+                val descriptor = resolveMethodToFunctionDescriptor(method)
+                if (!descriptor.isVisibleAsFunction()) continue
+
+                c.components.javaResolverCache.recordMethod(method, descriptor)
+                result.add(descriptor)
+            }
+
+            result
         }
+
+    private val declaredField: MemoizedFunctionToNullable<Name, PropertyDescriptor> =
+        c.storageManager.createMemoizedFunctionWithNullableValues { name ->
+            if (mainScope != null) return@createMemoizedFunctionWithNullableValues mainScope.declaredField(name)
+
+            val field = declaredMemberIndex().findFieldByName(name)
+            if (field != null && !field.isEnumEntry)
+                resolveProperty(field)
+            else
+                null
+        }
+
+
+    private val functions = c.storageManager.createMemoizedFunction<Name, Collection<SimpleFunctionDescriptor>> { name ->
+        val result = LinkedHashSet<SimpleFunctionDescriptor>(declaredFunctions(name))
 
         result.retainMostSpecificInEachOverridableGroup()
 
@@ -250,11 +276,7 @@ abstract class LazyJavaScope(protected val c: LazyJavaResolverContext) : MemberS
     private val properties = c.storageManager.createMemoizedFunction { name: Name ->
         val properties = ArrayList<PropertyDescriptor>()
 
-        val field = declaredMemberIndex().findFieldByName(name)
-        if (field != null && !field.isEnumEntry) {
-            properties.add(resolveProperty(field))
-        }
-
+        properties.addIfNotNull(declaredField(name))
         computeNonDeclaredProperties(name, properties)
 
         if (DescriptorUtils.isAnnotationClass(ownerDescriptor))
