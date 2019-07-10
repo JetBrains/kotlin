@@ -442,7 +442,9 @@ val dist = tasks.register("dist") {
 }
 
 val copyCompilerToIdeaPlugin by task<Copy> {
-    dependsOn(dist)
+    if (!isTeamcityBuild) {
+        dependsOn(dist)
+    }
     into(ideaPluginDir)
     from(distDir) { include("kotlinc/**") }
 }
