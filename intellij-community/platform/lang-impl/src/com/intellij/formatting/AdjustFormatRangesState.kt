@@ -19,18 +19,21 @@ import com.intellij.formatting.engine.State
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.formatter.common.ExtraRangesProvider
 import com.intellij.util.containers.Stack
+import one.util.streamex.StreamEx
 
-class AdjustFormatRangesState(var currentRoot: Block, val formatRanges: FormatTextRanges) : State() {
+class AdjustFormatRangesState(var currentRoot: Block,
+                              val formatRanges: FormatTextRanges,
+                              val model: FormattingDocumentModel) : State() {
   private val extendedRanges = formatRanges.extendedFormattingRanges
   private val totalNewRanges = mutableListOf<TextRange>()
   private val state = Stack(currentRoot)
 
   init {
-    setOnDone({
+    setOnDone {
       totalNewRanges.forEach {
         formatRanges.add(it, false)
       }
-    })
+    }
   }
 
   override fun doIteration() {
@@ -42,9 +45,9 @@ class AdjustFormatRangesState(var currentRoot: Block, val formatRanges: FormatTe
   private fun processBlock(currentBlock: Block) {
     if (!isInsideExtendedFormattingRanges(currentBlock)) return
 
-    currentBlock.subBlocks
-          .reversed()
-          .forEach { state.push(it) }
+    StreamEx.ofReversed(currentBlock.subBlocks)
+      .filter { ASSERT.checkChildRange(currentBlock.textRange, it.textRange, model) }
+      .forEach { state.push(it) }
 
     if (!formatRanges.isReadOnly(currentBlock.textRange)) {
       extractRanges(currentBlock)
@@ -65,5 +68,8 @@ class AdjustFormatRangesState(var currentRoot: Block, val formatRanges: FormatTe
     }
   }
 
+  companion object {
+    private val ASSERT = RangesAssert()
+  }
 
 }
