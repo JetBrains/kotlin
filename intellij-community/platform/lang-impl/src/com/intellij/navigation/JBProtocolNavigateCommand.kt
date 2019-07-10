@@ -6,6 +6,7 @@ import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
+import com.intellij.ide.impl.OpenProjectTask
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.JBProtocolCommand
 import com.intellij.openapi.application.JetBrainsProtocolHandler.FRAGMENT_PARAM_NAME
@@ -64,7 +65,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
           } ?: run {
             ApplicationManager.getApplication().invokeLater(
               {
-                RecentProjectsManagerBase.getInstanceEx().doOpenProject(recentProjectAction.projectPath, null, false)?.let {
+                RecentProjectsManagerBase.getInstanceEx().doOpenProject(recentProjectAction.projectPath, OpenProjectTask())?.let {
                   StartupManager.getInstance(it).registerPostStartupActivity(Runnable { findAndNavigateToReference(it, parameters) })
                 }
               }, ModalityState.NON_MODAL)

@@ -104,6 +104,8 @@ abstract class ProjectStoreBase(final override val project: Project) : Component
     }
   }
 
+  override fun getProjectWorkspaceId() = ProjectIdManager.getInstance(project).state.id
+
   override fun setPath(file: Path, isRefreshVfsNeeded: Boolean, template: Project?) {
     val storageManager = storageManager
     val fs = LocalFileSystem.getInstance()
