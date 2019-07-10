@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 
@@ -253,4 +254,7 @@ internal class NotNullTypeParameter(override val delegate: SimpleType) : NotNull
     override fun replaceAnnotations(newAnnotations: Annotations) = NotNullTypeParameter(delegate.replaceAnnotations(newAnnotations))
     override fun makeNullableAsSpecified(newNullability: Boolean) =
         if (newNullability) delegate.makeNullableAsSpecified(true) else this
+
+    @TypeRefinement
+    override fun replaceDelegate(delegate: SimpleType) = NotNullTypeParameter(delegate)
 }

@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.load.java.components.TypeUsage
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType(lowerBound, upperBound), RawType {
@@ -80,6 +83,12 @@ class RawTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : FlexibleType
         if (newLower == newUpper) return newLower
         return renderer.renderFlexibleType(newLower, newUpper, builtIns)
     }
+
+    @TypeRefinement
+    @UseExperimental(TypeRefinement::class)
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType {
+        return RawTypeImpl(kotlinTypeRefiner.refineType(lowerBound) as SimpleType, kotlinTypeRefiner.refineType(upperBound) as SimpleType)
+    }
 }
 
 internal object RawSubstitution : TypeSubstitution() {
@@ -124,13 +133,20 @@ internal object RawSubstitution : TypeSubstitution() {
 
         if (type.isError) return ErrorUtils.createErrorType("Raw error type: ${type.constructor}") to false
 
+        val memberScope = declaration.getMemberScope(RawSubstitution)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
             type.annotations, type.constructor,
             type.constructor.parameters.map { parameter ->
                 computeProjection(parameter, attr)
             },
-            type.isMarkedNullable, declaration.getMemberScope(RawSubstitution)
-        ) to true
+            type.isMarkedNullable, memberScope
+        ) factory@{ kotlinTypeRefiner ->
+            val classId = (declaration as? ClassDescriptor)?.classId ?: return@factory memberScope
+
+            kotlinTypeRefiner
+                .findClassAcrossModuleDependencies(classId)
+                ?.getRefinedMemberScopeIfPossible(RawSubstitution, moduleDescriptor) ?: memberScope
+        } to true
     }
 
     fun computeProjection(
@@ -150,13 +166,13 @@ internal object RawSubstitution : TypeSubstitution() {
         )
         JavaTypeFlexibility.FLEXIBLE_UPPER_BOUND, JavaTypeFlexibility.INFLEXIBLE -> {
             if (!parameter.variance.allowsOutPosition)
-                // in T -> Comparable<Nothing>
+            // in T -> Comparable<Nothing>
                 TypeProjectionImpl(Variance.INVARIANT, parameter.builtIns.nothingType)
             else if (erasedUpperBound.constructor.parameters.isNotEmpty())
-                // T : Enum<E> -> out Enum<*>
+            // T : Enum<E> -> out Enum<*>
                 TypeProjectionImpl(Variance.OUT_VARIANCE, erasedUpperBound)
             else
-                // T : String -> *
+            // T : String -> *
                 makeStarProjection(parameter, attr)
         }
     }

@@ -16,24 +16,55 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.getRefinedMemberScopeIfPossible
+import org.jetbrains.kotlin.descriptors.impl.getRefinedUnsubstitutedMemberScopeIfPossible
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.getKotlinTypeRefiner
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+typealias RefinedTypeFactory = (KotlinTypeRefiner) -> SimpleType?
 
 object KotlinTypeFactory {
-    private fun computeMemberScope(constructor: TypeConstructor, arguments: List<TypeProjection>): MemberScope {
-        val descriptor = constructor.declarationDescriptor
+    val EMPTY_REFINED_TYPE_FACTORY: RefinedTypeFactory = { _ -> null }
+
+    @UseExperimental(TypeRefinement::class)
+    private fun computeMemberScope(
+        constructor: TypeConstructor,
+        arguments: List<TypeProjection>,
+        kotlinTypeRefiner: KotlinTypeRefiner? = null
+    ): MemberScope {
+        val basicDescriptor = constructor.declarationDescriptor
+        val classId = basicDescriptor.safeAs<ClassifierDescriptorWithTypeParameters>()?.classId
+        val descriptor =
+            if (classId != null)
+                kotlinTypeRefiner?.findClassAcrossModuleDependencies(classId) ?: basicDescriptor
+            else basicDescriptor
+
         return when (descriptor) {
             is TypeParameterDescriptor -> descriptor.getDefaultType().memberScope
             is ClassDescriptor -> {
+                val refinedConstructor =
+                    if (descriptor != basicDescriptor)
+                        descriptor.typeConstructor
+                    else
+                        constructor
+
+                val refinerToUse = kotlinTypeRefiner ?: descriptor.module.getKotlinTypeRefiner()
                 if (arguments.isEmpty())
-                    descriptor.defaultType.memberScope
+                    descriptor.getRefinedUnsubstitutedMemberScopeIfPossible(refinerToUse)
                 else
-                    descriptor.getMemberScope(TypeConstructorSubstitution.create(constructor, arguments))
+                    // REVIEW
+                    descriptor.getRefinedMemberScopeIfPossible(
+                        TypeConstructorSubstitution.create(refinedConstructor, arguments),
+                        refinerToUse
+                    )
             }
             is TypeAliasDescriptor -> ErrorUtils.createErrorScope("Scope for abbreviation: ${descriptor.name}", true)
             else -> throw IllegalStateException("Unsupported classifier: $descriptor for constructor: $constructor")
@@ -52,12 +83,11 @@ object KotlinTypeFactory {
         }
 
         return simpleTypeWithNonTrivialMemberScope(
-            annotations,
-            constructor,
-            arguments,
-            nullable,
+            annotations, constructor, arguments, nullable,
             computeMemberScope(constructor, arguments)
-        )
+        ) { moduleDescriptor ->
+            computeMemberScope(constructor, arguments, moduleDescriptor)
+        }
     }
 
     @JvmStatic
@@ -68,7 +98,24 @@ object KotlinTypeFactory {
         nullable: Boolean,
         memberScope: MemberScope
     ): SimpleType =
-        SimpleTypeImpl(constructor, arguments, nullable, memberScope)
+        SimpleTypeImpl(constructor, arguments, nullable, memberScope, { memberScope })
+            .let {
+                if (annotations.isEmpty())
+                    it
+                else
+                    AnnotatedSimpleType(it, annotations)
+            }
+
+    @JvmStatic
+    fun simpleTypeWithNonTrivialMemberScope(
+        annotations: Annotations,
+        constructor: TypeConstructor,
+        arguments: List<TypeProjection>,
+        nullable: Boolean,
+        memberScope: MemberScope,
+        scopeFactory: (KotlinTypeRefiner) -> MemberScope
+    ): SimpleType =
+        SimpleTypeImpl(constructor, arguments, nullable, memberScope, scopeFactory)
             .let {
                 if (annotations.isEmpty())
                     it
@@ -116,8 +163,12 @@ private class SimpleTypeImpl(
     override val constructor: TypeConstructor,
     override val arguments: List<TypeProjection>,
     override val isMarkedNullable: Boolean,
-    override val memberScope: MemberScope
+    override val memberScope: MemberScope,
+    private val scopeFactory: (KotlinTypeRefiner) -> MemberScope
 ) : SimpleType() {
+    @TypeRefinement
+    override val hasNotTrivialRefinementFactory: Boolean get() = true
+
     override val annotations: Annotations get() = Annotations.EMPTY
 
     override fun replaceAnnotations(newAnnotations: Annotations) =
@@ -127,15 +178,25 @@ private class SimpleTypeImpl(
             AnnotatedSimpleType(this, newAnnotations)
 
     override fun makeNullableAsSpecified(newNullability: Boolean) = when {
-            newNullability == isMarkedNullable -> this
-            newNullability -> NullableSimpleType(this)
-            else -> NotNullSimpleType(this)
-        }
+        newNullability == isMarkedNullable -> this
+        newNullability -> NullableSimpleType(this)
+        else -> NotNullSimpleType(this)
+    }
 
     init {
         if (memberScope is ErrorUtils.ErrorScope) {
             throw IllegalStateException("SimpleTypeImpl should not be created for error type: $memberScope\n$constructor")
         }
+    }
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleType {
+        if (constructor.declarationDescriptor?.module?.getKotlinTypeRefiner() === kotlinTypeRefiner) return this
+
+        return SimpleTypeImpl(
+            constructor.refine(kotlinTypeRefiner) ?: constructor,
+            arguments, isMarkedNullable, scopeFactory(kotlinTypeRefiner), scopeFactory
+        )
     }
 }
 
@@ -155,14 +216,23 @@ abstract class DelegatingSimpleTypeImpl(override val delegate: SimpleType) : Del
 private class AnnotatedSimpleType(
     delegate: SimpleType,
     override val annotations: Annotations
-) : DelegatingSimpleTypeImpl(delegate)
+) : DelegatingSimpleTypeImpl(delegate) {
+    @TypeRefinement
+    override fun replaceDelegate(delegate: SimpleType) = AnnotatedSimpleType(delegate, annotations)
+}
 
 private class NullableSimpleType(delegate: SimpleType) : DelegatingSimpleTypeImpl(delegate) {
     override val isMarkedNullable: Boolean
         get() = true
+
+    @TypeRefinement
+    override fun replaceDelegate(delegate: SimpleType) = NullableSimpleType(delegate)
 }
 
 private class NotNullSimpleType(delegate: SimpleType) : DelegatingSimpleTypeImpl(delegate) {
     override val isMarkedNullable: Boolean
         get() = false
+
+    @TypeRefinement
+    override fun replaceDelegate(delegate: SimpleType) = NotNullSimpleType(delegate)
 }

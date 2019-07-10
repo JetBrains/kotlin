@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -52,6 +54,28 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
     abstract val memberScope: MemberScope
 
     abstract fun unwrap(): UnwrappedType
+
+    /**
+     * Returns refined type using passed KotlinTypeRefiner
+     *
+     * Refined type has its member scope refined
+     *
+     * Note #1: supertypes and type arguments ARE NOT refined!
+     *
+     * Note #2: Correct subtyping or equality for refined types from different Refiners *is not guaranteed*
+     *
+     * Implementation notice:
+     * Basically, this is a simple form of double-dispatching, used to incapsulate
+     * structure of specific type-implementations, which means that compound types most probably would like
+     * to implement it by recursively calling [refine] on components.
+     * A very few "basic" types (like [SimpleTypeImpl]) implement it by actually adjusting
+     * content using passed refiner and other low-level methods
+     */
+    @TypeRefinement
+    abstract fun refine(kotlinTypeRefiner: KotlinTypeRefiner): KotlinType
+
+    @TypeRefinement
+    open val hasNotTrivialRefinementFactory: Boolean get() = false
 
     /* '0' means "hashCode wasn't computed"
 
@@ -139,6 +163,9 @@ sealed class UnwrappedType : KotlinType() {
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
     final override fun unwrap(): UnwrappedType = this
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): UnwrappedType
 }
 
 /**
@@ -149,6 +176,9 @@ sealed class UnwrappedType : KotlinType() {
 abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleType
 
     override fun toString(): String {
         return buildString {
@@ -185,6 +215,9 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
     override val memberScope: MemberScope get() = delegate.memberScope
 
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType
 }
 
 val KotlinType.isError: Boolean
