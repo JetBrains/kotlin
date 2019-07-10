@@ -46,7 +46,7 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("library version")
         val LINKER_ARGS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("additional linker arguments")
-        val LIST_PHASES: CompilerConfigurationKey<Boolean> 
+        val LIST_PHASES: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("list backend phases")
         val LIST_TARGETS: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("list available targets")
@@ -100,20 +100,16 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("target we compile for")
         val TEMPORARY_FILES_DIR: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("directory for temporary files")
-        val VERIFY_BITCODE: CompilerConfigurationKey<Boolean> 
+        val VERIFY_BITCODE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("verify bitcode")
-        val VERIFY_DESCRIPTORS: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("verify descriptors")
-        val VERIFY_IR: CompilerConfigurationKey<Boolean> 
-                = CompilerConfigurationKey.create("verify ir")
-        val VERBOSE_PHASES: CompilerConfigurationKey<List<String>> 
-                = CompilerConfigurationKey.create("verbose backend phases")
+        val VERIFY_COMPILER: CompilerConfigurationKey<Boolean>
+                = CompilerConfigurationKey.create("verify compiler")
         val DEBUG_INFO_VERSION: CompilerConfigurationKey<Int>
                 = CompilerConfigurationKey.create("debug info format version")
         val COVERAGE: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("emit coverage info for sources")
         val LIBRARIES_TO_COVER: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey.create<List<String>>("libraries that should be covered")
+                = CompilerConfigurationKey.create("libraries that should be covered")
         val PROFRAW_PATH: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("path to *.profraw coverage output")
         val OBJC_GENERICS: CompilerConfigurationKey<Boolean>

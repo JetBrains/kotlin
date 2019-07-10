@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import java.util.Collections.emptySet
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
+    if (!context.config.needCompilerVerification) return
+
     val validatorConfig = IrValidatorConfig(
         abortOnError = false,
         ensureAllNodesAreDifferent = true,
@@ -371,5 +373,6 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         switch(buildDFGPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
         switch(devirtualizationPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
         switch(dcePhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switch(verifyBitcodePhase, config.needCompilerVerification || config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE))
     }
 }
