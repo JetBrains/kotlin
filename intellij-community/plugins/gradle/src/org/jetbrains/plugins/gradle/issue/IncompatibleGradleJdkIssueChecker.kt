@@ -48,12 +48,13 @@ class IncompatibleGradleJdkIssueChecker : GradleIssueChecker {
         feature != null && feature >= 11
       } == true
 
-    val unableToStartDaemonProcessForJDK11 = !isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue
-    rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
-    rootCauseText.contains("FAILURE: Build failed with an exception.") &&
-    gradleVersionUsed != null &&
-    gradleVersionUsed.baseVersion >= GradleVersion.version("4.5") &&
-    gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")
+    val unableToStartDaemonProcessForJDK11 =
+      !isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue &&
+      rootCauseText.startsWith("org.gradle.api.GradleException: Unable to start the daemon process.") &&
+      rootCauseText.contains("FAILURE: Build failed with an exception.") &&
+      gradleVersionUsed != null &&
+      gradleVersionUsed.baseVersion >= GradleVersion.version("4.5") &&
+      gradleVersionUsed.baseVersion <= GradleVersion.version("4.6")
 
     if (!isToolingClientIssue && !isRemovedUnsafeDefineClassMethodInJDK11Issue && !unableToStartDaemonProcessForJDK11 &&
         !rootCauseText.startsWith("org.gradle.api.GradleException: Could not determine Java version using executable")) {
