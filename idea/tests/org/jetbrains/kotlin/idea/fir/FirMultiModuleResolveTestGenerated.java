@@ -89,6 +89,11 @@ public class FirMultiModuleResolveTestGenerated extends AbstractFirMultiModuleRe
         runTest("idea/testData/fir/multiModule/javaInheritsRawKotlin/");
     }
 
+    @TestMetadata("javaSyntheticProperty")
+    public void testJavaSyntheticProperty() throws Exception {
+        runTest("idea/testData/fir/multiModule/javaSyntheticProperty/");
+    }
+
     @TestMetadata("mppFakeOverrides")
     public void testMppFakeOverrides() throws Exception {
         runTest("idea/testData/fir/multiModule/mppFakeOverrides/");

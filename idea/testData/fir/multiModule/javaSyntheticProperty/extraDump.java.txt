@@ -1,0 +1,6 @@
+public/*package*/ open class JavaClass : R|kotlin/Any| {
+    public open operator fun getFoo(): R|ft<kotlin/String, kotlin/String?>|!
+
+    public constructor(): R|JavaClass|
+
+}
