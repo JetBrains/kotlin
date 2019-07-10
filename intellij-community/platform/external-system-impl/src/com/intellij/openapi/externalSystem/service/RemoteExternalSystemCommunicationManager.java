@@ -224,8 +224,14 @@ public class RemoteExternalSystemCommunicationManager implements ExternalSystemC
     else {
       facade.applyProgressManager(exported);
     }
-    return facade;
+    return wrapResolverDeserialization(facade);
   }
+
+  @NotNull
+  private static RemoteExternalSystemFacade wrapResolverDeserialization(@NotNull RemoteExternalSystemFacade facade) {
+    return new ResolverDeserializationWrapper(facade);
+  }
+
 
   @Override
   public void release(@NotNull String id, @NotNull ProjectSystemId externalSystemId) {
