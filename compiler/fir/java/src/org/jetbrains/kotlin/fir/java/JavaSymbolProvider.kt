@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -211,7 +210,7 @@ class JavaSymbolProvider(
                     val javaClassDeclaredConstructors = javaClass.constructors
                     val constructorId = CallableId(classId.packageFqName, classId.relativeClassName, classId.shortClassName)
 
-                    fun addJavaConstructor(visibility: Visibility = Visibilities.PUBLIC): FirJavaConstructor {
+                    fun addJavaConstructor(visibility: Visibility = this.visibility): FirJavaConstructor {
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
