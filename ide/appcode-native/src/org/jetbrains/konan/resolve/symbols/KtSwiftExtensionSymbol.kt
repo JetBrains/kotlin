@@ -22,8 +22,6 @@ class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftTypeSymbol.TypeState, Ob
     override val baseType: SwiftType
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
 
-    override val baseTypeSymbol: SwiftTypeSymbol?
-        get() = (baseType as? SwiftClassType)?.resolveToSymbol()
 
     override val docString: String?
         get() = null
