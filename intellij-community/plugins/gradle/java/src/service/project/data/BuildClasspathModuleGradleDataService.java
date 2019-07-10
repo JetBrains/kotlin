@@ -22,12 +22,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.io.FileUtil;
 import gnu.trove.THashMap;
-import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData;
 import org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
+import org.jetbrains.plugins.gradle.service.project.ProjectResolverInternary;
 import org.jetbrains.plugins.gradle.settings.GradleLocalSettings;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
@@ -35,7 +35,6 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Vladislav.Soroka
@@ -93,6 +92,9 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
     };
 
     final Map<String, ExternalProjectBuildClasspathPojo> localProjectBuildClasspath = new THashMap<>(localSettings.getProjectBuildClasspath());
+
+    ProjectResolverInternary internary = new ProjectResolverInternary();
+
     for (final DataNode<BuildScriptClasspathData> node : toImport) {
       if (GradleConstants.SYSTEM_ID.equals(node.getData().getOwner())) {
         DataNode<ModuleData> moduleDataNode = ExternalSystemApiUtil.findParent(node, ProjectKeys.MODULE);
@@ -123,12 +125,16 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
           localProjectBuildClasspath.put(linkedExternalProjectPath, projectBuildClasspathPojo);
         }
 
-        List<String> projectBuildClasspath = new ArrayList<>(externalProjectGradleSdkLibs.getValue());
-
+        List<String> projectBuildClasspath = internary.intern(new ArrayList<>(externalProjectGradleSdkLibs.getValue()));
         projectBuildClasspathPojo.setProjectBuildClasspath(projectBuildClasspath);
-        List<String> buildClasspath = StreamEx.of(buildClasspathSources).append(buildClasspathClasses).collect(Collectors.toList());
-        projectBuildClasspathPojo.getModulesBuildClasspath().put(
-          externalModulePath, new ExternalModuleBuildClasspathPojo(externalModulePath, buildClasspath));
+
+        List<String> buildClasspath = new ArrayList<>(buildClasspathSources.size() + buildClasspathClasses.size());
+        buildClasspath.addAll(buildClasspathSources);
+        buildClasspath.addAll(buildClasspathClasses);
+        buildClasspath = internary.intern(buildClasspath);
+
+        projectBuildClasspathPojo.getModulesBuildClasspath().put(externalModulePath,
+                                                                 new ExternalModuleBuildClasspathPojo(externalModulePath, buildClasspath));
       }
     }
     localSettings.setProjectBuildClasspath(localProjectBuildClasspath);
