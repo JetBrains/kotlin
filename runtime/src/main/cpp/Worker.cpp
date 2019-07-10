@@ -591,8 +591,6 @@ void* workerRoutine(void* argument) {
 
   konanDestructInstance(worker);
 
-  Kotlin_deinitRuntimeIfNeeded();
-
   return nullptr;
 }
 

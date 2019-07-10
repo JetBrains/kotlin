@@ -15,8 +15,10 @@ external public fun initRuntimeIfNeeded(): Unit
 
 /**
  * Deinitializes Kotlin runtime for the current thread, if was inited.
+ * Cannot be called from Kotlin frames holding references, thus deprecated.
  */
 @SymbolName("Kotlin_deinitRuntimeIfNeeded")
+@Deprecated("Deinit runtime can not be called from Kotlin", level = DeprecationLevel.ERROR)
 external public fun deinitRuntimeIfNeeded(): Unit
 
 /**

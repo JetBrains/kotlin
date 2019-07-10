@@ -22,7 +22,6 @@
 #include "Porting.h"
 #include "Runtime.h"
 
-
 struct RuntimeState {
   MemoryState* memoryState;
   volatile int executionStatus;
@@ -72,17 +71,23 @@ void InitOrDeinitGlobalVariables(int initialize) {
   }
 }
 
-THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = nullptr;
+constexpr RuntimeState* kInvalidRuntime = nullptr;
+
+THREAD_LOCAL_VARIABLE RuntimeState* runtimeState = kInvalidRuntime;
 THREAD_LOCAL_VARIABLE int isMainThread = 0;
+
+inline bool isValidRuntime() {
+  return ::runtimeState != kInvalidRuntime;
+}
 
 int aliveRuntimesCount = 0;
 
 RuntimeState* initRuntime() {
   SetKonanTerminateHandler();
   RuntimeState* result = konanConstructInstance<RuntimeState>();
-  if (!result) return nullptr;
-  RuntimeCheck(runtimeState == nullptr, "No active runtimes allowed");
-  runtimeState = result;
+  if (!result) return kInvalidRuntime;
+  RuntimeCheck(!isValidRuntime(), "No active runtimes allowed");
+  ::runtimeState = result;
   result->memoryState = InitMemory();
   bool firstRuntime = atomicAdd(&aliveRuntimesCount, 1) == 1;
   // Keep global variables in state as well.
@@ -104,6 +109,12 @@ void deinitRuntime(RuntimeState* state) {
   konanDestructInstance(state);
 }
 
+void Kotlin_deinitRuntimeCallback(void* argument) {
+  auto* state = reinterpret_cast<RuntimeState*>(argument);
+  RuntimeCheck(updateStatusIf(state, RUNNING, DESTROYING), "Cannot transition state to DESTROYING");
+  deinitRuntime(state);
+}
+
 }  // namespace
 
 extern "C" {
@@ -119,19 +130,18 @@ void AppendToInitializersTail(InitNode *next) {
 }
 
 void Kotlin_initRuntimeIfNeeded() {
-  if (runtimeState == nullptr) {
+  if (!isValidRuntime()) {
     initRuntime();
-    RuntimeCheck(updateStatusIf(runtimeState, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for init");
+    RuntimeCheck(updateStatusIf(::runtimeState, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for init");
     // Register runtime deinit function at thread cleanup.
-    konan::onThreadExit(Kotlin_deinitRuntimeIfNeeded);
+    konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
   }
 }
 
 void Kotlin_deinitRuntimeIfNeeded() {
-  if (runtimeState != nullptr) {
-     RuntimeCheck(updateStatusIf(runtimeState, RUNNING, DESTROYING), "Cannot transition state to DESTROYING");
-     deinitRuntime(runtimeState);
-     runtimeState = nullptr;
+  if (isValidRuntime()) {
+    deinitRuntime(::runtimeState);
+    ::runtimeState = kInvalidRuntime;
   }
 }
 
@@ -145,23 +155,23 @@ void Kotlin_destroyRuntime(RuntimeState* state) {
 }
 
 RuntimeState* Kotlin_suspendRuntime() {
-    RuntimeCheck(::runtimeState != nullptr, "Runtime must be active on the current thread");
+    RuntimeCheck(isValidRuntime(), "Runtime must be active on the current thread");
     auto result = ::runtimeState;
     RuntimeCheck(updateStatusIf(result, RUNNING, SUSPENDED), "Cannot transition state to SUSPENDED for suspend");
     result->memoryState = SuspendMemory();
-    ::runtimeState = nullptr;
+    ::runtimeState = kInvalidRuntime;
     return result;
 }
 
 void Kotlin_resumeRuntime(RuntimeState* state) {
-    RuntimeCheck(::runtimeState == nullptr, "Runtime must not be active on the current thread");
+    RuntimeCheck(!isValidRuntime(), "Runtime must not be active on the current thread");
     RuntimeCheck(updateStatusIf(state, SUSPENDED, RUNNING), "Cannot transition state to RUNNING for resume");
     ::runtimeState = state;
     ResumeMemory(state->memoryState);
 }
 
 RuntimeState* RUNTIME_USED Kotlin_getRuntime() {
-  RuntimeCheck(::runtimeState != nullptr, "Runtime must be active on the current thread");
+  RuntimeCheck(isValidRuntime(), "Runtime must be active on the current thread");
   return ::runtimeState;
 }
 

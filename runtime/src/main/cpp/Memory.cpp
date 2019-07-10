@@ -2453,6 +2453,7 @@ MemoryState* InitMemory() {
 }
 
 void DeinitMemory(MemoryState* memoryState) {
+  ::memoryState = memoryState;
   deinitMemory(memoryState);
 }
 
