@@ -5,11 +5,13 @@ import com.intellij.ide.ui.search.SearchableOptionContributor;
 import com.intellij.ide.ui.search.SearchableOptionProcessor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.service.settings.GradleConfigurable;
+import org.jetbrains.plugins.gradle.util.GradleBundle;
 
 public class GradleSearchableOptionContributor extends SearchableOptionContributor {
   @Override
   public void processOptions(@NotNull SearchableOptionProcessor processor) {
-    processor.addOptions("jvm", null, "Gradle JVM:", GradleConfigurable.ID, GradleConfigurable.DISPLAY_NAME, true);
-    processor.addOptions("gradle", null, "Gradle JVM:", GradleConfigurable.ID, GradleConfigurable.DISPLAY_NAME, true);
+    String gradleJvmLabel = GradleBundle.message("gradle.settings.text.jvm.path");
+    processor.addOptions("jvm", null, gradleJvmLabel, GradleConfigurable.ID, GradleConfigurable.DISPLAY_NAME, true);
+    processor.addOptions("gradle", null, gradleJvmLabel, GradleConfigurable.ID, GradleConfigurable.DISPLAY_NAME, true);
   }
 }
