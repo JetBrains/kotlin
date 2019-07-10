@@ -33,7 +33,7 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
                                     Collection<? extends ExternalDependency> dependencies) {
     myId = new DefaultExternalDependencyId(id);
     mySelectionReason = selectionReason;
-    myDependencies = dependencies == null ? new ArrayList<ExternalDependency>() : ModelFactory.createCopy(dependencies);
+    myDependencies = dependencies == null ? new ArrayList<ExternalDependency>(0) : ModelFactory.createCopy(dependencies);
   }
 
   public AbstractExternalDependency(ExternalDependency dependency) {
