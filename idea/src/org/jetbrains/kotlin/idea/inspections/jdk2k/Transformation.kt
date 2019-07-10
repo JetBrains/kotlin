@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.types.isNullable
 interface Transformation {
     operator fun invoke(callExpression: KtCallExpression, replacement: Replacement)
     fun isApplicable(callExpression: KtCallExpression): Boolean = true
-    fun isApplicable(callExpression: KtCallExpression, context: BindingContext): Boolean = true
+    fun isApplicableInContext(callExpression: KtCallExpression, context: BindingContext): Boolean = true
 }
 
 object WithoutAdditionalTransformation : Transformation {
@@ -55,7 +55,7 @@ object ToExtensionFunctionWithNonNullableReceiver : Transformation {
 
     override fun isApplicable(callExpression: KtCallExpression): Boolean = callExpression.valueArguments.isNotEmpty()
 
-    override fun isApplicable(callExpression: KtCallExpression, context: BindingContext): Boolean = callExpression
+    override fun isApplicableInContext(callExpression: KtCallExpression, context: BindingContext): Boolean = callExpression
         .valueArguments.firstOrNull()
         ?.getArgumentExpression()
         ?.getType(context)
@@ -72,7 +72,8 @@ object ToExtensionFunctionWithNonNullableArguments : Transformation {
         callExpression
     )
 
-    override fun isApplicable(callExpression: KtCallExpression, context: BindingContext): Boolean = callExpression.valueArguments.all {
+    override fun isApplicableInContext(callExpression: KtCallExpression, context: BindingContext): Boolean = callExpression
+        .valueArguments.all {
         it.getArgumentExpression()?.getType(context)?.isNullable() == false
     }
 }

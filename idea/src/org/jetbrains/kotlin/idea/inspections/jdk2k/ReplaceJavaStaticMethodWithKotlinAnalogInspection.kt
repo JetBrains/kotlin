@@ -31,7 +31,12 @@ class ReplaceJavaStaticMethodWithKotlinAnalogInspection : AbstractKotlinInspecti
             ?.let { list ->
                 val context = call.analyze(BodyResolveMode.PARTIAL)
                 val callDescriptor = call.getResolvedCall(context) ?: return
-                list.filter { callDescriptor.isCalling(FqName(it.javaMethodFqName)) && it.transformation.isApplicable(call, context) }
+                list.filter {
+                    callDescriptor.isCalling(FqName(it.javaMethodFqName)) && it.transformation.isApplicableInContext(
+                        call,
+                        context
+                    )
+                }
             }
             ?.takeIf { it.isNotEmpty() }
             ?.map(::ReplaceWithKotlinAnalogFunction)
