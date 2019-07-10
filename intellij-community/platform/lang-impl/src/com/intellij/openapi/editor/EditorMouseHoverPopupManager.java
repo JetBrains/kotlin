@@ -508,18 +508,19 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
       Ref<WrapperPanel> wrapperPanelRef = new Ref<>();
       Ref<LightweightHint> mockHintRef = new Ref<>();
       HintHint hintHint = new HintHint().setAwtTooltip(true).setRequestFocus(requestFocus);
-      LightweightHint hint = renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, highlightActions, expand -> {
-        LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
-        JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge, requestFocus);
-        AbstractPopup popup = popupBridge.getPopup();
-        WrapperPanel wrapper = wrapperPanelRef.get();
-        if (newComponent != null && popup != null && wrapper != null) {
-          LightweightHint mockHint = mockHintRef.get();
-          if (mockHint != null) closeHintIgnoreBinding(mockHint);
-          wrapper.setContent(newComponent);
-          validatePopupSize(popup);
-        }
-      });
+      LightweightHint hint =
+        renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, true, highlightActions, expand -> {
+          LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
+          JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge, requestFocus);
+          AbstractPopup popup = popupBridge.getPopup();
+          WrapperPanel wrapper = wrapperPanelRef.get();
+          if (newComponent != null && popup != null && wrapper != null) {
+            LightweightHint mockHint = mockHintRef.get();
+            if (mockHint != null) closeHintIgnoreBinding(mockHint);
+            wrapper.setContent(newComponent);
+            validatePopupSize(popup);
+          }
+        });
       if (hint == null) return null;
       mockHintRef.set(hint);
       bindHintHiding(hint, popupBridge);

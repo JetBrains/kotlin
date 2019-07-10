@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider.isSho
 import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider.setShowActions
 import com.intellij.codeInsight.hint.HintManagerImpl
 import com.intellij.codeInsight.hint.LineTooltipRenderer
+import com.intellij.codeInsight.hint.TooltipGroup
 import com.intellij.icons.AllIcons
 import com.intellij.ide.TooltipEvent
 import com.intellij.ide.actions.ActionsCollector
@@ -88,25 +89,39 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     return textToProcess.replace(extendMessage, "")
   }
 
+  override fun createHint(editor: Editor,
+                          p: Point,
+                          alignToRight: Boolean,
+                          group: TooltipGroup,
+                          hintHint: HintHint,
+                          newLayout: Boolean,
+                          highlightActions: Boolean,
+                          tooltipReloader: TooltipReloader?): LightweightHint {
+    return super.createHint(editor, p, alignToRight, group, hintHint, newLayout,
+                            highlightActions || !(isShowActions() && tooltipAction != null && hintHint.isAwtTooltip),
+                            tooltipReloader)
+  }
+
   override fun fillPanel(editor: Editor,
                          grid: JPanel,
                          hint: LightweightHint,
                          hintHint: HintHint,
                          actions: ArrayList<AnAction>,
                          tooltipReloader: TooltipReloader,
+                         newLayout: Boolean,
                          highlightActions: Boolean) {
-    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, highlightActions)
+    super.fillPanel(editor, grid, hint, hintHint, actions, tooltipReloader, newLayout, highlightActions)
     val hasMore = LineTooltipRenderer.isActiveHtml(myText!!)
     if (tooltipAction == null && !hasMore) return
 
     val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore)
 
     val settingsConstraints = GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                 JBUI.insets(4, 7, 4, 4), 0, 0)
+                                                 JBUI.insets(if (newLayout) 8 else 4, 7, 4, 4), 0, 0)
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
-      addActionsRow(hintHint, hint, editor, actions, grid, highlightActions)
+      addActionsRow(hintHint, hint, editor, actions, grid, newLayout, highlightActions)
     }
   }
 
@@ -115,6 +130,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                             editor: Editor,
                             actions: ArrayList<AnAction>,
                             grid: JComponent,
+                            newLayout: Boolean,
                             highlightActions: Boolean) {
     if (tooltipAction == null || !hintHint.isAwtTooltip) return
 
@@ -138,16 +154,22 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
       .fillCellHorizontally()
       .anchor(GridBagConstraints.WEST)
 
-    buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground), gridBag.next().insets(5, 8, 5, 4))
-    buttons.add(createKeymapHint(shortcutRunActionText), gridBag.next().insets(0, 4, 0, 12))
+    val topInset = if (newLayout) 4 else 5
+    val bottomInset = if (newLayout) (if (highlightActions) 4 else 10) else 5
+    buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground),
+                gridBag.next().insets(topInset, if (newLayout) 10 else 8, bottomInset, 4))
+    buttons.add(createKeymapHint(shortcutRunActionText),
+                gridBag.next().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 12))
 
     val showAllFixes = { _: InputEvent? ->
       hint.hide()
       tooltipAction.showAllActions(editor)
     }
 
-    buttons.add(createActionLabel("More actions...", showAllFixes, hintHint.textBackground), gridBag.next().insets(5, 12, 5, 4))
-    buttons.add(createKeymapHint(shortcutShowAllActionsText), gridBag.next().fillCellHorizontally().insets(0, 4, 0, 20))
+    buttons.add(createActionLabel("More actions...", showAllFixes, hintHint.textBackground),
+                gridBag.next().insets(topInset, 12, bottomInset, 4))
+    buttons.add(createKeymapHint(shortcutShowAllActionsText),
+                gridBag.next().fillCellHorizontally().insets(if (newLayout) topInset else 0, 4, if (newLayout) bottomInset else 0, 20))
 
     actions.add(object : AnAction() {
       override fun actionPerformed(e: AnActionEvent) {

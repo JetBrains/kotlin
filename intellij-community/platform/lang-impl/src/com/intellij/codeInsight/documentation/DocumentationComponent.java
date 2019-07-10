@@ -500,7 +500,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           }
           else {
             Dimension d = component.getPreferredSize();
-            component.setBounds(r.width - d.width - 2, r.height - d.height - 3, d.width, d.height);
+            boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
+            component.setBounds(r.width - d.width - (newLayout ? 4 : 2),
+                                r.height - d.height - (newLayout ? 9 : 3),
+                                d.width, d.height);
           }
         }
       }
@@ -635,17 +638,23 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   private static void prepareCSS(HTMLEditorKit editorKit) {
     Color borderColor = ColorUtil.mix(DOCUMENTATION_COLOR, BORDER_COLOR, 0.5);
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
+    boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
+    int leftPadding = newLayout ? 8 : 7;
+    int definitionTopPadding = newLayout ? 4 : 3;
+    int definitionBottomPadding = newLayout ? 4 : 1;
+    int htmlBottomPadding = newLayout ? 8 : 5;
     editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"}");
-    editorKit.getStyleSheet().addRule("html { padding-bottom: 5px; }");
+    editorKit.getStyleSheet().addRule("html { padding-bottom: " + htmlBottomPadding + "px; }");
     editorKit.getStyleSheet().addRule("h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }");
     editorKit.getStyleSheet().addRule("a { color: #" + ColorUtil.toHex(getLinkColor()) + "; text-decoration: none;}");
-    editorKit.getStyleSheet().addRule(".definition { padding: 3px 17px 1px 7px; border-bottom: thin solid #" + ColorUtil.toHex(borderColor) + "; }");
-    editorKit.getStyleSheet().addRule(".definition-only { padding: 3px 17px 0 7px; }");
-    editorKit.getStyleSheet().addRule(".content { padding: 5px 16px 0 7px; max-width: 100% }");
-    editorKit.getStyleSheet().addRule(".bottom { padding: 3px 16px 0 7px; }");
-    editorKit.getStyleSheet().addRule(".bottom-no-content { padding: 5px 16px 0 7px; }");
+    editorKit.getStyleSheet().addRule(".definition { padding: " + definitionTopPadding + "px 17px " + definitionBottomPadding + "px " +
+                                      leftPadding + "px; border-bottom: thin solid #" + ColorUtil.toHex(borderColor) + "; }");
+    editorKit.getStyleSheet().addRule(".definition-only { padding: " + definitionTopPadding + "px 17px 0 " + leftPadding + "px; }");
+    editorKit.getStyleSheet().addRule(".content { padding: 5px 16px 0 " + leftPadding + "px; max-width: 100% }");
+    editorKit.getStyleSheet().addRule(".bottom { padding: 3px 16px 0 " + leftPadding + "px; }");
+    editorKit.getStyleSheet().addRule(".bottom-no-content { padding: 5px 16px 0 " + leftPadding + "px; }");
     editorKit.getStyleSheet().addRule("p { padding: 1px 0 2px 0; }");
     editorKit.getStyleSheet().addRule("ol { padding: 0 16px 0 0; }");
     editorKit.getStyleSheet().addRule("ul { padding: 0 16px 0 0; }");
@@ -654,7 +663,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     editorKit.getStyleSheet().addRule(".centered { text-align: center}");
 
     // sections table
-    editorKit.getStyleSheet().addRule(".sections { padding: 0 16px 0 7px; border-spacing: 0; }");
+    editorKit.getStyleSheet().addRule(".sections { padding: 0 16px 0 " + leftPadding + "; border-spacing: 0; }");
     editorKit.getStyleSheet().addRule("tr { margin: 0 0 0 0; padding: 0 0 0 0; }");
     editorKit.getStyleSheet().addRule("td { margin: 2px 0 3.5px 0; padding: 0 0 0 0; }");
     editorKit.getStyleSheet().addRule("th { text-align: left; }");
