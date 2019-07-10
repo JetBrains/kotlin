@@ -4,12 +4,11 @@ import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.serializers.FieldSerializer
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
 import org.jetbrains.konan.resolve.symbols.KtOCLazySymbol
-import java.lang.reflect.Method
+import org.jetbrains.konan.resolve.symbols.serialization.KtSerializer.Companion.currentFile
 
-class KtLazySymbolSerializer<T : KtOCLazySymbol<*, *>>(
+class KtOCLazySymbolSerializer<T : KtOCLazySymbol<*, *>>(
     symbolClass: Class<T>,
     private val serializer: FileSymbolTableSerializer
 ) : FieldSerializer<T>(serializer.kryo, symbolClass) {
@@ -32,16 +31,6 @@ class KtLazySymbolSerializer<T : KtOCLazySymbol<*, *>>(
         symbol.ensureStateLoaded()
         super.write(kryo, output, symbol)
     }
-
-    private val FileSymbolTableSerializer.currentFile: VirtualFile
-        get() = CurrentFileGetter.get(this)
 }
-
-//todo get rid of reflection
-private object CurrentFileGetter {
-    private val method: Method = FileSymbolTableSerializer::class.java.getMethod("getCurrentFile")
-    fun get(serializer: FileSymbolTableSerializer): VirtualFile = method.invoke(serializer) as VirtualFile
-}
-
 
 

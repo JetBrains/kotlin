@@ -1,27 +1,18 @@
-/*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
- */
-
 package org.jetbrains.konan.resolve.symbols
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.DeepEqual
+import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.VirtualFileOwner
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
-abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtLazySymbol<State, Stb>, VirtualFileOwner {
-
+abstract class KtOCImmediateSymbol : KtImmediateSymbol, VirtualFileOwner {
     @Transient
     private lateinit var file: VirtualFile
 
-    constructor(
-        stub: Stb,
-        project: Project,
-        file: VirtualFile
-    ) : super(stub, project) {
+    constructor(stub: Stub<*>, file: VirtualFile) : super(stub) {
         this.file = file
     }
 
@@ -32,8 +23,8 @@ abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : K
     override fun deepEqualStep(c: DeepEqual.Comparator, first: Any, second: Any): Boolean {
         if (!super.deepEqualStep(c, first, second)) return false
 
-        val f = first as KtOCLazySymbol<*, *>
-        val s = second as KtOCLazySymbol<*, *>
+        val f = first as KtOCImmediateSymbol
+        val s = second as KtOCImmediateSymbol
 
         if (!Comparing.equal(f.file, s.file)) return false
 
@@ -41,6 +32,11 @@ abstract class KtOCLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : K
     }
 
     override fun hashCodeExcludingOffset(): Int = name.hashCode() * 31 + file.hashCode()
+
+    override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
+        return super.isSameSymbol(symbol, project)
+               || symbol is KtOCLightSymbol && locateDefinition(project) == symbol.locateDefinition(project)
+    }
 
     override fun init(file: VirtualFile) {
         this.file = file

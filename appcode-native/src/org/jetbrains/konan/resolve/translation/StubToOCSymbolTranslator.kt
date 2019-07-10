@@ -12,24 +12,22 @@ import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
 import org.jetbrains.konan.resolve.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
-class StubToSymbolTranslator(val project: Project) {
+class StubToOCSymbolTranslator(val project: Project) {
     fun translate(stub: Stub<*>, file: VirtualFile): OCSymbol? {
         return when (stub) {
             is ObjCProtocol -> KtOCProtocolSymbol(stub, project, file)
             is ObjCInterface -> KtOCInterfaceSymbol(stub, project, file)
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
-                return null
+                null
             }
         }
     }
 
     fun translateMember(stub: Stub<*>, clazz: OCClassSymbol, file: VirtualFile): OCMemberSymbol? {
         return when (stub) {
-            is ObjCMethod -> {
-                val method = KtOCMethodSymbol(stub, project, file, clazz)
+            is ObjCMethod -> KtOCMethodSymbol(stub, project, file, clazz).also { method ->
                 method.selectors = translateParameters(stub, clazz, file)
-                method
             }
             is ObjCProperty -> KtOCPropertySymbol(stub, project, file, clazz)
             else -> {

@@ -1,3 +1,6 @@
 package org.jetbrains.konan.resolve.symbols
 
-interface KtSymbol
+import com.jetbrains.cidr.lang.symbols.OCForeignSymbol
+import com.jetbrains.cidr.lang.symbols.OCSymbol
+
+interface KtSymbol : OCSymbol, OCForeignSymbol

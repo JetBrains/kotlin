@@ -18,7 +18,7 @@ import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
-class KtOCParameterSymbol : KtOCSymbol, OCDeclaratorSymbol {
+class KtOCParameterSymbol : KtOCImmediateSymbol, OCDeclaratorSymbol {
     private lateinit var containingClass: OCClassSymbol
     private lateinit var qualifiedName: OCQualifiedName
     private lateinit var type: OCType
@@ -68,6 +68,7 @@ class KtOCParameterSymbol : KtOCSymbol, OCDeclaratorSymbol {
 
     override fun getTemplateSpecialization(): List<OCTypeArgument> = emptyList()
 
+    //todo why containingClass???
     override fun getParent(): OCSymbolWithQualifiedName = containingClass
 
     override fun getNameWithParent(context: OCResolveContext): String = parent.name + "::" + name

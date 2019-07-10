@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 
 class KtFileTranslator(val project: Project) {
-    private val stubToSymbolTranslator = StubToSymbolTranslator(project)
+    private val stubToOCSymbolTranslator = StubToOCSymbolTranslator(project)
+    private val stubToSwiftSymbolTranslator = StubToSwiftSymbolTranslator(project)
 
     fun translate(file: KtFile): Sequence<OCSymbol> = createStubProvider(file).translate(file).asSequence().translate(file.virtualFile)
     fun translateBase(file: KtFile): Sequence<OCSymbol> = createStubProvider(file).generateBase().asSequence().translate(file.virtualFile)
 
-    private fun Sequence<Stub<*>>.translate(file: VirtualFile): Sequence<OCSymbol> = mapNotNull { stubToSymbolTranslator.translate(it, file) }
+    private fun Sequence<Stub<*>>.translate(file: VirtualFile): Sequence<OCSymbol> = mapNotNull { stubToOCSymbolTranslator.translate(it, file) } +
+                                                                                     mapNotNull { stubToSwiftSymbolTranslator.translate(it, file) }
 
     private fun createStubProvider(file: KtFile): ObjCExportLazy {
         val configuration = object : ObjCExportLazy.Configuration {

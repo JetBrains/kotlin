@@ -13,7 +13,7 @@ import com.jetbrains.cidr.lang.refactoring.OCNameSuggester
 import com.jetbrains.cidr.lang.search.OCMethodReferencesSearch.processRefs
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
 import com.jetbrains.cidr.lang.types.OCObjectType
-import org.jetbrains.konan.resolve.symbols.KtOCPsiWrapper
+import org.jetbrains.konan.resolve.symbols.KtSymbolPsiWrapper
 import org.jetbrains.konan.resolve.findSymbols
 import org.jetbrains.kotlin.idea.debugger.readAction
 import org.jetbrains.kotlin.psi.KtFunction
@@ -41,7 +41,7 @@ class KotlinFunctionOCUsagesSearcher : QueryExecutor<PsiReference, ReferencesSea
         parameters: ReferencesSearch.SearchParameters,
         consumer: Processor<in PsiReference>
     ): Boolean {
-        val psiWrapper = KtOCPsiWrapper(function, symbol)
+        val psiWrapper = KtSymbolPsiWrapper(function, symbol)
         val ocQueryParameters = parameters.duplicateWith(psiWrapper)
 
         val methodSelector = psiWrapper.symbol.name
