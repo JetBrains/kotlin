@@ -151,7 +151,9 @@ class JvmDeclarationFactory(
                     interfaceFun.origin != IrDeclarationOrigin.FAKE_OVERRIDE -> interfaceFun.origin
                     interfaceFun.resolveFakeOverride()!!.origin.isSynthetic -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE_TO_SYNTHETIC
                     else -> JvmLoweredDeclarationOrigin.DEFAULT_IMPLS_BRIDGE
-                }
+                },
+                // Old backend doesn't generate ACC_FINAL on DefaultImpls methods.
+                modality = Modality.OPEN
             )
         }
     }
