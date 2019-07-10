@@ -198,7 +198,11 @@ public class PsiElementRenameHandler implements RenameHandler {
   }
 
   public static boolean isVetoed(PsiElement element) {
-    if (element == null || element instanceof SyntheticElement) return true;
+    if (element == null || 
+        element instanceof SyntheticElement || 
+        element instanceof PsiNamedElement && ((PsiNamedElement)element).getName() == null) {
+      return true;
+    }
     for(Condition<PsiElement> condition: VETO_RENAME_CONDITION_EP.getExtensionList()) {
       if (condition.value(element)) return true;
     }
