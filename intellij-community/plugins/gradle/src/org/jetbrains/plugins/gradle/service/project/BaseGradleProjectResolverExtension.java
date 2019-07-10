@@ -1172,7 +1172,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       library.addPath(LibraryPathType.DOC, javadocPath.getAbsolutePath());
     }
 
-    if (level == LibraryLevel.PROJECT && !linkProjectLibrary(ideProject, library)) {
+    if (level == LibraryLevel.PROJECT && !linkProjectLibrary(resolverCtx.getInternary(), ideProject, library)) {
       level = LibraryLevel.MODULE;
     }
 

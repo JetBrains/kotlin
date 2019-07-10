@@ -51,6 +51,8 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
 
+  @NotNull private ProjectResolverInternary myInternary = new ProjectResolverInternary();
+
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
                                        @Nullable final GradleExecutionSettings settings,
@@ -220,5 +222,11 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable
   public BuildEnvironment getBuildEnvironment() {
     return myBuildEnvironment;
+  }
+
+  @NotNull
+  @Override
+  public ProjectResolverInternary getInternary() {
+    return myInternary;
   }
 }
