@@ -242,7 +242,7 @@ internal fun ElementAndTextList.convertCodeToKotlin(project: Project, targetModu
     val inputElements = this.toList().filterIsInstance<PsiElement>()
     val (results, _, converterContext) =
             ProgressManager.getInstance().runProcessWithProgressSynchronously(
-                    ThrowableComputable<org.jetbrains.kotlin.j2k.Result, Exception> {
+                    ThrowableComputable<Result, Exception> {
                         runReadAction { converter.elementsToKotlin(inputElements) }
                     },
                     JavaToKotlinAction.title,
