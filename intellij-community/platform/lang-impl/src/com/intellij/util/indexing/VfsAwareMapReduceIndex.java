@@ -5,6 +5,7 @@ package com.intellij.util.indexing;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.TransactionGuard;
+import com.intellij.openapi.application.impl.ApplicationInfoImpl;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.util.io.ByteArraySequence;
@@ -38,7 +39,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
   static {
     if (!DebugAssertions.DEBUG) {
       final Application app = ApplicationManager.getApplication();
-      DebugAssertions.DEBUG = app.isEAP() || app.isInternal();
+      DebugAssertions.DEBUG = (app.isEAP() || app.isInternal()) && !ApplicationInfoImpl.isInStressTest();
     }
   }
 
