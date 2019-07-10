@@ -167,6 +167,11 @@ public class GenerateToStringActionTestGenerated extends AbstractGenerateToStrin
             runTest("idea/testData/codeInsight/generate/toString/singleTemplate/noVars.kt");
         }
 
+        @TestMetadata("nullableArrays.kt")
+        public void testNullableArrays() throws Exception {
+            runTest("idea/testData/codeInsight/generate/toString/singleTemplate/nullableArrays.kt");
+        }
+
         @TestMetadata("singleVar.kt")
         public void testSingleVar() throws Exception {
             runTest("idea/testData/codeInsight/generate/toString/singleTemplate/singleVar.kt");
