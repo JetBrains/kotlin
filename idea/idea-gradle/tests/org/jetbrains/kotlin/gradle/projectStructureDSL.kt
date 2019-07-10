@@ -157,15 +157,30 @@ class ModuleInfo(
     }
 
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
-        val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { it.libraryName == libraryName }
-        checkLibrary(libraryEntry, libraryName, scope)
+        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { it.libraryName == libraryName }
+        if (libraryEntries.size > 1) {
+            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $libraryName")
+        }
+        if (libraryEntries.isEmpty()) {
+            val mostProbableCandidate =
+                rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().sortedWith(Comparator<LibraryOrderEntry> { o1, o2 ->
+                    val o1len = o1?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
+                    val o2len = o2?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
+                    o2len - o1len
+                }).first()
+            projectInfo.messageCollector.report("Module '${module.name}': expected library dependency [$libraryName] but the most probable candidate [${mostProbableCandidate.libraryName}]")
+        }
+        checkLibrary(libraryEntries.singleOrNull(), libraryName, scope)
     }
 
     fun libraryDependencyByUrl(classesUrl: String, scope: DependencyScope) {
-        val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { entry ->
+        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { entry ->
             entry.library?.getUrls(OrderRootType.CLASSES)?.any { it == classesUrl } ?: false
         }
-        checkLibrary(libraryEntry, classesUrl, scope)
+        if (libraryEntries.size > 1) {
+            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $classesUrl")
+        }
+        checkLibrary(libraryEntries.singleOrNull(), classesUrl, scope)
     }
 
     private fun checkLibrary(libraryEntry: LibraryOrderEntry?, id: String, scope: DependencyScope) {
