@@ -32,7 +32,8 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : KtVisitorVoid() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                if (expression.parent is KtDotQualifiedExpression || expression.isInImportDirective()) return
+                val expressionParent = expression.parent
+                if (expressionParent is KtDotQualifiedExpression || expressionParent is KtPackageDirective || expressionParent is KtImportDirective) return
                 val expressionForAnalyze = expression.firstExpressionWithoutReceiver() ?: return
 
                 val parent = expressionForAnalyze.parent
