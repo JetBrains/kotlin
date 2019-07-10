@@ -433,7 +433,8 @@ public class FindManagerImpl extends FindManager {
       String newStringToFind;
 
       if (findmodel.isRegularExpressions()) {
-        newStringToFind = StringUtil.replace(s, "\n", "\\n\\s*"); // add \\s* for convenience
+        newStringToFind = StringUtil.replace(s, "\\n", "\n"); // temporary convert back escaped symbols
+        newStringToFind = newStringToFind.replaceAll( "\\n\\s+", "\\\\n\\\\s*"); // add \\s* for convenience
       } else {
         newStringToFind = StringUtil.escapeToRegexp(s);
         newStringToFind = newStringToFind.replaceAll("\\\\n\\s*", "\\\\n\\\\s*");

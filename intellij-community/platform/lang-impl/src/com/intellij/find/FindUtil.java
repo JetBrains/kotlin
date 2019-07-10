@@ -5,7 +5,6 @@ package com.intellij.find;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.codeInsight.hint.HintUtil;
-import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;
@@ -29,8 +28,6 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea;
 import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import com.intellij.openapi.fileEditor.FileEditor;
-import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.fileEditor.ex.IdeDocumentHistory;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -78,7 +75,11 @@ public class FindUtil {
     if (editor != null) {
       String s = getSelectedText(editor);
       if (s != null && s.length() < 10000) {
-        FindModel.initStringToFind(findModel, s);
+        if (findModel.isRegularExpressions() && Registry.is("ide.find.escape.selected.text.for.regex")) {
+          findModel.setStringToFind(StringUtil.escapeToRegexp(s));
+        } else {
+          FindModel.initStringToFind(findModel, s);
+        }
       }
     }
   }
@@ -86,8 +87,10 @@ public class FindUtil {
   public static void configureFindModel(boolean replace, @Nullable Editor editor, FindModel model, boolean firstSearch) {
     String stringToFind = firstSearch ? "" : model.getStringToFind();
     String selectedText = getSelectedText(editor);
+    boolean isSelectionUsed = false;
     if (!StringUtil.isEmpty(selectedText)) {
       stringToFind = selectedText;
+      isSelectionUsed = true;
     }
     model.setReplaceState(replace);
     boolean multiline = stringToFind.contains("\n");
@@ -97,7 +100,11 @@ public class FindUtil {
       stringToFind = "";
       multiline = false;
     }
-    model.setStringToFind(stringToFind);
+    model.setStringToFind(isSelectionUsed
+                          && model.isRegularExpressions()
+                          && Registry.is("ide.find.escape.selected.text.for.regex")
+                          ? StringUtil.escapeToRegexp(stringToFind)
+                          : stringToFind);
     model.setMultiline(multiline);
     model.setGlobal(isGlobal);
     model.setPromptOnReplace(false);
