@@ -189,8 +189,14 @@ addArtifact("archives", sourcesJar)
 addArtifact("sources", sourcesJar)
 
 val result by task<Jar> {
-    val task = if (kotlinBuildProperties.proguard) proguard else reflectShadowJar
+    val task = when {
+        kotlinBuildProperties.proguard -> proguard
+        kotlinBuildProperties.relocation -> stripMetadata
+        else -> reflectShadowJar
+    }
+    
     dependsOn(task)
+    
     from {
         zipTree(task.outputs.files.singleFile)
     }
