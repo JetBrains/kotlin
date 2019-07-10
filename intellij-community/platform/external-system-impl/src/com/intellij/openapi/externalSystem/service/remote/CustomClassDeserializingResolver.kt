@@ -5,6 +5,7 @@ import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.settings.ExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId
+import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataService
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import java.io.InputStream
 import java.io.ObjectInputStream
@@ -19,12 +20,14 @@ class CustomClassDeserializingResolver<S : ExternalSystemExecutionSettings>(
   private val rawResolverDelegate: RawExternalSystemProjectResolver<S>,
   private val resolverDelegate: RemoteExternalSystemProjectResolver<S>
 ) : RemoteExternalSystemProjectResolver<S> by resolverDelegate {
+
   override fun resolveProjectInfo(id: ExternalSystemTaskId,
                                   projectPath: String,
                                   isPreviewMode: Boolean,
                                   settings: S?): DataNode<ProjectData>? {
     val rawData = rawResolverDelegate.resolveProjectInfo(id, projectPath, isPreviewMode, settings) ?: return null
-    val managerClassLoaders = ExternalSystemApiUtil.getAllManagers().asSequence()
+    val managerClassLoaders = (ExternalSystemApiUtil.getAllManagers().asSequence()
+        + ProjectDataService.EP_NAME.extensions.asSequence())
       .map { it.javaClass.classLoader }
       .toSet()
 
