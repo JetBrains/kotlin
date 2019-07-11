@@ -178,7 +178,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             MINGW_X86,
             LINUX_X64,
             LINUX_ARM32_HFP,
-            LINUX_ARM64,
+            //LINUX_ARM64, it is disfunctional now. Need to update the toolchain.
             ANDROID_ARM32,
             // TODO: toolchain to be fixed for that to work.
             // ANDROID_ARM64,
