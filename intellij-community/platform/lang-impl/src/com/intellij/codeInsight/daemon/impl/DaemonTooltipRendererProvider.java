@@ -5,6 +5,7 @@
  */
 package com.intellij.codeInsight.daemon.impl;
 
+import com.intellij.codeInsight.daemon.impl.tooltips.TooltipActionProvider;
 import com.intellij.codeInsight.hint.LineTooltipRenderer;
 import com.intellij.codeInsight.hint.TooltipRenderer;
 import com.intellij.openapi.editor.Editor;
@@ -25,9 +26,11 @@ import java.util.List;
 
 public class DaemonTooltipRendererProvider implements ErrorStripTooltipRendererProvider {
   private final Project myProject;
+  private final Editor myEditor;
 
-  DaemonTooltipRendererProvider(final Project project) {
+  DaemonTooltipRendererProvider(final Project project, Editor editor) {
     myProject = project;
+    myEditor = editor;
   }
 
   @Override
@@ -65,7 +68,15 @@ public class DaemonTooltipRendererProvider implements ErrorStripTooltipRendererP
       });
       final HighlightInfoComposite composite = HighlightInfoComposite.create(infos);
       String toolTip = composite.getToolTip();
-      DaemonTooltipRenderer myRenderer = new DaemonTooltipRenderer(toolTip, new Object[]{highlighters});
+      DaemonTooltipRenderer myRenderer;
+      if (Registry.is("ide.tooltip.show.with.actions")) {
+        TooltipAction action = TooltipActionProvider.calcTooltipAction(composite, myEditor);
+        myRenderer = new DaemonTooltipWithActionRenderer(toolTip, action, 0,
+                                                         action == null ? new Object[]{toolTip} : new Object[]{toolTip, action});
+      }
+      else {
+        myRenderer = new DaemonTooltipRenderer(toolTip, new Object[]{highlighters});
+      }
       if (bigRenderer != null) {
         myRenderer.addBelow(bigRenderer.getText());
       }

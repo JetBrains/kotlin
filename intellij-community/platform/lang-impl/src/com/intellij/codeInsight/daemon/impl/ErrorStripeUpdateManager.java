@@ -38,7 +38,7 @@ public class ErrorStripeUpdateManager {
     PsiFile file = myPsiDocumentManager.getPsiFile(editor.getDocument());
     final EditorMarkupModel markup = (EditorMarkupModel) editor.getMarkupModel();
     markup.setErrorPanelPopupHandler(createPopup(file));
-    markup.setErrorStripTooltipRendererProvider(createTooltipRenderer());
+    markup.setErrorStripTooltipRendererProvider(createTooltipRenderer(editor));
     markup.setMinMarkHeight(DaemonCodeAnalyzerSettings.getInstance().getErrorStripeMarkMinHeight());
     setOrRefreshErrorStripeRenderer(markup, file);
   }
@@ -69,8 +69,8 @@ public class ErrorStripeUpdateManager {
   }
 
   @NotNull
-  private ErrorStripTooltipRendererProvider createTooltipRenderer() {
-    return new DaemonTooltipRendererProvider(myProject);
+  private ErrorStripTooltipRendererProvider createTooltipRenderer(Editor editor) {
+    return new DaemonTooltipRendererProvider(myProject, editor);
   }
 
   @Nullable
