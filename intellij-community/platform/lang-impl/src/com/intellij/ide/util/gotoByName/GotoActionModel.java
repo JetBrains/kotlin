@@ -301,9 +301,18 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     return event;
   }
 
+  /**
+   * @deprecated Please use {@link GotoActionModel#defaultActionForeground(boolean, boolean, Presentation)} instead.
+   * This method may be removed in future versions
+   */
+  @Deprecated
   public static Color defaultActionForeground(boolean isSelected, @Nullable Presentation presentation) {
-    if (isSelected) return UIUtil.getListSelectionForeground();
-    if (presentation != null && (!presentation.isEnabled() || !presentation.isVisible())) return UIUtil.getInactiveTextColor();
+    return defaultActionForeground(isSelected, true, presentation);
+  }
+
+  public static Color defaultActionForeground(boolean isSelected, boolean hasFocus, @Nullable Presentation presentation) {
+    if (isSelected) return UIUtil.getListSelectionForeground(hasFocus);
+    if (presentation != null && !presentation.isEnabledAndVisible()) return UIUtil.getInactiveTextColor();
     return UIUtil.getListForeground();
   }
 
@@ -720,7 +729,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
           panel.add(new JBLabel(EMPTY_ICON), BorderLayout.WEST);
         }
         String str = cutName((String)matchedValue, null, list, panel, nameComponent);
-        nameComponent.append(str, new SimpleTextAttributes(STYLE_PLAIN, defaultActionForeground(isSelected, null)));
+        nameComponent.append(str, new SimpleTextAttributes(STYLE_PLAIN, defaultActionForeground(isSelected, cellHasFocus, null)));
         return panel;
       }
 
@@ -736,8 +745,8 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         boolean toggle = anAction instanceof ToggleAction;
         String groupName = actionWithParentGroup.getAction() instanceof ApplyIntentionAction ? null : actionWithParentGroup.getGroupName();
         Presentation presentation = actionWithParentGroup.getPresentation();
-        Color fg = defaultActionForeground(isSelected, presentation);
-        boolean disabled = !isSelected && (!presentation.isEnabled() || !presentation.isVisible());
+        Color fg = defaultActionForeground(isSelected, cellHasFocus, presentation);
+        boolean disabled = !isSelected && !presentation.isEnabledAndVisible();
 
         if (disabled) {
           groupFg = UIUtil.getLabelDisabledForeground();
