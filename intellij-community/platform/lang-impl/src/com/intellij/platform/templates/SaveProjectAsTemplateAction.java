@@ -60,9 +60,9 @@ import java.util.regex.Pattern;
  * @author Dmitry Avdeev
  */
 public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
-
   private static final Logger LOG = Logger.getInstance(SaveProjectAsTemplateAction.class);
   private static final String PROJECT_TEMPLATE_XML = "project-template.xml";
+
   static final String FILE_HEADER_TEMPLATE_PLACEHOLDER = "<IntelliJ_File_Header>";
 
   @Override
@@ -79,7 +79,6 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     final SaveProjectAsTemplateDialog dialog = new SaveProjectAsTemplateDialog(project, descriptionFile);
 
     if (dialog.showAndGet()) {
-
       final Module moduleToSave = dialog.getModuleToSave();
       final Path file = dialog.getTemplateFile();
       final String description = dialog.getDescription();
@@ -101,8 +100,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
                                                        "Template Created",
                                                        FileUtilRt.getNameWithoutExtension(file.getFileName().toString()) +
                                                        " was successfully created",
-                                                       NotificationType.INFORMATION
-          );
+                                                       NotificationType.INFORMATION);
           notification.addAction(newProjectAction);
           if (manageAction != null) {
             notification.addAction(manageAction);
@@ -128,16 +126,17 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
     return baseDir != null ? baseDir.findFileByRelativePath(path) : null;
   }
 
-  public static void saveProject(final Project project,
+  public static void saveProject(Project project,
                                  @NotNull Path zipFile,
                                  Module moduleToSave,
-                                 final String description,
+                                 String description,
                                  boolean replaceParameters,
-                                 final ProgressIndicator indicator,
+                                 ProgressIndicator indicator,
                                  boolean shouldEscape) {
-    final Map<String, String> parameters = computeParameters(project, replaceParameters);
+    Map<String, String> parameters = computeParameters(project, replaceParameters);
     indicator.setText("Saving project...");
     StoreUtil.saveSettings(project, true);
+
     indicator.setText("Processing project files...");
     VirtualFile dir = getDirectoryToSave(project, moduleToSave);
     List<LocalArchivedTemplate.RootDescription> roots = collectStructure(project, moduleToSave);
@@ -165,9 +164,7 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
         index.iterateContentUnderDirectory(rootFile, iterator);
       }
     }
-    catch (ProcessCanceledException ex){
-      //ignore
-    }
+    catch (ProcessCanceledException ignored) { }
     catch (Exception ex) {
       LOG.error(ex);
       UIUtil.invokeLaterIfNeeded(() -> Messages.showErrorDialog(project, "Can't save project as template", "Internal Error"));
@@ -199,16 +196,10 @@ public class SaveProjectAsTemplateAction extends AnAction implements DumbAware {
   }
 
   static String getNewProjectActionId() {
-    if (PlatformUtils.isIntelliJ()) {
-      return "NewProject";
-    }
-    else if (PlatformUtils.isPhpStorm()) {
-      return "NewDirectoryProject";
-    } else if (PlatformUtils.isWebStorm()) {
-      return "NewWebStormDirectoryProject";
-    } else {
-      throw new IllegalStateException("Provide new project action id for your IDE");
-    }
+    if (PlatformUtils.isIntelliJ()) return "NewProject";
+    if (PlatformUtils.isPhpStorm()) return "NewDirectoryProject";
+    if (PlatformUtils.isWebStorm()) return "NewWebStormDirectoryProject";
+    throw new IllegalStateException("Provide new project action id for your IDE");
   }
 
   private static void writeFile(String path, String text, Project project, String prefix, Compressor zip, boolean overwrite) throws IOException {
