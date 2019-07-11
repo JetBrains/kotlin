@@ -15,6 +15,7 @@ val proguardLibraryJars by configurations.creating
 val projectsDependencies = listOf(
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
+    ":kotlin-scripting-jvm-host",
     ":kotlin-script-util",
     ":kotlin-script-runtime"
 )
@@ -26,8 +27,10 @@ dependencies {
         testCompile(project(it))
     }
     compileOnly("org.apache.ivy:ivy:2.4.0")
+    compileOnly(project(":compiler:cli-common"))
     runtime(project(":kotlin-compiler-embeddable"))
     runtime(project(":kotlin-scripting-compiler-embeddable"))
+    runtime(project(":kotlin-scripting-jvm-host-embeddable"))
     runtime(project(":kotlin-reflect"))
     embedded("org.apache.ivy:ivy:2.4.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
@@ -36,6 +39,7 @@ dependencies {
                               toolsJar()))
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(project(":kotlin-reflect"))
+    proguardLibraryJars(project(":kotlin-compiler"))
 }
 
 sourceSets {

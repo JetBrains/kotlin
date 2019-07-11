@@ -124,6 +124,6 @@ private fun <T : Any> KClass<T>.createInstance(): T {
 private fun <T : PropertiesCollection> scriptConfigInstance(kclass: KClass<out T>): T = try {
     kclass.objectInstance ?: kclass.createInstance()
 } catch (e: Throwable) {
-    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: ${e.message}", e)
+    throw IllegalArgumentException("$ILLEGAL_CONFIG_ANN_ARG: ${e.message + if (e.cause != null) " (${e.cause})" else ""}", e)
 }
 
