@@ -950,6 +950,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     else {
       width = Math.max(width, myEditorPane.getMinimumSize().width);
     }
+    Insets insets = getInsets();
+    width += insets.left + insets.right;
     return Math.min(maxWidth, Math.max(minWidth, width));
   }
 
@@ -959,6 +961,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     Dimension preferredSize = myEditorPane.getPreferredSize();
 
     int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
+    Insets insets = getInsets();
+    height += insets.top + insets.bottom;
     return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
   }
 

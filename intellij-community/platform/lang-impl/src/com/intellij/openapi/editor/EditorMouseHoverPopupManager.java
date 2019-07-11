@@ -580,21 +580,28 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
         }
         return null;
       }
-      DocumentationComponent component = new DocumentationComponent(documentationManager, false) {
+      class MyDocComponent extends DocumentationComponent {
+        private MyDocComponent() {
+          super(documentationManager, false);
+          if (deEmphasize) {
+            setBackground(UIUtil.getToolTipActionBackground());
+          }
+        }
+
         @Override
         protected void showHint() {
+          updateBorder();
           AbstractPopup popup = popupBridge.getPopup();
           if (popup != null) {
             validatePopupSize(popup);
           }
         }
-      };
-      if (deEmphasize) {
-        component.setBackground(UIUtil.getToolTipActionBackground());
-        if (component.needsToolbar()) {
-          component.setBorder(IdeBorderFactory.createBorder(SideBorder.TOP));
+
+        private void updateBorder() {
+          setBorder(deEmphasize && needsToolbar() ? IdeBorderFactory.createBorder(SideBorder.TOP) : null);
         }
       }
+      DocumentationComponent component = new MyDocComponent();
       component.setData(element, quickDocMessage, null, null, null);
       component.setToolwindowCallback(() -> {
         documentationManager.createToolWindow(element, extractOriginalElement(element));
