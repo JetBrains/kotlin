@@ -9,7 +9,10 @@ import com.intellij.codeInsight.navigation.BackgroundUpdaterTask;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.DataManager;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.CommonDataKeys;
+import com.intellij.openapi.actionSystem.DataContext;
+import com.intellij.openapi.actionSystem.PopupAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.progress.impl.BackgroundableProcessIndicator;
@@ -95,13 +98,27 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
   }
 
   private void updateElementImplementations(final Object lookupItemObject, ImplementationViewSession session) {
-    ImplementationViewSession newSession = session.getFactory().createSessionForLookupElement(session.getProject(),
-                                                                                              session.getEditor(), session.getFile(), lookupItemObject, isSearchDeep(),
-                                                                                              isIncludeAlwaysSelf());
+    ImplementationViewSessionFactory currentFactory = session.getFactory();
+    ImplementationViewSession newSession = createNewSession(currentFactory, session, lookupItemObject);
+    if (newSession == null) {
+      for (ImplementationViewSessionFactory factory: ImplementationViewSessionFactory.EP_NAME.getExtensionList()) {
+        if (currentFactory == factory) continue;
+        newSession = createNewSession(factory, session, lookupItemObject);
+        if (newSession != null) break;
+      }
+    }
     if (newSession != null) {
       Disposer.dispose(session);
       showImplementations(newSession, false, false);
     }
+  }
+
+  private ImplementationViewSession createNewSession(ImplementationViewSessionFactory factory,
+                                                     ImplementationViewSession session,
+                                                     Object lookupItemObject) {
+    return factory.createSessionForLookupElement(session.getProject(),
+                                                                                                session.getEditor(), session.getFile(), lookupItemObject, isSearchDeep(),
+                                                                                                isIncludeAlwaysSelf());
   }
 
   protected void showImplementations(@NotNull ImplementationViewSession session,
