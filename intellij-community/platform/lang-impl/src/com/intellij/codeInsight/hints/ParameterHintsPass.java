@@ -83,7 +83,7 @@ public class ParameterHintsPass extends EditorBoundHighlightingPass {
   }
 
   private static boolean isEnabled(Language language) {
-    return HintUtilsKt.isHintsEnabledForLanguage(language);
+    return HintUtilsKt.isParameterHintsEnabledForLanguage(language);
   }
 
   private void process(PsiElement element, InlayParameterHintsProvider provider) {

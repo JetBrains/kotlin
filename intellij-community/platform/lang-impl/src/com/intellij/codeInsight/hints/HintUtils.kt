@@ -51,7 +51,7 @@ fun getBaseLanguagesWithProviders(): List<Language> {
     .collect(Collectors.toList())
 }
 
-fun isHintsEnabledForLanguage(language: Language): Boolean {
+fun isParameterHintsEnabledForLanguage(language: Language): Boolean {
   if (!EditorSettingsExternalizable.getInstance().isShowParameterNameHints) return false
   return ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language)
 }

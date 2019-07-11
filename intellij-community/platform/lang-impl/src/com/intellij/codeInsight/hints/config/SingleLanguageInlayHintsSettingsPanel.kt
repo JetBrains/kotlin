@@ -4,6 +4,7 @@ package com.intellij.codeInsight.hints.config
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.codeInsight.hint.EditorFragmentComponent
 import com.intellij.codeInsight.hints.*
+import com.intellij.codeInsight.hints.settings.ParameterNameHintsSettings
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
@@ -12,6 +13,7 @@ import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
+import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
@@ -43,7 +45,11 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   private val editorField = createEditor()
   private val hintTypeConfigurableToComponent: MutableMap<ImmediateConfigurable, JComponent> = hashMapOf()
   private var selectedProvider: ProviderWithSettings<out Any>? = keyToProvider.entries.firstOrNull()?.value
-  private val providerTypesList = CheckBoxList<HintProviderOption<out Any>>()
+  private val providerTypesList = object: CheckBoxList<HintProviderOption<out Any>>() {
+    override fun isEnabled(index: Int): Boolean {
+      return getItemAt(index)?.isOldParameterHints != true || EditorSettingsExternalizable.getInstance().isShowParameterNameHints
+    }
+  }
   private val bottomPanel = JPanel()
   private val settings = ServiceManager.getService(InlayHintsSettings::class.java)
   private val immediateConfigurableListener = object : ChangeListener {
@@ -204,9 +210,15 @@ internal class SingleLanguageInlayHintsSettingsPanel(
   }
 
   fun isModified(): Boolean {
-    if (providerTypes.any { it.isEnabled() != settings.hintsEnabled(it.key, language) }) return true
+    if (providerTypes.any {
+        when {
+          it.isOldParameterHints -> it.isEnabled() != isParameterHintsEnabledForLanguage(language)
+          else -> it.isEnabled() != settings.hintsEnabled(it.key, language)
+        }
+      }) return true
     if (parameterHintsPanel?.isModified() == true) return true
-    return settingsWrappers.any { it.isModified() }
+    return settingsWrappers
+      .any { it.isModified() }
   }
 
   fun apply() {
@@ -261,8 +273,12 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     SwingUtilities.invokeLater {
       for ((index, providerType) in providerTypes.withIndex()) {
         val enabled = settings.hintsEnabled(providerType.key, language)
-        providerTypesList.setItemSelected(providerType, enabled)
-        providerTypesList.getItemAt(index)?.setEnabled(enabled)
+        if (!providerType.isOldParameterHints) {
+          providerTypesList.setItemSelected(providerType, enabled)
+          providerTypesList.getItemAt(index)?.setEnabled(enabled)
+        } else {
+          providerTypesList.setItemSelected(providerType, ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language))
+        }
       }
       providerTypesList.repaint()
     }
