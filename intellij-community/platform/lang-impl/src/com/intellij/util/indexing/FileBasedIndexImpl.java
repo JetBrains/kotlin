@@ -1,5 +1,4 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
 package com.intellij.util.indexing;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -2141,7 +2140,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
     @Override
     public boolean processFile(@NotNull final VirtualFile file) {
-      return ReadAction.compute(()->{
+      return ReadAction.compute(() -> {
         if (!file.isValid()) {
           return true;
         }
