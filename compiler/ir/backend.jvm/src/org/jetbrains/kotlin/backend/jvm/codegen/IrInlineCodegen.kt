@@ -99,7 +99,6 @@ class IrInlineCodegen(
 
     override fun genCall(
         callableMethod: Callable,
-        callDefault: Boolean,
         codegen: ExpressionCodegen,
         expression: IrFunctionAccessExpression
     ) {
@@ -107,7 +106,7 @@ class IrInlineCodegen(
         // TODO port inlining cycle detection to IrFunctionAccessExpression & pass it
         state.globalInlineContext.enterIntoInlining(null)
         try {
-            performInline(typeArguments, callDefault, codegen)
+            performInline(typeArguments, false, codegen)
         } finally {
             state.globalInlineContext.exitFromInliningOf(null)
         }

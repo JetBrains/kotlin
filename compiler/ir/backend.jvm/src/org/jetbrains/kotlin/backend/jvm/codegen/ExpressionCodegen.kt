@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -356,13 +355,6 @@ class ExpressionCodegen(
         }
 
         callGenerator.beforeValueParametersStart()
-        val extraArgsShift =
-            when {
-                callee is IrConstructor && callee.parentAsClass.isEnumClass -> 2
-                callee is IrConstructor && callee.parentAsClass.isInner -> 1 // skip the `$outer` parameter
-                else -> 0
-            }
-        val defaultMask = DefaultCallArgs(callable.valueParameterTypes.size - extraArgsShift)
         val typeParameters = if (callee is IrConstructor)
             callee.parentAsClass.typeParameters + callee.typeParameters
         else
@@ -375,16 +367,6 @@ class ExpressionCodegen(
             when {
                 arg != null -> {
                     callGenerator.genValueAndPut(irParameter, arg, parameterType, this@ExpressionCodegen, data)
-                }
-                irParameter.hasDefaultValue() -> {
-                    callGenerator.putValueIfNeeded(
-                        parameterType,
-                        StackValue.createDefaultValue(parameterType),
-                        ValueKind.DEFAULT_PARAMETER,
-                        i,
-                        this@ExpressionCodegen
-                    )
-                    defaultMask.mark(i - extraArgsShift/*TODO switch to separate lower*/)
                 }
                 else -> {
                     assert(irParameter.varargElementType != null)
@@ -412,7 +394,6 @@ class ExpressionCodegen(
 
         callGenerator.genCall(
             callable,
-            defaultMask.generateOnStackIfNeeded(callGenerator, callee is IrConstructor, this),
             this,
             expression
         )
@@ -1229,25 +1210,6 @@ class ExpressionCodegen(
             )
         }
     }
-}
-
-fun DefaultCallArgs.generateOnStackIfNeeded(callGenerator: IrCallGenerator, isConstructor: Boolean, codegen: ExpressionCodegen): Boolean {
-    val toInts = toInts()
-    if (toInts.isNotEmpty()) {
-        for (mask in toInts) {
-            callGenerator.putValueIfNeeded(Type.INT_TYPE, StackValue.constant(mask, Type.INT_TYPE), ValueKind.DEFAULT_MASK, -1, codegen)
-        }
-
-        val parameterType = if (isConstructor) DEFAULT_CONSTRUCTOR_MARKER else OBJECT_TYPE
-        callGenerator.putValueIfNeeded(
-            parameterType,
-            StackValue.constant(null, parameterType),
-            ValueKind.METHOD_HANDLE_IN_DEFAULT,
-            -1,
-            codegen
-        )
-    }
-    return toInts.isNotEmpty()
 }
 
 val IrType.isReifiedTypeParameter: Boolean
