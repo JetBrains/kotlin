@@ -332,7 +332,7 @@ internal open class TCServiceMessagesClient(
             checkState(NodeState.created)
             reportingParent?.checkState(NodeState.started)
 
-            results.started(descriptor!!, TestStartEvent(ts, reportingParent?.descriptor?.id))
+            results.started(descriptor!!, TestStartEvent(ts, descriptor!!.parent?.id))
 
             state = NodeState.started
         }
