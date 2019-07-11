@@ -7,6 +7,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.nio.file.Path;
 
 /**
@@ -15,6 +16,14 @@ import java.nio.file.Path;
 public class ComponentManagerSettingsImpl extends XmlBasedSettingsImpl implements ComponentManagerSettings {
   protected ComponentManagerSettingsImpl(Path file, ConversionContextImpl context) throws CannotConvertException {
     super(file, context);
+  }
+
+  /**
+   * @deprecated Use {@link #ComponentManagerSettingsImpl(Path, ConversionContextImpl)}
+   */
+  @Deprecated
+  protected ComponentManagerSettingsImpl(File file, ConversionContextImpl context) throws CannotConvertException {
+    super(file.toPath(), context);
   }
 
   @Override
