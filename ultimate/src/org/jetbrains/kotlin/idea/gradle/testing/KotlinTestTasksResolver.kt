@@ -12,6 +12,7 @@ import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.model.task.TaskData
 import com.intellij.openapi.externalSystem.util.Order
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
@@ -26,6 +27,10 @@ import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExten
 
 @Order(Int.MIN_VALUE)
 open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
+    companion object {
+        private const val ENABLED_REGISTRY_KEY = "kotlin.gradle.testing.enabled"
+    }
+
     private val LOG by lazy { Logger.getInstance(KotlinTestTasksResolver::class.java) }
 
     override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
@@ -37,6 +42,9 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
         ideModule: DataNode<ModuleData>,
         ideProject: DataNode<ProjectData>
     ): MutableCollection<TaskData> {
+        if (!Registry.`is`(ENABLED_REGISTRY_KEY))
+            return super.populateModuleTasks(gradleModule, ideModule, ideProject)
+
         val mppModel = resolverCtx.getMppModel(gradleModule)
             ?: return super.populateModuleTasks(gradleModule, ideModule, ideProject)
 
@@ -80,6 +88,9 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
     }
 
     override fun enhanceTaskProcessing(taskNames: MutableList<String>, jvmAgentSetup: String?, initScriptConsumer: Consumer<String>) {
+        if (!Registry.`is`(ENABLED_REGISTRY_KEY))
+            return
+
         try {
             val testLoggerScript = javaClass
                 .getResourceAsStream("/org/jetbrains/kotlin/idea/gradle/testing/KotlinMppTestLogger.groovy")

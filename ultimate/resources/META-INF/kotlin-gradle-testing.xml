@@ -1,4 +1,10 @@
 <idea-plugin>
+  <extensions defaultExtensionNs="com.intellij">
+    <registryKey key="kotlin.gradle.testing.enabled"
+                 description="Import Kotlin Gradle test tasks and process test output"
+                 defaultValue="false"
+                 restartRequired="false"/>
+  </extensions>
   <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
     <projectResolve implementation="org.jetbrains.kotlin.idea.gradle.testing.KotlinTestTasksResolver"/>
   </extensions>
