@@ -128,9 +128,14 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, val sourcePosition: Sour
             }
         }
 
+        if (!context.debugProcess.isAttached) {
+            status.error(EvaluationError.DebuggerNotAttached)
+            throw EvaluateExceptionUtil.PROCESS_EXITED
+        }
+
         val frameProxy = context.frameProxy ?: run {
             status.error(EvaluationError.NoFrameProxy)
-            evaluationException("Cannot evaluate a code fragment: frame proxy is not available")
+            throw EvaluateExceptionUtil.NULL_STACK_FRAME
         }
 
         val operatingThread = context.suspendContext.thread ?: run {

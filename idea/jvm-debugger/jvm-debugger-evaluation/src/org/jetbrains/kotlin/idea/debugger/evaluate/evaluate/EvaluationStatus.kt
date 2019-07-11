@@ -51,6 +51,7 @@ class EvaluationStatus {
 }
 
 enum class EvaluationError {
+    DebuggerNotAttached,
     NoFrameProxy,
     ThreadNotAvailable,
     ThreadNotSuspended,
