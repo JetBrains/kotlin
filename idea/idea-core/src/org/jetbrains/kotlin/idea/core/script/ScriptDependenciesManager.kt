@@ -30,6 +30,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
 import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
@@ -125,7 +126,8 @@ class ScriptDependenciesManager internal constructor(
         @TestOnly
         fun updateScriptDependenciesSynchronously(virtualFile: VirtualFile, project: Project) {
             val loader = SyncScriptDependenciesLoader(project)
-            loader.loadDependencies(virtualFile)
+            val scriptDefinition = virtualFile.findScriptDefinition(project) ?: return
+            loader.loadDependencies(virtualFile, scriptDefinition)
             loader.notifyRootsChanged()
         }
     }
