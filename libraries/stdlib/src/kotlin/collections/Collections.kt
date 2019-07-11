@@ -327,6 +327,7 @@ public inline fun <T, K : Comparable<K>> List<T>.binarySearchBy(
 
 /**
  * Searches this list or its range for an element for which the given [comparison] function returns zero using the binary search algorithm.
+ *
  * The list is expected to be sorted so that the signs of the [comparison] function's return values ascend on the list elements,
  * i.e. negative values come before zero and zeroes come before positive values.
  * Otherwise, the result is undefined.
