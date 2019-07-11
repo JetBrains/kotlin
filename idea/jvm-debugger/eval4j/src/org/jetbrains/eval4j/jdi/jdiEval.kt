@@ -31,10 +31,10 @@ private val CLASS = Type.getType(Class::class.java)
 private val OBJECT = Type.getType(Any::class.java)
 private val BOOTSTRAP_CLASS_DESCRIPTORS = setOf("Ljava/lang/String;", "Ljava/lang/ClassLoader;", "Ljava/lang/Class;")
 
-class JDIEval(
+open class JDIEval(
     private val vm: VirtualMachine,
     private val defaultClassLoader: ClassLoaderReference?,
-    private val thread: ThreadReference,
+    protected val thread: ThreadReference,
     private val invokePolicy: Int
 ) : Eval {
 
@@ -268,6 +268,14 @@ class JDIEval(
         return null
     }
 
+    open fun jdiInvokeStaticMethod(type: ClassType, method: Method, args: List<jdi_Value?>, invokePolicy: Int): jdi_Value? {
+        return type.invokeMethod(thread, method, args, invokePolicy)
+    }
+
+    open fun jdiInvokeStaticMethod(type: InterfaceType, method: Method, args: List<jdi_Value?>, invokePolicy: Int): jdi_Value? {
+        return type.invokeMethod(thread, method, args, invokePolicy)
+    }
+
     override fun invokeStaticMethod(methodDesc: MethodDescription, arguments: List<Value>): Value {
         val method = findMethod(methodDesc)
         if (!method.isStatic) {
@@ -284,14 +292,14 @@ class JDIEval(
 
         val result = mayThrow {
             when (declaringType) {
-                is ClassType -> declaringType.invokeMethod(thread, method, args, invokePolicy)
+                is ClassType -> jdiInvokeStaticMethod(declaringType, method, args, invokePolicy)
                 is InterfaceType -> {
                     if (!isJava8OrLater) {
                         val message = "Calling interface static methods is not supported in JVM ${vm.version()} ($method)"
                         throwBrokenCodeException(NoSuchMethodError(message))
                     }
 
-                    declaringType.invokeMethod(thread, method, args, invokePolicy)
+                    jdiInvokeStaticMethod(declaringType, method, args, invokePolicy)
                 }
                 else -> {
                     val message = "Calling static methods is only supported for classes and interfaces ($method)"
@@ -344,6 +352,10 @@ class JDIEval(
         return invokeMethod(boxedValue, method, listOf(), true)
     }
 
+    open fun jdiInvokeMethod(obj: ObjectReference, method: Method, args: List<jdi_Value?>, policy: Int): jdi_Value? {
+        return obj.invokeMethod(thread, method, args, policy)
+    }
+
     override fun invokeMethod(instance: Value, methodDesc: MethodDescription, arguments: List<Value>, invokespecial: Boolean): Value {
         if (invokespecial && methodDesc.name == "<init>") {
             // Constructor call
@@ -365,7 +377,7 @@ class JDIEval(
             }
 
             args.disableCollection()
-            val result = mayThrow { obj.invokeMethod(thread, method, args, policy) }.ifFail(method, obj)
+            val result = mayThrow { jdiInvokeMethod(obj, method, args, policy) }.ifFail(method, obj)
             args.enableCollection()
             return result.asValue()
         }
