@@ -15,6 +15,7 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
@@ -24,8 +25,8 @@ import kotlin.script.experimental.api.valueOrNull
 // TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
-    abstract fun isApplicable(file: VirtualFile): Boolean
-    abstract fun loadDependencies(file: VirtualFile)
+    abstract fun isApplicable(file: VirtualFile, scriptDefinition: ScriptDefinition): Boolean
+    abstract fun loadDependencies(file: VirtualFile, scriptDefinition: ScriptDefinition)
 
     protected abstract fun shouldShowNotification(): Boolean
 
