@@ -23,18 +23,14 @@ import java.io.File
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    private fun compareBase(stubMode: Boolean, compareFir: (File, LightTree2Fir) -> Boolean) {
+    private fun compareBase(stubMode: Boolean, compareFir: (File) -> Boolean) {
         val path = System.getProperty("user.dir")
         var counter = 0
         var errorCounter = 0
 
-        val parserDefinition = KotlinParserDefinition()
-        val lexer = parserDefinition.createLexer(myProject)
-        val lightTreeConverter = LightTree2Fir(stubMode, parserDefinition, lexer)
-
         println("BASE PATH: $path")
         path.walkTopDown { file ->
-            if (!compareFir(file, lightTreeConverter)) errorCounter++
+            if (!compareFir(file)) errorCounter++
             counter++
         }
         println("All scanned files: $counter")
@@ -43,7 +39,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll(stubMode: Boolean) {
-        compareBase(stubMode) { file, lightTreeConverter ->
+        val lightTreeConverter = LightTree2Fir(stubMode, myProject)
+        compareBase(stubMode) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree
@@ -62,6 +59,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     private fun compare(
         stubMode: Boolean,
         visitAnonymousFunction: Boolean = false,
+        visitLambdaExpression: Boolean = false,
         visitNamedFunction: Boolean = false,
         visitMemberDeclaration: Boolean = false,
         visitVariable: Boolean = false,
@@ -84,6 +82,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitTryExpression: Boolean = false,
         visitWhenExpression: Boolean = false,
         visitNamedArgumentExpression: Boolean = false,
+        visitLambdaArgumentExpression: Boolean = false,
         visitSpreadArgumentExpression: Boolean = false,
         visitAnonymousObject: Boolean = false,
         visitDoWhileLoop: Boolean = false,
@@ -92,6 +91,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     ) {
         val firVisitor = FirPartialTransformer(
             visitAnonymousFunction = visitAnonymousFunction,
+            visitLambdaExpression = visitLambdaExpression,
             visitNamedFunction = visitNamedFunction,
             visitMemberDeclaration = visitMemberDeclaration,
             visitVariable = visitVariable,
@@ -114,13 +114,15 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitTryExpression = visitTryExpression,
             visitWhenExpression = visitWhenExpression,
             visitNamedArgumentExpression = visitNamedArgumentExpression,
+            visitLambdaArgumentExpression = visitLambdaArgumentExpression,
             visitSpreadArgumentExpression = visitSpreadArgumentExpression,
             visitAnonymousObject = visitAnonymousObject,
             visitDoWhileLoop = visitDoWhileLoop,
             visitWhileLoop = visitWhileLoop,
             visitAssignment = visitAssignment
         )
-        compareBase(stubMode) { file, lightTreeConverter ->
+        val lightTreeConverter = LightTree2Fir(stubMode, myProject)
+        compareBase(stubMode) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree
@@ -152,5 +154,9 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testConstExpression() {
         compare(stubMode = false, visitConstExpression = true, visitAnnotation = true)
+    }
+
+    fun testCallExpression() {
+        compare(stubMode = false, visitFunctionCall = true, visitLambdaExpression = false)
     }
 }

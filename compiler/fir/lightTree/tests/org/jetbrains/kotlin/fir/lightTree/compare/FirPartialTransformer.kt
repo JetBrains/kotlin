@@ -15,9 +15,11 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.psi.KtForExpression
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 
 class FirPartialTransformer(
     private val visitAnonymousFunction: Boolean = false,
+    private val visitLambdaExpression: Boolean = false,
     private val visitNamedFunction: Boolean = false,
     private val visitMemberDeclaration: Boolean = false,
     private val visitVariable: Boolean = false,
@@ -40,6 +42,7 @@ class FirPartialTransformer(
     private val visitTryExpression: Boolean = false,
     private val visitWhenExpression: Boolean = false,
     private val visitNamedArgumentExpression: Boolean = false,
+    private val visitLambdaArgumentExpression: Boolean = false,
     private val visitSpreadArgumentExpression: Boolean = false,
     private val visitAnonymousObject: Boolean = false,
     private val visitDoWhileLoop: Boolean = false,
@@ -51,6 +54,8 @@ class FirPartialTransformer(
         data: Nothing?
     ): CompositeTransformResult<FirDeclaration> {
         return if (visitAnonymousFunction) {
+            (anonymousFunction.transformChildren(this, data) as FirAnonymousFunction).compose()
+        } else if (visitLambdaExpression && anonymousFunction.psi is KtLambdaExpression) {
             (anonymousFunction.transformChildren(this, data) as FirAnonymousFunction).compose()
         } else {
             DummyFirAnonymousFunction().compose()
@@ -260,6 +265,17 @@ class FirPartialTransformer(
     ): CompositeTransformResult<FirStatement> {
         return if (visitNamedArgumentExpression) {
             (namedArgumentExpression.transformChildren(this, data) as FirNamedArgumentExpression).compose()
+        } else {
+            DummyFirStatement().compose()
+        }
+    }
+
+    override fun transformLambdaArgumentExpression(
+        lambdaArgumentExpression: FirLambdaArgumentExpression,
+        data: Nothing?
+    ): CompositeTransformResult<FirStatement> {
+        return if (visitLambdaArgumentExpression) {
+            (lambdaArgumentExpression.transformChildren(this, data) as FirLambdaArgumentExpression).compose()
         } else {
             DummyFirStatement().compose()
         }
