@@ -21,9 +21,7 @@ class LightTree2FirConverterTestCases : AbstractRawFirBuilderTestCase() {
     private val testDirPath = "compiler/fir/psi2fir/testData/rawBuilder/declarations"
 
     private fun executeTest(filePath: String) {
-        val parserDefinition = KotlinParserDefinition()
-        val lexer = parserDefinition.createLexer(myProject)
-        val lightTree2Fir = LightTree2Fir(true, parserDefinition, lexer).buildFirFile(Paths.get(filePath)).render()
+        val lightTree2Fir = LightTree2Fir(true, myProject).buildFirFile(Paths.get(filePath)).render()
 
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(stubMode = true)
