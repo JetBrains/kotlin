@@ -77,11 +77,6 @@ open class FirBodyResolveTransformer(
     private var primaryConstructorParametersScope: FirLocalScope? = null
 
     override fun transformConstructor(constructor: FirConstructor, data: Any?): CompositeTransformResult<FirDeclaration> {
-        if (constructor.isPrimary) {
-            primaryConstructorParametersScope = FirLocalScope().apply {
-                constructor.valueParameters.forEach { this.storeDeclaration(it) }
-            }
-        }
         if (implicitTypeOnly) return constructor.compose()
         return super.transformConstructor(constructor, data)
     }
@@ -134,6 +129,12 @@ open class FirBodyResolveTransformer(
                 scopes.addIfNotNull(symbolProvider.getClassUseSiteMemberScope(companionObject.classId, session, scopeSession))
             }
             val result = withLabelAndReceiverType(regularClass.name, regularClass, type) {
+                val constructor = regularClass.declarations.firstOrNull() as? FirConstructor
+                if (constructor?.isPrimary == true) {
+                    primaryConstructorParametersScope = FirLocalScope().apply {
+                        constructor.valueParameters.forEach { this.storeDeclaration(it) }
+                    }
+                }
                 super.transformRegularClass(regularClass, data)
             }
             primaryConstructorParametersScope = oldConstructorScope
