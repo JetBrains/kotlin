@@ -84,4 +84,7 @@ public interface ProjectResolverContext extends UserDataHolderEx {
 
   @Nullable
   String getBuildSrcGroup();
+
+  @NotNull
+  ProjectResolverInternary getInternary();
 }

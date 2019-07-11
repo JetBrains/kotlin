@@ -94,7 +94,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
         buildScriptClasspath.add(new ClasspathEntryModelImpl(
           pathSet(projectDependencyArtifacts),
           pathSet(projectDependencyArtifactsSources),
-          new HashSet<String>()
+          Collections.<String>emptySet()
         ));
       }
       else if (dependency instanceof ExternalLibraryDependency) {
@@ -117,8 +117,8 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
         FileCollectionDependency fileCollectionDependency = (FileCollectionDependency)dependency;
         buildScriptClasspath.add(new ClasspathEntryModelImpl(
           pathSet(fileCollectionDependency.getFiles()),
-          new HashSet<String>(),
-          new HashSet<String>()
+          Collections.<String>emptySet(),
+          Collections.<String>emptySet()
         ));
       }
     }
@@ -136,12 +136,14 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
   }
 
   private static Set<String> pathSet(Collection<File> files) {
-    Set<String> set = new HashSet<String>();
+    if (files.isEmpty()) return Collections.emptySet();
+    Set<String> set = new HashSet<String>(files.size());
     for (File file : files) {
       if(file != null) {
         set.add(file.getPath());
       }
     }
+    if (set.isEmpty()) return Collections.emptySet();
     return set;
   }
 

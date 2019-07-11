@@ -258,19 +258,22 @@ public class GradleBuildSrcProjectsResolver {
 
       if (!buildSrcRuntimeSourcesPaths.isEmpty() || !buildSrcRuntimeClassesPaths.isEmpty()) {
         buildClasspathNodes.forEach(classpathNode -> {
-          BuildScriptClasspathData data = classpathNode.getData();
-          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = new ArrayList<>(data.getClasspathEntries());
+          BuildScriptClasspathData copyFrom = classpathNode.getData();
+
+          List<BuildScriptClasspathData.ClasspathEntry> classpathEntries = new ArrayList<>(copyFrom.getClasspathEntries().size() + 1);
+          classpathEntries.addAll(copyFrom.getClasspathEntries());
           classpathEntries.add(new BuildScriptClasspathData.ClasspathEntry(
             new THashSet<>(buildSrcRuntimeClassesPaths),
             new THashSet<>(buildSrcRuntimeSourcesPaths),
             Collections.emptySet()
           ));
+
           BuildScriptClasspathData buildScriptClasspathData = new BuildScriptClasspathData(GradleConstants.SYSTEM_ID, classpathEntries);
-          buildScriptClasspathData.setGradleHomeDir(data.getGradleHomeDir());
+          buildScriptClasspathData.setGradleHomeDir(copyFrom.getGradleHomeDir());
 
           DataNode<?> parent = classpathNode.getParent();
           assert parent != null;
-          parent.createChild(BuildScriptClasspathData.KEY, buildScriptClasspathData);
+          parent.createChild(BuildScriptClasspathData.KEY, buildSrcResolverCtx.getInternary().intern(buildScriptClasspathData));
           classpathNode.clear(true);
         });
       }
