@@ -48,8 +48,9 @@ public class PrintingLogger extends Logger {
 
     @Override
     public void debug(@Nullable Throwable t) {
-        //noinspection ConstantConditions
-        t.printStackTrace(out);
+        if (t != null) {
+            t.printStackTrace(out);
+        }
     }
 
     @Override
