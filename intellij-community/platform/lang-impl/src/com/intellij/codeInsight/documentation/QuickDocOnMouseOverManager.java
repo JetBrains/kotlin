@@ -302,7 +302,11 @@ public class QuickDocOnMouseOverManager {
       ApplicationManager.getApplication().invokeLater(() -> {
         myCurrentRequest = null;
 
-        if (editor.isDisposed() || IdeTooltipManager.getInstance().hasCurrent() && !docManager.hasActiveDockedDocWindow()) return;
+        if (editor.isDisposed() ||
+            (IdeTooltipManager.getInstance().hasCurrent() || IdeTooltipManager.getInstance().hasScheduled()) &&
+            !docManager.hasActiveDockedDocWindow()) {
+          return;
+        }
 
         PsiElement targetElement = targetElementRef.get();
         String documentation = documentationRef.get();
