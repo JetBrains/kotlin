@@ -143,6 +143,7 @@ class ReflectionReferencesGenerator(statementGenerator: StatementGenerator) : St
         return IrPropertyReferenceImpl(
             startOffset, endOffset, type.toIrType(),
             context.symbolTable.referenceProperty(originalProperty),
+            propertyDescriptor,
             propertyDescriptor.typeParametersCount,
             getFieldForPropertyReference(originalProperty),
             originalGetter?.let { context.symbolTable.referenceSimpleFunction(it) },

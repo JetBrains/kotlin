@@ -1616,6 +1616,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/types/explicitEqualsAndCompareToCallsOnPlatformTypeReceiver.kt");
         }
 
+        @TestMetadata("genericPropertyReferenceType.kt")
+        public void testGenericPropertyReferenceType() throws Exception {
+            runTest("compiler/testData/ir/irText/types/genericPropertyReferenceType.kt");
+        }
+
         @TestMetadata("intersectionType1_NI.kt")
         public void testIntersectionType1_NI() throws Exception {
             runTest("compiler/testData/ir/irText/types/intersectionType1_NI.kt");
