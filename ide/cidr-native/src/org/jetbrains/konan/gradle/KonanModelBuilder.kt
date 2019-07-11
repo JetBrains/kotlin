@@ -13,6 +13,9 @@ import org.gradle.api.tasks.Exec
 import org.jetbrains.konan.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.konan.gradle.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
 import org.jetbrains.konan.gradle.KonanModel.Companion.NO_TASK_PATH
+import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_ENVIRONMENT_VARIABLES
+import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_PROGRAM_PARAMETERS
+import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_WORKING_DIR
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
 import org.jetbrains.kotlin.gradle.getMethodOrNull
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -77,16 +80,13 @@ class KonanModelBuilder : ModelBuilderService {
 
         val execConfiguration = if (runTask != null) {
             val workingDir: String = runTask.workingDir.path
-            val programParameters: List<String> = runTask.args as List<String>? ?: emptyList()
+            val programParameters: List<String> = runTask.args as List<String>? ?: NO_PROGRAM_PARAMETERS
             val environmentVariables: Map<String, String> = (runTask.environment as Map<String, Any>?)
-                    ?.mapValues { it.value.toString() } ?: emptyMap()
+                ?.mapValues { it.value.toString() } ?: NO_ENVIRONMENT_VARIABLES
 
-            KonanModelArtifactExecConfigurationImpl(
-                    workingDir,
-                    programParameters,
-                    environmentVariables
-            )
-        } else null
+            KonanModelArtifactExecConfigurationImpl(workingDir, programParameters, environmentVariables)
+        } else
+            KonanModelArtifactExecConfigurationImpl(NO_WORKING_DIR, NO_PROGRAM_PARAMETERS, NO_ENVIRONMENT_VARIABLES)
 
         return KonanModelArtifactImpl(
             compilationTargetName,

@@ -10,51 +10,21 @@ import com.intellij.openapi.externalSystem.model.Key
 import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
 import org.gradle.tooling.model.idea.IdeaModule
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
-import java.io.File
 
 class KonanProjectResolver : AbstractProjectResolverExtension() {
-    override fun getToolingExtensionsClasses(): Set<Class<out Any>> {
-        return setOf(KonanModelBuilder::class.java, Unit::class.java)
-    }
 
-    override fun getExtraProjectModelClasses(): Set<Class<out Any>> {
-        return setOf(KonanModel::class.java)
-    }
+    override fun getToolingExtensionsClasses(): Set<Class<out Any>> = setOf(KonanModelBuilder::class.java, Unit::class.java)
+
+    override fun getExtraProjectModelClasses(): Set<Class<out Any>> = setOf(KonanModel::class.java)
 
     override fun populateModuleExtraModels(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
         resolverCtx.getExtraProject(gradleModule, KonanModel::class.java)?.let {
             // store a local process copy of the object to get rid of proxy types for further serialization
-            ideModule.createChild(KONAN_MODEL_KEY, MyKonanModel(it))
+            ideModule.createChild(KONAN_MODEL_KEY, KonanModelImpl(it))
         }
 
         nextResolver.populateModuleExtraModels(gradleModule, ideModule)
-    }
-
-    private class MyKonanModel(konanModel: KonanModel) : KonanModel {
-        override val artifacts: List<KonanModelArtifact> = konanModel.artifacts.map { MyKonanArtifactEx(it) }
-        override val buildTaskPath: String = konanModel.buildTaskPath
-        override val cleanTaskPath: String = konanModel.cleanTaskPath
-        override val kotlinNativeHome: String = konanModel.kotlinNativeHome
-
-        private class MyKonanArtifactEx(artifact: KonanModelArtifact) : KonanModelArtifact {
-            override val name: String = artifact.name
-            override val type: CompilerOutputKind = artifact.type
-            override val targetPlatform: String = artifact.targetPlatform
-            override val file: File = artifact.file
-            override val buildTaskPath: String = artifact.buildTaskPath
-            override val execConfiguration: KonanModelArtifactExecConfiguration? = artifact.execConfiguration?.let { MyKonanModelArtifactExecConfiguration(it) }
-            override val isTests: Boolean = artifact.isTests
-        }
-
-        private class MyKonanModelArtifactExecConfiguration(
-                execConfiguration: KonanModelArtifactExecConfiguration
-        ) : KonanModelArtifactExecConfiguration {
-            override val workingDir: String = execConfiguration.workingDir
-            override val programParameters: List<String> = execConfiguration.programParameters
-            override val environmentVariables: Map<String, String> = execConfiguration.environmentVariables
-        }
     }
 
     companion object {

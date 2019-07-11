@@ -27,7 +27,7 @@ interface KonanModelArtifact : Serializable {
     val targetPlatform: String
     val file: File
     val buildTaskPath: String
-    val execConfiguration: KonanModelArtifactExecConfiguration?
+    val execConfiguration: KonanModelArtifactExecConfiguration
     val isTests: Boolean
 }
 
@@ -35,4 +35,10 @@ interface KonanModelArtifactExecConfiguration : Serializable {
     val workingDir: String
     val programParameters: List<String>
     val environmentVariables: Map<String, String>
+
+    companion object {
+        const val NO_WORKING_DIR = ""
+        val NO_PROGRAM_PARAMETERS = emptyList<String>()
+        val NO_ENVIRONMENT_VARIABLES = emptyMap<String, String>()
+    }
 }

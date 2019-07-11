@@ -139,5 +139,4 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
             }
         }
     }
-
 }
