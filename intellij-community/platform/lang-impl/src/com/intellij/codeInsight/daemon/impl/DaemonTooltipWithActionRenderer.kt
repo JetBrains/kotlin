@@ -23,6 +23,7 @@ import com.intellij.openapi.keymap.KeymapUtil
 import com.intellij.openapi.keymap.KeymapUtil.getActiveKeymapShortcuts
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.GraphicsConfig
+import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.*
@@ -201,18 +202,23 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val wrapper: JPanel = if (highlight) object : JPanel(BorderLayout()) {
       override fun paint(g: Graphics?) {
         g!!.color = UIUtil.getToolTipActionBackground()
-        val graphics2D = g as Graphics2D
-        val cfg = GraphicsConfig(g)
-        cfg.setAntialiasing(true)
+        if (JBPopupFactory.getInstance().getParentBalloonFor(this) == null) {
+          g.fillRect(0, 0, width, height)
+        }
+        else {
+          val graphics2D = g as Graphics2D
+          val cfg = GraphicsConfig(g)
+          cfg.setAntialiasing(true)
 
-        graphics2D.fill(RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height / 2).toDouble(), 0.0, 0.0))
+          graphics2D.fill(RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height / 2).toDouble(), 0.0, 0.0))
 
-        val arc = BalloonImpl.ARC.get().toDouble()
-        val double = RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height - 1).toDouble(), arc, arc)
+          val arc = BalloonImpl.ARC.get().toDouble()
+          val double = RoundRectangle2D.Double(1.0, 0.0, bounds.width - 2.5, (bounds.height - 1).toDouble(), arc, arc)
 
-        graphics2D.fill(double)
+          graphics2D.fill(double)
 
-        cfg.restore()
+          cfg.restore()
+        }
         super.paint(g)
       }
     } else JPanel(BorderLayout())
