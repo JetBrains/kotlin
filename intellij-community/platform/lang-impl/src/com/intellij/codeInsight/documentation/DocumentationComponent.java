@@ -636,13 +636,13 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
   }
 
   private static void prepareCSS(HTMLEditorKit editorKit) {
-    Color borderColor = UIUtil.getTooltipSeparatorColor();
-    String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
     boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
+    Color borderColor = newLayout ? UIUtil.getTooltipSeparatorColor() : ColorUtil.mix(DOCUMENTATION_COLOR, BORDER_COLOR, 0.5);
     int leftPadding = newLayout ? 8 : 7;
     int definitionTopPadding = newLayout ? 4 : 3;
     int definitionBottomPadding = newLayout ? 4 : 1;
     int htmlBottomPadding = newLayout ? 8 : 5;
+    String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
     editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule("pre {font-family:\"" + editorFontName + "\"}");
     editorKit.getStyleSheet().addRule(".pre {font-family:\"" + editorFontName + "\"}");
