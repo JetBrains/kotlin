@@ -51,17 +51,17 @@ FILE fqName:<root> fileName:/differentReceivers.kt
         RETURN type=kotlin.Nothing from='public final fun <get-testO> (): IrErrorType declared in <root>'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testO type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val] 
-    FIELD PROPERTY_BACKING_FIELD name:testK type:IrErrorType visibility:public [final,static] 
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testK> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FIELD PROPERTY_BACKING_FIELD name:testK type:kotlin.String visibility:public [final,static]
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testK> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testK visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testK> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testK type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testK> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testK type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
   PROPERTY name:testOK visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:testOK type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/plus, kotlin/plus, kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/sequences/plus, kotlin/text/plus]>#' type=IrErrorType
-          CALL 'public final fun <get-testK> (): IrErrorType declared in <root>' type=IrErrorType origin=null
+        ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/plus, kotlin/plus, kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus, kotlin/text/plus]>#' type=IrErrorType
+          CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:IrErrorType 
       correspondingProperty: PROPERTY name:testOK visibility:public modality:FINAL [val] 
       BLOCK_BODY

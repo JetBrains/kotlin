@@ -29,8 +29,6 @@ interface FirProperty :
 
     val backingFieldSymbol: FirBackingFieldSymbol
 
-    fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D)
-
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
 

@@ -1,6 +1,6 @@
 FILE: typeFromDelegate.kt
-    public final val x: <ERROR TYPE REF: Not supported: type from delegate>by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| {
+    public final val x: R|kotlin/Int|by R|kotlin/lazy|<R|kotlin/Int|>(<L> = lazy@fun <anonymous>(): R|kotlin/Int| {
         Int(42)
     }
     )
-        public get(): <ERROR TYPE REF: Not supported: type from delegate>
+        public get(): R|kotlin/Int|

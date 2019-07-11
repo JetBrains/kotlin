@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedQualifierImpl
+import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirBackingFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
@@ -1003,15 +1003,18 @@ open class FirBodyResolveTransformer(
                     )
                 }
                 variable.delegate != null -> {
-                    // TODO: type from delegate
-                    variable.transformReturnTypeRef(
-                        this,
-                        FirErrorTypeRefImpl(
-                            session,
-                            null,
-                            "Not supported: type from delegate"
+                    val fakeInitializer = FirFunctionCallImpl(session, null).apply {
+                        explicitReceiver = variable.delegate
+                        calleeReference = FirSimpleNamedReference(this@FirBodyResolveTransformer.session, null, GET_VALUE)
+                        arguments += FirConstExpressionImpl(this@FirBodyResolveTransformer.session, null, IrConstKind.Null, null)
+                        arguments += FirThrowExpressionImpl(
+                            this@FirBodyResolveTransformer.session, null,
+                            FirConstExpressionImpl(this@FirBodyResolveTransformer.session, null, IrConstKind.Null, null)
                         )
-                    )
+                    }
+                    val result = transformFunctionCall(fakeInitializer, variable.returnTypeRef).single as FirFunctionCall
+                    variable.replaceDelegate(result.explicitReceiver)
+                    variable.transformReturnTypeRef(this, result.typeRef)
                 }
                 variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor -> {
                     variable.transformReturnTypeRef(
@@ -1054,8 +1057,10 @@ open class FirBodyResolveTransformer(
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             withContainer(property) {
                 property.transformChildrenWithoutAccessors(this, returnTypeRef)
-                if (property.returnTypeRef is FirImplicitTypeRef && property.initializer != null) {
-                    storeVariableReturnType(property)
+                if (property.returnTypeRef is FirImplicitTypeRef) {
+                    if (property.initializer != null || property.delegate != null) {
+                        storeVariableReturnType(property)
+                    }
                 }
                 withScopeCleanup(localScopes) {
                     localScopes.add(FirLocalScope().apply {
@@ -1122,6 +1127,10 @@ open class FirBodyResolveTransformer(
                 emptyList()
             )
         return transformedGetClassCall.compose()
+    }
+
+    companion object {
+        private val GET_VALUE = Name.identifier("getValue")
     }
 }
 
@@ -1211,7 +1220,9 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
 
         val newReturnTypeRef = declaration.returnTypeRef
         cycleErrorType(declaration)?.let { return it }
-        require(newReturnTypeRef is FirResolvedTypeRef) { declaration.render() }
+        require(newReturnTypeRef is FirResolvedTypeRef) {
+            declaration.render()
+        }
         return newReturnTypeRef
     }
 }

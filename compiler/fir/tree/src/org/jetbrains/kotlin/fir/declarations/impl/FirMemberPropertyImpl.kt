@@ -52,9 +52,12 @@ class FirMemberPropertyImpl(
         status.isLateInit = isLateInit
     }
 
+    override fun replaceDelegate(newDelegate: FirExpression?) {
+        delegate = newDelegate
+    }
+
     override fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D) {
         initializer = initializer?.transformSingle(transformer, data)
-        delegate = delegate?.transformSingle(transformer, data)
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         typeParameters.transformInplace(transformer, data)
@@ -65,6 +68,7 @@ class FirMemberPropertyImpl(
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         getter = getter.transformSingle(transformer, data)
         setter = setter?.transformSingle(transformer, data)
+        delegate = delegate?.transformSingle(transformer, data)
         transformChildrenWithoutAccessors(transformer, data)
         // Everything other (annotations, etc.) is done above
         return this

@@ -83,13 +83,13 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.C 
     PROPERTY name:test7 visibility:public modality:FINAL [delegated,val] 
-      FIELD PROPERTY_BACKING_FIELD name:test7 type:IrErrorType visibility:public [final] 
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:<root>.C) returnType:IrErrorType 
+      FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.Int visibility:public [final]
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test7> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:test7 visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.C 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-test7> (): IrErrorType declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test7 type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in <root>.C'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test7 type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test7>' type=<root>.C origin=null
     PROPERTY name:test8 visibility:public modality:FINAL [delegated,var] 
       FIELD PROPERTY_BACKING_FIELD name:test8 type:IrErrorType visibility:public 
