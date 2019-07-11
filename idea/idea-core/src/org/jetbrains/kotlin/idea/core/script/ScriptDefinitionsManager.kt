@@ -147,7 +147,10 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
     }
 
     fun isReady(): Boolean {
-        return definitionsBySource.keys.all { source ->
+        if (definitions == null) {
+            reloadScriptDefinitions()
+        }
+        return definitions != null && definitionsBySource.keys.all { source ->
             // TODO: implement another API for readiness checking
             (source as? ScriptDefinitionContributor)?.isReady() != false
         }
