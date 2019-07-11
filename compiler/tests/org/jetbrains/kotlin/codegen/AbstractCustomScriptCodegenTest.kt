@@ -149,3 +149,7 @@ abstract class TestScriptWithSimpleEnvVars
 @Suppress("unused")
 @KotlinScript(fileExtension = "customext")
 abstract class TestScriptWithNonKtsExtension(val name: String)
+
+@Suppress("unused")
+@KotlinScript(filePathPattern = "(.*/)?pathPattern[0-9]\\..+")
+abstract class TestScriptWithPathPattern(val name2: String)

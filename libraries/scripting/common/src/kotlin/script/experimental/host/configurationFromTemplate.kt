@@ -78,6 +78,9 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     if (fileExtension() == null) {
         fileExtension(mainAnnotation.fileExtension)
     }
+    if (filePathPattern() == null) {
+        filePathPattern(mainAnnotation.filePathPattern)
+    }
     if (displayName() == null) {
         displayName(mainAnnotation.displayName)
     }

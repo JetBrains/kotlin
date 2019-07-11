@@ -25,6 +25,9 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
  * @param fileExtension distinct filename extension for the script type being defined, stored in the configuration
  *        as {@link ScriptCompilationConfigurationKeys#fileExtension},
  *        default - "kts"
+ * @param filePathPattern additional (to the filename extension) RegEx pattern with that the script file path is checked
+ *        as {@link ScriptCompilationConfigurationKeys#filePathPattern},
+ *        default - empty - pattern is not used
  * @param compilationConfiguration an object or a class with default constructor containing initial script compilation configuration
  *        default - {@link ScriptCompilationConfiguration#Default}
  * @param evaluationConfiguration an object or a class with default constructor containing initial script evaluation configuration
@@ -47,6 +50,7 @@ import kotlin.script.experimental.api.ScriptEvaluationConfiguration
 annotation class KotlinScript(
     val displayName: String = "Kotlin script",
     val fileExtension: String = "kts",
+    val filePathPattern: String = "",
     val compilationConfiguration: KClass<out ScriptCompilationConfiguration> = ScriptCompilationConfiguration.Default::class,
     val evaluationConfiguration: KClass<out ScriptEvaluationConfiguration> = ScriptEvaluationConfiguration.Default::class
 )
