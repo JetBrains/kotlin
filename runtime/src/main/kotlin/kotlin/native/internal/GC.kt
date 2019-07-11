@@ -63,9 +63,36 @@ object GC {
         get() = getThreshold()
         set(value) = setThreshold(value)
 
+    /**
+     * GC allocation threshold, controlling how many bytes allocated since last
+     * collection will trigger new GC.
+     */
+    var thresholdAllocations: Long
+        get() = getThresholdAllocations()
+        set(value) = setThresholdAllocations(value)
+
+    /**
+     * If GC shall auto-tune thresholds, depending on how much time is spent in collection.
+     */
+    var autotune: Boolean
+        get() = getTuneThreshold()
+        set(value) = setTuneThreshold(value)
+
     @SymbolName("Kotlin_native_internal_GC_getThreshold")
     private external fun getThreshold(): Int
 
     @SymbolName("Kotlin_native_internal_GC_setThreshold")
     private external fun setThreshold(value: Int)
+
+    @SymbolName("Kotlin_native_internal_GC_getThresholdAllocations")
+    private external fun getThresholdAllocations(): Long
+
+    @SymbolName("Kotlin_native_internal_GC_setThresholdAllocations")
+    private external fun setThresholdAllocations(value: Long)
+
+    @SymbolName("Kotlin_native_internal_GC_getTuneThreshold")
+    private external fun getTuneThreshold(): Boolean
+
+    @SymbolName("Kotlin_native_internal_GC_setTuneThreshold")
+    private external fun setTuneThreshold(value: Boolean)
 }
