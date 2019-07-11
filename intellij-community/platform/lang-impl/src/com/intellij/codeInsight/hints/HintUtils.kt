@@ -56,10 +56,6 @@ fun isParameterHintsEnabledForLanguage(language: Language): Boolean {
   return ParameterNameHintsSettings.getInstance().isEnabledForLanguage(language)
 }
 
-fun setShowAllParameterHints(value: Boolean) {
-  EditorSettingsExternalizable.getInstance().isShowParameterNameHints = value
-}
-
 fun setShowParameterHintsForLanguage(value: Boolean, language: Language) {
   ParameterNameHintsSettings.getInstance().setIsEnabledForLanguage(value, language)
 }
