@@ -17,6 +17,7 @@ import com.intellij.util.Consumer
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder
+import org.jetbrains.kotlin.gradle.getMethodOrNull
 import org.jetbrains.kotlin.idea.configuration.getMppModel
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
@@ -70,12 +71,12 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
                 type = original.type
                 isInherited = original.isInherited
 
-                isTest = true
+                setTestIfSupported(true)
             }
 
         val replacementMap: Map<TaskData, TaskData> = mutableMapOf<TaskData, TaskData>().apply {
             originalTaskData.forEach {
-                if (it.name in testTaskNames && !it.isTest) {
+                if (it.name in testTaskNames && it.isTestIfSupported() == false) {
                     put(it, buildNewTaskDataMarkedAsTest(it))
                 }
             }
@@ -101,5 +102,14 @@ open class KotlinTestTasksResolver : AbstractProjectResolverExtension() {
         } catch (e: Exception) {
             LOG.error(e)
         }
+    }
+
+    /** [TaskData.isTest] is not available in IJ 182 */
+    private fun TaskData.isTestIfSupported(): Boolean? =
+        javaClass.getMethodOrNull("isTest")?.invoke(this) as Boolean?
+
+    /** [TaskData.setTest] is not available in IJ 182 */
+    private fun TaskData.setTestIfSupported(value: Boolean) {
+        javaClass.getMethodOrNull("setTest", Boolean::class.java)?.invoke(this, value)
     }
 }
