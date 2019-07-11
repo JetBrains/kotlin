@@ -35,17 +35,17 @@ object FeatureUsageSettingsEvents {
   val printer = FeatureUsageSettingsEventPrinter(false)
 
   fun logDefaultConfigurationState(componentName: String, stateSpec: State, clazz: Class<*>, project: Project?) {
-    if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
+    if (stateSpec.reportStatistic) {
       NonUrgentExecutor.getInstance().execute {
-        printer.logDefaultConfigurationState(componentName, clazz, project)
+        if (FeatureUsageLogger.isEnabled()) printer.logDefaultConfigurationState(componentName, clazz, project)
       }
     }
   }
 
   fun logConfigurationState(componentName: String, stateSpec: State, state: Any, project: Project?) {
-    if (stateSpec.reportStatistic && FeatureUsageLogger.isEnabled()) {
+    if (stateSpec.reportStatistic) {
       NonUrgentExecutor.getInstance().execute {
-        printer.logConfigurationState(componentName, state, project)
+        if (FeatureUsageLogger.isEnabled()) printer.logConfigurationState(componentName, state, project)
       }
     }
   }
