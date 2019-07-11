@@ -9,6 +9,7 @@ import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.NodeRenderer;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.fileEditor.impl.IdeDocumentHistoryImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -89,6 +90,10 @@ public class ProjectViewTree extends DnDAwareTree {
             SimpleTextAttributes attributes = SimpleTextAttributes.GRAYED_SMALL_ATTRIBUTES;
             append(DateFormatUtil.formatDateTime(attr.lastModifiedTime().toMillis()), attributes);
             append(", " + StringUtil.formatFileSize(attr.size()), attributes);
+          }
+
+          if (Registry.is("show.last.visited.timestamps") && file != null && node.getProject() != null) {
+            IdeDocumentHistoryImpl.appendTimestamp(node.getProject(), this, file);
           }
         }
       }
