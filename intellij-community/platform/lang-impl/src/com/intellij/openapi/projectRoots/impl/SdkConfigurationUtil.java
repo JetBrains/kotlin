@@ -39,6 +39,7 @@ import com.intellij.util.ArrayUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.NullableConsumer;
 import com.intellij.util.text.UniqueNameGenerator;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -151,7 +152,7 @@ public class SdkConfigurationUtil {
                              @Nullable final String customSdkSuggestedName) {
     ProjectJdkImpl sdk = null;
     try {
-      sdk = createSdk(allSdks, homeDir, sdkType, additionalData, customSdkSuggestedName);
+      sdk = createSdk(Arrays.asList(allSdks), homeDir, sdkType, additionalData, customSdkSuggestedName);
 
       sdkType.setupSdkPaths(sdk);
     }
@@ -173,20 +174,41 @@ public class SdkConfigurationUtil {
     return sdk;
   }
 
+  /**
+   * @deprecated Use {@link SdkConfigurationUtil#createSdk(Collection, VirtualFile, SdkType, SdkAdditionalData, String)} instead.
+   * This method will be removed in 2020.1.
+   */
   @NotNull
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
   public static ProjectJdkImpl createSdk(@NotNull Sdk[] allSdks,
                                          @NotNull VirtualFile homeDir,
                                          @NotNull SdkType sdkType,
-                                         @Nullable SdkAdditionalData additionalData, @Nullable String customSdkSuggestedName) {
-    final List<Sdk> sdksList = Arrays.asList(allSdks);
+                                         @Nullable SdkAdditionalData additionalData,
+                                         @Nullable String customSdkSuggestedName) {
+    return createSdk(Arrays.asList(allSdks), homeDir, sdkType, additionalData, customSdkSuggestedName);
+  }
 
-    String sdkPath = sdkType.sdkPath(homeDir);
+  @NotNull
+  public static ProjectJdkImpl createSdk(@NotNull Collection<? extends Sdk> allSdks,
+                                         @NotNull VirtualFile homeDir,
+                                         @NotNull SdkType sdkType,
+                                         @Nullable SdkAdditionalData additionalData,
+                                         @Nullable String customSdkSuggestedName) {
+    return createSdk(allSdks, sdkType.sdkPath(homeDir), sdkType, additionalData, customSdkSuggestedName);
+  }
 
+  @NotNull
+  public static ProjectJdkImpl createSdk(@NotNull Collection<? extends Sdk> allSdks,
+                                         @NotNull String homePath,
+                                         @NotNull SdkType sdkType,
+                                         @Nullable SdkAdditionalData additionalData,
+                                         @Nullable String customSdkSuggestedName) {
     final String sdkName = customSdkSuggestedName == null
-                           ? createUniqueSdkName(sdkType, sdkPath, sdksList)
-                           : createUniqueSdkName(customSdkSuggestedName, sdksList);
+                           ? createUniqueSdkName(sdkType, homePath, allSdks)
+                           : createUniqueSdkName(customSdkSuggestedName, allSdks);
 
-    ProjectJdkImpl sdk = new ProjectJdkImpl(sdkName, sdkType);
+    final ProjectJdkImpl sdk = new ProjectJdkImpl(sdkName, sdkType);
 
     if (additionalData != null) {
       // additional initialization.
@@ -195,7 +217,7 @@ public class SdkConfigurationUtil {
       sdk.setSdkAdditionalData(additionalData);
     }
 
-    sdk.setHomePath(sdkPath);
+    sdk.setHomePath(homePath);
     return sdk;
   }
 
