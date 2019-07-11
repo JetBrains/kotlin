@@ -47,9 +47,7 @@ class TotalKotlinTest : AbstractRawFirBuilderTestCase() {
         var counter = 0
         var time = 0L
 
-        val parserDefinition = KotlinParserDefinition()
-        val lexer = parserDefinition.createLexer(myProject)
-        val lightTreeConverter = LightTree2Fir(true, parserDefinition, lexer)
+        val lightTreeConverter = LightTree2Fir(true, myProject)
 
         if (onlyLightTree) println("LightTree generation") else println("Fir from LightTree converter")
         println("BASE PATH: $path")

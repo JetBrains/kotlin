@@ -29,9 +29,7 @@ open class LightTree2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase
     }
 
     private fun createConverter() {
-        val parserDefinition = KotlinParserDefinition()
-        val lexer = parserDefinition.createLexer(project)
-        lightTreeConverter = LightTree2Fir(true, parserDefinition, lexer)
+        lightTreeConverter = LightTree2Fir(true, myProject)
     }
 
     override fun setUp() {
