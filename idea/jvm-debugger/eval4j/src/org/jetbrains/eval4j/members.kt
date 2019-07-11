@@ -22,10 +22,10 @@ import org.jetbrains.org.objectweb.asm.tree.FieldInsnNode
 import org.jetbrains.org.objectweb.asm.tree.MethodInsnNode
 
 open class MemberDescription protected constructor(
-        val ownerInternalName: String,
-        val name: String,
-        val desc: String,
-        val isStatic: Boolean
+    val ownerInternalName: String,
+    val name: String,
+    val desc: String,
+    val isStatic: Boolean
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -34,7 +34,7 @@ open class MemberDescription protected constructor(
                 && name == other.name
                 && desc == other.desc
                 && isStatic == other.isStatic
-               )
+                )
     }
 
     override fun hashCode(): Int {
@@ -53,19 +53,13 @@ val MemberDescription.ownerType: Type
     get() = Type.getObjectType(ownerInternalName)
 
 class MethodDescription(
-        ownerInternalName: String,
-        name: String,
-        desc: String,
-        isStatic: Boolean
-) : MemberDescription(ownerInternalName, name, desc, isStatic)
-
-fun MethodDescription(insn: MethodInsnNode): MethodDescription =
-        MethodDescription(
-            insn.owner,
-            insn.name,
-            insn.desc,
-            insn.opcode == INVOKESTATIC
-        )
+    ownerInternalName: String,
+    name: String,
+    desc: String,
+    isStatic: Boolean
+) : MemberDescription(ownerInternalName, name, desc, isStatic) {
+    constructor(insn: MethodInsnNode) : this(insn.owner, insn.name, insn.desc, insn.opcode == INVOKESTATIC)
+}
 
 val MethodDescription.returnType: Type
     get() = Type.getReturnType(desc)
@@ -75,19 +69,13 @@ val MethodDescription.parameterTypes: List<Type>
 
 
 class FieldDescription(
-        ownerInternalName: String,
-        name: String,
-        desc: String,
-        isStatic: Boolean
-) : MemberDescription(ownerInternalName, name, desc, isStatic)
-
-fun FieldDescription(insn: FieldInsnNode): FieldDescription =
-        FieldDescription(
-                insn.owner,
-                insn.name,
-                insn.desc,
-                insn.opcode in setOf(GETSTATIC, PUTSTATIC)
-        )
+    ownerInternalName: String,
+    name: String,
+    desc: String,
+    isStatic: Boolean
+) : MemberDescription(ownerInternalName, name, desc, isStatic) {
+    constructor(insn: FieldInsnNode) : this(insn.owner, insn.name, insn.desc, insn.opcode in setOf(GETSTATIC, PUTSTATIC))
+}
 
 val FieldDescription.fieldType: Type
     get() = Type.getType(desc)

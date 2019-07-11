@@ -62,7 +62,7 @@ fun makeInitialFrame(methodNode: MethodNode, arguments: List<Value>): Frame<Valu
     return frame
 }
 
-class JDIFailureException(message: String?, cause: Throwable? = null): RuntimeException(message, cause)
+class JDIFailureException(message: String?, cause: Throwable? = null) : RuntimeException(message, cause)
 
 fun jdi_ObjectReference?.asValue(): ObjectValue {
     return when (this) {

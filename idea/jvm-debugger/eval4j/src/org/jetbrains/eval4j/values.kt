@@ -27,7 +27,8 @@ interface Value : org.jetbrains.org.objectweb.asm.tree.analysis.Value {
     override fun toString(): String
 }
 
-object NOT_A_VALUE: Value {
+@Suppress("ClassName")
+object NOT_A_VALUE : Value {
     override val asmType = Type.getObjectType("<invalid>")
     override val valid = false
     override fun getSize(): Int = 1
@@ -35,7 +36,8 @@ object NOT_A_VALUE: Value {
     override fun toString() = "NOT_A_VALUE"
 }
 
-object VOID_VALUE: Value {
+@Suppress("ClassName")
+object VOID_VALUE : Value {
     override val asmType: Type = Type.VOID_TYPE
     override val valid: Boolean = false
     override fun toString() = "VOID_VALUE"
@@ -48,13 +50,13 @@ fun makeNotInitializedValue(t: Type): Value? {
     }
 }
 
-class NotInitialized(override val asmType: Type): Value {
+class NotInitialized(override val asmType: Type) : Value {
     override val valid = false
     override fun toString() = "NotInitialized: $asmType"
 }
 
 abstract class AbstractValueBase<out V>(
-        override val asmType: Type
+    override val asmType: Type
 ) : Value {
     override val valid = true
     abstract val value: V
@@ -72,24 +74,22 @@ abstract class AbstractValueBase<out V>(
     }
 }
 
-abstract class AbstractValue<V>(
-        override val value: V,
-        asmType: Type
-) : AbstractValueBase<V>(asmType)
+abstract class AbstractValue<V>(override val value: V, asmType: Type) : AbstractValueBase<V>(asmType)
 
-class IntValue(value: Int, asmType: Type): AbstractValue<Int>(value, asmType)
-class LongValue(value: Long): AbstractValue<Long>(value, Type.LONG_TYPE)
-class FloatValue(value: Float): AbstractValue<Float>(value, Type.FLOAT_TYPE)
-class DoubleValue(value: Double): AbstractValue<Double>(value, Type.DOUBLE_TYPE)
-open class ObjectValue(value: Any?, asmType: Type): AbstractValue<Any?>(value, asmType)
-class NewObjectValue(asmType: Type): ObjectValue(null, asmType) {
+class IntValue(value: Int, asmType: Type) : AbstractValue<Int>(value, asmType)
+class LongValue(value: Long) : AbstractValue<Long>(value, Type.LONG_TYPE)
+class FloatValue(value: Float) : AbstractValue<Float>(value, Type.FLOAT_TYPE)
+class DoubleValue(value: Double) : AbstractValue<Double>(value, Type.DOUBLE_TYPE)
+open class ObjectValue(value: Any?, asmType: Type) : AbstractValue<Any?>(value, asmType)
+
+class NewObjectValue(asmType: Type) : ObjectValue(null, asmType) {
     override var value: Any? = null
         get(): Any? {
             return field ?: throw IllegalStateException("Trying to access an unitialized object: $this")
         }
 }
 
-class LabelValue(value: LabelNode): AbstractValue<LabelNode>(value, Type.VOID_TYPE)
+class LabelValue(value: LabelNode) : AbstractValue<LabelNode>(value, Type.VOID_TYPE)
 
 fun boolean(v: Boolean) = IntValue(if (v) 1 else 0, Type.BOOLEAN_TYPE)
 fun byte(v: Byte) = IntValue(v.toInt(), Type.BYTE_TYPE)
@@ -99,7 +99,6 @@ fun int(v: Int) = IntValue(v, Type.INT_TYPE)
 fun long(v: Long) = LongValue(v)
 fun float(v: Float) = FloatValue(v)
 fun double(v: Double) = DoubleValue(v)
-//fun <T> obj(v: T, t: Type = if (v != null) Type.getType(v.javaClass) else Type.getType(Any::class.java)) = ObjectValue(v, t)
 
 val NULL_VALUE = ObjectValue(null, Type.getObjectType("null"))
 
@@ -108,12 +107,13 @@ val Value.int: Int get() = (this as IntValue).value
 val Value.long: Long get() = (this as LongValue).value
 val Value.float: Float get() = (this as FloatValue).value
 val Value.double: Double get() = (this as DoubleValue).value
+
 fun Value.obj(expectedType: Type = asmType): Any? {
-    return when {
-        expectedType == Type.BOOLEAN_TYPE -> this.boolean
-        expectedType == Type.SHORT_TYPE -> (this as IntValue).int.toShort()
-        expectedType == Type.BYTE_TYPE -> (this as IntValue).int.toByte()
-        expectedType == Type.CHAR_TYPE -> (this as IntValue).int.toChar()
+    return when (expectedType) {
+        Type.BOOLEAN_TYPE -> this.boolean
+        Type.SHORT_TYPE -> (this as IntValue).int.toShort()
+        Type.BYTE_TYPE -> (this as IntValue).int.toByte()
+        Type.CHAR_TYPE -> (this as IntValue).int.toChar()
         else -> (this as AbstractValue<*>).value
     }
 }

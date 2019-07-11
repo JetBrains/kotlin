@@ -82,23 +82,21 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             BIPUSH, SIPUSH -> int((insn as IntInsnNode).operand)
 
             LDC -> {
-                val cst = ((insn as LdcInsnNode)).cst
-                when (cst) {
+                when (val cst = ((insn as LdcInsnNode)).cst) {
                     is Int -> int(cst)
                     is Float -> float(cst)
                     is Long -> long(cst)
                     is Double -> double(cst)
                     is String -> eval.loadString(cst)
                     is Type -> {
-                        val sort = cst.sort
-                        when (sort) {
+                        when (cst.sort) {
                             Type.OBJECT, Type.ARRAY -> eval.loadClass(cst)
                             Type.METHOD -> throw UnsupportedByteCodeException("Method handles are not supported")
-                            else -> throw UnsupportedByteCodeException("Illegal LDC constant " + cst)
+                            else -> throw UnsupportedByteCodeException("Illegal LDC constant $cst")
                         }
                     }
                     is Handle -> throw UnsupportedByteCodeException("Method handles are not supported")
-                    else -> throw UnsupportedByteCodeException("Illegal LDC constant " + cst)
+                    else -> throw UnsupportedByteCodeException("Illegal LDC constant $cst")
                 }
             }
             JSR -> LabelValue((insn as JumpInsnNode).label)
@@ -157,13 +155,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
             NEWARRAY -> {
                 val typeStr = when ((insn as IntInsnNode).operand) {
                     T_BOOLEAN -> "[Z"
-                    T_CHAR    -> "[C"
-                    T_BYTE    -> "[B"
-                    T_SHORT   -> "[S"
-                    T_INT     -> "[I"
-                    T_FLOAT   -> "[F"
-                    T_DOUBLE  -> "[D"
-                    T_LONG    -> "[J"
+                    T_CHAR -> "[C"
+                    T_BYTE -> "[B"
+                    T_SHORT -> "[S"
+                    T_INT -> "[I"
+                    T_FLOAT -> "[F"
+                    T_DOUBLE -> "[D"
+                    T_LONG -> "[J"
                     else -> throw AnalyzerException(insn, "Invalid array type")
                 }
                 eval.newArray(Type.getType(typeStr), value.int)
@@ -310,11 +308,13 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 val l1 = value1.long
                 val l2 = value2.long
 
-                int(when {
-                    l1 > l2 -> 1
-                    l1 == l2 -> 0
-                    else -> -1
-                })
+                int(
+                    when {
+                        l1 > l2 -> 1
+                        l1 == l2 -> 0
+                        else -> -1
+                    }
+                )
             }
 
             FCMPL,
@@ -322,13 +322,15 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 val l1 = value1.float
                 val l2 = value2.float
 
-                int(when {
-                    l1 > l2 -> 1
-                    l1 == l2 -> 0
-                    l1 < l2 -> -1
-                    // one of them is NaN
-                    else -> if (insn.opcode == FCMPG) 1 else -1
-                })
+                int(
+                    when {
+                        l1 > l2 -> 1
+                        l1 == l2 -> 0
+                        l1 < l2 -> -1
+                        // one of them is NaN
+                        else -> if (insn.opcode == FCMPG) 1 else -1
+                    }
+                )
             }
 
             DCMPL,
@@ -336,13 +338,15 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
                 val l1 = value1.double
                 val l2 = value2.double
 
-                int(when {
-                    l1 > l2 -> 1
-                    l1 == l2 -> 0
-                    l1 < l2 -> -1
-                    // one of them is NaN
-                    else -> if (insn.opcode == DCMPG) 1 else -1
-                })
+                int(
+                    when {
+                        l1 > l2 -> 1
+                        l1 == l2 -> 0
+                        l1 < l2 -> -1
+                        // one of them is NaN
+                        else -> if (insn.opcode == DCMPG) 1 else -1
+                    }
+                )
             }
 
             IF_ICMPEQ, IF_ICMPNE, IF_ICMPLT, IF_ICMPGE, IF_ICMPGT, IF_ICMPLE, IF_ACMPEQ, IF_ACMPNE -> {
@@ -393,10 +397,10 @@ class SingleInstructionInterpreter(private val eval: Eval) : Interpreter<Value>(
 
             INVOKEVIRTUAL, INVOKESPECIAL, INVOKEINTERFACE -> {
                 eval.invokeMethod(
-                        values[0],
-                        MethodDescription(insn as MethodInsnNode),
-                        values.subList(1, values.size),
-                        insn.opcode == INVOKESPECIAL
+                    values[0],
+                    MethodDescription(insn as MethodInsnNode),
+                    values.subList(1, values.size),
+                    insn.opcode == INVOKESPECIAL
                 )
             }
 
