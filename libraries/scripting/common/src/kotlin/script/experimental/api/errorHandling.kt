@@ -7,7 +7,7 @@
 
 package kotlin.script.experimental.api
 
-import com.sun.xml.internal.messaging.saaj.util.ByteOutputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 
@@ -66,7 +66,7 @@ data class ScriptDiagnostic(
             append(": ")
             append(exception)
             if (withStackTrace) {
-                ByteOutputStream().use { os ->
+                ByteArrayOutputStream().use { os ->
                     val ps = PrintStream(os)
                     exception.printStackTrace(ps)
                     ps.flush()
