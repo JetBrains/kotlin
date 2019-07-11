@@ -29,6 +29,7 @@ import com.intellij.util.NullableConsumer;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import javax.swing.*;
@@ -92,6 +93,11 @@ public class GradleParentProjectForm implements Disposable {
   @Nullable
   public ProjectData getParentProject() {
     return myParent;
+  }
+
+  @TestOnly
+  public void setParentProject(@Nullable ProjectData parent) {
+    myParent = parent;
   }
 
   public boolean isVisible() {
