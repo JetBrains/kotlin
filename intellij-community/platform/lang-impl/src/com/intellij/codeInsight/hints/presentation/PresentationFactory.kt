@@ -192,13 +192,13 @@ class PresentationFactory(private val editor: EditorImpl) {
       onHover(it, object : HoverListener {
         override fun onHover(event: MouseEvent) {
           for ((index, forwarding) in forwardings.withIndex()) {
-            forwarding.delegate = presentations[index]
+            forwarding.delegate = decorator(presentations[index])
           }
         }
 
         override fun onHoverFinished() {
           for ((index, forwarding) in forwardings.withIndex()) {
-            forwarding.delegate = decorator(presentations[index])
+            forwarding.delegate = presentations[index]
           }
         }
       })
