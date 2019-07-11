@@ -132,7 +132,10 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
 
-        override val name: String get() = compilationConfiguration[ScriptCompilationConfiguration.displayName]!!
+        override val name: String
+            get() =
+                compilationConfiguration[ScriptCompilationConfiguration.displayName]?.takeIf { it.isNotBlank() }
+                    ?: compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName.substringAfterLast('.')
 
         override val definitionId: String get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName
 
