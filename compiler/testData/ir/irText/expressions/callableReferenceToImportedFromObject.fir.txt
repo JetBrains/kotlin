@@ -37,7 +37,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
-        CALL 'public final fun <get-a> (): kotlin.String declared in test.Foo' type=kotlin.String origin=null
+        PROPERTY_REFERENCE 'public final a: kotlin.String [val]' field='FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:public [final] ' getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.String 
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -46,8 +46,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test1a visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test1a type:kotlin.String visibility:public [final,static] 
       EXPRESSION_BODY
-        CALL 'public final fun <get-a> (): kotlin.String declared in test.Foo' type=kotlin.String origin=null
-          $this: GET_OBJECT 'CLASS OBJECT name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=test.Foo
+        PROPERTY_REFERENCE 'public final a: kotlin.String [val]' field='FIELD PROPERTY_BACKING_FIELD name:a type:kotlin.String visibility:public [final] ' getter='public final fun <get-a> (): kotlin.String declared in test.Foo' setter=null type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1a> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:test1a visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -56,7 +55,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test2 type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
+        ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: foo>#' type=IrErrorType
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:IrErrorType 
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val] 
       BLOCK_BODY
@@ -65,7 +64,7 @@ FILE fqName:test fileName:/callableReferenceToImportedFromObject.kt
   PROPERTY name:test2a visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test2a type:IrErrorType visibility:public [final,static] 
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
+        ERROR_CALL 'Unsupported callable reference: Q|test/Foo|::<Unresolved name: foo>#' type=IrErrorType
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2a> visibility:public modality:FINAL <> () returnType:IrErrorType 
       correspondingProperty: PROPERTY name:test2a visibility:public modality:FINAL [val] 
       BLOCK_BODY

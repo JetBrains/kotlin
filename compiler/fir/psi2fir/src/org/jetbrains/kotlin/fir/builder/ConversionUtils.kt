@@ -8,20 +8,25 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.FirFunctionTarget
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirWhenSubject
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableAccessorsOwner
+import org.jetbrains.kotlin.fir.declarations.impl.FirPropertyAccessorImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -564,3 +569,66 @@ internal fun KtExpression?.generateAssignment(
         lValue = initializeLValue(session, this@generateAssignment) { convert() as? FirQualifiedAccess }
     }
 }
+
+internal fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession, member: Boolean) {
+    val variable = this as FirVariable<*>
+    val delegateFieldSymbol = delegateFieldSymbol ?: return
+    fun delegateAccess() = FirQualifiedAccessExpressionImpl(session, null).apply {
+        calleeReference = FirDelegateFieldReferenceImpl(session, null, delegateFieldSymbol)
+    }
+
+    fun thisRef() =
+        if (member) FirQualifiedAccessExpressionImpl(session, null).apply {
+            calleeReference = FirExplicitThisReference(session, null, null)
+        }
+        else FirConstExpressionImpl(session, null, IrConstKind.Null, null)
+
+    fun propertyRef() = FirCallableReferenceAccessImpl(session, null).apply {
+        calleeReference = FirResolvedCallableReferenceImpl(session, null, variable.name, variable.symbol)
+        typeRef = FirImplicitKPropertyTypeRef(session, null, ConeStarProjection)
+    }
+
+    getter = (getter as? FirPropertyAccessorImpl)
+        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(session, null)).apply Accessor@{
+            body = FirSingleExpressionBlock(
+                session,
+                FirReturnExpressionImpl(
+                    session, null,
+                    FirFunctionCallImpl(session, null).apply {
+                        explicitReceiver = delegateAccess()
+                        calleeReference = FirSimpleNamedReference(session, null, GET_VALUE)
+                        arguments += thisRef()
+                        arguments += propertyRef()
+                    }
+                ).apply {
+                    target = FirFunctionTarget(null)
+                    target.bind(this@Accessor)
+                }
+            )
+        }
+    setter = (setter as? FirPropertyAccessorImpl)
+        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, FirImplicitUnitTypeRef(session, null)).apply {
+            val parameter = FirValueParameterImpl(
+                session, null, DELEGATED_SETTER_PARAM,
+                FirImplicitTypeRefImpl(session, null),
+                defaultValue = null, isCrossinline = false,
+                isNoinline = false, isVararg = false
+            )
+            valueParameters += parameter
+            body = FirSingleExpressionBlock(
+                session, FirFunctionCallImpl(session, null).apply {
+                    explicitReceiver = delegateAccess()
+                    calleeReference = FirSimpleNamedReference(session, null, SET_VALUE)
+                    arguments += thisRef()
+                    arguments += propertyRef()
+                    arguments += FirQualifiedAccessExpressionImpl(session, null).apply {
+                        calleeReference = FirResolvedCallableReferenceImpl(session, psi, DELEGATED_SETTER_PARAM, parameter.symbol)
+                    }
+                }
+            )
+        }
+}
+
+private val GET_VALUE = Name.identifier("getValue")
+private val SET_VALUE = Name.identifier("setValue")
+private val DELEGATED_SETTER_PARAM = Name.special("<set-?>")

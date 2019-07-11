@@ -168,6 +168,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitResolvedCallableReference(backingFieldReference, null)
     }
 
+    open fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
+        visitResolvedCallableReference(delegateFieldReference, null)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference) {
         visitReference(superReference, null)
     }
@@ -550,6 +554,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: Nothing?) {
         visitDefaultPropertyAccessor(defaultPropertyAccessor)
+    }
+
+    final override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: Nothing?) {
+        visitDelegateFieldReference(delegateFieldReference)
     }
 
     final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {

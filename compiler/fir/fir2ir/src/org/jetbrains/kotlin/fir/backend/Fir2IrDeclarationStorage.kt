@@ -541,6 +541,20 @@ class Fir2IrDeclarationStorage(
         }
     }
 
+    fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
+        return when (val fir = firVariableSymbol.fir) {
+            is FirProperty -> {
+                val irProperty = getIrProperty(fir).apply {
+                    setAndModifyParent(findIrParent(fir))
+                }
+                irSymbolTable.referenceField(irProperty.backingField!!.descriptor)
+            }
+            else -> {
+                getIrVariableSymbol(fir)
+            }
+        }
+    }
+
     private fun getIrVariableSymbol(firVariable: FirVariable<*>): IrVariableSymbol {
         val irDeclaration = localStorage.getVariable(firVariable)
             ?: throw IllegalArgumentException("Cannot find variable ${firVariable.render()} in local storage")

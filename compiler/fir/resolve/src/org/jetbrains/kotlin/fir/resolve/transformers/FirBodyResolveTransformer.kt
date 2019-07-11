@@ -414,6 +414,11 @@ open class FirBodyResolveTransformer(
                 }
                 return qualifiedAccessExpression.compose()
             }
+            is FirDelegateFieldReference -> {
+                val delegateFieldSymbol = callee.coneSymbol
+                qualifiedAccessExpression.resultType = delegateFieldSymbol.delegate.typeRef
+                return qualifiedAccessExpression.compose()
+            }
             is FirResolvedCallableReference -> {
                 if (qualifiedAccessExpression.typeRef !is FirResolvedTypeRef) {
                     storeTypeFromCallee(qualifiedAccessExpression)
@@ -1020,21 +1025,10 @@ open class FirBodyResolveTransformer(
                         }
                     )
                 }
-                variable.delegate != null -> {
-                    // TODO: type from delegate
+                variable.getter != null && variable.getter !is FirDefaultPropertyAccessor -> {
                     variable.transformReturnTypeRef(
                         this,
-                        FirErrorTypeRefImpl(
-                            session,
-                            null,
-                            "Not supported: type from delegate"
-                        )
-                    )
-                }
-                variable is FirProperty && variable.getter !is FirDefaultPropertyAccessor -> {
-                    variable.transformReturnTypeRef(
-                        this,
-                        when (val resultType = variable.getter.returnTypeRef) {
+                        when (val resultType = variable.getter?.returnTypeRef) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
                                 session,
                                 null,
@@ -1050,15 +1044,31 @@ open class FirBodyResolveTransformer(
                     )
                 }
             }
-            if (variable is FirProperty && variable.getter.returnTypeRef is FirImplicitTypeRef) {
-                variable.getter.transformReturnTypeRef(this, variable.returnTypeRef)
+            if (variable.getter?.returnTypeRef is FirImplicitTypeRef) {
+                variable.getter?.transformReturnTypeRef(this, variable.returnTypeRef)
             }
         }
     }
 
+    private fun <F : FirVariable<F>> FirVariable<F>.transformAccessors() {
+        var enhancedTypeRef = returnTypeRef
+        getter?.transform<FirDeclaration, Any?>(this@FirBodyResolveTransformer, enhancedTypeRef)
+        if (returnTypeRef is FirImplicitTypeRef) {
+            storeVariableReturnType(this)
+            enhancedTypeRef = returnTypeRef
+        }
+        setter?.let {
+            it.transform<FirDeclaration, Any?>(this@FirBodyResolveTransformer, enhancedTypeRef)
+            it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
+        }
+    }
+
     override fun <F : FirVariable<F>> transformVariable(variable: FirVariable<F>, data: Any?): CompositeTransformResult<FirDeclaration> {
-        val variable = super.transformVariable(variable, variable.returnTypeRef).single as FirVariable<*>
-        storeVariableReturnType(variable)
+        variable.transformChildrenWithoutAccessors(this, variable.returnTypeRef)
+        if (variable.initializer != null) {
+            storeVariableReturnType(variable)
+        }
+        variable.transformAccessors()
         if (variable !is FirProperty) {
             localScopes.lastOrNull()?.storeDeclaration(variable)
         }
@@ -1075,23 +1085,14 @@ open class FirBodyResolveTransformer(
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             withContainer(property) {
                 property.transformChildrenWithoutAccessors(this, returnTypeRef)
-                if (property.returnTypeRef is FirImplicitTypeRef && property.initializer != null) {
+                if (property.initializer != null) {
                     storeVariableReturnType(property)
                 }
                 withScopeCleanup(localScopes) {
                     localScopes.add(FirLocalScope().apply {
                         storeBackingField(property)
                     })
-                    var enhancedTypeRef = property.returnTypeRef
-                    property.getter.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
-                    if (property.returnTypeRef is FirImplicitTypeRef) {
-                        storeVariableReturnType(property)
-                        enhancedTypeRef = property.returnTypeRef
-                    }
-                    property.setter?.let {
-                        it.transform<FirDeclaration, Any?>(this, enhancedTypeRef)
-                        it.valueParameters[0].transformReturnTypeRef(StoreType, enhancedTypeRef)
-                    }
+                    property.transformAccessors()
                 }
             }
             property.compose()

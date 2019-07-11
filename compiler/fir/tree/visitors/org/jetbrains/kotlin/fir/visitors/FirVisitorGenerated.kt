@@ -168,6 +168,10 @@ abstract class FirVisitor<out R, in D> {
         return visitResolvedCallableReference(backingFieldReference, data)
     }
 
+    open fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): R {
+        return visitResolvedCallableReference(delegateFieldReference, data)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R {
         return visitReference(superReference, data)
     }

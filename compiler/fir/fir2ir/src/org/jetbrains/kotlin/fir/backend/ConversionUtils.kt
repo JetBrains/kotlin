@@ -107,7 +107,8 @@ fun FirNamedReference.toSymbol(declarationStorage: Fir2IrDeclarationStorage): Ir
             is FirFunctionSymbol<*> -> return callableSymbol.toFunctionSymbol(declarationStorage)
             is FirPropertySymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
             is FirFieldSymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
-            is FirBackingFieldSymbol -> return callableSymbol.toPropertyOrFieldSymbol(declarationStorage)
+            is FirBackingFieldSymbol -> return callableSymbol.toBackingFieldSymbol(declarationStorage)
+            is FirDelegateFieldSymbol<*> -> return callableSymbol.toBackingFieldSymbol(declarationStorage)
             is FirVariableSymbol<*> -> return callableSymbol.toValueSymbol(declarationStorage)
         }
     }
@@ -128,6 +129,10 @@ fun FirFunctionSymbol<*>.toFunctionSymbol(declarationStorage: Fir2IrDeclarationS
 
 fun FirVariableSymbol<*>.toPropertyOrFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
     return declarationStorage.getIrPropertyOrFieldSymbol(this)
+}
+
+fun FirVariableSymbol<*>.toBackingFieldSymbol(declarationStorage: Fir2IrDeclarationStorage): IrSymbol {
+    return declarationStorage.getIrBackingFieldSymbol(this)
 }
 
 fun FirVariableSymbol<*>.toValueSymbol(declarationStorage: Fir2IrDeclarationStorage): IrValueSymbol {

@@ -83,14 +83,18 @@ FILE fqName:<root> fileName:/member.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] 
-      FIELD PROPERTY_BACKING_FIELD name:testMember type:IrErrorType visibility:public [final] 
-      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType 
+      FIELD DELEGATE name:testMember$delegate type:<root>.DelegateProvider visibility:private [final]
+        EXPRESSION_BODY
+          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
+            value: CONST String type=kotlin.String value="OK"
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): IrErrorType declared in <root>.Host'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testMember type:IrErrorType visibility:public [final] ' type=IrErrorType origin=null
-              receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-testMember>' type=<root>.Host origin=null
+            ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType
+              ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+              PROPERTY_REFERENCE 'public final testMember: IrErrorType [delegated,val]' field='FIELD DELEGATE name:testMember$delegate type:<root>.DelegateProvider visibility:private [final] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

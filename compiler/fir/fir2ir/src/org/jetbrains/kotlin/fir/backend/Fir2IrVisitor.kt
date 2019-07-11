@@ -456,8 +456,37 @@ internal class Fir2IrVisitor(
         }
     }
 
+    private fun IrProperty.createBackingField(
+        property: FirProperty,
+        origin: IrDeclarationOrigin,
+        descriptor: PropertyDescriptor,
+        visibility: Visibility,
+        name: Name,
+        isFinal: Boolean,
+        firInitializerExpression: FirExpression?,
+        type: IrType? = null
+    ): IrField {
+        val inferredType = type ?: firInitializerExpression!!.typeRef.toIrType(session, declarationStorage)
+        return symbolTable.declareField(
+            startOffset, endOffset, origin, descriptor, inferredType
+        ) { symbol ->
+            IrFieldImpl(
+                startOffset, endOffset, origin, symbol,
+                name, inferredType,
+                visibility, isFinal = isFinal, isExternal = false,
+                isStatic = property.isStatic || parent !is IrClass
+            )
+        }.setParentByParentStack().withParent {
+            declarationStorage.enterScope(descriptor)
+            val initializerExpression = firInitializerExpression?.toIrExpression()
+            this.initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
+            declarationStorage.leaveScope(descriptor)
+        }
+    }
+
     private fun IrProperty.setPropertyContent(descriptor: PropertyDescriptor, property: FirProperty): IrProperty {
         val initializer = property.initializer
+        val delegate = property.delegate
         val irParent = this.parent
         val type = property.returnTypeRef.toIrType(session, declarationStorage)
         // TODO: this checks are very preliminary, FIR resolve should determine backing field presence itself
@@ -465,27 +494,20 @@ internal class Fir2IrVisitor(
             if (initializer != null || property.getter is FirDefaultPropertyGetter ||
                 property.isVar && property.setter is FirDefaultPropertySetter
             ) {
-                val backingOrigin = IrDeclarationOrigin.PROPERTY_BACKING_FIELD
-                backingField = symbolTable.declareField(
-                    startOffset, endOffset, backingOrigin, descriptor, type
-                ) { symbol ->
-                    IrFieldImpl(
-                        startOffset, endOffset, backingOrigin, symbol,
-                        property.name, type, property.visibility,
-                        isFinal = property.isVal, isExternal = false,
-                        isStatic = property.isStatic || irParent !is IrClass
-                    )
-                }.setParentByParentStack().withParent {
-                    declarationStorage.enterScope(descriptor)
-                    val initializerExpression = initializer?.toIrExpression()
-                    this.initializer = initializerExpression?.let { IrExpressionBodyImpl(it) }
-                    declarationStorage.leaveScope(descriptor)
-                }
+                backingField = createBackingField(
+                    property, IrDeclarationOrigin.PROPERTY_BACKING_FIELD, descriptor,
+                    property.visibility, property.name, property.isVal, initializer, type
+                )
+            } else if (delegate != null) {
+                backingField = createBackingField(
+                    property, IrDeclarationOrigin.DELEGATE, descriptor,
+                    Visibilities.PRIVATE, Name.identifier("${property.name}\$delegate"), true, delegate
+                )
             }
         }
-        getter = property.getter.accept(this@Fir2IrVisitor, type) as IrSimpleFunction
+        getter = property.getter?.let { convertPropertyAccessor(it, type, delegate != null) }
         if (property.isVar) {
-            setter = property.setter!!.accept(this@Fir2IrVisitor, type) as IrSimpleFunction
+            setter = property.setter?.let { convertPropertyAccessor(it, type, delegate != null) }
         }
         property.annotations.forEach {
             annotations += it.accept(this@Fir2IrVisitor, null) as IrConstructorCall
@@ -511,10 +533,11 @@ internal class Fir2IrVisitor(
 
     private fun createPropertyAccessor(
         propertyAccessor: FirPropertyAccessor, startOffset: Int, endOffset: Int,
-        correspondingProperty: IrProperty, isDefault: Boolean, propertyType: IrType
+        correspondingProperty: IrProperty, isDefault: Boolean, hasDelegate: Boolean, propertyType: IrType
     ): IrSimpleFunction {
         val origin = when {
             isDefault -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            hasDelegate -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
             else -> IrDeclarationOrigin.DEFINED
         }
         val isSetter = propertyAccessor.isSetter
@@ -581,13 +604,13 @@ internal class Fir2IrVisitor(
         }
     }
 
-    override fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Any?): IrElement {
+    private fun convertPropertyAccessor(propertyAccessor: FirPropertyAccessor, type: IrType, hasDelegate: Boolean): IrSimpleFunction {
         val correspondingProperty = propertyStack.last()
         return propertyAccessor.convertWithOffsets { startOffset, endOffset ->
             createPropertyAccessor(
                 propertyAccessor, startOffset, endOffset, correspondingProperty,
                 isDefault = propertyAccessor is FirDefaultPropertyGetter || propertyAccessor is FirDefaultPropertySetter,
-                propertyType = data as IrType
+                hasDelegate = hasDelegate, propertyType = type
             )
         }
     }
@@ -748,6 +771,34 @@ internal class Fir2IrVisitor(
 
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: Any?): IrElement {
         return qualifiedAccessExpression.toIrExpression(qualifiedAccessExpression.typeRef).applyReceivers(qualifiedAccessExpression)
+    }
+
+    override fun visitCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess, data: Any?): IrElement {
+        val symbol = callableReferenceAccess.calleeReference.toSymbol(declarationStorage)
+        val type = callableReferenceAccess.typeRef.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
+            when (symbol) {
+                is IrPropertySymbol -> {
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type, symbol, 0,
+                        symbol.owner.backingField?.symbol,
+                        symbol.owner.getter?.symbol,
+                        symbol.owner.setter?.symbol
+                    )
+                }
+                is IrFunctionSymbol -> {
+                    IrFunctionReferenceImpl(
+                        startOffset, endOffset, type, symbol,
+                        symbol.descriptor, 0
+                    )
+                }
+                else -> {
+                    IrErrorCallExpressionImpl(
+                        startOffset, endOffset, type, "Unsupported callable reference: ${callableReferenceAccess.render()}"
+                    )
+                }
+            }
+        }
     }
 
     private fun generateErrorCallExpression(startOffset: Int, endOffset: Int, calleeReference: FirReference): IrErrorCallExpression {

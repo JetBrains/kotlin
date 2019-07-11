@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirField
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 class FirJavaField(
@@ -40,7 +42,14 @@ class FirJavaField(
     override val initializer: FirExpression?
         get() = null
 
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirField>?
+        get() = null
+
     init {
         status.isStatic = isStatic
+    }
+
+    override fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D) {
+        transformChildren(transformer, data)
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -32,6 +33,8 @@ class FirDefaultSetterValueParameter(
     override val delegate: FirExpression?
         get() = null
     override val receiverTypeRef: FirTypeRef?
+        get() = null
+    override val delegateFieldSymbol: FirDelegateFieldSymbol<FirValueParameter>?
         get() = null
 
     override val isCrossinline = false

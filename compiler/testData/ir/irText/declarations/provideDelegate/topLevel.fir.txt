@@ -77,10 +77,14 @@ FILE fqName:<root> fileName:/topLevel.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val] 
-    FIELD PROPERTY_BACKING_FIELD name:testTopLevel type:IrErrorType visibility:public [final,static] 
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:IrErrorType 
+    FIELD DELEGATE name:testTopLevel$delegate type:<root>.DelegateProvider visibility:private [final,static]
+      EXPRESSION_BODY
+        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
+          value: CONST String type=kotlin.String value="OK"
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testTopLevel> visibility:public modality:FINAL <> () returnType:IrErrorType
       correspondingProperty: PROPERTY name:testTopLevel visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testTopLevel> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testTopLevel type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
-
+          ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType
+            CONST Null type=kotlin.Nothing? value=null
+            PROPERTY_REFERENCE 'public final testTopLevel: IrErrorType [delegated,val]' field='FIELD DELEGATE name:testTopLevel$delegate type:<root>.DelegateProvider visibility:private [final,static] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null

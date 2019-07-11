@@ -30,5 +30,4 @@ FILE fqName:<root> fileName:/localDelegatedPropertiesWithAnnotations.kt
   FUN name:foo visibility:public modality:FINAL <> (m:kotlin.collections.Map<kotlin.String, kotlin.Int>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:m index:0 type:kotlin.collections.Map<kotlin.String, kotlin.Int> 
     BLOCK_BODY
-      VAR name:test type:IrErrorType [val] 
-
+      VAR name:test type:kotlin.Int [val]

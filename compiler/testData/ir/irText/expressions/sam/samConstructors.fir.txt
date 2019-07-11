@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: Runnable>#' type=IrErrorType
-          ERROR_CALL 'Unresolved reference: <Unresolved name: foo>#' type=IrErrorType
+          ERROR_CALL 'Unsupported callable reference: ::<Unresolved name: foo>#' type=IrErrorType
   FUN name:test4 visibility:public modality:FINAL <> () returnType:IrErrorType 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'

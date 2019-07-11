@@ -12,18 +12,20 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
 
 sealed class FirImplicitBuiltinTypeRef(
     session: FirSession,
     psi: PsiElement?,
-    val id: ClassId
+    val id: ClassId,
+    typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray()
 ) : FirResolvedTypeRef, FirAbstractElement(session, psi) {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
-    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), emptyArray(), false)
+    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, false)
 }
 
 class FirImplicitUnitTypeRef(
@@ -61,3 +63,8 @@ class FirImplicitStringTypeRef(
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.String)
 
+class FirImplicitKPropertyTypeRef(
+    session: FirSession,
+    psi: PsiElement?,
+    typeArgument: ConeKotlinTypeProjection
+) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.KProperty, arrayOf(typeArgument))
