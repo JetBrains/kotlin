@@ -44,6 +44,7 @@ import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.*;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vcs.FileStatus;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
@@ -612,7 +613,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       }
       return false;
     }, component);
-    if (myEditor != null) {
+    if (myEditor != null && Registry.is("editor.new.mouse.hover.popups")) {
       EditorMouseHoverPopupControl.disablePopupsWhileShowing(myEditor, component);
     }
   }
