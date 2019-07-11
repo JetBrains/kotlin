@@ -257,8 +257,18 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
   }
 
   @TestOnly
+  public void setGroupId(@NotNull String groupId) {
+    myGroupIdField.setText(groupId);
+  }
+
+  @TestOnly
   public void setArtifactId(@NotNull String artifactId) {
     myArtifactIdField.setText(artifactId);
+  }
+
+  @TestOnly
+  public void setParentProject(@Nullable ProjectData parent) {
+    myParentProjectForm.setParentProject(parent);
   }
 }
 

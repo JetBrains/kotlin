@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside;
@@ -84,13 +85,13 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         ((GradleModuleBuilder)projectBuilder).setName(projectName);
       }
     });
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> UIUtil.dispatchAllInvocationEvents());
 
     assertEquals(projectName, project.getName());
+    assertModules(project, projectName, projectName + ".main", projectName + ".test");
     Module[] modules = ModuleManager.getInstance(project).getModules();
-    assertEquals(1, modules.length);
-    final Module module = modules[0];
+    final Module module = ContainerUtil.find(modules, it -> it.getName().equals(projectName));
     assertTrue(ModuleRootManager.getInstance(module).isSdkInherited());
-    assertEquals(projectName, module.getName());
 
     VirtualFile root = ProjectRootManager.getInstance(project).getContentRoots()[0];
     VirtualFile settingsScript = VfsUtilCore.findRelativeFile("settings.gradle", root);
@@ -130,14 +131,21 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         ((GradleModuleWizardStep)step).setArtifactId("childModule");
       }
     });
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> UIUtil.dispatchAllInvocationEvents());
 
-    modules = ModuleManager.getInstance(project).getModules();
-    assertEquals(2, modules.length);
+    assertModules(project, projectName, projectName + ".main", projectName + ".test",
+                  projectName + ".childModule", projectName + ".childModule.main", projectName + ".childModule.test");
 
     assertEquals("childModule", childModule.getName());
     assertEquals(String.format("rootProject.name = '%s'\n" +
                                "include '%s'\n\n", projectName, childModule.getName()),
                  StringUtil.convertLineSeparators(VfsUtilCore.loadText(settingsScript)));
+  }
+
+  private static void assertModules(@NotNull Project project, @NotNull String... expectedNames) {
+    Module[] actual = ModuleManager.getInstance(project).getModules();
+    Collection<String> actualNames = ContainerUtil.map(actual, it -> it.getName());
+    assertEquals(ContainerUtil.newHashSet(expectedNames), new HashSet<>(actualNames));
   }
 
   @Override

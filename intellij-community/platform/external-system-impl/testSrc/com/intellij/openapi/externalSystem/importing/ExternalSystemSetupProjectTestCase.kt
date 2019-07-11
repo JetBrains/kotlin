@@ -16,7 +16,6 @@ import com.intellij.openapi.fileChooser.impl.FileChooserFactoryImpl
 import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
-import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.platform.PlatformProjectOpenProcessor
 import com.intellij.testFramework.TestActionEvent
@@ -79,24 +78,6 @@ interface ExternalSystemSetupProjectTestCase {
             else -> null
           }
         })
-      }
-    }
-  }
-
-  fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
-    val project = this@use
-    try {
-      action(project)
-    }
-    finally {
-      invokeAndWaitIfNeeded {
-        val projectManager = ProjectManagerEx.getInstanceEx()
-        if (save) {
-          projectManager.closeAndDispose(project)
-        }
-        else {
-          projectManager.forceCloseProject(project, true)
-        }
       }
     }
   }
