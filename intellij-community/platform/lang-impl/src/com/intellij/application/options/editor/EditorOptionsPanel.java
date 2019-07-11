@@ -41,7 +41,6 @@ import com.intellij.profile.codeInspection.ui.ErrorOptionsProvider;
 import com.intellij.profile.codeInspection.ui.ErrorOptionsProviderEP;
 import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.ui.components.JBCheckBox;
-import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.JBTextField;
 import com.intellij.util.ui.JBEmptyBorder;
 import org.jetbrains.annotations.NotNull;
@@ -93,8 +92,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
   private JCheckBox    myCbShowSoftWrapsOnlyOnCaretLine;
   private JCheckBox    myPreselectCheckBox;
   private JBCheckBox   myCbShowQuickDocOnMouseMove;
-  private JBLabel      myQuickDocDelayLabel;
-  private JTextField   myQuickDocDelayTextField;
+  private JTextField   myTooltipsDelayTextField;
   private JComboBox<String> myRichCopyColorSchemeComboBox;
   private JCheckBox    myShowInlineDialogForCheckBox;
   private JCheckBox    myCbEnableRichCopyByDefault;
@@ -145,7 +143,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     initCaretStopComboBox(myWordBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.WordBoundary.values());
     initCaretStopComboBox(myLineBoundaryCaretStopComboBox, EditorCaretStopPolicyItem.LineBoundary.values());
 
-    initQuickDocProcessing();
     initSoftWrapsSettingsProcessing();
     initVcsSettingsProcessing();
   }
@@ -218,9 +215,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
     myCbEnsureBlankLineBeforeCheckBox.setSelected(editorSettings.isEnsureNewLineAtEOF());
     myCbShowQuickDocOnMouseMove.setSelected(editorSettings.isShowQuickDocOnMouseOverElement());
-    myQuickDocDelayTextField.setText(Long.toString(editorSettings.getQuickDocOnMouseOverElementDelayMillis()));
-    myQuickDocDelayTextField.setEnabled(editorSettings.isShowQuickDocOnMouseOverElement());
-    myQuickDocDelayLabel.setEnabled(editorSettings.isShowQuickDocOnMouseOverElement());
+    myTooltipsDelayTextField.setText(Long.toString(editorSettings.getTooltipsDelay()));
 
     // Advanced mouse
     myCbEnableDnD.setSelected(editorSettings.isDndEnabled());
@@ -315,9 +310,9 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       ServiceManager.getService(QuickDocOnMouseOverManager.class).setEnabled(enabled);
     }
 
-    int quickDocDelay = getQuickDocDelayFromGui();
-    if (quickDocDelay != -1) {
-      editorSettings.setQuickDocOnMouseOverElementDelayMillis(quickDocDelay);
+    int tooltipsDelay = getTooltipsDelayFromGui();
+    if (tooltipsDelay != -1) {
+      editorSettings.setTooltipsDelay(tooltipsDelay);
     }
 
     editorSettings.setDndEnabled(myCbEnableDnD.isSelected());
@@ -402,9 +397,9 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     return false;
   }
 
-  private int getQuickDocDelayFromGui() {
+  private int getTooltipsDelayFromGui() {
     try {
-      return EditorSettingsExternalizable.QUICK_DOC_DELAY_RANGE.fit(Integer.parseInt(myQuickDocDelayTextField.getText().trim()));
+      return EditorSettingsExternalizable.TOOLTIPS_DELAY_RANGE.fit(Integer.parseInt(myTooltipsDelayTextField.getText().trim()));
     }
     catch (NumberFormatException e) {
       return -1;
@@ -475,7 +470,8 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     isModified |= isModified(myCbEnsureBlankLineBeforeCheckBox, editorSettings.isEnsureNewLineAtEOF());
 
     isModified |= isModified(myCbShowQuickDocOnMouseMove, editorSettings.isShowQuickDocOnMouseOverElement());
-    isModified |= isModified(myQuickDocDelayTextField, editorSettings.getQuickDocOnMouseOverElementDelayMillis(), EditorSettingsExternalizable.QUICK_DOC_DELAY_RANGE);
+    isModified |= isModified(myTooltipsDelayTextField, editorSettings.getTooltipsDelay(),
+                             EditorSettingsExternalizable.TOOLTIPS_DELAY_RANGE);
 
     // advanced mouse
     isModified |= isModified(myCbEnableDnD, editorSettings.isDndEnabled());
@@ -548,16 +544,6 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
       // Ignore
     }
     return defaultIndent;
-  }
-
-  private void initQuickDocProcessing() {
-    myCbShowQuickDocOnMouseMove.addItemListener(new ItemListener() {
-      @Override
-      public void itemStateChanged(ItemEvent e) {
-        myQuickDocDelayTextField.setEnabled(myCbShowQuickDocOnMouseMove.isSelected());
-        myQuickDocDelayLabel.setEnabled(myCbShowQuickDocOnMouseMove.isSelected());
-      }
-    });
   }
 
   private void initSoftWrapsSettingsProcessing() {

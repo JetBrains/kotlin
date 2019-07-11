@@ -230,7 +230,7 @@ public class QuickDocOnMouseOverManager {
     myAlarm.cancelAllRequests();
     if (myCurrentRequest != null) myCurrentRequest.cancel();
     myCurrentRequest = new MyShowQuickDocRequest(documentationManager, editor, mouseOffset, elementUnderMouse);
-    myAlarm.addRequest(myCurrentRequest, EditorSettingsExternalizable.getInstance().getQuickDocOnMouseOverElementDelayMillis());
+    myAlarm.addRequest(myCurrentRequest, EditorSettingsExternalizable.getInstance().getTooltipsDelay());
   }
 
   private void closeQuickDocIfPossible() {

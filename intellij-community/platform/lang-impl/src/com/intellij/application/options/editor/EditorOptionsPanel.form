@@ -2,7 +2,7 @@
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.application.options.editor.EditorOptionsPanel">
   <tabbedpane id="97a1e">
     <constraints>
-      <xy x="22" y="49" width="812" height="1491"/>
+      <xy x="22" y="49" width="812" height="1576"/>
     </constraints>
     <properties/>
     <border type="none"/>
@@ -347,36 +347,12 @@
                 <children>
                   <component id="ce8e2" class="com.intellij.ui.components.JBCheckBox" binding="myCbShowQuickDocOnMouseMove">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Show quick documentation on mouse move"/>
                     </properties>
                   </component>
-                  <component id="ec4ad" class="javax.swing.JTextField" binding="myQuickDocDelayTextField">
-                    <constraints>
-                      <grid row="2" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <text value="500"/>
-                    </properties>
-                  </component>
-                  <component id="8691a" class="com.intellij.ui.components.JBLabel" binding="myQuickDocDelayLabel">
-                    <constraints>
-                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
-                    </constraints>
-                    <properties>
-                      <horizontalAlignment value="11"/>
-                      <text value="Delay (ms):"/>
-                    </properties>
-                  </component>
-                  <vspacer id="612dd">
-                    <constraints>
-                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false">
-                        <preferred-size width="188" height="14"/>
-                      </grid>
-                    </constraints>
-                  </vspacer>
                   <component id="95944" class="javax.swing.JCheckBox" binding="myShowLSTInGutterCheckBox">
                     <constraints>
                       <grid row="3" column="0" row-span="1" col-span="3" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
@@ -435,6 +411,30 @@
                       </component>
                     </children>
                   </grid>
+                  <component id="8691a" class="com.intellij.ui.components.JBLabel">
+                    <constraints>
+                      <grid row="5" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="Tooltips delay:"/>
+                    </properties>
+                  </component>
+                  <component id="ec4ad" class="javax.swing.JTextField" binding="myTooltipsDelayTextField">
+                    <constraints>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="500"/>
+                    </properties>
+                  </component>
+                  <component id="cbf0c" class="com.intellij.ui.components.JBLabel">
+                    <constraints>
+                      <grid row="5" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                    </constraints>
+                    <properties>
+                      <text value="milliseconds"/>
+                    </properties>
+                  </component>
                 </children>
               </grid>
               <grid id="7bb4" layout-manager="GridLayoutManager" row-count="3" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="0">

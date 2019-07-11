@@ -399,8 +399,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
     }
 
     long getShowingDelay() {
-      return getHighlightInfo() == null ? EditorSettingsExternalizable.getInstance().getQuickDocOnMouseOverElementDelayMillis()
-                                        : Registry.intValue("ide.tooltip.initialDelay.highlighter");
+      return EditorSettingsExternalizable.getInstance().getTooltipsDelay();
     }
 
     @NotNull
