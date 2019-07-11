@@ -55,7 +55,7 @@ fun ScriptCompilationConfiguration?.with(body: ScriptCompilationConfiguration.Bu
 /**
  * The script type display name
  */
-val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script")
+val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>()
 
 /**
  * The script filename extension
