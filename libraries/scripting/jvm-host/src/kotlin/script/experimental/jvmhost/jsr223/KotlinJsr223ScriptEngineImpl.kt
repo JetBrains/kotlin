@@ -26,7 +26,8 @@ import kotlin.script.experimental.jvmhost.repl.JvmReplEvaluatorState
 class KotlinJsr223ScriptEngineImpl(
     factory: ScriptEngineFactory,
     baseCompilationConfiguration: ScriptCompilationConfiguration,
-    baseEvaluationConfiguration: ScriptEvaluationConfiguration
+    baseEvaluationConfiguration: ScriptEvaluationConfiguration,
+    val getScriptArgs: (context: ScriptContext) -> ScriptArgsWithTypes?
 ) : KotlinJsr223JvmScriptEngineBase(factory), KotlinJsr223InvocableScriptEngine {
 
     @Volatile
@@ -64,8 +65,7 @@ class KotlinJsr223ScriptEngineImpl(
 
     override fun createState(lock: ReentrantReadWriteLock): IReplStageState<*> = replEvaluator.createState(lock)
 
-    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? =
-        ScriptArgsWithTypes(arrayOf(context.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class))
+    override fun overrideScriptArgs(context: ScriptContext): ScriptArgsWithTypes? = getScriptArgs(context)
 
     override val invokeWrapper: InvokeWrapper?
         get() = null
