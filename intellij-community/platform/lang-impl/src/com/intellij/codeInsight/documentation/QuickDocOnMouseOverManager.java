@@ -292,7 +292,7 @@ public class QuickDocOnMouseOverManager {
       Ref<String> documentationRef = new Ref<>();
       if (!targetElementRef.isNull()) {
         try {
-          documentationRef.set(docManager.generateDocumentation(targetElementRef.get(), originalElement));
+          documentationRef.set(docManager.generateDocumentation(targetElementRef.get(), originalElement, true));
         }
         catch (Exception e) {
           LOG.info(e);

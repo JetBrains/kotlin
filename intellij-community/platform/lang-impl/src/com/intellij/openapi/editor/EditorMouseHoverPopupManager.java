@@ -443,7 +443,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
             }
           }, 5000, 100);
           if (!targetElementRef.isNull()) {
-            quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element);
+            quickDocMessage = documentationManager.generateDocumentation(targetElementRef.get(), element, true);
           }
         }
         catch (IndexNotReadyException ignored) {

@@ -290,7 +290,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     if (content == null) return;
     DocumentationComponent component = (DocumentationComponent)content.getComponent();
     myUpdateDocAlarm.cancelAllRequests();
-    doFetchDocInfo(component, new MyCollector(myProject, element, original, null))
+    doFetchDocInfo(component, new MyCollector(myProject, element, original, null, false))
       .doWhenDone(() -> component.clearHistory());
   }
 
@@ -494,7 +494,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
           }
         }
         if (!sameElement || !component.isUpToDate()) {
-          cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null))
+          cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false))
             .doWhenDone(() -> component.clearHistory());
         }
       }
@@ -505,7 +505,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     }
     else if (prevHint != null && prevHint.isVisible() && prevHint instanceof AbstractPopup) {
       DocumentationComponent component = (DocumentationComponent)((AbstractPopup)prevHint).getComponent();
-      ActionCallback result = cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null));
+      ActionCallback result = cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
       if (requestFocus) {
         result.doWhenDone(() -> {
           JBPopup hint = getDocInfoHint();
@@ -601,7 +601,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
       Lookup lookup = LookupManager.getInstance(myProject).getActiveLookup();
       myEditor = lookup != null ? lookup.getEditor() : null;
     }
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
 
     myDocInfoHintRef = new WeakReference<>(hint);
 
@@ -725,8 +725,8 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return null;
   }
 
-  public String generateDocumentation(@NotNull PsiElement element, @Nullable PsiElement originalElement) {
-    return new MyCollector(myProject, element, originalElement, null).getDocumentation();
+  public String generateDocumentation(@NotNull PsiElement element, @Nullable PsiElement originalElement, boolean onHover) {
+    return new MyCollector(myProject, element, originalElement, null, onHover).getDocumentation();
   }
 
   @Nullable
@@ -746,11 +746,11 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   public void fetchDocInfo(@NotNull PsiElement element, @NotNull DocumentationComponent component) {
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, null, null));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, null, null, false));
   }
 
   public ActionCallback queueFetchDocInfo(@NotNull PsiElement element, @NotNull DocumentationComponent component) {
-    return doFetchDocInfo(component, new MyCollector(myProject, element, null, null));
+    return doFetchDocInfo(component, new MyCollector(myProject, element, null, null, false));
   }
 
   private ActionCallback cancelAndFetchDocInfo(@NotNull DocumentationComponent component, @NotNull DocumentationCollector provider) {
@@ -990,7 +990,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
         }
       }
       if (targetElement != null) {
-        cancelAndFetchDocInfo(component, new MyCollector(myProject, targetElement, null, ref));
+        cancelAndFetchDocInfo(component, new MyCollector(myProject, targetElement, null, ref, false));
       }
     }
     else {
@@ -1065,7 +1065,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   @Override
   protected void doUpdateComponent(PsiElement element, PsiElement originalElement, DocumentationComponent component) {
-    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null));
+    cancelAndFetchDocInfo(component, new MyCollector(myProject, element, originalElement, null, false));
   }
 
   @Override
@@ -1138,11 +1138,13 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
     final Project project;
     final PsiElement originalElement;
+    final boolean onHover;
 
-    MyCollector(@NotNull Project project, @NotNull PsiElement element, PsiElement originalElement, String ref) {
+    MyCollector(@NotNull Project project, @NotNull PsiElement element, PsiElement originalElement, String ref, boolean onHover) {
       super(element, null, ref, null);
       this.project = project;
       this.originalElement = originalElement;
+      this.onHover = onHover;
     }
 
     @Override
@@ -1178,7 +1180,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
         if (!element.isValid()) return;
         SmartPsiElementPointer originalPointer = element.getUserData(ORIGINAL_ELEMENT_KEY);
         PsiElement originalPsi = originalPointer != null ? originalPointer.getElement() : null;
-        String doc = provider.generateDoc(element, originalPsi);
+        String doc = onHover ? provider.generateHoverDoc(element, originalPsi) : provider.generateDoc(element, originalPsi);
         if (element instanceof PsiFile) {
           String fileDoc = generateFileDoc((PsiFile)element, doc == null);
           if (fileDoc != null) {
