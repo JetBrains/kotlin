@@ -14,6 +14,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 
@@ -55,6 +56,8 @@ internal fun VirtualFile.isNonScript(): Boolean =
             !this.isKotlinFileType()
 
 private fun VirtualFile.isKotlinFileType(): Boolean {
+    if (extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) return true
+
     val typeRegistry = FileTypeRegistry.getInstance()
     return typeRegistry.getFileTypeByFile(this) == KotlinFileType.INSTANCE ||
             typeRegistry.getFileTypeByFileName(name) == KotlinFileType.INSTANCE
