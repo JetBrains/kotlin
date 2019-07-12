@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.LocalAlias
 import org.jetbrains.kotlin.js.backend.ast.metadata.SpecialFunction
+import org.jetbrains.kotlin.resolve.calls.callUtil.isFakePsiElement
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.BinaryOperation.Type.*
 import org.jetbrains.kotlin.serialization.js.ast.JsAstProtoBuf.UnaryOperation.Type.*
@@ -666,7 +667,7 @@ class JsAstSerializer(private val jsAstValidator: ((JsProgramFragment, Set<JsNam
         val source = node.source
         return when (source) {
             is JsLocationWithSource -> source.asSimpleLocation()
-            is PsiElement -> extractLocation(source)
+            is PsiElement -> if (!source.isFakePsiElement) extractLocation(source) else null
             else -> null
         }
     }
