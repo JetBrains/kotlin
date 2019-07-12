@@ -25,6 +25,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.projectRoots.Sdk
 import com.intellij.openapi.roots.ModifiableModelsProvider
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtil.createDirectoryIfMissing
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.idea.formatter.KotlinStyleGuideCodeStyle
 import org.jetbrains.kotlin.idea.formatter.ProjectCodeStyleImporter
@@ -33,6 +35,8 @@ import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.versions.*
 import org.jetbrains.plugins.gradle.frameworkSupport.BuildScriptDataBuilder
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider
+import java.io.File
+import java.io.Writer
 import javax.swing.Icon
 import javax.swing.JComponent
 import javax.swing.JLabel
@@ -220,6 +224,59 @@ open class GradleKotlinJSBrowserFrameworkSupportProvider(
         get() = "browser"
 
     override fun getDescription() = "A Kotlin library or application targeting JavaScript for browser"
+
+    override fun addSupport(
+        buildScriptData: BuildScriptDataBuilder,
+        module: Module,
+        sdk: Sdk?,
+        specifyPluginVersionIfNeeded: Boolean,
+        explicitPluginVersion: String?
+    ) {
+        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
+
+        getNewFileWriter(module, "src/main/resources", "index.html")?.use {
+            it.write("""
+                <!DOCTYPE html>
+                <html lang="en">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${module.name}</title>
+                    <script src="${module.name}.js"></script>
+                </head>
+                <body>
+                
+                </body>
+                </html>
+            """.trimIndent().trim())
+        }
+
+
+        getNewFileWriter(module, "src/main/kotlin", "main.kt")?.use {
+            it.write("""
+                import kotlin.browser.document
+                
+                fun main() {
+                    document.write("Hello, world!")
+                }
+            """.trimIndent().trim())
+        }
+    }
+
+    /**
+     * create parent directories and file
+     * @return null if file already exists
+     */
+    private fun getNewFileWriter(module: Module, relativeDir: String, fileName: String): Writer? {
+        val contentEntryPath = module.gradleModuleBuilder?.contentEntryPath ?: return null
+        if (contentEntryPath.isEmpty()) return null
+        val contentRootDir = File(contentEntryPath)
+        val modelContentRootDir = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(contentRootDir) ?: return null
+
+        val dir = createDirectoryIfMissing(modelContentRootDir, relativeDir) ?: return null
+        if (dir.findChild(fileName) != null) return null
+        val file = dir.createChildData(null, fileName)
+        return file.getOutputStream(null).writer()
+    }
 }
 
 open class GradleKotlinJSNodeFrameworkSupportProvider(
