@@ -10,6 +10,7 @@ import com.intellij.openapi.fileTypes.FileTypeExtension
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.psi.PsiElement
+import com.intellij.util.indexing.FileBasedIndexExtension
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.ID
 import com.intellij.util.io.*
@@ -19,6 +20,7 @@ import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
 import java.util.function.UnaryOperator
 
 const val EP_NAME = "com.intellij.filetype.prebuiltStubsProvider"
@@ -108,9 +110,20 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
   }
 
   override fun openIndexStorage(indexesRoot: File): PersistentHashMap<HashCode, SerializedStubTree>? {
-    val versionInFile = indexesRoot.toPath().resolve("$indexName.version").readText()
-    if (StringUtilRt.parseInt(versionInFile, 0) != stubVersion) {
-      LOG.error("Prebuilt stubs version mismatch: $versionInFile, current version is $stubVersion")
+    val versionFileText = Files.readAllLines(indexesRoot.toPath().resolve("$indexName.version"))
+    if (versionFileText.size != 2) {
+      LOG.error("Invalid version file format: \"$versionFileText\"")
+      return null
+    }
+    val stubSerializationVersion = versionFileText[0]
+    val currentSerializationVersion = StringUtilRt.parseInt(stubSerializationVersion, 0)
+    if (currentSerializationVersion != FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex::class.java)!!.version) {
+      LOG.error("Stub serialization version mismatch: $stubSerializationVersion, current version is $currentSerializationVersion")
+      return null
+    }
+    val prebuiltIndexVersion = versionFileText[1]
+    if (StringUtilRt.parseInt(prebuiltIndexVersion, 0) != stubVersion) {
+      LOG.error("Prebuilt stubs version mismatch: $prebuiltIndexVersion, current version is $stubVersion")
       return null
     }
     else {
