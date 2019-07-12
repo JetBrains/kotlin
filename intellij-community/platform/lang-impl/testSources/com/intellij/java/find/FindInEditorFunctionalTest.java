@@ -15,4 +15,12 @@ public class FindInEditorFunctionalTest extends AbstractFindInEditorTest {
     nextOccurrence();
     checkResultByText("first line\nsecond <selection>line</selection>");
   }
+
+  public void testAllHighlightersAreRemovedAfterSessionFinish() {
+    init("some text");
+    initFind();
+    setTextToFind("e");
+    allOccurrences();
+    assertEmpty(getEditor().getMarkupModel().getAllHighlighters());
+  }
 }
