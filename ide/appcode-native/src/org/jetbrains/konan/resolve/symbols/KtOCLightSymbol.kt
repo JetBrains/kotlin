@@ -12,6 +12,8 @@ import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.cidr.lang.symbols.OCSymbolOffsetUtil
+import org.jetbrains.konan.resolve.symbols.objc.KtOCLazySymbol
+import org.jetbrains.konan.resolve.symbols.swift.KtSwiftLazySymbol
 
 class KtOCLightSymbol(
     private val psi: PsiElement,
@@ -47,6 +49,7 @@ class KtOCLightSymbol(
     override fun isSameSymbol(symbol: OCSymbol?, project: Project): Boolean {
         return symbol === this
                || symbol is KtOCLazySymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
+               || symbol is KtSwiftLazySymbol<*, *> && symbol.locateDefinition(project) == locateDefinition(project)
                || symbol is KtOCLightSymbol && symbol.locateDefinition(project) == locateDefinition(project)
     }
 }

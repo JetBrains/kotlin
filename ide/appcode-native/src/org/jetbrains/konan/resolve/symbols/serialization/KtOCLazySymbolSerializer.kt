@@ -5,7 +5,7 @@ import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
-import org.jetbrains.konan.resolve.symbols.KtOCLazySymbol
+import org.jetbrains.konan.resolve.symbols.objc.KtOCLazySymbol
 import org.jetbrains.konan.resolve.symbols.serialization.KtSerializer.Companion.currentFile
 
 class KtOCLazySymbolSerializer<T : KtOCLazySymbol<*, *>>(

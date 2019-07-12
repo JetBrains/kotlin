@@ -1,17 +1,11 @@
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.swift.psi.SwiftDeclarationKind
-import com.jetbrains.swift.psi.impl.types.SwiftTypeUtil
-import com.jetbrains.swift.psi.types.SwiftClassType
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.symbols.SwiftExtensionSymbol
-import com.jetbrains.swift.symbols.SwiftRequirementInfo
-import com.jetbrains.swift.symbols.SwiftTypeSymbol
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCClass
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCInterface
-import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProtocol
 
 class KtSwiftExtensionSymbol : KtSwiftTypeSymbol<KtSwiftTypeSymbol.TypeState, ObjCInterface>, SwiftExtensionSymbol {
     constructor(stub: ObjCInterface, project: Project, file: VirtualFile) : super(stub, project, file)

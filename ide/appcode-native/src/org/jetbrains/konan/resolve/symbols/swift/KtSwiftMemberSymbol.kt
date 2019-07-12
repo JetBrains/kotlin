@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

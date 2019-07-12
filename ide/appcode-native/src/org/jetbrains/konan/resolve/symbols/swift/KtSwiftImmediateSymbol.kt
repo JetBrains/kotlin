@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Comparing
@@ -7,6 +7,8 @@ import com.jetbrains.cidr.lang.symbols.DeepEqual
 import com.jetbrains.cidr.lang.symbols.OCSymbol
 import com.jetbrains.cidr.lang.symbols.OCSymbolKind
 import com.jetbrains.swift.symbols.*
+import org.jetbrains.konan.resolve.symbols.KtImmediateSymbol
+import org.jetbrains.konan.resolve.symbols.KtOCLightSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KtSwiftImmediateSymbol : KtImmediateSymbol, SwiftSymbol {

@@ -6,7 +6,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.SerializerProvider
-import org.jetbrains.konan.resolve.symbols.*
+import org.jetbrains.konan.resolve.symbols.objc.*
+import org.jetbrains.konan.resolve.symbols.swift.*
 import org.objenesis.instantiator.ObjectInstantiator
 import java.lang.reflect.Method
 

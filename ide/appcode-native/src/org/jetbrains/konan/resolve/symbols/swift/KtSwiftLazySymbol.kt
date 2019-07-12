@@ -1,4 +1,4 @@
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
@@ -7,6 +7,7 @@ import com.jetbrains.swift.symbols.SwiftAttributesInfo
 import com.jetbrains.swift.symbols.SwiftDeclarationSpecifiers
 import com.jetbrains.swift.symbols.SwiftSymbol
 import com.jetbrains.swift.symbols.SwiftSymbolAttribute
+import org.jetbrains.konan.resolve.symbols.KtLazySymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.Stub
 
 abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtLazySymbol<State, Stb>, SwiftSymbol {

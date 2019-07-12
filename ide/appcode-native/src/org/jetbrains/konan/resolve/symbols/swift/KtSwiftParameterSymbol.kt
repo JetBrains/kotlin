@@ -3,23 +3,15 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.swift
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.*
-import com.jetbrains.cidr.lang.symbols.cpp.OCDeclaratorSymbol
-import com.jetbrains.cidr.lang.symbols.cpp.OCSymbolWithQualifiedName
-import com.jetbrains.cidr.lang.symbols.expression.OCExpressionSymbol
-import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
-import com.jetbrains.cidr.lang.types.OCType
-import com.jetbrains.cidr.lang.types.OCTypeArgument
-import com.jetbrains.cidr.lang.types.visitors.OCTypeSubstitution
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.SwiftExpression
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.symbols.*
-import org.jetbrains.konan.resolve.translation.toOCType
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
 class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {

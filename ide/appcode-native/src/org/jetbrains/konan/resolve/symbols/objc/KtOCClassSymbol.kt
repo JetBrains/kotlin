@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.resolve.symbols
+package org.jetbrains.konan.resolve.symbols.objc
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile

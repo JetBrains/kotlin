@@ -4,7 +4,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.OCLog
 import com.jetbrains.swift.symbols.*
-import org.jetbrains.konan.resolve.symbols.*
+import org.jetbrains.konan.resolve.symbols.swift.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class StubToSwiftSymbolTranslator(val project: Project) {

@@ -9,7 +9,7 @@ import com.jetbrains.cidr.lang.symbols.objc.OCClassSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMemberSymbol
 import com.jetbrains.cidr.lang.symbols.objc.OCMethodSymbol
 import com.jetbrains.cidr.lang.symbols.objc.SelectorPartSymbolImpl
-import org.jetbrains.konan.resolve.symbols.*
+import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 class StubToOCSymbolTranslator(val project: Project) {
