@@ -60,7 +60,7 @@ abstract class AbstractChangeFeatureSupportLevelFix(
                 Errors.EXPERIMENTAL_FEATURE_WARNING -> {
                     if (Errors.EXPERIMENTAL_FEATURE_WARNING.cast(diagnostic).a.first != feature) return emptyList()
                     if (!allowWarningAndErrorMode) listOf(LanguageFeature.State.ENABLED)
-                    listOf(LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_ERROR)
+                    else listOf(LanguageFeature.State.ENABLED, LanguageFeature.State.ENABLED_WITH_ERROR)
                 }
                 else -> return emptyList()
             }
