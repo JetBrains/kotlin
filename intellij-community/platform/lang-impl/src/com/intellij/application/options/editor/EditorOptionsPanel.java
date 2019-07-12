@@ -27,6 +27,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.TextEditor;
 import com.intellij.openapi.options.CompositeConfigurable;
 import com.intellij.openapi.options.ConfigurationException;
+import com.intellij.openapi.options.SchemeManager;
 import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.Project;
@@ -249,7 +250,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
     EditorColorsScheme[] schemes = EditorColorsManager.getInstance().getAllSchemes();
     myRichCopyColorSchemeComboBox.addItem(RichCopySettings.ACTIVE_GLOBAL_SCHEME_MARKER);
     for (EditorColorsScheme scheme : schemes) {
-      myRichCopyColorSchemeComboBox.addItem(scheme.getName());
+      myRichCopyColorSchemeComboBox.addItem(SchemeManager.getDisplayName(scheme));
     }
     String toSelect = settings.getSchemeName();
     if (!StringUtil.isEmpty(toSelect)) {
