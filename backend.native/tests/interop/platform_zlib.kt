@@ -21,7 +21,7 @@ fun main(args: Array<String>) = memScoped {
         }.ptr
 
         if (inflateInit2(z, -15) == Z_OK && inflate(z, Z_FINISH) == Z_STREAM_END && inflateEnd(z) == Z_OK)
-            println(buffer.stringFromUtf8())
+            println(buffer.toKString())
     }
     println(golden.toKString())
 }

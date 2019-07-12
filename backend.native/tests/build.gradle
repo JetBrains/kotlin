@@ -2159,7 +2159,7 @@ task indexof(type: KonanLocalTest) {
 
 task utf8(type: KonanLocalTest) {
     expectedFail = (project.testTarget == 'wasm32') // Uses exceptions.
-    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n"
+    goldValue = "Hello\nПривет\n\uD800\uDC00\n\n\uFFFD\uFFFD\n\uFFFD12\n\uFFFD12\n12\uFFFD\n\uD83D\uDE25\n\uD83D\uDE25\n\uD83D\uDE25\n"
     source = "runtime/text/utf8.kt"
 }
 

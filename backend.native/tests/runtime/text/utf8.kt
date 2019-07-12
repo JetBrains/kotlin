@@ -7,10 +7,12 @@ package runtime.text.utf8
 
 import kotlin.test.*
 import kotlin.reflect.KClass
+import kotlinx.cinterop.toKString
 
-// region Util
+// -------------------------------------- Utils --------------------------------------
 fun assertEquals(expected: ByteArray, actual: ByteArray, message: String) =
         assertTrue(expected.contentEquals(actual), message)
+
 
 fun checkUtf16to8(string: String, expected: IntArray, conversion: String.() -> ByteArray) {
     expected.forEach {
@@ -25,15 +27,35 @@ fun checkUtf16to8(string: String, expected: IntArray, conversion: String.() -> B
     """.trimIndent())
 }
 
-fun checkUtf16to8Replacing(string: String, expected: IntArray) = checkUtf16to8(string, expected) { toUtf8() }
-fun checkUtf16to8Throwing(string: String, expected: IntArray) = checkUtf16to8(string, expected) { toUtf8OrThrow() }
+// Utils for checking successful UTF-16 to UTF-8 conversion.
+fun checkUtf16to8Replacing(string: String, expected: IntArray) {
+    checkUtf16to8(string, expected) { toUtf8() }
+    checkUtf16to8(string, expected) { encodeToByteArray() }
+}
+fun checkUtf16to8Throwing(string: String, expected: IntArray) {
+    checkUtf16to8(string, expected) { toUtf8OrThrow() }
+    checkUtf16to8(string, expected) { encodeToByteArray(throwOnInvalidSequence = true) }
+}
+fun checkValidUtf16to8(string: String, expected: IntArray) {
+    checkUtf16to8Replacing(string, expected)
+    checkUtf16to8Throwing(string, expected)
+}
 
-fun checkUtf16to8Replacing(string: String, expected: IntArray, start: Int, size: Int) =
-        checkUtf16to8(string, expected) { toUtf8(start, size) }
+fun checkUtf16to8Replacing(string: String, expected: IntArray, start: Int, size: Int) {
+    checkUtf16to8(string, expected) { toUtf8(start, size) }
+    checkUtf16to8(string, expected) { encodeToByteArray(start, start + size) }
+}
+fun checkUtf16to8Throwing(string: String, expected: IntArray, start: Int, size: Int) {
+    checkUtf16to8(string, expected) { toUtf8OrThrow(start, size) }
+    checkUtf16to8(string, expected) { encodeToByteArray(start, start + size, true) }
+}
+fun checkValidUtf16to8(string: String, expected: IntArray, start: Int, size: Int) {
+    checkUtf16to8Replacing(string, expected, start, size)
+    checkUtf16to8Throwing(string, expected, start, size)
+}
 
-fun checkUtf16to8Throwing(string: String, expected: IntArray, start: Int, size: Int) =
-        checkUtf16to8(string, expected) { toUtf8OrThrow(start, size) }
 
+// Utils for checking successful UTF-8 to UTF-16 conversion.
 fun checkUtf8to16(expected: String, array: IntArray, conversion: ByteArray.() -> String) {
     array.forEach {
         assertTrue(it in Byte.MIN_VALUE..Byte.MAX_VALUE, "Expected array contains illegal values")
@@ -47,14 +69,62 @@ fun checkUtf8to16(expected: String, array: IntArray, conversion: ByteArray.() ->
     """.trimIndent())
 }
 
-fun checkUtf8to16Replacing(expected: String, array: IntArray) = checkUtf8to16(expected, array) { stringFromUtf8() }
-fun checkUtf8to16Throwing(expected: String, array: IntArray) = checkUtf8to16(expected, array) { stringFromUtf8OrThrow() }
+fun checkZeroTerminatedUtf8to16Replacing(expected: String, array: IntArray) {
+    checkUtf8to16(expected, array) { stringFromUtf8() }
+    checkUtf8to16(expected, array) { toKString() }
+}
+fun checkUtf8to16Replacing(expected: String, array: IntArray) {
+    checkUtf8to16(expected, array) { stringFromUtf8() }
+    checkZeroTerminatedUtf8to16Replacing(expected, array)
+    checkZeroTerminatedUtf8to16Replacing(expected, array.copyOf(array.size + 1))
+}
+fun checkZeroTerminatedUtf8to16Throwing(expected: String, array: IntArray) {
+    checkUtf8to16(expected, array) { stringFromUtf8OrThrow() }
+    checkUtf8to16(expected, array) { toKString(throwOnInvalidSequence = true) }
+}
+fun checkUtf8to16Throwing(expected: String, array: IntArray) {
+    checkUtf8to16(expected, array) { decodeToString(throwOnInvalidSequence = true) }
+    checkZeroTerminatedUtf8to16Throwing(expected, array)
+    checkZeroTerminatedUtf8to16Throwing(expected, array.copyOf(array.size + 1))
+}
+fun checkValidUtf8to16(expected: String, array: IntArray) {
+    checkUtf8to16Replacing(expected, array)
+    checkUtf8to16Throwing(expected, array)
+}
+fun checkValidZeroTerminatedUtf8to16(expected: String, array: IntArray) {
+    checkZeroTerminatedUtf8to16Replacing(expected, array)
+    checkZeroTerminatedUtf8to16Throwing(expected, array)
+}
 
-fun checkUtf8to16Replacing(expected: String, array: IntArray, start: Int, size: Int) =
-        checkUtf8to16(expected, array) { stringFromUtf8(start, size) }
-fun checkUtf8to16Throwing(expected: String, array: IntArray, start: Int, size: Int) =
-        checkUtf8to16(expected, array) { stringFromUtf8OrThrow(start, size) }
+fun checkZeroTerminatedUtf8to16Replacing(expected: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16(expected, array) { stringFromUtf8(start, size) }
+    checkUtf8to16(expected, array) { toKString(start, start + size) }
+}
+fun checkUtf8to16Replacing(expected: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16(expected, array) { decodeToString(start, start + size) }
+    checkZeroTerminatedUtf8to16Replacing(expected, array, start, size)
+    checkZeroTerminatedUtf8to16Replacing(expected, array.copyOf(array.size + 1), start, size)
+}
+fun checkZeroTerminatedUtf8to16Throwing(expected: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16(expected, array) { stringFromUtf8OrThrow(start, size) }
+    checkUtf8to16(expected, array) { toKString(start, start + size, true) }
+}
+fun checkUtf8to16Throwing(expected: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16(expected, array) { decodeToString(start, start + size, true) }
+    checkZeroTerminatedUtf8to16Throwing(expected, array, start, size)
+    checkZeroTerminatedUtf8to16Throwing(expected, array.copyOf(array.size + 1), start, size)
+}
+fun checkValidUtf8to16(expected: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16Replacing(expected, array, start, size)
+    checkUtf8to16Throwing(expected, array, start, size)
+}
+fun checkValidZeroTerminatedUtf8to16(expected: String, array: IntArray, start: Int, size: Int) {
+    checkZeroTerminatedUtf8to16Replacing(expected, array, start, size)
+    checkZeroTerminatedUtf8to16Throwing(expected, array, start, size)
+}
 
+
+// Utils for checking malformed UTF-16 to UTF-8 conversion.
 fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     var exception: Throwable? = null
     try {
@@ -62,7 +132,7 @@ fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     } catch (e: Throwable) {
         exception = e
     }
-    assertNotNull(exception, "No excpetion was thrown for string: $string")
+    assertNotNull(exception, "No exception was thrown for string: $string")
     assertTrue(e.isInstance(exception),"""
                 Wrong exception was thrown for string: $string
                 Expected: ${e.qualifiedName}
@@ -70,51 +140,114 @@ fun <T: Any> checkThrows(e: KClass<T>, string: String, action: () -> Unit) {
     """.trimIndent())
 }
 
-fun checkUtf16to8Throws(string: String) = checkThrows(IllegalCharacterConversionException::class, string) {
-    string.toUtf8OrThrow()
+fun checkUtf16to8Throws(string: String) {
+    checkThrows(IllegalCharacterConversionException::class, string) { string.toUtf8OrThrow() }
+    checkThrows(CharacterCodingException::class, string) { string.encodeToByteArray(throwOnInvalidSequence = true) }
+}
+fun checkUtf16to8Throws(string: String, start: Int, size: Int) {
+    checkThrows(IllegalCharacterConversionException::class, string) { string.toUtf8OrThrow(start, size) }
+    checkThrows(CharacterCodingException::class, string) { string.encodeToByteArray(start, start + size, true) }
 }
 
-fun checkUtf16to8Throws(string: String, start: Int, size: Int) =
-        checkThrows(IllegalCharacterConversionException::class, string) {
-            string.toUtf8OrThrow(start, size)
-        }
 
-fun checkUtf8to16Throws(string: String, array: IntArray)
-        = checkThrows(IllegalCharacterConversionException::class, string) {
+// Utils for checking malformed UTF-8 to UTF-16 conversion.
+fun <T: Any> checkUtf8to16Throws(e: KClass<T>, string: String, array: IntArray, conversion: ByteArray.() -> String)
+        = checkThrows(e, string) {
     array.forEach {
         assertTrue(it in Byte.MIN_VALUE..Byte.MAX_VALUE, "Expected array contains illegal values")
     }
     val arrayBytes = ByteArray(array.size) { i -> array[i].toByte() }
-    arrayBytes.stringFromUtf8OrThrow()
+    arrayBytes.conversion()
 }
 
-fun checkUtf8to16Throws(string: String, array: IntArray, start: Int, size: Int)
-        = checkThrows(IllegalCharacterConversionException::class, string) {
-    array.forEach {
-        assertTrue(it in Byte.MIN_VALUE..Byte.MAX_VALUE, "Expected array contains illegal values")
-    }
-    val arrayBytes = ByteArray(array.size) { i -> array[i].toByte() }
-    arrayBytes.stringFromUtf8OrThrow(start, size)
+fun checkZeroTerminatedUtf8to16Throws(string: String, array: IntArray) {
+    checkUtf8to16Throws(IllegalCharacterConversionException::class, string, array) { stringFromUtf8OrThrow() }
+    checkUtf8to16Throws(CharacterCodingException::class, string, array) { toKString(throwOnInvalidSequence = true) }
+}
+fun checkUtf8to16Throws(string: String, array: IntArray) {
+    checkUtf8to16Throws(CharacterCodingException::class, string, array) { decodeToString(throwOnInvalidSequence = true) }
+    checkZeroTerminatedUtf8to16Throws(string, array)
+    checkZeroTerminatedUtf8to16Throws(string, array.copyOf(array.size + 1))
+}
+fun checkZeroTerminatedUtf8to16Throws(string: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16Throws(IllegalCharacterConversionException::class, string, array) { stringFromUtf8OrThrow(start, size) }
+    checkUtf8to16Throws(CharacterCodingException::class, string, array) { toKString(start, start + size, true) }
+}
+fun checkUtf8to16Throws(string: String, array: IntArray, start: Int, size: Int) {
+    checkUtf8to16Throws(CharacterCodingException::class, string, array) { decodeToString(start, start + size, true) }
+    checkZeroTerminatedUtf8to16Throws(string, array, start, size)
+    checkZeroTerminatedUtf8to16Throws(string, array.copyOf(array.size + 1), start, size)
 }
 
 
-fun checkDobuleConversionThrows(string: String) = checkThrows(NumberFormatException::class, string) {
+// Utils for checking String to floating-point number conversion.
+fun checkDoubleConversionThrows(string: String) = checkThrows(NumberFormatException::class, string) {
     string.toDouble()
 }
 
 fun checkFloatConversionThrows(string: String) = checkThrows(NumberFormatException::class, string) {
     string.toFloat()
 }
-// endregion
 
-// region UTF-16 -> UTF-8 conversion
+
+// Utils for checking invalid-bounds-exception thrown by UTF-16 to UTF-8 conversion.
+fun <T: Any> checkOutOfBoundsUtf16to8Replacing(e: KClass<T>, string: String, start: Int, size: Int) {
+    checkThrows(e, string) { string.toUtf8(start, size) }
+    checkThrows(e, string) { string.encodeToByteArray(start, start + size) }
+}
+fun <T: Any> checkOutOfBoundsUtf16to8Throwing(e: KClass<T>, string: String, start: Int, size: Int) {
+    checkThrows(e, string) { string.toUtf8OrThrow(start, size) }
+    checkThrows(e, string) { string.encodeToByteArray(start, start + size, true) }
+}
+fun <T: Any> checkOutOfBoundsUtf16to8(e: KClass<T>, string: String, start: Int, size: Int) {
+    checkOutOfBoundsUtf16to8Replacing(e, string, start, size)
+    checkOutOfBoundsUtf16to8Throwing(e, string, start, size)
+}
+
+
+// Utils for checking invalid-bounds-exception thrown by UTF-8 to UTF-16 conversion.
+fun <T: Any> checkOutOfBoundsZeroTerminatedUtf8to16Replacing(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkThrows(e, string) { byteArray.stringFromUtf8(start, size) }
+    checkThrows(e, string) { byteArray.toKString(start, start + size) }
+}
+fun <T: Any> checkOutOfBoundsUtf8to16Replacing(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkThrows(e, string) { byteArray.decodeToString(start, start + size) }
+    checkOutOfBoundsZeroTerminatedUtf8to16Replacing(e, string, byteArray, start, size)
+}
+fun <T: Any> checkOutOfBoundsZeroTerminatedUtf8to16Throwing(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkThrows(e, string) { byteArray.stringFromUtf8OrThrow(start, size) }
+    checkThrows(e, string) { byteArray.toKString(start, start + size, true) }
+}
+fun <T: Any> checkOutOfBoundsUtf8to16Throwing(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkThrows(e, string) { byteArray.decodeToString(start, start + size, true) }
+    checkOutOfBoundsZeroTerminatedUtf8to16Throwing(e, string, byteArray, start, size)
+}
+fun <T: Any> checkOutOfBoundsUtf8to16(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkOutOfBoundsUtf8to16Replacing(e, string, byteArray, start, size)
+    checkOutOfBoundsUtf8to16Throwing(e, string, byteArray, start, size)
+}
+fun <T: Any> checkOutOfBoundsZeroTerminatedUtf8to16(e: KClass<T>, string: String, byteArray: ByteArray, start: Int, size: Int) {
+    checkOutOfBoundsZeroTerminatedUtf8to16Replacing(e, string, byteArray, start, size)
+    checkOutOfBoundsZeroTerminatedUtf8to16Throwing(e, string, byteArray, start, size)
+}
+
+
+// Util for performing action on result of UTF-8 to UTF-16 conversion.
+fun convertUtf8to16(byteArray: ByteArray, action: (String) -> Unit) {
+    byteArray.stringFromUtf8().let { action(it) }
+    byteArray.decodeToString().let { action(it) }
+    byteArray.toKString().let { action(it) }
+}
+
+// ------------------------- Test UTF-16 to UTF-8 conversion -------------------------
 fun test16to8() {
-    // Test manual conversion with replacement.
     // Valid strings.
-    checkUtf16to8Replacing("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
-    checkUtf16to8Replacing("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
-    checkUtf16to8Replacing("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
-    checkUtf16to8Replacing("", intArrayOf())
+    checkValidUtf16to8("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
+    checkValidUtf16to8("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
+    checkValidUtf16to8("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
+    checkValidUtf16to8("", intArrayOf())
+
+    // Test manual conversion with replacement.
     // Illegal surrogate pair -> replace with default
     checkUtf16to8Replacing("\uDC00\uD800", intArrayOf(-17, -65, -67, -17, -65, -67))
     // Different kinds of input
@@ -125,14 +258,7 @@ fun test16to8() {
     checkUtf16to8Replacing("\uDC0012", intArrayOf(-17, -65, -67, '1'.toInt(), '2'.toInt()))
     checkUtf16to8Replacing("12\uD800", intArrayOf('1'.toInt(), '2'.toInt(), -17, -65, -67))
 
-
     // Test manual conversion with an exception if an input is invalid.
-    // Valid strings.
-    checkUtf16to8Throwing("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
-    checkUtf16to8Throwing("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
-    checkUtf16to8Throwing("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
-    checkUtf16to8Replacing("", intArrayOf())
-
     // Illegal surrogate pair -> throw
     checkUtf16to8Throws("\uDC00\uD800")
     // Different kinds of input (including illegal one) -> throw
@@ -145,13 +271,13 @@ fun test16to8() {
     // Test double parsing.
     assertEquals(4.2, "4.2".toDouble())
     // Illegal surrogate pair -> throw
-    checkDobuleConversionThrows("\uDC00\uD800")
+    checkDoubleConversionThrows("\uDC00\uD800")
     // Different kinds of input (including illegal one) -> throw
-    checkDobuleConversionThrows("\uD800\uDC001\uDC00\uD800")
+    checkDoubleConversionThrows("\uD800\uDC001\uDC00\uD800")
     // Lone surrogate - throw
-    checkDobuleConversionThrows("\uD80012")
-    checkDobuleConversionThrows("\uDC0012")
-    checkDobuleConversionThrows("12\uD800")
+    checkDoubleConversionThrows("\uD80012")
+    checkDoubleConversionThrows("\uDC0012")
+    checkDoubleConversionThrows("12\uD800")
 
     // Test float parsing.
     assertEquals(4.2F,  "4.2".toFloat())
@@ -166,21 +292,27 @@ fun test16to8() {
 }
 
 fun test16to8CustomBorders() {
-    // Test manual conversion with replacement and custom borders.
     // Valid strings.
-    checkUtf16to8Replacing("Hello!", intArrayOf('H'.toInt(), 'e'.toInt()), 0, 2)
-    checkUtf16to8Replacing("Hello!", intArrayOf('e'.toInt(), 'l'.toInt()), 1, 2)
-    checkUtf16to8Replacing("Hello!", intArrayOf('o'.toInt(), '!'.toInt()), 4, 2)
-    checkUtf16to8Replacing("Hello!", intArrayOf(), 0, 0)
-    checkUtf16to8Replacing("Hello!", intArrayOf(), 6, 0)
+    checkValidUtf16to8("Hello!", intArrayOf('H'.toInt(), 'e'.toInt()), 0, 2)
+    checkValidUtf16to8("Hello!", intArrayOf('e'.toInt(), 'l'.toInt()), 1, 2)
+    checkValidUtf16to8("Hello!", intArrayOf('o'.toInt(), '!'.toInt()), 4, 2)
+    checkValidUtf16to8("Hello!", intArrayOf(), 0, 0)
+    checkValidUtf16to8("Hello!", intArrayOf(), 6, 0)
 
-    checkUtf16to8Replacing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
+    checkValidUtf16to8("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 0, 4)
-    checkUtf16to8Replacing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
+    checkValidUtf16to8("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 2, 4)
-    checkUtf16to8Replacing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
+    checkValidUtf16to8("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 4, 4)
 
+    // Index out of bound
+    checkOutOfBoundsUtf16to8(IndexOutOfBoundsException::class, "Hello", -1, 4)
+    checkOutOfBoundsUtf16to8(IndexOutOfBoundsException::class, "Hello", 5, 10)
+    checkOutOfBoundsUtf16to8(IndexOutOfBoundsException::class, "Hello", 2, 10)
+    checkOutOfBoundsUtf16to8(IllegalArgumentException::class, "Hello", 3, -2)
+
+    // Test manual conversion with replacement and custom borders.
     // Illegal surrogate pair -> replace with default
     checkUtf16to8Replacing("\uDC00\uD80012",
             intArrayOf(-17, -65, -67, -17, -65, -67, '1'.toInt()), 0, 3)
@@ -193,28 +325,7 @@ fun test16to8CustomBorders() {
     checkUtf16to8Replacing("1\uD800\uDC002", intArrayOf('1'.toInt(), -17, -65, -67), 0, 2)
     checkUtf16to8Replacing("1\uD800\uDC002", intArrayOf(-17, -65, -67, '2'.toInt()), 2, 2)
 
-    // Index out of bound
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(-1, 4)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(5, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8(2, 10)}
-    checkThrows(IllegalArgumentException::class, "Hello") { "Hello".toUtf8(3, -2)}
-
-
     // Test manual conversion with an exception if an input is invalid and custom borders.
-    // Valid strings.
-    checkUtf16to8Throwing("Hello!", intArrayOf('H'.toInt(), 'e'.toInt()), 0, 2)
-    checkUtf16to8Throwing("Hello!", intArrayOf('e'.toInt(), 'l'.toInt()), 1, 2)
-    checkUtf16to8Throwing("Hello!", intArrayOf('o'.toInt(), '!'.toInt()), 4, 2)
-    checkUtf16to8Throwing("Hello!", intArrayOf(), 0, 0)
-    checkUtf16to8Throwing("Hello!", intArrayOf(), 6, 0)
-
-    checkUtf16to8Throwing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 0, 4)
-    checkUtf16to8Throwing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 2, 4)
-    checkUtf16to8Throwing("\uD800\uDC00\uD800\uDC00\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128), 4, 4)
-
     // Illegal surrogate pair -> throw
     checkUtf16to8Throws("\uDC00\uD80012", 0, 3)
     checkUtf16to8Throws("1\uDC00\uD8002", 1, 3)
@@ -223,12 +334,6 @@ fun test16to8CustomBorders() {
     // Lone surrogate -> throw
     checkUtf16to8Throws("1\uD800\uDC002", 0, 2)
     checkUtf16to8Throws("1\uD800\uDC002",  2, 2)
-
-    // Index out of bound
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(-1, 4)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(5, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { "Hello".toUtf8OrThrow(2, 10)}
-    checkThrows(IllegalArgumentException::class, "Hello") { "Hello".toUtf8OrThrow(3, -2)}
 }
 
 fun testPrint() {
@@ -247,21 +352,21 @@ fun testPrint() {
 
     // https://github.com/JetBrains/kotlin-native/issues/1091
     val array = byteArrayOf(0xF0.toByte(), 0x9F.toByte(), 0x98.toByte(), 0xA5.toByte())
-    val badStr = array.stringFromUtf8()
-    assertEquals(2, badStr.length)
-    println(badStr)
+    convertUtf8to16(array) { badString ->
+        assertEquals(2, badString.length)
+        println(badString)
+    }
 }
-// endregion
 
-// region UTF-8 -> UTF-16 conversion
+// ------------------------- Test UTF-8 to UTF-16 conversion -------------------------
 fun test8to16() {
-    // Test manual conversion with replacement.
     // Valid strings.
-    checkUtf8to16Replacing("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
-    checkUtf8to16Replacing("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
-    checkUtf8to16Replacing("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
-    checkUtf8to16Replacing("", intArrayOf())
+    checkValidUtf8to16("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
+    checkValidUtf8to16("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
+    checkValidUtf8to16("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
+    checkValidUtf8to16("", intArrayOf())
 
+    // Test manual conversion with replacement.
     // Incorrect UTF-8 lead character.
     checkUtf8to16Replacing("\uFFFD1", intArrayOf(-1, '1'.toInt()))
 
@@ -270,12 +375,6 @@ fun test8to16() {
     checkUtf8to16Replacing("\uFFFD1\uFFFD", intArrayOf(-16, -97, -104, '1'.toInt(), -16, -97, -104))
 
     // Test manual conversion with exception throwing
-    // Valid strings.
-    checkUtf8to16Throwing("Hello", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()))
-    checkUtf8to16Throwing("Привет", intArrayOf(-48, -97, -47, -128, -48, -72, -48, -78, -48, -75, -47, -126))
-    checkUtf8to16Throwing("\uD800\uDC00", intArrayOf(-16, -112, -128, -128))
-    checkUtf8to16Throwing("", intArrayOf())
-
     // Incorrect UTF-8 lead character -> throw.
     checkUtf8to16Throws("\uFFFD1", intArrayOf(-1, '1'.toInt()))
 
@@ -285,26 +384,35 @@ fun test8to16() {
 }
 
 fun test8to16CustomBorders() {
-    // Conversion with replacement.
-    checkUtf8to16Replacing("He",
+    // Valid strings.
+    checkValidUtf8to16("He",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()),0, 2)
-    checkUtf8to16Replacing("ll",
+    checkValidUtf8to16("ll",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 2, 2)
-    checkUtf8to16Replacing("lo",
+    checkValidUtf8to16("lo",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 3, 2)
-    checkUtf8to16Replacing("",
+    checkValidUtf8to16("",
             intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 0, 0)
 
-    checkUtf8to16Replacing("\uD800\uDC00\uD800\uDC00",
+    checkValidUtf8to16("\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
             0, 8)
-    checkUtf8to16Replacing("\uD800\uDC00\uD800\uDC00",
+    checkValidUtf8to16("\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
             4, 8)
-    checkUtf8to16Replacing("\uD800\uDC00\uD800\uDC00",
+    checkValidUtf8to16("\uD800\uDC00\uD800\uDC00",
             intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
             8, 8)
 
+    // Index out of bound
+    val helloArray = byteArrayOf('H'.toByte(), 'e'.toByte(), 'l'.toByte(), 'l'.toByte(), 'o'.toByte())
+    checkOutOfBoundsUtf8to16(IndexOutOfBoundsException::class, "Hello", helloArray, -1, 4)
+    checkOutOfBoundsUtf8to16(IndexOutOfBoundsException::class, "Hello", helloArray, 5, 10)
+    checkOutOfBoundsUtf8to16(IndexOutOfBoundsException::class, "Hello", helloArray, 2, 10)
+    checkOutOfBoundsUtf8to16(IndexOutOfBoundsException::class, "Hello", helloArray, 10, 0)
+    checkOutOfBoundsUtf8to16(IllegalArgumentException::class, "Hello", helloArray, 3, -2)
+
+    // Test manual conversion with replacement and custom borders.
     // Incorrect UTF-8 lead character.
     checkUtf8to16Replacing("\uFFFD1", intArrayOf(-1, '1'.toInt(), '2'.toInt()), 0, 2)
     checkUtf8to16Replacing("\uFFFD2", intArrayOf('1'.toInt(), -1, '2'.toInt(), '3'.toInt()), 1, 2)
@@ -315,35 +423,7 @@ fun test8to16CustomBorders() {
     checkUtf8to16Replacing("\uFFFD2", intArrayOf('1'.toInt(), -16, -97, -104, '2'.toInt(), '3'.toInt()), 1, 4)
     checkUtf8to16Replacing("2\uFFFD", intArrayOf('1'.toInt(), '2'.toInt(), -16, -97, -104),  1, 4)
 
-
-    // Index out of bound
-    val helloArray = byteArrayOf('H'.toByte(), 'e'.toByte(), 'l'.toByte(), 'l'.toByte(), 'o'.toByte())
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(-1, 4)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(5, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8(10, 0)}
-    checkThrows(IllegalArgumentException::class, "Hello") { helloArray.stringFromUtf8(3, -2)}
-
-    // Conversion with throwing
-    checkUtf8to16Throwing("He",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()),0, 2)
-    checkUtf8to16Throwing("ll",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 2, 2)
-    checkUtf8to16Throwing("lo",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 3, 2)
-    checkUtf8to16Throwing("",
-            intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 'o'.toInt()), 0, 0)
-
-    checkUtf8to16Throwing("\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
-            0, 8)
-    checkUtf8to16Throwing("\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
-            4, 8)
-    checkUtf8to16Throwing("\uD800\uDC00\uD800\uDC00",
-            intArrayOf(-16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128, -16, -112, -128, -128),
-            8, 8)
-
+    // Test manual conversion with an exception if an input is invalid and custom borders.
     // Incorrect UTF-8 lead character.
     checkUtf8to16Throws("\uFFFD1", intArrayOf(-1, '1'.toInt(), '2'.toInt()), 0, 2)
     checkUtf8to16Throws("\uFFFD2", intArrayOf('1'.toInt(), -1, '2'.toInt(), '3'.toInt()), 1, 2)
@@ -353,20 +433,61 @@ fun test8to16CustomBorders() {
     checkUtf8to16Throws("\uFFFD1", intArrayOf(-16, -97, -104, '1'.toInt(), '2'.toInt()), 0, 4)
     checkUtf8to16Throws("\uFFFD2", intArrayOf('1'.toInt(), -16, -97, -104, '2'.toInt(), '3'.toInt()), 1, 4)
     checkUtf8to16Throws("2\uFFFD", intArrayOf('1'.toInt(), '2'.toInt(), -16, -97, -104),  1, 4)
-
-    // Index out of bound
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(-1, 4)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(5, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(2, 10)}
-    checkThrows(IndexOutOfBoundsException::class, "Hello") { helloArray.stringFromUtf8OrThrow(10, 0)}
-    checkThrows(IllegalArgumentException::class, "Hello") { helloArray.stringFromUtf8OrThrow(3, -2)}
 }
-// endregion
 
+// ----------------- Test zero-terminated UTF-8 to UTF-16 conversion -----------------
+fun testZeroTerminated8To16() {
+    // Valid strings.
+    checkValidZeroTerminatedUtf8to16("Hell", intArrayOf('H'.toInt(), 'e'.toInt(), 'l'.toInt(), 'l'.toInt(), 0, 'o'.toInt()))
+    checkValidZeroTerminatedUtf8to16("При", intArrayOf(-48, -97, -47, -128, -48, -72, 0, -48, -78, 0, -48, -75, -47, -126))
+    checkValidZeroTerminatedUtf8to16("\uD800\uDC00", intArrayOf(-16, -112, -128, -128, 0, -16, -112, -128, -128))
+    checkValidZeroTerminatedUtf8to16("", intArrayOf(0, 'H'.toInt()))
+
+    // Test manual conversion with replacement.
+    // Incorrect UTF-8 lead character.
+    checkZeroTerminatedUtf8to16Replacing("\uFFFD", intArrayOf(-1, 0, '1'.toInt()))
+
+    // Incomplete codepoint.
+    checkZeroTerminatedUtf8to16Replacing("\uFFFD", intArrayOf(-16, -97, -104, 0, '1'.toInt()))
+    checkZeroTerminatedUtf8to16Replacing("\uFFFD1", intArrayOf(-16, -97, -104, '1'.toInt(), 0, -16, -97, -104))
+
+    // Test manual conversion with exception throwing
+    // Incorrect UTF-8 lead character -> throw.
+    checkZeroTerminatedUtf8to16Throws("\uFFFD", intArrayOf(-1, 0, '1'.toInt()))
+
+    // Incomplete codepoint -> throw.
+    checkZeroTerminatedUtf8to16Throws("\uFFFD", intArrayOf(-16, -97, -104, 0, '1'.toInt()))
+    checkZeroTerminatedUtf8to16Throws("\uFFFD1", intArrayOf(-16, -97, -104, '1'.toInt(), 0, -16, -97, -104))
+}
+
+fun testZeroTerminated8To16CustomBorders() {
+    val array = intArrayOf('a'.toInt(), 'a'.toInt(), 'a'.toInt(), 0, 'b'.toInt(), 'b'.toInt(), 'b'.toInt(), 0)
+    checkValidZeroTerminatedUtf8to16("aaa", array, 0, 5)
+    checkValidZeroTerminatedUtf8to16("a", array, 2, 2)
+    checkValidZeroTerminatedUtf8to16("", array, 3, 2)
+    checkValidZeroTerminatedUtf8to16("bb", array, 4, 2)
+    checkValidZeroTerminatedUtf8to16("bbb", array, 4, 3)
+    checkValidZeroTerminatedUtf8to16("bbb", array, 4, 4)
+    checkValidZeroTerminatedUtf8to16("bb", array, 5, 3)
+    checkValidZeroTerminatedUtf8to16("b", array, 6, 2)
+    checkValidZeroTerminatedUtf8to16("", array, 7, 1)
+    checkValidZeroTerminatedUtf8to16("", array, 8, 0)
+
+    val byteArray = ByteArray(array.size) { array[it].toByte() }
+    checkOutOfBoundsZeroTerminatedUtf8to16(IndexOutOfBoundsException::class, "aaa0bbb0", byteArray, -1, 4)
+    checkOutOfBoundsZeroTerminatedUtf8to16(IndexOutOfBoundsException::class, "aaa0bbb0", byteArray, 8, 10)
+    checkOutOfBoundsZeroTerminatedUtf8to16(IndexOutOfBoundsException::class, "aaa0bbb0", byteArray, 2, 10)
+    checkOutOfBoundsZeroTerminatedUtf8to16(IndexOutOfBoundsException::class, "aaa0bbb0", byteArray, 10, 0)
+    checkOutOfBoundsZeroTerminatedUtf8to16(IllegalArgumentException::class, "aaa0bbb0", byteArray, 3, -2)
+}
+
+// ------------------------------------ Run tests ------------------------------------
 @Test fun runTest() {
     test16to8()
     test16to8CustomBorders()
     test8to16()
     test8to16CustomBorders()
+    testZeroTerminated8To16()
+    testZeroTerminated8To16CustomBorders()
     testPrint()
 }

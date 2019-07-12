@@ -162,7 +162,7 @@ class NumberConverter {
         if (k == expt - 1)
             formattedDecimal[charPos++] = '0'
         formattedDecimal[charPos++] = 'E'
-        return fromCharArray(formattedDecimal, 0, charPos) + expt.toString()
+        return unsafeStringFromCharArray(formattedDecimal, 0, charPos) + expt.toString()
     }
 
     private fun freeFormat(): String {
@@ -192,7 +192,7 @@ class NumberConverter {
             k--
             u = if (getCount < setCount) uArray[getCount++] else -1
         } while (u != -1 || k >= -1)
-        return fromCharArray(formattedDecimal, 0, charPos)
+        return unsafeStringFromCharArray(formattedDecimal, 0, charPos)
     }
 
     private fun bigIntDigitGeneratorInstImpl(f: Long, e: Int,

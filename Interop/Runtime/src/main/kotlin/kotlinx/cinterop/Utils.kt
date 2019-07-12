@@ -554,6 +554,60 @@ public fun CPointer<IntVar>.toKStringFromUtf32(): String {
     return String(chars)
 }
 
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array.
+ * Bytes following the first occurrence of `0` byte, if it occurs, are not decoded.
+ *
+ * Malformed byte sequences are replaced by the replacement char `\uFFFD`.
+ */
+@UseExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("1.3")
+public fun ByteArray.toKString() : String {
+    val realEndIndex = realEndIndex(this, 0, this.size)
+    return decodeToString(0, realEndIndex)
+}
+
+/**
+ * Decodes a string from the bytes in UTF-8 encoding in this array or its subrange.
+ * Bytes following the first occurrence of `0` byte, if it occurs, are not decoded.
+ *
+ * @param startIndex the beginning (inclusive) of the subrange to decode, 0 by default.
+ * @param endIndex the end (exclusive) of the subrange to decode, size of this array by default.
+ * @param throwOnInvalidSequence specifies whether to throw an exception on malformed byte sequence or replace it by the replacement char `\uFFFD`.
+ *
+ * @throws IndexOutOfBoundsException if [startIndex] is less than zero or [endIndex] is greater than the size of this array.
+ * @throws IllegalArgumentException if [startIndex] is greater than [endIndex].
+ * @throws CharacterCodingException if the byte array contains malformed UTF-8 byte sequence and [throwOnInvalidSequence] is true.
+ */
+@UseExperimental(ExperimentalStdlibApi::class)
+@SinceKotlin("1.3")
+public fun ByteArray.toKString(
+        startIndex: Int = 0,
+        endIndex: Int = this.size,
+        throwOnInvalidSequence: Boolean = false
+) : String {
+    checkBoundsIndexes(startIndex, endIndex, this.size)
+    val realEndIndex = realEndIndex(this, startIndex, endIndex)
+    return decodeToString(startIndex, realEndIndex, throwOnInvalidSequence)
+}
+
+private fun realEndIndex(byteArray: ByteArray, startIndex: Int, endIndex: Int): Int {
+    var index = startIndex
+    while (index < endIndex && byteArray[index] != 0.toByte()) {
+        index++
+    }
+    return index
+}
+
+private fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
+    if (startIndex < 0 || endIndex > size) {
+        throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, size: $size")
+    }
+    if (startIndex > endIndex) {
+        throw IllegalArgumentException("startIndex: $startIndex > endIndex: $endIndex")
+    }
+}
+
 public class MemScope : ArenaBase() {
 
     val memScope: MemScope

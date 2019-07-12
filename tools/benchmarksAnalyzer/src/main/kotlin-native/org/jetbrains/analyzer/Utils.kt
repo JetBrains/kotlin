@@ -39,7 +39,7 @@ actual fun readFile(fileName: String): String {
 actual fun Double.format(decimalNumber: Int): String {
     var buffer = ByteArray(1024)
     snprintf(buffer.refTo(0), buffer.size.toULong(), "%.${decimalNumber}f", this)
-    return buffer.stringFromUtf8()
+    return buffer.toKString()
 }
 
 actual fun writeToFile(fileName: String, text: String) {
@@ -91,7 +91,7 @@ class CUrl(url: String, user: String? = null, password: String? = null, followLo
 
 fun CPointer<ByteVar>.toKString(length: Int): String {
     val bytes = this.readBytes(length)
-    return bytes.stringFromUtf8()
+    return bytes.toKString()
 }
 
 fun collectResponse(buffer: CPointer<ByteVar>?, size: size_t, nitems: size_t, userdata: COpaquePointer?): size_t {
