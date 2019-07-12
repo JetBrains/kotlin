@@ -3,6 +3,7 @@
 package com.intellij.ide.util.gotoByName;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.intellij.BundleBase;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.ApplyIntentionAction;
 import com.intellij.ide.actions.ShowSettingsUtilImpl;
@@ -820,7 +821,9 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         return value.getHit() + " = " + value.getValue();
       }
       String hit = StringUtil.defaultIfEmpty(value.getHit(), value.getOption());
-      return StringUtil.unescapeXmlEntities(hit).replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
+      return StringUtil.unescapeXmlEntities(hit)
+        .replace(BundleBase.MNEMONIC_STRING, "")
+        .replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
     }
 
     private static String cutName(String name, String shortcutText, JList list, JPanel panel, SimpleColoredComponent nameComponent) {
