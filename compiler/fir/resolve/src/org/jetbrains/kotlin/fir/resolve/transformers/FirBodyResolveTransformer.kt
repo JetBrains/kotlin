@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -204,39 +201,51 @@ open class FirBodyResolveTransformer(
         access.resultType = typeFromCallee(access)
     }
 
+    private fun typeFromSymbol(symbol: ConeSymbol, makeNullable: Boolean): FirResolvedTypeRef {
+        return when (symbol) {
+            is FirCallableSymbol<*> -> {
+                val returnType = jump.tryCalculateReturnType(symbol.fir)
+                if (makeNullable) {
+                    returnType.withReplacedConeType(
+                        session,
+                        returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
+                    )
+                } else {
+                    returnType
+                }
+            }
+            is ConeClassifierSymbol -> {
+                val fir = (symbol as? FirBasedSymbol<*>)?.fir
+                // TODO: unhack
+                if (fir is FirEnumEntry) {
+                    (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
+                        session,
+                        null,
+                        "no enum item supertype"
+                    )
+                } else
+                    FirResolvedTypeRefImpl(
+                        session, null, symbol.constructType(emptyArray(), isNullable = false),
+                        annotations = emptyList()
+                    )
+            }
+            else -> error("WTF ! $symbol")
+        }
+    }
+
     private fun <T> typeFromCallee(access: T): FirResolvedTypeRef where T : FirQualifiedAccess {
+        val makeNullable: Boolean by lazy {
+            access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable
+        }
+
         return when (val newCallee = access.calleeReference) {
             is FirErrorNamedReference ->
                 FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+            is FirNamedReferenceWithCandidate -> {
+                typeFromSymbol(newCallee.candidateSymbol, makeNullable)
+            }
             is FirResolvedCallableReference -> {
-                val symbol = newCallee.coneSymbol
-                if (symbol is FirCallableSymbol<*>) {
-                    val returnType = jump.tryCalculateReturnType(symbol.fir)
-                    if (access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable) {
-                        returnType.withReplacedConeType(
-                            session,
-                            returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
-                        )
-                    } else {
-                        returnType
-                    }
-                } else if (symbol is ConeClassifierSymbol && symbol is FirBasedSymbol<*>) {
-                    val fir = symbol.fir
-                    // TODO: unhack
-                    if (fir is FirEnumEntry) {
-                        (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
-                            session,
-                            null,
-                            "no enum item supertype"
-                        )
-                    } else
-                        FirResolvedTypeRefImpl(
-                            session, null, symbol.constructType(emptyArray(), isNullable = false),
-                            annotations = emptyList()
-                        )
-                } else {
-                    error("WTF ! $symbol")
-                }
+                typeFromSymbol(newCallee.coneSymbol, makeNullable)
             }
             is FirThisReference -> {
                 val labelName = newCallee.labelName
@@ -358,12 +367,14 @@ open class FirBodyResolveTransformer(
             tryResolveAsQualifier()?.let { return it }
         }
 
-        if (nameReference is FirResolvedCallableReference) {
-            val symbol = nameReference.coneSymbol as? ConeClassLikeSymbol
-            if (symbol != null) {
-                return FirResolvedQualifierImpl(session, nameReference.psi, symbol.classId).apply {
-                    resultType = typeForQualifier(this)
-                }
+        val referencedSymbol = when (nameReference) {
+            is FirResolvedCallableReference -> nameReference.coneSymbol
+            is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol
+            else -> null
+        }
+        if (referencedSymbol is ConeClassLikeSymbol) {
+            return FirResolvedQualifierImpl(session, nameReference.psi, referencedSymbol.classId).apply {
+                resultType = typeForQualifier(this)
             }
         }
 
@@ -747,7 +758,13 @@ open class FirBodyResolveTransformer(
         val expectedTypeRef = data as FirTypeRef?
         val completeInference =
             try {
+                val initialExplicitReceiver = functionCall.explicitReceiver
                 val resultExpression = resolveCallAndSelectCandidate(functionCall, expectedTypeRef)
+                val resultExplicitReceiver = resultExpression.explicitReceiver
+                if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
+                    // name.invoke() case
+                    completeTypeInference(resultExplicitReceiver, null)
+                }
                 completeTypeInference(resultExpression, expectedTypeRef)
             } catch (e: Throwable) {
                 throw RuntimeException("While resolving call ${functionCall.render()}", e)

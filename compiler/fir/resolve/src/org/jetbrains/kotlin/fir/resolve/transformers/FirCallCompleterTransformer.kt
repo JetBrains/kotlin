@@ -42,7 +42,7 @@ class FirCallCompleterTransformer(
             qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
         calleeReference.candidate.substitutor
 
-        val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.coneSymbol.firUnsafe())
+        val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.candidateSymbol.firUnsafe())
 
         val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
@@ -56,7 +56,7 @@ class FirCallCompleterTransformer(
                 calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
-                calleeReference.coneSymbol
+                calleeReference.candidateSymbol
             )
         ).compose()
     }
@@ -73,7 +73,7 @@ class FirCallCompleterTransformer(
                 calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
-                calleeReference.coneSymbol
+                calleeReference.candidateSymbol
             )
         ).compose()
     }
@@ -123,7 +123,7 @@ class FirCallCompleterTransformer(
                 calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
-                calleeReference.coneSymbol
+                calleeReference.candidateSymbol
             )
         ).compose()
 
