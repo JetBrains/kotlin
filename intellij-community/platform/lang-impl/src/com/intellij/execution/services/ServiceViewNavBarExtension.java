@@ -38,7 +38,7 @@ public class ServiceViewNavBarExtension extends AbstractNavBarModelExtension {
       return ((ServiceViewItem)object).getViewDescriptor().getPresentation().getIcon(false);
     }
     if (object instanceof ServiceViewNavBarRoot) {
-      return AllIcons.Toolwindows.ToolWindowServices; // TODO [konstantin.aleev] provide new icon
+      return AllIcons.Nodes.Services;
     }
     return null;
   }
