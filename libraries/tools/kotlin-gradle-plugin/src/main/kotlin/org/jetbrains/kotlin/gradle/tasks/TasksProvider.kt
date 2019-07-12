@@ -21,6 +21,7 @@ import org.gradle.api.Task
 import org.gradle.api.UnknownTaskException
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.defaultSourceSetName
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
@@ -99,7 +100,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     open fun registerKotlinJVMTask(
         project: Project,
         name: String,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         configureAction: (KotlinCompile) -> (Unit)
     ): TaskHolder<out KotlinCompile> {
         val properties = PropertiesProvider(project)
@@ -114,7 +115,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     fun registerKotlinJSTask(
         project: Project,
         name: String,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         configureAction: (Kotlin2JsCompile) -> Unit
     ): TaskHolder<Kotlin2JsCompile> {
         val properties = PropertiesProvider(project)
@@ -129,7 +130,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
     fun registerKotlinCommonTask(
         project: Project,
         name: String,
-        compilation: KotlinCompilation<*>,
+        compilation: AbstractKotlinCompilation<*>,
         configureAction: (KotlinCompileCommon) -> (Unit)
     ): TaskHolder<KotlinCompileCommon> {
         val properties = PropertiesProvider(project)
@@ -145,7 +146,7 @@ internal open class KotlinTasksProvider(val targetName: String) {
         kotlinTaskHolder: TaskHolder<AbstractKotlinCompile<*>>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: KotlinCompilation<*>
+        compilation: AbstractKotlinCompilation<*>
     ) {
         val configureAfterEvaluated = RunOnceAfterEvaluated("TaskProvider.configure") {
             val languageSettings = project.kotlinExtension.sourceSets.findByName(compilation.defaultSourceSetName)?.languageSettings
@@ -156,7 +157,6 @@ internal open class KotlinTasksProvider(val targetName: String) {
             applyLanguageSettingsToKotlinTask(languageSettings, kotlinTask)
         }
         kotlinTaskHolder.configure {
-            it.sourceSetName = compilation.name
             it.friendTaskName = taskToFriendTaskMapper[it]
             propertiesProvider.mapKotlinTaskProperties(it)
             configureAfterEvaluated.onConfigure()
@@ -179,7 +179,7 @@ internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(ta
         kotlinTaskHolder: TaskHolder<AbstractKotlinCompile<*>>,
         project: Project,
         propertiesProvider: PropertiesProvider,
-        compilation: KotlinCompilation<*>
+        compilation: AbstractKotlinCompilation<*>
     ) {
         super.configure(kotlinTaskHolder, project, propertiesProvider, compilation)
         kotlinTaskHolder.configure {

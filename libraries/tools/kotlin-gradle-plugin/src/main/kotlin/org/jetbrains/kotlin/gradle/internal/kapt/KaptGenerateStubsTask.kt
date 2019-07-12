@@ -61,7 +61,7 @@ open class KaptGenerateStubsTask : KotlinCompile() {
 
     @get:Input
     override var useModuleDetection: Boolean
-        get() = kotlinCompileTask.useModuleDetection
+        get() = super.useModuleDetection
         set(_) {
             error("KaptGenerateStubsTask.useModuleDetection setter should not be called!")
         }

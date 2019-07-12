@@ -29,18 +29,19 @@ import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
 import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.IncrementalModuleEntry
-import org.jetbrains.kotlin.incremental.classpathAsList
-import org.jetbrains.kotlin.incremental.destinationAsFile
-import org.jetbrains.kotlin.incremental.makeModuleFile
 import java.io.File
 import java.lang.ref.WeakReference
 
@@ -180,38 +181,44 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             val jarToModule = HashMap<File, IncrementalModuleEntry>()
 
             for (project in gradle.rootProject.allprojects) {
-              project.tasks.withType(AbstractKotlinCompile::class.java).toList().forEach { task ->
+
+                if (project.kotlinExtensionOrNull == null)
+                    continue
+
+                val isMultiplatformProject = project.multiplatformExtensionOrNull != null
+
+                KotlinCompileTaskData.getTaskDataContainer(project).forEach { taskData ->
+                    val compilation = taskData.compilation
+                    val target = taskData.compilation.target
                     val module = IncrementalModuleEntry(
                         project.path,
-                        task.moduleName,
+                        compilation.moduleName,
                         project.buildDir,
-                        task.buildHistoryFile
+                        taskData.buildHistoryFile
                     )
-                    dirToModule[task.destinationDir] = module
-                    task.javaOutputDir?.let { dirToModule[it] = module }
+                    @Suppress("UnstableApiUsage")
+                    dirToModule[taskData.destinationDir.get()] = module
+
+                    taskData.javaOutputDir?.let { dirToModule[it] = module }
                     nameToModules.getOrPut(module.name) { HashSet() }.add(module)
 
-                    if (task is Kotlin2JsCompile) {
-                        jarForSourceSet(project, task.sourceSetName)?.let {
+                    if (compilation.platformType == KotlinPlatformType.js) {
+                        jarForSourceSet(project, compilation.name)?.let {
                             jarToModule[it] = module
                         }
                     }
-                }
-                project.tasks.withType(InspectClassesForMultiModuleIC::class.java).forEach { task ->
-                    jarToClassListFile[File(task.archivePath)] = task.classesListFile
-                }
-                project.extensions.findByType(KotlinMultiplatformExtension::class.java)?.let { kotlinExt ->
-                    for (target in kotlinExt.targets) {
-                        val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME) ?: continue
-                        val kotlinTask = mainCompilation.compileKotlinTask as? AbstractKotlinCompile<*> ?: continue
-                        val module = IncrementalModuleEntry(
-                            project.path,
-                            kotlinTask.moduleName,
-                            project.buildDir,
-                            kotlinTask.buildHistoryFile
-                        )
-                        val jarTask = project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask ?: continue
-                        jarToModule[jarTask.archivePath] = module
+
+                    if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
+                        if (isMultiplatformProject) {
+                            (project.tasks.findByName(target.artifactsTaskName) as? AbstractArchiveTask)?.let { jarTask ->
+                                jarToModule[jarTask.archivePathCompatible.canonicalFile] = module
+                            }
+                        } else {
+                            if (target is KotlinWithJavaTarget<*>) {
+                                val jar = project.tasks.getByName(target.artifactsTaskName) as Jar
+                                jarToClassListFile[jar.archivePathCompatible.canonicalFile] = target.defaultArtifactClassesListFile
+                            }
+                        }
                     }
                 }
             }
