@@ -71,7 +71,7 @@ task copyGenerated(type: Copy) {
 
 task deleteGenerated(type: Delete) {
     dependsOn('copyGenerated')
-    delete 'build/generated'
+    delete 'build/generated/source/proto/compiler/java'
 }
 
 task renamePackage {
@@ -171,7 +171,7 @@ def commonSrc = file('build/stdlib')
 
 task unzipStdlibSources(type: CopyCommonSources) {
     outputDir commonSrc
-    sourcePaths configurations.kotlinCommonSources.files
+    sourcePaths configurations.kotlinCommonSources
 }
 
 final List<File> stdLibSrc = [

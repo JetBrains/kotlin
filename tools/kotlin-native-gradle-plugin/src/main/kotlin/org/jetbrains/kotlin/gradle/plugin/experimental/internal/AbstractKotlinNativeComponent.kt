@@ -55,7 +55,7 @@ abstract class AbstractKotlinNativeComponent @Inject constructor(
         val project: Project,
         val objectFactory: ObjectFactory,
         fileOperations: FileOperations
-) : DefaultNativeComponent(fileOperations),
+) : DefaultNativeComponent(objectFactory),
     KotlinNativeComponent,
     ComponentWithNames {
 

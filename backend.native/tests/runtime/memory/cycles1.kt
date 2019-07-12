@@ -9,6 +9,8 @@ import kotlin.test.*
 import kotlin.native.ref.*
 
 @Test fun runTest() {
+    // TODO: make it work in relaxed model as well.
+    if (Platform.memoryModel == MemoryModel.RELAXED) return
     val weakRefToTrashCycle = createLoop()
     kotlin.native.internal.GC.collect()
     assertNull(weakRefToTrashCycle.get())

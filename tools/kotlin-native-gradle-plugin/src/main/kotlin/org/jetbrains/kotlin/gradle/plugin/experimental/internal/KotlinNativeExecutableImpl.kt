@@ -31,6 +31,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.language.cpp.internal.DefaultUsageContext
 import org.gradle.nativeplatform.Linkage
+import org.gradle.nativeplatform.TargetMachine
 import org.jetbrains.kotlin.gradle.plugin.experimental.KotlinNativeExecutable
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import javax.inject.Inject
@@ -79,4 +80,6 @@ open class KotlinNativeExecutableImpl @Inject constructor(
     }
 
     override val outputRootName = "exe"
+
+    override fun getTargetMachine(): TargetMachine = konanTarget.toTargetMachine(objects)
 }

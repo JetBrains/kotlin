@@ -5,17 +5,19 @@
 
 package org.jetbrains.kotlin.backend.konan.descriptors
 
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.isInlinedNative
+import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.ir.util.overrides
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.SimpleType
 
 /**
@@ -75,12 +77,8 @@ internal fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false
     return realSupers.first { allowAbstract || it.modality != Modality.ABSTRACT }
 }
 
-// TODO: don't forget to remove descriptor access here.
 internal val IrFunction.isTypedIntrinsic: Boolean
-    get() = this.descriptor.isTypedIntrinsic
-
-internal val IrDeclaration.isFrozen: Boolean
-    get() = this.descriptor.isFrozen
+    get() = annotations.hasAnnotation(KonanFqNames.typedIntrinsic)
 
 internal val arrayTypes = setOf(
         "kotlin.Array",
@@ -242,4 +240,28 @@ fun IrDeclaration.findTopLevelDeclaration(): IrDeclaration = when {
         (this as IrField).correspondingProperty!!.findTopLevelDeclaration()
     else ->
         (this.parent as IrDeclaration).findTopLevelDeclaration()
+}
+
+internal val IrClass.isFrozen: Boolean
+    get() = annotations.hasAnnotation(KonanFqNames.frozen) ||
+            // RTTI is used for non-reference type box or Objective-C object wrapper:
+            !this.defaultType.binaryTypeIsReference() || this.isObjCClass()
+
+fun IrConstructorCall.getAnnotationValue() = (getValueArgument(0) as? IrConst<String>)?.value
+
+fun IrConstructorCall.getStringValue(name: String): String {
+    val parameter = symbol.owner.valueParameters.single { it.name.asString() == name }
+    return (getValueArgument(parameter.index) as IrConst<String>).value
+}
+
+fun IrFunction.externalSymbolOrThrow(): String? {
+    annotations.findAnnotation(RuntimeNames.symbolNameAnnotation)?.let { return it.getAnnotationValue() }
+
+    if (annotations.hasAnnotation(KonanFqNames.objCMethod)) return null
+
+    if (annotations.hasAnnotation(KonanFqNames.typedIntrinsic)) return null
+
+    if (annotations.hasAnnotation(RuntimeNames.cCall)) return null
+
+    throw Error("external function ${this.longName} must have @TypedIntrinsic, @SymbolName or @ObjCMethod annotation")
 }

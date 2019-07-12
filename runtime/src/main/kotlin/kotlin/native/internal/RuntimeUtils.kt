@@ -105,7 +105,7 @@ internal fun ExceptionReporterLaunchpad(reporter: (Throwable) -> Unit, throwable
 @ExportForCppRuntime
 internal fun TheEmptyString() = ""
 
-fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
+public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     var left = 0
     var right = values.size - 1
     while (left <= right) {
@@ -120,7 +120,7 @@ fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
     throw Exception("Invalid enum name: $name")
 }
 
-fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
+public fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
     val result = @Suppress("TYPE_PARAMETER_AS_REIFIED") Array<T?>(values.size)
     for (value in values)
         result[value.ordinal] = value
@@ -136,18 +136,28 @@ internal external fun <T> createUninitializedInstance(): T
 @TypedIntrinsic(IntrinsicType.INIT_INSTANCE)
 internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
-fun checkProgressionStep(step: Int)  = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
-fun checkProgressionStep(step: Long) = if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
+@PublishedApi
+internal fun checkProgressionStep(step: Int)  =
+        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
+@PublishedApi
+internal fun checkProgressionStep(step: Long) =
+        if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 
-fun getProgressionLast(start: Char, end: Char, step: Int): Char =
+@PublishedApi
+internal fun getProgressionLast(start: Char, end: Char, step: Int): Char =
         getProgressionLast(start.toInt(), end.toInt(), step).toChar()
 
-fun getProgressionLast(start: Int, end: Int, step: Int): Int = getProgressionLastElement(start, end, step)
-fun getProgressionLast(start: Long, end: Long, step: Long): Long = getProgressionLastElement(start, end, step)
+@PublishedApi
+internal fun getProgressionLast(start: Int, end: Int, step: Int): Int =
+        getProgressionLastElement(start, end, step)
+@PublishedApi
+internal fun getProgressionLast(start: Long, end: Long, step: Long): Long =
+        getProgressionLastElement(start, end, step)
 
+@PublishedApi
 // Called by the debugger.
 @ExportForCppRuntime
-fun KonanObjectToUtf8Array(value: Any?): ByteArray {
+internal fun KonanObjectToUtf8Array(value: Any?): ByteArray {
     val string = when (value) {
         is Array<*> -> value.contentToString()
         is CharArray -> value.contentToString()

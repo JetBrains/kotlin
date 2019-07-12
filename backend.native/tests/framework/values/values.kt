@@ -495,7 +495,9 @@ class TestInvalidIdentifiers {
 @Suppress("UNUSED_PARAMETER")
 open class TestDeprecation() {
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN) open class OpenHidden : TestDeprecation()
-    @Suppress("DEPRECATION_ERROR") class ExtendingHidden : OpenHidden()
+    @Suppress("DEPRECATION_ERROR") class ExtendingHidden : OpenHidden() {
+        class Nested
+    }
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN) interface HiddenInterface {
         fun effectivelyHidden(): Any
@@ -508,7 +510,19 @@ open class TestDeprecation() {
     @Suppress("DEPRECATION_ERROR")
     fun callEffectivelyHidden(obj: Any): Int = (obj as HiddenInterface).effectivelyHidden() as Int
 
-    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) class Hidden : TestDeprecation()
+    @Deprecated("hidden", level = DeprecationLevel.HIDDEN) class Hidden : TestDeprecation() {
+        open class Nested {
+            class Nested
+            inner class Inner
+        }
+
+        inner class Inner {
+            inner class Inner
+        }
+    }
+
+    @Suppress("DEPRECATION_ERROR") class ExtendingNestedInHidden : Hidden.Nested()
+
     @Suppress("DEPRECATION_ERROR") fun getHidden() = Hidden()
 
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN) constructor(hidden: Byte) : this()
@@ -647,6 +661,34 @@ open class TestDeprecation() {
         override fun openNormal(): Int = 5
         override val openNormalVal: Any? = null
         override var openNormalVar: Any? = null
+    }
+
+    @Suppress("DEPRECATION_ERROR") fun test(hiddenNested: Hidden.Nested) {}
+    @Suppress("DEPRECATION_ERROR") fun test(hiddenNestedNested: Hidden.Nested.Nested) {}
+    @Suppress("DEPRECATION_ERROR") fun test(hiddenNestedInner: Hidden.Nested.Inner) {}
+    @Suppress("DEPRECATION_ERROR") fun test(hiddenInner: Hidden.Inner) {}
+    @Suppress("DEPRECATION_ERROR") fun test(hiddenInnerInner: Hidden.Inner.Inner) {}
+
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHidden: TopLevelHidden) {}
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHiddenNested: TopLevelHidden.Nested) {}
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHiddenNestedNested: TopLevelHidden.Nested.Nested) {}
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHiddenNestedInner: TopLevelHidden.Nested.Inner) {}
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHiddenInner: TopLevelHidden.Inner) {}
+    @Suppress("DEPRECATION_ERROR") fun test(topLevelHiddenInnerInner: TopLevelHidden.Inner.Inner) {}
+
+    @Suppress("DEPRECATION_ERROR") fun test(extendingHiddenNested: ExtendingHidden.Nested) {}
+    @Suppress("DEPRECATION_ERROR") fun test(extendingNestedInHidden: ExtendingNestedInHidden) {}
+
+}
+
+@Deprecated("hidden", level = DeprecationLevel.HIDDEN) class TopLevelHidden {
+    class Nested {
+        class Nested
+        inner class Inner
+    }
+
+    inner class Inner {
+        inner class Inner
     }
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -11,45 +11,24 @@ import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.descriptors.*
-import org.jetbrains.kotlin.backend.konan.descriptors.isArray
 import org.jetbrains.kotlin.backend.konan.ir.*
-import org.jetbrains.kotlin.backend.konan.ir.NaiveSourceBasedFileEntryImpl
-import org.jetbrains.kotlin.backend.konan.ir.containsNull
-import org.jetbrains.kotlin.backend.konan.llvm.coverage.*
-import org.jetbrains.kotlin.backend.konan.llvm.objcexport.is64Bit
-import org.jetbrains.kotlin.backend.konan.optimizations.*
+import org.jetbrains.kotlin.backend.konan.llvm.coverage.LLVMCoverageInstrumentation
+import org.jetbrains.kotlin.backend.konan.optimizations.DataFlowIR
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.UnsignedType
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.IrPropertyDelegateDescriptor
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-
-private val threadLocalAnnotationFqName = FqName("kotlin.native.concurrent.ThreadLocal")
-private val sharedAnnotationFqName = FqName("kotlin.native.concurrent.SharedImmutable")
-private val frozenAnnotationFqName = FqName("kotlin.native.internal.Frozen")
-
-val IrField.propertyDescriptor: PropertyDescriptor
-    get() {
-        val descriptor = this.descriptor
-        return if (descriptor is IrPropertyDelegateDescriptor)
-            descriptor.correspondingProperty
-        else
-            descriptor
-    }
 
 internal enum class FieldStorage {
     MAIN_THREAD,
@@ -59,17 +38,18 @@ internal enum class FieldStorage {
 
 // TODO: maybe unannotated singleton objects shall be accessed from main thread only as well?
 val IrClass.objectIsShared get() =
-    !descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName)
+    !annotations.hasAnnotation(KonanFqNames.threadLocal)
 
 internal val IrField.storageClass: FieldStorage get() {
-    val descriptor = propertyDescriptor
+    // TODO: Is this correct?
+    val annotations = correspondingPropertySymbol?.owner?.annotations ?: annotations
     return when {
-        descriptor.annotations.hasAnnotation(threadLocalAnnotationFqName) -> FieldStorage.THREAD_LOCAL
+        annotations.hasAnnotation(KonanFqNames.threadLocal) -> FieldStorage.THREAD_LOCAL
         !isFinal -> FieldStorage.MAIN_THREAD
-        descriptor.annotations.hasAnnotation(sharedAnnotationFqName) -> FieldStorage.SHARED
+        annotations.hasAnnotation(KonanFqNames.sharedImmutable) -> FieldStorage.SHARED
         // TODO: simplify, once IR types are fully there.
-        type is IrSimpleType && (type as IrSimpleType).
-                classifier.descriptor.annotations.hasAnnotation(frozenAnnotationFqName) -> FieldStorage.SHARED
+        (type.classifierOrNull?.owner as? IrAnnotationContainer)
+                ?.annotations?.hasAnnotation(KonanFqNames.frozen) == true -> FieldStorage.SHARED
         else -> FieldStorage.MAIN_THREAD
     }
 }
@@ -630,7 +610,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         private val scope by lazy {
             if (!context.shouldContainDebugInfo())
                 return@lazy null
-            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.builtIns.intType)))
+            declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
 
         override fun location(line: Int, column: Int) = scope?.let { LocationInfo(it, line, column) }
@@ -682,7 +662,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         }
 
 
-        if (declaration.descriptor.retainAnnotation(context.config.target)) {
+        if (declaration.retainAnnotation(context.config.target)) {
             context.llvm.usedFunctions.add(codegen.llvmFunction(declaration))
         }
 
@@ -1189,7 +1169,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrVariable -> if (shouldGenerateDebugInfo(element)) debugInfoLocalVariableLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    diType        = element.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     file          = file,
                     line          = locationInfo.line,
@@ -1198,7 +1178,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             is IrValueParameter -> debugInfoParameterLocation(
                     builder       = context.debugInfo.builder,
                     functionScope = locationInfo.scope,
-                    diType        = element.descriptor.type.diType(context, codegen.llvmTargetData),
+                    diType        = element.type.diType(context, codegen.llvmTargetData),
                     name          = element.descriptor.name,
                     argNo         = function.allParameters.indexOf(element) + 1,
                     file          = file,
@@ -1452,11 +1432,10 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     //-------------------------------------------------------------------------//
-    // TODO: rewrite in IR!
-    private fun needMutationCheck(descriptor: org.jetbrains.kotlin.descriptors.DeclarationDescriptor): Boolean {
+    private fun needMutationCheck(irClass: IrClass): Boolean {
         // For now we omit mutation checks on immutable types, as this allows initialization in constructor
         // and it is assumed that API doesn't allow to change them.
-        return !descriptor.isFrozen
+        return !irClass.isFrozen
     }
 
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
@@ -1467,7 +1446,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
             assert(thisPtr.type == codegen.kObjHeaderPtr) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
             }
-            if (needMutationCheck(value.descriptor.containingDeclaration)) {
+            if (needMutationCheck(value.symbol.owner.parentAsClass)) {
                 functionGenerationContext.call(context.llvm.mutationCheck,
                         listOf(functionGenerationContext.bitcast(codegen.kObjHeaderPtr, thisPtr)),
                         Lifetime.IRRELEVANT, ExceptionHandler.Caller)
@@ -1784,9 +1763,9 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         val scope = currentCodeContext.classScope() as? ClassScope ?: return
         if (!scope.isExported || !context.shouldContainDebugInfo()) return
         val irFile = (currentCodeContext.fileScope() as FileScope).file
-        val sizeInBits = expression.descriptor.type.size(context)
+        val sizeInBits = expression.type.size(context)
         scope.offsetInBits += sizeInBits
-        val alignInBits = expression.descriptor.type.alignment(context)
+        val alignInBits = expression.type.alignment(context)
         scope.offsetInBits = alignTo(scope.offsetInBits, alignInBits)
         @Suppress("UNCHECKED_CAST")
         scope.members.add(DICreateMemberType(
@@ -1799,7 +1778,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                 alignInBits  = alignInBits,
                 offsetInBits = scope.offsetInBits,
                 flags        = 0,
-                type         = expression.descriptor.type.diType(context, codegen.llvmTargetData)
+                type         = expression.type.diType(context, codegen.llvmTargetData)
         )!!)
     }
 
@@ -2086,7 +2065,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
         assert(irClass.isInterface)
         assert(irClass.isExternalObjCClass())
 
-        val annotation = irClass.descriptor.annotations.findAnnotation(externalObjCClassFqName)!!
+        val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
         val protocolGetterName = annotation.getStringValue("protocolGetter")
         val protocolGetter = context.llvm.externalFunction(
                 protocolGetterName,

@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.backend.konan.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.common.lower.*
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.cgen.*
 import org.jetbrains.kotlin.backend.konan.descriptors.allOverriddenFunctions
@@ -26,12 +26,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
-import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -43,15 +38,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.OverridingUtil
-import org.jetbrains.kotlin.resolve.constants.StringValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
-import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 
 internal abstract class BaseInteropIrTransformer(private val context: Context) : IrBuildingTransformer(context) {
 
@@ -159,20 +154,20 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 
         irClass.declarations.toList().mapNotNull {
             when {
-                it is IrSimpleFunction && it.descriptor.annotations.hasAnnotation(interop.objCAction) ->
+                it is IrSimpleFunction && it.annotations.hasAnnotation(interop.objCAction.fqNameSafe) ->
                         generateActionImp(it)
 
-                it is IrProperty && it.descriptor.annotations.hasAnnotation(interop.objCOutlet) ->
+                it is IrProperty && it.annotations.hasAnnotation(interop.objCOutlet.fqNameSafe) ->
                         generateOutletSetterImp(it)
 
-                it is IrConstructor && it.descriptor.annotations.hasAnnotation(interop.objCOverrideInit) ->
+                it is IrConstructor && it.annotations.hasAnnotation(interop.objCOverrideInit.fqNameSafe) ->
                         generateOverrideInit(irClass, it)
 
                 else -> null
             }
         }.let { irClass.addChildren(it) }
 
-        if (irClass.descriptor.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
+        if (irClass.annotations.hasAnnotation(interop.exportObjCClass.fqNameSafe)) {
             val irBuilder = context.createIrBuilder(currentFile.symbol).at(irClass)
             topLevelInitializers.add(irBuilder.getObjCClass(irClass.symbol))
         }
@@ -224,51 +219,26 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 
         // Generate `override fun init...(...) = this.initBy(...)`:
 
-        val resultDescriptor = SimpleFunctionDescriptorImpl.create(
-                irClass.descriptor,
-                Annotations.EMPTY,
-                initMethod.name,
-                CallableMemberDescriptor.Kind.DECLARATION,
-                SourceElement.NO_SOURCE
-        )
-
-        val valueParameters = constructor.valueParameters.map {
-            val descriptor = ValueParameterDescriptorImpl(
-                    resultDescriptor,
-                    null,
-                    it.index,
-                    Annotations.EMPTY,
-                    it.name,
-                    it.descriptor.type,
-                    false,
-                    false,
-                    false,
-                    it.varargElementType?.toKotlinType(),
-                    SourceElement.NO_SOURCE
-            )
-            it.copy(descriptor)
-        }
-        resultDescriptor.initialize(
-                null,
-                irClass.descriptor.thisAsReceiverParameter,
-                emptyList<TypeParameterDescriptor>(),
-                valueParameters.map { it.descriptor as ValueParameterDescriptor },
-                irClass.descriptor.defaultType,
-                Modality.OPEN,
-                Visibilities.PUBLIC
-        )
-
+        val resultDescriptor = WrappedSimpleFunctionDescriptor()
         return IrFunctionImpl(
-                constructor.startOffset, constructor.endOffset, OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
-                resultDescriptor,
-                irClass.defaultType
+                constructor.startOffset, constructor.endOffset,
+                OVERRIDING_INITIALIZER_BY_CONSTRUCTOR,
+                IrSimpleFunctionSymbolImpl(resultDescriptor),
+                initMethod.name,
+                Visibilities.PUBLIC,
+                Modality.OPEN,
+                irClass.defaultType,
+                isInline = false,
+                isExternal = false,
+                isTailrec = false,
+                isSuspend = false
         ).also { result ->
+            resultDescriptor.bind(result)
             result.parent = irClass
             result.createDispatchReceiverParameter()
-            result.valueParameters += valueParameters
+            constructor.valueParameters.mapTo(result.valueParameters) { it.copyTo(result) }
 
             result.overriddenSymbols.add(initMethod.symbol)
-            result.descriptor.overriddenDescriptors = listOf(initMethod.descriptor)
 
             result.body = context.createIrBuilder(result.symbol).irBlockBody(result) {
                 +irReturn(
@@ -390,54 +360,40 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             }
         }
 
-        val newDescriptor = SimpleFunctionDescriptorImpl.create(
-                function.descriptor.containingDeclaration,
-                Annotations.EMPTY,
-                ("imp:" + selector).synthesizedName,
-                CallableMemberDescriptor.Kind.SYNTHESIZED,
-                SourceElement.NO_SOURCE
-        )
-
-        val valueParameters = parameterTypes.mapIndexed { index, it ->
-            ValueParameterDescriptorImpl(
-                    newDescriptor,
-                    null,
-                    index,
-                    Annotations.EMPTY,
-                    Name.identifier("p$index"),
-                    it.toKotlinType(),
-                    false,
-                    false,
-                    false,
-                    null,
-                    SourceElement.NO_SOURCE
-            )
+        val newFunction = WrappedSimpleFunctionDescriptor().let {
+            IrFunctionImpl(
+                    function.startOffset, function.endOffset,
+                    IrDeclarationOrigin.DEFINED,
+                    IrSimpleFunctionSymbolImpl(it),
+                    ("imp:$selector").synthesizedName,
+                    Visibilities.PRIVATE,
+                    Modality.FINAL,
+                    returnType,
+                    isInline = false,
+                    isExternal = false,
+                    isTailrec = false,
+                    isSuspend = false
+            ).apply {
+                it.bind(this)
+            }
         }
 
-        newDescriptor.initialize(
-                null, null,
-                emptyList(),
-                valueParameters,
-                function.descriptor.returnType,
-                Modality.FINAL,
-                Visibilities.PRIVATE
-        )
-
-        val newFunction = IrFunctionImpl(
-                function.startOffset, function.endOffset,
-                IrDeclarationOrigin.DEFINED,
-                newDescriptor,
-                function.returnType
-        ).apply {
-            parameterTypes.mapIndexedTo(this.valueParameters) { index, it ->
+        parameterTypes.mapIndexedTo(newFunction.valueParameters) { index, type ->
+            WrappedValueParameterDescriptor().let {
                 IrValueParameterImpl(
-                        startOffset,
-                        endOffset,
+                        function.startOffset, function.endOffset,
                         IrDeclarationOrigin.DEFINED,
-                        descriptor.valueParameters[index],
-                        it,
-                        null
-                )
+                        IrValueParameterSymbolImpl(it),
+                        Name.identifier("p$index"),
+                        index,
+                        type,
+                        varargElementType = null,
+                        isCrossinline = false,
+                        isNoinline = false
+                ).apply {
+                    it.bind(this)
+                    parent = newFunction
+                }
             }
         }
 
@@ -478,18 +434,6 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
         return irCall(callee, listOf(type)).apply {
             putValueArgument(0, expression)
         }
-    }
-
-    private fun createObjCMethodImpAnnotations(selector: String, encoding: String): Annotations {
-        val annotation = AnnotationDescriptorImpl(
-                context.interopBuiltIns.objCMethodImp.defaultType,
-                mapOf("selector" to selector, "encoding" to encoding)
-                        .mapKeys { Name.identifier(it.key) }
-                        .mapValues { StringValue(it.value) },
-                SourceElement.NO_SOURCE
-        )
-
-        return Annotations.create(listOf(annotation))
     }
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
@@ -561,7 +505,6 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
         builder.at(expression)
 
         val constructedClass = outerClasses.peek()!!
-        val constructedClassDescriptor = constructedClass.descriptor
 
         if (!constructedClass.isObjCClass()) {
             return expression
@@ -578,12 +521,13 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             }
         }
 
+        val delegatingCallConstructingClass = expression.symbol.owner.constructedClass
         if (!constructedClass.isExternalObjCClass() &&
-            (expression.symbol.owner.constructedClass).isExternalObjCClass()) {
+            delegatingCallConstructingClass.isExternalObjCClass()) {
 
             // Calling super constructor from Kotlin Objective-C class.
 
-            assert(constructedClassDescriptor.getSuperClassNotAny() == expression.descriptor.constructedClass)
+            assert(constructedClass.getSuperClassNotAny() == delegatingCallConstructingClass)
 
             val initMethod = expression.symbol.owner.getObjCInitMethod()!!
 
@@ -602,14 +546,14 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
 
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
-                    superQualifier = expression.symbol.owner.constructedClass.symbol,
+                    superQualifier = delegatingCallConstructingClass.symbol,
                     receiver = builder.getRawPtr(builder.irGet(constructedClass.thisReceiver!!)),
                     arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
                     call = expression,
                     method = initMethod
             )
 
-            val superConstructor = expression.symbol.owner.constructedClass
+            val superConstructor = delegatingCallConstructingClass
                     .constructors.single { it.valueParameters.size == 0 }.symbol
 
             return builder.irBlock(expression) {
@@ -897,7 +841,7 @@ private class InteropTransformer(val context: Context, override val irFile: IrFi
             }
         }
 
-        if (function.descriptor.annotations.hasAnnotation(RuntimeNames.cCall)) {
+        if (function.annotations.hasAnnotation(RuntimeNames.cCall)) {
             context.llvmImports.add(function.descriptor.llvmSymbolOrigin)
             return generateWithStubs { generateCCall(expression, builder, isInvoke = false) }
         }
@@ -1186,5 +1130,3 @@ private fun IrBuilder.irFloat(value: Float) =
 
 private fun IrBuilder.irDouble(value: Double) =
         IrConstImpl.double(startOffset, endOffset, context.irBuiltIns.doubleType, value)
-
-private fun Annotations.hasAnnotation(descriptor: ClassDescriptor) = this.hasAnnotation(descriptor.fqNameSafe)

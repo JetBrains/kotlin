@@ -48,6 +48,11 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val memoryModel: MemoryModel get() = configuration.get(KonanConfigKeys.MEMORY_MODEL)!!
 
+    val needCompilerVerification: Boolean
+        get() = configuration.get(KonanConfigKeys.VERIFY_COMPILER) ?:
+            (configuration.getBoolean(KonanConfigKeys.OPTIMIZATION) ||
+                KonanVersion.CURRENT.meta != MetaVersion.RELEASE)
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")

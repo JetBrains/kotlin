@@ -134,17 +134,15 @@ open class BenchmarkingPlugin: Plugin<Project> {
                     linkerOpts.add("-L${mingwPath}/lib")
                 }
 
+                runTask!!.apply {
+                    group = ""
+                    enabled = false
+                }
+
                 // Specify settings configured by a user in the benchmark extension.
                 afterEvaluate {
                     linkerOpts.addAll(benchmark.linkerOpts)
-                    runTask!!.args(
-                        "-w", nativeWarmup,
-                        "-r", attempts,
-                        "-o", buildDir.resolve(nativeBenchResults).absolutePath,
-                        "-p", "${benchmark.applicationName}::"
-                    )
                 }
-
             }
         }
     }
@@ -161,9 +159,17 @@ open class BenchmarkingPlugin: Plugin<Project> {
         // Native run task.
         val nativeTarget = kotlin.targets.getByName(NATIVE_TARGET_NAME) as KotlinNativeTarget
         val nativeExecutable = nativeTarget.binaries.getExecutable(NATIVE_EXECUTABLE_NAME, NativeBuildType.RELEASE)
-        val konanRun = createRunTask(this, "konanRun", nativeExecutable.runTask!!).apply {
+        val konanRun = createRunTask(this, "konanRun", nativeExecutable.linkTask,
+                buildDir.resolve(nativeBenchResults).absolutePath).apply {
             group = BENCHMARKING_GROUP
             description = "Runs the benchmark for Kotlin/Native."
+        }
+        afterEvaluate {
+            (konanRun as RunKotlinNativeTask).args(
+                    "-w", nativeWarmup.toString(),
+                    "-r", attempts.toString(),
+                    "-p", "${benchmark.applicationName}::"
+            )
         }
 
         // JVM run task.

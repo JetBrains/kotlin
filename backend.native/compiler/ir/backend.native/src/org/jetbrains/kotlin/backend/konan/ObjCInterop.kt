@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.constructedClass
-import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
-import org.jetbrains.kotlin.ir.util.hasAnnotation
-import org.jetbrains.kotlin.ir.util.isReal
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
@@ -61,8 +58,7 @@ fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         }
 fun IrClass.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         (this as IrDeclaration).parentDeclarationsWithSelf.filterIsInstance<IrClass>().any {
-            it.annotations.hasAnnotation(externalObjCClassFqName) ||
-            it.descriptor.annotations.hasAnnotation(externalObjCClassFqName)
+            it.annotations.hasAnnotation(externalObjCClassFqName)
         }
 
 fun ClassDescriptor.isObjCForwardDeclaration(): Boolean =
@@ -140,9 +136,9 @@ fun FunctionDescriptor.getObjCMethodInfo(): ObjCMethodInfo? = this.getObjCMethod
 fun IrFunction.isObjCBridgeBased(): Boolean {
     assert(this.isReal)
 
-    return this.descriptor.annotations.hasAnnotation(objCMethodFqName) ||
-            this.descriptor.annotations.hasAnnotation(objCFactoryFqName) ||
-            this.descriptor.annotations.hasAnnotation(objCConstructorFqName)
+    return this.annotations.hasAnnotation(objCMethodFqName) ||
+            this.annotations.hasAnnotation(objCFactoryFqName) ||
+            this.annotations.hasAnnotation(objCConstructorFqName)
 }
 
 /**
@@ -222,11 +218,11 @@ fun ConstructorDescriptor.objCConstructorIsDesignated(): Boolean {
 }
 
 
-val IrConstructor.isObjCConstructor get() = this.descriptor.annotations.hasAnnotation(objCConstructorFqName)
+val IrConstructor.isObjCConstructor get() = this.annotations.hasAnnotation(objCConstructorFqName)
 
 // TODO-DCE-OBJC-INIT: Selector should be preserved by DCE.
 fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
-    return this.descriptor.annotations.findAnnotation(objCConstructorFqName)?.let {
+    return this.annotations.findAnnotation(objCConstructorFqName)?.let {
         val initSelector = it.getStringValue("initSelector")
         this.constructedClass.declarations.asSequence()
                 .filterIsInstance<IrSimpleFunction>()
@@ -234,9 +230,9 @@ fun IrConstructor.getObjCInitMethod(): IrSimpleFunction? {
     }
 }
 
-val IrFunction.hasObjCFactoryAnnotation get() = this.descriptor.annotations.hasAnnotation(objCFactoryFqName)
+val IrFunction.hasObjCFactoryAnnotation get() = this.annotations.hasAnnotation(objCFactoryFqName)
 
-val IrFunction.hasObjCMethodAnnotation get() = this.descriptor.annotations.hasAnnotation(objCMethodFqName)
+val IrFunction.hasObjCMethodAnnotation get() = this.annotations.hasAnnotation(objCMethodFqName)
 
 fun FunctionDescriptor.getObjCFactoryInitMethodInfo(): ObjCMethodInfo? {
     val factoryAnnotation = this.annotations.findAnnotation(objCFactoryFqName) ?: return null

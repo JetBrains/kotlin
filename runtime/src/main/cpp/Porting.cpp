@@ -127,17 +127,18 @@ void consolePrintf(const char* format, ...) {
 pthread_key_t terminationKey;
 pthread_once_t terminationKeyOnceControl =  PTHREAD_ONCE_INIT;
 
-typedef void (*destructor_t)();
+typedef void (*destructor_t)(void*);
 
 struct DestructorRecord {
   struct DestructorRecord* next;
   destructor_t destructor;
+  void* destructorParameter;
 };
 
 static void onThreadExitCallback(void* value) {
   DestructorRecord* record = reinterpret_cast<DestructorRecord*>(value);
   while (record != nullptr) {
-    record->destructor();
+    record->destructor(record->destructorParameter);
     auto next = record->next;
     free(record);
     record = next;
@@ -150,7 +151,7 @@ static void onThreadExitInit() {
 
 #endif  // !KONAN_NO_THREADS
 
-void onThreadExit(void (*destructor)()) {
+void onThreadExit(void (*destructor)(void*), void* destructorParameter) {
 #if KONAN_NO_THREADS
 #if KONAN_WASM || KONAN_ZEPHYR
   // No way to do that.
@@ -162,6 +163,7 @@ void onThreadExit(void (*destructor)()) {
   pthread_once(&terminationKeyOnceControl, onThreadExitInit);
   DestructorRecord* destructorRecord = (DestructorRecord*)calloc(1, sizeof(DestructorRecord));
   destructorRecord->destructor = destructor;
+  destructorRecord->destructorParameter = destructorParameter;
   destructorRecord->next =
       reinterpret_cast<DestructorRecord*>(pthread_getspecific(terminationKey));
   pthread_setspecific(terminationKey, destructorRecord);

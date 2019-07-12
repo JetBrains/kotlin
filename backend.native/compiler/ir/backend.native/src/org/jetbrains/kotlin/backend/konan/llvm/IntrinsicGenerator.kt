@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 import kotlinx.cinterop.cValuesOf
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.descriptors.getAnnotationValue
 import org.jetbrains.kotlin.backend.konan.descriptors.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.llvm.objc.genObjCSelector
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
@@ -12,8 +13,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.isSuspend
-import org.jetbrains.kotlin.name.Name
 
 internal enum class IntrinsicType {
     PLUS,
@@ -113,8 +114,8 @@ internal fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): Intrinsi
 
 private fun getIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType {
     val function = callSite.symbol.owner
-    val annotation = function.descriptor.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
-    val value = annotation.allValueArguments.getValue(Name.identifier("kind")).value as String
+    val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
+    val value = annotation.getAnnotationValue()!!
     return IntrinsicType.valueOf(value)
 }
 

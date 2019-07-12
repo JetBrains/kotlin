@@ -71,22 +71,5 @@ private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Ch
     addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'))
 }
 
-fun block(header: String, lines: Iterable<String>) = block(header, lines.asSequence())
-
-fun block(header: String, lines: Sequence<String>) =
-        sequenceOf("$header {") +
-                lines.map { "    $it" } +
-                sequenceOf("}")
-
 val annotationForUnableToImport
     get() = "@Deprecated(${"Unable to import this declaration".quoteAsKotlinLiteral()}, level = DeprecationLevel.ERROR)"
-
-fun String.applyToStrings(vararg arguments: String) =
-        "${this}(${arguments.joinToString { it.quoteAsKotlinLiteral() }})"
-
-fun List<KotlinParameter>.renderParameters(scope: KotlinScope) = buildString {
-    this@renderParameters.renderParametersTo(scope, this)
-}
-
-fun List<KotlinParameter>.renderParametersTo(scope: KotlinScope, buffer: Appendable) =
-        this.joinTo(buffer, ", ") { it.render(scope) }

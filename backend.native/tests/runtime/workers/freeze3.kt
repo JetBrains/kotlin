@@ -9,7 +9,7 @@ import kotlin.test.*
 
 import kotlin.native.concurrent.*
 
-object Immutable {
+object AnObject {
     var x = 1
 }
 
@@ -19,11 +19,17 @@ object Mutable {
 }
 
 @Test fun runTest() {
-    assertEquals(1, Immutable.x)
-    assertFailsWith<InvalidMutabilityException> {
-        Immutable.x++
+    assertEquals(1, AnObject.x)
+    if (Platform.memoryModel == MemoryModel.STRICT) {
+        assertFailsWith<InvalidMutabilityException> {
+            AnObject.x++
+        }
+        assertEquals(1, AnObject.x)
+    } else {
+        AnObject.x++
+        assertEquals(2, AnObject.x)
     }
-    assertEquals(1, Immutable.x)
+
     Mutable.x++
     assertEquals(3, Mutable.x)
     println("OK")

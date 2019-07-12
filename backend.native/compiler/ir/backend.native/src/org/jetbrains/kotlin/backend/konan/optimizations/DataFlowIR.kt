@@ -12,16 +12,14 @@ import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler.symbolName
+import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isNothing
@@ -601,15 +599,15 @@ internal object DataFlowIR {
             }
             val symbol = when {
                 it.isExternal || (it.symbol in context.irBuiltIns.irBuiltInsSymbols) -> {
-                    val escapesAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_ESCAPES)
-                    val pointsToAnnotation = it.descriptor.annotations.findAnnotation(FQ_NAME_POINTS_TO)
+                    val escapesAnnotation = it.annotations.findAnnotation(FQ_NAME_ESCAPES)
+                    val pointsToAnnotation = it.annotations.findAnnotation(FQ_NAME_POINTS_TO)
                     @Suppress("UNCHECKED_CAST")
-                    val escapesBitMask = (escapesAnnotation?.allValueArguments?.get(escapesWhoDescriptor.name) as? ConstantValue<Int>)?.value
+                    val escapesBitMask = (escapesAnnotation?.getValueArgument(0) as? IrConst<Int>)?.value
                     @Suppress("UNCHECKED_CAST")
-                    val pointsToBitMask = (pointsToAnnotation?.allValueArguments?.get(pointsToOnWhomDescriptor.name) as? ConstantValue<List<IntValue>>)?.value
+                    val pointsToBitMask = (pointsToAnnotation?.getValueArgument(0) as? IrVararg)?.elements?.map { (it as IrConst<Int>).value }
                     FunctionSymbol.External(name.localHash.value, attributes, it, takeName { name }).apply {
                         escapes  = escapesBitMask
-                        pointsTo = pointsToBitMask?.let { it.map { it.value }.toIntArray() }
+                        pointsTo = pointsToBitMask?.let { it.toIntArray() }
                     }
                 }
 
@@ -646,7 +644,8 @@ internal object DataFlowIR {
         }
 
         private val IrFunction.isSpecial get() =
-            name.asString().let { it.startsWith("<bridge-") || it.endsWith("-box>") || it.endsWith("-unbox>") }
+            origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION
+                    || origin is DECLARATION_ORIGIN_BRIDGE_METHOD
 
         private fun mapPropertyInitializer(irField: IrField): FunctionSymbol {
             functionMap[irField]?.let { return it }

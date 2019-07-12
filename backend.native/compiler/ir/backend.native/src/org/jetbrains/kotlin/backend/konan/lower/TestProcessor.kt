@@ -463,7 +463,7 @@ internal class TestProcessor (val context: Context) {
         }
     }
 
-    private val IrClass.ignored: Boolean get() = descriptor.annotations.hasAnnotation(IGNORE_FQ_NAME)
+    private val IrClass.ignored: Boolean get() = annotations.hasAnnotation(IGNORE_FQ_NAME)
 
     /**
      * Builds a test suite class representing a test class (any class in the original IrFile with method(s)

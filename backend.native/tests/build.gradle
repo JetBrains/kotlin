@@ -2357,7 +2357,14 @@ standaloneTest("args0") {
 
 standaloneTest("devirtualization_lateinitInterface") {
     goldValue = "42\n"
+    flags = ["-opt"]
     source = "codegen/devirtualization/lateinitInterface.kt"
+}
+
+standaloneTest("devirtualization_getter_looking_as_box_function") {
+    goldValue = "box\n"
+    flags = ["-opt"]
+    source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
 standaloneTest("multiargs") {
@@ -2865,6 +2872,11 @@ task inline_localObjectReturnedFromWhen(type: KonanLocalTest) {
 task inline_genericFunctionReference(type: KonanLocalTest) {
     goldValue = "0\n"
     source = "codegen/inline/genericFunctionReference.kt"
+}
+
+task inline_correctOrderFunctionReference(type: KonanLocalTest) {
+    goldValue = "OK\n"
+    source = "codegen/inline/correctOrderFunctionReference.kt"
 }
 
 task classDeclarationInsideInline(type: KonanLocalTest) {
@@ -3500,7 +3512,7 @@ if (isAppleTarget(project)) {
         final String dir = "$testOutputFramework/$frameworkName"
         final File lazyHeader = file("$dir/$target-lazy.h")
 
-        doFirst {
+        doLast {
             final File expectedLazyHeader = file("framework/values/expectedLazy.h")
 
             if (expectedLazyHeader.readLines() != lazyHeader.readLines()) {

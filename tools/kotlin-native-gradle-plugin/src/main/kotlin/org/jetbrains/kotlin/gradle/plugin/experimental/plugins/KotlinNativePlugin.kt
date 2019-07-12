@@ -74,7 +74,7 @@ class KotlinNativePlugin @Inject constructor(val attributesFactory: ImmutableAtt
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
             attribute(KONAN_TARGET_ATTRIBUTE, target.name)
         }
-        return DefaultUsageContext(variantName + usageContextSuffix, usage, attributes)
+        return DefaultUsageContext(variantName + usageContextSuffix, attributes)
     }
 
     private fun AbstractKotlinNativeComponent.getAndLockTargets(): Set<KonanTarget> {

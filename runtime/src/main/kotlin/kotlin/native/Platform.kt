@@ -32,6 +32,14 @@ public enum class CpuArchitecture(val bitness: Int) {
 }
 
 /**
+ * Memory model.
+ */
+public enum class MemoryModel {
+    STRICT,
+    RELAXED
+}
+
+/**
  * Object describing the current platform program executes upon.
  */
 public object Platform {
@@ -58,6 +66,19 @@ public object Platform {
      */
     public val cpuArchitecture: CpuArchitecture
         get() = CpuArchitecture.values()[Platform_getCpuArchitecture()]
+
+    /**
+     * Memory model binary was compiled with.
+     */
+    public val memoryModel: MemoryModel
+        get() = MemoryModel.values()[Platform_getMemoryModel()]
+
+    /**
+     * If binary was compiled in debug mode.
+     */
+    public val isDebugBinary: Boolean
+        get() = Platform_isDebugBinary()
+
 }
 
 @SymbolName("Konan_Platform_canAccessUnaligned")
@@ -71,3 +92,9 @@ private external fun Platform_getOsFamily(): Int
 
 @SymbolName("Konan_Platform_getCpuArchitecture")
 private external fun Platform_getCpuArchitecture(): Int
+
+@SymbolName("Konan_Platform_getMemoryModel")
+private external fun Platform_getMemoryModel(): Int
+
+@SymbolName("Konan_Platform_isDebugBinary")
+private external fun Platform_isDebugBinary(): Boolean

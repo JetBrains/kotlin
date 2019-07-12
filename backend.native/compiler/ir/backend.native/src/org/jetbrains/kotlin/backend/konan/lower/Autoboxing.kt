@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetObjectValueImpl
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
@@ -401,7 +402,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                 startOffset,
                 endOffset,
                 IrDeclarationOrigin.DEFINED,
-                descriptor,
+                IrPropertySymbolImpl(descriptor),
                 irField.name,
                 irField.visibility,
                 Modality.FINAL,

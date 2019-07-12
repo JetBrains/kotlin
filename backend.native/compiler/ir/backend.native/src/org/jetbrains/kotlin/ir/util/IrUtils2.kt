@@ -7,22 +7,20 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedVariableDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.substitute
-import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanCompilationException
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
+import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.konan.ir.allParameters
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.containsNull
 import org.jetbrains.kotlin.builtins.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -36,8 +34,6 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
-import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -65,13 +61,7 @@ internal fun IrExpression.isNullConst() = this is IrConst<*> && this.kind == IrC
 private var topLevelInitializersCounter = 0
 
 internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: KonanBackendContext, threadLocal: Boolean) {
-    val descriptor = WrappedFieldDescriptor(
-            if (threadLocal)
-                Annotations.create(listOf(AnnotationDescriptorImpl(context.ir.symbols.threadLocal.defaultType,
-                        emptyMap(), SourceElement.NO_SOURCE)))
-            else
-                Annotations.EMPTY
-    )
+    val descriptor = WrappedFieldDescriptor()
     val irField = IrFieldImpl(
             expression.startOffset, expression.endOffset,
             IrDeclarationOrigin.DEFINED,
@@ -85,7 +75,12 @@ internal fun IrFile.addTopLevelInitializer(expression: IrExpression, context: Ko
     ).apply {
         descriptor.bind(this)
 
-        initializer = IrExpressionBodyImpl(expression.startOffset, expression.endOffset, expression)
+        expression.setDeclarationsParent(this)
+
+        if (threadLocal)
+            annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.threadLocal.owner)
+
+        initializer = IrExpressionBodyImpl(startOffset, endOffset, expression)
     }
     addChild(irField)
 }
@@ -125,39 +120,6 @@ object SetDeclarationsParentVisitor : IrElementVisitor<Unit, IrDeclarationParent
     override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent) {
         declaration.parent = data
         super.visitDeclaration(declaration, data)
-    }
-}
-
-fun IrModuleFragment.checkDeclarationParents() {
-    this.accept(CheckDeclarationParentsVisitor, null)
-}
-
-object CheckDeclarationParentsVisitor : IrElementVisitor<Unit, IrDeclarationParent?> {
-
-    override fun visitElement(element: IrElement, data: IrDeclarationParent?) {
-        element.acceptChildren(this, element as? IrDeclarationParent ?: data)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclaration, data: IrDeclarationParent?) {
-        if (declaration !is IrVariable && declaration !is IrValueParameter && declaration !is IrTypeParameter) {
-            checkParent(declaration, data)
-        } else {
-            // Don't check IrVariable parent.
-        }
-
-        super.visitDeclaration(declaration, data)
-    }
-
-    private fun checkParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?) {
-        val parent = try {
-            declaration.parent
-        } catch (e: Throwable) {
-            error("$declaration for ${declaration.descriptor} has no parent")
-        }
-
-        if (parent != expectedParent) {
-            error("$declaration for ${declaration.descriptor} has unexpected parent $parent")
-        }
     }
 }
 
@@ -322,6 +284,7 @@ fun IrBuilderWithScope.irCatch(type: IrType) =
                             false
                     ).apply {
                         descriptor.bind(this)
+                        parent = this@irCatch.parent
                     }
                 }
         )

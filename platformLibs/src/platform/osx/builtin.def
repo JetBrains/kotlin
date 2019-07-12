@@ -1,5 +1,6 @@
+depends = posix
 package = platform.builtin
-headerFilter =
+headerFilter = **
 language = C
 ---
 // See https://github.com/llvm-mirror/clang/blob/master/include/clang/Basic/Builtins.def

@@ -138,9 +138,9 @@ task teamCityStat(type:Exec) {
     }
 }
 
-task сinterop {
+task cinterop {
     dependsOn 'clean'
-    dependsOn 'сinterop:konanRun'
+    dependsOn 'cinterop:konanRun'
 }
 
 task framework {

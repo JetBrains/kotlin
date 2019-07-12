@@ -45,7 +45,7 @@ val topSharedData = Data(43)
         false
     }
     }).consume {
-        result -> assertEquals(false, result)
+        result -> assertEquals(Platform.memoryModel == MemoryModel.RELAXED, result)
     }
 
     worker.execute(TransferMode.SAFE, { -> }, {
@@ -65,7 +65,7 @@ val topSharedData = Data(43)
             false
         }
     }).consume {
-        result -> assertEquals(false, result)
+        result -> assertEquals(Platform.memoryModel == MemoryModel.RELAXED, result)
     }
 
     worker.execute(TransferMode.SAFE, { -> }, {
@@ -159,6 +159,24 @@ val stableHolder2 = StableRef.create(("hello" to "world").freeze())
     }
     while (semaphore.value != 1) {}
     stableHolder2.dispose()
+    kotlin.native.internal.GC.collect()
+    semaphore.increment()
+    future.result
+    worker.requestTermination().result
+}
+
+val atomicRef2 = AtomicReference<Any?>(Any().freeze())
+@Test fun runTest6() {
+    semaphore.value = 0
+    val worker = Worker.start()
+    val future = worker.execute(TransferMode.SAFE, { null }) {
+        val value = atomicRef2.compareAndSwap(null, null)
+        semaphore.increment()
+        while (semaphore.value != 2) {}
+        assertEquals(true, value.toString() != "")
+    }
+    while (semaphore.value != 1) {}
+    atomicRef2.value = null
     kotlin.native.internal.GC.collect()
     semaphore.increment()
     future.result

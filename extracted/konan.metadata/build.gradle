@@ -59,7 +59,7 @@ protobuf {
 compileJava {
     dependsOn('renamePackage')
     doFirst {
-        delete 'build/generated'
+        delete 'build/generated/source/proto/main/java'
     }
 }
 

@@ -5,17 +5,17 @@
 
 package org.jetbrains.kotlin
 
-import groovy.lang.Closure
 import org.gradle.api.DefaultTask
-import org.gradle.api.Task
-import org.gradle.api.tasks.AbstractExecTask
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.options.Option
 import org.gradle.api.tasks.Input
+import java.io.ByteArrayOutputStream
+import java.io.File
 import javax.inject.Inject
 
-open class RunKotlinNativeTask @Inject constructor(
-        private val runTask: AbstractExecTask<*>
+open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinNativeLink,
+                                                   private val outputFileName: String
 ) : DefaultTask() {
     @Input
     var buildType = "RELEASE"
@@ -26,30 +26,51 @@ open class RunKotlinNativeTask @Inject constructor(
     @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
     var filterRegex: String = ""
 
-    override fun configure(configureClosure: Closure<Any>): Task {
-        val task = super.configure(configureClosure)
-        this.finalizedBy(runTask.name)
-        runTask.finalizedBy("konanJsonReport")
-        return task
+    private val argumentsList = mutableListOf<String>()
+
+    init {
+        this.dependsOn += linkTask.name
+        this.finalizedBy("konanJsonReport")
     }
 
     fun depends(taskName: String) {
         this.dependsOn += taskName
     }
 
-    @TaskAction
-    fun run() {
-        runTask.run {
-            val filterArgs = filter.splitCommaSeparatedOption("-f")
-            val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
-            runTask.args(filterArgs)
-            runTask.args(filterRegexArgs)
-        }
+    fun args(vararg arguments: String) {
+        argumentsList.addAll(arguments.toList())
     }
 
-    internal fun emptyConfigureClosure() = object : Closure<Any>(this) {
-        override fun call(): RunKotlinNativeTask {
-            return this@RunKotlinNativeTask
+    @TaskAction
+    fun run() {
+        var output = ByteArrayOutputStream()
+        project.exec {
+            it.executable = linkTask.binary.outputFile.absolutePath
+            it.args("list")
+            it.standardOutput = output
         }
+        val benchmarks = output.toString().lines()
+        val filterArgs = filter.splitCommaSeparatedOption("-f")
+        val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
+        val regexes = filterRegexArgs.map { it.toRegex() }
+        val benchmarksToRun = if (filterArgs.isNotEmpty() || regexes.isNotEmpty()) {
+            benchmarks.filter { benchmark -> benchmark in filterArgs || regexes.any { it.matches(benchmark) } }
+        } else benchmarks.filter { !it.isEmpty() }
+
+        val results = benchmarksToRun.map { benchmark ->
+            output = ByteArrayOutputStream()
+            project.exec {
+                it.executable = linkTask.binary.outputFile.absolutePath
+                it.args(argumentsList)
+                it.args("-f", benchmark)
+                it.standardOutput = output
+            }
+            output.toString().removePrefix("[").removeSuffix("]")
+        }
+
+        File(outputFileName).printWriter().use { out ->
+            out.println("[${results.joinToString(",")}]")
+        }
+
     }
 }

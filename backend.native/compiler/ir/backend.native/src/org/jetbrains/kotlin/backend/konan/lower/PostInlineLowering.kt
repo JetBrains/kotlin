@@ -100,9 +100,9 @@ internal class PostInlineLowering(val context: Context) : FileLoweringPass {
                         // Basic Multilingual Plane, so we could just append data "as is".
                         builder.append(value.toChar())
                     }
-                    expression.putValueArgument(0, IrConstImpl<String>(
+                    expression.putValueArgument(0, IrConstImpl(
                             expression.startOffset, expression.endOffset,
-                            context.ir.symbols.immutableBlob.typeWithoutArguments,
+                            context.irBuiltIns.stringType,
                             IrConstKind.String, builder.toString()))
                 } else if (expression.symbol.owner.isTypeOfIntrinsic()) {
                     val type = expression.getTypeArgument(0)

@@ -12,6 +12,10 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.konan.KonanBackendContext
+import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
+import org.jetbrains.kotlin.backend.konan.ir.typeWithStarProjections
+import org.jetbrains.kotlin.backend.konan.isObjCClass
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -87,10 +91,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
 
         val kPropertiesFieldType: IrType = context.ir.symbols.array.typeWith(kPropertyImplType)
 
-        val kPropertiesField = WrappedFieldDescriptor(
-                Annotations.create(listOf(AnnotationDescriptorImpl(context.ir.symbols.sharedImmutable.defaultType,
-                        emptyMap(), SourceElement.NO_SOURCE)))
-        ).let {
+        val kPropertiesField = WrappedFieldDescriptor().let {
             IrFieldImpl(
                     SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                     DECLARATION_ORIGIN_KPROPERTIES_FOR_DELEGATION,
@@ -104,6 +105,7 @@ internal class PropertyDelegationLowering(val context: Context) : FileLoweringPa
             ).apply {
                 it.bind(this)
                 parent = irFile
+                annotations += buildSimpleAnnotation(context.irBuiltIns, startOffset, endOffset, context.ir.symbols.sharedImmutable.owner)
             }
         }
 

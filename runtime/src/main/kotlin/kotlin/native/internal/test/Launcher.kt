@@ -9,14 +9,17 @@ import kotlin.system.exitProcess
 import kotlin.native.concurrent.*
 
 @ThreadLocal
-private val _generatedSuites = mutableListOf<TestSuite>()
+private object GeneratedSuites {
+   val suites = mutableListOf<TestSuite>()
+   fun add(suite: TestSuite) = suites.add(suite)
+}
 
 public fun registerSuite(suite: TestSuite): Unit {
-    _generatedSuites.add(suite)
+    GeneratedSuites.add(suite)
 }
 
 fun testLauncherEntryPoint(args: Array<String>): Int {
-    return TestRunner(_generatedSuites, args).run()
+    return TestRunner(GeneratedSuites.suites, args).run()
 }
 
 fun main(args: Array<String>) {

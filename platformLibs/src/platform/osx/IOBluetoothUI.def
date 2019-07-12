@@ -1,0 +1,7 @@
+depends = AppKit ApplicationServices CFNetwork Cocoa CoreData CoreFoundation CoreGraphics CoreImage CoreServices CoreText CoreVideo DiskArbitration Foundation IOBluetooth IOKit IOSurface ImageIO Metal OpenGLCommon QuartzCore Security darwin libkern osx posix
+language = Objective-C
+package = platform.IOBluetoothUI
+modules = IOBluetoothUI
+
+compilerOpts = -framework IOBluetoothUI
+linkerOpts = -framework IOBluetoothUI

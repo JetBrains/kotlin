@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.atMostOne
-import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -69,14 +68,7 @@ val IrClass.isFinalClass: Boolean
 fun IrClass.isSpecialClassWithNoSupertypes() = this.isAny() || this.isNothing()
 
 fun <T> IrDeclaration.getAnnotationArgumentValue(fqName: FqName, argumentName: String): T? {
-    val annotation = this.annotations.findAnnotation(fqName)
-    if (annotation == null) {
-        // As a last resort try searching the descriptor.
-        // This is needed for a period while we don't have IR for platform libraries.
-        return this.descriptor.annotations
-            .findAnnotation(fqName)
-            ?.getArgumentValueOrNull<T>(argumentName)
-    }
+    val annotation = this.annotations.findAnnotation(fqName) ?: return null
     for (index in 0 until annotation.valueArgumentsCount) {
         val parameter = annotation.symbol.owner.valueParameters[index]
         if (parameter.name == Name.identifier(argumentName)) {
@@ -94,12 +86,6 @@ val IrDeclaration.parentDeclarationsWithSelf: Sequence<IrDeclaration>
     get() = generateSequence(this, { it.parent as? IrDeclaration })
 
 fun IrClass.companionObject() = this.declarations.filterIsInstance<IrClass>().atMostOne { it.isCompanion }
-
-val IrDeclaration.isGetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.getter
-
-val IrDeclaration.isSetter get() = this is IrSimpleFunction && this == this.correspondingProperty?.setter
-
-val IrDeclaration.isAccessor get() = this.isGetter || this.isSetter
 
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {

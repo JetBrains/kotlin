@@ -21,29 +21,26 @@ import org.jetbrains.structsBenchmarks.*
 import org.jetbrains.typesBenchmarks.*
 import org.jetbrains.kliopt.*
 
-class CinteropLauncher(numWarmIterations: Int, numberOfAttempts: Int, prefix: String) : Launcher(numWarmIterations, numberOfAttempts, prefix) {
-    val stringBenchmark = StringBenchmark()
-    val intMatrixBenchmark = IntMatrixBenchmark()
-    val intBenchmark = IntBenchmark()
-    val boxedIntBenchmark = BoxedIntBenchmark()
+class CinteropLauncher : Launcher() {
     override val benchmarks = BenchmarksCollection(
             mutableMapOf(
-                    "macros" to ::macrosBenchmark,
-                    "struct" to ::structBenchmark,
-                    "union" to ::unionBenchmark,
-                    "enum" to ::enumBenchmark,
-                    "stringToC" to stringBenchmark::stringToCBenchmark,
-                    "stringToKotlin" to stringBenchmark::stringToKotlinBenchmark,
-                    "intMatrix" to intMatrixBenchmark::intMatrixBenchmark,
-                    "int" to intBenchmark::intBenchmark,
-                    "boxedInt" to boxedIntBenchmark::boxedIntBenchmark
+                    "macros" to BenchmarkEntry(::macrosBenchmark),
+                    "struct" to BenchmarkEntry(::structBenchmark),
+                    "union" to BenchmarkEntry(::unionBenchmark),
+                    "enum" to BenchmarkEntry(::enumBenchmark),
+                    "stringToC" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToCBenchmark() }),
+                    "stringToKotlin" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringToKotlinBenchmark() }),
+                    "intMatrix" to BenchmarkEntryWithInit.create(::IntMatrixBenchmark, { intMatrixBenchmark() }),
+                    "int" to BenchmarkEntryWithInit.create(::IntBenchmark, { intBenchmark() }),
+                    "boxedInt" to BenchmarkEntryWithInit.create(::BoxedIntBenchmark, { boxedIntBenchmark() })
             )
     )
 }
 
 fun main(args: Array<String>) {
+    val launcher = CinteropLauncher()
     BenchmarksRunner.runBenchmarks(args, { parser: ArgParser ->
-        CinteropLauncher(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!)
-                .launch(parser.getAll<String>("filter"), parser.getAll<String>("filterRegex"))
-    })
+        launcher.launch(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!,
+                parser.getAll<String>("filter"), parser.getAll<String>("filterRegex"))
+    }, benchmarksListAction = launcher::benchmarksListAction)
 }
