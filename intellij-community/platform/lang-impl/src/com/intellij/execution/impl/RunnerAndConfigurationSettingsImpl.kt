@@ -123,8 +123,12 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(val manager: 
   }
 
   override fun setName(name: String) {
+    val existing = uniqueId != null && manager.getConfigurationById(uniqueID) != null
     uniqueId = null
     configuration.name = name
+    if (existing) {
+      manager.addConfiguration(this)
+    }
   }
 
   override fun getName(): String {
