@@ -36,6 +36,8 @@ interface KonanModelArtifactExecConfiguration : Serializable {
     val programParameters: List<String>
     val environmentVariables: Map<String, String>
 
+    fun isNotEmpty() = workingDir.isNotEmpty() || programParameters.isNotEmpty() || environmentVariables.isNotEmpty()
+
     companion object {
         const val NO_WORKING_DIR = ""
         val NO_PROGRAM_PARAMETERS = emptyList<String>()

@@ -26,13 +26,15 @@ class GradleKonanConfiguration(
     val artifactBuildTaskPath: String,
     artifactCleanTaskPath: String?,
     val projectPath: String,
-    val execConfiguration: KonanModelArtifactExecConfiguration?,
+    execConfiguration: KonanModelArtifactExecConfiguration,
     val isTests: Boolean
 ) : Serializable, CidrBuildConfiguration, ProjectModelBuildableElement {
     val isExecutable: Boolean
         get() = targetType == CompilerOutputKind.PROGRAM
 
     val artifactCleanTaskPath: String? = artifactCleanTaskPath?.takeIf { it.isNotEmpty() }
+
+    val execConfiguration: KonanModelArtifactExecConfiguration? = execConfiguration.takeIf { it.isNotEmpty() }
 
     override fun getName() = name
 
