@@ -79,6 +79,13 @@ internal object StoreCalleeReference : FirTransformer<FirResolvedCallableReferen
         return element.compose()
     }
 
+    override fun transformNamedReference(
+        namedReference: FirNamedReference,
+        data: FirResolvedCallableReference
+    ): CompositeTransformResult<FirNamedReference> {
+        return data.compose()
+    }
+
     override fun transformResolvedCallableReference(
         resolvedCallableReference: FirResolvedCallableReference,
         data: FirResolvedCallableReference

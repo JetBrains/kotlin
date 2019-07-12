@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.FirNamedReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.name.Name
 
-class FirSimpleNamedReference(
+open class FirSimpleNamedReference(
     session: FirSession,
     psi: PsiElement?,
     override val name: Name

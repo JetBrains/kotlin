@@ -783,10 +783,18 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     }
 
     override fun visitNamedReference(namedReference: FirNamedReference) {
-        if (namedReference is FirErrorNamedReference) {
-            print("<${namedReference.errorReason}>#")
-        } else {
-            print("${namedReference.name}#")
+        val symbol = namedReference.candidateSymbol
+        when {
+            symbol != null -> {
+                print("R?C|")
+                if (symbol is ConeCallableSymbol)
+                    print(symbol.callableId)
+                else if (symbol is ConeClassLikeSymbol)
+                    print(symbol.classId)
+                print("|")
+            }
+            namedReference is FirErrorNamedReference -> print("<${namedReference.errorReason}>#")
+            else -> print("${namedReference.name}#")
         }
     }
 
