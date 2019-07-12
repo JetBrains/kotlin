@@ -27,19 +27,6 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.types.Variance
 
-object StoreCalleeReference : FirTransformer<FirResolvedCallableReference>() {
-    override fun <E : FirElement> transformElement(element: E, data: FirResolvedCallableReference): CompositeTransformResult<E> {
-        return element.compose()
-    }
-
-    override fun transformResolvedCallableReference(
-        resolvedCallableReference: FirResolvedCallableReference,
-        data: FirResolvedCallableReference
-    ): CompositeTransformResult<FirNamedReference> {
-        return data.compose()
-    }
-}
-
 class FirCallCompleterTransformer(
     val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
