@@ -917,9 +917,13 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       hintSize = getOptimalSize();
     }
     else {
-      hintSize = myManuallyResized
-                 ? myHint.getSize()
-                 : DimensionService.getInstance().getSize(DocumentationManager.NEW_JAVADOC_LOCATION_AND_SIZE, myManager.myProject);
+      if (myManuallyResized) {
+        hintSize = myHint.getSize();
+        JBInsets.removeFrom(hintSize, myHint.getContent().getInsets());
+      }
+      else {
+        hintSize = DimensionService.getInstance().getSize(DocumentationManager.NEW_JAVADOC_LOCATION_AND_SIZE, myManager.myProject);
+      }
       if (hintSize == null) {
         hintSize = new Dimension(MIN_DEFAULT);
       }
