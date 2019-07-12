@@ -154,18 +154,28 @@ class NewCapturedType(
 
 class NewCapturedTypeConstructor(
     override val projection: TypeProjection,
-    private var supertypes: List<UnwrappedType>? = null,
+    private var supertypesComputation: (() -> List<UnwrappedType>)? = null,
     private val original: NewCapturedTypeConstructor? = null
-) :
-    CapturedTypeConstructor {
-    fun initializeSupertypes(supertypes: List<UnwrappedType>) {
-        assert(this.supertypes == null) {
-            "Already initialized! oldValue = ${this.supertypes}, newValue = $supertypes"
-        }
-        this.supertypes = supertypes
+) : CapturedTypeConstructor {
+
+    constructor(
+        projection: TypeProjection,
+        supertypes: List<UnwrappedType>,
+        original: NewCapturedTypeConstructor? = null
+    ) : this(projection, { supertypes }, original)
+
+    private val _supertypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        supertypesComputation?.invoke()
     }
 
-    override fun getSupertypes() = supertypes ?: emptyList()
+    fun initializeSupertypes(supertypes: List<UnwrappedType>) {
+        assert(this.supertypesComputation == null) {
+            "Already initialized! oldValue = ${this.supertypesComputation}, newValue = $supertypes"
+        }
+        this.supertypesComputation = { supertypes }
+    }
+
+    override fun getSupertypes() = _supertypes ?: emptyList()
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
 
     override fun isFinal() = false
@@ -177,7 +187,11 @@ class NewCapturedTypeConstructor(
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
         NewCapturedTypeConstructor(
             projection.refine(kotlinTypeRefiner),
-            supertypes?.map { it.refine(kotlinTypeRefiner) },
+            supertypesComputation?.let {
+                {
+                    supertypes.map { it.refine(kotlinTypeRefiner) }
+                }
+            },
             original ?: this
         )
 
