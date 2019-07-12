@@ -273,7 +273,7 @@ public class GradleBuildSrcProjectsResolver {
 
           DataNode<?> parent = classpathNode.getParent();
           assert parent != null;
-          parent.createChild(BuildScriptClasspathData.KEY, buildSrcResolverCtx.getInternary().intern(buildScriptClasspathData));
+          parent.createChild(BuildScriptClasspathData.KEY, GradleProjectResolverUtil.intern(myResolverContext, buildScriptClasspathData));
           classpathNode.clear(true);
         });
       }

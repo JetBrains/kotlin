@@ -21,13 +21,14 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.containers.HashSetInterner;
+import com.intellij.util.containers.Interner;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.data.BuildScriptClasspathData;
 import org.jetbrains.plugins.gradle.service.GradleBuildClasspathManager;
 import org.jetbrains.plugins.gradle.service.GradleInstallationManager;
-import org.jetbrains.plugins.gradle.service.project.ProjectResolverInternary;
 import org.jetbrains.plugins.gradle.settings.GradleLocalSettings;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.GradleSettings;
@@ -93,7 +94,7 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
 
     final Map<String, ExternalProjectBuildClasspathPojo> localProjectBuildClasspath = new THashMap<>(localSettings.getProjectBuildClasspath());
 
-    ProjectResolverInternary internary = new ProjectResolverInternary();
+    Interner<List<String>> interner = new HashSetInterner<>();
 
     for (final DataNode<BuildScriptClasspathData> node : toImport) {
       if (GradleConstants.SYSTEM_ID.equals(node.getData().getOwner())) {
@@ -125,13 +126,13 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
           localProjectBuildClasspath.put(linkedExternalProjectPath, projectBuildClasspathPojo);
         }
 
-        List<String> projectBuildClasspath = internary.intern(new ArrayList<>(externalProjectGradleSdkLibs.getValue()));
+        List<String> projectBuildClasspath = interner.intern(new ArrayList<>(externalProjectGradleSdkLibs.getValue()));
         projectBuildClasspathPojo.setProjectBuildClasspath(projectBuildClasspath);
 
         List<String> buildClasspath = new ArrayList<>(buildClasspathSources.size() + buildClasspathClasses.size());
         buildClasspath.addAll(buildClasspathSources);
         buildClasspath.addAll(buildClasspathClasses);
-        buildClasspath = internary.intern(buildClasspath);
+        buildClasspath = interner.intern(buildClasspath);
 
         projectBuildClasspathPojo.getModulesBuildClasspath().put(externalModulePath,
                                                                  new ExternalModuleBuildClasspathPojo(externalModulePath, buildClasspath));
