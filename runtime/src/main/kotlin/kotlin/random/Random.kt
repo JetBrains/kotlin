@@ -36,8 +36,5 @@ internal object NativeRandom : Random() {
 
 internal actual fun defaultPlatformRandom(): Random = NativeRandom
 
-internal actual fun fastLog2(value: Int): Int =
-        31 - value.numberOfLeadingZeros()
-
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
         (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()

@@ -330,8 +330,6 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
 
     override val returnIfSuspended = internalFunction("returnIfSuspended")
 
-
-
     val coroutineLaunchpad = internalFunction("coroutineLaunchpad")
 
     val konanSuspendCoroutineUninterceptedOrReturn = internalFunction("suspendCoroutineUninterceptedOrReturn")

@@ -511,9 +511,11 @@ actual class HashMap<K, V> private constructor(
         const val INITIAL_MAX_PROBE_DISTANCE = 2
         const val TOMBSTONE = -1
 
-        fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).highestOneBit()
+        @UseExperimental(ExperimentalStdlibApi::class)
+        fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
-        fun computeShift(hashSize: Int): Int = hashSize.numberOfLeadingZeros() + 1
+        @UseExperimental(ExperimentalStdlibApi::class)
+        fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
     }
 
     internal open class Itr<K, V>(
