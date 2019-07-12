@@ -47,8 +47,7 @@ import java.util.function.Consumer;
 
 @State(name = "ServiceViewManager", storages = @Storage(StoragePathMacros.WORKSPACE_FILE))
 public final class ServiceViewManagerImpl implements ServiceViewManager, PersistentStateComponent<ServiceViewManagerImpl.State> {
-  // TODO [konstantin.aleev] provide help id
-  @NonNls private static final String HELP_ID = "run-dashboard.reference";
+  @NonNls private static final String HELP_ID = "services.tool.window";
 
   private final Project myProject;
   private State myState = new State();
