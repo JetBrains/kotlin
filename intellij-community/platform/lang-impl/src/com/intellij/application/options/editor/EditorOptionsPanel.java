@@ -62,7 +62,7 @@ public class EditorOptionsPanel extends CompositeConfigurable<ErrorOptionsProvid
 
   private static final String STRIP_ALL  = ApplicationBundle.message("combobox.strip.all");
   private static final String STRIP_NONE = ApplicationBundle.message("combobox.strip.none");
-  private JComboBox myStripTrailingSpacesCombo;
+  private JComboBox<String> myStripTrailingSpacesCombo;
 
   private JCheckBox myCbVirtualSpace;
   private JCheckBox myCbCaretInsideTabs;
