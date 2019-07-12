@@ -1791,6 +1791,8 @@ public actual inline fun <T> Array<T>.plusElement(element: T): Array<T> {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun IntArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1798,6 +1800,8 @@ public actual fun IntArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1805,6 +1809,8 @@ public actual fun LongArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ByteArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1812,6 +1818,8 @@ public actual fun ByteArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun ShortArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1819,6 +1827,8 @@ public actual fun ShortArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun DoubleArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1826,6 +1836,8 @@ public actual fun DoubleArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun FloatArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1833,6 +1845,8 @@ public actual fun FloatArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun CharArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -1842,6 +1856,8 @@ public actual fun CharArray.sort(): Unit {
  * Sorts the array in-place according to the natural order of its elements.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T : Comparable<T>> Array<out T>.sort(): Unit {
@@ -1864,6 +1880,8 @@ public fun <T> Array<out T>.sort(): Unit {
  * Sorts a range in the array in-place.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1871,6 +1889,8 @@ public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1878,6 +1898,8 @@ public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1885,6 +1907,8 @@ public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1892,6 +1916,8 @@ public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1899,6 +1925,8 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1906,6 +1934,8 @@ public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1913,6 +1943,8 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 
 /**
  * Sorts a range in the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
  */
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)

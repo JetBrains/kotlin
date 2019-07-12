@@ -3484,6 +3484,8 @@ public inline operator fun UShortArray.plus(elements: UShortArray): UShortArray 
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3493,6 +3495,8 @@ public fun UIntArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3502,6 +3506,8 @@ public fun ULongArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3511,6 +3517,8 @@ public fun UByteArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

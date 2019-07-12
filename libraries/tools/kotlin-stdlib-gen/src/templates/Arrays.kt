@@ -1016,8 +1016,12 @@ object ArrayOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
         appendStableSortNote()
+        specialFor(ArraysOfObjects) {
+            sample("samples.collections.Arrays.Sorting.sortArrayOfComparable")
+        }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             doc { "Sorts the array in-place." }
+            sample("samples.collections.Arrays.Sorting.sortArray")
         }
 
         returns("Unit")
@@ -1143,6 +1147,7 @@ object ArrayOps : TemplateGroupBase() {
         specialFor(ArraysOfObjects) {
             appendStableSortNote()
         }
+        sample("samples.collections.Arrays.Sorting.sortRangeOfComparable")
         returns("Unit")
         body {
             "java.util.Arrays.sort(this, fromIndex, toIndex)"
