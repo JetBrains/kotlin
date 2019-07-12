@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileResolver
 import org.gradle.api.plugins.BasePluginConvention
-import org.gradle.api.reflect.TypeOf.typeOf
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -77,38 +75,12 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         get() = field ?: project.buildDir.resolve(baseConventions!!.distsDirName)
 
     @get:Internal
-    var archiveBaseName: String? = null
-        get() = field ?: baseConventions?.archivesBaseName
-
-    @get:Internal
-    var archiveAppendix: String? = null
-
-    @get:Internal
-    var archiveVersion: String? = null
-        get() = field ?: project.version.toString()
-
-    @get:Internal
-    var archiveClassifier: String? = null
-
-    @get:Internal
-    var archiveExtension: String? = "js"
-
-    @get:Internal
-    var archiveFileName: String? = null
-        get() = field ?: defaultArchiveFileName
-
-    private val defaultArchiveFileName: String
-        get() {
-            // [baseName]-[appendix]-[version]-[classifier].[extension]
-            val baseFileName = listOf(archiveBaseName, archiveAppendix, archiveVersion, archiveClassifier)
-                .filter { it != null && it.isNotBlank() }
-                .joinToString("-")
-            return baseFileName + if (archiveExtension == null) "" else ".$archiveExtension"
-        }
+    var outputFileName: String? = null
+        get() = field ?: (baseConventions?.archivesBaseName + ".js")
 
     @get:OutputFile
-    open val archiveFile: File
-        get() = destinationDirectory!!.resolve(archiveFileName!!)
+    open val outputFile: File
+        get() = destinationDirectory!!.resolve(outputFileName!!)
 
     open val configDirectory: File?
         @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
@@ -141,7 +113,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
             outputPath = destinationDirectory,
-            outputFileName = archiveFileName,
+            outputFileName = outputFileName,
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
