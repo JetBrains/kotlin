@@ -38,36 +38,6 @@ class VariableFinder(val context: ExecutionContext) {
         private val USE_UNSAFE_FALLBACK: Boolean
             get() = true
 
-        fun variableNotFound(context: ExecutionContext, message: String): Exception {
-            val frameProxy = context.frameProxy
-            val location = frameProxy.safeLocation()
-            val scope = context.debugProcess.searchScope
-
-            val locationText = location?.run { "Location: ${sourceName()}:${lineNumber()}" } ?: "No location available"
-
-            val sourceName = location?.sourceName()
-            val declaringTypeName = location?.declaringType()?.name()?.replace('.', '/')?.let { JvmClassName.byInternalName(it) }
-
-            val sourceFile = if (sourceName != null && declaringTypeName != null) {
-                DebuggerUtils.findSourceFileForClassIncludeLibrarySources(context.project, scope, declaringTypeName, sourceName, location)
-            } else {
-                null
-            }
-
-            val sourceFileText = runReadAction { sourceFile?.text }
-
-            if (sourceName != null && sourceFileText != null) {
-                val attachments = mergeAttachments(
-                    Attachment(sourceName, sourceFileText),
-                    Attachment("location.txt", locationText)
-                )
-
-                LOG.error(message, attachments)
-            }
-
-            return EvaluateExceptionUtil.createEvaluateException(message)
-        }
-
         private fun getCapturedVariableNameRegex(capturedName: String): Regex {
             val escapedName = Regex.escape(capturedName)
             val escapedSuffix = Regex.escape(INLINE_TRANSFORMATION_SUFFIX)

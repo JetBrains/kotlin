@@ -409,10 +409,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
                     evaluationException("Parameter evaluation is not supported for '\$default' methods")
                 } else {
                     status.error(EvaluationError.CannotFindVariable)
-
-                    throw VariableFinder.variableNotFound(variableFinder.context, buildString {
-                        append("Cannot find local variable: name = '").append(name).append("', type = ").append(asmType.className)
-                    })
+                    evaluationException("Cannot find local variable '$name' with type " + asmType.className)
                 }
             }
 
