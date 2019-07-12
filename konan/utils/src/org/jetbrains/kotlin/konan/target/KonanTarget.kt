@@ -180,8 +180,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             LINUX_ARM32_HFP,
             LINUX_ARM64,
             ANDROID_ARM32,
-            // TODO: toolchain to be fixed for that to work.
-            // ANDROID_ARM64,
+            ANDROID_ARM64,
             WASM32
         ),
         MACOS_X64 to setOf(
