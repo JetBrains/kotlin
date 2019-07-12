@@ -52,6 +52,7 @@ class EvaluationStatus {
 
 enum class EvaluationError {
     DebuggerNotAttached,
+    DumbMode,
     NoFrameProxy,
     ThreadNotAvailable,
     ThreadNotSuspended,
@@ -61,7 +62,20 @@ enum class EvaluationError {
     EvaluateException,
     SpecialException,
     GenericException,
+    CannotFindVariable,
 
+    CoroutineContextUnavailable,
+    ParameterNotCaptured,
+    InsideDefaultMethod,
+    BackingFieldNotFound,
+    SuspendCall,
+    CrossInlineLambda,
+
+    Eval4JExceptionFromEvaluatedCode,
+    Eval4JAbnormalTermination,
+    Eval4JUnknownException,
+
+    ErrorElementOccurred,
     FrontendException,
     BackendException,
     ErrorsInCode

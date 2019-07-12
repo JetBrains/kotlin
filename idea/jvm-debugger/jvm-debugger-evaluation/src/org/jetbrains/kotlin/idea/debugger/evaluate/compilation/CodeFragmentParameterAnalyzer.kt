@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.descriptors.impl.SyntheticFieldDescriptor
 import org.jetbrains.kotlin.idea.debugger.evaluate.DebuggerFieldPropertyDescriptor
+import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationError
+import org.jetbrains.kotlin.idea.debugger.evaluate.EvaluationStatus
 import org.jetbrains.kotlin.idea.debugger.evaluate.ExecutionContext
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.CodeFragmentParameter.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinCodeFragmentFactory.Companion.FAKE_JAVA_CONTEXT_FUNCTION_NAME
@@ -49,7 +51,8 @@ class CodeFragmentParameterInfo(
 class CodeFragmentParameterAnalyzer(
     private val context: ExecutionContext,
     private val codeFragment: KtCodeFragment,
-    private val bindingContext: BindingContext
+    private val bindingContext: BindingContext,
+    private val evaluationStatus: EvaluationStatus
 ) {
     private val parameters = LinkedHashMap<DeclarationDescriptor, Smart>()
     private val crossingBounds = mutableSetOf<Dumb>()
@@ -190,6 +193,7 @@ class CodeFragmentParameterAnalyzer(
                 if (resolvedCall != null) {
                     val descriptor = resolvedCall.resultingDescriptor
                     if (descriptor is FunctionDescriptor && descriptor.isSuspend) {
+                        evaluationStatus.error(EvaluationError.SuspendCall)
                         throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'suspend' calls is not supported")
                     }
                 }
@@ -275,6 +279,7 @@ class CodeFragmentParameterAnalyzer(
 
     private fun processSimpleNameExpression(target: DeclarationDescriptor, expression: KtSimpleNameExpression): Smart? {
         if (target is ValueParameterDescriptor && target.isCrossinline) {
+            evaluationStatus.error(EvaluationError.CrossInlineLambda)
             throw EvaluateExceptionUtil.createEvaluateException("Evaluation of 'crossinline' lambdas is not supported")
         }
 
