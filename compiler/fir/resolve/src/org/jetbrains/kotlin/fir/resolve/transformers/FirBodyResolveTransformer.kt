@@ -1058,10 +1058,8 @@ open class FirBodyResolveTransformer(
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             withContainer(property) {
                 property.transformChildrenWithoutAccessors(this, returnTypeRef)
-                if (property.returnTypeRef is FirImplicitTypeRef) {
-                    if (property.initializer != null || property.delegate != null) {
-                        storeVariableReturnType(property)
-                    }
+                if (property.initializer != null || property.delegate != null) {
+                    storeVariableReturnType(property)
                 }
                 withScopeCleanup(localScopes) {
                     localScopes.add(FirLocalScope().apply {
