@@ -37,7 +37,7 @@ public val Node.isElement: Boolean
  *
  * To access an element of specific type, just add it to the property declaration
  * ```
- * val theID : HTMLImageElement by document.gettingElementById
+ * val theID: HTMLImageElement by document.gettingElementById
  * ```
  */
 inline val Document.gettingElementById get() = DocumentGettingElementById(this)
