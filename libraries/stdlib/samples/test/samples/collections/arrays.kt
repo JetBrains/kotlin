@@ -131,4 +131,53 @@ class Arrays {
         }
     }
 
+    class Sorting {
+
+        @Sample
+        fun sortArray() {
+            val intArray = intArrayOf(4, 3, 2, 1)
+
+            assertPrints(intArray.joinToString(), "4, 3, 2, 1")
+
+            intArray.sort()
+
+            assertPrints(intArray.joinToString(), "1, 2, 3, 4")
+        }
+
+        @Sample
+        fun sortArrayOfComparable() {
+            data class Person(val firstName: String, val lastName: String) : Comparable<Person> {
+                override fun compareTo(other: Person): Int {
+                    return lastName.compareTo(other.lastName)
+                }
+
+            }
+
+            val people = arrayOf(
+                Person("Ragnar", "Lodbrok"),
+                Person("Bjorn", "Ironside"),
+                Person("Sweyn", "Forkbeard")
+            )
+
+            assertPrints(people.joinToString(), "Person(firstName=Ragnar, lastName=Lodbrok), Person(firstName=Bjorn, lastName=Ironside), Person(firstName=Sweyn, lastName=Forkbeard)")
+
+            people.sort()
+
+            assertPrints(people.joinToString(), "Person(firstName=Sweyn, lastName=Forkbeard), Person(firstName=Bjorn, lastName=Ironside), Person(firstName=Ragnar, lastName=Lodbrok)")
+
+        }
+
+        @Sample
+        fun sortRangeOfArray() {
+            val intArray = intArrayOf(4, 3, 2, 1)
+
+            assertPrints(intArray.joinToString(), "4, 3, 2, 1")
+
+            intArray.sort(0, 3)
+
+            assertPrints(intArray.joinToString(), "2, 3, 4, 1")
+        }
+
+    }
+
 }
