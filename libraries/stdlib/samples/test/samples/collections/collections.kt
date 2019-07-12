@@ -568,33 +568,32 @@ class Collections {
         fun sortMutableList() {
             val mutableList = mutableListOf(4, 3, 2, 1)
 
+            // before sorting
             assertPrints(mutableList.joinToString(), "4, 3, 2, 1")
 
             mutableList.sort()
 
+            // after sorting
             assertPrints(mutableList.joinToString(), "1, 2, 3, 4")
         }
 
         @Sample
-        fun sortRangeOfComparable() {
-            data class Person(val firstName: String, val lastName: String) : Comparable<Person> {
-                override fun compareTo(other: Person): Int {
-                    return lastName.compareTo(other.lastName)
-                }
-
+        fun sortMutableListWith() {
+            // non-comparable class
+            class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
             }
 
-            val people = arrayOf(
+            val people = mutableListOf(
                 Person("Ragnar", "Lodbrok"),
                 Person("Bjorn", "Ironside"),
                 Person("Sweyn", "Forkbeard")
             )
 
-            assertPrints(people.joinToString(), "Person(firstName=Ragnar, lastName=Lodbrok), Person(firstName=Bjorn, lastName=Ironside), Person(firstName=Sweyn, lastName=Forkbeard)")
+            people.sortWith(compareByDescending { it.firstName })
 
-            people.sort(0, 2)
-
-            assertPrints(people.joinToString(), "Person(firstName=Bjorn, lastName=Ironside), Person(firstName=Ragnar, lastName=Lodbrok), Person(firstName=Sweyn, lastName=Forkbeard)")
+            // after sorting
+            assertPrints(people.joinToString(), "Sweyn Forkbeard, Ragnar Lodbrok, Bjorn Ironside")
         }
 
     }
