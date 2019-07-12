@@ -157,11 +157,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
   private void clearUnusedHighlighters() {
     myHighlighters.removeIf(h -> {
       if (h.getUserData(MARKER_USED) == null) {
-        removeHighlighter(h);
-        RangeHighlighter additionalHighlighter = h.getUserData(IN_SELECTION_KEY);
-        if (additionalHighlighter != null) {
-          removeHighlighter(additionalHighlighter);
-        }
+        removeHighlighterWithDependent(h);
         return true;
       }
       else {
@@ -169,6 +165,14 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
         return false;
       }
     });
+  }
+
+  private void removeHighlighterWithDependent(@NotNull RangeHighlighter highlighter) {
+    removeHighlighter(highlighter);
+    RangeHighlighter additionalHighlighter = highlighter.getUserData(IN_SELECTION_KEY);
+    if (additionalHighlighter != null) {
+      removeHighlighter(additionalHighlighter);
+    }
   }
 
   @Override
@@ -221,7 +225,7 @@ public class LivePreview implements SearchResults.SearchResultsListener, Selecti
     hideBalloon();
 
     for (RangeHighlighter h : myHighlighters) {
-      removeHighlighter(h);
+      removeHighlighterWithDependent(h);
     }
     myHighlighters.clear();
 
