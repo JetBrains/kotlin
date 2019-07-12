@@ -1881,7 +1881,7 @@ public fun <T> Array<out T>.sort(): Unit {
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable
  */
 public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1890,7 +1890,7 @@ public fun <T> Array<out T>.sort(fromIndex: Int = 0, toIndex: Int = size): Unit 
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1899,7 +1899,7 @@ public fun ByteArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1908,7 +1908,7 @@ public fun ShortArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1917,7 +1917,7 @@ public fun IntArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1926,7 +1926,7 @@ public fun LongArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1935,7 +1935,7 @@ public fun FloatArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)
@@ -1944,7 +1944,7 @@ public fun DoubleArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
 /**
  * Sorts a range in the array in-place.
  * 
- * @sample samples.collections.Arrays.Sorting.sortRangeOfComparable
+ * @sample samples.collections.Arrays.Sorting.sortRangeOfArray
  */
 public fun CharArray.sort(fromIndex: Int = 0, toIndex: Int = size): Unit {
     java.util.Arrays.sort(this, fromIndex, toIndex)

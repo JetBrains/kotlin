@@ -1146,8 +1146,11 @@ object ArrayOps : TemplateGroupBase() {
         doc { "Sorts a range in the array in-place." }
         specialFor(ArraysOfObjects) {
             appendStableSortNote()
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable")
         }
-        sample("samples.collections.Arrays.Sorting.sortRangeOfComparable")
+        specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArray")
+        }
         returns("Unit")
         body {
             "java.util.Arrays.sort(this, fromIndex, toIndex)"
