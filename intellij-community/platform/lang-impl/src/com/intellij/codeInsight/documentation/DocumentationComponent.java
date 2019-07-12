@@ -895,9 +895,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     Window window = myHint.getPopupWindow();
     if (window != null) window.setFocusableWindowState(true);
 
-    if (myHint.getDimensionServiceKey() == null) {
-      registerSizeTracker();
-    }
+    registerSizeTracker();
   }
 
   private DataContext getDataContext() {
