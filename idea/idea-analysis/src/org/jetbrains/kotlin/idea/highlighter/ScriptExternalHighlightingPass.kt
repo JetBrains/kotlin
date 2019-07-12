@@ -37,6 +37,7 @@ import com.intellij.openapi.wm.ex.StatusBarEx
 import com.intellij.psi.PsiFile
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.core.script.IdeScriptReportSink
+import org.jetbrains.kotlin.idea.script.ScriptDiagnosticFixProvider
 import org.jetbrains.kotlin.psi.KtFile
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
@@ -54,18 +55,24 @@ class ScriptExternalHighlightingPass(
 
         val reports = IdeScriptReportSink.getReports(file.virtualFile)
 
-        val annotations = reports.mapNotNull { (message, severity, _ , location) ->
-            val (startOffset, endOffset) = location?.let { computeOffsets(document, it) } ?: 0 to 0
+        val annotations = reports.mapNotNull { scriptDiagnostic ->
+            val (startOffset, endOffset) = scriptDiagnostic.location?.let { computeOffsets(document, it) } ?: 0 to 0
             val annotation = Annotation(
                 startOffset,
                 endOffset,
-                severity.convertSeverity() ?: return@mapNotNull null,
-                message,
-                message
+                scriptDiagnostic.severity.convertSeverity() ?: return@mapNotNull null,
+                scriptDiagnostic.message,
+                scriptDiagnostic.message
             )
 
             // if range is empty, show notification panel in editor
             annotation.isFileLevelAnnotation = startOffset == endOffset
+
+            for (provider in ScriptDiagnosticFixProvider.EP_NAME.extensions) {
+                provider.provideFixes(scriptDiagnostic).forEach {
+                    annotation.registerFix(it)
+                }
+            }
 
             annotation
         }
