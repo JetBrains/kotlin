@@ -9,6 +9,7 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <buildSystemTypeDetector implementation="org.jetbrains.kotlin.idea.configuration.GradleDetector"/>
+        <scriptDiagnosticFixProvider implementation="org.jetbrains.kotlin.idea.script.GradleScriptDiagnosticFixProvider"/>
     </extensions>
 
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
@@ -22,4 +23,10 @@
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
     </extensions>
+
+    <actions>
+        <action id="Kotlin.Gradle.ShowDslLogs" class="org.jetbrains.kotlin.idea.actions.ShowKotlinGradleDslLogs"
+                text="Show Kotlin Gradle DSL Logs" description="Show Kotlin Gradle DSL logs">
+        </action>
+    </actions>
 </idea-plugin>
