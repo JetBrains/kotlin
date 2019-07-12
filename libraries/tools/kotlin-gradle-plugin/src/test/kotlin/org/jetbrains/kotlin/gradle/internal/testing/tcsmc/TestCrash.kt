@@ -40,7 +40,7 @@ COMPLETED FAILURE // root
         }
 
         assertEquals(
-            "Test running process exits unexpectedly.\n" +
+            "Test running process exited unexpectedly.\n" +
                     "Current test: Test\n" +
                     "Process output:\n" +
                     " Crash info",
