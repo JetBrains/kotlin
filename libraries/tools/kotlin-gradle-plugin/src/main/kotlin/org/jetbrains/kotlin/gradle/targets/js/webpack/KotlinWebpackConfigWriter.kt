@@ -186,7 +186,6 @@ data class KotlinWebpackConfigWriter(
                         use: ["source-map-loader"],
                         enforce: "pre"
                 });
-                config.module.rules.push({test: /\.js${'$'}/, use: ['source-map-loader'], enforce: 'pre'});
                 config.devtool = 'eval-source-map';
                 
             """.trimIndent()
@@ -223,7 +222,7 @@ data class KotlinWebpackConfigWriter(
                         const p = percentage*100;
                         let msg = Math.trunc(p/100) + Math.trunc(p%100) + '% ' + message + ' ' + args.join(' ');
                         ${if (progressReporterPathFilter == null) "" else """
-                            msg = msg.replace(new RegExp(${jsQuotedString(progressReporterPathFilter ?: "")}, 'g'), '');
+                            msg = msg.replace(new RegExp(${jsQuotedString(progressReporterPathFilter)}, 'g'), '');
                         """.trimIndent()}
                         console.log(msg);
                     };
