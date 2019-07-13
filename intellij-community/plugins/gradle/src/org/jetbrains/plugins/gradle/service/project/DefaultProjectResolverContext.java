@@ -19,6 +19,8 @@ import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskId;
 import com.intellij.openapi.externalSystem.model.task.ExternalSystemTaskNotificationListener;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.util.UserDataHolderBase;
+import com.intellij.util.containers.HashSetInterner;
+import com.intellij.util.containers.Interner;
 import org.gradle.initialization.BuildLayoutParameters;
 import org.gradle.tooling.CancellationTokenSource;
 import org.gradle.tooling.GradleConnector;
@@ -51,7 +53,7 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable private String myBuildSrcGroup;
   @Nullable private BuildEnvironment myBuildEnvironment;
 
-  @NotNull private ProjectResolverInternary myInternary = new ProjectResolverInternary();
+  @NotNull private final Interner myInterner = new HashSetInterner();
 
   public DefaultProjectResolverContext(@NotNull final ExternalSystemTaskId externalSystemTaskId,
                                        @NotNull final String projectPath,
@@ -225,8 +227,8 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   }
 
   @NotNull
-  @Override
-  public ProjectResolverInternary getInternary() {
-    return myInternary;
+  public <T> T intern(@NotNull T value) {
+    //noinspection unchecked
+    return (T)myInterner.intern(value);
   }
 }
