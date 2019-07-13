@@ -465,21 +465,21 @@ public class GradleProjectResolverUtil {
             mergedDependency.setClasspathOrder(dependency.getClasspathOrder());
             mergedDependency.getDependencies().addAll(dependency.getDependencies());
 
-            mergedDependency.getFiles().addAll(ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getFile(), ((ExternalLibraryDependency)dependency).getFile()));
-            mergedDependency.getSources().addAll((ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getSource(), ((ExternalLibraryDependency)dependency).getSource())));
-            mergedDependency.getJavadoc().addAll((ContainerUtil.packNullables(
-              ((ExternalLibraryDependency)seenDependency).getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc())));
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)seenDependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)dependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)seenDependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)dependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)seenDependency).getJavadoc());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc());
 
             dependencyMap.put(dependency.getId(), mergedDependency);
             continue;
           }
           else if (seenDependency instanceof DefaultExternalMultiLibraryDependency) {
             DefaultExternalMultiLibraryDependency mergedDependency = (DefaultExternalMultiLibraryDependency)seenDependency;
-            mergedDependency.getFiles().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getFile()));
-            mergedDependency.getSources().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getSource()));
-            mergedDependency.getJavadoc().addAll(ContainerUtil.packNullables(((ExternalLibraryDependency)dependency).getJavadoc()));
+            ContainerUtil.addIfNotNull(mergedDependency.getFiles(), ((ExternalLibraryDependency)dependency).getFile());
+            ContainerUtil.addIfNotNull(mergedDependency.getSources(), ((ExternalLibraryDependency)dependency).getSource());
+            ContainerUtil.addIfNotNull(mergedDependency.getJavadoc(), ((ExternalLibraryDependency)dependency).getJavadoc());
             continue;
           }
         }

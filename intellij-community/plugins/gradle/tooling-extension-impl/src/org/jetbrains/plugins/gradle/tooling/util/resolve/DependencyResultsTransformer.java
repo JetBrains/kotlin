@@ -240,8 +240,9 @@ public class DependencyResultsTransformer {
             dDep.setProjectPath(artifactComponentIdentifier.getProjectPath());
             dDep.setConfigurationName(Dependency.DEFAULT_CONFIGURATION);
 
-            List<File> files = new ArrayList<File>();
-            for (ResolvedArtifact resolvedArtifact : artifactMap.get(componentResult.getModuleVersion())) {
+            Collection<ResolvedArtifact> resolvedArtifacts = artifactMap.get(componentResult.getModuleVersion());
+            List<File> files = new ArrayList<File>(resolvedArtifacts.size());
+            for (ResolvedArtifact resolvedArtifact : resolvedArtifacts) {
               files.add(resolvedArtifact.getFile());
             }
             dDep.setProjectDependencyArtifacts(files);

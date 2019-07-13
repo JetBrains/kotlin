@@ -76,19 +76,37 @@ public class ExternalProjectSerializer {
     myKryo.register(ArrayList.class, new CollectionSerializer() {
       @Override
       protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new ArrayList();
+        return new ArrayList(0);
       }
     });
     myKryo.register(HashMap.class, new MapSerializer() {
       @Override
       protected Map create(Kryo kryo, Input input, Class<Map> type) {
-        return new HashMap();
+        return new HashMap(0);
       }
     });
     myKryo.register(HashSet.class, new CollectionSerializer() {
       @Override
       protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new HashSet();
+        return new HashSet(0);
+      }
+    });
+    myKryo.register(LinkedHashSet.class, new CollectionSerializer() {
+      @Override
+      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
+        return new LinkedHashSet(0);
+      }
+    });
+    myKryo.register(THashSet.class, new CollectionSerializer() {
+      @Override
+      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
+        return new THashSet(0);
+      }
+    });
+    myKryo.register(THashMap.class, new MapSerializer() {
+      @Override
+      protected Map create(Kryo kryo, Input input, Class<Map> type) {
+        return new THashMap(0);
       }
     });
 
@@ -195,41 +213,10 @@ public class ExternalProjectSerializer {
       new FieldSerializer<FilePatternSetImpl>(myKryo, FilePatternSetImpl.class) {
         @Override
         protected FilePatternSetImpl create(Kryo kryo, Input input, Class<FilePatternSetImpl> type) {
-          return new FilePatternSetImpl(new LinkedHashSet<>(), new LinkedHashSet<>());
+          return new FilePatternSetImpl();
         }
       }
     );
-
-    myKryo.register(LinkedHashSet.class, new CollectionSerializer() {
-      @Override
-      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new LinkedHashSet();
-      }
-    });
-    myKryo.register(HashSet.class, new CollectionSerializer() {
-      @Override
-      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new HashSet();
-      }
-    });
-    myKryo.register(THashSet.class, new CollectionSerializer() {
-      @Override
-      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new THashSet();
-      }
-    });
-    myKryo.register(Set.class, new CollectionSerializer() {
-      @Override
-      protected Collection create(Kryo kryo, Input input, Class<Collection> type) {
-        return new HashSet();
-      }
-    });
-    myKryo.register(THashMap.class, new MapSerializer() {
-      @Override
-      protected Map create(Kryo kryo, Input input, Class<Map> type) {
-        return new THashMap();
-      }
-    });
   }
 
 

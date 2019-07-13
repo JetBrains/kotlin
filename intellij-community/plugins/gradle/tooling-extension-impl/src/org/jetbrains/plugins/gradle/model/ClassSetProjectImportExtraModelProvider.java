@@ -12,10 +12,10 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public final class ClassSetProjectImportExtraModelProvider implements ProjectImportExtraModelProvider {
-  @NotNull private final Set<Class> classSet = new LinkedHashSet<Class>();
+  @NotNull private final Set<Class> classSet;
 
   public ClassSetProjectImportExtraModelProvider(@NotNull Collection<Class> classes) {
-    classSet.addAll(classes);
+    classSet = new LinkedHashSet<Class>(classes);
   }
 
   @Override

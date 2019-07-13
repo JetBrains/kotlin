@@ -23,11 +23,11 @@ public class DefaultGradleExtensions implements GradleExtensions {
   private String parentProjectPath;
 
   public DefaultGradleExtensions() {
-    extensions = new ArrayList<DefaultGradleExtension>();
-    conventions = new ArrayList<DefaultGradleConvention>();
-    gradleProperties = new ArrayList<DefaultGradleProperty>();
-    tasks = new ArrayList<DefaultExternalTask>();
-    configurations = new ArrayList<DefaultGradleConfiguration>();
+    extensions = new ArrayList<DefaultGradleExtension>(0);
+    conventions = new ArrayList<DefaultGradleConvention>(0);
+    gradleProperties = new ArrayList<DefaultGradleProperty>(0);
+    tasks = new ArrayList<DefaultExternalTask>(0);
+    configurations = new ArrayList<DefaultGradleConfiguration>(0);
   }
 
   public DefaultGradleExtensions(@NotNull GradleExtensions extensions) {
