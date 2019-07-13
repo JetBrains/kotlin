@@ -394,7 +394,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
     mergeSourceSetContentRoots(moduleMap, resolverCtx);
     if(resolverCtx.isResolveModulePerSourceSet()) {
-      mergeLibraryAndModuleDependencyData(projectDataNode, resolverCtx.getGradleUserHome(), gradleHomeDir, gradleVersion);
+      mergeLibraryAndModuleDependencyData(resolverCtx, projectDataNode, resolverCtx.getGradleUserHome(), gradleHomeDir, gradleVersion);
     }
 
     for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
@@ -469,7 +469,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     return gradleIncludedModules;
   }
 
-  private static void mergeLibraryAndModuleDependencyData(@NotNull DataNode<ProjectData> projectDataNode,
+  private static void mergeLibraryAndModuleDependencyData(@NotNull ProjectResolverContext context,
+                                                          @NotNull DataNode<ProjectData> projectDataNode,
                                                           @NotNull File gradleUserHomeDir,
                                                           @Nullable File gradleHomeDir,
                                                           @Nullable GradleVersion gradleVersion) {
@@ -488,7 +489,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       findAllRecursively(projectDataNode, ProjectKeys.LIBRARY_DEPENDENCY);
 
     LibraryDataNodeSubstitutor librarySubstitutor =
-      new LibraryDataNodeSubstitutor(gradleUserHomeDir, gradleHomeDir, gradleVersion, sourceSetMap, moduleOutputsMap, artifactsMap);
+      new LibraryDataNodeSubstitutor(context, gradleUserHomeDir, gradleHomeDir, gradleVersion, sourceSetMap, moduleOutputsMap, artifactsMap);
     for (DataNode<LibraryDependencyData> libraryDependencyDataNode : libraryDependencies) {
       librarySubstitutor.run(libraryDependencyDataNode);
     }
