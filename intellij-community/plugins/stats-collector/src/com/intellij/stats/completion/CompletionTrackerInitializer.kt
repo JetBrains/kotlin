@@ -74,8 +74,8 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
 
   private fun sessionShouldBeLogged(experimentHelper: WebServiceStatus, language: Language?): Boolean {
     val application = ApplicationManager.getApplication()
-    if (!application.isEAP) return false
     if (application.isUnitTestMode || experimentHelper.isExperimentOnCurrentIDE()) return true
+    if (!application.isEAP) return false // todo: care of released IDE versions
 
     var logSessionChance = 0.0
     if (language != null) {
