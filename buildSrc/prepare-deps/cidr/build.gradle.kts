@@ -7,7 +7,7 @@ plugins {
 }
 
 rootProject.apply {
-    from(project.file("../../../gradle/cidrPluginProperties.gradle.kts"))
+    from(project.file("../../../gradle/kotlinUltimateProperties.gradle.kts"))
 }
 
 repositories {

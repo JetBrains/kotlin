@@ -41,8 +41,8 @@ plugins {
 }
 
 rootProject.apply {
-    from(project.file("gradle/cidrPluginProperties.gradle.kts")) // this one must go the first
-    from(project.file("gradle/ultimateTools.gradle.kts"))
+    from(project.file("gradle/kotlinUltimateProperties.gradle.kts")) // this one must go the first
+    from(project.file("gradle/kotlinUltimateTools.gradle.kts"))
     from(project.file("gradle/cidrPluginTools.gradle.kts"))
 }
 
