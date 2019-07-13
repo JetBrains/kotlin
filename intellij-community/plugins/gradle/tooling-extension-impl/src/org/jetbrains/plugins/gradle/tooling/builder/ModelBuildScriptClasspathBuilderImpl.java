@@ -144,6 +144,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
       }
     }
     if (set.isEmpty()) return Collections.emptySet();
+    if (set.size() == 1) return Collections.singleton(set.iterator().next());
     return set;
   }
 

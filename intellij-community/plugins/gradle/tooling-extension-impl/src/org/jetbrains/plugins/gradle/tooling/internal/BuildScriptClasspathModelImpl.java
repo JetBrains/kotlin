@@ -38,7 +38,7 @@ public class BuildScriptClasspathModelImpl implements BuildScriptClasspathModel 
   private String myGradleVersion;
 
   public BuildScriptClasspathModelImpl() {
-    myClasspathEntries = new ArrayList<ClasspathEntryModel>();
+    myClasspathEntries = new ArrayList<ClasspathEntryModel>(0);
   }
 
   @Override
