@@ -17,14 +17,15 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
 
   private String name;
   private Map<ExternalSystemSourceType, DefaultExternalSourceDirectorySet> sources;
-  private final Collection<ExternalDependency> dependencies = new LinkedHashSet<ExternalDependency>();
+  private Collection<ExternalDependency> dependencies;
   private Collection<File> artifacts;
   private String sourceCompatibility;
   private String targetCompatibility;
 
   public DefaultExternalSourceSet() {
-    sources = new HashMap<ExternalSystemSourceType, DefaultExternalSourceDirectorySet>();
-    artifacts = new ArrayList<File>();
+    sources = new HashMap<ExternalSystemSourceType, DefaultExternalSourceDirectorySet>(0);
+    dependencies = new LinkedHashSet<ExternalDependency>(0);
+    artifacts = new ArrayList<File>(0);
   }
 
   public DefaultExternalSourceSet(ExternalSourceSet sourceSet) {
@@ -39,10 +40,11 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
       sources.put(ExternalSystemSourceType.from(entry.getKey()), new DefaultExternalSourceDirectorySet(entry.getValue()));
     }
 
+    dependencies = new ArrayList<ExternalDependency>(sourceSet.getDependencies().size());
     for (ExternalDependency dependency : sourceSet.getDependencies()) {
       dependencies.add(ModelFactory.createCopy(dependency));
     }
-    artifacts = sourceSet.getArtifacts() == null ? new ArrayList<File>() : new ArrayList<File>(sourceSet.getArtifacts());
+    artifacts = sourceSet.getArtifacts() == null ? new ArrayList<File>(0) : new ArrayList<File>(sourceSet.getArtifacts());
   }
 
   @NotNull

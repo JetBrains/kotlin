@@ -10,11 +10,14 @@ import java.util.LinkedHashSet;
 
 public final class DefaultExternalMultiLibraryDependency extends AbstractExternalDependency implements ExternalMultiLibraryDependency {
   private static final long serialVersionUID = 1L;
-  private Collection<File> files = new LinkedHashSet<File>();
-  private Collection<File> sources = new LinkedHashSet<File>();
-  private Collection<File> javadocs = new LinkedHashSet<File>();
+  private Collection<File> files;
+  private Collection<File> sources;
+  private Collection<File> javadocs;
 
   public DefaultExternalMultiLibraryDependency() {
+    files = new LinkedHashSet<File>(0);
+    sources = new LinkedHashSet<File>(0);
+    javadocs = new LinkedHashSet<File>(0);
   }
 
   public DefaultExternalMultiLibraryDependency(ExternalMultiLibraryDependency dependency) {

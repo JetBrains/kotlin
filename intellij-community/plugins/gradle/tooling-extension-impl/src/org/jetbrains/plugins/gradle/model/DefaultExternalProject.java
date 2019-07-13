@@ -47,12 +47,12 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   private Map<String, Set<File>> artifactsByConfiguration;
 
   public DefaultExternalProject() {
-    childProjects = new HashMap<String, DefaultExternalProject>();
-    tasks = new HashMap<String, DefaultExternalTask>();
-    sourceSets = new HashMap<String, DefaultExternalSourceSet>();
-    plugins = new HashMap<String, DefaultExternalPlugin>();
-    artifacts = new ArrayList<File>();
-    artifactsByConfiguration = new HashMap<String, Set<File>>();
+    childProjects = new HashMap<String, DefaultExternalProject>(0);
+    tasks = new HashMap<String, DefaultExternalTask>(0);
+    sourceSets = new HashMap<String, DefaultExternalSourceSet>(0);
+    plugins = new HashMap<String, DefaultExternalPlugin>(0);
+    artifacts = new ArrayList<File>(0);
+    artifactsByConfiguration = new HashMap<String, Set<File>>(0);
   }
 
   public DefaultExternalProject(@NotNull ExternalProject externalProject) {
