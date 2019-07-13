@@ -25,7 +25,10 @@ public final class ByteArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Byte): this(size) {
@@ -86,7 +89,10 @@ public final class CharArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Char): this(size) {
@@ -148,7 +154,10 @@ public final class ShortArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Short): this(size) {
@@ -210,7 +219,10 @@ public final class IntArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Int): this(size) {
@@ -272,7 +284,10 @@ public final class LongArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Long): this(size) {
@@ -334,7 +349,10 @@ public final class FloatArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Float): this(size) {
@@ -392,7 +410,10 @@ public final class DoubleArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Double): this(size) {
@@ -450,7 +471,10 @@ public final class BooleanArray {
 
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     @InlineConstructor
     public constructor(size: Int, init: (Int) -> Boolean): this(size) {
