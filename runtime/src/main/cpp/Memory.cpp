@@ -688,7 +688,8 @@ ContainerHeader* allocContainer(MemoryState* state, size_t size) {
 #endif
   if (result == nullptr) {
 #if USE_GC
-    state->allocSinceLastGc += size;
+    if (state != nullptr)
+        state->allocSinceLastGc += size;
 #endif
     result = konanConstructSizedInstance<ContainerHeader>(alignUp(size, kObjectAlignment));
     atomicAdd(&allocCount, 1);
@@ -1661,7 +1662,7 @@ void updateHeapRefIfNull(ObjHeader** location, const ObjHeader* object) {
 }
 
 inline void checkIfGcNeeded(MemoryState* state) {
-  if (state->allocSinceLastGc > state->allocSinceLastGcThreshold) {
+  if (state != nullptr && state->allocSinceLastGc > state->allocSinceLastGcThreshold) {
     // To avoid GC trashing check that at least 10ms passed since last GC.
     if (konan::getTimeMicros() - state->lastGcTimestamp > 10 * 1000) {
       garbageCollect(state, false);
