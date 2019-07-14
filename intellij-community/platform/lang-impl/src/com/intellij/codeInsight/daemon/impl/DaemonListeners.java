@@ -20,7 +20,6 @@ import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.todo.TodoConfiguration;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.*;
 import com.intellij.openapi.application.impl.LaterInvocator;
@@ -28,7 +27,10 @@ import com.intellij.openapi.command.CommandEvent;
 import com.intellij.openapi.command.CommandListener;
 import com.intellij.openapi.command.undo.UndoManager;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.*;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.editor.colors.EditorColorsManager;
 import com.intellij.openapi.editor.event.*;
@@ -112,7 +114,7 @@ public class DaemonListeners implements Disposable {
                          @NotNull PsiDocumentManager psiDocumentManager,
                          @NotNull final Application application,
                          @NotNull TodoConfiguration todoConfiguration,
-                         @NotNull ActionManagerEx actionManager,
+                         @NotNull ActionManager actionManager,
                          @NotNull final FileDocumentManager fileDocumentManager,
                          @NotNull final PsiManager psiManager,
                          @NotNull final FileEditorManager fileEditorManager,
@@ -421,12 +423,9 @@ public class DaemonListeners implements Disposable {
   }
 
   private class MyApplicationListener implements ApplicationListener {
-    private boolean myDaemonWasRunning;
-
     @Override
     public void beforeWriteActionStart(@NotNull Object action) {
-      myDaemonWasRunning = myDaemonCodeAnalyzer.isRunning();
-      if (!myDaemonWasRunning) return; // we'll restart in writeActionFinished()
+      if (!myDaemonCodeAnalyzer.isRunning()) return; // we'll restart in writeActionFinished()
       stopDaemon(true, "Write action start");
     }
 

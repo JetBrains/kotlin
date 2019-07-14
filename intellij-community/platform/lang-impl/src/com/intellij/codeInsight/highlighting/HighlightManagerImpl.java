@@ -8,7 +8,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
-import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.actionSystem.ex.AnActionListener;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
@@ -41,7 +40,7 @@ import java.util.*;
 public class HighlightManagerImpl extends HighlightManager {
   private final Project myProject;
 
-  public HighlightManagerImpl(Project project, ActionManagerEx actionManagerEx, final EditorFactory editorFactory) {
+  public HighlightManagerImpl(Project project, EditorFactory editorFactory) {
     myProject = project;
     ApplicationManager.getApplication().getMessageBus().connect(myProject).subscribe(AnActionListener.TOPIC, new MyAnActionListener());
 
@@ -233,7 +232,7 @@ public class HighlightManagerImpl extends HighlightManager {
   private static int trimOffsetToDocumentSize(@NotNull Editor editor, int offset) {
     if (offset < 0) return 0;
     int textLength = editor.getDocument().getTextLength();
-    return offset < textLength ? offset : textLength;
+    return Math.min(offset, textLength);
   }
 
   @Nullable

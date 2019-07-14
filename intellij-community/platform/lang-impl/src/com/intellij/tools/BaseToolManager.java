@@ -34,8 +34,8 @@ public abstract class BaseToolManager<T extends Tool> {
   @Nullable private final ActionManagerEx myActionManager;
   private final SchemeManager<ToolsGroup<T>> mySchemeManager;
 
-  public BaseToolManager(@Nullable ActionManagerEx actionManagerEx, @NotNull SchemeManagerFactory factory, @NotNull String schemePath, @NotNull String presentableName) {
-    myActionManager = actionManagerEx;
+  public BaseToolManager(@NotNull SchemeManagerFactory factory, @NotNull String schemePath, @NotNull String presentableName) {
+    myActionManager = ActionManagerEx.getInstanceEx();
 
     //noinspection AbstractMethodCallInConstructor
     mySchemeManager = factory.create(schemePath, createProcessor(), presentableName);
