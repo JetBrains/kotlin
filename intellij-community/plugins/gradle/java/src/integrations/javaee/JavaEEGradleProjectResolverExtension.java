@@ -198,7 +198,7 @@ public class JavaEEGradleProjectResolverExtension extends AbstractProjectResolve
     buildDependencies(resolverCtx, sourceSetMap, allArtifactsMap, fakeNode, dependencies, null);
 
     LibraryDataNodeSubstitutor librarySubstitutor =
-      new LibraryDataNodeSubstitutor(null, null, null, sourceSetMap, moduleOutputsMap, artifactsMap);
+      new LibraryDataNodeSubstitutor(resolverCtx, null, null, null, sourceSetMap, moduleOutputsMap, artifactsMap);
     final Collection<DataNode<LibraryDependencyData>> libraryDependencies = findAllRecursively(fakeNode, ProjectKeys.LIBRARY_DEPENDENCY);
     for (DataNode<LibraryDependencyData> libraryDependencyDataNode : libraryDependencies) {
       librarySubstitutor.run(libraryDependencyDataNode);

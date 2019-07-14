@@ -30,6 +30,7 @@ import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
  */
 @ApiStatus.Experimental
 public class LibraryDataNodeSubstitutor {
+  private @NotNull final ProjectResolverContext resolverContext;
   private @Nullable final File gradleUserHomeDir;
   private @Nullable final File gradleHomeDir;
   private @Nullable final GradleVersion gradleVersion;
@@ -37,12 +38,14 @@ public class LibraryDataNodeSubstitutor {
   private @NotNull final Map<String, Pair<String, ExternalSystemSourceType>> moduleOutputsMap;
   private @NotNull final Map<String, String> artifactsMap;
 
-  public LibraryDataNodeSubstitutor(@Nullable File gradleUserHomeDir,
+  public LibraryDataNodeSubstitutor(@NotNull ProjectResolverContext context,
+                                    @Nullable File gradleUserHomeDir,
                                     @Nullable File gradleHomeDir,
                                     @Nullable GradleVersion gradleVersion,
                                     @NotNull Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetMap,
                                     @NotNull Map<String, Pair<String, ExternalSystemSourceType>> moduleOutputsMap,
                                     @NotNull Map<String, String> artifactsMap) {
+    resolverContext = context;
     this.gradleUserHomeDir = gradleUserHomeDir;
     this.gradleHomeDir = gradleHomeDir;
     this.gradleVersion = gradleVersion;
@@ -61,7 +64,7 @@ public class LibraryDataNodeSubstitutor {
     if (libraryPaths.isEmpty()) return;
     if (StringUtil.isNotEmpty(libraryData.getExternalName())) {
       if (gradleUserHomeDir != null) {
-        attachSourcesAndJavadocFromGradleCacheIfNeeded(gradleUserHomeDir, libraryData);
+        attachSourcesAndJavadocFromGradleCacheIfNeeded(resolverContext, gradleUserHomeDir, libraryData);
       }
       return;
     }
