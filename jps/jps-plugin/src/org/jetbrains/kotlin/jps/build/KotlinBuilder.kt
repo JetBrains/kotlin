@@ -648,7 +648,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         lookupStorageManager.withLookupStorage { lookupStorage ->
             lookupStorage.removeLookupsFrom(dirtyFilesHolder.allDirtyFiles.asSequence() + dirtyFilesHolder.allRemovedFilesFiles.asSequence())
-            lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
+            lookupStorage.addAll(lookupTracker.lookups, lookupTracker.pathInterner.values)
         }
     }
 }
