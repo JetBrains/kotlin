@@ -52,6 +52,7 @@ import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -282,7 +283,12 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
   public void addToolbarActions(@NotNull DefaultActionGroup actionGroup) {
   }
 
+  /**
+   * @deprecated added in {@link ProjectViewImpl} automatically
+   */
   @NotNull
+  @Deprecated
+  @ApiStatus.ScheduledForRemoval
   protected ToggleAction createFlattenModulesAction(@NotNull BooleanSupplier isApplicable) {
     return new FlattenModulesToggleAction(myProject, () -> isApplicable.getAsBoolean() && ProjectView.getInstance(myProject).isShowModules(getId()),
                                           () -> ProjectView.getInstance(myProject).isFlattenModules(getId()),
@@ -708,10 +714,47 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
     myTreeBuilder = treeBuilder;
   }
 
+  @ApiStatus.Internal
+  public boolean supportsAbbreviatePackageNames() {
+    return true;
+  }
+
+  @ApiStatus.Internal
+  public boolean supportsCompactDirectories() {
+    return false;
+  }
+
+  @ApiStatus.Internal
+  public boolean supportsFlattenModules() {
+    return false;
+  }
+
+  @ApiStatus.Internal
   public boolean supportsFoldersAlwaysOnTop() {
     return true;
   }
 
+  @ApiStatus.Internal
+  public boolean supportsHideEmptyMiddlePackages() {
+    return true;
+  }
+
+  @ApiStatus.Internal
+  public boolean supportsShowExcludedFiles() {
+    return false;
+  }
+
+  @ApiStatus.Internal
+  public boolean supportsShowLibraryContents() {
+    return false;
+  }
+
+  @ApiStatus.Internal
+  public boolean supportsShowModules() {
+    return false;
+  }
+
+  @ApiStatus.Internal
   public boolean supportsSortByType() {
     return true;
   }
