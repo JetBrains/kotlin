@@ -26,10 +26,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
-import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.refactoring.HelpID
 import com.intellij.refactoring.RefactoringActionHandler
@@ -115,8 +112,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
         private val psiFactory = KtPsiFactory(expression)
 
         var propertyRef: KtDeclaration? = null
-        var reference: KtExpression? = null
-        val references = ArrayList<KtExpression>()
+        var reference: SmartPsiElementPointer<KtExpression>? = null
+        val references = ArrayList<SmartPsiElementPointer<KtExpression>>()
 
         private fun findElementByOffsetAndText(offset: Int, text: String, newContainer: PsiElement): PsiElement? {
             return newContainer.findElementAt(offset)?.parentsWithSelf?.firstOrNull { (it as? KtExpression)?.text == text }
@@ -139,9 +136,13 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
 
             result = result.removeTemplateEntryBracesIfPossible()
 
-            if (addToReferences) references.addIfNotNull(result)
+            if (addToReferences) {
+                references.addIfNotNull(SmartPointerManager.createPointer(result))
+            }
 
-            if (isActualExpression) reference = result
+            if (isActualExpression) {
+                reference = SmartPointerManager.createPointer(result)
+            }
 
             return result
         }
@@ -214,24 +215,24 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         }
                     }
                     //ugly logic to make sure we are working with right actual expression
-                    var actualExpression = reference ?: return
+                    var actualExpression = reference?.element ?: return
                     var diff = actualExpression.textRange.startOffset - oldElement.textRange.startOffset
                     var actualExpressionText = actualExpression.text
                     val newElement = emptyBody.addAfter(oldElement, firstChild)
                     var elem: PsiElement? = findElementByOffsetAndText(diff, actualExpressionText, newElement)
                     if (elem != null) {
-                        reference = elem as KtExpression
+                        reference = SmartPointerManager.createPointer(elem as KtExpression)
                     }
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
                     property = emptyBody.addAfter(property, firstChild) as KtProperty
                     emptyBody.addAfter(psiFactory.createNewLine(), firstChild)
-                    actualExpression = reference ?: return
+                    actualExpression = reference?.element ?: return
                     diff = actualExpression.textRange.startOffset - emptyBody.textRange.startOffset
                     actualExpressionText = actualExpression.text
                     emptyBody = anchor.replace(emptyBody) as KtBlockExpression
                     elem = findElementByOffsetAndText(diff, actualExpressionText, emptyBody)
                     if (elem != null) {
-                        reference = elem as KtExpression
+                        reference = SmartPointerManager.createPointer(elem as KtExpression)
                     }
 
                     emptyBody.accept(
@@ -240,7 +241,7 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                                     if (!expression.isOccurrence) return
 
                                     expression.isOccurrence = false
-                                    references.add(expression)
+                                    references.add(SmartPointerManager.createPointer(expression))
                                 }
                             })
                 }
@@ -615,8 +616,8 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                         is KtProperty -> {
                             KotlinVariableInplaceIntroducer(
                                     property,
-                                    introduceVariableContext.reference,
-                                    introduceVariableContext.references.toTypedArray(),
+                                    introduceVariableContext.reference?.element,
+                                    introduceVariableContext.references.mapNotNull { it.element }.toTypedArray(),
                                     suggestedNames.single(),
                                     isVar,
                                     /*todo*/ false,

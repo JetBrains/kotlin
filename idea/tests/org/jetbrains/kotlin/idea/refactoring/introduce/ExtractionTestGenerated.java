@@ -110,6 +110,11 @@ public class ExtractionTestGenerated extends AbstractExtractionTest {
             runTest("idea/testData/refactoring/introduceVariable/FewOccurrences.kt");
         }
 
+        @TestMetadata("FromLambda.kt")
+        public void testFromLambda() throws Exception {
+            runTest("idea/testData/refactoring/introduceVariable/FromLambda.kt");
+        }
+
         @TestMetadata("FunctionAddBlock.kt")
         public void testFunctionAddBlock() throws Exception {
             runTest("idea/testData/refactoring/introduceVariable/FunctionAddBlock.kt");
