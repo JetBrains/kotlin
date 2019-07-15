@@ -1729,6 +1729,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt31981.kt");
             }
 
+            @TestMetadata("kt32256.kt")
+            public void testKt32256() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/kt32256.kt");
+            }
+
             @TestMetadata("kt7430_wrongClassOnLHS.kt")
             public void testKt7430_wrongClassOnLHS() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/kt7430_wrongClassOnLHS.kt");
@@ -1772,6 +1777,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
             @TestMetadata("subtypeArgumentFromRHSForReference.kt")
             public void testSubtypeArgumentFromRHSForReference() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/subtypeArgumentFromRHSForReference.kt");
+            }
+
+            @TestMetadata("suspendCallableReference.kt")
+            public void testSuspendCallableReference() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/suspendCallableReference.kt");
             }
 
             @TestMetadata("typealiases.kt")

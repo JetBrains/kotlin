@@ -1,0 +1,9 @@
+package
+
+public fun </*0*/ O> anotherMethod(/*0*/ f: suspend () -> O): kotlin.Unit
+public fun </*0*/ I, /*1*/ O> anotherMethod(/*0*/ f: suspend (I) -> O): kotlin.Unit
+public fun main(): kotlin.Unit
+public fun myMethod(/*0*/ f: suspend () -> kotlin.String): kotlin.Unit
+public fun myMethod(/*0*/ f: suspend (kotlin.String) -> kotlin.String): kotlin.Unit
+public suspend fun refA(/*0*/ input: kotlin.String): kotlin.String
+public suspend fun refB(): kotlin.String
