@@ -13,14 +13,6 @@ repositories {
     mavenCentral()
 }
 kotlin {
-    targets {
-        fromPreset(presets.jvm, 'jvm')
-        configure([jvm]) {
-            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
-                freeCompilerArgs = ["-XXLanguage:+SamConversionForKotlinFunctions"]
-            }
-        }
-    }
     sourceSets {
         commonMain {
             dependencies {
@@ -31,6 +23,9 @@ kotlin {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
             }
+        }
+        all {
+            languageSettings.enableLanguageFeature("SamConversionForKotlinFunctions")
         }
     }
 }
