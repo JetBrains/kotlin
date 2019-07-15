@@ -426,7 +426,7 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
       throw new ConfigurationException(String.format("Can't create configuration file '%s'", file.getPath()));
     }
     if (virtualFile.isDirectory()) {
-      throw new ConfigurationException(String.format("Configuration file is directory '%s'", file.getPath()));
+      throw new ConfigurationException(String.format("Configuration file is a directory '%s'", file.getPath()));
     }
     VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile);
     return virtualFile;
