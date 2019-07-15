@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import kotlin.reflect.KClass
@@ -127,7 +128,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
         override fun isScript(file: File): Boolean =
             file.name.endsWith(".$fileExtension") &&
                     (filePathPattern?.let {
-                        Regex(it).matches(file.path)
+                        Regex(it).matches(FileUtilRt.toSystemIndependentName(file.path))
                     } ?: true)
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
