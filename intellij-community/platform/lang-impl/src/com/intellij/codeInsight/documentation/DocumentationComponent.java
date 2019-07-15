@@ -515,6 +515,10 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
   }
 
+  public void setToolbarBorderColor(Color color) {
+    myControlPanel.setBorder(IdeBorderFactory.createBorder(color, SideBorder.BOTTOM));
+  }
+
   public AnAction[] getActions() {
     return myToolBar.getActions().stream().filter((action -> !(action instanceof Separator))).toArray(AnAction[]::new);
   }
