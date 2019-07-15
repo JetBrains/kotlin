@@ -4,7 +4,7 @@ FILE: propertyFromParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val name: <ERROR TYPE REF: cycle> = R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
-            public get(): <ERROR TYPE REF: cycle>
+        public final val name: R|kotlin/String| = R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            public get(): R|kotlin/String|
 
     }

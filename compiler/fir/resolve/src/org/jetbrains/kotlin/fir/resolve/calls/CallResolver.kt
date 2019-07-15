@@ -395,7 +395,8 @@ abstract class TowerDataConsumer {
     fun skipGroup(group: Int, resultCollector: CandidateCollector): Boolean {
         if (resultCollector.isSuccess() && stopGroup == Int.MAX_VALUE) {
             stopGroup = group
-        } else if (group > stopGroup) return true
+        }
+        if (group >= stopGroup) return true
         return false
     }
 }
