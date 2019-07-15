@@ -17,7 +17,7 @@ import java.io.File
 import kotlin.test.assertEquals
 
 abstract class AbstractJavaToKotlinCopyPasteConversionTest : AbstractJ2kCopyPasteTest() {
-    private val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion"
+    protected open val BASE_PATH = PluginTestCaseBase.getTestDataPathBase() + "/copyPaste/conversion"
 
     private var oldEditorOptions: KotlinEditorOptions? = null
 
