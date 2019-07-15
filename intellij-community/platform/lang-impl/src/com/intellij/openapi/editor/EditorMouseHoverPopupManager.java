@@ -477,7 +477,10 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
     }
 
     private JComponent createComponent(Editor editor, PopupBridge popupBridge, boolean requestFocus) {
-      JComponent c1 = createHighlightInfoComponent(editor, quickDocMessage == null, popupBridge, requestFocus);
+      boolean quickDocShownInPopup = quickDocMessage != null &&
+                                     ToolWindowManager.getInstance(Objects.requireNonNull(editor.getProject()))
+                                       .getToolWindow(ToolWindowId.DOCUMENTATION) == null;
+      JComponent c1 = createHighlightInfoComponent(editor, !quickDocShownInPopup, popupBridge, requestFocus);
       DocumentationComponent c2 = createQuickDocComponent(editor, c1 != null, popupBridge);
       if (c1 == null && c2 == null) return null;
       JPanel p = new JPanel(new CombinedPopupLayout(c1, c2));
