@@ -70,19 +70,23 @@ fun KJvmCompiledScript<*>.saveToJar(outputJar: File) {
             putValue("Created-By", "JetBrains Kotlin")
             if (dependencies.isNotEmpty()) {
                 // TODO: implement options for various cases - paths as is (now), absolute paths (local execution only), names only (most likely as a hint only), fat jar
-                putValue("Class-Path", dependencies.joinToString(" "))
+                putValue("Class-Path", dependencies.joinToString(" ") { it.toURI().toURL().toExternalForm() })
             }
             putValue("Main-Class", scriptClassFQName)
         }
-        // TODO: fat jar/dependencies
-        val jarStream = JarOutputStream(fileStream, manifest)
-        jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
-        jarStream.write(copyWithoutModule().toBytes())
-        for ((path, bytes) in module.compilerOutputFiles) {
-            jarStream.putNextEntry(JarEntry(path))
-            jarStream.write(bytes)
+        JarOutputStream(fileStream, manifest).use { jarStream ->
+            jarStream.putNextEntry(JarEntry(scriptMetadataPath(scriptClassFQName)))
+            jarStream.write(copyWithoutModule().toBytes())
+            jarStream.closeEntry()
+            for ((path, bytes) in module.compilerOutputFiles) {
+                jarStream.putNextEntry(JarEntry(path))
+                jarStream.write(bytes)
+                jarStream.closeEntry()
+            }
+            jarStream.finish()
+            jarStream.flush()
         }
-        jarStream.finish()
+        fileStream.flush()
     }
 }
 
