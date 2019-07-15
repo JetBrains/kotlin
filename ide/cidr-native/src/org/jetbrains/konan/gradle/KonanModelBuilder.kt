@@ -1,24 +1,23 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.konan.gradle
 
+import com.jetbrains.konan.KonanModel
+import com.jetbrains.konan.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
+import com.jetbrains.konan.KonanModel.Companion.NO_TASK_PATH
+import com.jetbrains.konan.KonanModelImpl
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
-import org.jetbrains.konan.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
-import org.jetbrains.konan.gradle.KonanModel.Companion.NO_KOTLIN_NATIVE_HOME
-import org.jetbrains.konan.gradle.KonanModel.Companion.NO_TASK_PATH
-import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_ENVIRONMENT_VARIABLES
-import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_PROGRAM_PARAMETERS
-import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration.Companion.NO_WORKING_DIR
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModelBuilder.Companion.getTargets
+import org.jetbrains.kotlin.gradle.KotlinNativeHomeEvaluator.getKotlinNativeHome
 import org.jetbrains.kotlin.gradle.getMethodOrNull
-import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import java.io.File
@@ -70,7 +69,7 @@ class KonanModelBuilder : ModelBuilderService {
         .mapNotNull { buildArtifact(it, null) }
 
     @Suppress("UNCHECKED_CAST")
-    private fun buildArtifact(linkTask: Task, runTask: Exec?): KonanModelArtifact? {
+    private fun buildArtifact(linkTask: Task, runTask: Exec?): KonanArtifactModel? {
         val outputKind = linkTask["getOutputKind"]["name"] as? String ?: return null
         val konanTargetName = linkTask["getTarget"] as? String ?: error("No arch target found")
         val outputFile = (linkTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
@@ -78,23 +77,14 @@ class KonanModelBuilder : ModelBuilderService {
         val compilationTargetName = compilationTarget["getName"] as? String ?: return null
         val isTests = linkTask["getProcessTests"] as? Boolean ?: return null
 
-        val execConfiguration = if (runTask != null) {
-            val workingDir: String = runTask.workingDir.path
-            val programParameters: List<String> = runTask.args as List<String>? ?: NO_PROGRAM_PARAMETERS
-            val environmentVariables: Map<String, String> = (runTask.environment as Map<String, Any>?)
-                ?.mapValues { it.value.toString() } ?: NO_ENVIRONMENT_VARIABLES
-
-            KonanModelArtifactExecConfigurationImpl(workingDir, programParameters, environmentVariables)
-        } else
-            KonanModelArtifactExecConfigurationImpl(NO_WORKING_DIR, NO_PROGRAM_PARAMETERS, NO_ENVIRONMENT_VARIABLES)
-
-        return KonanModelArtifactImpl(
+        return KonanArtifactModelImpl(
             compilationTargetName,
-            CompilerOutputKind.valueOf(outputKind),
+            "",
+            outputKind,
             konanTargetName,
             outputFile,
             linkTask.path,
-            execConfiguration,
+            KonanRunConfigurationModelImpl(runTask),
             isTests
         )
     }

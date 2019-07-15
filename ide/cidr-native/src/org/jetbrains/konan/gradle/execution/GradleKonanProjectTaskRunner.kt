@@ -21,14 +21,14 @@ import com.intellij.task.ProjectTask
 import com.intellij.task.ProjectTaskContext
 import com.intellij.task.ProjectTaskNotification
 import com.intellij.task.ProjectTaskRunner
-import org.jetbrains.konan.KonanBundle.message
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
-import org.jetbrains.konan.gradle.KonanModel
-import org.jetbrains.konan.gradle.KonanProjectDataService
+import com.jetbrains.konan.KonanModel
+import com.jetbrains.konan.KonanBundle.message
+import com.jetbrains.konan.runBuildTasks
+import com.jetbrains.konan.forEachKonanProject
 import org.jetbrains.konan.gradle.execution.GradleBuildTasksOrigin.*
 import org.jetbrains.kotlin.idea.configuration.externalProjectPath
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
-import org.jetbrains.kotlin.platform.impl.isKotlinNative
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -85,7 +85,7 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
 
         ApplicationManager.getApplication().executeOnPooledThread {
             toExecute.forEach { (executionName, buildTasks, projectPath) ->
-                GradleKonanBuild.runBuildTasks(project, executionName, buildTasks, projectPath, true)
+                runBuildTasks(project, executionName, buildTasks, projectPath, true)
             }
         }
     }
@@ -107,12 +107,12 @@ class GradleKonanProjectTaskRunner : ProjectTaskRunner() {
 
         val cache = CachedValuesManager.getManager(project).getCachedValue(project) {
             CachedValueProvider.Result(
-                    mutableMapOf<String, Pair<KonanModel, String>>().apply {
-                        KonanProjectDataService.forEachKonanProject(project) { konanModel: KonanModel, moduleNode: DataNode<ModuleData>, projectPath: String ->
+                mutableMapOf<String, Pair<KonanModel, String>>().apply {
+                        forEachKonanProject(project) { konanModel: KonanModel, moduleNode: DataNode<ModuleData>, projectPath: String ->
                             this[moduleNode.data.linkedExternalProjectPath] = konanModel to projectPath
                         }
                     } as Map<String, Pair<KonanModel, String>>,
-                    ProjectRootModificationTracker.getInstance(project)
+                ProjectRootModificationTracker.getInstance(project)
             )
         }
 

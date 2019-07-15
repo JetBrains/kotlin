@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.konan.gradle
 
 import com.intellij.openapi.externalSystem.model.DataNode
-import com.intellij.openapi.externalSystem.model.Key
-import com.intellij.openapi.externalSystem.model.ProjectKeys
 import com.intellij.openapi.externalSystem.model.project.ModuleData
+import com.jetbrains.konan.KONAN_MODEL_KEY
+import com.jetbrains.konan.KonanModel
+import com.jetbrains.konan.KonanModelImpl
 import org.gradle.tooling.model.idea.IdeaModule
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 
@@ -25,9 +26,5 @@ class KonanProjectResolver : AbstractProjectResolverExtension() {
         }
 
         nextResolver.populateModuleExtraModels(gradleModule, ideModule)
-    }
-
-    companion object {
-        val KONAN_MODEL_KEY = Key.create(KonanModel::class.java, ProjectKeys.MODULE.processingWeight + 1)
     }
 }

@@ -3,7 +3,7 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.konan.debugger
+package com.jetbrains.konan.debugger
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement

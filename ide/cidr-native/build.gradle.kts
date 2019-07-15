@@ -9,6 +9,8 @@ val cidrUnscrambledJarDir: File by rootProject.extra
 
 dependencies {
     addIdeaNativeModuleDeps(project)
+    compile(project(":kotlin-ultimate:ide:common-native"))
+    compile(project(":idea:kotlin-gradle-tooling"))
     compileOnly(fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
 }
 

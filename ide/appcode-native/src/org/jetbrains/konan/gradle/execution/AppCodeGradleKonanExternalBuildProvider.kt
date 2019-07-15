@@ -13,7 +13,8 @@ import com.jetbrains.cidr.execution.BuildConfiguration
 import com.jetbrains.cidr.execution.build.XcodeBuildAction
 import com.jetbrains.cidr.execution.build.XcodeExternalBuildProvider
 import com.jetbrains.cidr.xcode.frameworks.buildSystem.BuildSettingNames
-import org.jetbrains.konan.gradle.KonanProjectDataService
+import com.jetbrains.konan.forEachKonanProject
+import com.jetbrains.konan.runBuildTasks
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 
 
@@ -45,7 +46,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
                                   .mapNotNull { configuration.getWithTarget(it) })
 
         val tasks = HashSet<String>()
-        KonanProjectDataService.forEachKonanProject(configuration.project) { _, moduleNode, _ ->
+        forEachKonanProject(configuration.project) { _, moduleNode, _ ->
             tasks.addAll(ExternalSystemApiUtil.findAll(moduleNode, ProjectKeys.TASK).map { it.data.name })
         }
 
@@ -66,7 +67,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
         }
 
         var rootPath: String? = null
-        KonanProjectDataService.forEachKonanProject(project) { _, _, rootProjectPath ->
+        forEachKonanProject(project) { _, _, rootProjectPath ->
             rootPath = rootProjectPath
         }
 
@@ -82,7 +83,7 @@ class AppCodeGradleKonanExternalBuildProvider : XcodeExternalBuildProvider {
 
         frameworksToBuild.let {
             it.frameworkNames.forEach { gradleTaskName ->
-                GradleKonanBuild.runBuildTasks(
+                runBuildTasks(
                     project,
                     "$taskDescription ${it.name}",
                     listOf(gradleTaskName),

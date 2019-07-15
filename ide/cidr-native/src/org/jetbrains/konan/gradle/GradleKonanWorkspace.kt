@@ -18,12 +18,16 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.AtomicClearableLazyValue
 import com.jetbrains.cidr.lang.workspace.OCResolveConfiguration
 import com.jetbrains.cidr.lang.workspace.OCWorkspaceImpl
+import com.jetbrains.konan.KonanBundle
+import com.jetbrains.konan.KonanModel
+import com.jetbrains.konan.forEachKonanProject
 import org.jetbrains.konan.gradle.CachedBuildableElements.KonanBuildableElements
 import org.jetbrains.konan.gradle.CachedBuildableElements.NoKonanBuildableElements
-import org.jetbrains.konan.gradle.KonanProjectDataService.Companion.forEachKonanProject
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildTarget
 import org.jetbrains.konan.gradle.execution.GradleKonanConfiguration
+import org.jetbrains.kotlin.gradle.KonanArtifactModel
+import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.plugins.gradle.settings.GradleSettings
@@ -31,13 +35,11 @@ import org.jetbrains.plugins.gradle.settings.GradleSettings
 class GradleKonanWorkspace(val project: Project) : ProjectComponent {
 
     companion object {
-        private const val LOADING_GRADLE_KONAN_PROJECT = "Loading Gradle Kotlin/Native Project..."
-
         @JvmStatic
         fun getInstance(project: Project): GradleKonanWorkspace = project.getComponent(GradleKonanWorkspace::class.java)
     }
 
-    private val reloadsQueue = BackgroundTaskQueue(project, LOADING_GRADLE_KONAN_PROJECT)
+    private val reloadsQueue = BackgroundTaskQueue(project, KonanBundle.message("label.loadProject.text"))
 
     private val cachedBuildableElements = AtomicClearableLazyValue.create {
         if (project.mayBeKotlinNativeProject) loadBuildableElements(project) else NoKonanBuildableElements
@@ -76,7 +78,7 @@ class GradleKonanWorkspace(val project: Project) : ProjectComponent {
             return
         }
 
-        reloadsQueue.run(object : Task.Backgroundable(project, LOADING_GRADLE_KONAN_PROJECT) {
+        reloadsQueue.run(object : Task.Backgroundable(project, KonanBundle.message("label.loadProject.text")) {
             override fun run(indicator: ProgressIndicator) {
                 cachedBuildableElements.drop()
                 cachedBuildableElements.value
@@ -111,7 +113,7 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
         konanModelData[KonanModelDataKey(moduleId, rootProjectPath)] = KonanModelDataValue(moduleData, konanModel)
 
         konanModel.artifacts.forEach { artifact ->
-            artifactNamesUsedInModules.computeIfAbsent(artifact.name) { mutableSetOf() } += moduleId
+            artifactNamesUsedInModules.computeIfAbsent(artifact.targetName) { mutableSetOf() } += moduleId
         }
     }
 
@@ -134,24 +136,24 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
         val disambiguationSuffix = if (useDisambiguationSuffix) " ($moduleId)" else ""
 
         konanModel.artifacts.forEach { artifact ->
-            val configurationName = artifact.name + disambiguationSuffix
+            val configurationName = artifact.targetName + disambiguationSuffix
             val configurationId = getConfigurationId(moduleId, artifact)
             val profileName = if (artifact.buildTaskPath.contains("Debug", ignoreCase = true)) "Debug" else "Release"
 
             val configuration = GradleKonanConfiguration(
-                    id = configurationId,
-                    name = configurationName,
-                    profileName = profileName,
-                    productFile = artifact.file,
-                    targetType = artifact.type,
-                    artifactBuildTaskPath = artifact.buildTaskPath,
-                    artifactCleanTaskPath = konanModel.cleanTaskPath,
-                    projectPath = rootProjectPath,
-                    execConfiguration = artifact.execConfiguration,
-                    isTests = artifact.isTests
+                id = configurationId,
+                name = configurationName,
+                profileName = profileName,
+                productFile = artifact.file,
+                targetType = CompilerOutputKind.valueOf(artifact.type),
+                artifactBuildTaskPath = artifact.buildTaskPath,
+                artifactCleanTaskPath = konanModel.cleanTaskPath,
+                projectPath = rootProjectPath,
+                runConfiguration = artifact.runConfiguration,
+                isTests = artifact.isTests
             )
 
-            configurationsMap.computeIfAbsent(ConfigurationKey(moduleId, artifact.name)) {
+            configurationsMap.computeIfAbsent(ConfigurationKey(moduleId, artifact.targetName)) {
                 ConfigurationValue(moduleData.externalName, disambiguationSuffix)
             }.configurations += configuration
         }
@@ -181,8 +183,8 @@ private fun loadBuildableElements(project: Project): CachedBuildableElements {
     return if (buildTargets.isNotEmpty()) KonanBuildableElements(buildTargets) else NoKonanBuildableElements
 }
 
-private fun getConfigurationId(moduleId: String, artifact: KonanModelArtifact) =
-    getBuildTargetId(moduleId, artifact.name) + ":" + artifact.buildTaskPath
+private fun getConfigurationId(moduleId: String, artifact: KonanArtifactModel) =
+    getBuildTargetId(moduleId, artifact.targetName) + ":" + artifact.buildTaskPath
 
 private fun getBuildTargetId(moduleId: String, targetName: String) = "$moduleId:$targetName"
 

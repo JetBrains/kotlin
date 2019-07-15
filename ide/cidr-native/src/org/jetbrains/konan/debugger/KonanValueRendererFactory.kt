@@ -11,9 +11,10 @@ import com.intellij.xdebugger.XDebuggerManager
 import com.jetbrains.cidr.execution.debugger.backend.lldb.LLDBDriver
 import com.jetbrains.cidr.execution.debugger.evaluation.ValueRendererFactory
 import com.jetbrains.cidr.execution.debugger.evaluation.renderers.ValueRenderer
-import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.*
+import com.jetbrains.konan.getKotlinNativeVersion
+import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.PP_1_3_AND_1_3_1
+import org.jetbrains.konan.debugger.PrettyPrintersFromPlugin.PP_PRE_1_2_RELEASE
 import org.jetbrains.konan.util.getKotlinNativeHome
-import org.jetbrains.konan.util.getKotlinNativeVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import java.nio.file.Path
 import java.nio.file.Paths

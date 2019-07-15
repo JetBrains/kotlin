@@ -54,9 +54,12 @@ val platformDepsJarName = "kotlinNative-platformDeps.jar"
 
 val pluginXmlPath = "META-INF/plugin.xml"
 
-val javaApiArtifacts = listOf("java-api", "java-impl")
-
 val javaPluginId = "com.intellij.kotlinNative.platformDeps"
+
+val ultimateTools: Map<String, Any> by rootProject.extensions
+val addIdeaNativeModuleDepsComposite: (Project) -> Unit by ultimateTools
+
+val javaApiArtifacts: List<String> by rootProject.extra
 
 val Project.isStandaloneBuild: Boolean
     get() = rootProject.findProject(":idea") == null
@@ -107,6 +110,42 @@ fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(n
     }.let { if (lowerCase) it.toLowerCase() else it }
 }
 
+fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
+    dependencies {
+        // contents of Kotlin plugin
+        val ideaPluginForCidrDir: String by rootProject.extra
+        val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
+            exclude(excludesListFromIdeaPlugin)
+        }
+        add("compile", ideaPluginJars)
+
+        // IntelliJ platform (out of CIDR IDE distribution)
+        val cidrIdeDir: String by rootProject.extra
+        val cidrPlatform = fileTree(cidrIdeDir) {
+            include("lib/*.jar")
+            exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
+            exclude("lib/clion*.jar") // don't take scrambled JARs
+            exclude("lib/appcode*.jar")
+        }
+        add("compile", cidrPlatform)
+
+        // standard CIDR plugins
+        val cidrPlugins = fileTree(cidrIdeDir) {
+            include("plugins/cidr-*/lib/*.jar")
+            include("plugins/gradle/lib/*.jar")
+        }
+        add("compile", cidrPlugins)
+
+        // Java APIs (private artifact that goes together with CIDR IDEs)
+        val cidrPlatformDepsOrJavaPluginDir: String by rootProject.extra
+        val cidrPlatformDepsOrJavaPlugin = fileTree(cidrPlatformDepsOrJavaPluginDir) {
+            include(platformDepsJarName)
+            javaApiArtifacts.forEach { include("$it*.jar") }
+        }
+        add("compile", cidrPlatformDepsOrJavaPlugin)
+    }
+}
+
 // --------------------------------------------------
 // CIDR plugin dependencies:
 // --------------------------------------------------
@@ -125,88 +164,10 @@ fun ideaPluginJarDep(project: Project): Any = with(project) {
 }
 
 fun addIdeaNativeModuleDeps(project: Project) = with(project) {
-    dependencies {
-        if (isStandaloneBuild) {
-            // contents of Kotlin plugin
-            val ideaPluginForCidrDir: String by rootProject.extra
-            val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
-                exclude(excludesListFromIdeaPlugin)
-            }
-            add("compile", ideaPluginJars)
-
-            // IntelliJ platform (out of CIDR IDE distribution)
-            val cidrIdeDir: String by rootProject.extra
-            val cidrPlatform = fileTree(cidrIdeDir) {
-                include("lib/*.jar")
-                exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
-                exclude("lib/clion*.jar") // don't take scrambled JARs
-                exclude("lib/appcode*.jar")
-            }
-            add("compile", cidrPlatform)
-
-            // standard CIDR plugins
-            val cidrPlugins = fileTree(cidrIdeDir) {
-                include("plugins/cidr-*/lib/*.jar")
-                include("plugins/gradle/lib/*.jar")
-            }
-            add("compile", cidrPlugins)
-
-            // Java APIs (private artifact that goes together with CIDR IDEs)
-            val cidrPlatformDepsOrJavaPluginDir: String by rootProject.extra
-            val cidrPlatformDepsOrJavaPlugin = fileTree(cidrPlatformDepsOrJavaPluginDir) {
-                include(platformDepsJarName)
-                javaApiArtifacts.forEach { include("$it*.jar") }
-            }
-            add("compile", cidrPlatformDepsOrJavaPlugin)
-        } else {
-            // Gradle projects with Kotlin/Native-specific logic
-            // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
-            add("compile", project(":idea:idea-native"))
-            add("compile", project(":idea:idea-gradle-native"))
-
-            // Detect IDE name and version
-            // TODO: add dependency on base project artifacts
-            val intellijUltimateEnabled: Boolean? by rootProject.extra
-            val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
-            val ideVersion = rootProject.extra["versions.intellijSdk"] as String
-            val ideBranch = ideVersion.substringBefore('.').toIntOrNull() ?: error("Invalid product version format: $ideVersion")
-            val javaModuleName = if (ideBranch >= 192) "java" else ideName
-
-            add("compile", "kotlin.build:$javaModuleName:$ideVersion") {
-                javaApiArtifacts.forEach { jarName ->
-                    artifact {
-                        name = jarName
-                        type = "jar"
-                        extension = "jar"
-                    }
-                }
-                isTransitive = false
-            }
-
-            val ijPlatformDependencies = listOf(
-                "idea",
-                "openapi",
-                "platform-api",
-                "platform-impl",
-                "util",
-                "extensions",
-                "jdom"
-            ) + if (ideBranch >= 192)
-                listOf("intellij-dvcs", "platform-util-ui", "platform-util-ex")
-            else
-                emptyList()
-
-            add("compile", "kotlin.build:$ideName:$ideVersion") {
-                ijPlatformDependencies.forEach { jarName ->
-                    artifact {
-                        name = jarName
-                        type = "jar"
-                        extension = "jar"
-                    }
-                }
-                isTransitive = false
-            }
-        }
+    if (isStandaloneBuild) {
+        addIdeaNativeModuleDepsStandalone(project)
+    } else {
+        addIdeaNativeModuleDepsComposite(project)
     }
 }
 

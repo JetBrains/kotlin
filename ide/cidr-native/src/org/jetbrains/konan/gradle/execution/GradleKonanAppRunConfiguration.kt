@@ -138,12 +138,12 @@ class GradleKonanAppRunConfiguration(
                     }
                 }
                 else {
-                    //CPPLog.LOG.assertTrue(runData.path != null);
+                    //KonanLog.LOG.assertTrue(runData.path != null);
                     runExecutable = File(runData.path!!)
                 }
             }
 
-            //CPPLog.LOG.assertTrue(buildData.target != null);
+            //KonanLog.LOG.assertTrue(buildData.target != null);
             buildConfig = checkAndGetConfiguration(helper, problems, buildData!!.target!!, buildData.configurationName, false,
                                                    runConfig == null && runExecutable == null)
 

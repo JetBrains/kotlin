@@ -12,20 +12,18 @@ import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.options.SettingsEditor
 import com.intellij.openapi.project.Project
+import com.jetbrains.konan.*
 import org.jetbrains.annotations.NonNls
 
 /**
  * @author Vladislav.Soroka
  */
 class GradleKonanAppRunConfigurationType private constructor() : ConfigurationTypeBase(
-        "GradleKonanAppRunConfiguration",
-        "Kotlin/Native Application",
-        "Kotlin/Native application configuration",
-        AllIcons.RunConfigurations.Application
+    KonanBundle.message("id.runConfiguration"),
+    KonanBundle.message("label.applicationName.text"),
+    KonanBundle.message("label.applicationDescription.text"),
+    AllIcons.RunConfigurations.Application
 ) {
-
-    private val myDefaultFactoryId: String = "Application"
-
     val factory: ConfigurationFactory
         get() = object : ConfigurationFactory(this) {
             override fun createTemplateConfiguration(project: Project): RunConfiguration {
@@ -34,7 +32,7 @@ class GradleKonanAppRunConfigurationType private constructor() : ConfigurationTy
 
             @NonNls
             override fun getId(): String {
-                return myDefaultFactoryId
+                return KonanBundle.message("id.factory")
             }
         }
 

@@ -36,7 +36,7 @@
 
   <extensions defaultExtensionNs="cidr.debugger">
     <languageSupport language="kotlin" implementationClass="org.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
-    <lineBreakpointFileTypesProvider implementation="org.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
+    <lineBreakpointFileTypesProvider implementation="com.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
     <valueRendererFactory implementation="org.jetbrains.konan.debugger.KonanValueRendererFactory"/>
   </extensions>
 </idea-plugin>

@@ -8,7 +8,7 @@ package org.jetbrains.konan.gradle.execution
 import com.intellij.openapi.roots.ProjectModelBuildableElement
 import com.intellij.openapi.roots.ProjectModelExternalSource
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
-import org.jetbrains.konan.gradle.KonanModelArtifactExecConfiguration
+import org.jetbrains.kotlin.gradle.KonanRunConfigurationModel
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 
 import java.io.File
@@ -26,7 +26,7 @@ class GradleKonanConfiguration(
     val artifactBuildTaskPath: String,
     artifactCleanTaskPath: String?,
     val projectPath: String,
-    execConfiguration: KonanModelArtifactExecConfiguration,
+    runConfiguration: KonanRunConfigurationModel,
     val isTests: Boolean
 ) : Serializable, CidrBuildConfiguration, ProjectModelBuildableElement {
     val isExecutable: Boolean
@@ -34,7 +34,7 @@ class GradleKonanConfiguration(
 
     val artifactCleanTaskPath: String? = artifactCleanTaskPath?.takeIf { it.isNotEmpty() }
 
-    val execConfiguration: KonanModelArtifactExecConfiguration? = execConfiguration.takeIf { it.isNotEmpty() }
+    val runConfiguration: KonanRunConfigurationModel? = runConfiguration.takeIf { it.isNotEmpty() }
 
     override fun getName() = name
 

@@ -10,18 +10,16 @@ import com.intellij.execution.RunnerAndConfigurationSettings
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.Key
-import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.service.project.IdeModelsProvider
 import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsProvider
-import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.service.project.manage.AbstractProjectDataService
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.util.PlatformUtils
 import com.intellij.util.execution.ParametersListUtil
+import com.jetbrains.konan.KONAN_MODEL_KEY
+import com.jetbrains.konan.KonanModel
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer
@@ -32,7 +30,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
  */
 class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>() {
 
-    override fun getTargetDataKey(): Key<KonanModel> = KonanProjectResolver.KONAN_MODEL_KEY
+    override fun getTargetDataKey(): Key<KonanModel> = KONAN_MODEL_KEY
 
     override fun postProcess(
         toImport: Collection<DataNode<KonanModel>>,
@@ -99,9 +97,9 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
             buildTarget.buildConfigurations
                     .filter { it.profileName == "Debug" || it.profileName == "Release" }
                     .minBy { /* Debug should go the first */ it.profileName }
-                    ?.execConfiguration
+                    ?.runConfiguration
                     ?.let {
-                        configuration.workingDirectory = it.workingDir
+                        configuration.workingDirectory = it.workingDirectory
                         configuration.programParameters = ParametersListUtil.join(it.programParameters)
                         configuration.envs = it.environmentVariables
                     }
@@ -115,28 +113,6 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
         if (runConfigurationToSelect != null && runManager.selectedConfiguration == null) {
             val finalRunConfigurationToSelect = runConfigurationToSelect
             ApplicationManager.getApplication().invokeLater { runManager.selectedConfiguration = finalRunConfigurationToSelect }
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        fun forEachKonanProject(
-            project: Project,
-            consumer: (konanModel: KonanModel, moduleNode: DataNode<ModuleData>, rootProjectPath: String) -> Unit
-        ) {
-            for (projectInfo in ProjectDataManager.getInstance().getExternalProjectsData(project, GradleConstants.SYSTEM_ID)) {
-                val projectStructure = projectInfo.externalProjectStructure ?: continue
-                val projectData = projectStructure.data
-                val rootProjectPath = projectData.linkedExternalProjectPath
-                val modulesNodes = ExternalSystemApiUtil.findAll(projectStructure, ProjectKeys.MODULE)
-                for (moduleNode in modulesNodes) {
-                    val projectNode = ExternalSystemApiUtil.find(moduleNode, KonanProjectResolver.KONAN_MODEL_KEY)
-                    if (projectNode != null) {
-                        val konanProject = projectNode.data
-                        consumer(konanProject, moduleNode, rootProjectPath)
-                    }
-                }
-            }
         }
     }
 }

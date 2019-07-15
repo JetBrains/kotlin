@@ -8,7 +8,9 @@ import kotlin.reflect.KFunction
 // TODO: pack this as a Gradle plugin
 val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
         ::enableTasksIfAtLeast,
-        ::enableTasksIfOsIsNot
+        ::enableTasksIfOsIsNot,
+        ::addCidrDeps,
+        ::addIdeaNativeModuleDepsComposite
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -53,3 +55,73 @@ fun Project.disableBuildTasks(message: () -> String) {
         logger.warn("Build tasks in $project have been disabled due to condition mismatch: ${message()}: ${tasksToDisable.joinToString { it.name }}")
     }
 }
+
+// --------------------------------------------------
+// Shared utils:
+// --------------------------------------------------
+
+val javaApiArtifacts: List<String> by rootProject.extra
+
+val intellijUltimateEnabled: Boolean? by rootProject.extra
+
+fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
+    dependencies {
+        // Gradle projects with Kotlin/Native-specific logic
+        // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
+        add("compile", project(":idea:idea-native"))
+        add("compile", project(":idea:idea-gradle-native"))
+
+        // Detect IDE name and version
+        // TODO: add dependency on base project artifacts
+        val intellijUltimateEnabled: Boolean? by rootProject.extra
+        val ideName = if (intellijUltimateEnabled == true) "ideaIU" else "ideaIC" // TODO: what if AndroidStudio?
+        val ideVersion = rootProject.extra["versions.intellijSdk"] as String
+        val ideBranch = ideVersion.substringBefore('.').toIntOrNull() ?: error("Invalid product version format: $ideVersion")
+        val javaModuleName = if (ideBranch >= 192) "java" else ideName
+
+        add("compile", "kotlin.build:$javaModuleName:$ideVersion") {
+            javaApiArtifacts.forEach { jarName ->
+                artifact {
+                    name = jarName
+                    type = "jar"
+                    extension = "jar"
+                }
+            }
+            isTransitive = false
+        }
+
+        val ijPlatformDependencies = listOf(
+            "idea",
+            "openapi",
+            "platform-api",
+            "platform-impl",
+            "util",
+            "extensions",
+            "jdom"
+        ) + if (ideBranch >= 192)
+            listOf("intellij-dvcs", "platform-util-ui", "platform-util-ex")
+        else
+            emptyList()
+
+        add("compile", "kotlin.build:$ideName:$ideVersion") {
+            ijPlatformDependencies.forEach { jarName ->
+                artifact {
+                    name = jarName
+                    type = "jar"
+                    extension = "jar"
+                }
+            }
+            isTransitive = false
+        }
+    }
+}
+
+fun addCidrDeps(project: Project) = with(project) {
+    dependencies {
+//        if (intellijUltimateEnabled != true) { // CIDR build
+            val cidrUnscrambledJarDir: File by rootProject.extra
+            add("compile", fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
+//        }
+    }
+}
+

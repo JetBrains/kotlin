@@ -2,7 +2,7 @@ package org.jetbrains.konan.gradle.execution
 
 import com.intellij.icons.AllIcons
 import com.jetbrains.cidr.execution.CidrBuildTarget
-import org.jetbrains.konan.CidrNativeIconProvider
+import com.jetbrains.konan.KonanIconProvider
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind.*
 import javax.swing.Icon
 
@@ -65,7 +65,7 @@ class GradleKonanBuildTarget(
     override fun toString() = "$name [${configurations.size} configs]"
 
     companion object {
-        val EXECUTABLE_ICON: Icon = CidrNativeIconProvider.getInstance().getExecutableIcon()
+        val EXECUTABLE_ICON: Icon = KonanIconProvider.getInstance().getExecutableIcon()
         val LIBRARY_ICON: Icon = AllIcons.Nodes.PpLib
     }
 }

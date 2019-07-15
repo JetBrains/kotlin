@@ -139,6 +139,8 @@ val clionPluginZipPath: File by rootProject.extra(
 )
 val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
+val javaApiArtifacts: List<String> by rootProject.extra(listOf("java-api", "java-impl"))
+
 fun cidrProductBranch(productVersion: String): Int {
     return productVersion.substringBefore('.').toIntOrNull()
             ?: error("Invalid product version format: $productVersion")
