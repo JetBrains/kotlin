@@ -23,7 +23,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
     protected open fun getScriptingHostConfiguration(): ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration
 
     override fun getDefaultDefinition(): ScriptDefinition =
-        ScriptDefinition.FromLegacy(getScriptingHostConfiguration(), StandardScriptDefinition)
+        ScriptDefinition.getDefault(getScriptingHostConfiguration())
 
     private var _cachedDefinitions: Sequence<ScriptDefinition>? = null
     private val cachedDefinitions: Sequence<ScriptDefinition>
