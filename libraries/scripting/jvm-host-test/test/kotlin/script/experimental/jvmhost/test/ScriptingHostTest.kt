@@ -112,6 +112,7 @@ class ScriptingHostTest : TestCase() {
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
         val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
+        Thread.sleep(100)
         val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
         val scriptClass = classloader.loadClass("SavedScript")
         val output = captureOut {
@@ -138,6 +139,8 @@ class ScriptingHostTest : TestCase() {
         runBlocking {
             saver(compiledScript, ScriptEvaluationConfiguration.Default).throwOnFailure()
         }
+
+        Thread.sleep(100)
 
         val classpathFromJar = run {
             val manifest = JarFile(outJar).manifest
