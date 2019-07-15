@@ -69,11 +69,22 @@ fun <T : Any> separateValues(values: String, valuesContainer: MutableMap<String,
     }
 }
 
+fun getBuildsGroup(builds: List<Build>) = buildsNumberToShow?.let {
+        val buildsGroups = builds.chunked(buildsNumberToShow!!)
+        val expectedGroup = buildsGroups.size - 1 + stageToShow
+        val index = when {
+            expectedGroup < 0 -> 0
+            expectedGroup >= buildsGroups.size -> buildsGroups.size - 1
+            else -> expectedGroup
+        }
+        buildsGroups[index]
+    } ?: builds
+
+
 fun getChartData(labels: List<String>, valuesList: Collection<List<*>>, stageToShow: Int = 0,
                  buildsNumber: Int? = null, classNames: Array<String>? = null): dynamic {
     val chartData: dynamic = object{}
     // Show only some part of data.
-    println("BuildsNumber $buildsNumber")
     val (labelsData, valuesData) = buildsNumber?.let {
         println("Divide on ${labels.size / buildsNumber}")
         val labelsGroups = labels.chunked(buildsNumber)
@@ -147,8 +158,9 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     chart.on("draw", { data ->
         var element = data.element
         if (data.type == "point") {
+            val buildsGroup = getBuildsGroup(builds)
             val pointSize = 12
-            val currentBuild = builds.get(data.index)
+            val currentBuild = buildsGroup.get(data.index)
             // Higlight builds with failures.
             if (currentBuild.failuresNumber > 0) {
                 val svgParameters: dynamic = object{}
@@ -173,7 +185,7 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
             val linkToDetailedInfo = "https://kotlin-native-performance.labs.jb.gg/?report=bintray:" +
                     "${currentBuild.buildNumber}:${parameters["target"]}:nativeReport.json" +
                     "${if (data.index - 1 >= 0)
-                        "&compareTo=bintray:${builds.get(data.index - 1).buildNumber}:${parameters["target"]}:nativeReport.json"
+                        "&compareTo=bintray:${buildsGroup.get(data.index - 1).buildNumber}:${parameters["target"]}:nativeReport.json"
                     else ""}"
             val information = buildString {
                 append("<a href=\"$linkToDetailedInfo\">${currentBuild.buildNumber}</a><br>")
@@ -209,10 +221,14 @@ fun customizeChart(chart: dynamic, chartContainer: String, jquerySelector: dynam
     })
 }
 
+var stageToShow = 0
+
+var buildsNumberToShow: Int? = null
+
 fun main(args: Array<String>) {
     val serverUrl = "https://kotlin-native-perf-summary.labs.jb.gg"
-    var buildsNumberToShow: Int? = null
-    var stageToShow = 0
+    buildsNumberToShow = null
+    stageToShow = 0
     val zoomRatio = 3
 
     // Get parameters from request.
