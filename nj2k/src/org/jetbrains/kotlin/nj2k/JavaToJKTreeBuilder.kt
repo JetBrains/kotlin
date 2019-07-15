@@ -335,7 +335,13 @@ class JavaToJKTreeBuilder constructor(
                             }
                         }
 
-                        else -> TODO()
+                        else -> {
+                            JKJavaMethodCallExpressionImpl(
+                                JKMultiverseMethodSymbol(target, symbolProvider),
+                                arguments.toJK(),
+                                typeArguments
+                            ).qualified(qualifier)
+                        }
                     }
                 }
 
