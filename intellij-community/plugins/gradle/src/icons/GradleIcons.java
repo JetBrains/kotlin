@@ -35,7 +35,7 @@ public final class GradleIcons {
   @SuppressWarnings("unused")
   @Deprecated
   @ScheduledForRemoval(inVersion = "2020.1")
-  public static final Icon GradlePlugin = GradleIcons.Gradle;
+  /** 16x16 */ public static final Icon GradlePlugin = load("/icons/gradle.svg");
 
   /** @deprecated to be removed in IDEA 2020 */
   @SuppressWarnings("unused")
