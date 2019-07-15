@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.nj2k.tree.impl
 
 import com.intellij.psi.*
 import com.intellij.psi.impl.source.tree.java.PsiReferenceExpressionImpl
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.idea.search.declarationsSearch.findDeepestSuperMethodsNoWrapping
@@ -172,7 +173,10 @@ class JKMultiverseMethodSymbol(override val target: PsiMethod, private val symbo
     override val declaredIn: JKSymbol?
         get() = target.containingClass?.let { symbolProvider.provideDirectSymbol(it) }
     override val fqName: String
-        get() = target.getKotlinFqName()?.asString() ?: target.name
+        get() {
+            val kotlinFqName = target.getKotlinFqName()?.asString() ?: return name
+            return if (target is KtLightMethod) "$kotlinFqName.$name" else kotlinFqName
+        }
 }
 
 class JKMultiverseFunctionSymbol(override val target: KtFunction, private val symbolProvider: JKSymbolProvider) : JKMethodSymbol {
