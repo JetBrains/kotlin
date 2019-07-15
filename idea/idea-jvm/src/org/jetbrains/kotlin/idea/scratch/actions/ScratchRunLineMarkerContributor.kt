@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.getEditorWithScratchPanel
+import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -27,7 +28,7 @@ class ScratchRunLineMarkerContributor : RunLineMarkerContributor() {
         val ktFile = element.containingFile as? KtFile
         if (ktFile?.isScript() != true) return null
         val file = ktFile.virtualFile
-        if (ScratchFileService.getInstance().getRootType(file) !is ScratchRootType) return null
+        if (!(ScratchFileService.getInstance().getRootType(file) is ScratchRootType || file.isKotlinWorksheet)) return null
 
         val declaration = element.getStrictParentOfType<KtNamedDeclaration>()
         if (declaration != null && declaration !is KtParameter && declaration.nameIdentifier == element) {

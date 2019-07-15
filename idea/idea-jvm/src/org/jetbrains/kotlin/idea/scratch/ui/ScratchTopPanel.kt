@@ -107,7 +107,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         add(JLabel("Use classpath of module"))
         add(moduleChooser)
 
-        isMakeBeforeRunCheckbox = JCheckBox("Make before Run")
+        isMakeBeforeRunCheckbox = JCheckBox("Make module before Run")
         add(isMakeBeforeRunCheckbox)
         isMakeBeforeRunCheckbox.addItemListener {
             scratchFile.saveOptions {

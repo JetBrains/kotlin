@@ -52,7 +52,7 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
 
     private fun isPluggable(file: VirtualFile): Boolean {
         if (!file.isValid) return false
-        if (ScratchFileService.getInstance().getRootType(file) !is ScratchRootType) return false
+        if (!(ScratchFileService.getInstance().getRootType(file) is ScratchRootType || file.isKotlinWorksheet)) return false
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
         return ScratchFileLanguageProvider.get(psiFile.fileType) != null
     }
