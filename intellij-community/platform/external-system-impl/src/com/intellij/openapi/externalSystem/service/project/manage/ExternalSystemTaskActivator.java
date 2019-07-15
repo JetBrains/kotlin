@@ -117,19 +117,19 @@ public class ExternalSystemTaskActivator {
 
     boolean result = true;
     if (myBefore) {
-      if (!modulesToBuild.isEmpty()) {
-        result = runTasks(modulesToBuild, Phase.BEFORE_COMPILE);
+      if (!modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.BEFORE_REBUILD);
       }
-      if (result && !modulesToRebuild.isEmpty()) {
-        result = runTasks(modulesToRebuild, Phase.BEFORE_COMPILE, Phase.BEFORE_REBUILD);
+      if (result && !modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.BEFORE_COMPILE);
       }
     }
     else {
-      if (!modulesToBuild.isEmpty()) {
-        result = runTasks(modulesToBuild, Phase.AFTER_COMPILE);
+      if (!modulesToRebuild.isEmpty()) {
+        result = runTasks(modulesToRebuild, Phase.AFTER_REBUILD);
       }
-      if (result && !modulesToRebuild.isEmpty()) {
-        result = runTasks(modulesToRebuild, Phase.AFTER_COMPILE, Phase.AFTER_REBUILD);
+      if (result && !modulesToBuild.isEmpty()) {
+        result = runTasks(modulesToBuild, Phase.AFTER_COMPILE);
       }
     }
     return result;
@@ -200,7 +200,7 @@ public class ExternalSystemTaskActivator {
       }
 
       if (ExternalProjectsManager.getInstance(myProject).isIgnored(activation.systemId, activation.projectPath)) {
-        continue;
+          continue;
       }
 
       ExternalSystemTaskExecutionSettings executionSettings = new ExternalSystemTaskExecutionSettings();
