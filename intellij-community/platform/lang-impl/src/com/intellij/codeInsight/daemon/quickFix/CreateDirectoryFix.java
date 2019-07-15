@@ -2,61 +2,41 @@
 package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.psi.*;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-/**
- * @author peter
- * @deprecated Use {@link CreateDirectoryFix} or {@link CreateFileWithScopeFix} instead.
-*/
-@Deprecated
-public class CreateFileFix extends AbstractCreateFileFix {
+public class CreateDirectoryFix extends LocalQuickFixAndIntentionActionOnPsiElement {
   private static final int REFRESH_INTERVAL = 1000;
 
-  private final boolean myIsDirectory;
   private final String myNewFileName;
-  private final String myText;
   @NotNull private final String myKey;
+  private final SmartPsiElementPointer<PsiDirectory> myDirectory;
   private boolean myIsAvailable;
   private long myIsAvailableTimeStamp;
 
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
-  public CreateFileFix(boolean isDirectory,
-                       @NotNull String newFileName,
-                       @NotNull PsiDirectory directory,
-                       @Nullable String text,
-                       @NotNull String key) {
-    super(directory);
+  public CreateDirectoryFix(@NotNull String newFileName,
+                            @NotNull PsiElement element,
+                            @NotNull PsiDirectory directory,
+                            @NotNull String key) {
+    super(element);
 
-    myIsDirectory = isDirectory;
+    myDirectory = SmartPointerManager.getInstance(directory.getProject()).createSmartPsiElementPointer(directory);
     myNewFileName = newFileName;
-    myText = text;
     myKey = key;
-    myIsAvailable = isDirectory || !FileTypeManager.getInstance().getFileTypeByFileName(newFileName).isBinary();
+    myIsAvailable = true;
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
-  public CreateFileFix(@NotNull String newFileName, @NotNull PsiDirectory directory, String text) {
-    this(false, newFileName, directory, text, "create.file.text");
-  }
-
-  public CreateFileFix(final boolean isDirectory, @NotNull String newFileName, @NotNull PsiDirectory directory) {
-    this(isDirectory, newFileName, directory, null, isDirectory ? "create.directory.text" : "create.file.text");
-  }
-
-  @Override
-  @Nullable
-  protected String getFileText() {
-    return myText;
+  public CreateDirectoryFix(@NotNull String newFileName, @NotNull PsiElement element, @NotNull PsiDirectory directory) {
+    this(newFileName, element, directory, "create.directory.text");
   }
 
   @Override
@@ -80,17 +60,21 @@ public class CreateFileFix extends AbstractCreateFileFix {
   @Override
   public void invoke(@NotNull Project project,
                      @NotNull PsiFile file,
-                     Editor editor,
+                     @Nullable Editor editor,
                      @NotNull PsiElement startElement,
                      @NotNull PsiElement endElement) {
     if (isAvailable(project, null, file)) {
-      invoke(project, (PsiDirectory)startElement);
+      assert myDirectory.getElement() != null;
+
+      invoke(myDirectory.getElement());
     }
   }
 
   @Override
   public void applyFix() {
-    invoke(myStartElement.getProject(), (PsiDirectory)myStartElement.getElement());
+    PsiDirectory directory = myDirectory.getElement();
+    if (directory == null) return;
+    invoke(directory);
   }
 
   @Override
@@ -98,27 +82,24 @@ public class CreateFileFix extends AbstractCreateFileFix {
                              @NotNull PsiFile file,
                              @NotNull PsiElement startElement,
                              @NotNull PsiElement endElement) {
-    final PsiDirectory myDirectory = (PsiDirectory)startElement;
+    PsiDirectory directory = myDirectory.getElement();
+    if (directory == null) return false;
+
     long current = System.currentTimeMillis();
 
     if (ApplicationManager.getApplication().isUnitTestMode() || current - myIsAvailableTimeStamp > REFRESH_INTERVAL) {
-      myIsAvailable &= myDirectory.getVirtualFile().findChild(myNewFileName) == null;
+      myIsAvailable &= directory.getVirtualFile().findChild(myNewFileName) == null;
       myIsAvailableTimeStamp = current;
     }
 
     return myIsAvailable;
   }
 
-  private void invoke(@NotNull Project project, PsiDirectory myDirectory) throws IncorrectOperationException {
+  private void invoke(PsiDirectory myDirectory) throws IncorrectOperationException {
     myIsAvailableTimeStamp = 0; // to revalidate applicability
 
     try {
-      if (myIsDirectory) {
-        myDirectory.createSubdirectory(myNewFileName);
-      }
-      else {
-        createFile(project, myDirectory, myNewFileName);
-      }
+      myDirectory.createSubdirectory(myNewFileName);
     }
     catch (IncorrectOperationException e) {
       myIsAvailable = false;
