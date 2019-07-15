@@ -4,12 +4,12 @@ package org.jetbrains.plugins.gradle.service.project.open
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.externalSystem.importing.AbstractOpenProjectProvider
 import com.intellij.openapi.externalSystem.service.execution.ExternalSystemJdkUtil
-import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.IN_BACKGROUND_ASYNC
+import com.intellij.openapi.externalSystem.service.execution.ProgressExecutionMode.MODAL_SYNC
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -25,13 +25,14 @@ import org.jetbrains.plugins.gradle.settings.DistributionType
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.startup.GradleUnlinkedProjectProcessor
-import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleConstants.BUILD_FILE_EXTENSIONS
+import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
 import org.jetbrains.plugins.gradle.util.GradleEnvironment
 import org.jetbrains.plugins.gradle.util.GradleUtil
 
 internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   override fun isProjectFile(file: VirtualFile): Boolean {
-    return !file.isDirectory && GradleConstants.BUILD_FILE_EXTENSIONS.any { file.name.endsWith(it) }
+    return !file.isDirectory && BUILD_FILE_EXTENSIONS.any { file.name.endsWith(it) }
   }
 
   override fun linkAndRefreshProject(projectDirectory: String, project: Project) {
@@ -50,15 +51,12 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   private fun attachGradleProjectAndRefresh(settings: ExternalProjectSettings, project: Project) {
     val externalProjectPath = settings.externalProjectPath
     ExternalProjectsManagerImpl.getInstance(project).runWhenInitialized {
-      DumbService.getInstance(project).runWhenSmart {
-        ExternalSystemUtil.ensureToolWindowInitialized(project, GradleConstants.SYSTEM_ID)
-      }
+      ExternalSystemUtil.ensureToolWindowInitialized(project, SYSTEM_ID)
     }
     ExternalProjectsManagerImpl.disableProjectWatcherAutoUpdate(project)
-    ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID).linkProject(settings)
-    ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, true, ProgressExecutionMode.MODAL_SYNC)
-    ExternalSystemUtil.refreshProject(project, GradleConstants.SYSTEM_ID, externalProjectPath, false,
-                                      ProgressExecutionMode.IN_BACKGROUND_ASYNC)
+    ExternalSystemApiUtil.getSettings(project, SYSTEM_ID).linkProject(settings)
+    ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, true, MODAL_SYNC)
+    ExternalSystemUtil.refreshProject(project, SYSTEM_ID, externalProjectPath, false, IN_BACKGROUND_ASYNC)
   }
 
   fun setupGradleSettings(settings: GradleProjectSettings, projectDirectory: String, project: Project, projectSdk: Sdk? = null) {
@@ -104,7 +102,7 @@ internal class GradleOpenProjectProvider : AbstractOpenProjectProvider() {
   private class SettingsContext(val project: Project, val projectSdk: Sdk?, val gradleVersion: GradleVersion)
 
   private fun SettingsContext.getGradleJdkReference(): String? {
-    val settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID)
+    val settings = ExternalSystemApiUtil.getSettings(project, SYSTEM_ID)
     return settings.getLinkedProjectsSettings()
       .filterIsInstance<GradleProjectSettings>()
       .mapNotNull { it.gradleJvm }

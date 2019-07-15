@@ -10,6 +10,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.impl.ContentManagerWatcher;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.DataProvider;
+import com.intellij.openapi.project.DumbAwareRunnable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.ActionCallback;
@@ -66,7 +67,7 @@ public class BuildContentManagerImpl implements BuildContentManager {
     myProject = project;
     if (project.isDefault()) return;
 
-    StartupManager.getInstance(project).runWhenProjectIsInitialized(() -> {
+    StartupManager.getInstance(project).runWhenProjectIsInitialized((DumbAwareRunnable)() -> {
       ToolWindow toolWindow = ToolWindowManager.getInstance(project)
         .registerToolWindow(ToolWindowId.BUILD, true, ToolWindowAnchor.BOTTOM, project, true);
       toolWindow.setIcon(AllIcons.Toolwindows.ToolWindowBuild);
