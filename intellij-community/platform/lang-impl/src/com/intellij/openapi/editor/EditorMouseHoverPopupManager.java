@@ -593,18 +593,14 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
 
         @Override
         protected void showHint() {
-          updateBorder();
           AbstractPopup popup = popupBridge.getPopup();
           if (popup != null) {
             validatePopupSize(popup);
           }
         }
-
-        private void updateBorder() {
-          setBorder(deEmphasize && needsToolbar() ? IdeBorderFactory.createBorder(SideBorder.TOP) : null);
-        }
       }
       DocumentationComponent component = new MyDocComponent();
+      component.setBorder(deEmphasize ? IdeBorderFactory.createBorder(SideBorder.TOP) : null);
       component.setData(element, quickDocMessage, null, null, null);
       component.setToolwindowCallback(() -> {
         documentationManager.createToolWindow(element, extractOriginalElement(element));
