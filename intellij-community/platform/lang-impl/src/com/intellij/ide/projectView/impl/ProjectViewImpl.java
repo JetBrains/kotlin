@@ -1009,23 +1009,23 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private void createToolbarActions() {
     if (myActionGroup == null) return;
     myActionGroup.removeAll();
-    myActionGroup.addAction(getAutoScrollToSourceAction()).setAsSecondary(true);
-    myActionGroup.addAction(getAutoScrollFromSourceAction()).setAsSecondary(true);
-    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
-    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
+    myActionGroup.addAction(Action.SHOW_MODULES).setAsSecondary(true);
+    myActionGroup.addAction(Action.FLATTEN_MODULES).setAsSecondary(true);
     myActionGroup.addAction(Action.FLATTEN_PACKAGES).setAsSecondary(true);
     myActionGroup.addAction(Action.HIDE_EMPTY_MIDDLE_PACKAGES).setAsSecondary(true);
     myActionGroup.addAction(Action.ABBREVIATE_PACKAGE_NAMES).setAsSecondary(true);
     myActionGroup.addAction(Action.COMPACT_DIRECTORIES).setAsSecondary(true);
     myActionGroup.addAction(Action.SHOW_MEMBERS).setAsSecondary(true);
+    myActionGroup.addAction(Action.SHOW_LIBRARY_CONTENTS).setAsSecondary(true);
+    myActionGroup.addAction(Action.SHOW_EXCLUDED_FILES).setAsSecondary(true);
+    myActionGroup.addAction(Action.SHOW_VISIBILITY_ICONS).setAsSecondary(true);
+    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
+    myActionGroup.addAction(getAutoScrollToSourceAction()).setAsSecondary(true);
+    myActionGroup.addAction(getAutoScrollFromSourceAction()).setAsSecondary(true);
+    myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
     myActionGroup.addAction(Action.MANUAL_ORDER).setAsSecondary(true);
     myActionGroup.addAction(Action.SORT_BY_TYPE).setAsSecondary(true);
     myActionGroup.addAction(Action.FOLDERS_ALWAYS_ON_TOP).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_EXCLUDED_FILES).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_VISIBILITY_ICONS).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_MODULES).setAsSecondary(true);
-    myActionGroup.addAction(Action.FLATTEN_MODULES).setAsSecondary(true);
-    myActionGroup.addAction(Action.SHOW_LIBRARY_CONTENTS).setAsSecondary(true);
 
     getProjectViewPaneById(myCurrentViewId == null ? getDefaultViewId() : myCurrentViewId).addToolbarActions(myActionGroup);
 
