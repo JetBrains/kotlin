@@ -22,7 +22,6 @@ import com.intellij.testFramework.TestActionEvent
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.actions.KOTLIN_SCRIPT_EXTENSION
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
@@ -36,6 +35,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -70,7 +70,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     private fun doMultiFileTest(dirName: String, isWorksheet: Boolean) {
-        val mainFileExtension = if (isWorksheet) KOTLIN_WORKSHEET_EXTENSION else KOTLIN_SCRIPT_EXTENSION
+        val mainFileExtension = if (isWorksheet) KOTLIN_WORKSHEET_EXTENSION else STD_SCRIPT_SUFFIX
 
         val javaFiles = arrayListOf<File>()
         val kotlinFiles = arrayListOf<File>()

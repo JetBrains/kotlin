@@ -10,7 +10,6 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiFile
 
 const val KOTLIN_WORKSHEET_EXTENSION: String = "ws.kts"
-const val KOTLIN_SCRIPT_EXTENSION = "kts"
 
 class NewKotlinWorksheetAction : NewKotlinScriptAction(
     actionName = "Kotlin Worksheet",
