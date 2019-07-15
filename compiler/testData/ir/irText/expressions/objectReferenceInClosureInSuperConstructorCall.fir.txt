@@ -35,11 +35,10 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (lambda: kotlin.Function0<kotlin.Any>) [primary] declared in <root>.Base'
-          lambda: BLOCK type=IrErrorType origin=LAMBDA
+          lambda: FUN_EXPR type=IrErrorType
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: Test#' type=IrErrorType
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): IrErrorType declared in <root>.Test.<init>' type=IrErrorType origin=LAMBDA
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:Test modality:FINAL visibility:public superTypes:[<root>.Base]'
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
@@ -54,4 +53,3 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-

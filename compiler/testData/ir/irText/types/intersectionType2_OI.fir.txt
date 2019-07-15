@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
       RETURN type=kotlin.Nothing from='public final fun foo (): <root>.B declared in <root>'
         CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=<root>.B origin=null
           <T>: <none>
-          fn: BLOCK type=kotlin.Function0<<root>.B> origin=LAMBDA
+          fn: FUN_EXPR type=kotlin.Function0<<root>.B>
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.B
               BLOCK_BODY
                 VAR name:mm type:<root>.B [val]
@@ -96,4 +96,3 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
                 GET_VAR 'val c: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): <root>.B declared in <root>.foo' type=kotlin.Function0<<root>.B> origin=LAMBDA

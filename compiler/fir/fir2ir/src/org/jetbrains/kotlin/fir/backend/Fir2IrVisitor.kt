@@ -427,27 +427,17 @@ internal class Fir2IrVisitor(
         }
     }
 
-    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement {
-        val irFunction = declarationStorage.getIrLocalFunction(anonymousFunction)
-        irFunction.setParentByParentStack().withFunction {
-            setFunctionContent(irFunction.descriptor, anonymousFunction)
-        }
-        return anonymousFunction.convertWithOffsets { startOffset, endOffset ->
-            val type = anonymousFunction.typeRef.toIrType(session, declarationStorage)
-            val origin = when (anonymousFunction.psi) {
-                is KtFunctionLiteral -> IrStatementOrigin.LAMBDA
-                else -> IrStatementOrigin.ANONYMOUS_FUNCTION
+    override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction, data: Any?): IrElement =
+        anonymousFunction.convertWithOffsets { startOffset, endOffset ->
+            val irFunction = declarationStorage.getIrLocalFunction(anonymousFunction)
+            irFunction.setParentByParentStack().withFunction {
+                setFunctionContent(irFunction.descriptor, anonymousFunction)
             }
-            IrBlockImpl(
-                startOffset, endOffset, type, origin,
-                listOf(
-                    irFunction, IrFunctionReferenceImpl(
-                        startOffset, endOffset, type, irFunction.symbol, irFunction.descriptor, 0, origin
-                    )
-                )
-            )
+
+            val type = anonymousFunction.typeRef.toIrType(session, declarationStorage)
+
+            IrFunctionExpressionImpl(startOffset, endOffset, type, irFunction)
         }
-    }
 
     private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
         val firDefaultValue = firValueParameter.defaultValue
