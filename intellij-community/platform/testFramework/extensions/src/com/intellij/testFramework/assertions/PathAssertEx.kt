@@ -19,9 +19,9 @@ class PathAssertEx(actual: Path?) : PathAssert(actual) {
     isNotNull
 
     if (Files.exists(actual, LinkOption.NOFOLLOW_LINKS)) {
-      var error = "Expecting path:\n\t${actual}\nnot to exist"
+      var error = "Expecting path:\n\t$actual\nnot to exist"
       if (actual.size() < 16 * 1024) {
-        error += ", content:\n\n${actual.readText()}\n"
+        error += " but it does, with content:\n\n${actual.readText()}\n"
       }
       failWithMessage(error)
     }
