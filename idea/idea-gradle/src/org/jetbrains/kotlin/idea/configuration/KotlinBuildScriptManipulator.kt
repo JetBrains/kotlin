@@ -146,13 +146,13 @@ class KotlinBuildScriptManipulator(
 
     private fun KtBlockExpression.addCompileStdlibIfMissing(stdlibArtifactName: String): KtCallExpression? =
         findStdLibDependency()
-                ?: addExpressionIfMissing(
-                        getCompileDependencySnippet(
-                                KOTLIN_GROUP_ID,
-                                stdlibArtifactName,
-                                version = "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME"
-                        )
-                ) as? KtCallExpression
+            ?: addExpressionIfMissing(
+                getCompileDependencySnippet(
+                    KOTLIN_GROUP_ID,
+                    stdlibArtifactName,
+                    version = "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME"
+                )
+            ) as? KtCallExpression
 
     private fun addPluginRepositoryExpression(expression: String) {
         scriptFile.getPluginManagementBlock()?.findOrCreateBlock("repositories")?.addExpressionIfMissing(expression)
@@ -172,7 +172,7 @@ class KotlinBuildScriptManipulator(
             ?.findOrCreateBlock("resolutionStrategy")
             ?.findOrCreateBlock("eachPlugin")
             ?.addExpressionIfMissing(
-                    """
+                """
                         if (requested.id.id == "$pluginId") {
                             useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${'$'}{requested.version}")
                         }
@@ -181,7 +181,12 @@ class KotlinBuildScriptManipulator(
     }
 
     private fun KtBlockExpression.addNoVersionCompileStdlibIfMissing(stdlibArtifactName: String): KtCallExpression? =
-        findStdLibDependency() ?: addExpressionIfMissing("implementation(${getKotlinModuleDependencySnippet(stdlibArtifactName, null)})") as? KtCallExpression
+        findStdLibDependency() ?: addExpressionIfMissing(
+            "implementation(${getKotlinModuleDependencySnippet(
+                stdlibArtifactName,
+                null
+            )})"
+        ) as? KtCallExpression
 
     private fun KtFile.containsCompileStdLib(): Boolean =
         findScriptInitializer("dependencies")?.getBlock()?.findStdLibDependency() != null
@@ -200,10 +205,10 @@ class KotlinBuildScriptManipulator(
 
     private fun KtBlockExpression.findPluginInPluginsGroup(pluginName: String): KtCallExpression? {
         return PsiTreeUtil.getChildrenOfAnyType(
-                this,
-                KtCallExpression::class.java,
-                KtBinaryExpression::class.java,
-                KtDotQualifiedExpression::class.java
+            this,
+            KtCallExpression::class.java,
+            KtBinaryExpression::class.java,
+            KtDotQualifiedExpression::class.java
         ).mapNotNull {
             when (it) {
                 is KtCallExpression -> it
@@ -233,15 +238,14 @@ class KotlinBuildScriptManipulator(
     }
 
     private fun KtScriptInitializer.getBlock(): KtBlockExpression? =
-        PsiTreeUtil.findChildOfType<KtCallExpression>(this, KtCallExpression::class.java)?.getBlock()
+        PsiTreeUtil.findChildOfType(this, KtCallExpression::class.java)?.getBlock()
 
     private fun KtCallExpression.getBlock(): KtBlockExpression? =
         (valueArguments.singleOrNull()?.getArgumentExpression() as? KtLambdaExpression)?.bodyExpression
 
     private fun KtFile.getKotlinStdlibVersion(): String? {
         return findScriptInitializer("dependencies")?.getBlock()?.let {
-            val expression = it.findStdLibDependency()?.valueArguments?.firstOrNull()?.getArgumentExpression()
-            when (expression) {
+            when (val expression = it.findStdLibDependency()?.valueArguments?.firstOrNull()?.getArgumentExpression()) {
                 is KtCallExpression -> expression.valueArguments.getOrNull(1)?.text?.trim('\"')
                 is KtStringTemplateExpression -> expression.text?.trim('\"')?.substringAfterLast(":")?.removePrefix("$")
                 else -> null
@@ -253,7 +257,7 @@ class KotlinBuildScriptManipulator(
         return PsiTreeUtil.getChildrenOfType(this, KtCallExpression::class.java)?.find {
             val calleeText = it.calleeExpression?.text
             calleeText in PRODUCTION_DEPENDENCY_STATEMENTS && (it.valueArguments.firstOrNull()?.getArgumentExpression()?.isKotlinStdLib()
-                    ?: false)
+                ?: false)
         }
     }
 
@@ -267,22 +271,18 @@ class KotlinBuildScriptManipulator(
         else -> false
     }
 
-    private fun KtFile.getPluginManagementBlock(): KtBlockExpression? =
-        findScriptInitializer("pluginManagement")?.getBlock() ?: addTopLevelBlock("pluginManagement", true)
+    private fun KtFile.getPluginManagementBlock(): KtBlockExpression? = findOrCreateScriptInitializer("pluginManagement", true)
 
-    private fun KtFile.getRepositoriesBlock(): KtBlockExpression? =
-        findScriptInitializer("repositories")?.getBlock() ?: addTopLevelBlock("repositories")
+    private fun KtFile.getRepositoriesBlock(): KtBlockExpression? = findOrCreateScriptInitializer("repositories")
 
-    private fun KtFile.getDependenciesBlock(): KtBlockExpression? =
-        findScriptInitializer("dependencies")?.getBlock() ?: addTopLevelBlock("dependencies")
+    private fun KtFile.getDependenciesBlock(): KtBlockExpression? = findOrCreateScriptInitializer("dependencies")
 
-    private fun KtFile.getPluginsBlock(): KtBlockExpression? =
-        findScriptInitializer("plugins")?.getBlock() ?: addTopLevelBlock("plugins", true)
+    private fun KtFile.getPluginsBlock(): KtBlockExpression? = findOrCreateScriptInitializer("plugins", true)
 
     private fun KtFile.createPluginInPluginsGroupIfMissing(pluginName: String, version: String): KtCallExpression? =
         getPluginsBlock()?.let {
             it.findPluginInPluginsGroup(pluginName)
-                    ?: it.addExpressionIfMissing("$pluginName version \"$version\"") as? KtCallExpression
+                ?: it.addExpressionIfMissing("$pluginName version \"$version\"") as? KtCallExpression
         }
 
     private fun KtFile.createApplyBlock(): KtBlockExpression? {
@@ -300,7 +300,7 @@ class KotlinBuildScriptManipulator(
 
     private fun KtFile.changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
         val snippet = "experimental.coroutines = Coroutines.${coroutineOption.toUpperCase()}"
-        val kotlinBlock = findScriptInitializer("kotlin")?.getBlock() ?: addTopLevelBlock("kotlin") ?: return null
+        val kotlinBlock = findOrCreateScriptInitializer("kotlin") ?: return null
         addImportIfMissing("org.jetbrains.kotlin.gradle.dsl.Coroutines")
         val statement = kotlinBlock.statements.find { it.text.startsWith("experimental.coroutines") }
         return if (statement != null) {
@@ -363,14 +363,14 @@ class KotlinBuildScriptManipulator(
         }
     }
 
-    private fun KtFile.getBuildScriptBlock(): KtBlockExpression? =
-        findScriptInitializer("buildscript")?.getBlock() ?: addTopLevelBlock("buildscript", true)
+    private fun KtFile.getBuildScriptBlock(): KtBlockExpression? = findOrCreateScriptInitializer("buildscript", true)
 
-    private fun KtBlockExpression.getRepositoriesBlock(): KtBlockExpression? =
-        findBlock("repositories") ?: addBlock("repositories")
+    private fun KtFile.findOrCreateScriptInitializer(name: String, first: Boolean = false): KtBlockExpression? =
+        findScriptInitializer(name)?.getBlock() ?: addTopLevelBlock(name, first)
 
-    private fun KtBlockExpression.getDependenciesBlock(): KtBlockExpression? =
-        findBlock("dependencies") ?: addBlock("dependencies")
+    private fun KtBlockExpression.getRepositoriesBlock(): KtBlockExpression? = findOrCreateBlock("repositories")
+
+    private fun KtBlockExpression.getDependenciesBlock(): KtBlockExpression? = findOrCreateBlock("dependencies")
 
     private fun KtBlockExpression.addRepositoryIfMissing(version: String): KtCallExpression? {
         val snippet = getRepositorySnippet(version) ?: return null
@@ -425,17 +425,15 @@ class KotlinBuildScriptManipulator(
 
     private fun KtFile.addImportIfMissing(path: String): KtImportDirective =
         importDirectives.find { it.importPath?.pathStr == path } ?: importList?.add(
-                psiFactory.createImportDirective(
-                        ImportPath.fromString(
-                                path
-                        )
+            psiFactory.createImportDirective(
+                ImportPath.fromString(
+                    path
                 )
+            )
         ) as KtImportDirective
 
     private fun KtBlockExpression.addExpressionAfterIfMissing(text: String, after: PsiElement): KtExpression = addStatementIfMissing(text) {
-        psiFactory.createExpression(it).let { created ->
-            addAfter(created, after)
-        }
+        addAfter(psiFactory.createExpression(it), after)
     }
 
     private fun KtBlockExpression.addExpressionIfMissing(text: String, first: Boolean = false): KtExpression = addStatementIfMissing(text) {
@@ -494,8 +492,8 @@ class KotlinBuildScriptManipulator(
     }
 
     companion object {
-        private val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
-        val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
+        private const val STDLIB_ARTIFACT_PREFIX = "org.jetbrains.kotlin:kotlin-stdlib"
+        const val GSK_KOTLIN_VERSION_PROPERTY_NAME = "kotlin_version"
 
         fun getKotlinGradlePluginClassPathSnippet(): String =
             "classpath(${getKotlinModuleDependencySnippet("gradle-plugin", "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME")})"
