@@ -16,14 +16,14 @@
 package com.intellij.tools;
 
 import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
 import com.intellij.openapi.options.SchemeProcessor;
 import org.jetbrains.annotations.NotNull;
 
 public class ToolManager extends BaseToolManager<Tool> {
-  public ToolManager(@NotNull SchemeManagerFactory factory) {
-    super(ActionManagerEx.getInstanceEx(), factory, "tools", ToolsBundle.message("tools.settings"));
+  public ToolManager() {
+    super(ActionManagerEx.getInstanceEx(), SchemeManagerFactory.getInstance(), "tools", ToolsBundle.message("tools.settings"));
   }
 
   @Override
@@ -47,6 +47,6 @@ public class ToolManager extends BaseToolManager<Tool> {
   }
 
   public static ToolManager getInstance() {
-    return ApplicationManager.getApplication().getComponent(ToolManager.class);
+    return ServiceManager.getService(ToolManager.class);
   }
 }
