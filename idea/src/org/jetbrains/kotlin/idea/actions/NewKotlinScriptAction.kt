@@ -16,11 +16,23 @@ import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.idea.KotlinIcons
 import org.jetbrains.kotlin.psi.KtFile
 
-class NewKotlinScriptAction : CreateFileFromTemplateAction(
-    "Kotlin Script",
-    "Creates new Kotlin script",
+open class NewKotlinScriptAction(
+    val actionName: String,
+    val description: String,
+    val dialogTitle: String,
+    val templateName: String
+) : CreateFileFromTemplateAction(
+    actionName,
+    description,
     KotlinIcons.SCRIPT
 ), DumbAware {
+
+    constructor() : this(
+        actionName = "Kotlin Script",
+        description = "Creates new Kotlin script",
+        dialogTitle = "New Kotlin Script",
+        templateName = "Kotlin Script"
+    )
 
     override fun postProcess(createdElement: PsiFile, templateName: String?, customProperties: Map<String, String>?) {
         super.postProcess(createdElement, templateName, customProperties)
@@ -33,18 +45,18 @@ class NewKotlinScriptAction : CreateFileFromTemplateAction(
     }
 
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
-        builder.setTitle("New Kotlin Script")
-            .addKind("Kotlin Script", KotlinIcons.SCRIPT, "Kotlin Script")
+        builder.setTitle(dialogTitle)
+            .addKind(actionName, KotlinIcons.SCRIPT, templateName)
     }
 
     override fun createFileFromTemplate(name: String, template: FileTemplate, dir: PsiDirectory) =
         NewKotlinFileAction.createFileFromTemplateWithStat(name, template, dir)
 
-    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = "Kotlin Script"
+    override fun getActionName(directory: PsiDirectory, newName: String, templateName: String) = actionName
 
     override fun startInWriteAction() = false
 
     override fun hashCode(): Int = 0
 
-    override fun equals(other: Any?): Boolean = other is NewKotlinScriptAction
+    override fun equals(other: Any?): Boolean = this::class.isInstance(other)
 }

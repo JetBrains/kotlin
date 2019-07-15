@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.statistics.FUSEventGroups
 import org.jetbrains.kotlin.idea.statistics.KotlinFUSLogger
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition.Companion.STD_SCRIPT_SUFFIX
 import org.jetbrains.kotlin.psi.KtClass
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -148,7 +149,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             get() = NameValidator
 
         private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: CharArray): Pair<String, PsiDirectory> {
-            var className = name.substringBeforeLast(".kt")
+            var className = removeKotlinExtensionIfPresent(name)
             var targetDir = dir
 
             for (splitChar in directorySeparators) {
@@ -166,6 +167,13 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 }
             }
             return Pair(className, targetDir)
+        }
+
+        private fun removeKotlinExtensionIfPresent(name: String): String = when {
+            name.endsWith(".$KOTLIN_WORKSHEET_EXTENSION") -> name.removeSuffix(".$KOTLIN_WORKSHEET_EXTENSION")
+            name.endsWith(".$STD_SCRIPT_SUFFIX") -> name.removeSuffix(".$STD_SCRIPT_SUFFIX")
+            name.endsWith(".${KotlinFileType.EXTENSION}") -> name.removeSuffix(".${KotlinFileType.EXTENSION}")
+            else -> name
         }
 
         private fun createFromTemplate(dir: PsiDirectory, className: String, template: FileTemplate): PsiFile? {
