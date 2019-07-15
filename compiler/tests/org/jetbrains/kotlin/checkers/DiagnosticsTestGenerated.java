@@ -9718,6 +9718,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/inference/kt3184.kt");
             }
 
+            @TestMetadata("kt32434.kt")
+            public void testKt32434() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/kt32434.kt");
+            }
+
             @TestMetadata("kt6175.kt")
             public void testKt6175() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/kt6175.kt");
