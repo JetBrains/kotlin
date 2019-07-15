@@ -39,6 +39,9 @@ val Module.sourceType: SourceType?
 val Module.isMPPModule: Boolean
     get() = facetSettings?.isMPPModule ?: false
 
+val Module.isTestModule: Boolean
+    get() = facetSettings?.isTestModule ?: false
+
 val KotlinFacetSettings.isMPPModule: Boolean
     get() = targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() || kind.isNewMPP
 
@@ -65,7 +68,7 @@ val Module.implementedModules: List<Module>
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
                     rootManager.dependencies.filter {
-                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId
+                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && it.isTestModule == isTestModule
                     }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
