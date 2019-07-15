@@ -79,6 +79,11 @@ public class TextNewJavaToKotlinCopyPasteConversionTestGenerated extends Abstrac
         runTest("nj2k/testData/copyPastePlainText/KT13529_1.txt");
     }
 
+    @TestMetadata("KT32603.txt")
+    public void testKT32603() throws Exception {
+        runTest("nj2k/testData/copyPastePlainText/KT32603.txt");
+    }
+
     @TestMetadata("MembersIntoClass.txt")
     public void testMembersIntoClass() throws Exception {
         runTest("nj2k/testData/copyPastePlainText/MembersIntoClass.txt");
