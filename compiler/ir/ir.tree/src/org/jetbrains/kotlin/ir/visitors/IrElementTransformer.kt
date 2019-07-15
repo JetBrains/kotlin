@@ -98,6 +98,8 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference, data: D) =
         visitCallableReference(expression, data)
 
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: D): IrElement = visitExpression(expression, data)
+
     override fun visitClassReference(expression: IrClassReference, data: D) = visitDeclarationReference(expression, data)
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, data: D) = visitExpression(expression, data)

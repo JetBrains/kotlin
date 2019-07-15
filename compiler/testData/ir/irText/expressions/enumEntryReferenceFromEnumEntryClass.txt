@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
         PROPERTY name:aLambda visibility:public modality:FINAL [val] 
           FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:public [final] 
             EXPRESSION_BODY
-              BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+              FUN_EXPR type=kotlin.Function0<kotlin.Unit>
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
                   BLOCK_BODY
                     CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ
@@ -56,7 +56,6 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.MyEnum.Z.aLambda'
                       CALL 'public final fun foo (): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=null
                         $this: GET_ENUM 'ENUM_ENTRY name:Z' type=<root>.MyEnum.Z
-                FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.MyEnum.Z.aLambda' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aLambda> visibility:public modality:FINAL <> ($this:<root>.MyEnum.Z) returnType:kotlin.Function0<kotlin.Unit> 
             correspondingProperty: PROPERTY name:aLambda visibility:public modality:FINAL [val] 
             $this: VALUE_PARAMETER name:<this> type:<root>.MyEnum.Z 

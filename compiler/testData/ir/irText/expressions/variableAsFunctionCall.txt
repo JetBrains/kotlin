@@ -3,12 +3,11 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun k (): kotlin.Function0<kotlin.String> declared in <root>'
-        BLOCK type=kotlin.Function0<kotlin.String> origin=LAMBDA
+        FUN_EXPR type=kotlin.Function0<kotlin.String>
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.k'
                 GET_VAR '<this>: kotlin.String declared in <root>.k' type=kotlin.String origin=null
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.String declared in <root>.k' type=kotlin.Function0<kotlin.String> origin=LAMBDA
   FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit> 
     BLOCK_BODY

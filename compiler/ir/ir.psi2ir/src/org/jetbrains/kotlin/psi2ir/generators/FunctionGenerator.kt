@@ -42,7 +42,7 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
-    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrFunction =
+    fun generateFunctionDeclaration(ktFunction: KtNamedFunction): IrSimpleFunction =
         declareSimpleFunction(
             ktFunction,
             ktFunction.receiverTypeReference,

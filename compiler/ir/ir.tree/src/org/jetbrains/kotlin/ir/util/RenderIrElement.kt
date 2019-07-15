@@ -601,6 +601,11 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
             append("origin=${expression.origin}")
         }
 
+    override fun visitFunctionExpression(expression: IrFunctionExpression, data: Nothing?): String =
+        buildTrimEnd {
+            append("FUN_EXPR type=${expression.type.render()}")
+        }
+
     override fun visitClassReference(expression: IrClassReference, data: Nothing?): String =
         "CLASS_REFERENCE '${expression.symbol.renderReference()}' type=${expression.type.render()}"
 

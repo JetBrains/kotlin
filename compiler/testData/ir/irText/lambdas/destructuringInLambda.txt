@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
   PROPERTY name:fn visibility:public modality:FINAL [var] 
     FIELD PROPERTY_BACKING_FIELD name:fn type:kotlin.Function1<<root>.A, kotlin.Int> visibility:public [static] 
       EXPRESSION_BODY
-        BLOCK type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
+        FUN_EXPR type=kotlin.Function1<<root>.A, kotlin.Int>
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (<name for destructuring parameter 0>:<root>.A) returnType:kotlin.Int 
             VALUE_PARAMETER name:<name for destructuring parameter 0> index:0 type:<root>.A 
             BLOCK_BODY
@@ -151,7 +151,6 @@ FILE fqName:<root> fileName:/destructuringInLambda.kt
                 CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
                   $this: CONST Int type=kotlin.Int value=42
                   other: GET_VAR 'val y: kotlin.Int [val] declared in <root>.fn.<anonymous>' type=kotlin.Int origin=null
-          FUNCTION_REFERENCE 'local final fun <anonymous> (<name for destructuring parameter 0>: <root>.A): kotlin.Int declared in <root>.fn' type=kotlin.Function1<<root>.A, kotlin.Int> origin=LAMBDA
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-fn> visibility:public modality:FINAL <> () returnType:kotlin.Function1<<root>.A, kotlin.Int> 
       correspondingProperty: PROPERTY name:fn visibility:public modality:FINAL [var] 
       BLOCK_BODY

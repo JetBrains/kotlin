@@ -19,12 +19,11 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
     BLOCK_BODY
       CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=PLUSEQ
-        lambda: BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+        lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit>
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-          FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
     VALUE_PARAMETER name:a index:0 type:kotlin.Any 
     BLOCK_BODY
@@ -32,12 +31,11 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.Any [val] 
           GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Function0<kotlin.Unit> [val] 
-          BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+          FUN_EXPR type=kotlin.Function0<kotlin.Unit>
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
                   GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-            FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
         CALL 'public final fun set (index: kotlin.Function0<kotlin.Unit>, value: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
           $receiver: GET_VAR 'val tmp0_array: kotlin.Any [val] declared in <root>.test2' type=kotlin.Any origin=null
           index: GET_VAR 'val tmp1_index0: kotlin.Function0<kotlin.Unit> [val] declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -54,12 +52,11 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.Any [val] 
             GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Function0<kotlin.Unit> [val] 
-            BLOCK type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function0<kotlin.Unit>
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-              FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.Unit declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           VAR IR_TEMPORARY_VARIABLE name:tmp2 type:kotlin.Int [val] 
             CALL 'public final fun get (index: kotlin.Function0<kotlin.Unit>): kotlin.Int declared in <root>' type=kotlin.Int origin=POSTFIX_INCR
               $receiver: GET_VAR 'val tmp0_array: kotlin.Any [val] declared in <root>.test3' type=kotlin.Any origin=null

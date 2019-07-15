@@ -2,11 +2,10 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
   PROPERTY name:anonymous visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
-        BLOCK type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit>
           FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
-          FUNCTION_REFERENCE 'local final fun <no name provided> (): kotlin.Unit declared in <root>.anonymous' type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-anonymous> visibility:public modality:FINAL <> () returnType:kotlin.Function0<kotlin.Unit> 
       correspondingProperty: PROPERTY name:anonymous visibility:public modality:FINAL [val] 
       BLOCK_BODY
