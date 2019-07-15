@@ -416,17 +416,17 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @NotNull
   private static VirtualFile getOrCreateExternalProjectConfigFile(@NotNull String parent,
                                                                   @NotNull String fileName,
-                                                                  boolean deleteExistedFile)
+                                                                  boolean deleteExistingFile)
     throws ConfigurationException {
     File file = new File(parent, fileName);
-    if (deleteExistedFile) FileUtilRt.delete(file);
+    if (deleteExistingFile) FileUtilRt.delete(file);
     FileUtilRt.createIfNotExists(file);
     VirtualFile virtualFile = VfsUtil.findFileByIoFile(file, true);
     if (virtualFile == null) {
       throw new ConfigurationException(String.format("Can't create configuration file '%s'", file.getPath()));
     }
     if (virtualFile.isDirectory()) {
-      throw new ConfigurationException(String.format("Configuration file is directory '%s'", file.getPath()));
+      throw new ConfigurationException(String.format("Configuration file is a directory '%s'", file.getPath()));
     }
     VfsUtil.markDirtyAndRefresh(false, false, false, virtualFile);
     return virtualFile;

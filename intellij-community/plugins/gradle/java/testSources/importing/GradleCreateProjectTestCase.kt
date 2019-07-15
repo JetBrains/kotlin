@@ -1,5 +1,5 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-package org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.importing
+package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.projectWizard.NewProjectWizard
@@ -11,13 +11,11 @@ import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.roots.ui.configuration.DefaultModulesProvider
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.util.ui.UIUtil
-import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
@@ -49,24 +47,6 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
           if (root.exists()) {
             root.delete(null)
           }
-        }
-      }
-    }
-  }
-
-  fun Project.use(save: Boolean = false, action: (Project) -> Unit) {
-    val project = this@use
-    try {
-      action(project)
-    }
-    finally {
-      invokeAndWaitIfNeeded {
-        val projectManager = ProjectManagerEx.getInstanceEx()
-        if (save) {
-          projectManager.closeAndDispose(project)
-        }
-        else {
-          projectManager.forceCloseProject(project, true)
         }
       }
     }
@@ -132,7 +112,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
   private fun createWizard(project: Project?, directory: String): AbstractProjectWizard {
     val modulesProvider = project?.let { DefaultModulesProvider(it) } ?: ModulesProvider.EMPTY_MODULES_PROVIDER
     return NewProjectWizard(project, modulesProvider, directory).also {
-      UIUtil.dispatchAllInvocationEvents()
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
   }
 
@@ -151,7 +131,7 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
 
   private fun waitForImportCompletion() {
     invokeAndWaitIfNeeded {
-      UIUtil.dispatchAllInvocationEvents()
+      PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
   }
 

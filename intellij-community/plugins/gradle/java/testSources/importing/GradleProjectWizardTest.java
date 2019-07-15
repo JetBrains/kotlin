@@ -34,6 +34,7 @@ import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.RunAll;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.ArrayUtilRt;
@@ -85,7 +86,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         ((GradleModuleBuilder)projectBuilder).setName(projectName);
       }
     });
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> UIUtil.dispatchAllInvocationEvents());
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
 
     assertEquals(projectName, project.getName());
     assertModules(project, projectName, projectName + ".main", projectName + ".test");
@@ -131,7 +132,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
         ((GradleModuleWizardStep)step).setArtifactId("childModule");
       }
     });
-    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> UIUtil.dispatchAllInvocationEvents());
+    UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
 
     assertModules(project, projectName, projectName + ".main", projectName + ".test",
                   projectName + ".childModule", projectName + ".childModule.main", projectName + ".childModule.test");
@@ -176,7 +177,7 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       myWizard = null;
     }
     myWizard = createWizard(project, directory);
-    UIUtil.dispatchAllInvocationEvents(); // to make default selection applied
+    PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue();
   }
 
   protected void collectAllowedRoots(final List<String> roots) {
