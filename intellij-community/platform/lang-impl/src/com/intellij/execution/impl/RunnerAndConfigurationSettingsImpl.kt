@@ -322,6 +322,7 @@ class RunnerAndConfigurationSettingsImpl @JvmOverloads constructor(val manager: 
     val runners = THashSet<ProgramRunner<*>>()
     runners.addAll(runnerSettings.settings.keys)
     runners.addAll(configurationPerRunnerSettings.settings.keys)
+    executor?.let { ProgramRunner.getRunner(executor.id, configuration)?.let { runners.add(it) } }
     var runnerFound = false
     for (runner in runners) {
       if (executor == null || runner.canRun(executor.id, configuration)) {
