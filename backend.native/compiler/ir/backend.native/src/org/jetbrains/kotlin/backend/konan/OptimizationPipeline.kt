@@ -41,25 +41,35 @@ private class LlvmPipelineConfiguration(context: Context) {
 
     val targetTriple: String = context.llvm.targetTriple
 
-    val cpuArchitecture: String = when (target) {
-        KonanTarget.IOS_ARM32 -> "armv7"
-        KonanTarget.IOS_ARM64 -> "arm64"
+    // Most of these values are copied from corresponding runtime.bc
+    // Which is using "generic" target CPU for many case.
+    // This approach is suboptimal because target-cpu="generic" limits
+    // the set of used cpu features.
+    // TODO: refactor KonanTarget so that we can explicitly specify
+    //  target cpu or arch+features combination in a single place.
+    val cpuModel: String = when (target) {
+        KonanTarget.IOS_ARM32 -> "generic"
+        KonanTarget.IOS_ARM64 -> "cyclone"
         KonanTarget.IOS_X64 -> "core2"
         KonanTarget.LINUX_X64 -> "x86-64"
         KonanTarget.MINGW_X86 -> "pentium4"
         KonanTarget.MINGW_X64 -> "x86-64"
         KonanTarget.MACOS_X64 -> "core2"
         KonanTarget.LINUX_ARM32_HFP -> "arm1136jf-s"
-        KonanTarget.LINUX_ARM64 -> "cortex-a57"
-        KonanTarget.ANDROID_ARM32 -> "armv7"
-        KonanTarget.ANDROID_ARM64 -> "arm64"
+        KonanTarget.LINUX_ARM64 -> "generic"
+        KonanTarget.ANDROID_ARM32 -> "arm7tdmi"
+        KonanTarget.ANDROID_ARM64 -> "cortex-a57"
         KonanTarget.LINUX_MIPS32 -> "mips32r2"
         KonanTarget.LINUX_MIPSEL32 -> "mips32r2"
         KonanTarget.WASM32,
         is KonanTarget.ZEPHYR -> error("There is no support for ${target.name} target yet.")
     }
 
-    val cpuFeatures: String = ""
+    val cpuFeatures: String = when (target) {
+        KonanTarget.LINUX_ARM32_HFP -> "+dsp,+strict-align,+vfp2,-crypto,-d16,-fp-armv8,-fp-only-sp,-fp16,-neon,-thumb-mode,-vfp3,-vfp4"
+        KonanTarget.ANDROID_ARM32 -> "+soft-float,+strict-align,-crypto,-neon,-thumb-mode"
+        else -> ""
+    }
 
     val customInlineThreshold: Int? = when {
         context.shouldOptimize() -> 100
@@ -122,7 +132,7 @@ internal fun runLlvmOptimizationPipeline(context: Context) {
         val targetMachine = LLVMCreateTargetMachine(
                 target.value,
                 config.targetTriple,
-                config.cpuArchitecture,
+                config.cpuModel,
                 config.cpuFeatures,
                 config.codegenOptimizationLevel,
                 config.relocMode,
