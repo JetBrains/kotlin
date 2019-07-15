@@ -171,10 +171,10 @@ class LineBreakpointExpressionVisitor private constructor(
             return Lines.EMPTY
         }
 
-        val startOffset = this.startOffset
+        val startOffset = maxOf(this.startOffset, this.textOffset)
         val endOffset = this.endOffset
 
-        if (startOffset < 0 || endOffset < 0) {
+        if (startOffset < 0 || endOffset < 0 || startOffset > endOffset) {
             return Lines.EMPTY
         }
 

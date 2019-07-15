@@ -53,9 +53,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaMethodBreakpointProperties;
 import org.jetbrains.kotlin.asJava.LightClassUtilsKt;
+import org.jetbrains.kotlin.asJava.classes.KtLightClass;
 import org.jetbrains.kotlin.psi.KtClass;
 import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.psi.KtDeclaration;
+import org.jetbrains.kotlin.psi.KtPrimaryConstructor;
 import org.jetbrains.org.objectweb.asm.Label;
 import org.jetbrains.org.objectweb.asm.MethodVisitor;
 import org.jetbrains.org.objectweb.asm.Opcodes;
@@ -570,7 +572,20 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         KtDeclaration declaration = PositionUtil.getPsiElementAt(project, KtDeclaration.class, sourcePosition);
 
         if (declaration instanceof KtClass) {
-            declaration = ((KtClass) declaration).getPrimaryConstructor();
+            KtPrimaryConstructor constructor = ((KtClass) declaration).getPrimaryConstructor();
+            if (constructor != null) {
+                declaration = constructor;
+            } else {
+                KtLightClass lightClass = LightClassUtilsKt.toLightClass((KtClassOrObject) declaration);
+                if (lightClass != null) {
+                    PsiMethod[] constructors = lightClass.getConstructors();
+                    if (constructors.length > 0) {
+                        return constructors[0];
+                    }
+                }
+
+                return null;
+            }
         }
 
         if (declaration == null) {

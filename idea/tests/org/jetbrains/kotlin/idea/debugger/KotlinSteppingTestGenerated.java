@@ -1067,6 +1067,11 @@ public class KotlinSteppingTestGenerated extends AbstractKotlinSteppingTest {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/funLiteral.kt");
         }
 
+        @TestMetadata("functionBreakpoints.kt")
+        public void testFunctionBreakpoints() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/stepping/custom/functionBreakpoints.kt");
+        }
+
         @TestMetadata("functionCallStoredToVariable.kt")
         public void testFunctionCallStoredToVariable() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/stepping/custom/functionCallStoredToVariable.kt");

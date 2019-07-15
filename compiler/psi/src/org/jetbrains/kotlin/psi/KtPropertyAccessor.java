@@ -181,4 +181,9 @@ public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessor
     public KtProperty getProperty() {
         return (KtProperty) getParent();
     }
+
+    @Override
+    public int getTextOffset() {
+        return getNamePlaceholder().getTextRange().getStartOffset();
+    }
 }
