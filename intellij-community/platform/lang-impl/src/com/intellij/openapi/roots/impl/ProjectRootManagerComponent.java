@@ -212,7 +212,6 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
     Disposable oldDisposable = myRootPointersDisposable;
     myRootPointersDisposable = Disposer.newDisposable();
-    Disposer.register(this, myRootPointersDisposable);
     List<String> recursiveUrls = ContainerUtil.map(recursivePaths, VfsUtilCore::pathToUrl);
     Set<String> excludedUrls = new THashSet<>();
     // changes in files provided by this method should be watched manually because no-one's bothered to setup correct pointers for them
@@ -222,6 +221,7 @@ public class ProjectRootManagerComponent extends ProjectRootManagerImpl implemen
 
     // avoid creating empty unnecessary container
     if (!recursiveUrls.isEmpty() || !flatPaths.isEmpty() || !excludedUrls.isEmpty()) {
+      Disposer.register(this, myRootPointersDisposable);
       // create container with these URLs with the sole purpose to get events to getRootsValidityChangedListener() when these roots change
       VirtualFilePointerContainer container =
         VirtualFilePointerManager.getInstance().createContainer(myRootPointersDisposable, getRootsValidityChangedListener());
