@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: Runnable>#' type=IrErrorType
-          FUN_EXPR type=IrErrorType
+          FUN_EXPR type=IrErrorType origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
               BLOCK_BODY
                 GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: Comparator>#' type=IrErrorType
-          FUN_EXPR type=IrErrorType
+          FUN_EXPR type=IrErrorType origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:IrErrorType, b:IrErrorType) returnType:IrErrorType 
               VALUE_PARAMETER name:a index:0 type:IrErrorType 
               VALUE_PARAMETER name:b index:1 type:IrErrorType 

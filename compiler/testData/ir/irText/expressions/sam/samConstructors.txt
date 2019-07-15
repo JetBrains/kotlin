@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): java.lang.Runnable declared in <root>'
         TYPE_OP type=java.lang.Runnable origin=SAM_CONVERSION typeOperand=java.lang.Runnable
-          FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
@@ -26,7 +26,7 @@ FILE fqName:<root> fileName:/samConstructors.kt
       RETURN type=kotlin.Nothing from='public final fun test4 (): java.util.Comparator<kotlin.Int> declared in <root>'
         TYPE_OP type=java.util.Comparator<kotlin.Int> origin=SAM_CONVERSION typeOperand=java.util.Comparator<kotlin.Int>
           TYPE_OP type=kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int> origin=IMPLICIT_CAST typeOperand=kotlin.Function2<T of java.util.Comparator?, T of java.util.Comparator?, kotlin.Int>
-            FUN_EXPR type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int>
+            FUN_EXPR type=kotlin.Function2<kotlin.Int?, kotlin.Int?, kotlin.Int> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (a:kotlin.Int?, b:kotlin.Int?) returnType:kotlin.Int
                 VALUE_PARAMETER name:a index:0 type:kotlin.Int?
                 VALUE_PARAMETER name:b index:1 type:kotlin.Int?

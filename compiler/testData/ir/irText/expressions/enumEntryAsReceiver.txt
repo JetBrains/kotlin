@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
         PROPERTY name:value visibility:public modality:OPEN [val] 
           FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final] 
             EXPRESSION_BODY
-              FUN_EXPR type=kotlin.Function0<kotlin.String>
+              FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String 
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value'

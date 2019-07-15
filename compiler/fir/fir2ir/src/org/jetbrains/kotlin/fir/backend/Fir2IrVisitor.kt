@@ -436,7 +436,7 @@ internal class Fir2IrVisitor(
 
             val type = anonymousFunction.typeRef.toIrType(session, declarationStorage)
 
-            IrFunctionExpressionImpl(startOffset, endOffset, type, irFunction)
+            IrFunctionExpressionImpl(startOffset, endOffset, type, irFunction, IrStatementOrigin.LAMBDA)
         }
 
     private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {

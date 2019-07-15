@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/enumEntryReferenceFromEnumEntryClass.kt
         PROPERTY name:aLambda visibility:public modality:FINAL [val] 
           FIELD PROPERTY_BACKING_FIELD name:aLambda type:kotlin.Function0<kotlin.Unit> visibility:public [final] 
             EXPRESSION_BODY
-              FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+              FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
                   BLOCK_BODY
                     CALL 'public final fun <set-counter> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyEnum.Z' type=kotlin.Unit origin=EQ

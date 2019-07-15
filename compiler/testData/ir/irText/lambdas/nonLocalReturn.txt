@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
     BLOCK_BODY
       CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Nothing origin=null
         <R>: kotlin.Nothing
-        block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing>
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun test0 (): kotlin.Unit declared in <root>'
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
     BLOCK_BODY
       CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
-        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
     BLOCK_BODY
       CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
-        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
@@ -30,13 +30,13 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
     BLOCK_BODY
       CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Unit origin=null
         <R>: kotlin.Unit
-        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+        block: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
                 CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.run>): R of kotlin.run [inline] declared in kotlin' type=kotlin.Nothing origin=null
                   <R>: kotlin.Nothing
-                  block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing>
+                  block: FUN_EXPR type=kotlin.Function0<kotlin.Nothing> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Nothing 
                       BLOCK_BODY
                         RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
       CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: GET_VAR 'ints: kotlin.collections.List<kotlin.Int> declared in <root>.testLrmFoo1' type=kotlin.collections.List<kotlin.Int> origin=null
-        action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit>
+        action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit 
             VALUE_PARAMETER name:it index:0 type:kotlin.Int 
             BLOCK_BODY
@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
       CALL 'public final fun forEach <T> (action: kotlin.Function1<T of kotlin.collections.forEach, kotlin.Unit>): kotlin.Unit [inline] declared in kotlin.collections' type=kotlin.Unit origin=null
         <T>: kotlin.Int
         $receiver: GET_VAR 'ints: kotlin.collections.List<kotlin.Int> declared in <root>.testLrmFoo2' type=kotlin.collections.List<kotlin.Int> origin=null
-        action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit>
+        action: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.Int) returnType:kotlin.Unit 
             VALUE_PARAMETER name:it index:0 type:kotlin.Int 
             BLOCK_BODY

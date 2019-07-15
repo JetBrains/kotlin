@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.ir.expressions
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 interface IrFunctionExpression : IrExpression {
-
+    val origin: IrStatementOrigin
     var function: IrSimpleFunction
-
 }

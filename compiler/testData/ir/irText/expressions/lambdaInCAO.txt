@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
     BLOCK_BODY
       CALL 'public final fun plusAssign (lambda: kotlin.Function0<kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=PLUSEQ
         $receiver: GET_VAR 'a: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=PLUSEQ
-        lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+        lambda: FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test1'
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
         VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.Any [val] 
           GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
         VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Function0<kotlin.Unit> [val] 
-          FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+          FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test2'
@@ -52,7 +52,7 @@ FILE fqName:<root> fileName:/lambdaInCAO.kt
           VAR IR_TEMPORARY_VARIABLE name:tmp0_array type:kotlin.Any [val] 
             GET_VAR 'a: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
           VAR IR_TEMPORARY_VARIABLE name:tmp1_index0 type:kotlin.Function0<kotlin.Unit> [val] 
-            FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+            FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Unit declared in <root>.test3'

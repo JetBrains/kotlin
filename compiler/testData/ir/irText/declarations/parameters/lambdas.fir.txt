@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:public [final,static] 
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function2<kotlin.Function1<kotlin.String, kotlin.String>, kotlin.String, kotlin.Function1<kotlin.String, kotlin.String>>
+        FUN_EXPR type=kotlin.Function2<kotlin.Function1<kotlin.String, kotlin.String>, kotlin.String, kotlin.Function1<kotlin.String, kotlin.String>> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Function1<kotlin.String, kotlin.String>
             VALUE_PARAMETER name:it index:0 type:kotlin.String
             BLOCK_BODY
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static] 
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function1<kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>, kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>>
+        FUN_EXPR type=kotlin.Function1<kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>, kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> 
             BLOCK_BODY
               ERROR_CALL 'Unresolved reference: <Unresolved name: hashCode>#' type=IrErrorType
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test3 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit>
+        FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit
             VALUE_PARAMETER name:i index:0 type:kotlin.Int 
             VALUE_PARAMETER name:j index:1 type:kotlin.Int 
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test4 visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> visibility:public [final,static]
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit>
+        FUN_EXPR type=kotlin.Function2<kotlin.Int, kotlin.Int, kotlin.Unit> origin=LAMBDA
           FUN name:<no name provided> visibility:local modality:FINAL <> (i:kotlin.Int, j:kotlin.Int) returnType:kotlin.Unit 
             VALUE_PARAMETER name:i index:0 type:kotlin.Int 
             VALUE_PARAMETER name:j index:1 type:kotlin.Int 

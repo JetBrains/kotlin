@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun k (): kotlin.Function0<kotlin.String> declared in <root>'
-        FUN_EXPR type=kotlin.Function0<kotlin.String>
+        FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String 
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.k'

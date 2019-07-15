@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -30,7 +31,12 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         val lambdaExpressionType = getInferredTypeWithImplicitCastsOrFail(ktLambda).toIrType()
         val irLambdaFunction = FunctionGenerator(context).generateLambdaFunctionDeclaration(ktFun)
 
-        return IrFunctionExpressionImpl(ktLambda.startOffset, ktLambda.endOffset, lambdaExpressionType, irLambdaFunction)
+        return IrFunctionExpressionImpl(
+            ktLambda.startOffset, ktLambda.endOffset,
+            lambdaExpressionType,
+            irLambdaFunction,
+            IrStatementOrigin.LAMBDA
+        )
     }
 
     fun generateFunction(ktFun: KtNamedFunction): IrStatement {
@@ -38,7 +44,12 @@ class LocalFunctionGenerator(statementGenerator: StatementGenerator) : Statement
         if (ktFun.name != null) return irFun
 
         val funExpressionType = getInferredTypeWithImplicitCastsOrFail(ktFun).toIrType()
-        return IrFunctionExpressionImpl(ktFun.startOffset, ktFun.endOffset, funExpressionType, irFun)
+        return IrFunctionExpressionImpl(
+            ktFun.startOffset, ktFun.endOffset,
+            funExpressionType,
+            irFun,
+            IrStatementOrigin.ANONYMOUS_FUNCTION
+        )
     }
 
     private fun generateFunctionDeclaration(ktFun: KtNamedFunction) =

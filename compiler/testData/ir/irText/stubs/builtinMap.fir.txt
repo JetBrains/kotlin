@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CALL 'public final fun apply (block: kotlin.Function1<T of <uninitialized parent>, kotlin.Unit>): T of <uninitialized parent> [inline] declared in kotlin' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
-              block: FUN_EXPR type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit>
+              block: FUN_EXPR type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit 
                   VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> 
                   BLOCK_BODY

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/samAdapter.kt
     BLOCK_BODY
       VAR name:hello type:IrErrorType [val] 
         ERROR_CALL 'Unresolved reference: <Unresolved name: Runnable>#' type=IrErrorType
-          FUN_EXPR type=IrErrorType
+          FUN_EXPR type=IrErrorType origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType 
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: println#' type=IrErrorType

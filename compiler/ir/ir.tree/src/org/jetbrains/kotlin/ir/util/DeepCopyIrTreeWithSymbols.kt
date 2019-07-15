@@ -593,7 +593,8 @@ open class DeepCopyIrTreeWithSymbols(
         IrFunctionExpressionImpl(
             expression.startOffset, expression.endOffset,
             expression.type.remapType(),
-            expression.function.transform()
+            expression.function.transform(),
+            mapStatementOrigin(expression.origin)!!
         )
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference =

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
+import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
@@ -15,7 +16,8 @@ class IrFunctionExpressionImpl(
     startOffset: Int,
     endOffset: Int,
     type: IrType,
-    override var function: IrSimpleFunction
+    override var function: IrSimpleFunction,
+    override val origin: IrStatementOrigin
 ) :
     IrExpressionBase(startOffset, endOffset, type),
     IrFunctionExpression {

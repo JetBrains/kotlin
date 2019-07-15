@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
   PROPERTY name:anonymous visibility:public modality:FINAL [val] 
     FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static] 
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function0<kotlin.Unit>
+        FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit 
             BLOCK_BODY
               CALL 'public final fun println (): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null

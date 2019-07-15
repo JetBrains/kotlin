@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/objectReferenceInClosureInSuperConstructorCall.kt
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test [primary] 
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> (lambda: kotlin.Function0<kotlin.Any>) [primary] declared in <root>.Base'
-          lambda: FUN_EXPR type=kotlin.Function0<<root>.Test>
+          lambda: FUN_EXPR type=kotlin.Function0<<root>.Test> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Test 
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Test declared in <root>.Test.<init>'
