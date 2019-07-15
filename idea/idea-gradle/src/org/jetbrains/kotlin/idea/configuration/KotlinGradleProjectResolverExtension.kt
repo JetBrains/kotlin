@@ -57,6 +57,8 @@ var DataNode<out ModuleData>.isHmpp
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_HMPP_MODULE"), false)
 var DataNode<ModuleData>.platformPluginId
         by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
+var DataNode<ModuleData>.kotlinNativeHome
+        by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_NATIVE_HOME"))
 var DataNode<out ModuleData>.implementedModuleNames
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
 // Project is usually the same during all import, thus keeping Map Project->Dependencies makes model a bit more complicated but allows to avoid future problems

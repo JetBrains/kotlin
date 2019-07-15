@@ -13,6 +13,8 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Exec
 import org.jetbrains.kotlin.gradle.KotlinMPPGradleModel.Companion.NO_KOTLIN_NATIVE_HOME
 import org.jetbrains.plugins.gradle.model.*
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
@@ -218,6 +220,53 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return project.getTargets()?.mapNotNull { buildTarget(it, sourceSetMap, dependencyResolver, project, dependencyMapper) }
     }
 
+    private operator fun Any?.get(methodName: String, vararg params: Any): Any? {
+        return this[methodName, params.map { it.javaClass }, params.toList()]
+    }
+
+    private operator fun Any?.get(methodName: String, paramTypes: List<Class<*>>, params: List<Any?>): Any? {
+        if (this == null) return null
+        return this::class.java.getMethodOrNull(methodName, *paramTypes.toTypedArray())?.invoke(this, *params.toTypedArray())
+    }
+
+    private fun buildArtifact(
+        executableName: String,
+        linkTask: Task,
+        runConfiguration: KonanRunConfigurationModel
+    ): KonanArtifactModel? {
+        val outputKind = linkTask["getOutputKind"]["name"] as? String ?: return null
+        val konanTargetName = linkTask["getTarget"] as? String ?: error("No arch target found")
+        val outputFile = (linkTask["getOutputFile"] as? Provider<*>)?.orNull as? File ?: return null
+        val compilationTarget = linkTask["getCompilation"]["getTarget"]
+        val compilationTargetName = compilationTarget["getName"] as? String ?: return null
+        val isTests = linkTask["getProcessTests"] as? Boolean ?: return null
+
+        return KonanArtifactModelImpl(
+            compilationTargetName,
+            executableName,
+            outputKind,
+            konanTargetName,
+            outputFile,
+            linkTask.path,
+            runConfiguration,
+            isTests
+        )
+    }
+
+    private fun konanArtifacts(target: Named): List<KonanArtifactModel> {
+        val result = ArrayList<KonanArtifactModel>()
+
+        val binaries = target["getBinaries"] as? Collection<*> ?: return result
+        binaries.forEach { binary ->
+            val executableName = binary["getBaseName"] as? String ?: ""
+            val linkTask = binary["getLinkTask"] as? Task ?: return@forEach
+            val runConfiguration = KonanRunConfigurationModelImpl(binary["getRunTask"] as? Exec)
+            buildArtifact(executableName, linkTask, runConfiguration)?.let { result.add(it) }
+        }
+
+        return result
+    }
+
     private fun buildTarget(
         gradleTarget: Named,
         sourceSetMap: Map<String, KotlinSourceSet>,
@@ -247,7 +296,17 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
         val jar = buildTargetJar(gradleTarget, project)
         val testTasks = buildTestTasks(project, gradleTarget)
-        val target = KotlinTargetImpl(gradleTarget.name, targetPresetName, disambiguationClassifier, platform, compilations, testTasks, jar)
+        val artifacts = konanArtifacts(gradleTarget)
+        val target = KotlinTargetImpl(
+            gradleTarget.name,
+            targetPresetName,
+            disambiguationClassifier,
+            platform,
+            compilations,
+            testTasks,
+            jar,
+            artifacts
+        )
         compilations.forEach {
             it.disambiguationClassifier = target.disambiguationClassifier
             it.platform = target.platform

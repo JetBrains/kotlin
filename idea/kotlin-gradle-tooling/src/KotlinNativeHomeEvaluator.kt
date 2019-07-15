@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.Project
 
 // KT-29613, KT-29783
-internal object KotlinNativeHomeEvaluator {
+object KotlinNativeHomeEvaluator {
     private const val KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY = "konanHome"
 
     private const val FALLBACK_ACCESSOR_CLASS = "org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunnerKt"
     private const val FALLBACK_ACCESSOR_METHOD = "getKonanHome"
 
-    internal fun getKotlinNativeHome(project: Project): String? =
+    fun getKotlinNativeHome(project: Project): String? =
         getKotlinNativeHomePrimary(project) ?: getKotlinNativeHomeFallback(project)
 
     // Read Kotlin/Native home from the predefined property in Gradle plugin.
