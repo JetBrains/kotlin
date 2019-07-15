@@ -134,9 +134,7 @@ class KotlinConsoleRunner(
 
     private val consoleScriptDefinition = object : KotlinScriptDefinition(Any::class) {
         override val name = "Kotlin REPL"
-        override fun isScript(fileName: String): Boolean {
-            return fileName == consoleView.virtualFile.name
-        }
+        override fun isScript(fileName: String): Boolean = fileName.startsWith(consoleView.virtualFile.name)
         override fun getScriptName(script: KtScript) = Name.identifier("REPL")
     }
 
@@ -278,10 +276,13 @@ class KotlinConsoleRunner(
         runReadAction {
             val lineNumber = replState.successfulLinesCount + 1
             val virtualFile =
-                    LightVirtualFile("line$lineNumber${KotlinParserDefinition.STD_SCRIPT_EXT}", KotlinLanguage.INSTANCE, text).apply {
-                        charset = CharsetToolkit.UTF8_CHARSET
-                        isWritable = false
-                    }
+                LightVirtualFile(
+                    "${consoleView.virtualFile.name}$lineNumber${KotlinParserDefinition.STD_SCRIPT_EXT}",
+                    KotlinLanguage.INSTANCE, text
+                ).apply {
+                    charset = CharsetToolkit.UTF8_CHARSET
+                    isWritable = false
+                }
             val psiFile = (PsiFileFactory.getInstance(project) as PsiFileFactoryImpl).trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, true, false) as KtFile?
                           ?: error("Failed to setup PSI for file:\n$text")
 
