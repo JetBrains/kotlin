@@ -4,19 +4,31 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.types.SwiftFunctionType
+import com.jetbrains.swift.psi.types.SwiftType
+import com.jetbrains.swift.psi.types.SwiftTypeFactory
 import com.jetbrains.swift.symbols.*
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCMethod
 
 class KtSwiftMethodSymbol : KtSwiftMemberSymbol, SwiftFunctionSymbol {
-    constructor(stub: ObjCMethod, project: Project, file: VirtualFile, containingTypeSymbol: SwiftTypeSymbol)
-        : super(stub, file, project, containingTypeSymbol)
+    private lateinit var parameters: List<SwiftParameterSymbol>
+    private lateinit var returnType: SwiftType
+
+    constructor(
+        stub: ObjCMethod,
+        project: Project,
+        file: VirtualFile,
+        containingTypeSymbol: SwiftTypeSymbol
+    ) : super(stub, file, project, containingTypeSymbol)
 
     constructor() : super()
 
     override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.method
 
     override fun getSwiftType(): SwiftFunctionType {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val typeFactory = SwiftTypeFactory.getInstance()
+        val domain = typeFactory.createDomainType(parameters)
+        val functionType = typeFactory.createFunctionType(domain, returnType, false)
+        return typeFactory.createImplicitSelfMethodType(functionType)
     }
 
     override fun getStaticness(): SwiftCanBeStatic.Staticness = SwiftCanBeStatic.Staticness.NOT_STATIC
@@ -26,6 +38,10 @@ class KtSwiftMethodSymbol : KtSwiftMemberSymbol, SwiftFunctionSymbol {
     override fun getGenericParametersInfo(): SwiftGenericParametersInfo = SwiftGenericParametersInfo.EMPTY
 
     fun setParameters(parameters: List<SwiftParameterSymbol>) {
-        TODO("not implemented")
+        this.parameters = parameters
+    }
+
+    fun setReturnType(returnType: SwiftType) {
+        this.returnType = returnType
     }
 }

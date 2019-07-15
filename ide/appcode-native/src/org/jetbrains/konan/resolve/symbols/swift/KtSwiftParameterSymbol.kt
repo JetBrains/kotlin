@@ -12,9 +12,12 @@ import com.jetbrains.swift.psi.SwiftDeclarationKind
 import com.jetbrains.swift.psi.SwiftExpression
 import com.jetbrains.swift.psi.types.SwiftType
 import com.jetbrains.swift.symbols.*
+import com.jetbrains.swift.symbols.impl.variable.TypeAnnotationInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCParameter
 
 class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
+    private lateinit var methodSymbol: SwiftFunctionSymbol
+    private lateinit var type: SwiftType
 
     constructor(
         stub: ObjCParameter,
@@ -22,57 +25,43 @@ class KtSwiftParameterSymbol : KtSwiftImmediateSymbol, SwiftParameterSymbol {
         file: VirtualFile,
         methodSymbol: SwiftFunctionSymbol
     ) : super(stub, file, project) {
+        this.methodSymbol = methodSymbol
     }
 
     constructor() : super()
 
     override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.parameter
 
-    override fun getContext(): SwiftMemberSymbol? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getContext(): SwiftMemberSymbol? = methodSymbol
 
-    override fun getSwiftType(): SwiftType {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getSwiftType(): SwiftType = type
 
-    override fun isOptional(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun isOptional(): Boolean = false
 
-    override fun isReadOnly(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun isReadOnly(): Boolean = true //todo???
 
-    override fun getModifierAttributes(modifier: SwiftModifierInfo.Modifier): SwiftAttributesInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    //todo [medvedev]???
+    override fun getModifierAttributes(modifier: SwiftModifierInfo.Modifier): SwiftAttributesInfo = SwiftAttributesInfo.EMPTY
 
-    override fun getNameInfo(): SwiftParameterNameInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getNameInfo(): SwiftParameterNameInfo = SwiftParameterNameInfo.create(name, null, true)
 
-    override fun getParent(): SwiftCallableSymbol? {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getParent(): SwiftCallableSymbol? = methodSymbol
 
-    override fun isVariadic(): Boolean {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    //todo [medvedev]???
+    override fun isVariadic(): Boolean = false
 
-    override fun getTypeInfo(): SwiftVariableTypeInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(type)
 
-    override fun getNameWithParent(p0: OCResolveContext): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getNameWithParent(context: OCResolveContext): String = name
 
     override val initializer: SwiftExpression?
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = null
 
+    //todo [medvedev]???
     override val modifiers: SwiftModifierInfo
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = SwiftModifierInfo.EMPTY
 
-
+    fun setType(type: SwiftType) {
+        this.type = type
+    }
 }

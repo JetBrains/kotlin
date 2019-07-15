@@ -5,6 +5,7 @@
 
 package org.jetbrains.konan.internal
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.application.ApplicationNamesInfo
@@ -16,6 +17,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectEx
 import com.intellij.openapi.project.guessProjectDir
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiModificationTrackerImpl
 import com.jetbrains.cidr.xcode.model.XcodeMetaData
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
@@ -76,8 +79,24 @@ class AppCodeGradleKonanProjectAttacher(
 
     private fun refreshOCRoots() {
         TransactionGuard.getInstance().submitTransactionAndWait {
-            runWriteAction { XcodeMetaData.getInstance(project).updateContentRoots() }
+            runWriteAction {
+                XcodeMetaData.getInstance(project).apply {
+                    updateContentRoots()
+                    //todo [medvedev] use proper tracker instead of `xcodeProjectTrackers.referencesTracker`
+                    xcodeProjectTrackers.referencesTracker.incModificationCount()
+                    dropLocalResolve(project)
+                }
+            }
         }
+    }
+
+    private fun dropLocalResolve(project: Project) {
+        TransactionGuard.getInstance().submitTransactionLater(project, Runnable {
+            (PsiManager.getInstance(project).modificationTracker as? PsiModificationTrackerImpl)?.let { psiTracker ->
+                runWriteAction { psiTracker.incCounter() }
+            }
+            DaemonCodeAnalyzer.getInstance(project).restart()
+        })
     }
 
 }

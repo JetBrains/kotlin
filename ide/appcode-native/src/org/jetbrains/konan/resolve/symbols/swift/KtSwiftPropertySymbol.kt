@@ -10,16 +10,20 @@ import com.jetbrains.swift.symbols.impl.variable.TypeAnnotationInfo
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 
 class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
-    constructor(stub: ObjCProperty, project: Project, file: VirtualFile, containingTypeSymbol: SwiftTypeSymbol)
-        : super(stub, file, project, containingTypeSymbol)
+    private lateinit var type: SwiftType
+
+    constructor(
+        stub: ObjCProperty,
+        project: Project,
+        file: VirtualFile,
+        containingTypeSymbol: SwiftTypeSymbol
+    ) : super(stub, file, project, containingTypeSymbol)
 
     constructor() : super()
 
     override fun getDeclarationKind(): SwiftDeclarationKind = SwiftDeclarationKind.propertyDeclaration
 
-    override fun getSwiftType(): SwiftType {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun getSwiftType(): SwiftType = this.type
 
     override fun isReadOnly(): Boolean {
         val modifiers = this.modifiers
@@ -32,16 +36,20 @@ class KtSwiftPropertySymbol : KtSwiftMemberSymbol, SwiftPropertySymbol {
     }
 
     override fun getModifierAttributes(modifier: SwiftModifierInfo.Modifier): SwiftAttributesInfo {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return SwiftAttributesInfo.EMPTY //todo [medvedev]???
     }
 
     override fun getStaticness(): SwiftCanBeStatic.Staticness = SwiftCanBeStatic.Staticness.NOT_STATIC
 
     override fun getTypeInfo(): SwiftVariableTypeInfo = TypeAnnotationInfo(swiftType)
 
-    override val modifiers: SwiftModifierInfo
+    override val modifiers: SwiftModifierInfo //todo [medvedev]???
         get() = SwiftModifierInfo.EMPTY
 
     override val initializer: SwiftExpression?
         get() = null
+
+    fun setType(type: SwiftType) {
+        this.type = type
+    }
 }

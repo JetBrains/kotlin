@@ -6,8 +6,6 @@ import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.serializers.FieldSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
 import org.jetbrains.konan.resolve.symbols.swift.KtSwiftLazySymbol
-import org.jetbrains.konan.resolve.symbols.serialization.KtSerializer.Companion.currentFile
-import org.jetbrains.konan.resolve.symbols.serialization.KtSerializer.Companion.project
 
 class KtSwiftLazySymbolSerializer<T : KtSwiftLazySymbol<*, *>>(
     symbolClass: Class<T>,

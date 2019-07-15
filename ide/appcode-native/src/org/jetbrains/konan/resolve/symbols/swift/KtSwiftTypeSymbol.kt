@@ -48,17 +48,10 @@ abstract class KtSwiftTypeSymbol<State : KtSwiftTypeSymbol.TypeState, Stub : Obj
 
     override fun getContainingTypeSymbol(): SwiftTypeSymbol? = null
 
-    override fun getRawSuperTypes(): List<SwiftClassType> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
     open class TypeState : StubState {
-        val members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
-        //todo
-        lateinit var protocolNames: List<String>
+        var members: MostlySingularMultiMap<String, SwiftMemberSymbol>?
 
         constructor(clazz: KtSwiftTypeSymbol<*, *>, stub: ObjCClass<*>, project: Project) : super(stub) {
-            this.protocolNames = stub.superProtocols
             val translator = StubToSwiftSymbolTranslator(project)
             var map: MostlySingularMultiMap<String, SwiftMemberSymbol>? = null
             for (member in stub.members) {

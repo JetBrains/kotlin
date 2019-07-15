@@ -16,7 +16,7 @@ abstract class KtSwiftLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> 
     @Transient
     private lateinit var project: Project
 
-    constructor(stub: Stb, project: Project, file: VirtualFile) : super(stub, project) {
+    constructor(stub: Stb, project: Project, file: VirtualFile) : super(stub, project, stub.swiftName) {
         this.file = file
         this.project = project
     }

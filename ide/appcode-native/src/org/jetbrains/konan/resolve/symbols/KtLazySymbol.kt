@@ -22,9 +22,10 @@ abstract class KtLazySymbol<State : KtLazySymbol.StubState, Stb : Stub<*>> : KtS
 
     constructor(
         stub: Stb,
-        project: Project
+        project: Project,
+        name: String = stub.name
     ) {
-        this.name = stub.name
+        this.name = name
         this.stubAndProject = Pair(stub, project)
     }
 

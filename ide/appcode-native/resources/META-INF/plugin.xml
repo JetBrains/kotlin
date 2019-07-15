@@ -36,6 +36,14 @@
     <xcodeExternalBuildProvider implementation="org.jetbrains.konan.gradle.execution.AppCodeGradleKonanExternalBuildProvider"/>
   </extensions>
 
+  <extensions defaultExtensionNs="appcode.swift">
+    <sourceModuleProducer implementation="org.jetbrains.konan.resolve.konan.KonanSwiftSourceModuleProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="swift">
+    <kotlinNative implementation="org.jetbrains.konan.resolve.konan.KonanSwiftExtensionPoint"/>
+  </extensions>
+
   <extensions defaultExtensionNs="cidr.lang">
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.konan.KonanBridgeSymbolTableProvider" order="before OCSymbolTableProvider"/>
     <symbolTableProvider implementation="org.jetbrains.konan.resolve.KtSymbolTableProvider"/>

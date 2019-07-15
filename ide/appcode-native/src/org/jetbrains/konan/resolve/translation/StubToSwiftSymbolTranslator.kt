@@ -29,8 +29,11 @@ class StubToSwiftSymbolTranslator(val project: Project) {
         return when (stub) {
             is ObjCMethod -> KtSwiftMethodSymbol(stub, project, file, clazz).also { method ->
                 method.setParameters(translateParameters(stub, method, file))
+                method.setReturnType(stub.returnType.convertType(method))
             }
-            is ObjCProperty -> KtSwiftPropertySymbol(stub, project, file, clazz)
+            is ObjCProperty -> KtSwiftPropertySymbol(stub, project, file, clazz).also { property ->
+                property.setType(stub.type.convertType(property))
+            }
             else -> {
                 OCLog.LOG.error("unknown kotlin objective-c declaration: " + stub::class)
                 null
@@ -39,9 +42,13 @@ class StubToSwiftSymbolTranslator(val project: Project) {
     }
 
     private fun translateParameters(
-        stub: ObjCMethod,
+        methodStub: ObjCMethod,
         functionSymbol: SwiftFunctionSymbol,
         file: VirtualFile
     ): List<SwiftParameterSymbol> =
-        stub.parameters.map { parameter -> KtSwiftParameterSymbol(parameter, project, file, functionSymbol) }
+        methodStub.parameters.map { parameterStub ->
+            KtSwiftParameterSymbol(parameterStub, project, file, functionSymbol).apply {
+                setType(parameterStub.type.convertType(parameter))]
+            }
+        }
 }

@@ -2,14 +2,11 @@ package org.jetbrains.konan.resolve.symbols.serialization
 
 import com.esotericsoftware.kryo.serializers.DefaultSerializers
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.jetbrains.cidr.lang.symbols.symtable.FileSymbolTableSerializer
 import com.jetbrains.cidr.lang.symbols.symtable.SerializerProvider
 import org.jetbrains.konan.resolve.symbols.objc.*
 import org.jetbrains.konan.resolve.symbols.swift.*
 import org.objenesis.instantiator.ObjectInstantiator
-import java.lang.reflect.Method
 
 class KtSerializer : SerializerProvider {
     override fun registerSerializers(serializer: FileSymbolTableSerializer) {
@@ -31,8 +28,9 @@ class KtSerializer : SerializerProvider {
         serializer.registerSwiftLazySymbolSerializer(KtSwiftProtocolSymbol::class.java, ::KtSwiftProtocolSymbol)
         serializer.registerSwiftLazySymbolSerializer(KtSwiftExtensionSymbol::class.java, ::KtSwiftExtensionSymbol)
 
-//        serializer.registerFieldSerializer(KtOCInterfaceSymbol.InterfaceState::class.java) { KtOCInterfaceSymbol.InterfaceState() }
-//        serializer.registerFieldSerializer(KtOCProtocolSymbol.ProtocolState::class.java) { KtOCProtocolSymbol.ProtocolState() }
+        serializer.registerFieldSerializer(KtSwiftClassSymbol.ClassState::class.java) { KtSwiftClassSymbol.ClassState() }
+        serializer.registerFieldSerializer(KtSwiftProtocolSymbol.ProtocolState::class.java) { KtSwiftProtocolSymbol.ProtocolState() }
+        serializer.registerFieldSerializer(KtSwiftExtensionSymbol.ExtensionState::class.java) { KtSwiftExtensionSymbol.ExtensionState() }
 
         serializer.kryo.register(listOf<Any>().javaClass, DefaultSerializers.CollectionsEmptyListSerializer())
     }
@@ -56,29 +54,10 @@ class KtSerializer : SerializerProvider {
     }
 
 
-    override fun getVersion(): Int = 0
+    override fun getVersion(): Int = 1
 
     companion object {
         @JvmStatic
         val LOG: Logger = Logger.getInstance(KtSerializer::class.java)
-
-        internal val FileSymbolTableSerializer.currentFile: VirtualFile
-            get() = CurrentFileGetter.get(this)
-
-        internal val FileSymbolTableSerializer.project: Project
-            get() = ProjectGetter.get(this)
-
-        //todo get rid of reflection
-        internal object CurrentFileGetter {
-            private val method: Method = FileSymbolTableSerializer::class.java.getMethod("getCurrentFile")
-            fun get(serializer: FileSymbolTableSerializer): VirtualFile = method.invoke(serializer) as VirtualFile
-        }
-
-        //todo get rid of reflection
-        internal object ProjectGetter {
-            private val method: Method = FileSymbolTableSerializer::class.java.getMethod("getProject")
-            fun get(serializer: FileSymbolTableSerializer): Project = method.invoke(serializer) as Project
-        }
-
     }
 }
