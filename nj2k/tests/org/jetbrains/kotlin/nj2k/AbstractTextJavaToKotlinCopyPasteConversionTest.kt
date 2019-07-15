@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.nj2k
 
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.test.KotlinTestUtils
 
 abstract class AbstractTextNewJavaToKotlinCopyPasteConversionTest : AbstractTextJavaToKotlinCopyPasteConversionTest() {
+    override val BASE_PATH = KotlinTestUtils.getHomeDirectory() + "/nj2k/testData/copyPastePlainText"
+
     override fun isNewJ2K(): Boolean = true
 }
