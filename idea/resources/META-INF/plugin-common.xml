@@ -51,6 +51,9 @@
     <action id="Kotlin.NewScript" class="org.jetbrains.kotlin.idea.actions.NewKotlinScriptAction">
       <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
     </action>
+    <action id="Kotlin.NewWorksheet" class="org.jetbrains.kotlin.idea.actions.NewKotlinWorksheetAction">
+      <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFromTemplate"/>
+    </action>
 
     <group id = "ConvertJavaToKotlinGroup">
       <separator/>
@@ -381,6 +384,7 @@
     <internalFileTemplate name="Kotlin Class"/>
     <internalFileTemplate name="Kotlin Enum"/>
     <internalFileTemplate name="Kotlin Interface"/>
+    <internalFileTemplate name="Kotlin Worksheet"/>
     <internalFileTemplate name="Kotlin Script"/>
 
     <gotoSymbolContributor implementation="org.jetbrains.kotlin.idea.goto.KotlinGotoSymbolContributor"/>

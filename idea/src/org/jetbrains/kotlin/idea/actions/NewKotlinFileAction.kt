@@ -148,7 +148,7 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
             get() = NameValidator
 
         private fun findOrCreateTarget(dir: PsiDirectory, name: String, directorySeparators: CharArray): Pair<String, PsiDirectory> {
-            var className = name.substringBeforeLast(".kt")
+            var className = removeKotlinExtensionIfPresent(name)
             var targetDir = dir
 
             for (splitChar in directorySeparators) {
@@ -166,6 +166,13 @@ class NewKotlinFileAction : CreateFileFromTemplateAction(
                 }
             }
             return Pair(className, targetDir)
+        }
+
+        private fun removeKotlinExtensionIfPresent(name: String): String = when {
+            name.endsWith(".$KOTLIN_WORKSHEET_EXTENSION") -> name.removeSuffix(".$KOTLIN_WORKSHEET_EXTENSION")
+            name.endsWith(".$KOTLIN_SCRIPT_EXTENSION") -> name.removeSuffix(".$KOTLIN_SCRIPT_EXTENSION")
+            name.endsWith(".${KotlinFileType.EXTENSION}") -> name.removeSuffix(".${KotlinFileType.EXTENSION}")
+            else -> name
         }
 
         private fun createFromTemplate(dir: PsiDirectory, className: String, template: FileTemplate): PsiFile? {
