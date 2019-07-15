@@ -4534,6 +4534,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             public void testGetterReturnsNothing() throws Exception {
                 runTest("idea/testData/inspectionsLocal/functionWithLambdaExpressionBody/removeBraces/getterReturnsNothing.kt");
             }
+
+            @TestMetadata("kt32580.kt")
+            public void testKt32580() throws Exception {
+                runTest("idea/testData/inspectionsLocal/functionWithLambdaExpressionBody/removeBraces/kt32580.kt");
+            }
         }
 
         @TestMetadata("idea/testData/inspectionsLocal/functionWithLambdaExpressionBody/specifyType")
@@ -4589,6 +4594,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("getterReturnsNothing.kt")
             public void testGetterReturnsNothing() throws Exception {
                 runTest("idea/testData/inspectionsLocal/functionWithLambdaExpressionBody/wrapRun/getterReturnsNothing.kt");
+            }
+
+            @TestMetadata("kt32580.kt")
+            public void testKt32580() throws Exception {
+                runTest("idea/testData/inspectionsLocal/functionWithLambdaExpressionBody/wrapRun/kt32580.kt");
             }
         }
     }
