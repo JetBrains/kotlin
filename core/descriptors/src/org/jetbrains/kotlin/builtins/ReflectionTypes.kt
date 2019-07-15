@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.DescriptorUtils.COROUTINES_PACKAGE_FQ_NAME_RELEASE
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
 import kotlin.reflect.KProperty
@@ -206,7 +207,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
                        || shortName == "KCallable" || shortName == "KAnnotatedElement"
 
             }
-            if (packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME) {
+            if (packageName == KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME || packageName == COROUTINES_PACKAGE_FQ_NAME_RELEASE) {
                 return shortName.startsWith("Function") // FunctionN, Function
                         || shortName.startsWith("SuspendFunction")
             }
