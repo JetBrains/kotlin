@@ -15,6 +15,7 @@
  */
 package com.intellij.tools;
 
+import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
 import com.intellij.openapi.options.SchemeProcessor;
@@ -22,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ToolManager extends BaseToolManager<Tool> {
   public ToolManager(@NotNull SchemeManagerFactory factory) {
-    super(factory, "tools", ToolsBundle.message("tools.settings"));
+    super(ActionManagerEx.getInstanceEx(), factory, "tools", ToolsBundle.message("tools.settings"));
   }
 
   @Override
