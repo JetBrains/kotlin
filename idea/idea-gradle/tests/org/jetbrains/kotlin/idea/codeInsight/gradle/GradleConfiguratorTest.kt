@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -571,22 +571,6 @@ class GradleConfiguratorTest : GradleImportingTestCase() {
 
     @Test
     fun testDisableFeatureSupport() {
-        val files = importProjectFromTestData()
-
-        runInEdtAndWait {
-            myTestFixture.project.executeWriteCommand("") {
-                KotlinWithGradleConfigurator.changeFeatureConfiguration(
-                    myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.DISABLED, false
-                )
-            }
-
-            checkFiles(files)
-        }
-    }
-
-    @TargetVersions("4.7+")
-    @Test
-    fun testDisableFeatureSupportMultiplatform() {
         val files = importProjectFromTestData()
 
         runInEdtAndWait {

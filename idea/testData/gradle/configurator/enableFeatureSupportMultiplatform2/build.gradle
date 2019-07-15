@@ -7,13 +7,15 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.3.0-rc-190"
     }
 }
-apply plugin: "kotlin-multiplatform"
+plugins {
+    id 'org.jetbrains.kotlin.multiplatform' version '1.3.41'
+}
 repositories {
     jcenter()
     mavenCentral()
 }
 kotlin {
-    targets.fromPreset(presets.jvm, 'jvm')
+    jvm()
     sourceSets {
         commonMain {
             dependencies {
@@ -23,13 +25,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-    }
-    targets {
-        configure([jvm]) {
-            tasks.getByName(compilations.main.compileKotlinTaskName).kotlinOptions {
-                freeCompilerArgs = ["-XXLanguage:+InlineClasses"]
             }
         }
     }
