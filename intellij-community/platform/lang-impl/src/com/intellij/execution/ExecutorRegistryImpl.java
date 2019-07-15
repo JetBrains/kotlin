@@ -51,7 +51,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   private final Set<Trinity<Project, String, String>> myInProgress = Collections.synchronizedSet(new THashSet<>());
 
   public ExecutorRegistryImpl() {
-    initComponent();
+    init();
   }
 
   synchronized void initExecutor(@NotNull Executor executor) {
@@ -133,7 +133,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     return myId2Executor.get(executorId);
   }
 
-  private void initComponent() {
+  private void init() {
     MessageBusConnection connection = ApplicationManager.getApplication().getMessageBus().connect(this);
     connection.subscribe(ExecutionManager.EXECUTION_TOPIC, new ExecutionListener() {
       @Override
