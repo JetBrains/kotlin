@@ -1054,6 +1054,9 @@ open class FirBodyResolveTransformer(
     override fun transformProperty(property: FirProperty, data: Any?): CompositeTransformResult<FirDeclaration> {
         val returnTypeRef = property.returnTypeRef
         if (returnTypeRef !is FirImplicitTypeRef && implicitTypeOnly) return property.compose()
+        if (returnTypeRef is FirImplicitTypeRef) {
+            property.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
+        }
         return withScopeCleanup(localScopes) {
             localScopes.addIfNotNull(primaryConstructorParametersScope)
             withContainer(property) {
