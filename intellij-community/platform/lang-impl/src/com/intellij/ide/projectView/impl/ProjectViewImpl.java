@@ -2169,7 +2169,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     boolean isEnabled(@Nullable String paneId) {
       AbstractProjectViewPane pane = myId2Pane.get(paneId);
-      return pane != null && isEnabled(pane);
+      return pane != null ? isEnabled(pane) : ApplicationManager.getApplication().isUnitTestMode();
     }
 
     boolean isEnabled(@NotNull AbstractProjectViewPane pane) {
