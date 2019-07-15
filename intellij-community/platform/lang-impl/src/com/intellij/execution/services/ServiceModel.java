@@ -8,13 +8,16 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ColoredItem;
+import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.util.Function;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.concurrency.Invoker;
 import com.intellij.util.concurrency.InvokerSupplier;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.util.containers.JBTreeTraverser;
 import com.intellij.util.containers.TreeTraversal;
 import org.jetbrains.annotations.NotNull;
@@ -75,15 +78,18 @@ class ServiceModel implements Disposable, InvokerSupplier {
     return result;
   }
 
-  @Nullable
-  ServiceViewItem findItem(Object service, Class<?> contributorClass) {
+  private JBIterable<ServiceViewItem> findItems(Object service, Class<?> contributorClass) {
     Object value = service instanceof ServiceViewProvidingContributor ? ((ServiceViewProvidingContributor)service).asService() : service;
     return JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node ->
       contributorClass.isInstance(node.getRootContributor()) ? new ArrayList<>(node.getChildren()) : null)
       .withRoots(myRoots)
       .traverse(TreeTraversal.PLAIN_BFS)
-      .filter(node -> node.getValue().equals(value))
-      .first();
+      .filter(node -> node.getValue().equals(value));
+  }
+
+  @Nullable
+  ServiceViewItem findItem(Object service, Class<?> contributorClass) {
+    return findItems(service, contributorClass).first();
   }
 
   @Nullable
@@ -276,17 +282,20 @@ class ServiceModel implements Disposable, InvokerSupplier {
   }
 
   private void groupChanged(ServiceEvent e) {
-    ServiceViewItem item = findItem(e.target, e.contributorClass);
-    if (!(item instanceof ServiceGroupNode)) return;
+    JBIterable<ServiceGroupNode> groups = findItems(e.target, e.contributorClass).filter(ServiceGroupNode.class);
+    ServiceGroupNode first = groups.first();
+    if (first == null) return;
 
     //noinspection unchecked
-    ServiceViewDescriptor viewDescriptor = ((ServiceViewGroupingContributor)item.getContributor()).getGroupDescriptor(e.target);
-    item.setViewDescriptor(viewDescriptor);
-    ServiceViewItem parent = item.getParent();
-    if (parent != null) {
-      List<ServiceViewItem> children = parent.getChildren();
-      children.remove(item);
-      addGroupOrdered(children, (ServiceGroupNode)item);
+    ServiceViewDescriptor viewDescriptor = ((ServiceViewGroupingContributor)first.getContributor()).getGroupDescriptor(e.target);
+    for (ServiceViewItem group : groups) {
+      group.setViewDescriptor(viewDescriptor);
+      ServiceViewItem parent = group.getParent();
+      if (parent != null) {
+        List<ServiceViewItem> children = parent.getChildren();
+        children.remove(group);
+        addGroupOrdered(children, (ServiceGroupNode)group);
+      }
     }
   }
 
@@ -441,9 +450,9 @@ class ServiceModel implements Disposable, InvokerSupplier {
 
   private static int compareGroups(ServiceGroupNode group1, ServiceGroupNode group2) {
     ServiceViewDescriptor groupDescriptor1 = group1.getViewDescriptor();
-    WeighedItem weighedItem1 = groupDescriptor1 instanceof WeighedItem ? (WeighedItem)groupDescriptor1 : null;
+    WeighedItem weighedItem1 = ObjectUtils.tryCast(groupDescriptor1, WeighedItem.class);
     ServiceViewDescriptor groupDescriptor2 = group2.getViewDescriptor();
-    WeighedItem weighedItem2 = groupDescriptor2 instanceof WeighedItem ? (WeighedItem)groupDescriptor2 : null;
+    WeighedItem weighedItem2 = ObjectUtils.tryCast(groupDescriptor2, WeighedItem.class);
     if (weighedItem1 != null) {
       if (weighedItem2 == null) return -1;
 
@@ -612,6 +621,23 @@ class ServiceModel implements Disposable, InvokerSupplier {
     @Override
     protected List<ServiceViewItem> doGetChildren() {
       return new CopyOnWriteArrayList<>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+
+      ServiceGroupNode node = (ServiceGroupNode)o;
+      return getValue().equals(node.getValue()) && Comparing.equal(getParent(), node.getParent());
+    }
+
+    @Override
+    public int hashCode() {
+      int result = super.hashCode();
+      ServiceViewItem parent = getParent();
+      result = 31 * result + (parent != null ? parent.hashCode() : 0);
+      return result;
     }
   }
 }

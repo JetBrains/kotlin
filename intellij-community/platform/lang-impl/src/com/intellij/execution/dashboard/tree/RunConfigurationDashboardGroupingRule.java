@@ -22,6 +22,7 @@ import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -54,7 +55,7 @@ public class RunConfigurationDashboardGroupingRule implements RunDashboardGroupi
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
-    if (node instanceof RunDashboardRunConfigurationNode) {
+    if (node instanceof RunDashboardRunConfigurationNode && !Registry.is("ide.service.view")) {
       RunnerAndConfigurationSettings configurationSettings = ((RunDashboardRunConfigurationNode)node).getConfigurationSettings();
       return new RunDashboardGroupImpl<>(configurationSettings, configurationSettings.getName(),
                                          configurationSettings.getConfiguration().getIcon());

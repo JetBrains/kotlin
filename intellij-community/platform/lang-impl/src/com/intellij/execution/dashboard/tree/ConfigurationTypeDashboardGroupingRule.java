@@ -21,9 +21,12 @@ import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.dashboard.RunDashboardGroup;
 import com.intellij.execution.dashboard.RunDashboardGroupingRule;
 import com.intellij.execution.dashboard.RunDashboardRunConfigurationNode;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentation;
 import com.intellij.ide.util.treeView.smartTree.ActionPresentationData;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.registry.Registry;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -32,7 +35,7 @@ import org.jetbrains.annotations.Nullable;
  * @author konstantin.aleev
  */
 public class ConfigurationTypeDashboardGroupingRule implements RunDashboardGroupingRule {
-  @NonNls private static final String NAME = "ConfigurationTypeDashboardGroupingRule";
+  @NonNls public static final String NAME = "ConfigurationTypeDashboardGroupingRule";
 
   @Override
   @NotNull
@@ -61,6 +64,12 @@ public class ConfigurationTypeDashboardGroupingRule implements RunDashboardGroup
   @Nullable
   @Override
   public RunDashboardGroup getGroup(AbstractTreeNode<?> node) {
+    if (Registry.is("ide.service.view")) {
+      Project project = node.getProject();
+      if (project != null && !PropertiesComponent.getInstance(project).getBoolean(getName(), true)) {
+        return null;
+      }
+    }
     if (node instanceof RunDashboardRunConfigurationNode) {
       RunnerAndConfigurationSettings configurationSettings = ((RunDashboardRunConfigurationNode)node).getConfigurationSettings();
       ConfigurationType type = configurationSettings.getType();

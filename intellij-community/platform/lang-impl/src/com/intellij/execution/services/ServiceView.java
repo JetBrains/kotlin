@@ -19,6 +19,7 @@ import org.jetbrains.concurrency.Promise;
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 abstract class ServiceView extends JPanel implements Disposable {
   protected final Project myProject;
@@ -128,6 +129,9 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       if (PlatformDataKeys.COPY_PROVIDER.is(dataId)) {
         return new ServiceViewCopyProvider(serviceView);
+      }
+      if (ServiceViewActionUtils.CONTRIBUTORS_KEY.is(dataId)) {
+        return serviceView.getModel().getRoots().stream().map(item -> item.getRootContributor()).collect(Collectors.toSet());
       }
       List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
       ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems);

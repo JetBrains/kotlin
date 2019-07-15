@@ -7,9 +7,10 @@ import com.intellij.execution.RunnerAndConfigurationSettings;
 import com.intellij.execution.actions.StopAction;
 import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.execution.configurations.RunConfiguration;
-import com.intellij.execution.dashboard.tree.ConfigurationTypeDashboardGroupingRule;
+import com.intellij.execution.dashboard.tree.FolderDashboardGroupingRule;
 import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
+import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.runners.FakeRerunAction;
 import com.intellij.execution.services.ServiceViewDescriptor;
 import com.intellij.execution.services.ServiceViewGroupingContributor;
@@ -22,6 +23,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
+import com.intellij.ide.util.treeView.WeighedItem;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
@@ -36,7 +38,6 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -60,7 +61,6 @@ public class RunConfigurationsServiceViewContributor
         return RunConfigurationsServiceViewContributor.getPopupActions();
       }
     };
-  private static final RunDashboardGroupingRule TYPE_GROUPING_RULE = new ConfigurationTypeDashboardGroupingRule();
 
   @NotNull
   @Override
@@ -87,55 +87,17 @@ public class RunConfigurationsServiceViewContributor
   @NotNull
   @Override
   public List<RunDashboardGroup> getGroups(@NotNull RunConfigurationContributor contributor) {
-    RunDashboardGroup group = TYPE_GROUPING_RULE.getGroup(contributor.asService());
-    return group != null ? Collections.singletonList(group) : Collections.emptyList();
+    List<RunDashboardGroup> result = new ArrayList<>();
+    for (RunDashboardGroupingRule groupingRule : RunDashboardGroupingRule.EP_NAME.getExtensions()) {
+      ContainerUtil.addIfNotNull(result, groupingRule.getGroup(contributor.asService()));
+    }
+    return result;
   }
 
   @NotNull
   @Override
   public ServiceViewDescriptor getGroupDescriptor(@NotNull RunDashboardGroup group) {
-    PresentationData presentationData = new PresentationData();
-    presentationData.setPresentableText(group.getName());
-    presentationData.setIcon(group.getIcon());
-    return new ServiceViewDescriptor() {
-      @Nullable
-      @Override
-      public String getId() {
-        if (group instanceof RunDashboardGroupImpl) {
-          Object value = ((RunDashboardGroupImpl)group).getValue();
-          if (value instanceof ConfigurationType) {
-            return ((ConfigurationType)value).getId();
-          }
-        }
-        return group.getName();
-      }
-
-      @Override
-      public JComponent getContentComponent() {
-        return null;
-      }
-
-      @Override
-      public ActionGroup getToolbarActions() {
-        return RunConfigurationsServiceViewContributor.getToolbarActions(null);
-      }
-
-      @Override
-      public ActionGroup getPopupActions() {
-        return RunConfigurationsServiceViewContributor.getPopupActions();
-      }
-
-      @NotNull
-      @Override
-      public ItemPresentation getPresentation() {
-        return presentationData;
-      }
-
-      @Override
-      public DataProvider getDataProvider() {
-        return null;
-      }
-    };
+    return new RunDashboardGroupViewDescriptor(group);
   }
 
   @NotNull
@@ -279,6 +241,82 @@ public class RunConfigurationsServiceViewContributor
       RunnerAndConfigurationSettings settings = node.getConfigurationSettings();
       RunManager runManager = RunManager.getInstance(settings.getConfiguration().getProject());
       return runManager.hasSettings(settings) ? () -> runManager.removeConfiguration(settings) : null;
+    }
+  }
+
+  private static class RunDashboardGroupViewDescriptor implements ServiceViewDescriptor, WeighedItem {
+    private final RunDashboardGroup myGroup;
+    private final PresentationData myPresentationData;
+
+    private RunDashboardGroupViewDescriptor(RunDashboardGroup group) {
+      myGroup = group;
+      myPresentationData = new PresentationData();
+      myPresentationData.setPresentableText(group.getName());
+      myPresentationData.setIcon(group.getIcon());
+    }
+
+    @Nullable
+    @Override
+    public String getId() {
+      if (myGroup instanceof RunDashboardGroupImpl) {
+        Object value = ((RunDashboardGroupImpl)myGroup).getValue();
+        if (value instanceof ConfigurationType) {
+          return ((ConfigurationType)value).getId();
+        }
+      }
+      return myGroup.getName();
+    }
+
+    @Override
+    public ActionGroup getToolbarActions() {
+      return RunConfigurationsServiceViewContributor.getToolbarActions(null);
+    }
+
+    @Override
+    public ActionGroup getPopupActions() {
+      return RunConfigurationsServiceViewContributor.getPopupActions();
+    }
+
+    @NotNull
+    @Override
+    public ItemPresentation getPresentation() {
+      return myPresentationData;
+    }
+
+    @Override
+    public int getWeight() {
+      Object value = ((RunDashboardGroupImpl)myGroup).getValue();
+      if (value instanceof RunDashboardRunConfigurationStatus) {
+        return ((RunDashboardRunConfigurationStatus)value).getPriority();
+      }
+      return 0;
+    }
+
+    @Nullable
+    @Override
+    public Runnable getRemover() {
+      if (myGroup instanceof FolderDashboardGroupingRule.FolderDashboardGroup) {
+        return () -> {
+          String groupName = myGroup.getName();
+          Project project = ((FolderDashboardGroupingRule.FolderDashboardGroup)myGroup).getProject();
+          List<RunDashboardManager.RunDashboardService> services = RunDashboardManager.getInstance(project).getRunConfigurations();
+
+          final RunManagerImpl runManager = RunManagerImpl.getInstanceImpl(project);
+          runManager.fireBeginUpdate();
+          try {
+            for (RunDashboardManager.RunDashboardService service : services) {
+              RunnerAndConfigurationSettings settings = service.getSettings();
+              if (groupName.equals(settings.getFolderName())) {
+                settings.setFolderName(null);
+              }
+            }
+          }
+          finally {
+            runManager.fireEndUpdate();
+          }
+        };
+      }
+      return null;
     }
   }
 
