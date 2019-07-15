@@ -80,7 +80,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.ide.BuiltInServerManager;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
@@ -100,8 +99,6 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderContext;
 import java.awt.image.renderable.RenderableImage;
 import java.awt.image.renderable.RenderableImageProducer;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.net.MalformedURLException;
@@ -284,7 +281,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     HTMLEditorKit editorKit = new JBHtmlEditorKit(true) {
       @Override
       public ViewFactory getViewFactory() {
-        return new HTMLFactory() {
+        return new JBHtmlFactory() {
           @Override
           public View create(Element elem) {
             AttributeSet attrs = elem.getAttributes();
@@ -297,37 +294,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
               }
               if (icon != null) {
                 return new MyIconView(elem, icon);
-              }
-            }
-            else if ("img".equals(elem.getName())) {
-              String src = (String)attrs.getAttribute(HTML.Attribute.SRC);
-              // example: "data:image/png;base64,ENCODED_IMAGE_HERE"
-              if (src != null && src.startsWith("data:image") && src.contains("base64")) {
-                String[] split = src.split(",");
-                if (split.length == 2) {
-                  ByteArrayInputStream bis = null;
-                  try {
-                    byte[] bytes = Base64.getDecoder().decode(split[1]);
-                    bis = new ByteArrayInputStream(bytes);
-                    BufferedImage image = ImageIO.read(bis);
-                    if (image != null) {
-                      return new MyBufferedImageView(elem, image);
-                    }
-                  }
-                  catch (IllegalArgumentException | IOException e) {
-                    LOG.trace(e);
-                  }
-                  finally {
-                    try {
-                      if (bis != null) {
-                        bis.close();
-                      }
-                    }
-                    catch (IOException e) {
-                      LOG.trace(e);
-                    }
-                  }
-                }
               }
             }
             View view = super.create(elem);
@@ -1867,132 +1833,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       Graphics2D graphics = image.createGraphics();
       super.paint(graphics, new Rectangle(image.getWidth(), image.getHeight()));
       UIUtil.drawImage(g, ImageUtil.ensureHiDPI(image, ScaleContext.create(myEditorPane)), bounds.x, bounds.y, null);
-    }
-  }
-
-  private class MyBufferedImageView extends View {
-
-    private static final int DEFAULT_BORDER = 0;
-    private final BufferedImage myBufferedImage;
-    private final int width;
-    private final int height;
-    private final int border;
-    private final float vAlign;
-
-    MyBufferedImageView(Element elem, BufferedImage myBufferedImage) {
-      super(elem);
-      this.myBufferedImage = myBufferedImage;
-      int width = getIntAttr(HTML.Attribute.WIDTH, -1);
-      int height = getIntAttr(HTML.Attribute.HEIGHT, -1);
-      if (width < 0 && height < 0) {
-        this.width = myBufferedImage.getWidth();
-        this.height = myBufferedImage.getHeight();
-      } else if (width < 0) {
-        this.width = height * getAspectRatio();
-        this.height = height;
-      } else if (height < 0) {
-        this.width = width;
-        this.height = width / getAspectRatio();
-      } else {
-        this.width = width;
-        this.height = height;
-      }
-      this.border = getIntAttr(HTML.Attribute.BORDER, DEFAULT_BORDER);
-      Object alignment = elem.getAttributes().getAttribute(HTML.Attribute.ALIGN);
-      float vAlign = 1.0f;
-      if (alignment != null) {
-        alignment = alignment.toString();
-        if ("top".equals(alignment)) {
-          vAlign = 0f;
-        }
-        else if ("middle".equals(alignment)) {
-          vAlign = .5f;
-        }
-      }
-      this.vAlign = vAlign;
-    }
-
-    private int getAspectRatio() {
-      return myBufferedImage.getWidth() / myBufferedImage.getHeight();
-    }
-
-    private int getIntAttr(HTML.Attribute name, int defaultValue) {
-      AttributeSet attr = getElement().getAttributes();
-      if (attr.isDefined(name)) {
-        String val = (String)attr.getAttribute(name);
-        if (val == null) {
-          return defaultValue;
-        }
-        else {
-          try {
-            return Math.max(0, Integer.parseInt(val));
-          }
-          catch (NumberFormatException x) {
-            return defaultValue;
-          }
-        }
-      }
-      else {
-        return defaultValue;
-      }
-    }
-
-    @Override
-    public float getPreferredSpan(int axis) {
-      switch (axis) {
-        case View.X_AXIS:
-          return width + 2 * border;
-        case View.Y_AXIS:
-          return height + 2 * border;
-        default:
-          throw new IllegalArgumentException("Invalid axis: " + axis);
-      }
-    }
-
-    @Override
-    public String getToolTipText(float x, float y, Shape allocation) {
-      return (String)super.getElement().getAttributes().getAttribute(HTML.Attribute.ALT);
-    }
-
-    @Override
-    public void paint(Graphics g, Shape a) {
-      Rectangle bounds = a.getBounds();
-      Rectangle dstBounds = new Rectangle(bounds.x + border, bounds.y + border, width, height);
-      UIUtil.drawImage(g, ImageUtil.ensureHiDPI(myBufferedImage, ScaleContext.create(myEditorPane)), dstBounds, null);
-    }
-
-    @Override
-    public Shape modelToView(int pos, Shape a, Position.Bias b) throws BadLocationException {
-      int p0 = getStartOffset();
-      int p1 = getEndOffset();
-      if ((pos >= p0) && (pos <= p1)) {
-        Rectangle r = a.getBounds();
-        if (pos == p1) {
-          r.x += r.width;
-        }
-        r.width = 0;
-        return r;
-      }
-      return null;
-    }
-
-    @Override
-    public int viewToModel(float x, float y, Shape a, Position.Bias[] bias) {
-      Rectangle alloc = (Rectangle) a;
-      if (x < alloc.x + alloc.width) {
-        bias[0] = Position.Bias.Forward;
-        return getStartOffset();
-      }
-      bias[0] = Position.Bias.Backward;
-      return getEndOffset();
-    }
-
-    @Override
-    public float getAlignment(int axis) {
-      if (axis == View.Y_AXIS) {
-        return vAlign;
-      }
-      return super.getAlignment(axis);
     }
   }
 
