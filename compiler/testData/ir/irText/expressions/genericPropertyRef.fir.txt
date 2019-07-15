@@ -161,12 +161,11 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static] ' type=kotlin.Any? origin=null
           value: GET_VAR 'value: T of <uninitialized parent> declared in <root>.<set-bar>' type=T of <uninitialized parent> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:barRef type:T of <uninitialized parent> visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.String.Companion visibility:public [final,static]
       EXPRESSION_BODY
-        CALL 'public final fun <get-bar> (): T of <uninitialized parent> declared in <root>' type=T of <uninitialized parent> origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:T of <uninitialized parent> 
+        CALL 'public final fun <get-bar> (): T of <uninitialized parent> declared in <root>' type=kotlin.String.Companion origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-barRef> visibility:public modality:FINAL <> () returnType:kotlin.String.Companion
       correspondingProperty: PROPERTY name:barRef visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-barRef> (): T of <uninitialized parent> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:T of <uninitialized parent> visibility:public [final,static] ' type=T of <uninitialized parent> origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-barRef> (): kotlin.String.Companion declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.String.Companion visibility:public [final,static] ' type=kotlin.String.Companion origin=null
