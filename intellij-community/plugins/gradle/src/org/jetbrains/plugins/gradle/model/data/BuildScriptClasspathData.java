@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public final class BuildScriptClasspathData extends AbstractExternalEntityData {
@@ -38,6 +39,21 @@ public final class BuildScriptClasspathData extends AbstractExternalEntityData {
 
   public void setGradleHomeDir(@Nullable File gradleHomeDir) {
     this.gradleHomeDir = gradleHomeDir;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    if (!super.equals(o)) return false;
+    BuildScriptClasspathData data = (BuildScriptClasspathData)o;
+    return Objects.equals(gradleHomeDir, data.gradleHomeDir) &&
+           classpathEntries.equals(data.classpathEntries);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), gradleHomeDir, classpathEntries);
   }
 
   @NotNull

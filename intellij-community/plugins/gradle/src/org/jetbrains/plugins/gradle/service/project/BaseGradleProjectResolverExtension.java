@@ -1144,7 +1144,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       libraryName += (":" + FileUtilRt.getExtension(binaryPath.getName()));
     }
 
-    final LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName, unresolved);
+    LibraryData library = new LibraryData(GradleConstants.SYSTEM_ID, libraryName, unresolved);
     if (moduleVersion != null) {
       library.setGroup(moduleVersion.getGroup());
       library.setArtifactId(moduleVersion.getName());
@@ -1172,7 +1172,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       library.addPath(LibraryPathType.DOC, javadocPath.getAbsolutePath());
     }
 
-    if (level == LibraryLevel.PROJECT && !linkProjectLibrary(ideProject, library)) {
+    if (level == LibraryLevel.PROJECT && !linkProjectLibrary(resolverCtx, ideProject, library)) {
       level = LibraryLevel.MODULE;
     }
 
