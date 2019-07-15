@@ -226,7 +226,8 @@ def flags = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
 
 if (flags.includeCidrPlugins) {
     logger.info("Including CIDR plugins in settings.gradle")
-    include ":kotlin-ultimate:ide:cidr-native",
+    include ":kotlin-ultimate:ide:common-native",
+            ":kotlin-ultimate:ide:cidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
@@ -236,12 +237,11 @@ if (flags.includeCidrPlugins) {
     logger.info("NOT including CIDR plugins in settings.gradle")
 }
 
-def isTeamcityBuild = hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
-if (flags.kotlinUltimateExists && (isTeamcityBuild || flags.intellijUltimateEnabled)) {
-    include(
-            ":kotlin-ultimate:ultimate",
-            ":kotlin-ultimate:ultimate:ultimate-runner"
-    )
+if (flags.includeUltimate) {
+    include ":kotlin-ultimate:ultimate",
+            ":kotlin-ultimate:ultimate:ultimate-runner",
+            ":kotlin-ultimate:ide:common-native",
+            ":kotlin-ultimate:ide:ultimate-native"
     logger.info("Including extension for IJ Ultimate in settings.gradle")
 } else {
     logger.info("NOT including extension for IJ Ultimate in settings.gradle")

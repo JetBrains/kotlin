@@ -206,6 +206,8 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             val mppModel = resolverCtx.getMppModel(gradleModule)
             if (mppModel == null || externalProject == null) return
 
+            mainModuleNode.kotlinNativeHome = mppModel.kotlinNativeHome
+
             val jdkName = gradleModule.jdkNameIfAny
 
             // save artefacts locations.
@@ -244,6 +246,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 if (target.name == KotlinTarget.METADATA_TARGET_NAME) continue
                 val targetData = KotlinTargetData(target.name).also {
                     it.archiveFile = target.jar?.archiveFile
+                    it.konanArtifacts = target.konanArtifacts
                 }
                 val targetDataNode = mainModuleNode.createChild<KotlinTargetData>(KotlinTargetData.KEY, targetData)
 

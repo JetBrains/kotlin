@@ -57,9 +57,7 @@ class KotlinBuildProperties(
     val useBootstrapStdlib: Boolean
         get() = isInJpsBuildIdeaSync || getBoolean("kotlin.build.useBootstrapStdlib", false)
 
-    val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
-
-    val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
+    private val kotlinUltimateExists: Boolean = propertiesProvider.rootProjectDir.resolve("kotlin-ultimate").exists()
 
     val isTeamcityBuild: Boolean = getBoolean("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
@@ -71,6 +69,10 @@ class KotlinBuildProperties(
             }
             return kotlinUltimateExists && (explicitlyEnabled || isTeamcityBuild)
         }
+
+    val includeCidrPlugins: Boolean = kotlinUltimateExists && getBoolean("cidrPluginsEnabled")
+
+    val includeUltimate: Boolean = kotlinUltimateExists && (isTeamcityBuild || intellijUltimateEnabled)
 
     val postProcessing: Boolean get() = isTeamcityBuild || getBoolean("kotlin.build.postprocessing", true)
 
