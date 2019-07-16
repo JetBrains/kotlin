@@ -289,8 +289,8 @@ open class GradleKotlinJSNodeFrameworkSupportProvider(
     override fun getDescription() = "A Kotlin library or application targeting JavaScript for Node.js"
 }
 
-open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
-    "KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP
+class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSupportProvider(
+    "KOTLIN_MPP", "Kotlin (Multiplatform - Experimental)", KotlinIcons.MPP
 ) {
     override fun getPluginId() = "org.jetbrains.kotlin.multiplatform"
     override fun getPluginExpression() = "id 'org.jetbrains.kotlin.multiplatform'"
@@ -298,38 +298,6 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getDependencies(sdk: Sdk?): List<String> = listOf()
     override fun getTestDependencies(): List<String> = listOf()
 
-    override fun getDescription() =
-        "For sharing code between platforms (JVM, JS, Android, iOS, etc.)"
-
-    override fun addSupport(
-        buildScriptData: BuildScriptDataBuilder,
-        module: Module,
-        sdk: Sdk?,
-        specifyPluginVersionIfNeeded: Boolean,
-        explicitPluginVersion: String?
-    ) {
-        super.addSupport(buildScriptData, module, sdk, specifyPluginVersionIfNeeded, explicitPluginVersion)
-
-        buildScriptData.addOther(
-            """kotlin {
-    /* Targets declarations omitted
-    *  Documentation: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html */
-
-    sourceSets {
-        commonMain {
-            dependencies {
-                implementation kotlin('stdlib-common')
-            }
-        }
-        commonTest {
-            dependencies {
-                implementation kotlin('test-common')
-                implementation kotlin('test-annotations-common')
-            }
-        }
-    }
-}"""
-        )
-    }
+    override fun getDescription() = "Kotlin multiplatform code"
 }
 
