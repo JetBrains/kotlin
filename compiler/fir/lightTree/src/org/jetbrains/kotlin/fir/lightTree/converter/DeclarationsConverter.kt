@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringWithoutBacktick
@@ -53,7 +51,7 @@ class DeclarationsConverter(
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>
 ) : BaseConverter(session, tree) {
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree)
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -94,6 +92,31 @@ class DeclarationsConverter(
         firFile.declarations += firDeclarationList
 
         return firFile
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
+     */
+    private fun convertBlockExpression(block: LighterASTNode): FirBlock {
+        val firStatements = mutableListOf<FirStatement>()
+        block.forEachChildren {
+            when (it.tokenType) {
+                //TODO("not implemented")
+                BLOCK -> ""
+                BINARY_EXPRESSION -> firStatements += expressionConverter.convertBinaryExpression(it)
+                PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> firStatements += expressionConverter.convertUnaryExpression(it)
+                else -> if (it.isExpression()) firStatements += expressionConverter.visitExpression(it)
+            }
+        }
+        return FirBlockImpl(session, null).apply {
+            firStatements.forEach { firStatement ->
+                if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
+                    statements += firStatement
+                } else {
+                    statements += firStatement.statements
+                }
+            }
+        }
     }
 
     /*****    PREAMBLE    *****/
@@ -639,7 +662,7 @@ class DeclarationsConverter(
         lateinit var identifier: String
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var isReturnType = false
-        var isDelegate = false
+        var firDelegateExpression: FirExpression? = null
         var isVar = false
         var receiverType: FirTypeRef? = null
         var returnType: FirTypeRef = implicitType
@@ -655,7 +678,7 @@ class DeclarationsConverter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                PROPERTY_DELEGATE -> isDelegate = true
+                PROPERTY_DELEGATE -> firDelegateExpression = expressionConverter.visitExpression(it)
                 VAR_KEYWORD -> isVar = true
                 PROPERTY_ACCESSOR -> {
                     val propertyAccessor = convertGetterOrSetter(it, returnType)
@@ -675,11 +698,7 @@ class DeclarationsConverter(
                 returnType,
                 isVar,
                 firExpression,
-                delegate = if (isDelegate) {
-                    FirExpressionStub(session, null)
-                    //TODO("not implemented")
-                    //{ property.delegate?.expression }.toFirExpression("Should have delegate")
-                } else null
+                delegate = firDelegateExpression
             )
         } else {
             FirMemberPropertyImpl(
@@ -700,11 +719,7 @@ class DeclarationsConverter(
                 firExpression,
                 getter ?: FirDefaultPropertyGetter(session, null, returnType, modifiers.getVisibility()),
                 if (isVar) setter ?: FirDefaultPropertySetter(session, null, returnType, modifiers.getVisibility()) else null,
-                if (isDelegate) {
-                    FirExpressionStub(session, null)
-                    //TODO("not implemented")
-                    //{ property.delegate?.expression }.toFirExpression("Should have delegate")
-                } else null
+                firDelegateExpression
             ).apply {
                 this.typeParameters += firTypeParameters
                 this.joinTypeParameters(typeConstraints)
@@ -854,6 +869,7 @@ class DeclarationsConverter(
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionBody
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.buildFirBody
      */
     private fun visitFunctionBody(firBlock: FirBlock?, firExpression: FirExpression?): FirBlock? {
         return when {
@@ -878,11 +894,10 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
-    private fun visitBlock(block: LighterASTNode?): FirBlock {
+    private fun visitBlock(block: LighterASTNode): FirBlock {
         return if (!stubMode) {
-            //TODO("not implemented")
-            FirBlockImpl(session, null)
-            //visitStatements(ctx.statements())
+            val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.getAsString())
+            return DeclarationsConverter(session, stubMode, blockTree).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
                 session,
@@ -1116,7 +1131,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentList
      */
-    private fun convertTypeArguments(typeArguments: LighterASTNode): List<FirTypeProjection> {
+    fun convertTypeArguments(typeArguments: LighterASTNode): List<FirTypeProjection> {
         return typeArguments.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 TYPE_PROJECTION -> container += convertTypeProjection(node)
