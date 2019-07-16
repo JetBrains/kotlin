@@ -1,12 +1,19 @@
 <idea-plugin>
   <id>com.intellij.stats.completion</id>
-  <name>Completion Stats Collector</name>
+  <name>Machine Learning Code Completion</name>
   <vendor>JetBrains</vendor>
 
   <description><![CDATA[
-      Collects data about your usage of code completion, anonymizes and sends it to JetBrains.
+      <p>The plugin improves code completion feature by reordering of elements in the completion
+      popup by ranking more relevant items higher using machine learning models.</p>
+
+      <p>Currently, ML reordering is available for Java, Kotlin and Python languages. To enable the feature for your language,
+      check settings in Editor | General | Code Completion | "Machine Learning Assistant Code Completion" section.</p>
+
+      <p>Notice: the plugin does not collect or send any data in stable (release) builds. But in the EAP builds
+      the plugin collects data about your usage of code completion, anonymizes and sends it to JetBrains.
       Note, the plugin doesn't send any of your personal data or code. All it sends is just numbers
-      calculated based on your completion usage patterns. The plugin does not send more than 15MB of data per day.
+      calculated based on your completion usage patterns. The plugin does not send more than 15MB of data per day. </p>
     ]]></description>
 
   <depends>com.intellij.modules.lang</depends>
