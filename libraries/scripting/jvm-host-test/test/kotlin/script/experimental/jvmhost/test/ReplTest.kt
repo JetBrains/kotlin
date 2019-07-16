@@ -56,6 +56,25 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testImplicitReceiver() {
+        val receiver = TestReceiver()
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration.with {
+                implicitReceivers(TestReceiver::class)
+            },
+            simpleScriptEvaluationConfiguration.with {
+                implicitReceivers(receiver)
+            },
+            sequenceOf(
+                "val x = 4",
+                "x + prop1",
+                "res1 * 3"
+            ),
+            sequenceOf(null, 7, 21)
+        )
+    }
+
+    @Test
     fun testEvalWithError() {
         chechEvaluateInRepl(
             simpleScriptompilationConfiguration,
@@ -142,3 +161,5 @@ val simpleScriptompilationConfiguration = createJvmCompilationConfigurationFromT
 }
 
 val simpleScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
+
+class TestReceiver(val prop1: Int = 3)
