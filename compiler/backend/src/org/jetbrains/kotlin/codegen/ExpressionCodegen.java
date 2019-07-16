@@ -1473,7 +1473,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         markLineNumber(element, false);
     }
 
-    public void markLineNumber(@NotNull KtElement statement, boolean markEndOffset) {
+    public void markLineNumber(@NotNull PsiElement statement, boolean markEndOffset) {
         if (!shouldMarkLineNumbers) return;
 
         Integer lineNumber = CodegenUtil.getLineNumberForElement(statement, markEndOffset);
