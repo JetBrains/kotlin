@@ -41,8 +41,10 @@ class SenderComponent(private val sender: StatisticSender, private val statusHel
   }
 
   override fun initComponent() {
-    ApplicationManager.getApplication().executeOnPooledThread {
-      send()
+    if (isSendAllowed()) {
+      ApplicationManager.getApplication().executeOnPooledThread {
+        send()
+      }
     }
   }
 
