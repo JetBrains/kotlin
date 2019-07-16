@@ -15,7 +15,7 @@ fun <T> getIfEnabledOn(clazz: ClassDescriptor, body: () -> T): T? {
     val module = clazz.module.getCapability(ModuleInfo.Capability)?.unwrapModuleSourceInfo()?.module ?: return null
     val facet = KotlinFacet.get(module) ?: return null
     val pluginClasspath = facet.configuration.settings.compilerArguments?.pluginClasspaths ?: return null
-    if (pluginClasspath.none { it == KotlinSerializationImportHandler.PLUGIN_JPS_JAR }) return null
+    if (pluginClasspath.none(KotlinSerializationImportHandler::isPluginJarPath)) return null
     return body()
 }
 
