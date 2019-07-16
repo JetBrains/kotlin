@@ -3466,4 +3466,13 @@
 
     <navbar implementation="org.jetbrains.kotlin.idea.navigationToolbar.KotlinNavBarModelExtension" order="first"/>
   </extensions>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin">
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JvmIdePlatformKind"/>
+    <idePlatformKind implementation="org.jetbrains.kotlin.platform.impl.JsIdePlatformKind"/>
+
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JvmIdePlatformKindTooling"/>
+    <idePlatformKindTooling implementation="org.jetbrains.kotlin.idea.core.platform.impl.JsIdePlatformKindTooling"/>
+  </extensions>
+
 </idea-plugin>
