@@ -20,6 +20,7 @@ import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.refactoring.rename.NameSuggestionProvider;
 import com.intellij.refactoring.rename.PreferrableNameSuggestionProvider;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,22 +30,23 @@ public class MyLookupExpression extends Expression {
   protected final LookupElement[] myLookupItems;
   private final String myAdvertisementText;
 
-  public MyLookupExpression(final String name,
-                            final LinkedHashSet<String> names,
-                            PsiNamedElement elementToRename,
-                            final PsiElement nameSuggestionContext,
-                            final boolean shouldSelectAll,
-                            final String advertisement) {
+  public MyLookupExpression(String name,
+                            @Nullable LinkedHashSet<String> names,
+                            @Nullable PsiNamedElement elementToRename,
+                            @Nullable PsiElement nameSuggestionContext,
+                            boolean shouldSelectAll,
+                            String advertisement) {
     myName = name;
     myAdvertisementText = advertisement;
     myLookupItems = initLookupItems(names, elementToRename, nameSuggestionContext, shouldSelectAll);
   }
 
-  private static LookupElement[] initLookupItems(LinkedHashSet<String> names,
-                                                 PsiNamedElement elementToRename,
-                                                 PsiElement nameSuggestionContext,
+  private static LookupElement[] initLookupItems(@Nullable LinkedHashSet<String> names,
+                                                 @Nullable PsiNamedElement elementToRename,
+                                                 @Nullable PsiElement nameSuggestionContext,
                                                  final boolean shouldSelectAll) {
     if (names == null) {
+      if (elementToRename == null) return LookupElement.EMPTY_ARRAY;
       names = new LinkedHashSet<>();
       for (NameSuggestionProvider provider : NameSuggestionProvider.EP_NAME.getExtensionList()) {
         final SuggestedNameInfo suggestedNameInfo = provider.getSuggestedNames(elementToRename, nameSuggestionContext, names);
