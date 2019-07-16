@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.fir.lightTree.compare
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiFileFactory
+import com.intellij.psi.PsiManager
+import com.intellij.psi.impl.PsiFileFactoryImpl
+import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
+import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
@@ -23,7 +29,7 @@ import java.io.File
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    private fun compareBase(stubMode: Boolean, compareFir: (File) -> Boolean) {
+    private fun compareBase(compareFir: (File) -> Boolean) {
         val path = System.getProperty("user.dir")
         var counter = 0
         var errorCounter = 0
@@ -40,7 +46,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     private fun compareAll(stubMode: Boolean) {
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
-        compareBase(stubMode) { file ->
+        compareBase { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree
@@ -122,7 +128,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitAssignment = visitAssignment
         )
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
-        compareBase(stubMode) { file ->
+        compareBase { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree

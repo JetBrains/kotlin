@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
 
 open class BaseConverter(
     session: FirSession,
@@ -25,7 +26,7 @@ open class BaseConverter(
     protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
     protected val implicitType = FirImplicitTypeRefImpl(session, null)
 
-    protected fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
+    fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 type -> container += node
@@ -33,12 +34,20 @@ open class BaseConverter(
         } ?: listOf()
     }
 
-    protected fun LighterASTNode?.getChildrenAsArray(): Array<LighterASTNode?> {
+    fun LighterASTNode?.getChildrenAsArray(): Array<LighterASTNode?> {
         if (this == null) return arrayOf()
 
         val kidsRef = Ref<Array<LighterASTNode?>>()
         tree.getChildren(this, kidsRef)
         return kidsRef.get()
+    }
+
+    fun LighterASTNode.getExpressionInParentheses(): LighterASTNode {
+        this.forEachChildren {
+            if (it.isExpression()) return it
+        }
+
+        throw Exception()
     }
 
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
