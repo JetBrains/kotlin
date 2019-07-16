@@ -115,10 +115,10 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val hasMore = LineTooltipRenderer.isActiveHtml(myText!!)
     if (tooltipAction == null && !hasMore) return
 
-    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore)
+    val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore, newLayout)
 
     val settingsConstraints = GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                 JBUI.insets(if (newLayout) 8 else 4, 7, 4, 4), 0, 0)
+                                                 JBUI.insets(if (newLayout) 7 else 4, 7, 4, if (newLayout) 2 else 4), 0, 0)
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
@@ -155,7 +155,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
       .fillCellHorizontally()
       .anchor(GridBagConstraints.WEST)
 
-    val topInset = if (newLayout) 4 else 5
+    val topInset = 5
     val bottomInset = if (newLayout) (if (highlightActions) 4 else 10) else 5
     buttons.add(createActionLabel(tooltipAction.text, runFixAction, hintHint.textBackground),
                 gridBag.next().insets(topInset, if (newLayout) 10 else 8, bottomInset, 4))
@@ -286,7 +286,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
 
   private fun createSettingsComponent(hintHint: HintHint,
                                       reloader: TooltipReloader,
-                                      hasMore: Boolean): JComponent {
+                                      hasMore: Boolean,
+                                      newLayout: Boolean): JComponent {
     val presentation = Presentation()
     presentation.icon = AllIcons.Actions.More
     presentation.putClientProperty(ActionButton.HIDE_DROPDOWN_ICON, true)
@@ -295,8 +296,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val docAction = ShowDocAction(reloader, hasMore)
     actions.add(docAction)
     val actionGroup = SettingsActionGroup(actions)
-
-    val settingsButton = ActionButton(actionGroup, presentation, ActionPlaces.UNKNOWN, Dimension(18, 18))
+    val buttonSize = if (newLayout) 20 else 18
+    val settingsButton = ActionButton(actionGroup, presentation, ActionPlaces.UNKNOWN, Dimension(buttonSize, buttonSize))
     settingsButton.setNoIconsInPopup(true)
     settingsButton.border = JBUI.Borders.empty()
     settingsButton.isOpaque = false

@@ -428,9 +428,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           }
           else {
             Dimension d = component.getPreferredSize();
-            component.setBounds(r.width - d.width - (newLayout ? 4 : 2),
-                                r.height - d.height - (newLayout ? 9 : 3),
-                                d.width, d.height);
+            component.setBounds(r.width - d.width - 2, r.height - d.height - (newLayout ? 7 : 3), d.width, d.height);
           }
         }
       }
@@ -568,7 +566,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     Color borderColor = newLayout ? UIUtil.getTooltipSeparatorColor() : ColorUtil.mix(DOCUMENTATION_COLOR, BORDER_COLOR, 0.5);
     int leftPadding = newLayout ? 8 : 7;
     int definitionTopPadding = newLayout ? 4 : 3;
-    int definitionBottomPadding = newLayout ? 4 : 1;
     int htmlBottomPadding = newLayout ? 8 : 5;
     String editorFontName = StringUtil.escapeQuotes(EditorColorsManager.getInstance().getGlobalScheme().getEditorFontName());
     editorKit.getStyleSheet().addRule("code {font-family:\"" + editorFontName + "\"}");
@@ -577,10 +574,11 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     editorKit.getStyleSheet().addRule("html { padding-bottom: " + htmlBottomPadding + "px; }");
     editorKit.getStyleSheet().addRule("h1, h2, h3, h4, h5, h6 { margin-top: 0; padding-top: 1px; }");
     editorKit.getStyleSheet().addRule("a { color: #" + ColorUtil.toHex(getLinkColor()) + "; text-decoration: none;}");
-    editorKit.getStyleSheet().addRule(".definition { padding: " + definitionTopPadding + "px 17px " + definitionBottomPadding + "px " +
-                                      leftPadding + "px; border-bottom: thin solid #" + ColorUtil.toHex(borderColor) + "; }");
+    editorKit.getStyleSheet().addRule(".definition { padding: " + definitionTopPadding + "px 17px 1px " + leftPadding +
+                                      "px; border-bottom: thin solid #" + ColorUtil.toHex(borderColor) + "; }");
     editorKit.getStyleSheet().addRule(".definition-only { padding: " + definitionTopPadding + "px 17px 0 " + leftPadding + "px; }");
     editorKit.getStyleSheet().addRule(".content { padding: 5px 16px 0 " + leftPadding + "px; max-width: 100% }");
+    editorKit.getStyleSheet().addRule(".content-only { padding: 8px 16px 0 " + leftPadding + "px; max-width: 100% }");
     editorKit.getStyleSheet().addRule(".bottom { padding: 3px 16px 0 " + leftPadding + "px; }");
     editorKit.getStyleSheet().addRule(".bottom-no-content { padding: 5px 16px 0 " + leftPadding + "px; }");
     editorKit.getStyleSheet().addRule("p { padding: 1px 0 2px 0; }");
@@ -593,7 +591,13 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     // sections table
     editorKit.getStyleSheet().addRule(".sections { padding: 0 16px 0 " + leftPadding + "; border-spacing: 0; }");
     editorKit.getStyleSheet().addRule("tr { margin: 0 0 0 0; padding: 0 0 0 0; }");
-    editorKit.getStyleSheet().addRule("td { margin: 2px 0 3.5px 0; padding: 0 0 0 0; }");
+    if (newLayout) {
+      editorKit.getStyleSheet().addRule("table p { padding-bottom: 0}");
+      editorKit.getStyleSheet().addRule("td { margin: 4px 0 0 0; padding: 0 0 0 0; }");
+    }
+    else {
+      editorKit.getStyleSheet().addRule("td { margin: 2px 0 3.5px 0; padding: 0 0 0 0; }");
+    }
     editorKit.getStyleSheet().addRule("th { text-align: left; }");
     editorKit.getStyleSheet().addRule(".section { color: " + ColorUtil.toHtmlColor(SECTION_COLOR) + "; padding-right: 4px}");
   }
@@ -971,6 +975,9 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       } else if (!text.contains(DocumentationMarkup.SECTIONS_START)){
         text = StringUtil.replaceIgnoreCase(text, DocumentationMarkup.DEFINITION_START, "<div class='definition-only'><pre>");
       }
+    }
+    if (Registry.is("editor.new.mouse.hover.popups") && !text.contains(DocumentationMarkup.DEFINITION_START)) {
+      text = text.replace("class='content'", "class='content-only'");
     }
     String location = getLocationText();
     if (location != null) {
