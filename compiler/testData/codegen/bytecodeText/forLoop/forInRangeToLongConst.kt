@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val N = 42L
 
 fun test(): Long {
@@ -18,8 +17,15 @@ fun test(): Long {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 LCMP
 // 1 IFGT
-// 1 IF
 // 0 L2I
 // 0 I2L
+
+// JVM_TEMPLATES
+// 1 LCMP
+// 1 IF
+
+// JVM_IR_TEMPLATES
+// 2 LCMP
+// 1 IFLE
+// 2 IF

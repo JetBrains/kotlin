@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 object Host {
     const val M = 1
     const val N = 4
@@ -21,5 +20,10 @@ fun test(): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMPGT
 // 1 IF
+
+// JVM_TEMPLATES
+// 1 IF_ICMPGT
+
+// JVM_IR_TEMPLATES
+// 1 IF_ICMPLE

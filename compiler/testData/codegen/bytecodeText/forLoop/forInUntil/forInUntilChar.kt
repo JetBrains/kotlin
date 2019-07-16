@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(a: Char, b: Char): String {
     var s = ""
     for (i in a until b) {
@@ -16,5 +15,13 @@ fun test(a: Char, b: Char): String {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+
+// JVM_TEMPLATES
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 1 IFEQ
+// 1 IF_ICMPGT
+// 1 IF_ICMPLE
+// 3 IF

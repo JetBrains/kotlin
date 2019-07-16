@@ -1,7 +1,6 @@
-// TARGET_BACKEND: JVM_IR
-const val M = Int.MIN_VALUE
+const val M = Char.MIN_VALUE
 
-fun f(a: Int): Int {
+fun f(a: Char): Int {
     var n = 0
     for (i in a until M) {
         n++
@@ -18,5 +17,10 @@ fun f(a: Int): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 0 IF
 // 0 LINENUMBER 7
+
+// JVM_TEMPLATES
+// 1 IF
+
+// JVM_IR_TEMPLATES
+// 0 IF

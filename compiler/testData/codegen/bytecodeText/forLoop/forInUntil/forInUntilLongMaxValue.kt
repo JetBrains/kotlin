@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val M = Long.MAX_VALUE
 
 fun f(a: Long): Int {
@@ -18,6 +17,14 @@ fun f(a: Long): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+
+// JVM_TEMPLATES
 // 1 LCMP
 // 1 IFGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 2 LCMP
+// 1 IFGT
+// 1 IFLE
+// 2 IF

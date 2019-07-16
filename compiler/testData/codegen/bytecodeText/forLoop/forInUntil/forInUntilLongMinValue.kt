@@ -1,4 +1,3 @@
-// TARGET_BACKEND: JVM_IR
 const val M = Long.MIN_VALUE
 
 fun f(a: Long): Int {
@@ -18,5 +17,10 @@ fun f(a: Long): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 0 IF
 // 0 LINENUMBER 7
+
+// JVM_TEMPLATES
+// 1 IF
+
+// JVM_IR_TEMPLATES
+// 0 IF

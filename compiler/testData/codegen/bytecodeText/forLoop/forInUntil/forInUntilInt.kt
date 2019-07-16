@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun test(a: Int, b: Int): Int {
     var sum = 0
     for (i in a until b) {
@@ -16,5 +15,14 @@ fun test(a: Int, b: Int): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
+
+// JVM_TEMPLATES
 // 1 IF_ICMPGE
 // 1 IF
+
+// JVM_IR_TEMPLATES
+// 1 LDC -2147483648
+// 1 IF_ICMPEQ
+// 1 IF_ICMPGT
+// 1 IF_ICMPLE
+// 3 IF

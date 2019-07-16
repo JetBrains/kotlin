@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 const val N = 42
 
 fun test(): Int {
@@ -18,5 +17,10 @@ fun test(): Int {
 // 0 getFirst
 // 0 getLast
 // 0 getStep
-// 1 IF_ICMPGT
 // 1 IF
+
+// JVM_TEMPLATES
+// 1 IF_ICMPGT
+
+// JVM_IR_TEMPLATES
+// 1 IF_ICMPLE
