@@ -51,6 +51,7 @@ import kotlin.system.measureTimeMillis
 
 class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferableData>() {
     private val LOG = Logger.getInstance(ConvertTextJavaCopyPasteProcessor::class.java)
+    private val javaContextDeclarationRenderer = JavaContextDeclarationRenderer()
 
     private class MyTransferableData(val text: String) : TextBlockTransferableData {
 
@@ -247,8 +248,9 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
     }
 
     private fun prepareCopiedJavaCodeByContext(text: String, context: JavaContext, target: KtElement): CopiedJavaCode {
-
         val targetFile = target.containingFile as KtFile
+
+        val (localDeclarations, memberDeclarations) = javaContextDeclarationRenderer.render(target)
 
         val prefix = buildString {
             targetFile.packageDirective?.let {
@@ -279,9 +281,10 @@ class ConvertTextJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransf
         return when (context) {
             JavaContext.TOP_LEVEL -> createCopiedJavaCode(prefix, "$", text)
 
-            JavaContext.CLASS_BODY -> createCopiedJavaCode(prefix, "$classDef {\n$\n}", text)
+            JavaContext.CLASS_BODY -> createCopiedJavaCode(prefix, "$classDef {\n$memberDeclarations $\n}", text)
 
-            JavaContext.IN_BLOCK -> createCopiedJavaCode(prefix, "$classDef {\nvoid foo() {\n$\n}\n}", text)
+            JavaContext.IN_BLOCK ->
+                createCopiedJavaCode(prefix, "$classDef {\n$memberDeclarations void foo() {\n$localDeclarations $\n}\n}", text)
 
             JavaContext.EXPRESSION -> createCopiedJavaCode(prefix, "$classDef {\nObject field = $\n}", text)
         }
