@@ -2,7 +2,6 @@
 package com.intellij.navigation
 
 import com.intellij.ide.IdeBundle
-import com.intellij.ide.RecentProjectsManager
 import com.intellij.ide.RecentProjectsManagerBase
 import com.intellij.ide.ReopenProjectAction
 import com.intellij.ide.actions.searcheverywhere.SymbolSearchEverywhereContributor
@@ -56,21 +55,22 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       return
     }
 
-    val recentProjectsActions = RecentProjectsManager.getInstance().getRecentProjectsActions(false)
+    val recentProjectManager = RecentProjectsManagerBase.getInstanceEx()
+    val recentProjectsActions = recentProjectManager.getRecentProjectsActions(false)
     for (recentProjectAction in recentProjectsActions) {
-      if (recentProjectAction is ReopenProjectAction) {
-        if (recentProjectAction.projectName == projectName) {
-          ProjectManager.getInstance().openProjects.find { project -> project.name == projectName }?.let {
-            findAndNavigateToReference(it, parameters)
-          } ?: run {
-            ApplicationManager.getApplication().invokeLater(
-              {
-                RecentProjectsManagerBase.getInstanceEx().doOpenProject(recentProjectAction.projectPath, OpenProjectTask())?.let {
-                  StartupManager.getInstance(it).registerPostStartupActivity(Runnable { findAndNavigateToReference(it, parameters) })
-                }
-              }, ModalityState.NON_MODAL)
-          }
-        }
+      if (recentProjectAction !is ReopenProjectAction || recentProjectAction.projectName != projectName) {
+        continue
+      }
+
+      ProjectManager.getInstance().openProjects.find { project -> project.name == projectName }?.let {
+        findAndNavigateToReference(it, parameters)
+      } ?: run {
+        ApplicationManager.getApplication().invokeLater(
+          {
+            recentProjectManager.doOpenProject(recentProjectAction.projectPath, OpenProjectTask())?.let {
+              StartupManager.getInstance(it).registerPostStartupActivity { findAndNavigateToReference(it, parameters) }
+            }
+          }, ModalityState.NON_MODAL)
       }
     }
   }
