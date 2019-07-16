@@ -556,7 +556,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import android.widget.LinearLayout;
 
             fun foo(ll: LinearLayout) {
-                ll.compose({ <TextView text="Hello World!" /> })
+                ll.setViewContent({ <TextView text="Hello World!" /> })
             }
         """)
     }
