@@ -5,11 +5,11 @@
 
   <description><![CDATA[
       <p>The plugin improves code completion feature by reordering of elements in the completion
-      popup by ranking more relevant items higher using machine learning models.</p>
-
-      <p>Currently, ML reordering is available for Java, Kotlin and Python languages. To enable the feature for your language,
-      check settings in Editor | General | Code Completion | "Machine Learning Assistant Code Completion" section.</p>
-
+      popup by ranking more relevant items higher using machine learning.</p>
+      <br>
+      <p>Currently, ML reordering is available for Java, Kotlin and Python languages. To enable the feature for your
+      programming language, check settings in Editor | General | Code Completion | "Machine Learning Assistant Code Completion" section.</p>
+      <br>
       <p>Notice: the plugin does not collect or send any data in stable (release) builds. But in the EAP builds
       the plugin collects data about your usage of code completion, anonymizes and sends it to JetBrains.
       Note, the plugin doesn't send any of your personal data or code. All it sends is just numbers
