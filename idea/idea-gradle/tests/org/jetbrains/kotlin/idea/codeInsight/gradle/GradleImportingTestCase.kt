@@ -112,7 +112,10 @@ abstract class GradleImportingTestCase : ExternalSystemImportingTestCase() {
         myProjectSettings = GradleProjectSettings().apply {
             this.isUseQualifiedModuleNames = false
         }
-        GradleSettings.getInstance(myProject).gradleVmOptions = "-Xmx128m -XX:MaxPermSize=64m"
+
+        GradleSettings.getInstance(myProject).gradleVmOptions =
+            "-Xmx128m -XX:MaxPermSize=64m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${System.getProperty("user.dir")}"
+
         System.setProperty(ExternalSystemExecutionSettings.REMOTE_PROCESS_IDLE_TTL_IN_MS_KEY, GRADLE_DAEMON_TTL_MS.toString())
         configureWrapper()
         sdkCreationChecker = KotlinSdkCreationChecker()
