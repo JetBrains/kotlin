@@ -21,14 +21,8 @@ import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 
 interface JKTreeElement : JKElement, JKNonCodeElementsListOwner {
-    fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
-
-    fun <R> accept(visitor: JKVisitor<R, Nothing?>): R = accept(visitor, null)
-
-    fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-
-    fun acceptChildren(visitor: JKVisitor<Unit, Nothing?>) = acceptChildren(visitor, null)
-
+    fun accept(visitor: JKVisitor)
+    fun acceptChildren(visitor: JKVisitor)
     fun copy(): JKTreeElement
 }
 
