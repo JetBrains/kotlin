@@ -68,6 +68,7 @@ class ImplicitCtorValueNode(
 class AttributeNode(
     name: String,
     var isStatic: Boolean,
+    var isStable: Boolean,
     val expression: KtExpression,
     type: KotlinType,
     descriptor: DeclarationDescriptor
@@ -97,6 +98,7 @@ enum class ValidationType {
 class ValidatedAssignment(
     val validationType: ValidationType,
     val validationCall: ResolvedCall<*>?,
+    val uncheckedValidationCall: ResolvedCall<*>?,
     val assignment: ResolvedCall<*>?,
     val assignmentLambda: FunctionDescriptor?,
     val attribute: AttributeNode

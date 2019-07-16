@@ -1,15 +1,16 @@
 package androidx.compose.plugins.kotlin.analysis
 
+import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
+import androidx.compose.plugins.kotlin.ResolvedKtxElementCall
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtReferenceExpression
-import androidx.compose.plugins.kotlin.ComposableAnnotationChecker
-import androidx.compose.plugins.kotlin.ResolvedKtxElementCall
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.util.slicedMap.BasicWritableSlice
 import org.jetbrains.kotlin.util.slicedMap.RewritePolicy
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
+import org.jetbrains.kotlin.types.KotlinType
 
 object ComposeWritableSlices {
     val COMPOSABLE_ANALYSIS: WritableSlice<KtElement, ComposableAnnotationChecker.Composability> =
@@ -26,6 +27,8 @@ object ComposeWritableSlices {
     val FCS_RESOLVEDCALL_COMPOSABLE: WritableSlice<KtElement, Boolean> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
     val INFERRED_COMPOSABLE_DESCRIPTOR: WritableSlice<FunctionDescriptor, Boolean> =
+        BasicWritableSlice(RewritePolicy.DO_NOTHING)
+    val STABLE_TYPE: WritableSlice<KotlinType, Boolean?> =
         BasicWritableSlice(RewritePolicy.DO_NOTHING)
 }
 
