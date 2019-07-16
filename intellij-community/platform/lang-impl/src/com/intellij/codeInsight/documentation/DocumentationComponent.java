@@ -121,7 +121,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
   private static final int PREFERRED_HEIGHT_MAX_EM = 10;
   private static final JBDimension MAX_DEFAULT = new JBDimension(650, 500);
-  private static final JBDimension MIN_DEFAULT = new JBDimension(300, 20);
+  private static final JBDimension MIN_DEFAULT = new JBDimension(300, Registry.is("editor.new.mouse.hover.popups") ? 36 : 20);
   private final ExternalDocAction myExternalDocAction;
 
   private DocumentationManager myManager;
@@ -885,8 +885,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       width = Math.max(width, myEditorPane.getMinimumSize().width);
     }
     Insets insets = getInsets();
-    width += insets.left + insets.right;
-    return Math.min(maxWidth, Math.max(minWidth, width));
+    return Math.min(maxWidth, Math.max(minWidth, width)) + insets.left + insets.right;
   }
 
   public int getPreferredHeight(int width) {
@@ -896,8 +895,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
 
     int height = preferredSize.height + (needsToolbar() ? myControlPanel.getPreferredSize().height : 0);
     Insets insets = getInsets();
-    height += insets.top + insets.bottom;
-    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height));
+    return Math.min(MAX_DEFAULT.height, Math.max(MIN_DEFAULT.height, height)) + insets.top + insets.bottom;
   }
 
   private Component getPopupAnchor() {
