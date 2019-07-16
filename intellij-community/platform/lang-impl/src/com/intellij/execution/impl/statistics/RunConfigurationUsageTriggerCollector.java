@@ -3,6 +3,7 @@ package com.intellij.execution.impl.statistics;
 
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.ConfigurationFactory;
+import com.intellij.execution.configurations.ConfigurationType;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType;
 import com.intellij.internal.statistic.eventLog.validator.rules.EventContext;
@@ -15,15 +16,18 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector.FACTORY_FIELD;
+
 public class RunConfigurationUsageTriggerCollector {
 
   public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
-    final String key = RunConfigurationTypeUsagesCollector.toReportedId(factory);
-    if (StringUtil.isNotEmpty(key)) {
-      final FeatureUsageData data = new FeatureUsageData().
-        addProject(project).addExecutor(executor);
-      FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", key, data);
+    final ConfigurationType configurationType = factory.getType();
+    final String eventId = RunConfigurationTypeUsagesCollector.toConfigurationId(configurationType);
+    final FeatureUsageData data = new FeatureUsageData().addProject(project).addExecutor(executor);
+    if (configurationType.getConfigurationFactories().length > 1) {
+      data.addData(FACTORY_FIELD, factory.getId());
     }
+    FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", eventId, data);
   }
 
   public static class RunConfigurationExecutorUtilValidator extends CustomWhiteListRule {

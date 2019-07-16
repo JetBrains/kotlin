@@ -29,7 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector {
-  private static final String FACTORY_FIELD = "factory";
+  public static final String FACTORY_FIELD = "factory";
 
   @NotNull
   @Override
@@ -58,7 +58,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
         }
 
         final ConfigurationType configurationType = configurationFactory.getType();
-        final String eventId = configurationType instanceof UnknownConfigurationType ? "unknown" : configurationType.getId();
+        final String eventId = toConfigurationId(configurationType);
         final FeatureUsageData data = createData(settings, runConfiguration);
         if (configurationType.getConfigurationFactories().length > 1) {
           data.addData(FACTORY_FIELD, configurationFactory.getId());
@@ -79,19 +79,9 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
     return result;
   }
 
-  @Nullable
-  public static String toReportedId(@NotNull ConfigurationFactory factory) {
-    final ConfigurationType configurationType = factory.getType();
-    if (configurationType instanceof UnknownConfigurationType) {
-      return null;
-    }
-
-    final StringBuilder keyBuilder = new StringBuilder();
-    keyBuilder.append(configurationType.getId());
-    if (configurationType.getConfigurationFactories().length > 1) {
-      keyBuilder.append("/").append(factory.getId());
-    }
-    return keyBuilder.toString();
+  @NotNull
+  public static String toConfigurationId(@NotNull ConfigurationType configurationType) {
+    return configurationType instanceof UnknownConfigurationType ? "unknown" : configurationType.getId();
   }
 
   private static FeatureUsageData createData(@NotNull RunnerAndConfigurationSettings settings,
@@ -142,7 +132,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
     @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      if (isThirdPartyValue(data)) return ValidationResultType.ACCEPTED;
+      if (isThirdPartyValue(data) || "unknown".equals(data)) return ValidationResultType.ACCEPTED;
 
       final String configurationId = context.eventId;
       final String factoryId = context.eventData.containsKey(FACTORY_FIELD) ? context.eventData.get(FACTORY_FIELD).toString() : null;
