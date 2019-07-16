@@ -60,17 +60,17 @@ class MainKtsIT {
         val (stdoutThread, stdoutException, processOut) = process.inputStream.captureStream()
         val (stderrThread, stderrException, processErr) = process.errorStream.captureStream()
 
-        process.waitFor(10000, TimeUnit.MILLISECONDS)
+        process.waitFor(30000, TimeUnit.MILLISECONDS)
 
         try {
             if (process.isAlive) {
                 process.destroyForcibly()
                 fail("Process terminated forcibly")
             }
-            stdoutThread.join(100)
+            stdoutThread.join(300)
             assertFalse("stdout thread not finished", stdoutThread.isAlive)
             assertNull(stdoutException.value)
-            stderrThread.join(100)
+            stderrThread.join(300)
             assertFalse("stderr thread not finished", stderrThread.isAlive)
             assertNull(stderrException.value)
             assertEquals(expectedOutPatterns.size, processOut.size)
