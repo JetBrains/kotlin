@@ -798,11 +798,13 @@ public class GradleProjectResolverUtil {
   }
 
   public static <T> T intern(ProjectResolverContext context, T value) {
-    if (context == null) {
-      LOG.warn("ProjectResolverContext should not be null, it is used to intern objects");
-      return value;
-    }
-    return ((DefaultProjectResolverContext)context).intern(value);
+    // hot fix for hashing issue
+    return value;
+    //if (context == null) {
+    //  LOG.warn("ProjectResolverContext should not be null, it is used to intern objects");
+    //  return value;
+    //}
+    //return ((DefaultProjectResolverContext)context).intern(value);
   }
 
   public static boolean isIdeaTask(final String taskName, @Nullable String group) {
