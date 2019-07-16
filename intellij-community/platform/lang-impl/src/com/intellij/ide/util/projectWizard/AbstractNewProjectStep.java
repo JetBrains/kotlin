@@ -2,6 +2,7 @@
 package com.intellij.ide.util.projectWizard;
 
 import com.intellij.ide.RecentProjectsManager;
+import com.intellij.ide.impl.OpenProjectTask;
 import com.intellij.ide.util.projectWizard.actions.ProjectSpecificAction;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -22,17 +23,17 @@ import com.intellij.platform.*;
 import com.intellij.platform.templates.ArchivedTemplatesFactory;
 import com.intellij.platform.templates.LocalArchivedTemplate;
 import com.intellij.platform.templates.TemplateProjectDirectoryGenerator;
-import com.intellij.projectImport.ProjectOpenedCallback;
 import com.intellij.util.PairConsumer;
-import com.intellij.util.PathUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EnumSet;
 import java.util.List;
 
 import static com.intellij.platform.ProjectTemplatesFactory.CUSTOM_GROUP;
@@ -167,15 +168,18 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
                                           @NotNull final String locationString,
                                           @Nullable final DirectoryProjectGenerator generator,
                                           @NotNull Object settings) {
-    final File location = new File(FileUtil.toSystemDependentName(locationString));
-    if (!location.exists() && !location.mkdirs()) {
-      String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.getAbsolutePath());
+    Path location = Paths.get(locationString);
+    try {
+      Files.createDirectories(location);
+    }
+    catch (IOException e) {
+      LOG.warn(e);
+      String message = ActionsBundle.message("action.NewDirectoryProject.cannot.create.dir", location.toString());
       Messages.showErrorDialog(projectToClose, message, ActionsBundle.message("action.NewDirectoryProject.title"));
       return null;
     }
 
-    final VirtualFile baseDir =
-      WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByIoFile(location));
+    VirtualFile baseDir = WriteAction.compute(() -> LocalFileSystem.getInstance().refreshAndFindFileByPath(FileUtil.toSystemIndependentName(location.toString())));
     if (baseDir == null) {
       LOG.error("Couldn't find '" + location + "' in VFS");
       return null;
@@ -183,26 +187,22 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
     VfsUtil.markDirtyAndRefresh(false, true, true, baseDir);
 
     if (baseDir.getChildren().length > 0) {
-      String message = ActionsBundle.message("action.NewDirectoryProject.not.empty", location.getAbsolutePath());
-      int rc = Messages.showYesNoDialog(projectToClose, message, ActionsBundle.message("action.NewDirectoryProject.title"), Messages.getQuestionIcon());
-      if (rc == Messages.YES) {
-        return PlatformProjectOpenProcessor.getInstance().doOpenProject(baseDir, null, false);
+      String message = ActionsBundle.message("action.NewDirectoryProject.not.empty", location.toString());
+      int result = Messages.showYesNoDialog(projectToClose, message, ActionsBundle.message("action.NewDirectoryProject.title"), Messages.getQuestionIcon());
+      if (result == Messages.YES) {
+        return PlatformProjectOpenProcessor.doOpenProject(location, new OpenProjectTask(), -1);
       }
     }
 
-    RecentProjectsManager.getInstance().setLastProjectCreationLocation(PathUtil.toSystemIndependentName(location.getParent()));
+    RecentProjectsManager.getInstance().setLastProjectCreationLocation(location.getParent());
 
-    ProjectOpenedCallback callback = null;
-    if(generator instanceof TemplateProjectDirectoryGenerator){
+    OpenProjectTask options = new OpenProjectTask(false, projectToClose);
+    if (generator instanceof TemplateProjectDirectoryGenerator) {
       ((TemplateProjectDirectoryGenerator)generator).generateProject(baseDir.getName(), locationString);
-    } else {
-      callback = (p, module) -> {
-        if (generator != null) {
-          generator.generateProject(p, baseDir, settings, module);
-        }
-      };
     }
-    EnumSet<PlatformProjectOpenProcessor.Option> options = EnumSet.noneOf(PlatformProjectOpenProcessor.Option.class);
-    return PlatformProjectOpenProcessor.doOpenProject(baseDir, projectToClose, -1, callback, options);
+    else if (generator != null) {
+      options.setCallback((p, module) -> generator.generateProject(p, baseDir, settings, module));
+    }
+    return PlatformProjectOpenProcessor.doOpenProject(location, options, -1);
   }
 }
