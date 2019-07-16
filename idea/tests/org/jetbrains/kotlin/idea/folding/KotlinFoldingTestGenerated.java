@@ -143,5 +143,10 @@ public class KotlinFoldingTestGenerated extends AbstractKotlinFoldingTest {
         public void testPrimaryConstructor() throws Exception {
             runTest("idea/testData/folding/checkCollapse/primaryConstructor.kt");
         }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("idea/testData/folding/checkCollapse/when.kt");
+        }
     }
 }
