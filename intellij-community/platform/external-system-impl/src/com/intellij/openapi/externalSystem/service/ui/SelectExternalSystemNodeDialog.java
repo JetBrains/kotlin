@@ -28,8 +28,8 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.ScrollPaneFactory;
+import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.ui.treeStructure.SimpleNode;
-import com.intellij.ui.treeStructure.SimpleNodeVisitor;
 import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
@@ -38,10 +38,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.event.InputEvent;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
  * @author Vladislav.Soroka
@@ -51,7 +53,7 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
   @NotNull
   private final SimpleTree myTree;
   @Nullable
-  private final NodeSelector mySelector;
+  private final Predicate<SimpleNode> mySelector;
   @Nullable
   protected Boolean groupTasks;
   @Nullable
@@ -61,7 +63,7 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
                                         @NotNull Project project,
                                         @NotNull String title,
                                         Class<? extends ExternalSystemNode> nodeClass,
-                                        @Nullable NodeSelector selector) {
+                                        @Nullable Predicate<SimpleNode> selector) {
     //noinspection unchecked
     this(systemId, project, title, new Class[]{nodeClass}, selector);
   }
@@ -70,7 +72,7 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
                                         @NotNull Project project,
                                         @NotNull String title,
                                         final Class<? extends ExternalSystemNode>[] nodeClasses,
-                                        @Nullable NodeSelector selector) {
+                                        @Nullable Predicate<SimpleNode> selector) {
     super(project, false);
     mySelector = selector;
     setTitle(title);
@@ -138,18 +140,22 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
       TreeUtil.expandAll(myTree);
 
       if (mySelector != null) {
-        final SimpleNode[] selection = new SimpleNode[]{null};
-        treeStructure.accept(new SimpleNodeVisitor() {
+        TreeVisitor visitor = new TreeVisitor() {
+          @NotNull
           @Override
-          public boolean accept(SimpleNode each) {
-            if (!mySelector.shouldSelect(each)) return false;
-            selection[0] = each;
-            return true;
+          public Action visit(@NotNull TreePath path) {
+            Object userObject = TreeUtil.getLastUserObject(path);
+            SimpleNode node = userObject instanceof SimpleNode ? ((SimpleNode)userObject) : null;
+            if (node != null && mySelector.test(node)) {
+              return Action.INTERRUPT;
+            }
+            else {
+              return Action.CONTINUE;
+            }
           }
-        });
-        if (selection[0] != null) {
-          treeStructure.select(selection[0]);
-        }
+        };
+
+        TreeUtil.select(myTree, visitor, path -> {});
       }
     }
 
@@ -179,9 +185,5 @@ public class SelectExternalSystemNodeDialog extends DialogWrapper {
     final JScrollPane pane = ScrollPaneFactory.createScrollPane(myTree);
     pane.setPreferredSize(JBUI.size(320, 400));
     return pane;
-  }
-
-  protected interface NodeSelector {
-    boolean shouldSelect(SimpleNode node);
   }
 }

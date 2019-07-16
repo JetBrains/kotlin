@@ -5,16 +5,19 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.Disposer;
-import com.intellij.ui.treeStructure.*;
+import com.intellij.ui.tree.AsyncTreeModel;
+import com.intellij.ui.tree.StructureTreeModel;
+import com.intellij.ui.treeStructure.SimpleNode;
+import com.intellij.ui.treeStructure.SimpleTree;
+import com.intellij.ui.treeStructure.SimpleTreeStructure;
+import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.Consumer;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.tree.TreeUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreePath;
 import java.util.*;
 
 /**
@@ -22,14 +25,14 @@ import java.util.*;
  */
 public class ExternalProjectsStructure extends SimpleTreeStructure implements Disposable  {
   private final Project myProject;
-  private final SimpleTree myTree;
+  private final Tree myTree;
   private ExternalProjectsView myExternalProjectsView;
-  private SimpleTreeBuilder myTreeBuilder;
+  private StructureTreeModel<ExternalProjectsStructure> myTreeModel;
   private RootNode myRoot;
 
   private final Map<String, ExternalSystemNode> myNodeMapping = new THashMap<>();
 
-  public ExternalProjectsStructure(Project project, SimpleTree tree) {
+  public ExternalProjectsStructure(Project project, Tree tree) {
     myProject = project;
     myTree = tree;
     configureTree(tree);
@@ -38,13 +41,9 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
   public void init(ExternalProjectsView externalProjectsView) {
     myExternalProjectsView = externalProjectsView;
     myRoot = new RootNode();
-
-    myTreeBuilder = new SimpleTreeBuilder(myTree, (DefaultTreeModel)myTree.getModel(), this, null) {
-      // unique class to simplify search through the logs
-    };
-    Disposer.register(myProject, myTreeBuilder);
-    myTreeBuilder.initRoot();
-    myTreeBuilder.expand(myRoot, null);
+    myTreeModel = new StructureTreeModel<>(this, this);
+    myTree.setModel(new AsyncTreeModel(myTreeModel, this));
+    TreeUtil.expand(myTree, 1);
   }
 
   public Project getProject() {
@@ -53,14 +52,14 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
 
   public void updateFrom(SimpleNode node) {
     if (node != null) {
-      myTreeBuilder.addSubtreeToUpdateByElement(node);
+      myTreeModel.invalidate(node, true);
     }
   }
 
   public void updateUpTo(SimpleNode node) {
     SimpleNode each = node;
     while (each != null) {
-      updateFrom(each);
+      myTreeModel.invalidate(each, false);
       each = each.getParent();
     }
   }
@@ -71,19 +70,13 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
     return myRoot;
   }
 
-  private static void configureTree(final SimpleTree tree) {
+  private static void configureTree(final Tree tree) {
     tree.setRootVisible(false);
     tree.setShowsRootHandles(true);
   }
 
-  public void accept(@NotNull SimpleNodeVisitor visitor) {
-    if (myTreeBuilder.getTree() instanceof SimpleTree) {
-      ((SimpleTree)myTreeBuilder.getTree()).accept(myTreeBuilder, visitor);
-    }
-  }
-
   public void select(SimpleNode node) {
-    myTreeBuilder.select(node, null);
+    myTreeModel.select(node, myTree, path -> {});
   }
 
   protected Class<? extends ExternalSystemNode>[] getVisibleNodesClasses() {
@@ -116,7 +109,7 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
         myNodeMapping.put(projectPath, projectNode);
       }
       if (toImport.size() == 1) {
-        myTreeBuilder.expand(projectNode, null);
+        TreeUtil.expand(myTree, 1);
       }
       doUpdateProject((ProjectNode)projectNode);
     }
@@ -270,26 +263,6 @@ public class ExternalProjectsStructure extends SimpleTreeStructure implements Di
 
   @NotNull
   public <T extends ExternalSystemNode> List<T> getSelectedNodes(SimpleTree tree, Class<T> nodeClass) {
-    final List<T> filtered = new ArrayList<>();
-    for (SimpleNode node : getSelectedNodes(tree)) {
-      if ((nodeClass != null) && (!nodeClass.isInstance(node))) {
-        filtered.clear();
-        break;
-      }
-      //noinspection unchecked
-      filtered.add((T)node);
-    }
-    return filtered;
-  }
-
-  private static List<SimpleNode> getSelectedNodes(SimpleTree tree) {
-    List<SimpleNode> nodes = new ArrayList<>();
-    TreePath[] treePaths = tree.getSelectionPaths();
-    if (treePaths != null) {
-      for (TreePath treePath : treePaths) {
-        nodes.add(tree.getNodeFor(treePath));
-      }
-    }
-    return nodes;
+    return TreeUtil.collectSelectedObjectsOfType(tree, nodeClass);
   }
 }
