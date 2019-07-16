@@ -547,7 +547,8 @@ open class FirBodyResolveTransformer(
     }
 
     private val noExpectedType = FirImplicitTypeRefImpl(session, null)
-    private val inferenceComponents = inferenceComponents(session, jump, scopeSession)
+    private val pool = CandidatePool()
+    private val inferenceComponents = inferenceComponents(session, jump, scopeSession, pool)
     private val callResolver = CallResolver(jump, inferenceComponents)
     private val conflictResolver = ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
     val completer = ConstraintSystemCompleter(inferenceComponents)
@@ -655,7 +656,7 @@ open class FirBodyResolveTransformer(
             return qualifiedAccess
         }
         val candidate = qualifiedAccess.candidate() ?: return qualifiedAccess
-        val initialSubstitutor = candidate.substitutor
+        val initialSubstitutor = candidate.substitutor!!
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
 
@@ -729,7 +730,7 @@ open class FirBodyResolveTransformer(
             val finalSubstitutor =
                 candidate.system.asReadOnlyStorage().buildAbstractResultingSubstitutor(inferenceComponents.ctx) as ConeSubstitutor
             return qualifiedAccess.transformSingle(
-                FirCallCompleterTransformer(session, finalSubstitutor, jump),
+                FirCallCompleterTransformer(session, finalSubstitutor, pool, jump),
                 null
             )
         }
@@ -1155,7 +1156,12 @@ open class FirBodyResolveTransformer(
     }
 }
 
-private fun inferenceComponents(session: FirSession, jump: ReturnTypeCalculatorWithJump, scopeSession: ScopeSession) =
+private fun inferenceComponents(
+    session: FirSession,
+    jump: ReturnTypeCalculatorWithJump,
+    scopeSession: ScopeSession,
+    candidatePool: CandidatePool
+) =
     InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
         override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
             //TODO wtf
@@ -1172,7 +1178,7 @@ private fun inferenceComponents(session: FirSession, jump: ReturnTypeCalculatorW
         override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
             return this
         }
-    }, session, jump, scopeSession)
+    }, session, jump, scopeSession, candidatePool)
 
 
 class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: ScopeSession) : ReturnTypeCalculator {

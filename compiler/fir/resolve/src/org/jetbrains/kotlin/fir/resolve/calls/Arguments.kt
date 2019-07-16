@@ -80,7 +80,7 @@ fun resolveSubCallArgument(
 ) {
     val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
     val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
-    val argumentType = candidate.substitutor.substituteOrSelf(type)
+    val argumentType = candidate.substitutor!!.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
 }
 
@@ -159,7 +159,7 @@ internal fun Candidate.resolveArgument(
 
 private fun Candidate.prepareExpectedType(session: FirSession, argument: FirExpression, parameter: FirValueParameter): ConeKotlinType {
     val expectedType = argument.getExpectedType(session, parameter/*, LanguageVersionSettings*/)
-    return this.substitutor.substituteOrSelf(expectedType)
+    return this.substitutor!!.substituteOrSelf(expectedType)
 }
 
 internal fun FirExpression.getExpectedType(

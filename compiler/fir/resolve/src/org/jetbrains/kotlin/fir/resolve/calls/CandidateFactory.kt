@@ -33,9 +33,17 @@ class CandidateFactory(
         implicitExtensionReceiverValue: ImplicitReceiverValue?,
         explicitReceiverKind: ExplicitReceiverKind
     ): Candidate {
+
         return Candidate(
-            symbol, dispatchReceiverValue, implicitExtensionReceiverValue,
-            explicitReceiverKind, inferenceComponents, baseSystem, callInfo
+            inferenceComponents.candidatePool.new().also {
+                it.symbol = symbol
+                it.dispatchReceiverValue = dispatchReceiverValue
+                it.implicitExtensionReceiverValue = implicitExtensionReceiverValue
+                it.explicitReceiverKind = explicitReceiverKind
+                it.inferenceComponents = inferenceComponents
+                it.baseSystem = baseSystem
+                it.callInfo = callInfo
+            }
         )
     }
 }

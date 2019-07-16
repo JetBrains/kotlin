@@ -103,7 +103,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                 resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
-                    expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                    expectedType = candidate.substitutor!!.substituteOrSelf(expectedReceiverParameterValue.type),
                     expectedTypeRef = explicitReceiverExpression.typeRef,
                     sink = sink,
                     isReceiver = true,
@@ -118,7 +118,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                     resolvePlainArgumentType(
                         candidate.csBuilder,
                         argumentType = argumentExtensionReceiverValue.type,
-                        expectedType = candidate.substitutor.substituteOrSelf(expectedReceiverParameterValue.type),
+                        expectedType = candidate.substitutor!!.substituteOrSelf(expectedReceiverParameterValue.type),
                         sink = sink,
                         isReceiver = true,
                         isSafeCall = callInfo.isSafeCall

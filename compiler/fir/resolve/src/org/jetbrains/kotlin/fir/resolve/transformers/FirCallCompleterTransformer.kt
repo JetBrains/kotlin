@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.resolve.calls.CandidatePool
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.constructFunctionalTypeRef
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.Variance
 class FirCallCompleterTransformer(
     val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
+    private val candidatePool: CandidatePool,
     private val typeCalculator: ReturnTypeCalculator
 ) : FirAbstractTreeTransformer() {
 
@@ -40,11 +42,12 @@ class FirCallCompleterTransformer(
     ): CompositeTransformResult<FirStatement> {
         val calleeReference =
             qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
-        calleeReference.candidate.substitutor
+        val candidate = calleeReference.candidate
+
 
         val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.candidateSymbol.firUnsafe())
 
-        val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
+        val initialType = candidate.substitutor!!.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
         val resultType = typeRef.withReplacedConeType(session, finalType)
@@ -58,7 +61,9 @@ class FirCallCompleterTransformer(
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
-        ).compose()
+        ).compose().also {
+            candidatePool.free(calleeReference.candidate.pooledCandidate)
+        }
     }
 
     override fun transformVariableAssignment(
@@ -75,7 +80,9 @@ class FirCallCompleterTransformer(
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
-        ).compose()
+        ).compose().also {
+            candidatePool.free(calleeReference.candidate.pooledCandidate)
+        }
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: Nothing?): CompositeTransformResult<FirStatement> {
@@ -85,7 +92,7 @@ class FirCallCompleterTransformer(
         val subCandidate = calleeReference.candidate
         val declaration = subCandidate.symbol.firUnsafe<FirCallableMemberDeclaration<*>>()
         val newTypeParameters = declaration.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }
-            .map { subCandidate.substitutor.substituteOrSelf(it) }
+            .map { subCandidate.substitutor!!.substituteOrSelf(it) }
             .map { finalSubstitutor.substituteOrSelf(it) }
             .mapIndexed { index, type ->
                 when (val argument = functionCall.typeArguments.getOrNull(index)) {
@@ -111,7 +118,7 @@ class FirCallCompleterTransformer(
 
         val typeRef = typeCalculator.tryCalculateReturnType(declaration)
 
-        val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
+        val initialType = subCandidate.substitutor!!.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
         val resultType = typeRef.withReplacedConeType(session, finalType)
@@ -125,7 +132,9 @@ class FirCallCompleterTransformer(
                 calleeReference.name,
                 calleeReference.candidateSymbol
             )
-        ).compose()
+        ).compose().also {
+            candidatePool.free(calleeReference.candidate.pooledCandidate)
+        }
 
     }
 

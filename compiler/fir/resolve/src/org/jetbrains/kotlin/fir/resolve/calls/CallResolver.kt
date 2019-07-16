@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -89,26 +90,110 @@ class CheckerSinkImpl(override val components: InferenceComponents, var continua
     }
 }
 
+class CandidatePool {
 
-class Candidate(
-    val symbol: FirBasedSymbol<*>,
-    val dispatchReceiverValue: ClassDispatchReceiverValue?,
-    val implicitExtensionReceiverValue: ImplicitReceiverValue?,
-    val explicitReceiverKind: ExplicitReceiverKind,
-    private val inferenceComponents: InferenceComponents,
-    private val baseSystem: ConstraintStorage,
-    val callInfo: CallInfo
-) {
-    val system by lazy {
-        val system = inferenceComponents.createConstraintSystem()
-        system.addOtherSystem(baseSystem)
-        system
+    val pool = ArrayList<PooledCandidate>()
+
+    private fun preAlloc(num: Int) {
+        pool.ensureCapacity(num)
+        repeat(num) {
+            pool += PooledCandidate()
+        }
     }
-    lateinit var substitutor: ConeSubstitutor
+
+    fun new(): PooledCandidate {
+        if (pool.isEmpty()) {
+            preAlloc(16)
+        }
+        return pool.removeAt(pool.lastIndex)
+    }
+
+    fun free(candidate: PooledCandidate) {
+        candidate.reset()
+        pool.add(candidate)
+    }
+}
+
+class PooledCandidate() {
+
+    var symbol: FirBasedSymbol<*>? = null
+    var dispatchReceiverValue: ClassDispatchReceiverValue? = null
+    var implicitExtensionReceiverValue: ImplicitReceiverValue? = null
+    var explicitReceiverKind: ExplicitReceiverKind? = null
+
+    var system: NewConstraintSystemImpl? = null
+    var callInfo: CallInfo? = null
+    var substitutor: ConeSubstitutor? = null
 
     var argumentMapping: Map<FirExpression, FirValueParameter>? = null
     val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
+
+    var baseSystem: ConstraintStorage? = null
+    var inferenceComponents: InferenceComponents? = null
+
+    fun system(): NewConstraintSystemImpl {
+        return system ?: inferenceComponents!!.createConstraintSystem()?.also {
+            it.addOtherSystem(baseSystem!!)
+            system = it
+        }
+    }
+
+    fun reset() {
+        symbol = null
+        dispatchReceiverValue = null
+        implicitExtensionReceiverValue = null
+        explicitReceiverKind = null
+        system = null
+        callInfo = null
+        substitutor = null
+        baseSystem = null
+        inferenceComponents = null
+        argumentMapping = null
+        postponedAtoms.clear()
+    }
 }
+
+inline class Candidate(val pooledCandidate: PooledCandidate) {
+    val symbol: FirBasedSymbol<*> get() = pooledCandidate.symbol!!
+    val dispatchReceiverValue: ClassDispatchReceiverValue? get() = pooledCandidate.dispatchReceiverValue
+    val implicitExtensionReceiverValue: ImplicitReceiverValue? get() = pooledCandidate.implicitExtensionReceiverValue
+    val explicitReceiverKind: ExplicitReceiverKind get() = pooledCandidate.explicitReceiverKind!!
+    val callInfo: CallInfo get() = pooledCandidate.callInfo!!
+    val system get() = pooledCandidate.system()
+
+    var substitutor: ConeSubstitutor?
+        get() = pooledCandidate.substitutor
+        set(value) {
+            pooledCandidate.substitutor = value
+        }
+    var argumentMapping: Map<FirExpression, FirValueParameter>?
+        get() = pooledCandidate.argumentMapping
+        set(value) {
+            pooledCandidate.argumentMapping = value
+        }
+
+    val postponedAtoms get() = pooledCandidate.postponedAtoms
+}
+//
+//class Candidate(
+//    val symbol: FirBasedSymbol<*>,
+//    val dispatchReceiverValue: ClassDispatchReceiverValue?,
+//    val implicitExtensionReceiverValue: ImplicitReceiverValue?,
+//    val explicitReceiverKind: ExplicitReceiverKind,
+//    private val inferenceComponents: InferenceComponents,
+//    private val baseSystem: ConstraintStorage,
+//    val callInfo: CallInfo
+//) {
+//    val system by lazy {
+//        val system = inferenceComponents.createConstraintSystem()
+//        system.addOtherSystem(baseSystem)
+//        system
+//    }
+//    lateinit var substitutor: ConeSubstitutor
+//
+//    var argumentMapping: Map<FirExpression, FirValueParameter>? = null
+//    val postponedAtoms = mutableListOf<PostponedResolvedAtomMarker>()
+//}
 
 sealed class CallKind {
     abstract fun sequence(): List<ResolutionStage>
@@ -836,7 +921,7 @@ enum class CandidateApplicability {
 open class CandidateCollector(val components: InferenceComponents) {
 
     val groupNumbers = mutableListOf<Int>()
-    val candidates = mutableListOf<Candidate>()
+    val candidates = mutableListOf<PooledCandidate>()
 
 
     var currentApplicability = CandidateApplicability.HIDDEN
@@ -886,13 +971,14 @@ open class CandidateCollector(val components: InferenceComponents) {
 
         if (applicability > currentApplicability) {
             groupNumbers.clear()
+            candidates.forEach { components.candidatePool.free(it) }
             candidates.clear()
             currentApplicability = applicability
         }
 
 
         if (applicability == currentApplicability) {
-            candidates.add(candidate)
+            candidates.add(candidate.pooledCandidate)
             groupNumbers.add(group)
         }
 
@@ -902,7 +988,7 @@ open class CandidateCollector(val components: InferenceComponents) {
 
     fun bestCandidates(): List<Candidate> {
         if (groupNumbers.isEmpty()) return emptyList()
-        if (groupNumbers.size == 1) return candidates
+        //if (groupNumbers.size == 1) return listOf(Candidate(candidates.first()))
         val result = mutableListOf<Candidate>()
         var bestGroup = groupNumbers.first()
         for ((index, candidate) in candidates.withIndex()) {
@@ -912,7 +998,7 @@ open class CandidateCollector(val components: InferenceComponents) {
                 result.clear()
             }
             if (bestGroup == group) {
-                result.add(candidate)
+                result.add(Candidate(candidate))
             }
         }
         return result

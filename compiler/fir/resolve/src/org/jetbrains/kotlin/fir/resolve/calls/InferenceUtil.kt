@@ -57,7 +57,8 @@ class InferenceComponents(
     val ctx: TypeSystemInferenceExtensionContextDelegate,
     val session: FirSession,
     val returnTypeCalculator: ReturnTypeCalculator,
-    val scopeSession: ScopeSession
+    val scopeSession: ScopeSession,
+    val candidatePool: CandidatePool
 ) {
     private val approximator = object : AbstractTypeApproximator(ctx) {
         override fun createErrorType(message: String): SimpleTypeMarker {
