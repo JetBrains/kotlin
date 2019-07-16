@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.*
@@ -21,11 +22,16 @@ import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumen
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtSuperExpression
+import org.jetbrains.kotlin.psi.KtThisExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -51,6 +57,8 @@ class ExpressionsConverter(
                 is KtConstantExpressionElementType -> return convertConstantExpression(expression)
                 REFERENCE_EXPRESSION -> return convertSimpleNameExpression(expression)
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> return visitExpression(expression.getExpressionInParentheses())
+                THIS_EXPRESSION -> return convertThisExpression(expression)
+                SUPER_EXPRESSION -> return convertSuperExpression(expression)
             }
             return FirExpressionStub(session, null)
             //TODO("not fully implemented")
@@ -377,6 +385,40 @@ class ExpressionsConverter(
     }
 
     /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseThisExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitThisExpression
+     */
+    private fun convertThisExpression(thisExpression: LighterASTNode): FirQualifiedAccessExpression {
+        var label: String? = null
+        thisExpression.forEachChildren {
+            when (it.tokenType) {
+                LABEL_QUALIFIER -> label = it.getAsString().replaceFirst("@", "")
+            }
+        }
+
+        return FirQualifiedAccessExpressionImpl(session, null).apply {
+            calleeReference = FirExplicitThisReference(this@ExpressionsConverter.session, null, label)
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseSuperExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitSuperExpression
+     */
+    private fun convertSuperExpression(superExpression: LighterASTNode): FirQualifiedAccessExpression {
+        var superTypeRef: FirTypeRef = implicitType
+        superExpression.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> superTypeRef = declarationsConverter.convertType(it)
+            }
+        }
+
+        return FirQualifiedAccessExpressionImpl(session, null).apply {
+            calleeReference = FirExplicitSuperReference(this@ExpressionsConverter.session, null, superTypeRef)
+        }
+    }
+
+    /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseValueArgumentList
      */
     fun convertValueArguments(valueArguments: LighterASTNode): List<FirExpression> {
@@ -414,7 +456,7 @@ class ExpressionsConverter(
     fun convertLValue(leftArgNode: LighterASTNode, container: FirModifiableQualifiedAccess<*>): FirReference {
         leftArgNode.forEachChildren {
             return when (it.tokenType) {
-                //THIS_EXPRESSION -> FirExplicitThisReference(session, left, left.getLabelName())
+                THIS_EXPRESSION -> convertThisExpression(leftArgNode).calleeReference
                 REFERENCE_EXPRESSION -> FirSimpleNamedReference(session, null, it.getAsString().nameAsSafeName())
                 in qualifiedAccessTokens -> (visitExpression(it) as FirQualifiedAccess).let { firQualifiedAccess ->
                     container.explicitReceiver = firQualifiedAccess.explicitReceiver

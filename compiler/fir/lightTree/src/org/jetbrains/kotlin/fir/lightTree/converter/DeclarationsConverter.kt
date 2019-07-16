@@ -1050,7 +1050,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeRef
      */
-    private fun convertType(type: LighterASTNode): FirTypeRef {
+    fun convertType(type: LighterASTNode): FirTypeRef {
         var typeModifiers = TypeModifier(session) //TODO what with suspend?
         lateinit var firType: FirTypeRef
         type.forEachChildren {
