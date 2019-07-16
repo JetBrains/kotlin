@@ -241,8 +241,10 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getDependencies(sdk: Sdk?): List<String> = listOf()
     override fun getTestDependencies(): List<String> = listOf()
 
-    override fun getDescription() =
-        "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules"
+    override fun getDescription() = "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules"
+}
+
+open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFrameworkSupportProvider() {
 
     override fun addSupport(
         buildScriptData: BuildScriptDataBuilder,

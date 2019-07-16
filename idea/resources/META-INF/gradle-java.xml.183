@@ -1,6 +1,6 @@
 <idea-plugin>
     <extensions defaultExtensionNs="org.jetbrains.plugins.gradle">
-        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPFrameworkSupportProvider"/>
+        <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinMPPSourceSetsFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJavaFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSBrowserFrameworkSupportProvider"/>
         <frameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.GradleKotlinJSNodeFrameworkSupportProvider"/>
