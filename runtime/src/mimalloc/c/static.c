@@ -4,6 +4,7 @@ This is free software; you can redistribute it and/or modify it under the
 terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
+#if !KONAN_MI_MALLOC
 #define _DEFAULT_SOURCE
 
 #include "mimalloc.h"
@@ -24,3 +25,4 @@ terms of the MIT license. A copy of the license can be found in the file
 #include "alloc-posix.c"
 #include "init.c"
 #include "options.c"
+#endif

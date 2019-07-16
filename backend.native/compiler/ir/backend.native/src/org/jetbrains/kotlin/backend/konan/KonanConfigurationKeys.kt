@@ -88,6 +88,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("program or library name")
         val OVERRIDE_CLANG_OPTIONS: CompilerConfigurationKey<List<String>>
                 = CompilerConfigurationKey.create("arguments for clang")
+        val ALLOCATION_MODE: CompilerConfigurationKey<String>
+                = CompilerConfigurationKey.create("allocation mode")
         val PRINT_BITCODE: CompilerConfigurationKey<Boolean> 
                 = CompilerConfigurationKey.create("print bitcode")
         val PRINT_DESCRIPTORS: CompilerConfigurationKey<Boolean>

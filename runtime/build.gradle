@@ -1,21 +1,23 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-import org.jetbrains.kotlin.CompileCppToBitcode
+import org.jetbrains.kotlin.CompileToBitcode
+import org.jetbrains.kotlin.UtilsKt
 
 // TODO: consider using some Gradle plugins to build and test
 
-void includeRuntime(CompileCppToBitcode task) {
-    task.compilerArgs '-I' + project.file('../common/src/hash/headers')
-    task.compilerArgs '-I' + project.file('src/main/cpp')
+void includeRuntime(CompileToBitcode task) {
+    task.compilerArgs.add('-I' + project.file('../common/src/hash/headers'))
+    task.compilerArgs.add('-I' + project.file('src/main/cpp'))
 }
 
 targetList.each { targetName ->
-    task("${targetName}Runtime", type: CompileCppToBitcode) {
-        name "runtime"
-        srcRoot file('src/main')
+    tasks.create("${targetName}Runtime", CompileToBitcode, file('src/main'), "runtime", targetName).configure {
         dependsOn ":common:${targetName}Hash"
+        dependsOn "${targetName}StdAlloc"
+        dependsOn "${targetName}OptAlloc"
+        dependsOn "${targetName}Mimalloc"
         dependsOn "${targetName}Launcher"
         dependsOn "${targetName}Debug"
         dependsOn "${targetName}Release"
@@ -24,63 +26,53 @@ targetList.each { targetName ->
         dependsOn "${targetName}ProfileRuntime"
         dependsOn "${targetName}ObjC"
         dependsOn "${targetName}ExceptionsSupport"
-        target targetName
         includeRuntime(delegate)
-        linkerArgs project.file("../common/build/$targetName/hash.bc").path
+        linkerArgs.add(project.file("../common/build/$targetName/hash.bc").path)
     }
 
-    task("${targetName}Launcher", type: CompileCppToBitcode) {
-        name "launcher"
-        srcRoot file('src/launcher')
-        target targetName
-        includeRuntime(delegate)
+    tasks.create("${targetName}Mimalloc", CompileToBitcode, file('src/mimalloc'), "mimalloc", targetName).configure {
+        language = CompileToBitcode.Language.C
+        excludeFiles.addAll(["**/alloc-override*.c", "**/page-queue.c", "**/static.c"])
+        if (!UtilsKt.targetSupportsMimallocAllocator(targetName))
+            excludedTargets.add(targetName)
+        srcDir = new File(srcRoot, "c")
+        compilerArgs.add("-DKONAN_MI_MALLOC=1")
+        headersDir = new File(srcDir, "include")
     }
 
-    task ("${targetName}Debug", type: CompileCppToBitcode) {
-        name "debug"
-        srcRoot file('src/debug')
-        target targetName
-        includeRuntime(delegate)
-    }
-
-    task ("${targetName}ExceptionsSupport", type: CompileCppToBitcode) {
-        name "exceptionsSupport"
-        srcRoot file('src/exceptions_support')
-        target targetName
+    tasks.create("${targetName}Launcher", CompileToBitcode, file('src/launcher'), "launcher", targetName).configure {
         includeRuntime(delegate)
     }
 
-    task ("${targetName}Release", type: CompileCppToBitcode) {
-        name "release"
-        srcRoot file('src/release')
-        target targetName
+    tasks.create("${targetName}Debug", CompileToBitcode, file('src/debug'), "debug", targetName).configure {
         includeRuntime(delegate)
     }
 
-    task ("${targetName}Strict", type: CompileCppToBitcode) {
-        name "strict"
-        srcRoot file('src/strict')
-        target targetName
+    tasks.create("${targetName}StdAlloc", CompileToBitcode, file('src/std_alloc'), "std_alloc", targetName)
+
+    tasks.create("${targetName}OptAlloc", CompileToBitcode, file('src/opt_alloc'), "opt_alloc", targetName)
+
+    tasks.create("${targetName}ExceptionsSupport", CompileToBitcode, file('src/exceptions_support'),
+            "exceptionsSupport", targetName).configure {
         includeRuntime(delegate)
     }
 
-    task ("${targetName}Relaxed", type: CompileCppToBitcode) {
-        name "relaxed"
-        srcRoot file('src/relaxed')
-        target targetName
+    tasks.create("${targetName}Release", CompileToBitcode, file('src/release'), "release", targetName).configure {
         includeRuntime(delegate)
     }
 
-    task ("${targetName}ProfileRuntime", type: CompileCppToBitcode) {
-        name "profileRuntime"
-        srcRoot file('src/profile_runtime')
-        target targetName
+    tasks.create("${targetName}Strict", CompileToBitcode, file('src/strict'), "strict", targetName).configure {
+        includeRuntime(delegate)
     }
 
-    task ("${targetName}ObjC", type: CompileCppToBitcode) {
-        name "objc"
-        srcRoot file('src/objc')
-        target targetName
+    tasks.create("${targetName}Relaxed", CompileToBitcode, file('src/relaxed'), "relaxed", targetName).configure {
+        includeRuntime(delegate)
+    }
+
+    tasks.create("${targetName}ProfileRuntime", CompileToBitcode, file('src/profile_runtime'),
+            "profileRuntime", targetName)
+
+    tasks.create("${targetName}ObjC", CompileToBitcode, file('src/objc'), "objc", targetName).configure {
         includeRuntime(delegate)
     }
 }

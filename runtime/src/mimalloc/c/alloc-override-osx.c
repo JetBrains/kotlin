@@ -5,6 +5,7 @@ terms of the MIT license. A copy of the license can be found in the file
 "LICENSE" at the root of this distribution.
 -----------------------------------------------------------------------------*/
 
+#if !KONAN_MI_MALLOC
 #include "mimalloc.h"
 #include "mimalloc-internal.h"
 
@@ -228,3 +229,4 @@ static void __attribute__((constructor)) _mi_macos_override_malloc()
 }
 
 #endif // MI_MALLOC_OVERRIDE
+#endif

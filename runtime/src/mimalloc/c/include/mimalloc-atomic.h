@@ -214,7 +214,7 @@ static inline void mi_atomic_write(volatile _Atomic(uintptr_t)* p, uintptr_t x) 
     asm volatile ("pause" ::: "memory");
   }
 #elif defined(__arm__) || defined(__aarch64__)
-  #if defined(KONAN_MI_MALLOC)
+  #if KONAN_MI_MALLOC
     #if defined(__arm__)
       #include <sched.h>
       static inline void mi_atomic_yield(void) {

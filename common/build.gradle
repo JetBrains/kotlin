@@ -2,22 +2,16 @@
  * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-import org.jetbrains.kotlin.CompileCppToBitcode
+import org.jetbrains.kotlin.CompileToBitcode
 
 // TODO: consider using some Gradle plugins to build and test
 
 targetList.each { targetName ->
-    task ("${targetName}Hash", type: CompileCppToBitcode) {
-        name 'hash'
-        target targetName
-    }
+    tasks.create("${targetName}Hash", CompileToBitcode, file("src/hash"), 'hash', targetName)
 }
 
 targetList.each { targetName ->
-    task ("${targetName}Files", type: CompileCppToBitcode) {
-        name 'files'
-        target targetName
-    }
+    tasks.create("${targetName}Files", CompileToBitcode, file("src/files"), 'files', targetName)
 }
 
 task build {

@@ -241,3 +241,6 @@ fun compileSwift(project: Project, target: KonanTarget, sources: List<String>, o
     check(exitCode == 0, { "Compilation failed" })
     check(output.toFile().exists(), { "Compiler swiftc hasn't produced an output file: $output" })
 }
+
+fun targetSupportsMimallocAllocator(targetName: String) =
+        HostManager().targetByName(targetName).supportsMimallocAllocator()

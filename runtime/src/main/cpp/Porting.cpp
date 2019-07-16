@@ -216,8 +216,10 @@ extern "C" void dlfree(void*);
 #define calloc_impl dlcalloc
 #define free_impl dlfree
 #else
-#define calloc_impl ::calloc
-#define free_impl ::free
+extern "C" void* konan_calloc_impl(size_t, size_t);
+extern "C" void konan_free_impl(void*);
+#define calloc_impl konan_calloc_impl
+#define free_impl konan_free_impl
 #endif
 
 void* calloc(size_t count, size_t size) {

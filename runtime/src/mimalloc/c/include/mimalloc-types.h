@@ -17,7 +17,7 @@ terms of the MIT license. A copy of the license can be found in the file
 // ------------------------------------------------------
 
 // Define NDEBUG in the release version to disable assertions.
-#if !defined(KONAN_MI_MALLOC)
+#if !KONAN_MI_MALLOC
   #define NDEBUG
 #endif
 

@@ -13,20 +13,13 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.konan.CURRENT
+import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.TempFiles
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
-import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.jetbrains.kotlin.konan.target.PlatformManager
 import org.jetbrains.kotlin.konan.target.*
-import org.jetbrains.kotlin.util.Logger
-import kotlin.system.exitProcess
-import org.jetbrains.kotlin.library.toUnresolvedLibraries
-import org.jetbrains.kotlin.konan.CompilerVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.resolver.TopologicalLibraryOrder
 
@@ -116,6 +109,18 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         add(if (debug) "debug.bc" else "release.bc")
         add(if (memoryModel == MemoryModel.STRICT) "strict.bc" else "relaxed.bc")
         if (shouldCoverLibraries || shouldCoverSources) add("profileRuntime.bc")
+        if (configuration.get(KonanConfigKeys.ALLOCATION_MODE) == "mimalloc") {
+            if (!target.supportsMimallocAllocator()) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Mimalloc allocator isn't supported on target ${target.name}. Used standard mode.")
+                add("std_alloc.bc")
+            } else {
+                add("opt_alloc.bc")
+                add("mimalloc.bc")
+            }
+        } else {
+            add("std_alloc.bc")
+        }
     }.map {
         File(distribution.defaultNatives(target)).child(it).absolutePath
     }
