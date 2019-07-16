@@ -3,7 +3,7 @@ package com.intellij.codeInsight.navigation
 
 import com.intellij.ide.util.EditSourceUtil
 import com.intellij.navigation.NavigationTarget
-import com.intellij.navigation.TargetPresentation
+import com.intellij.navigation.TargetPopupPresentation
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.ApiStatus.Experimental
@@ -16,14 +16,14 @@ class PsiElementNavigationTarget(private val myElement: PsiElement) : Navigation
   }
 
   private val myPresentation by lazy {
-    PsiElementTargetPresentation(myElement)
+    PsiElementTargetPopupPresentation(myElement)
   }
 
   override fun isValid(): Boolean = myElement.isValid
 
   override fun getNavigatable(): Navigatable? = myNavigatable
 
-  override fun getTargetPresentation(): TargetPresentation = myPresentation
+  override fun getTargetPresentation(): TargetPopupPresentation = myPresentation
 
   override fun equals(other: Any?): Boolean {
     if (this === other) return true

@@ -1,7 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.ui
 
-import com.intellij.navigation.TargetPresentation
+import com.intellij.navigation.TargetPopupPresentation
 import com.intellij.ui.components.JBLabel
 import com.intellij.ui.speedSearch.SearchAwareRenderer
 import com.intellij.util.ui.JBUI
@@ -19,7 +19,7 @@ internal abstract class TargetPresentationRightRenderer<T> : ListCellRenderer<T>
     private val ourBorder = JBUI.Borders.emptyRight(UIUtil.getListCellHPadding())
   }
 
-  protected abstract fun getPresentation(value: T): TargetPresentation?
+  protected abstract fun getPresentation(value: T): TargetPopupPresentation?
 
   private val component = JBLabel().apply {
     border = ourBorder

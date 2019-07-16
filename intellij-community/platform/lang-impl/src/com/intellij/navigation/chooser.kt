@@ -25,7 +25,7 @@ fun chooseTarget(editor: Editor, title: String, targets: List<NavigationTarget>,
 
 fun <T> chooseTargetPopup(title: String,
                           targets: List<T>,
-                          presentation: (T) -> TargetPresentation?,
+                          presentation: (T) -> TargetPopupPresentation?,
                           consumer: Consumer<in T>): JBPopup {
   val renderer = createTargetPresentationRenderer(presentation)
   return JBPopupFactory.getInstance()
@@ -39,6 +39,6 @@ fun <T> chooseTargetPopup(title: String,
     .createPopup()
 }
 
-private fun NavigationTarget.getPresentationIfValid(): TargetPresentation? {
+private fun NavigationTarget.getPresentationIfValid(): TargetPopupPresentation? {
   return if (isValid) targetPresentation else null
 }

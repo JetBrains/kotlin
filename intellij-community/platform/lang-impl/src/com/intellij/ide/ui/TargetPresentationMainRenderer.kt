@@ -3,7 +3,7 @@ package com.intellij.ide.ui
 
 import com.intellij.navigation.LocationPresentation.DEFAULT_LOCATION_PREFIX
 import com.intellij.navigation.LocationPresentation.DEFAULT_LOCATION_SUFFIX
-import com.intellij.navigation.TargetPresentation
+import com.intellij.navigation.TargetPopupPresentation
 import com.intellij.ui.ColoredListCellRenderer
 import com.intellij.ui.JBColor
 import com.intellij.ui.SimpleTextAttributes
@@ -18,7 +18,7 @@ import javax.swing.JList
 @Experimental
 abstract class TargetPresentationMainRenderer<T> : ColoredListCellRenderer<T>(), SearchAwareRenderer<T> {
 
-  protected abstract fun getPresentation(value: T): TargetPresentation?
+  protected abstract fun getPresentation(value: T): TargetPopupPresentation?
 
   final override fun getItemSearchString(item: T): String? = getPresentation(item)?.presentableText
 

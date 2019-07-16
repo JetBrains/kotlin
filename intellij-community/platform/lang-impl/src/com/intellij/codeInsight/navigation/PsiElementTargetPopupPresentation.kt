@@ -4,7 +4,7 @@ package com.intellij.codeInsight.navigation
 import com.intellij.icons.AllIcons
 import com.intellij.navigation.ItemPresentation
 import com.intellij.navigation.NavigationItem
-import com.intellij.navigation.TargetPresentation
+import com.intellij.navigation.TargetPopupPresentation
 import com.intellij.openapi.editor.markup.EffectType
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.fileEditor.impl.EditorTabPresentationUtil
@@ -30,7 +30,7 @@ import java.io.File
 import javax.swing.Icon
 
 @Experimental
-class PsiElementTargetPresentation(private val myElement: PsiElement) : TargetPresentation {
+class PsiElementTargetPopupPresentation(private val myElement: PsiElement) : TargetPopupPresentation {
 
   private val myProject: Project = myElement.project
   private val myVirtualFile: VirtualFile? = myElement.containingFile?.virtualFile
