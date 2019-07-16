@@ -1,5 +1,4 @@
 // "Implement members" "false"
-// ACTION: Create test
 // ACTION: Make internal
 // ACTION: Extract 'A' from current file
 

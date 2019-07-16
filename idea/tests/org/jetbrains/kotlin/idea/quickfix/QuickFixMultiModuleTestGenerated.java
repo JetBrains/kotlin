@@ -219,6 +219,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/createFunInExpectClass/");
     }
 
+    @TestMetadata("createTestOnExpect")
+    public void testCreateTestOnExpect() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createTestOnExpect/");
+    }
+
     @TestMetadata("createValInExpectClass")
     public void testCreateValInExpectClass() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createValInExpectClass/");
