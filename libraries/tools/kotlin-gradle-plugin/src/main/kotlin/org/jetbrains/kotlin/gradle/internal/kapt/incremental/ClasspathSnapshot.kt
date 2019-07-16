@@ -54,36 +54,20 @@ open class ClasspathSnapshot protected constructor(
             return KaptClasspathChanges.Unknown
         }
 
-        loadEntriesFor(changedFiles)
+        val unchangedBetweenCompilations = dataForFiles.keys.intersect(previousSnapshot.dataForFiles.keys).filter { it !in changedFiles }
+        val currentToLoad = dataForFiles.keys.filter { it !in unchangedBetweenCompilations }.also { loadEntriesFor(it) }
+        val previousToLoad = previousSnapshot.dataForFiles.keys.filter { it !in unchangedBetweenCompilations }
 
-        val currentHashAbiSize = changedFiles.sumBy { dataForFiles[it]!!.classAbiHash.size }
-        val currentHashesToAnalyze =
-            HashMap<String, ByteArray>(currentHashAbiSize).also { hashes ->
-                changedFiles.forEach {
-                    hashes.putAll(dataForFiles[it]!!.classAbiHash)
-                }
-            }
-
-        val currentUnchanged = dataForFiles.keys.filter { it !in changedFiles }
-        val previousChanged = previousSnapshot.dataForFiles.keys.filter { it !in currentUnchanged }
-
-        check(changedFiles.size == previousChanged.size) {
+        check(currentToLoad.size == previousToLoad.size) {
             """
-            Number of changed files in snapshots differs. Reported changed files: $changedFiles
+            Number of loaded files in snapshots differs. Reported changed files: $changedFiles
             Current snapshot data files: ${dataForFiles.keys}
             Previous snapshot data files: ${previousSnapshot.dataForFiles.keys}
         """.trimIndent()
         }
 
-        val previousHashAbiSize = previousChanged.sumBy { previousSnapshot.dataForFiles.get(it)?.classAbiHash?.size ?: 0 }
-        val previousHashesToAnalyze =
-            HashMap<String, ByteArray>(previousHashAbiSize).also { hashes ->
-                for (c in previousChanged) {
-                    previousSnapshot.dataForFiles[c]?.let {
-                        hashes.putAll(it.classAbiHash)
-                    }
-                }
-            }
+        val currentHashesToAnalyze = getHashesToAnalyze(currentToLoad)
+        val previousHashesToAnalyze = previousSnapshot.getHashesToAnalyze(previousToLoad)
 
         val changedClasses = mutableSetOf<String>()
         for (key in previousHashesToAnalyze.keys + currentHashesToAnalyze.keys) {
@@ -104,13 +88,22 @@ open class ClasspathSnapshot protected constructor(
 
         // We do not compute structural data for unchanged files of the current snapshot for performance reasons.
         // That is why we reuse the previous snapshot as that one contains all unchanged entries.
-        for (unchanged in currentUnchanged) {
+        for (unchanged in unchangedBetweenCompilations) {
             dataForFiles[unchanged] = previousSnapshot.dataForFiles[unchanged]!!
         }
 
         val allImpactedClasses = findAllImpacted(changedClasses)
 
         return KaptClasspathChanges.Known(allImpactedClasses)
+    }
+
+    private fun getHashesToAnalyze(filesToLoad: List<File>): HashMap<String, ByteArray> {
+        val hashAbiSize = filesToLoad.sumBy { dataForFiles[it]!!.classAbiHash.size }
+        return HashMap<String, ByteArray>(hashAbiSize).also { hashes ->
+            filesToLoad.forEach {
+                hashes.putAll(dataForFiles[it]!!.classAbiHash)
+            }
+        }
     }
 
     private fun loadEntriesFor(file: Iterable<File>) {
