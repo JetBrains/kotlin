@@ -124,7 +124,6 @@ class EditorSettingsStatisticsCollector extends ApplicationUsagesCollector {
     DaemonCodeAnalyzerSettings dcasDefault = new DaemonCodeAnalyzerSettings();
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isNextErrorActionGoesToErrorsFirst(), "nextErrorActionGoesToErrorsFirst");
     addIfDiffers(set, dcas, dcasDefault, s -> s.getAutoReparseDelay(), "autoReparseDelay");
-    addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isShowSmallIconsInGutter(), "showSmallIconsInGutter");
     addIfDiffers(set, dcas, dcasDefault, s -> s.getErrorStripeMarkMinHeight(), "errorStripeMarkMinHeight");
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isSuppressWarnings(), "suppressWarnings");
     addBoolIfDiffers(set, dcas, dcasDefault, s -> s.isImportHintEnabled(), "importHintEnabled");

@@ -24,7 +24,6 @@ open class DaemonCodeAnalyzerSettingsImpl : DaemonCodeAnalyzerSettings(), Persis
     settings.myShowAddImportHints = myShowAddImportHints
     settings.SHOW_METHOD_SEPARATORS = SHOW_METHOD_SEPARATORS
     settings.NO_AUTO_IMPORT_PATTERN = NO_AUTO_IMPORT_PATTERN
-    settings.isShowSmallIconsInGutter = isShowSmallIconsInGutter
     return settings
   }
 
