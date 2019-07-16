@@ -83,6 +83,22 @@ class ClasspathSnapshotTest {
         assertEquals(setOf("library/C", "first/A", "first/B"), diff.names)
     }
 
+    @Test
+    fun testNoChangedFileButPathsChanged() {
+        val dataFile = generateStructureData(
+            ClassData("first/A"),
+            ClassData("first/B").also { it.withAbiDependencies("first/A") }
+        )
+        val firstSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), setOf(dataFile))
+        firstSnapshot.writeToCache()
+
+        val copyOfDataFile = dataFile.copyTo(tmp.newFile(), overwrite = true)
+        val secondSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(tmp.newFolder(), listOf(), setOf(copyOfDataFile))
+
+        val diff = secondSnapshot.diff(firstSnapshot, setOf()) as KaptClasspathChanges.Known
+        assertEquals(emptySet<String>(), diff.names)
+    }
+
     private fun generateStructureData(vararg classData: ClassData, outputFile: File = tmp.newFile()): File {
         val data = ClasspathEntryData()
         classData.forEach {
