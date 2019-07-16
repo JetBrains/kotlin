@@ -74,10 +74,11 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
     }
     final GradleProjectSettings settings = GradleSettings.getInstance(project).getLinkedProjectSettings(linkedExternalProjectPath);
 
-    final NotNullLazyValue<Set<String>> externalProjectGradleSdkLibs = new NotNullLazyValue<Set<String>>() {
+    Interner<List<String>> interner = new HashSetInterner<>();
+    final NotNullLazyValue<List<String>> externalProjectGradleSdkLibs = new NotNullLazyValue<List<String>>() {
       @NotNull
       @Override
-      protected Set<String> compute() {
+      protected List<String> compute() {
         final Set<String> gradleSdkLibraries = new LinkedHashSet<>();
         File gradleHome = gradleInstallationManager.getGradleHome(project, linkedExternalProjectPath);
         if (gradleHome != null && gradleHome.isDirectory()) {
@@ -88,13 +89,11 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
             }
           }
         }
-        return gradleSdkLibraries;
+        return interner.intern(new ArrayList<>(gradleSdkLibraries));
       }
     };
 
     final Map<String, ExternalProjectBuildClasspathPojo> localProjectBuildClasspath = new THashMap<>(localSettings.getProjectBuildClasspath());
-
-    Interner<List<String>> interner = new HashSetInterner<>();
 
     for (final DataNode<BuildScriptClasspathData> node : toImport) {
       if (GradleConstants.SYSTEM_ID.equals(node.getData().getOwner())) {
@@ -126,8 +125,7 @@ public class BuildClasspathModuleGradleDataService extends AbstractProjectDataSe
           localProjectBuildClasspath.put(linkedExternalProjectPath, projectBuildClasspathPojo);
         }
 
-        List<String> projectBuildClasspath = interner.intern(new ArrayList<>(externalProjectGradleSdkLibs.getValue()));
-        projectBuildClasspathPojo.setProjectBuildClasspath(projectBuildClasspath);
+        projectBuildClasspathPojo.setProjectBuildClasspath(externalProjectGradleSdkLibs.getValue());
 
         List<String> buildClasspath = new ArrayList<>(buildClasspathSources.size() + buildClasspathClasses.size());
         buildClasspath.addAll(buildClasspathSources);
