@@ -3,6 +3,7 @@ package com.intellij.openapi.externalSystem.action;
 
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys;
+import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,11 +29,7 @@ public abstract class ExternalSystemTreeAction extends ExternalSystemAction {
       JTree tree = getTree(e);
       if (tree == null) return;
 
-      int row = tree.getRowCount() - 1;
-      while (row >= 0) {
-        tree.collapseRow(row);
-        row--;
-      }
+      TreeUtil.collapseAll(tree, -1);
     }
   }
 
@@ -42,9 +39,7 @@ public abstract class ExternalSystemTreeAction extends ExternalSystemAction {
       JTree tree = getTree(e);
       if (tree == null) return;
 
-      for (int i = 0; i < tree.getRowCount(); i++) {
-        tree.expandRow(i);
-      }
+      TreeUtil.expandAll(tree);
     }
   }
 }

@@ -38,15 +38,7 @@ public class SelectExternalProjectDialog extends SelectExternalSystemNodeDialog 
 
   public SelectExternalProjectDialog(@NotNull ProjectSystemId systemId, Project project, final ProjectData current) {
     super(systemId, project, String.format("Select %s Project", systemId.getReadableName()), ProjectNode.class,
-          new SelectExternalSystemNodeDialog.NodeSelector() {
-            @Override
-            public boolean shouldSelect(SimpleNode node) {
-              if (node instanceof ProjectNode) {
-                return ((ProjectNode)node).getData() == current;
-              }
-              return false;
-            }
-          });
+          node -> node instanceof ProjectNode && ((ProjectNode)node).getData() == current);
     assert current == null || current.getOwner().equals(systemId);
     init();
   }
