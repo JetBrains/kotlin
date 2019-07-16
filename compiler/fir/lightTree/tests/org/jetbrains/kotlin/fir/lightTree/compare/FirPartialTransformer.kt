@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree.compare
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
-import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
@@ -24,7 +23,7 @@ class FirPartialTransformer(
     private val visitMemberDeclaration: Boolean = false,
     private val visitVariable: Boolean = false,
     private val visitAnnotation: Boolean = false,
-    private val visitOperationCall: Boolean = false,
+    private val visitOperatorCall: Boolean = false,
     private val visitTypeOperatorCall: Boolean = false,
     private val visitStringConcatenationCall: Boolean = false,
     private val visitArrayOfCall: Boolean = false,
@@ -106,7 +105,7 @@ class FirPartialTransformer(
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitOperationCall) {
+        return if (visitOperatorCall) {
             (operatorCall.transformChildren(this, data) as FirOperatorCall).compose()
         } else {
             DummyFirStatement().compose()
