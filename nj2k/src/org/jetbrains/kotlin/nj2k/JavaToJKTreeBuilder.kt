@@ -171,7 +171,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
-                lExpression.toJK() as? JKAssignableExpression ?: error("Its possible? ${lExpression.toJK().prettyDebugPrintTree()}"),
+                lExpression.toJK() as JKAssignableExpression,
                 rExpression.toJK(),
                 operationSign.tokenType.toJK()
             ).also {
