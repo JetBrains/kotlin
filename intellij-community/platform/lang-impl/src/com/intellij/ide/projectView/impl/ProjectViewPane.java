@@ -224,6 +224,11 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
     }
 
     @Override
+    public boolean isShowLibraryContents() {
+      return true;
+    }
+
+    @Override
     public boolean isShowVisibilityIcons() {
       return ProjectView.getInstance(myProject).isShowVisibilityIcons(ID);
     }
