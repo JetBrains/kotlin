@@ -29,7 +29,11 @@ import org.jetbrains.kotlin.psi.psiUtil.siblings
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.core.util.end
 import org.jetbrains.kotlin.idea.core.util.range
+import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.types.KotlinType
 import java.util.*
+
+
 
 data class DataForConversion private constructor(
         val elementsAndTexts: ElementAndTextList /* list consisting of PsiElement's to convert and plain String's */,
@@ -37,7 +41,7 @@ data class DataForConversion private constructor(
         val file: PsiJavaFile
 ) {
     companion object {
-        fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion  {
+        fun prepare(copiedCode: CopiedJavaCode, project: Project): DataForConversion {
             val startOffsets = copiedCode.startOffsets.clone()
             val endOffsets = copiedCode.endOffsets.clone()
             assert(startOffsets.size == endOffsets.size) { "Must have the same size" }
@@ -60,6 +64,7 @@ data class DataForConversion private constructor(
 
             return DataForConversion(elementsAndTexts, importsAndPackage, file)
         }
+
 
         private fun clipTextIfNeeded(file: PsiJavaFile, fileText: String, startOffsets: IntArray, endOffsets: IntArray): String? {
             val ranges = startOffsets.indices.map { TextRange(startOffsets[it], endOffsets[it]) }.sortedBy { it.start }

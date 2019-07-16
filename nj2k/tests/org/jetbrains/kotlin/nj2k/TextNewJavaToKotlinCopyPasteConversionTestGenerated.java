@@ -49,6 +49,11 @@ public class TextNewJavaToKotlinCopyPasteConversionTestGenerated extends Abstrac
         runTest("nj2k/testData/copyPastePlainText/ImportResolve.txt");
     }
 
+    @TestMetadata("InClassContextProperty.txt")
+    public void testInClassContextProperty() throws Exception {
+        runTest("nj2k/testData/copyPastePlainText/InClassContextProperty.txt");
+    }
+
     @TestMetadata("InsideIdentifier.txt")
     public void testInsideIdentifier() throws Exception {
         runTest("nj2k/testData/copyPastePlainText/InsideIdentifier.txt");
@@ -89,6 +94,16 @@ public class TextNewJavaToKotlinCopyPasteConversionTestGenerated extends Abstrac
         runTest("nj2k/testData/copyPastePlainText/KT32604.txt");
     }
 
+    @TestMetadata("LocalAndMemberConflict.txt")
+    public void testLocalAndMemberConflict() throws Exception {
+        runTest("nj2k/testData/copyPastePlainText/LocalAndMemberConflict.txt");
+    }
+
+    @TestMetadata("LocalContextProperty.txt")
+    public void testLocalContextProperty() throws Exception {
+        runTest("nj2k/testData/copyPastePlainText/LocalContextProperty.txt");
+    }
+
     @TestMetadata("MembersIntoClass.txt")
     public void testMembersIntoClass() throws Exception {
         runTest("nj2k/testData/copyPastePlainText/MembersIntoClass.txt");
@@ -117,6 +132,11 @@ public class TextNewJavaToKotlinCopyPasteConversionTestGenerated extends Abstrac
     @TestMetadata("StatementsIntoFunction.txt")
     public void testStatementsIntoFunction() throws Exception {
         runTest("nj2k/testData/copyPastePlainText/StatementsIntoFunction.txt");
+    }
+
+    @TestMetadata("TopLevelContextProperty.txt")
+    public void testTopLevelContextProperty() throws Exception {
+        runTest("nj2k/testData/copyPastePlainText/TopLevelContextProperty.txt");
     }
 
     @TestMetadata("WholeFile.txt")
