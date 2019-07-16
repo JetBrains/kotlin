@@ -340,12 +340,6 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
   }
 
   @Override
-  public void addToolbarActions(@NotNull DefaultActionGroup actionGroup) {
-    AnAction editScopesAction = ActionManager.getInstance().getAction("ScopeView.EditScopes");
-    if (editScopesAction != null) actionGroup.addAction(editScopesAction).setAsSecondary(true);
-  }
-
-  @Override
   protected void installComparator(AbstractTreeBuilder builder, @NotNull Comparator<? super NodeDescriptor> comparator) {
     if (myTreeModel != null) {
       myTreeModel.setComparator(comparator);

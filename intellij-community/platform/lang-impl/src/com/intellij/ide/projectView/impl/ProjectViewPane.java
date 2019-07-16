@@ -133,8 +133,6 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
   @Override
   public void addToolbarActions(@NotNull DefaultActionGroup actionGroup) {
     actionGroup.addAction(new ConfigureFilesNestingAction()).setAsSecondary(true);
-    AnAction editScopesAction = ActionManager.getInstance().getAction("ScopeView.EditScopes");
-    if (editScopesAction != null) actionGroup.addAction(editScopesAction).setAsSecondary(true);
   }
 
   /**
