@@ -7,10 +7,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
-import org.jetbrains.kotlin.library.SerializedIr
-import org.jetbrains.kotlin.library.impl.CombinedIrFileWriter
-import org.jetbrains.kotlin.library.impl.DeclarationId
-import org.jetbrains.kotlin.library.impl.SimpleIrTableFileWriter
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -27,8 +23,99 @@ import org.jetbrains.kotlin.ir.util.lineStartOffsets
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.SerializedIr
+import org.jetbrains.kotlin.library.impl.CombinedIrFileWriter
+import org.jetbrains.kotlin.library.impl.DeclarationId
+import org.jetbrains.kotlin.library.impl.SimpleIrTableFileWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.backend.common.serialization.proto.Annotations as ProtoAnnotations
+import org.jetbrains.kotlin.backend.common.serialization.proto.ClassKind as ProtoClassKind
+import org.jetbrains.kotlin.backend.common.serialization.proto.Coordinates as ProtoCoordinates
+import org.jetbrains.kotlin.backend.common.serialization.proto.FieldAccessCommon as ProtoFieldAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry as ProtoFileEntry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrAnonymousInit as ProtoAnonymousInit
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlock as ProtoBlock
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrBlockBody as ProtoBlockBody
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrBranch as ProtoBranch
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrBreak as ProtoBreak
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrCall as ProtoCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrCatch as ProtoCatch
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrClassReference as ProtoClassReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrComposite as ProtoComposite
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConst as ProtoConst
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructor as ProtoConstructor
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall as ProtoConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrContinue as ProtoContinue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationContainer as ProtoDeclarationContainer
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationOrigin as ProtoDeclarationOrigin
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDelegatingConstructorCall as ProtoDelegatingConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDoWhile as ProtoDoWhile
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicMemberExpression as ProtoDynamicMemberExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicOperatorExpression as ProtoDynamicOperatorExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumConstructorCall as ProtoEnumConstructorCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetField as ProtoGetField
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetObject as ProtoGetObject
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetValue as ProtoGetValue
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrInstanceInitializerCall as ProtoInstanceInitializerCall
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedProperty as ProtoLocalDelegatedProperty
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrLocalDelegatedPropertyReference as ProtoLocalDelegatedPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrModule as ProtoModule
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrOperation as ProtoOperation
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrProperty as ProtoProperty
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrPropertyReference as ProtoPropertyReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrReturn as ProtoReturn
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetField as ProtoSetField
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSetVariable as ProtoSetVariable
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType as ProtoSimpleType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSpreadElement as ProtoSpreadElement
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStarProjection as ProtoStarProjection
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement as ProtoStatement
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin as ProtoStatementOrigin
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrStringConcat as ProtoStringConcat
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol as ProtoSymbol
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolData as ProtoSymbolData
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind as ProtoSymbolKind
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBody as ProtoSyntheticBody
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKind as ProtoSyntheticBodyKind
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument as ProtoTypeArgument
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex as ProtoTypeIndex
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOperator as ProtoTypeOperator
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameter as ProtoTypeParameter
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeParameterContainer as ProtoTypeParameterContainer
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeProjection as ProtoTypeProjection
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance as ProtoTypeVariance
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrValueParameter as ProtoValueParameter
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrVararg as ProtoVararg
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrVarargElement as ProtoVarargElement
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrVariable as ProtoVariable
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhen as ProtoWhen
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrWhile as ProtoWhile
+import org.jetbrains.kotlin.backend.common.serialization.proto.Loop as ProtoLoop
+import org.jetbrains.kotlin.backend.common.serialization.proto.MemberAccessCommon as ProtoMemberAccessCommon
+import org.jetbrains.kotlin.backend.common.serialization.proto.ModalityKind as ProtoModalityKind
+import org.jetbrains.kotlin.backend.common.serialization.proto.NullableIrExpression as ProtoNullableIrExpression
+import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
+import org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments as ProtoTypeArguments
+import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as ProtoVisibility
 
 open class IrModuleSerializer(
     val logger: LoggingContext,
@@ -44,12 +131,12 @@ open class IrModuleSerializer(
     // The same symbol can be used multiple times in a module
     // so use this index to store symbol data only once.
     val protoSymbolMap = mutableMapOf<IrSymbol, Int>()
-    val protoSymbolArray = arrayListOf<KotlinIr.IrSymbolData>()
+    val protoSymbolArray = arrayListOf<ProtoSymbolData>()
 
     // The same type can be used multiple times in a module
     // so use this index to store type data only once.
     val protoTypeMap = mutableMapOf<IrTypeKey, Int>()
-    val protoTypeArray = arrayListOf<KotlinIr.IrType>()
+    val protoTypeArray = arrayListOf<ProtoType>()
 
     val protoStringMap = mutableMapOf<String, Int>()
     val protoStringArray = arrayListOf<String>()
@@ -57,22 +144,22 @@ open class IrModuleSerializer(
     /* ------- Common fields ---------------------------------------------------- */
 
     private fun serializeIrDeclarationOrigin(origin: IrDeclarationOrigin) =
-        KotlinIr.IrDeclarationOrigin.newBuilder()
+        ProtoDeclarationOrigin.newBuilder()
             .setCustom(serializeString((origin as IrDeclarationOriginImpl).name))
             .build()
 
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin) =
-        KotlinIr.IrStatementOrigin.newBuilder()
+        ProtoStatementOrigin.newBuilder()
             .setName(serializeString((origin as IrStatementOriginImpl).debugName))
             .build()
 
     private fun serializeVisibility(visibility: Visibility) =
-        KotlinIr.Visibility.newBuilder()
+        ProtoVisibility.newBuilder()
             .setName(serializeString(visibility.name))
             .build()
 
-    private fun serializeCoordinates(start: Int, end: Int): KotlinIr.Coordinates {
-        return KotlinIr.Coordinates.newBuilder()
+    private fun serializeCoordinates(start: Int, end: Int): ProtoCoordinates {
+        return ProtoCoordinates.newBuilder()
             .setStartOffset(start)
             .setEndOffset(end)
             .build()
@@ -80,8 +167,8 @@ open class IrModuleSerializer(
 
     /* ------- Strings ---------------------------------------------------------- */
 
-    fun serializeString(value: String): KotlinIr.String {
-        val proto = KotlinIr.String.newBuilder()
+    fun serializeString(value: String): ProtoString {
+        val proto = ProtoString.newBuilder()
         proto.index = protoStringMap.getOrPut(value) {
             protoStringArray.add(value)
             protoStringArray.size - 1
@@ -89,50 +176,50 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    fun serializeName(name: Name): KotlinIr.String = serializeString(name.toString())
+    fun serializeName(name: Name): ProtoString = serializeString(name.toString())
 
     /* ------- IrSymbols -------------------------------------------------------- */
 
-    fun protoSymbolKind(symbol: IrSymbol): KotlinIr.IrSymbolKind = when (symbol) {
+    fun protoSymbolKind(symbol: IrSymbol): ProtoSymbolKind = when (symbol) {
         is IrAnonymousInitializerSymbol ->
-            KotlinIr.IrSymbolKind.ANONYMOUS_INIT_SYMBOL
+            ProtoSymbolKind.ANONYMOUS_INIT_SYMBOL
         is IrClassSymbol ->
-            KotlinIr.IrSymbolKind.CLASS_SYMBOL
+            ProtoSymbolKind.CLASS_SYMBOL
         is IrConstructorSymbol ->
-            KotlinIr.IrSymbolKind.CONSTRUCTOR_SYMBOL
+            ProtoSymbolKind.CONSTRUCTOR_SYMBOL
         is IrTypeParameterSymbol ->
-            KotlinIr.IrSymbolKind.TYPE_PARAMETER_SYMBOL
+            ProtoSymbolKind.TYPE_PARAMETER_SYMBOL
         is IrEnumEntrySymbol ->
-            KotlinIr.IrSymbolKind.ENUM_ENTRY_SYMBOL
+            ProtoSymbolKind.ENUM_ENTRY_SYMBOL
         is IrVariableSymbol ->
-            KotlinIr.IrSymbolKind.VARIABLE_SYMBOL
+            ProtoSymbolKind.VARIABLE_SYMBOL
         is IrValueParameterSymbol ->
             if (symbol.descriptor is ReceiverParameterDescriptor) // TODO: we use descriptor here.
-                KotlinIr.IrSymbolKind.RECEIVER_PARAMETER_SYMBOL
+                ProtoSymbolKind.RECEIVER_PARAMETER_SYMBOL
             else
-                KotlinIr.IrSymbolKind.VALUE_PARAMETER_SYMBOL
+                ProtoSymbolKind.VALUE_PARAMETER_SYMBOL
         is IrSimpleFunctionSymbol ->
-            KotlinIr.IrSymbolKind.FUNCTION_SYMBOL
+            ProtoSymbolKind.FUNCTION_SYMBOL
         is IrReturnableBlockSymbol ->
-            KotlinIr.IrSymbolKind.RETURNABLE_BLOCK_SYMBOL
+            ProtoSymbolKind.RETURNABLE_BLOCK_SYMBOL
         is IrFieldSymbol ->
             if (symbol.owner.correspondingProperty.let { it == null || it.isDelegated })
-                KotlinIr.IrSymbolKind.STANDALONE_FIELD_SYMBOL
+                ProtoSymbolKind.STANDALONE_FIELD_SYMBOL
             else
-                KotlinIr.IrSymbolKind.FIELD_SYMBOL
+                ProtoSymbolKind.FIELD_SYMBOL
         is IrPropertySymbol ->
-            KotlinIr.IrSymbolKind.PROPERTY_SYMBOL
+            ProtoSymbolKind.PROPERTY_SYMBOL
         is IrLocalDelegatedPropertySymbol ->
-            KotlinIr.IrSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL
+            ProtoSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL
         else ->
             TODO("Unexpected symbol kind: $symbol")
     }
 
-    fun serializeIrSymbolData(symbol: IrSymbol): KotlinIr.IrSymbolData {
+    fun serializeIrSymbolData(symbol: IrSymbol): ProtoSymbolData {
 
         val declaration = symbol.owner as? IrDeclaration ?: error("Expected IrDeclaration: ${symbol.owner}")
 
-        val proto = KotlinIr.IrSymbolData.newBuilder()
+        val proto = ProtoSymbolData.newBuilder()
         proto.kind = protoSymbolKind(symbol)
 
         val uniqId =
@@ -150,8 +237,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    fun serializeIrSymbol(symbol: IrSymbol): KotlinIr.IrSymbol {
-        val proto = KotlinIr.IrSymbol.newBuilder()
+    fun serializeIrSymbol(symbol: IrSymbol): ProtoSymbol {
+        val proto = ProtoSymbol.newBuilder()
         proto.index = protoSymbolMap.getOrPut(symbol) {
             protoSymbolArray.add(serializeIrSymbolData(symbol))
             protoSymbolArray.size - 1
@@ -163,8 +250,8 @@ open class IrModuleSerializer(
 
     // TODO: we, probably, need a type table.
 
-    private fun serializeTypeArguments(call: IrMemberAccessExpression): KotlinIr.TypeArguments {
-        val proto = KotlinIr.TypeArguments.newBuilder()
+    private fun serializeTypeArguments(call: IrMemberAccessExpression): ProtoTypeArguments {
+        val proto = ProtoTypeArguments.newBuilder()
         for (i in 0 until call.typeArgumentsCount) {
             proto.addTypeArgument(serializeIrType(call.getTypeArgument(i)!!))
         }
@@ -172,29 +259,29 @@ open class IrModuleSerializer(
     }
 
     fun serializeIrTypeVariance(variance: Variance) = when (variance) {
-        Variance.IN_VARIANCE -> KotlinIr.IrTypeVariance.IN
-        Variance.OUT_VARIANCE -> KotlinIr.IrTypeVariance.OUT
-        Variance.INVARIANT -> KotlinIr.IrTypeVariance.INV
+        Variance.IN_VARIANCE -> ProtoTypeVariance.IN
+        Variance.OUT_VARIANCE -> ProtoTypeVariance.OUT
+        Variance.INVARIANT -> ProtoTypeVariance.INV
     }
 
-    fun serializeAnnotations(annotations: List<IrConstructorCall>): KotlinIr.Annotations {
-        val proto = KotlinIr.Annotations.newBuilder()
+    fun serializeAnnotations(annotations: List<IrConstructorCall>): ProtoAnnotations {
+        val proto = ProtoAnnotations.newBuilder()
         annotations.forEach {
             proto.addAnnotation(serializeConstructorCall(it))
         }
         return proto.build()
     }
 
-    fun serializeIrTypeProjection(argument: IrTypeProjection) = KotlinIr.IrTypeProjection.newBuilder()
+    fun serializeIrTypeProjection(argument: IrTypeProjection) = ProtoTypeProjection.newBuilder()
         .setVariance(serializeIrTypeVariance(argument.variance))
         .setType(serializeIrType(argument.type))
         .build()
 
-    fun serializeTypeArgument(argument: IrTypeArgument): KotlinIr.IrTypeArgument {
-        val proto = KotlinIr.IrTypeArgument.newBuilder()
+    fun serializeTypeArgument(argument: IrTypeArgument): ProtoTypeArgument {
+        val proto = ProtoTypeArgument.newBuilder()
         when (argument) {
             is IrStarProjection ->
-                proto.star = KotlinIr.IrStarProjection.newBuilder()
+                proto.star = ProtoStarProjection.newBuilder()
                     .build() // TODO: Do we need a singletone here? Or just an enum?
             is IrTypeProjection ->
                 proto.type = serializeIrTypeProjection(argument)
@@ -203,8 +290,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    fun serializeSimpleType(type: IrSimpleType): KotlinIr.IrSimpleType {
-        val proto = KotlinIr.IrSimpleType.newBuilder()
+    fun serializeSimpleType(type: IrSimpleType): ProtoSimpleType {
+        val proto = ProtoSimpleType.newBuilder()
             .setAnnotations(serializeAnnotations(type.annotations))
             .setClassifier(serializeIrSymbol(type.classifier))
             .setHasQuestionMark(type.hasQuestionMark)
@@ -214,17 +301,17 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    fun serializeDynamicType(type: IrDynamicType) = KotlinIr.IrDynamicType.newBuilder()
+    fun serializeDynamicType(type: IrDynamicType) = ProtoDynamicType.newBuilder()
         .setAnnotations(serializeAnnotations(type.annotations))
         .build()
 
-    fun serializeErrorType(type: IrErrorType) = KotlinIr.IrErrorType.newBuilder()
+    fun serializeErrorType(type: IrErrorType) = ProtoErrorType.newBuilder()
         .setAnnotations(serializeAnnotations(type.annotations))
         .build()
 
-    private fun serializeIrTypeData(type: IrType): KotlinIr.IrType {
+    private fun serializeIrTypeData(type: IrType): ProtoType {
         logger.log { "### serializing IrType: " + type }
-        val proto = KotlinIr.IrType.newBuilder()
+        val proto = ProtoType.newBuilder()
         when (type) {
             is IrSimpleType ->
                 proto.simple = serializeSimpleType(type)
@@ -286,8 +373,8 @@ open class IrModuleSerializer(
         type = (this as? IrTypeProjection)?.type?.toIrTypeKey
     )
 
-    fun serializeIrType(type: IrType): KotlinIr.IrTypeIndex {
-        val proto = KotlinIr.IrTypeIndex.newBuilder()
+    fun serializeIrType(type: IrType): ProtoTypeIndex {
+        val proto = ProtoTypeIndex.newBuilder()
         val key = type.toIrTypeKey
         proto.index = protoTypeMap.getOrPut(key) {
             // println("new type: $type ${(type as? IrSimpleType)?.classifier?.descriptor}${if((type as? IrSimpleType)?.hasQuestionMark ?: false) "?" else ""}")
@@ -300,16 +387,16 @@ open class IrModuleSerializer(
 
     /* -------------------------------------------------------------------------- */
 
-    private fun serializeBlockBody(expression: IrBlockBody): KotlinIr.IrBlockBody {
-        val proto = KotlinIr.IrBlockBody.newBuilder()
+    private fun serializeBlockBody(expression: IrBlockBody): ProtoBlockBody {
+        val proto = ProtoBlockBody.newBuilder()
         expression.statements.forEach {
             proto.addStatement(serializeStatement(it))
         }
         return proto.build()
     }
 
-    private fun serializeBranch(branch: IrBranch): KotlinIr.IrBranch {
-        val proto = KotlinIr.IrBranch.newBuilder()
+    private fun serializeBranch(branch: IrBranch): ProtoBranch {
+        val proto = ProtoBranch.newBuilder()
 
         proto.condition = serializeExpression(branch.condition)
         proto.result = serializeExpression(branch.result)
@@ -317,8 +404,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeBlock(block: IrBlock): KotlinIr.IrBlock {
-        val proto = KotlinIr.IrBlock.newBuilder()
+    private fun serializeBlock(block: IrBlock): ProtoBlock {
+        val proto = ProtoBlock.newBuilder()
 
         block.origin?.let { proto.setOrigin(serializeIrStatementOrigin(it)) }
 
@@ -328,8 +415,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeComposite(composite: IrComposite): KotlinIr.IrComposite {
-        val proto = KotlinIr.IrComposite.newBuilder()
+    private fun serializeComposite(composite: IrComposite): ProtoComposite {
+        val proto = ProtoComposite.newBuilder()
 
         composite.origin?.let { proto.setOrigin(serializeIrStatementOrigin(it)) }
         composite.statements.forEach {
@@ -338,23 +425,23 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeCatch(catch: IrCatch): KotlinIr.IrCatch {
-        val proto = KotlinIr.IrCatch.newBuilder()
+    private fun serializeCatch(catch: IrCatch): ProtoCatch {
+        val proto = ProtoCatch.newBuilder()
             .setCatchParameter(serializeIrVariable(catch.catchParameter))
             .setResult(serializeExpression(catch.result))
         return proto.build()
     }
 
-    private fun serializeStringConcat(expression: IrStringConcatenation): KotlinIr.IrStringConcat {
-        val proto = KotlinIr.IrStringConcat.newBuilder()
+    private fun serializeStringConcat(expression: IrStringConcatenation): ProtoStringConcat {
+        val proto = ProtoStringConcat.newBuilder()
         expression.arguments.forEach {
             proto.addArgument(serializeExpression(it))
         }
         return proto.build()
     }
 
-    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression): KotlinIr.MemberAccessCommon {
-        val proto = KotlinIr.MemberAccessCommon.newBuilder()
+    private fun serializeMemberAccessCommon(call: IrMemberAccessExpression): ProtoMemberAccessCommon {
+        val proto = ProtoMemberAccessCommon.newBuilder()
         if (call.extensionReceiver != null) {
             proto.extensionReceiver = serializeExpression(call.extensionReceiver!!)
         }
@@ -366,7 +453,7 @@ open class IrModuleSerializer(
 
         for (index in 0..call.valueArgumentsCount - 1) {
             val actual = call.getValueArgument(index)
-            val argOrNull = KotlinIr.NullableIrExpression.newBuilder()
+            val argOrNull = ProtoNullableIrExpression.newBuilder()
             if (actual == null) {
                 // Am I observing an IR generation regression?
                 // I see a lack of arg for an empty vararg,
@@ -382,8 +469,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeCall(call: IrCall): KotlinIr.IrCall {
-        val proto = KotlinIr.IrCall.newBuilder()
+    private fun serializeCall(call: IrCall): ProtoCall {
+        val proto = ProtoCall.newBuilder()
         proto.symbol = serializeIrSymbol(call.symbol)
         call.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
 
@@ -395,15 +482,15 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeConstructorCall(call: IrConstructorCall): KotlinIr.IrConstructorCall =
-        KotlinIr.IrConstructorCall.newBuilder().apply {
+    private fun serializeConstructorCall(call: IrConstructorCall): ProtoConstructorCall =
+        ProtoConstructorCall.newBuilder().apply {
             symbol = serializeIrSymbol(call.symbol)
             constructorTypeArgumentsCount = call.constructorTypeArgumentsCount
             memberAccess = serializeMemberAccessCommon(call)
         }.build()
 
-    private fun serializeFunctionReference(callable: IrFunctionReference): KotlinIr.IrFunctionReference {
-        val proto = KotlinIr.IrFunctionReference.newBuilder()
+    private fun serializeFunctionReference(callable: IrFunctionReference): ProtoFunctionReference {
+        val proto = ProtoFunctionReference.newBuilder()
             .setSymbol(serializeIrSymbol(callable.symbol))
             .setMemberAccess(serializeMemberAccessCommon(callable))
 
@@ -413,8 +500,8 @@ open class IrModuleSerializer(
 
     private fun serializeIrLocalDelegatedPropertyReference(
         callable: IrLocalDelegatedPropertyReference
-    ): KotlinIr.IrLocalDelegatedPropertyReference {
-        val proto = KotlinIr.IrLocalDelegatedPropertyReference.newBuilder()
+    ): ProtoLocalDelegatedPropertyReference {
+        val proto = ProtoLocalDelegatedPropertyReference.newBuilder()
             .setDelegate(serializeIrSymbol(callable.delegate))
             .setGetter(serializeIrSymbol(callable.getter))
             .setSymbol(serializeIrSymbol(callable.symbol))
@@ -425,8 +512,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializePropertyReference(callable: IrPropertyReference): KotlinIr.IrPropertyReference {
-        val proto = KotlinIr.IrPropertyReference.newBuilder()
+    private fun serializePropertyReference(callable: IrPropertyReference): ProtoPropertyReference {
+        val proto = ProtoPropertyReference.newBuilder()
             .setMemberAccess(serializeMemberAccessCommon(callable))
             .setSymbol(serializeIrSymbol(callable.symbol))
         callable.origin?.let { proto.origin = serializeIrStatementOrigin(it) }
@@ -437,15 +524,15 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeClassReference(expression: IrClassReference): KotlinIr.IrClassReference {
-        val proto = KotlinIr.IrClassReference.newBuilder()
+    private fun serializeClassReference(expression: IrClassReference): ProtoClassReference {
+        val proto = ProtoClassReference.newBuilder()
             .setClassSymbol(serializeIrSymbol(expression.symbol))
             .setClassType(serializeIrType(expression.classType))
         return proto.build()
     }
 
-    private fun serializeConst(value: IrConst<*>): KotlinIr.IrConst {
-        val proto = KotlinIr.IrConst.newBuilder()
+    private fun serializeConst(value: IrConst<*>): ProtoConst {
+        val proto = ProtoConst.newBuilder()
         when (value.kind) {
             IrConstKind.Null -> proto.`null` = true
             IrConstKind.Boolean -> proto.boolean = value.value as Boolean
@@ -461,121 +548,121 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): KotlinIr.IrDelegatingConstructorCall {
-        val proto = KotlinIr.IrDelegatingConstructorCall.newBuilder()
+    private fun serializeDelegatingConstructorCall(call: IrDelegatingConstructorCall): ProtoDelegatingConstructorCall {
+        val proto = ProtoDelegatingConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
             .setMemberAccess(serializeMemberAccessCommon(call))
         return proto.build()
     }
 
-    private fun serializeDoWhile(expression: IrDoWhileLoop): KotlinIr.IrDoWhile  =
-        KotlinIr.IrDoWhile.newBuilder()
+    private fun serializeDoWhile(expression: IrDoWhileLoop): ProtoDoWhile =
+        ProtoDoWhile.newBuilder()
             .setLoop(serializeLoop(expression))
             .build()
 
-    fun serializeEnumConstructorCall(call: IrEnumConstructorCall): KotlinIr.IrEnumConstructorCall {
-        val proto = KotlinIr.IrEnumConstructorCall.newBuilder()
+    fun serializeEnumConstructorCall(call: IrEnumConstructorCall): ProtoEnumConstructorCall {
+        val proto = ProtoEnumConstructorCall.newBuilder()
             .setSymbol(serializeIrSymbol(call.symbol))
             .setMemberAccess(serializeMemberAccessCommon(call))
         return proto.build()
     }
 
-    private fun serializeGetClass(expression: IrGetClass): KotlinIr.IrGetClass {
-        val proto = KotlinIr.IrGetClass.newBuilder()
+    private fun serializeGetClass(expression: IrGetClass): ProtoGetClass {
+        val proto = ProtoGetClass.newBuilder()
             .setArgument(serializeExpression(expression.argument))
         return proto.build()
     }
 
-    private fun serializeGetEnumValue(expression: IrGetEnumValue): KotlinIr.IrGetEnumValue {
-        val proto = KotlinIr.IrGetEnumValue.newBuilder()
+    private fun serializeGetEnumValue(expression: IrGetEnumValue): ProtoGetEnumValue {
+        val proto = ProtoGetEnumValue.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
         return proto.build()
     }
 
-    private fun serializeFieldAccessCommon(expression: IrFieldAccessExpression): KotlinIr.FieldAccessCommon {
-        val proto = KotlinIr.FieldAccessCommon.newBuilder()
+    private fun serializeFieldAccessCommon(expression: IrFieldAccessExpression): ProtoFieldAccessCommon {
+        val proto = ProtoFieldAccessCommon.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
         expression.superQualifierSymbol?.let { proto.`super` = serializeIrSymbol(it) }
         expression.receiver?.let { proto.receiver = serializeExpression(it) }
         return proto.build()
     }
 
-    private fun serializeGetField(expression: IrGetField): KotlinIr.IrGetField =
-        KotlinIr.IrGetField.newBuilder()
+    private fun serializeGetField(expression: IrGetField): ProtoGetField =
+        ProtoGetField.newBuilder()
             .setFieldAccess(serializeFieldAccessCommon(expression)).apply {
                 expression.origin?.let { setOrigin(serializeIrStatementOrigin(it)) }
             }
             .build()
 
-    private fun serializeGetValue(expression: IrGetValue): KotlinIr.IrGetValue =
-        KotlinIr.IrGetValue.newBuilder()
+    private fun serializeGetValue(expression: IrGetValue): ProtoGetValue =
+        ProtoGetValue.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol)).apply {
                 expression.origin?.let { setOrigin(serializeIrStatementOrigin(it)) }
             }
             .build()
 
-    private fun serializeGetObject(expression: IrGetObjectValue): KotlinIr.IrGetObject {
-        val proto = KotlinIr.IrGetObject.newBuilder()
+    private fun serializeGetObject(expression: IrGetObjectValue): ProtoGetObject {
+        val proto = ProtoGetObject.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
         return proto.build()
     }
 
-    private fun serializeInstanceInitializerCall(call: IrInstanceInitializerCall): KotlinIr.IrInstanceInitializerCall {
-        val proto = KotlinIr.IrInstanceInitializerCall.newBuilder()
+    private fun serializeInstanceInitializerCall(call: IrInstanceInitializerCall): ProtoInstanceInitializerCall {
+        val proto = ProtoInstanceInitializerCall.newBuilder()
 
         proto.symbol = serializeIrSymbol(call.classSymbol)
 
         return proto.build()
     }
 
-    private fun serializeReturn(expression: IrReturn): KotlinIr.IrReturn {
-        val proto = KotlinIr.IrReturn.newBuilder()
+    private fun serializeReturn(expression: IrReturn): ProtoReturn {
+        val proto = ProtoReturn.newBuilder()
             .setReturnTarget(serializeIrSymbol(expression.returnTargetSymbol))
             .setValue(serializeExpression(expression.value))
         return proto.build()
     }
 
-    private fun serializeSetField(expression: IrSetField): KotlinIr.IrSetField =
-        KotlinIr.IrSetField.newBuilder()
+    private fun serializeSetField(expression: IrSetField): ProtoSetField =
+        ProtoSetField.newBuilder()
             .setFieldAccess(serializeFieldAccessCommon(expression))
             .setValue(serializeExpression(expression.value)).apply {
                 expression.origin?.let{ setOrigin(serializeIrStatementOrigin(it)) }
             }
             .build()
 
-    private fun serializeSetVariable(expression: IrSetVariable): KotlinIr.IrSetVariable =
-        KotlinIr.IrSetVariable.newBuilder()
+    private fun serializeSetVariable(expression: IrSetVariable): ProtoSetVariable =
+        ProtoSetVariable.newBuilder()
             .setSymbol(serializeIrSymbol(expression.symbol))
             .setValue(serializeExpression(expression.value)).apply {
                 expression.origin?.let{ setOrigin(serializeIrStatementOrigin(it)) }
             }
             .build()
 
-    private fun serializeSpreadElement(element: IrSpreadElement): KotlinIr.IrSpreadElement {
+    private fun serializeSpreadElement(element: IrSpreadElement): ProtoSpreadElement {
         val coordinates = serializeCoordinates(element.startOffset, element.endOffset)
-        return KotlinIr.IrSpreadElement.newBuilder()
+        return ProtoSpreadElement.newBuilder()
             .setExpression(serializeExpression(element.expression))
             .setCoordinates(coordinates)
             .build()
     }
 
-    private fun serializeSyntheticBody(expression: IrSyntheticBody) = KotlinIr.IrSyntheticBody.newBuilder()
+    private fun serializeSyntheticBody(expression: IrSyntheticBody) = ProtoSyntheticBody.newBuilder()
         .setKind(
             when (expression.kind) {
-                IrSyntheticBodyKind.ENUM_VALUES -> KotlinIr.IrSyntheticBodyKind.ENUM_VALUES
-                IrSyntheticBodyKind.ENUM_VALUEOF -> KotlinIr.IrSyntheticBodyKind.ENUM_VALUEOF
+                IrSyntheticBodyKind.ENUM_VALUES -> ProtoSyntheticBodyKind.ENUM_VALUES
+                IrSyntheticBodyKind.ENUM_VALUEOF -> ProtoSyntheticBodyKind.ENUM_VALUEOF
             }
         )
         .build()
 
-    private fun serializeThrow(expression: IrThrow): KotlinIr.IrThrow {
-        val proto = KotlinIr.IrThrow.newBuilder()
+    private fun serializeThrow(expression: IrThrow): ProtoThrow {
+        val proto = ProtoThrow.newBuilder()
             .setValue(serializeExpression(expression.value))
         return proto.build()
     }
 
-    private fun serializeTry(expression: IrTry): KotlinIr.IrTry {
-        val proto = KotlinIr.IrTry.newBuilder()
+    private fun serializeTry(expression: IrTry): ProtoTry {
+        val proto = ProtoTry.newBuilder()
             .setResult(serializeExpression(expression.tryResult))
         val catchList = expression.catches
         catchList.forEach {
@@ -588,31 +675,31 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeTypeOperator(operator: IrTypeOperator): KotlinIr.IrTypeOperator = when (operator) {
+    private fun serializeTypeOperator(operator: IrTypeOperator): ProtoTypeOperator = when (operator) {
         IrTypeOperator.CAST ->
-            KotlinIr.IrTypeOperator.CAST
+            ProtoTypeOperator.CAST
         IrTypeOperator.IMPLICIT_CAST ->
-            KotlinIr.IrTypeOperator.IMPLICIT_CAST
+            ProtoTypeOperator.IMPLICIT_CAST
         IrTypeOperator.IMPLICIT_NOTNULL ->
-            KotlinIr.IrTypeOperator.IMPLICIT_NOTNULL
+            ProtoTypeOperator.IMPLICIT_NOTNULL
         IrTypeOperator.IMPLICIT_COERCION_TO_UNIT ->
-            KotlinIr.IrTypeOperator.IMPLICIT_COERCION_TO_UNIT
+            ProtoTypeOperator.IMPLICIT_COERCION_TO_UNIT
         IrTypeOperator.IMPLICIT_INTEGER_COERCION ->
-            KotlinIr.IrTypeOperator.IMPLICIT_INTEGER_COERCION
+            ProtoTypeOperator.IMPLICIT_INTEGER_COERCION
         IrTypeOperator.SAFE_CAST ->
-            KotlinIr.IrTypeOperator.SAFE_CAST
+            ProtoTypeOperator.SAFE_CAST
         IrTypeOperator.INSTANCEOF ->
-            KotlinIr.IrTypeOperator.INSTANCEOF
+            ProtoTypeOperator.INSTANCEOF
         IrTypeOperator.NOT_INSTANCEOF ->
-            KotlinIr.IrTypeOperator.NOT_INSTANCEOF
+            ProtoTypeOperator.NOT_INSTANCEOF
         IrTypeOperator.SAM_CONVERSION ->
-            KotlinIr.IrTypeOperator.SAM_CONVERSION
+            ProtoTypeOperator.SAM_CONVERSION
         IrTypeOperator.IMPLICIT_DYNAMIC_CAST ->
-            KotlinIr.IrTypeOperator.IMPLICIT_DYNAMIC_CAST
+            ProtoTypeOperator.IMPLICIT_DYNAMIC_CAST
     }
 
-    private fun serializeTypeOp(expression: IrTypeOperatorCall): KotlinIr.IrTypeOp {
-        val proto = KotlinIr.IrTypeOp.newBuilder()
+    private fun serializeTypeOp(expression: IrTypeOperatorCall): ProtoTypeOp {
+        val proto = ProtoTypeOp.newBuilder()
             .setOperator(serializeTypeOperator(expression.operator))
             .setOperand(serializeIrType(expression.typeOperand))
             .setArgument(serializeExpression(expression.argument))
@@ -620,8 +707,8 @@ open class IrModuleSerializer(
 
     }
 
-    private fun serializeVararg(expression: IrVararg): KotlinIr.IrVararg {
-        val proto = KotlinIr.IrVararg.newBuilder()
+    private fun serializeVararg(expression: IrVararg): ProtoVararg {
+        val proto = ProtoVararg.newBuilder()
             .setElementType(serializeIrType(expression.varargElementType))
         expression.elements.forEach {
             proto.addElement(serializeVarargElement(it))
@@ -629,8 +716,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeVarargElement(element: IrVarargElement): KotlinIr.IrVarargElement {
-        val proto = KotlinIr.IrVarargElement.newBuilder()
+    private fun serializeVarargElement(element: IrVarargElement): ProtoVarargElement {
+        val proto = ProtoVarargElement.newBuilder()
         when (element) {
             is IrExpression
             -> proto.expression = serializeExpression(element)
@@ -641,8 +728,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeWhen(expression: IrWhen): KotlinIr.IrWhen {
-        val proto = KotlinIr.IrWhen.newBuilder()
+    private fun serializeWhen(expression: IrWhen): ProtoWhen {
+        val proto = ProtoWhen.newBuilder()
 
         expression.origin?.let{ proto.setOrigin(serializeIrStatementOrigin(it)) }
 
@@ -654,15 +741,14 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeLoop(expression: IrLoop): KotlinIr.Loop {
-        val proto = KotlinIr.Loop.newBuilder()
+    private fun serializeLoop(expression: IrLoop): ProtoLoop {
+        val proto = ProtoLoop.newBuilder()
             .setCondition(serializeExpression(expression.condition)).apply {
                 expression.origin?.let{ setOrigin(serializeIrStatementOrigin(it)) }
             }
 
-        val label = expression.label?.let { serializeString(it) }
-        if (label != null) {
-            proto.label = label
+        expression.label?.let {
+            proto.label = serializeString(it)
         }
 
         proto.loopId = currentLoopIndex
@@ -676,23 +762,23 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeWhile(expression: IrWhileLoop): KotlinIr.IrWhile {
-        val proto = KotlinIr.IrWhile.newBuilder()
+    private fun serializeWhile(expression: IrWhileLoop): ProtoWhile {
+        val proto = ProtoWhile.newBuilder()
             .setLoop(serializeLoop(expression))
 
         return proto.build()
     }
 
-    private fun serializeDynamicMemberExpression(expression: IrDynamicMemberExpression): KotlinIr.IrDynamicMemberExpression {
-        val proto = KotlinIr.IrDynamicMemberExpression.newBuilder()
+    private fun serializeDynamicMemberExpression(expression: IrDynamicMemberExpression): ProtoDynamicMemberExpression {
+        val proto = ProtoDynamicMemberExpression.newBuilder()
             .setMemberName(serializeString(expression.memberName))
             .setReceiver(serializeExpression(expression.receiver))
 
         return proto.build()
     }
 
-    private fun serializeDynamicOperatorExpression(expression: IrDynamicOperatorExpression): KotlinIr.IrDynamicOperatorExpression {
-        val proto = KotlinIr.IrDynamicOperatorExpression.newBuilder()
+    private fun serializeDynamicOperatorExpression(expression: IrDynamicOperatorExpression): ProtoDynamicOperatorExpression {
+        val proto = ProtoDynamicOperatorExpression.newBuilder()
             .setOperator(serializeDynamicOperator(expression.operator))
             .setReceiver(serializeExpression(expression.receiver))
 
@@ -702,54 +788,53 @@ open class IrModuleSerializer(
     }
 
     private fun serializeDynamicOperator(operator: IrDynamicOperator) = when (operator) {
-        IrDynamicOperator.UNARY_PLUS -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS
-        IrDynamicOperator.UNARY_MINUS -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS
+        IrDynamicOperator.UNARY_PLUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.UNARY_PLUS
+        IrDynamicOperator.UNARY_MINUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.UNARY_MINUS
 
-        IrDynamicOperator.EXCL -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCL
+        IrDynamicOperator.EXCL -> ProtoDynamicOperatorExpression.IrDynamicOperator.EXCL
 
-        IrDynamicOperator.PREFIX_INCREMENT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_INCREMENT
-        IrDynamicOperator.PREFIX_DECREMENT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PREFIX_DECREMENT
+        IrDynamicOperator.PREFIX_INCREMENT -> ProtoDynamicOperatorExpression.IrDynamicOperator.PREFIX_INCREMENT
+        IrDynamicOperator.PREFIX_DECREMENT -> ProtoDynamicOperatorExpression.IrDynamicOperator.PREFIX_DECREMENT
 
-        IrDynamicOperator.POSTFIX_INCREMENT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_INCREMENT
-        IrDynamicOperator.POSTFIX_DECREMENT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.POSTFIX_DECREMENT
+        IrDynamicOperator.POSTFIX_INCREMENT -> ProtoDynamicOperatorExpression.IrDynamicOperator.POSTFIX_INCREMENT
+        IrDynamicOperator.POSTFIX_DECREMENT -> ProtoDynamicOperatorExpression.IrDynamicOperator.POSTFIX_DECREMENT
 
-        IrDynamicOperator.BINARY_PLUS -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_PLUS
-        IrDynamicOperator.BINARY_MINUS -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.BINARY_MINUS
-        IrDynamicOperator.MUL -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MUL
-        IrDynamicOperator.DIV -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.DIV
-        IrDynamicOperator.MOD -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MOD
+        IrDynamicOperator.BINARY_PLUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.BINARY_PLUS
+        IrDynamicOperator.BINARY_MINUS -> ProtoDynamicOperatorExpression.IrDynamicOperator.BINARY_MINUS
+        IrDynamicOperator.MUL -> ProtoDynamicOperatorExpression.IrDynamicOperator.MUL
+        IrDynamicOperator.DIV -> ProtoDynamicOperatorExpression.IrDynamicOperator.DIV
+        IrDynamicOperator.MOD -> ProtoDynamicOperatorExpression.IrDynamicOperator.MOD
 
-        IrDynamicOperator.GT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.GT
-        IrDynamicOperator.LT -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.LT
-        IrDynamicOperator.GE -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.GE
-        IrDynamicOperator.LE -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.LE
+        IrDynamicOperator.GT -> ProtoDynamicOperatorExpression.IrDynamicOperator.GT
+        IrDynamicOperator.LT -> ProtoDynamicOperatorExpression.IrDynamicOperator.LT
+        IrDynamicOperator.GE -> ProtoDynamicOperatorExpression.IrDynamicOperator.GE
+        IrDynamicOperator.LE -> ProtoDynamicOperatorExpression.IrDynamicOperator.LE
 
-        IrDynamicOperator.EQEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQEQ
-        IrDynamicOperator.EXCLEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQ
+        IrDynamicOperator.EQEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.EQEQ
+        IrDynamicOperator.EXCLEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.EXCLEQ
 
-        IrDynamicOperator.EQEQEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQEQEQ
-        IrDynamicOperator.EXCLEQEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EXCLEQEQ
+        IrDynamicOperator.EQEQEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.EQEQEQ
+        IrDynamicOperator.EXCLEQEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.EXCLEQEQ
 
-        IrDynamicOperator.ANDAND -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.ANDAND
-        IrDynamicOperator.OROR -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.OROR
+        IrDynamicOperator.ANDAND -> ProtoDynamicOperatorExpression.IrDynamicOperator.ANDAND
+        IrDynamicOperator.OROR -> ProtoDynamicOperatorExpression.IrDynamicOperator.OROR
 
-        IrDynamicOperator.EQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.EQ
-        IrDynamicOperator.PLUSEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.PLUSEQ
-        IrDynamicOperator.MINUSEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MINUSEQ
-        IrDynamicOperator.MULEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MULEQ
-        IrDynamicOperator.DIVEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.DIVEQ
-        IrDynamicOperator.MODEQ -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.MODEQ
+        IrDynamicOperator.EQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.EQ
+        IrDynamicOperator.PLUSEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.PLUSEQ
+        IrDynamicOperator.MINUSEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.MINUSEQ
+        IrDynamicOperator.MULEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.MULEQ
+        IrDynamicOperator.DIVEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.DIVEQ
+        IrDynamicOperator.MODEQ -> ProtoDynamicOperatorExpression.IrDynamicOperator.MODEQ
 
-        IrDynamicOperator.ARRAY_ACCESS -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.ARRAY_ACCESS
+        IrDynamicOperator.ARRAY_ACCESS -> ProtoDynamicOperatorExpression.IrDynamicOperator.ARRAY_ACCESS
 
-        IrDynamicOperator.INVOKE -> KotlinIr.IrDynamicOperatorExpression.IrDynamicOperator.INVOKE
+        IrDynamicOperator.INVOKE -> ProtoDynamicOperatorExpression.IrDynamicOperator.INVOKE
     }
 
-    private fun serializeBreak(expression: IrBreak): KotlinIr.IrBreak {
-        val proto = KotlinIr.IrBreak.newBuilder()
-        val label = expression.label?.let { serializeString(it) }
-        if (label != null) {
-            proto.label = label
+    private fun serializeBreak(expression: IrBreak): ProtoBreak {
+        val proto = ProtoBreak.newBuilder()
+        expression.label?.let {
+            proto.label = serializeString(it)
         }
         val loopId = loopIndex[expression.loop]!!
         proto.loopId = loopId
@@ -757,11 +842,10 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeContinue(expression: IrContinue): KotlinIr.IrContinue {
-        val proto = KotlinIr.IrContinue.newBuilder()
-        val label = expression.label?.let { serializeString(it) }
-        if (label != null) {
-            proto.label = label
+    private fun serializeContinue(expression: IrContinue): ProtoContinue {
+        val proto = ProtoContinue.newBuilder()
+        expression.label?.let {
+            proto.label = serializeString(it)
         }
         val loopId = loopIndex[expression.loop]!!
         proto.loopId = loopId
@@ -769,15 +853,15 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeExpression(expression: IrExpression): KotlinIr.IrExpression {
+    private fun serializeExpression(expression: IrExpression): ProtoExpression {
         logger.log { "### serializing Expression: ${ir2string(expression)}" }
 
         val coordinates = serializeCoordinates(expression.startOffset, expression.endOffset)
-        val proto = KotlinIr.IrExpression.newBuilder()
+        val proto = ProtoExpression.newBuilder()
             .setType(serializeIrType(expression.type))
             .setCoordinates(coordinates)
 
-        val operationProto = KotlinIr.IrOperation.newBuilder()
+        val operationProto = ProtoOperation.newBuilder()
 
         // TODO: make me a visitor.
         when (expression) {
@@ -833,11 +917,11 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeStatement(statement: IrElement): KotlinIr.IrStatement {
+    private fun serializeStatement(statement: IrElement): ProtoStatement {
         logger.log { "### serializing Statement: ${ir2string(statement)}" }
 
         val coordinates = serializeCoordinates(statement.startOffset, statement.endOffset)
-        val proto = KotlinIr.IrStatement.newBuilder()
+        val proto = ProtoStatement.newBuilder()
             .setCoordinates(coordinates)
 
         when (statement) {
@@ -867,15 +951,15 @@ open class IrModuleSerializer(
     }
 
     private fun serializeIrDeclarationBase(declaration: IrDeclaration) =
-        KotlinIr.IrDeclarationBase.newBuilder()
+        ProtoDeclarationBase.newBuilder()
             .setSymbol(serializeIrSymbol((declaration as IrSymbolOwner).symbol))
             .setCoordinates(serializeCoordinates(declaration.startOffset, declaration.endOffset))
             .setAnnotations(serializeAnnotations(declaration.annotations))
             .setOrigin(serializeIrDeclarationOrigin(declaration.origin))
             .build()
 
-    private fun serializeIrValueParameter(parameter: IrValueParameter): KotlinIr.IrValueParameter {
-        val proto = KotlinIr.IrValueParameter.newBuilder()
+    private fun serializeIrValueParameter(parameter: IrValueParameter): ProtoValueParameter {
+        val proto = ProtoValueParameter.newBuilder()
             .setBase(serializeIrDeclarationBase(parameter))
             .setName(serializeName(parameter.name))
             .setIndex(parameter.index)
@@ -889,8 +973,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrTypeParameter(parameter: IrTypeParameter): KotlinIr.IrTypeParameter {
-        val proto = KotlinIr.IrTypeParameter.newBuilder()
+    private fun serializeIrTypeParameter(parameter: IrTypeParameter): ProtoTypeParameter {
+        val proto = ProtoTypeParameter.newBuilder()
             .setBase(serializeIrDeclarationBase(parameter))
             .setName(serializeName(parameter.name))
             .setIndex(parameter.index)
@@ -902,16 +986,16 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrTypeParameterContainer(typeParameters: List<IrTypeParameter>): KotlinIr.IrTypeParameterContainer {
-        val proto = KotlinIr.IrTypeParameterContainer.newBuilder()
+    private fun serializeIrTypeParameterContainer(typeParameters: List<IrTypeParameter>): ProtoTypeParameterContainer {
+        val proto = ProtoTypeParameterContainer.newBuilder()
         typeParameters.forEach {
             proto.addTypeParameter(serializeIrTypeParameter(it))
         }
         return proto.build()
     }
 
-    private fun serializeIrFunctionBase(function: IrFunction): KotlinIr.IrFunctionBase {
-        val proto = KotlinIr.IrFunctionBase.newBuilder()
+    private fun serializeIrFunctionBase(function: IrFunction): ProtoFunctionBase {
+        val proto = ProtoFunctionBase.newBuilder()
             .setBase(serializeIrDeclarationBase(function))
             .setName(serializeName(function.name))
             .setVisibility(serializeVisibility(function.visibility))
@@ -932,20 +1016,20 @@ open class IrModuleSerializer(
     }
 
     private fun serializeModality(modality: Modality) = when (modality) {
-        Modality.FINAL -> KotlinIr.ModalityKind.FINAL_MODALITY
-        Modality.SEALED -> KotlinIr.ModalityKind.SEALED_MODALITY
-        Modality.OPEN -> KotlinIr.ModalityKind.OPEN_MODALITY
-        Modality.ABSTRACT -> KotlinIr.ModalityKind.ABSTRACT_MODALITY
+        Modality.FINAL -> ProtoModalityKind.FINAL_MODALITY
+        Modality.SEALED -> ProtoModalityKind.SEALED_MODALITY
+        Modality.OPEN -> ProtoModalityKind.OPEN_MODALITY
+        Modality.ABSTRACT -> ProtoModalityKind.ABSTRACT_MODALITY
     }
 
-    private fun serializeIrConstructor(declaration: IrConstructor): KotlinIr.IrConstructor =
-        KotlinIr.IrConstructor.newBuilder()
+    private fun serializeIrConstructor(declaration: IrConstructor): ProtoConstructor =
+        ProtoConstructor.newBuilder()
             .setBase(serializeIrFunctionBase(declaration))
             .setIsPrimary(declaration.isPrimary)
             .build()
 
-    private fun serializeIrFunction(declaration: IrSimpleFunction): KotlinIr.IrFunction {
-        val proto = KotlinIr.IrFunction.newBuilder()
+    private fun serializeIrFunction(declaration: IrSimpleFunction): ProtoFunction {
+        val proto = ProtoFunction.newBuilder()
             .setBase(serializeIrFunctionBase(declaration))
             .setModality(serializeModality(declaration.modality))
             .setIsTailrec(declaration.isTailrec)
@@ -959,13 +1043,13 @@ open class IrModuleSerializer(
     }
 
     private fun serializeIrAnonymousInit(declaration: IrAnonymousInitializer) =
-        KotlinIr.IrAnonymousInit.newBuilder()
+        ProtoAnonymousInit.newBuilder()
             .setBase(serializeIrDeclarationBase(declaration))
             .setBody(serializeStatement(declaration.body))
             .build()
 
-    private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty): KotlinIr.IrLocalDelegatedProperty {
-        val proto = KotlinIr.IrLocalDelegatedProperty.newBuilder()
+    private fun serializeIrLocalDelegatedProperty(variable: IrLocalDelegatedProperty): ProtoLocalDelegatedProperty {
+        val proto = ProtoLocalDelegatedProperty.newBuilder()
             .setBase(serializeIrDeclarationBase(variable))
             .setName(serializeString(variable.name.toString()))
             .setIsVar(variable.isVar)
@@ -978,10 +1062,10 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrProperty(property: IrProperty): KotlinIr.IrProperty {
+    private fun serializeIrProperty(property: IrProperty): ProtoProperty {
         declarationTable.uniqIdByDeclaration(property)
 
-        val proto = KotlinIr.IrProperty.newBuilder()
+        val proto = ProtoProperty.newBuilder()
             .setBase(serializeIrDeclarationBase(property))
             .setIsDelegated(property.isDelegated)
             .setName(serializeName(property.name))
@@ -1006,8 +1090,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrField(field: IrField): KotlinIr.IrField {
-        val proto = KotlinIr.IrField.newBuilder()
+    private fun serializeIrField(field: IrField): ProtoField {
+        val proto = ProtoField.newBuilder()
             .setBase(serializeIrDeclarationBase(field))
             .setName(serializeName(field.name))
             .setVisibility(serializeVisibility(field.visibility))
@@ -1022,8 +1106,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrVariable(variable: IrVariable): KotlinIr.IrVariable {
-        val proto = KotlinIr.IrVariable.newBuilder()
+    private fun serializeIrVariable(variable: IrVariable): ProtoVariable {
+        val proto = ProtoVariable.newBuilder()
             .setBase(serializeIrDeclarationBase(variable))
             .setName(serializeName(variable.name))
             .setType(serializeIrType(variable.type))
@@ -1034,8 +1118,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrDeclarationContainer(declarations: List<IrDeclaration>): KotlinIr.IrDeclarationContainer {
-        val proto = KotlinIr.IrDeclarationContainer.newBuilder()
+    private fun serializeIrDeclarationContainer(declarations: List<IrDeclaration>): ProtoDeclarationContainer {
+        val proto = ProtoDeclarationContainer.newBuilder()
         declarations.forEach {
             //if (it is IrDeclarationWithVisibility && it.visibility == Visibilities.INVISIBLE_FAKE) return@forEach
             proto.addDeclaration(serializeDeclaration(it))
@@ -1044,16 +1128,16 @@ open class IrModuleSerializer(
     }
 
     private fun serializeClassKind(kind: ClassKind) = when (kind) {
-        CLASS -> KotlinIr.ClassKind.CLASS
-        INTERFACE -> KotlinIr.ClassKind.INTERFACE
-        ENUM_CLASS -> KotlinIr.ClassKind.ENUM_CLASS
-        ENUM_ENTRY -> KotlinIr.ClassKind.ENUM_ENTRY
-        ANNOTATION_CLASS -> KotlinIr.ClassKind.ANNOTATION_CLASS
-        OBJECT -> KotlinIr.ClassKind.OBJECT
+        CLASS -> ProtoClassKind.CLASS
+        INTERFACE -> ProtoClassKind.INTERFACE
+        ENUM_CLASS -> ProtoClassKind.ENUM_CLASS
+        ENUM_ENTRY -> ProtoClassKind.ENUM_ENTRY
+        ANNOTATION_CLASS -> ProtoClassKind.ANNOTATION_CLASS
+        OBJECT -> ProtoClassKind.OBJECT
     }
 
-    private fun serializeIrClass(clazz: IrClass): KotlinIr.IrClass {
-        val proto = KotlinIr.IrClass.newBuilder()
+    private fun serializeIrClass(clazz: IrClass): ProtoClass {
+        val proto = ProtoClass.newBuilder()
             .setBase(serializeIrDeclarationBase(clazz))
             .setName(serializeName(clazz.name))
             .setKind(serializeClassKind(clazz.kind))
@@ -1074,8 +1158,8 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeIrEnumEntry(enumEntry: IrEnumEntry): KotlinIr.IrEnumEntry {
-        val proto = KotlinIr.IrEnumEntry.newBuilder()
+    private fun serializeIrEnumEntry(enumEntry: IrEnumEntry): ProtoEnumEntry {
+        val proto = ProtoEnumEntry.newBuilder()
             .setBase(serializeIrDeclarationBase(enumEntry))
             .setName(serializeName(enumEntry.name))
 
@@ -1088,10 +1172,10 @@ open class IrModuleSerializer(
         return proto.build()
     }
 
-    private fun serializeDeclaration(declaration: IrDeclaration): KotlinIr.IrDeclaration {
+    private fun serializeDeclaration(declaration: IrDeclaration): ProtoDeclaration {
         logger.log { "### serializing Declaration: ${ir2string(declaration)}" }
 
-        val proto = KotlinIr.IrDeclaration.newBuilder()
+        val proto = ProtoDeclaration.newBuilder()
 
         when (declaration) {
             is IrAnonymousInitializer ->
@@ -1125,7 +1209,7 @@ open class IrModuleSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    fun serializeFileEntry(entry: SourceManager.FileEntry) = KotlinIr.FileEntry.newBuilder()
+    fun serializeFileEntry(entry: SourceManager.FileEntry) = ProtoFileEntry.newBuilder()
         .setName(serializeString(entry.name))
         .addAllLineStartOffsets(entry.lineStartOffsets.asIterable())
         .build()
@@ -1133,8 +1217,8 @@ open class IrModuleSerializer(
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
 
-    fun serializeIrFile(file: IrFile): KotlinIr.IrFile {
-        val proto = KotlinIr.IrFile.newBuilder()
+    fun serializeIrFile(file: IrFile): ProtoFile {
+        val proto = ProtoFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
             .setFqName(serializeString(file.fqName.toString()))
             .setAnnotations(serializeAnnotations(file.annotations))
@@ -1189,8 +1273,8 @@ open class IrModuleSerializer(
     lateinit var typeTableWriter: SimpleIrTableFileWriter
     lateinit var stringTableWriter: SimpleIrTableFileWriter
 
-    fun serializeModule(module: IrModuleFragment): KotlinIr.IrModule {
-        val proto = KotlinIr.IrModule.newBuilder()
+    fun serializeModule(module: IrModuleFragment): ProtoModule {
+        val proto = ProtoModule.newBuilder()
             .setName(serializeName(module.name))
 
         val topLevelDeclarationsCount = module.files.sumBy { it.declarations.size }
