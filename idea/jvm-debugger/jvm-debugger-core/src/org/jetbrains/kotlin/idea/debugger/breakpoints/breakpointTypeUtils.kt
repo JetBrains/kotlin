@@ -31,11 +31,17 @@ import com.intellij.xdebugger.XDebuggerUtil
 import com.intellij.xdebugger.XSourcePosition
 import com.intellij.xdebugger.impl.XSourcePositionImpl
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.util.getLineNumber
 import org.jetbrains.kotlin.idea.debugger.findElementAtLine
+import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.inline.INLINE_ONLY_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
@@ -54,6 +60,9 @@ class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
 
         @JvmField
         val DEFINITELY_YES = ApplicabilityResult(isApplicable = true, shouldStop = true)
+
+        @JvmField
+        val DEFINITELY_NO = ApplicabilityResult(isApplicable = false, shouldStop = true)
 
         @JvmField
         val MAYBE_YES = ApplicabilityResult(isApplicable = true, shouldStop = false)
@@ -181,3 +190,18 @@ fun getLambdasAtLineIfAny(file: KtFile, line: Int): List<KtFunction> {
     }
 }
 
+internal fun KtCallableDeclaration.isInlineOnly(): Boolean {
+    if (!hasModifier(KtTokens.INLINE_KEYWORD)) {
+        return false
+    }
+
+    val inlineOnlyAnnotation = annotationEntries
+        .firstOrNull { it.shortName == INLINE_ONLY_ANNOTATION_FQ_NAME.shortName() }
+        ?: return false
+
+    return runReadAction f@{
+        val bindingContext = inlineOnlyAnnotation.analyze(BodyResolveMode.PARTIAL)
+        val annotationDescriptor = bindingContext[BindingContext.ANNOTATION, inlineOnlyAnnotation] ?: return@f false
+        return@f annotationDescriptor.fqName == INLINE_ONLY_ANNOTATION_FQ_NAME
+    }
+}

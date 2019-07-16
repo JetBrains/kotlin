@@ -39,6 +39,11 @@ public class BreakpointApplicabilityTestGenerated extends AbstractBreakpointAppl
         runTest("idea/testData/debugger/breakpointApplicability/functions.kt");
     }
 
+    @TestMetadata("inlineOnly.kt")
+    public void testInlineOnly() throws Exception {
+        runTest("idea/testData/debugger/breakpointApplicability/inlineOnly.kt");
+    }
+
     @TestMetadata("locals.kt")
     public void testLocals() throws Exception {
         runTest("idea/testData/debugger/breakpointApplicability/locals.kt");

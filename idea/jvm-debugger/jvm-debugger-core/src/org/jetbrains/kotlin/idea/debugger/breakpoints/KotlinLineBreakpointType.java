@@ -135,6 +135,14 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
                 return ApplicabilityResult.MAYBE_YES;
             }
 
+            PsiElement containingMethod = getContainingMethod(element);
+            if (containingMethod instanceof KtCallableDeclaration) {
+                KtCallableDeclaration callable = (KtCallableDeclaration) containingMethod;
+                if (BreakpointTypeUtilsKt.isInlineOnly(callable)) {
+                    return ApplicabilityResult.DEFINITELY_NO;
+                }
+            }
+
             if (isClosingBraceInMethod(element)) {
                 return ApplicabilityResult.MAYBE_YES;
             }
