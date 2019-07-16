@@ -2,10 +2,10 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.ide.DataManager;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.util.Key;
 import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
@@ -22,7 +22,6 @@ import java.awt.event.MouseEvent;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
 class ServiceViewTree extends Tree {
-  static final Key<ServiceViewOptions> OPTIONS_KEY = Key.create("ServiceViewTreeOptions");
   private final TreeModel myTreeModel;
 
   ServiceViewTree(@NotNull TreeModel treeModel, @NotNull Disposable parent) {
@@ -84,7 +83,7 @@ class ServiceViewTree extends Tree {
       // Ensure that value != myTreeModel.getRoot() && !(value instanceof LoadingNode)
       if (!(node instanceof ServiceViewItem)) return null;
 
-      ServiceViewOptions viewOptions = UIUtil.getClientProperty(myComponent, OPTIONS_KEY);
+      ServiceViewOptions viewOptions = DataManager.getInstance().getDataContext(myComponent).getData(ServiceViewActionUtils.OPTIONS_KEY);
       ServiceViewDescriptor viewDescriptor = ((ServiceViewItem)node).getViewDescriptor();
       ItemPresentation presentation =
         viewOptions == null ? viewDescriptor.getPresentation() : viewDescriptor.getCustomPresentation(viewOptions);
