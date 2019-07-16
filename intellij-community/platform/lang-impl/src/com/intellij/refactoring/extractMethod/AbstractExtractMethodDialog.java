@@ -2,6 +2,7 @@
 package com.intellij.refactoring.extractMethod;
 
 import com.intellij.codeInsight.codeFragment.CodeFragment;
+import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import java.util.*;
+import java.util.stream.Stream;
 
 public class AbstractExtractMethodDialog<T> extends DialogWrapper implements ExtractMethodSettings<T> {
   private JPanel myContentPane;
@@ -55,6 +57,8 @@ public class AbstractExtractMethodDialog<T> extends DialogWrapper implements Ext
 
     myVisibilityComboBox = new ComboBoxVisibilityPanel<>(visibilityVariants);
     myVisibilityComboBox.setVisible(visibilityVariants.length > 1);
+    getRememberedVisibility(visibilityVariants).ifPresent(myVisibilityComboBox::setVisibility);
+    myVisibilityComboBox.addListener(event -> rememberCurrentVisibility());
 
     $$$setupUI$$$();
 
@@ -172,6 +176,20 @@ public class AbstractExtractMethodDialog<T> extends DialogWrapper implements Ext
       }
     };
     mySignaturePreviewTextArea = new MethodSignatureComponent("", myProject, myFileType);
+  }
+
+  @NotNull
+  private String getPersistenceId() {
+    return "visibility.combobox." + getClass().getName();
+  }
+
+  private void rememberCurrentVisibility() {
+    PropertiesComponent.getInstance().setValue(getPersistenceId(), Optional.ofNullable(getVisibility()).map(Object::toString).orElse(null));
+  }
+
+  private Optional<T> getRememberedVisibility(T[] visibilityVariants) {
+    final String stringValue = PropertiesComponent.getInstance().getValue(getPersistenceId());
+    return Stream.of(visibilityVariants).filter(visibility -> visibility.toString().equals(stringValue)).findAny();
   }
 
   private void updateOutputVariables() {
