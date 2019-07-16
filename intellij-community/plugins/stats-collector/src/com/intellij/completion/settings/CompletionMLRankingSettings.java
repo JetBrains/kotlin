@@ -63,7 +63,7 @@ public class CompletionMLRankingSettings implements PersistentStateComponent<Com
   }
 
   public static class State {
-    public boolean rankingEnabled = false;
+    public boolean rankingEnabled = true;
 
     public Set<String> enabledLanguages = new HashSet<>(ENABLE_RANKING_BY_DEFAULT);
   }
