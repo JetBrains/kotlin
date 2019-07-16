@@ -6,29 +6,35 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
+import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
+import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
+import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
 import org.jetbrains.kotlin.types.Variance
@@ -194,6 +200,7 @@ object ClassNameUtil {
 
 object FunctionUtil {
     val firFunctions = mutableListOf<FirFunction>()
+    val firFunctionCalls = mutableListOf<FirFunctionCall>()
 
     fun <T> MutableList<T>.removeLast() {
         removeAt(size - 1)

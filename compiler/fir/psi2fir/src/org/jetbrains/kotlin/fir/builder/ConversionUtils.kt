@@ -144,15 +144,15 @@ internal fun generateConstantExpressionByLiteral(session: FirSession, expression
 
 }
 
-internal fun IElementType.toBinaryName(): Name? {
+fun IElementType.toBinaryName(): Name? {
     return OperatorConventions.BINARY_OPERATION_NAMES[this]
 }
 
-internal fun IElementType.toUnaryName(): Name? {
+fun IElementType.toUnaryName(): Name? {
     return OperatorConventions.UNARY_OPERATION_NAMES[this]
 }
 
-internal fun IElementType.toFirOperation(): FirOperation =
+fun IElementType.toFirOperation(): FirOperation =
     when (this) {
         KtTokens.LT -> FirOperation.LT
         KtTokens.GT -> FirOperation.GT
@@ -176,8 +176,8 @@ internal fun IElementType.toFirOperation(): FirOperation =
         else -> throw AssertionError(this.toString())
     }
 
-internal fun FirExpression.generateNotNullOrOther(
-    session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement
+fun FirExpression.generateNotNullOrOther(
+    session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement?
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
     val subjectVariable = generateTemporaryVariable(session, psi, subjectName, this)
@@ -205,8 +205,8 @@ internal fun FirExpression.generateNotNullOrOther(
     }
 }
 
-internal fun FirExpression.generateLazyLogicalOperation(
-    session: FirSession, other: FirExpression, isAnd: Boolean, basePsi: KtElement
+fun FirExpression.generateLazyLogicalOperation(
+    session: FirSession, other: FirExpression, isAnd: Boolean, basePsi: KtElement?
 ): FirWhenExpression {
     val terminalExpression = FirConstExpressionImpl(session, psi, IrConstKind.Boolean, !isAnd)
     val terminalBlock = FirSingleExpressionBlock(session, terminalExpression)
@@ -328,12 +328,12 @@ internal fun Array<KtStringTemplateEntry>.toInterpolatingCall(
     return if (hasExpressions) result!! else FirConstExpressionImpl(session, base, IrConstKind.String, sb.toString())
 }
 
-internal fun FirExpression.generateContainsOperation(
+fun FirExpression.generateContainsOperation(
     session: FirSession,
     argument: FirExpression,
     inverted: Boolean,
     base: KtExpression?,
-    operationReference: KtOperationReferenceExpression
+    operationReference: KtOperationReferenceExpression?
 ): FirFunctionCall {
     val containsCall = FirFunctionCallImpl(session, base).apply {
         calleeReference = FirSimpleNamedReference(session, operationReference, OperatorNameConventions.CONTAINS)
@@ -426,12 +426,12 @@ internal fun generateIncrementOrDecrementBlock(
     }
 }
 
-internal fun generateAccessExpression(session: FirSession, psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
+fun generateAccessExpression(session: FirSession, psi: PsiElement?, name: Name): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(session, psi).apply {
         calleeReference = FirSimpleNamedReference(session, psi, name)
     }
 
-internal fun generateResolvedAccessExpression(session: FirSession, psi: PsiElement?, variable: FirVariable): FirQualifiedAccessExpression =
+fun generateResolvedAccessExpression(session: FirSession, psi: PsiElement?, variable: FirVariable): FirQualifiedAccessExpression =
     FirQualifiedAccessExpressionImpl(session, psi).apply {
         calleeReference = FirResolvedCallableReferenceImpl(session, psi, variable.name, variable.symbol)
     }
@@ -463,7 +463,7 @@ internal fun generateDestructuringBlock(
     }
 }
 
-internal fun generateTemporaryVariable(
+fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, name: Name, initializer: FirExpression
 ): FirVariable =
     FirVariableImpl(session, psi, name, FirImplicitTypeRefImpl(session, psi), false, initializer, FirVariableSymbol(name)).apply {
