@@ -9,6 +9,7 @@ import com.intellij.ide.projectView.actions.MarkRootActionBase;
 import com.intellij.ide.ui.newItemPopup.NewItemPopupUtil;
 import com.intellij.ide.ui.newItemPopup.NewItemWithTemplatesPopupPanel;
 import com.intellij.ide.util.DirectoryChooserUtil;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.StatisticsUtilKt;
 import com.intellij.openapi.actionSystem.*;
@@ -324,7 +325,10 @@ public class CreateDirectoryOrPackageAction extends AnAction implements DumbAwar
       Class contributorClass = contributor.getClass();
       String nameToReport = StatisticsUtilKt.getPluginType(contributorClass).isSafeToReport()
                             ? contributorClass.getSimpleName() : "third.party";
-      FUCounterUsageLogger.getInstance().logEvent("create.directory.completion", nameToReport);
+
+      FUCounterUsageLogger.getInstance().logEvent("create.directory.dialog",
+                                                  "completion.variant.chosen",
+                                                  new FeatureUsageData().addData("contributor", nameToReport));
     }
   }
 
