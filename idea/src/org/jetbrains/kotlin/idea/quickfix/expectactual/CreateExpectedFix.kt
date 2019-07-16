@@ -131,7 +131,7 @@ class CreateExpectedClassFix(
 })
 
 private fun KtDeclaration.canAddActualModifier() = when (this) {
-    is KtEnumEntry -> false
+    is KtEnumEntry, is KtClassInitializer -> false
     is KtParameter -> this.hasValOrVar()
     else -> true
 }
@@ -140,7 +140,9 @@ private fun KtDeclaration.canAddActualModifier() = when (this) {
  * @return null if close without OK
  */
 private fun chooseMembers(project: Project, collection: Collection<KtDeclaration>, prefixToRemove: String): List<KtDeclaration>? {
-    val classMembers = collection.map { Member(prefixToRemove, it, it.resolveToDescriptorIfAny()!!) }
+    val classMembers = collection.mapNotNull {
+        it.resolveToDescriptorIfAny()?.let { descriptor -> Member(prefixToRemove, it, descriptor) }
+    }
     val filter = if (collection.any(KtDeclaration::hasActualModifier)) {
         { declaration: KtDeclaration -> declaration.hasActualModifier() }
     } else {
