@@ -29,6 +29,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static com.intellij.openapi.externalSystem.model.ProjectKeys.PROJECT;
 
@@ -203,37 +204,19 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
 
   private static abstract class DependencyDataExternalSystemNode<T extends DependencyData> extends ExternalSystemNode<T> {
 
+    private final Navigatable myNavigatable;
+
     DependencyDataExternalSystemNode(@NotNull ExternalProjectsView externalProjectsView,
-                                            @Nullable ExternalSystemNode parent,
-                                            @Nullable DataNode<T> dataNode) {
+                                     @Nullable ExternalSystemNode parent,
+                                     @Nullable DataNode<T> dataNode) {
       super(externalProjectsView, parent, dataNode);
+      myNavigatable = new OrderEntryNavigatable(getProject(), () -> getOrderEntry());
     }
 
     @Nullable
     @Override
     public Navigatable getNavigatable() {
-      return new Navigatable() {
-        @Nullable
-        private OrderEntry myOrderEntry;
-
-        @Override
-        public void navigate(boolean requestFocus) {
-          if (myOrderEntry != null) {
-            ProjectSettingsService.getInstance(myProject).openModuleDependenciesSettings(myOrderEntry.getOwnerModule(), myOrderEntry);
-          }
-        }
-
-        @Override
-        public boolean canNavigate() {
-          myOrderEntry = getOrderEntry();
-          return myOrderEntry != null;
-        }
-
-        @Override
-        public boolean canNavigateToSource() {
-          return true;
-        }
-      };
+      return myNavigatable;
     }
 
     @Nullable
@@ -276,6 +259,36 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
         }
       }
       return node.getName();
+    }
+
+    private static class OrderEntryNavigatable implements Navigatable {
+      @NotNull private final Supplier<OrderEntry> myProvider;
+      @Nullable private final Project myProject;
+      @Nullable private OrderEntry myOrderEntry;
+
+      OrderEntryNavigatable(@Nullable Project project,
+                            @NotNull Supplier<OrderEntry> provider) {
+        myProject = project;
+        myProvider = provider;
+      }
+
+      @Override
+      public void navigate(boolean requestFocus) {
+        if (myOrderEntry != null && myProject != null) {
+          ProjectSettingsService.getInstance(myProject).openModuleDependenciesSettings(myOrderEntry.getOwnerModule(), myOrderEntry);
+        }
+      }
+
+      @Override
+      public boolean canNavigate() {
+        myOrderEntry = myProvider.get();
+        return myOrderEntry != null;
+      }
+
+      @Override
+      public boolean canNavigateToSource() {
+        return true;
+      }
     }
   }
 
