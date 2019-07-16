@@ -265,6 +265,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
         }
       }
     };
+    boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
     DataProvider helpDataProvider = dataId -> PlatformDataKeys.HELP_ID.is(dataId) ? DOCUMENTATION_TOPIC_ID : null;
     myEditorPane.putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, helpDataProvider);
     myText = "";
@@ -276,7 +277,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     }
     else {
       myEditorPane.putClientProperty("caretWidth", 0); // do not reserve space for caret (making content one pixel narrower than component)
-      if (Registry.is("editor.new.mouse.hover.popups")) {
+      if (newLayout) {
         UIUtil.doNotScrollToCaret(myEditorPane);
       }
     }
@@ -427,7 +428,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
           }
           else {
             Dimension d = component.getPreferredSize();
-            boolean newLayout = Registry.is("editor.new.mouse.hover.popups");
             component.setBounds(r.width - d.width - (newLayout ? 4 : 2),
                                 r.height - d.height - (newLayout ? 9 : 3),
                                 d.width, d.height);
@@ -474,7 +474,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     add(layeredPane, BorderLayout.CENTER);
 
     myControlPanel = myToolBar.getComponent();
-    myControlPanel.setBorder(IdeBorderFactory.createBorder(SideBorder.BOTTOM));
+    myControlPanel.setBorder(IdeBorderFactory.createBorder(newLayout ? UIUtil.getTooltipSeparatorColor() : JBColor.border(),
+                                                           SideBorder.BOTTOM));
     myControlPanelVisible = false;
 
     HyperlinkListener hyperlinkListener = new HyperlinkListener() {
@@ -513,10 +514,6 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
       if (myEditorPane != null) myEditorPane.setBackground(color);
       if (myControlPanel != null) myControlPanel.setBackground(color);
     }
-  }
-
-  public void setToolbarBorderColor(Color color) {
-    myControlPanel.setBorder(IdeBorderFactory.createBorder(color, SideBorder.BOTTOM));
   }
 
   public AnAction[] getActions() {

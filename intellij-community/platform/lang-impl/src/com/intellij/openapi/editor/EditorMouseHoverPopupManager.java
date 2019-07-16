@@ -601,9 +601,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
       }
       DocumentationComponent component = new MyDocComponent();
       if (deEmphasize) {
-        Color separatorColor = UIUtil.getTooltipSeparatorColor();
-        component.setBorder(IdeBorderFactory.createBorder(separatorColor, SideBorder.TOP));
-        component.setToolbarBorderColor(separatorColor);
+        component.setBorder(IdeBorderFactory.createBorder(UIUtil.getTooltipSeparatorColor(), SideBorder.TOP));
       }
       component.setData(element, quickDocMessage, null, null, null);
       component.setToolwindowCallback(() -> {
