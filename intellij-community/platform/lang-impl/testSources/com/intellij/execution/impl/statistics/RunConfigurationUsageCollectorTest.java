@@ -18,7 +18,7 @@ import java.util.*;
 
 public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
-  private static void doTest(@NotNull List<? extends RunnerAndConfigurationSettings> configurations,
+  private void doTest(@NotNull List<? extends RunnerAndConfigurationSettings> configurations,
                              @NotNull Set<? extends TestUsageDescriptor> expected, boolean withTemporary) {
     final Project project = getProject();
     final RunManager manager = RunManager.getInstance(project);

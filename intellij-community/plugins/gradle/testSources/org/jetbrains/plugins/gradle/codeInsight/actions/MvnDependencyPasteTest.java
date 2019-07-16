@@ -122,25 +122,25 @@ public class MvnDependencyPasteTest extends LightJavaCodeInsightTestCase {
     return dependency;
   }
 
-  private static void configureGradleFile() {
+  private void configureGradleFile() {
     configureFromFileText("build.gradle",
                           "dependencies {\n" +
                           "    <caret>\n" +
                           "}");
   }
 
-  private static void selectWholeFile() {
+  private void selectWholeFile() {
     Document document = getEditor().getDocument();
     getEditor().getSelectionModel().setSelection(0, document.getTextLength());
   }
 
-  private static void performCut() {
+  private void performCut() {
     EditorActionManager actionManager = EditorActionManager.getInstance();
     EditorActionHandler actionHandler = actionManager.getActionHandler(IdeActions.ACTION_EDITOR_CUT);
     actionHandler.execute(getEditor(), null, DataManager.getInstance().getDataContextFromFocus().getResultSync());
   }
 
-  private static void performPaste() {
+  private void performPaste() {
     EditorActionManager actionManager = EditorActionManager.getInstance();
     EditorActionHandler actionHandler = actionManager.getActionHandler(IdeActions.ACTION_EDITOR_PASTE);
     actionHandler.execute(getEditor(), null, DataManager.getInstance().getDataContextFromFocus().getResultSync());
