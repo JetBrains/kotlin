@@ -1109,6 +1109,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/qualifiedCall2.kt");
         }
 
+        @TestMetadata("semicolon1.kt")
+        public void testSemicolon1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/semicolon1.kt");
+        }
+
+        @TestMetadata("semicolon2.kt")
+        public void testSemicolon2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/semicolon2.kt");
+        }
+
         @TestMetadata("when1.kt")
         public void testWhen1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/when1.kt");

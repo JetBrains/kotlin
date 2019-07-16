@@ -411,7 +411,7 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
     @Override
     protected boolean checkSourceElement(@NotNull PsiElement element) {
-        return PsiTreeUtil.instanceOf(element, MOVABLE_ELEMENT_CLASSES);
+        return PsiTreeUtil.instanceOf(element, MOVABLE_ELEMENT_CLASSES) || element.getNode().getElementType() == KtTokens.SEMICOLON;
     }
 
     @Override
@@ -427,6 +427,10 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
 
     @Nullable
     private static PsiElement getMovableElement(@NotNull PsiElement element, boolean lookRight) {
+        if (element.getNode().getElementType() == KtTokens.SEMICOLON) {
+            return element;
+        }
+
         //noinspection unchecked
         PsiElement movableElement = PsiUtilsKt.getParentOfTypesAndPredicate(
                 element,
