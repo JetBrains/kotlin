@@ -1,0 +1,5 @@
+// MOVE: up
+fun x() {
+    <caret>println("b");
+    println("a")
+}
