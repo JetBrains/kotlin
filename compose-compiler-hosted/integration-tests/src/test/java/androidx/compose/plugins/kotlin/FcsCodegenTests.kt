@@ -116,7 +116,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
             """,
             { emptyMap<String, String>() },
-            "TestCall()", dumpClasses = true
+            "TestCall()"
         ).then { activity ->
             val textView = activity.findViewById<TextView>(100)
             assertEquals("12", textView.text)
@@ -1847,6 +1847,180 @@ class FcsCodegenTests : AbstractCodegenTest() {
         )
     }
 
+    @Test
+    fun testStableParameters_Various(): Unit = ensureSetup {
+        val output = ArrayList<String>()
+        compose("""
+            @Model
+            class M { var count = 0 }
+            val m = M()
+
+            @Immutable
+            data class ValueHolder(val value: Int)
+
+            var output = ArrayList<String>()
+
+            class NotStable { val value = 10 }
+
+            @Composable
+            fun MemoInt(a: Int) {
+              output.add("MemoInt a=${'$'}a")
+              Button(id=101, text="memo ${'$'}a", onClick={ m.count++ })
+            }
+
+            @Composable
+            fun MemoFloat(a: Float) {
+              output.add("MemoFloat")
+              Button(text="memo ${'$'}a")
+            }
+
+            @Composable
+            fun MemoDouble(a: Double) {
+              output.add("MemoDouble")
+              Button(text="memo ${'$'}a")
+            }
+
+            @Composable
+            fun MemoNotStable(a: NotStable) {
+              output.add("MemoNotStable")
+              Button(text="memo ${'$'}{a.value}")
+            }
+
+            @Composable
+            fun MemoModel(a: ValueHolder) {
+              output.add("MemoModelHolder")
+              Button(text="memo ${'$'}{a.value}")
+            }
+
+            @Composable
+            fun TestSkipping(
+                a: Int,
+                b: Float,
+                c: Double,
+                d: NotStable,
+                e: ValueHolder
+            ) {
+              val am = a + m.count
+              output.add("TestSkipping a=${'$'}a am=${'$'}am")
+              MemoInt(a=am)
+              MemoFloat(a=b)
+              MemoDouble(a=c)
+              MemoNotStable(a=d)
+              MemoModel(a=e)
+            }
+
+            @Composable
+            fun Main(v: ValueHolder) {
+              TestSkipping(a=1, b=1f, c=2.0, d=NotStable(), e=v)
+            }
+        """, {
+            mapOf(
+                "outerOutput: ArrayList<String>" to output
+            )
+        }, """
+            output = outerOutput
+            val v = ValueHolder(0)
+            Main(v)
+        """).then {
+            // Expect that all the methods are called in order
+            assertEquals(
+                "TestSkipping a=1 am=1, MemoInt a=1, MemoFloat, " +
+                        "MemoDouble, MemoNotStable, MemoModelHolder",
+                output.joinToString()
+            )
+            output.clear()
+        }.then { activity ->
+            // Expect TestSkipping and MemoNotStable to be called because the test forces an extra compose.
+            assertEquals("TestSkipping a=1 am=1, MemoNotStable", output.joinToString())
+            output.clear()
+
+            // Change the model
+            val button = activity.findViewById(101) as Button
+            button.performClick()
+        }.then {
+            // Expect that only MemoInt (the parameter changed) and MemoNotStable (it has unstable parameters) were
+            // called then expect a second compose which should only MemoNotStable
+            assertEquals(
+                "TestSkipping a=1 am=2, MemoInt a=2, MemoNotStable, " +
+                        "TestSkipping a=1 am=2, MemoNotStable",
+                output.joinToString()
+            )
+        }
+    }
+
+    @Test
+    fun testStableParameters_Lambdas(): Unit = ensureSetup {
+        val output = ArrayList<String>()
+        compose("""
+            @Model
+            class M { var count = 0 }
+            val m = M()
+
+            var output = ArrayList<String>()
+            val unchanged: () -> Unit = { }
+
+            fun log(msg: String) { output.add(msg) }
+
+            @Composable
+            fun Container(@Children children: () -> Unit) {
+              log("Container")
+              children()
+            }
+
+            @Composable
+            fun NormalLambda(index: Int, lambda: () -> Unit) {
+              log("NormalLambda(${'$'}index)")
+              Button(text="text")
+            }
+
+            @Composable
+            fun TestSkipping(unchanged: () -> Unit, changed: () -> Unit) {
+              log("TestSkipping")
+              Container {
+                NormalLambda(index = 1, lambda = unchanged)
+                NormalLambda(index = 2, lambda = unchanged)
+                NormalLambda(index = 3, lambda = unchanged)
+                NormalLambda(index = 4, lambda = changed)
+              }
+            }
+
+            @Composable
+            fun Main(unchanged: () -> Unit) {
+              Button(id=101, text="model ${'$'}{m.count}", onClick={ m.count++ })
+              TestSkipping(unchanged = unchanged, changed = { })
+            }
+        """, {
+            mapOf(
+                "outerOutput: ArrayList<String>" to output
+            )
+        }, """
+            output = outerOutput
+            Main(unchanged = unchanged)
+        """).then {
+            // Expect that all the methods are called in order
+            assertEquals(
+                "TestSkipping, Container, NormalLambda(1), " +
+                        "NormalLambda(2), NormalLambda(3), NormalLambda(4)",
+                output.joinToString()
+            )
+            output.clear()
+        }.then { activity ->
+            // Expect nothing to occur with no changes
+            assertEquals("", output.joinToString())
+            output.clear()
+
+            // Change the model
+            val button = activity.findViewById(101) as Button
+            button.performClick()
+        }.then {
+            // Expect only NormalLambda(4) to be called
+            assertEquals(
+                "TestSkipping, Container, NormalLambda(4)",
+                output.joinToString()
+            )
+        }
+    }
+
     override fun setUp() {
         isSetup = true
         super.setUp()
@@ -1914,7 +2088,9 @@ class FcsCodegenTests : AbstractCodegenTest() {
 
         @Suppress("NO_REFLECTION_IN_CLASS_PATH")
         val parameterList = candidateValues.map {
-            "${it.key}: ${it.value::class.qualifiedName}"
+            if (it.key.contains(':')) {
+                it.key
+            } else "${it.key}: ${it.value::class.qualifiedName}"
         }.joinToString()
         val parameterTypes = candidateValues.map {
             it.value::class.javaPrimitiveType ?: it.value::class.javaObjectType

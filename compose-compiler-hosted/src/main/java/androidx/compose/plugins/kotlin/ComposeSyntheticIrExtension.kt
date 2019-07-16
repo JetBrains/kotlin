@@ -358,9 +358,11 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                                 memoize.validations.map { validation ->
                                     statementGenerator.validationCall(
                                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                        validation,
-                                        updaterLambdaDescriptor,
-                                        validation.assignmentLambda?.extensionReceiverParameter
+                                        memoizing = true,
+                                        validation = validation,
+                                        fnDescriptor = updaterLambdaDescriptor,
+                                        assignmentReceiver = validation.assignmentLambda
+                                            ?.extensionReceiverParameter
                                             ?: error("expected extension receiver")
                                     ) { name ->
                                         getAttribute(name)
@@ -602,6 +604,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             ?: error("Expected callInvalidFnDescriptor to be non-null")
                         val validateParameterType =
                             getComposerCallParameterType(KtxNameConventions.CALL_INVALID_PARAMETER)
+                        val memoizing = memoize.validations.all { it.attribute.isStable }
+                        val validations = memoize.validations
                         val validateLambda =
                             lambdaExpression(
                                 validateLambdaDescriptor,
@@ -609,30 +613,51 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             ) { statements ->
                             // all as one expression: a or b or c ... or z
 
-                            val validationCalls = memoize.validations
+                            val validationCalls = validations
                                 .map { validation ->
-                                    statementGenerator.validationCall(
-                                        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                        validation,
-                                        validateLambdaDescriptor,
-                                        validateLambdaDescriptor.valueParameters.firstOrNull()
-                                    ) { name ->
-                                        getAttribute(name)
-                                    }
+                                    if (validation.validationType == ValidationType.CHANGED &&
+                                        !memoizing)
+                                        IrConstImpl.constTrue(
+                                            UNDEFINED_OFFSET,
+                                            UNDEFINED_OFFSET,
+                                            irBuiltIns.booleanType
+                                        )
+                                    else
+                                        statementGenerator.validationCall(
+                                            UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                            memoizing = memoizing,
+                                            validation = validation,
+                                            fnDescriptor = validateLambdaDescriptor,
+                                            assignmentReceiver = validateLambdaDescriptor
+                                                .valueParameters.firstOrNull()
+                                        ) { name ->
+                                            getAttribute(name)
+                                        }
                                 }
                             when (validationCalls.size) {
-                                0 -> Unit // TODO(lmr): return constant true here?
+                                0 -> if (!memoizing) {
+                                    // If we are not memoizing we should always return true
+                                    statements.add(IrConstImpl.constTrue(
+                                        UNDEFINED_OFFSET,
+                                        UNDEFINED_OFFSET,
+                                        irBuiltIns.booleanType
+                                    ))
+                                }
                                 1 -> statements.add(validationCalls.single())
                                 else -> {
                                     statements.add(
                                         validationCalls.reduce { left, right ->
-                                            statementGenerator.callMethod(
-                                                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                                                resolvedKtxCall.infixOrCall
-                                                    ?: error("Invalid KTX Call"),
-                                                left
-                                            ).apply {
-                                                putValueArgument(0, right)
+                                            when {
+                                                left is IrConstImpl<*> -> right
+                                                right is IrConstImpl<*> -> left
+                                                else -> statementGenerator.callMethod(
+                                                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                                                    resolvedKtxCall.infixOrCall
+                                                        ?: error("Invalid KTX Call"),
+                                                    left
+                                                ).apply {
+                                                    putValueArgument(0, right)
+                                                }
                                             }
                                         }
                                     )
@@ -697,15 +722,6 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
     }
 }
 
-private fun <T> Collection<T>.append(collection: Collection<T>): Collection<T> {
-    if (collection.isEmpty()) return this
-    if (this.isEmpty()) return collection
-    val result = arrayListOf<T>()
-    result.addAll(this)
-    result.addAll(collection)
-    return result
-}
-
 private fun StatementGenerator.getProperty(
     startOffset: Int,
     endOffset: Int,
@@ -758,13 +774,16 @@ private fun StatementGenerator.addReturn(
 private fun StatementGenerator.validationCall(
     startOffset: Int,
     endOffset: Int,
+    memoizing: Boolean,
     validation: ValidatedAssignment,
     fnDescriptor: FunctionDescriptor,
     assignmentReceiver: ValueDescriptor?,
     getAttribute: (String) -> IrExpression
 ): IrCall {
-    val name = validation.attribute.name
+    val attribute = validation.attribute
+    val name = attribute.name
     val attributeValue = getAttribute(name)
+
     val validator = extensionReceiverOf(fnDescriptor)
         ?: error("expected an extension receiver to validator lambda")
 
@@ -773,10 +792,12 @@ private fun StatementGenerator.validationCall(
 
     // in emit, the element is passed through an extension parameter
     // in call, the element is passed through a capture scope
-
+    val validationCall = (
+                if (memoizing) validation.validationCall
+                else validation.uncheckedValidationCall
+            ) ?: error("Expected validationCall to be non-null")
     return callMethod(
-        UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-        validation.validationCall ?: error("Expected validationCall to be non-null"),
+        UNDEFINED_OFFSET, UNDEFINED_OFFSET, validationCall,
         validator
     ).apply {
         putValueArgument(0, attributeValue)
@@ -787,7 +808,7 @@ private fun StatementGenerator.validationCall(
             val validationAssignment = lambdaExpression(
                 startOffset, endOffset,
                 assignmentLambdaDescriptor,
-                validation.validationCall.resultingDescriptor.valueParameters[1].type
+                validationCall.resultingDescriptor.valueParameters[1].type
             ) { statements ->
                 val parameterDefinition = validation.assignmentLambda.valueParameters.first()
                 val parameterReference = context.symbolTable.referenceValueParameter(
@@ -870,23 +891,6 @@ private fun IrCall.putValueParameters(
             }
         }
     }
-}
-
-private fun StatementGenerator.callFunction(
-    startOffset: Int,
-    endOffset: Int,
-    function: ResolvedCall<*>,
-    extensionReceiver: IrExpression? = null
-): IrCall {
-    val functionDescriptor = function.resultingDescriptor as FunctionDescriptor
-
-    return buildCall(
-        startOffset,
-        endOffset,
-        function,
-        functionDescriptor,
-        extensionReceiver = extensionReceiver
-    )
 }
 
 private fun StatementGenerator.callMethod(
