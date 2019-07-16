@@ -5,6 +5,7 @@ import com.intellij.execution.dashboard.RunConfigurationsServiceViewContributor;
 import com.intellij.execution.services.ServiceEventListener;
 import com.intellij.execution.services.ServiceViewActionUtils;
 import com.intellij.execution.services.ServiceViewContributor;
+import com.intellij.execution.services.ServiceViewOptions;
 import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.ToggleAction;
@@ -18,6 +19,11 @@ abstract class RunDashboardGroupingRuleToggleAction extends ToggleAction impleme
   @Override
   public void update(@NotNull AnActionEvent e) {
     super.update(e);
+    ServiceViewOptions viewOptions = e.getData(ServiceViewActionUtils.OPTIONS_KEY);
+    if (viewOptions != null && !viewOptions.isGroupByServiceGroups()) {
+      e.getPresentation().setEnabledAndVisible(false);
+      return;
+    }
     Set<ServiceViewContributor> contributors = e.getData(ServiceViewActionUtils.CONTRIBUTORS_KEY);
     if (contributors != null) {
       for (ServiceViewContributor contributor : contributors) {

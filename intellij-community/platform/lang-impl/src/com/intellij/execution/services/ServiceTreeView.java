@@ -16,7 +16,6 @@ import com.intellij.ui.tree.RestoreSelectionListener;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.concurrency.AsyncPromise;
@@ -58,17 +57,6 @@ class ServiceTreeView extends ServiceView {
 
     myTree.addTreeSelectionListener(new RestoreSelectionListener());
     myTree.addTreeSelectionListener(e -> onSelectionChanged());
-    UIUtil.putClientProperty(myTree, ServiceViewTree.OPTIONS_KEY, new ServiceViewOptions() {
-      @Override
-      public boolean isGroupByContributor() {
-        return ServiceTreeView.this.isGroupByContributor();
-      }
-
-      @Override
-      public boolean isGroupByServiceGroups() {
-        return ServiceTreeView.this.isGroupByServiceGroups();
-      }
-    });
     model.addModelListener(this::rootsChanged);
 
     Consumer<ServiceViewItem> selector = item ->

@@ -108,6 +108,17 @@ abstract class ServiceView extends JPanel implements Disposable {
   }
 
   private static void setDataProvider(ServiceView serviceView) {
+    ServiceViewOptions viewOptions = new ServiceViewOptions() {
+      @Override
+      public boolean isGroupByContributor() {
+        return serviceView.isGroupByContributor();
+      }
+
+      @Override
+      public boolean isGroupByServiceGroups() {
+        return serviceView.isGroupByServiceGroups();
+      }
+    };
     serviceView.putClientProperty(DataManager.CLIENT_PROPERTY_DATA_PROVIDER, (DataProvider)dataId -> {
       if (PlatformDataKeys.HELP_ID.is(dataId)) {
         return ServiceViewManagerImpl.getToolWindowContextHelpId();
@@ -132,6 +143,9 @@ abstract class ServiceView extends JPanel implements Disposable {
       }
       if (ServiceViewActionUtils.CONTRIBUTORS_KEY.is(dataId)) {
         return serviceView.getModel().getRoots().stream().map(item -> item.getRootContributor()).collect(Collectors.toSet());
+      }
+      if (ServiceViewActionUtils.OPTIONS_KEY.is(dataId)) {
+        return viewOptions;
       }
       List<ServiceViewItem> selectedItems = serviceView.getSelectedItems();
       ServiceViewItem selectedItem = ContainerUtil.getOnlyItem(selectedItems);
