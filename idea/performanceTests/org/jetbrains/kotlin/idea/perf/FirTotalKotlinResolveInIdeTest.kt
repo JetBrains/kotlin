@@ -103,6 +103,6 @@ class FirTotalKotlinResolveInIdeTest : ModuleTestCase() {
         }
 
         println("Raw fir up, files: ${firFiles.size}")
-        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, withProgress = true)
+//        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, withProgress = true)
     }
 }

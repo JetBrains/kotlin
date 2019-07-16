@@ -121,7 +121,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             return result!!
         }
 
-        val transformer = FirTotalResolveTransformer()
+        val transformer = FirTotalResolveTransformer(sessions)
         transformer.processFiles(firFiles)
         for (file in firFiles) {
             val firFileDump = StringBuilder().also { file.accept(FirRenderer(it), null) }.toString()

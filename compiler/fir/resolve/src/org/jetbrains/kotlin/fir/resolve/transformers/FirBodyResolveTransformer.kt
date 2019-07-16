@@ -1247,26 +1247,28 @@ class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>,
 
 
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
+class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
+    val transformer = FirBodyResolveTransformer(session, implicitTypeOnly = true)
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(file.fileSession, implicitTypeOnly = true)
+
         return file.transform(transformer, null)
     }
 }
 
 
 @Deprecated("It is temp", level = DeprecationLevel.WARNING, replaceWith = ReplaceWith("TODO(\"что-то нормальное\")"))
-class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
+class FirBodyResolveTransformerAdapter(session: FirSession) : FirTransformer<Nothing?>() {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
+    val transformer = FirBodyResolveTransformer(session, implicitTypeOnly = false)
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(file.fileSession, implicitTypeOnly = false)
+
         return file.transform(transformer, null)
     }
 }

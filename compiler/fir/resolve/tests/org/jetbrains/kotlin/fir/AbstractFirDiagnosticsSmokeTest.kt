@@ -91,7 +91,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             }
         }
 
-        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+//        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
 
     }
 

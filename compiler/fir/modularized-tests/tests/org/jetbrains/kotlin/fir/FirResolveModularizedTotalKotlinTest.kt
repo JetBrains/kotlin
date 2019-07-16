@@ -55,7 +55,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val session = createSession(environment, scope, librariesScope)
         val builder = RawFirBuilder(session, stubMode = false)
 
-        val totalTransformer = FirTotalResolveTransformer()
+        val totalTransformer = FirTotalResolveTransformer(session)
         val firFiles = ktFiles.toList().mapNotNull {
             var firFile: FirFile? = null
             val time = measureNanoTime {

@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirTotalResolveTransformer {
+class FirTotalResolveTransformer(session: FirSession) {
 
     val transformers: List<FirTransformer<Nothing?>> = listOf(
         FirImportResolveTransformer(),
         FirSupertypeResolverTransformer(),
         FirTypeResolveTransformer(),
         FirStatusResolveTransformer(),
-        FirImplicitTypeBodyResolveTransformerAdapter(),
-        FirBodyResolveTransformerAdapter()
+        FirImplicitTypeBodyResolveTransformerAdapter(session),
+        FirBodyResolveTransformerAdapter(session)
     )
 
     fun processFiles(files: List<FirFile>) {
