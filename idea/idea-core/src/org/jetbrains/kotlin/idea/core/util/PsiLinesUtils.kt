@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 fun PsiFile.getLineStartOffset(line: Int): Int? {
+    return getLineStartOffset(line, skipWhitespace = true)
+}
+
+fun PsiFile.getLineStartOffset(line: Int, skipWhitespace: Boolean): Int? {
     val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
     if (doc != null && line >= 0 && line < doc.lineCount) {
         val startOffset = doc.getLineStartOffset(line)
         val element = findElementAt(startOffset) ?: return startOffset
 
-        if (element is PsiWhiteSpace || element is PsiComment) {
+        if (skipWhitespace && (element is PsiWhiteSpace || element is PsiComment)) {
             return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
         }
         return startOffset

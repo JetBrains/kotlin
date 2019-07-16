@@ -39,6 +39,8 @@ import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 import java.util.*
 
+interface KotlinBreakpointType
+
 class ApplicabilityResult(val isApplicable: Boolean, val shouldStop: Boolean) {
     companion object {
         @JvmStatic

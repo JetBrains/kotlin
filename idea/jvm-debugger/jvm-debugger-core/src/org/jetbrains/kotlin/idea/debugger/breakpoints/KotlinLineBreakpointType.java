@@ -51,7 +51,7 @@ import java.util.List;
 
 import static org.jetbrains.kotlin.idea.debugger.breakpoints.BreakpointTypeUtilsKt.isBreakpointApplicable;
 
-public class KotlinLineBreakpointType extends JavaLineBreakpointType {
+public class KotlinLineBreakpointType extends JavaLineBreakpointType implements KotlinBreakpointType {
     public KotlinLineBreakpointType() {
         super("kotlin-line", KotlinBundle.message("debugger.line.breakpoints.tab.title"));
     }

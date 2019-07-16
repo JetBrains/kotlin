@@ -74,6 +74,11 @@
             <reference ref="Kotlin.XDebugger.ToggleKotlinVariableView"/>
             <add-to-group group-id="XDebugger.Watches.Tree.Toolbar" relative-to-action="XDebugger.SwitchWatchesInVariables" anchor="after"/>
         </group>
+
+        <action id="InspectBreakpointApplicability" class="org.jetbrains.kotlin.idea.debugger.breakpoints.InspectBreakpointApplicabilityAction"
+                text="Inspect Breakpoint Applicability" internal="true">
+            <add-to-group group-id="KotlinInternalGroup"/>
+        </action>
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">

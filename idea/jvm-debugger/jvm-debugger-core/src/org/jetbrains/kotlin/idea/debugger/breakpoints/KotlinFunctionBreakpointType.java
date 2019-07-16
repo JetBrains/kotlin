@@ -28,7 +28,10 @@ import static org.jetbrains.kotlin.idea.debugger.breakpoints.BreakpointTypeUtils
 // This class is copied from com.intellij.debugger.ui.breakpoints.MethodBreakpoint.
 // Changed parts are marked with '// MODIFICATION: ' comments.
 // This should be deleted when IDEA opens the method breakpoint API (presumably in 193).
-public class KotlinFunctionBreakpointType extends JavaLineBreakpointTypeBase<JavaMethodBreakpointProperties> {
+public class KotlinFunctionBreakpointType
+        extends JavaLineBreakpointTypeBase<JavaMethodBreakpointProperties>
+        implements KotlinBreakpointType
+{
     // MODIFICATION: Start Kotlin implementation
     public KotlinFunctionBreakpointType() {
         super("kotlin-function", KotlinBundle.message("debugger.function.breakpoints.tab.title"));

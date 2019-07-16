@@ -53,10 +53,7 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralKotlinToKotlinCo
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractLiteralTextToKotlinCopyPasteTest
 import org.jetbrains.kotlin.idea.conversion.copy.AbstractTextJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.idea.coverage.AbstractKotlinCoverageOutputFilesTest
-import org.jetbrains.kotlin.idea.debugger.AbstractFileRankingTest
-import org.jetbrains.kotlin.idea.debugger.AbstractKotlinSteppingTest
-import org.jetbrains.kotlin.idea.debugger.AbstractPositionManagerTest
-import org.jetbrains.kotlin.idea.debugger.AbstractSmartStepIntoTest
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.*
 import org.jetbrains.kotlin.idea.debugger.sequence.exec.AbstractSequenceTraceTestCase
 import org.jetbrains.kotlin.idea.decompiler.navigation.AbstractNavigateToDecompiledLibraryTest
@@ -623,6 +620,10 @@ fun main(args: Array<String>) {
         testClass<AbstractPositionManagerTest> {
             model("debugger/positionManager", recursive = false, extension = "kt", testClassName = "SingleFile")
             model("debugger/positionManager", recursive = false, extension = null, testClassName = "MultiFile")
+        }
+
+        testClass<AbstractBreakpointApplicabilityTest> {
+            model("debugger/breakpointApplicability")
         }
 
         testClass<AbstractKotlinExceptionFilterTest> {
