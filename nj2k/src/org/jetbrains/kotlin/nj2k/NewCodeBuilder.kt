@@ -40,7 +40,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         JKClass.ClassKind.COMPANION -> "companion object"
     }
 
-    inner class Visitor : JKVisitorWithCommentsPrinting {
+    inner class Visitor : JKVisitorWithCommentsPrinting() {
         private val printedTokens = mutableSetOf<JKNonCodeElement>()
 
         //TODO move to ast transformation phase
