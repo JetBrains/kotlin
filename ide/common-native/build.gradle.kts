@@ -5,6 +5,7 @@ plugins {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addCidrDeps: (Project) -> Unit by ultimateTools
 val addIdeaNativeModuleDepsComposite: (Project) -> Unit by ultimateTools
+val cidrUnscrambledJarDir: File? by rootProject.extra
 
 dependencies {
     addCidrDeps(project)
@@ -13,6 +14,10 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    if (Ide.IJ192.orHigher() || cidrUnscrambledJarDir?.exists() == true) {
+        "main" { projectDefault() }
+    } else {
+        "main" {}
+    }
     "test" {}
 }

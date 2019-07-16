@@ -7,10 +7,10 @@ import kotlin.reflect.KFunction
 
 // TODO: pack this as a Gradle plugin
 val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
-        ::enableTasksIfAtLeast,
-        ::enableTasksIfOsIsNot,
-        ::addCidrDeps,
-        ::addIdeaNativeModuleDepsComposite
+    ::enableTasksIfAtLeast,
+    ::enableTasksIfOsIsNot,
+    ::addCidrDeps,
+    ::addIdeaNativeModuleDepsComposite
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -21,7 +21,7 @@ rootProject.extensions.add("ultimateTools", ultimateTools)
 
 fun enableTasksIfAtLeast(project: Project, productVersion: String, expectedProductBranch: Int) = with(project) {
     val productBranch = productVersion.substringBefore('.').toIntOrNull()
-            ?: error("Invalid product version format: $productVersion")
+        ?: error("Invalid product version format: $productVersion")
 
     if (productBranch >= expectedProductBranch)
         return // OK, nothing to disable
@@ -62,7 +62,7 @@ fun Project.disableBuildTasks(message: () -> String) {
 
 val javaApiArtifacts: List<String> by rootProject.extra
 
-val intellijUltimateEnabled: Boolean? by rootProject.extra
+val cidrPluginsEnabled: Boolean? by rootProject.extra
 
 fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
     dependencies {
@@ -118,10 +118,13 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
 
 fun addCidrDeps(project: Project) = with(project) {
     dependencies {
-//        if (intellijUltimateEnabled != true) { // CIDR build
-            val cidrUnscrambledJarDir: File by rootProject.extra
+        val cidrUnscrambledJarDir: File? by rootProject.extra
+        val nativeDebugPluginDir: File? by rootProject.extra
+        if (cidrUnscrambledJarDir?.exists() == true) { // CIDR build
             add("compile", fileTree(cidrUnscrambledJarDir) { include("**/*.jar") })
-//        }
+        } else if (nativeDebugPluginDir?.exists() == true) { // Idea Ultimate build
+            add("compile", fileTree(nativeDebugPluginDir) { include("**/*.jar") })
+        }
     }
 }
 

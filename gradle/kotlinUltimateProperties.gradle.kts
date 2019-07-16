@@ -83,6 +83,28 @@ val appcodeJavaPluginDownloadUrl: URL? by rootProject.extra(
             null
 )
 
+if (rootProject.extra.has("versions.nativeDebug")) {
+    val nativeDebugVersion: String = rootProject.extra["versions.nativeDebug"] as String
+    rootProject.extra["nativeDebugVersion"] = nativeDebugVersion
+    rootProject.extra["nativeDebugRepo"] = rootProject.extra["versions.nativeDebug.repo"] as String
+    rootProject.extra["nativeDebugPluginDir"] = externalDepsDir("native-debug-plugin", "native-debug-$nativeDebugVersion")
+
+    val lldbFrontendHash = rootProject.extra["versions.lldbFrontend.hash"] as String
+    rootProject.extra["lldbFrontendHash"] = lldbFrontendHash
+
+    rootProject.extra["lldbFrontendLinuxRepo"] = rootProject.extra["versions.lldbFrontend.linux.repo"] as String
+    rootProject.extra["lldbFrontendLinuxArtifact"] = rootProject.extra["versions.lldbFrontend.linux.artifact"] as String
+    rootProject.extra["lldbFrontendLinuxDir"] = externalDepsDir("lldb-frontend", "linux-$lldbFrontendHash")
+
+    rootProject.extra["lldbFrontendMacosRepo"] = rootProject.extra["versions.lldbFrontend.macos.repo"] as String
+    rootProject.extra["lldbFrontendMacosArtifact"] = rootProject.extra["versions.lldbFrontend.macos.artifact"] as String
+    rootProject.extra["lldbFrontendMacosDir"] = externalDepsDir("lldb-frontend", "macos-$lldbFrontendHash")
+
+    rootProject.extra["lldbFrontendWindowsRepo"] = rootProject.extra["versions.lldbFrontend.windows.repo"] as String
+    rootProject.extra["lldbFrontendWindowsArtifact"] = rootProject.extra["versions.lldbFrontend.windows.artifact"] as String
+    rootProject.extra["lldbFrontendWindowsDir"] = externalDepsDir("lldb-frontend", "windows-$lldbFrontendHash")
+}
+
 val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("dist/artifacts"))
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))

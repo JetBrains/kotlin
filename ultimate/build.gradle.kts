@@ -52,6 +52,8 @@ dependencies {
         Platform[192].orHigher {
             compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui", "platform-core-ui") }
             compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-api", "java-impl") }
+            compile(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
+            compile(project(":kotlin-ultimate:ide:ultimate-native")) { isTransitive = false }
         }
 
         compileOnly(intellijUltimatePluginDep("CSS"))
@@ -203,7 +205,12 @@ val jar = runtimeJar {
     from(provider { zipTree(ideaPlugin.singleFile) }) { 
         exclude("META-INF/plugin.xml") 
     }
-    
+
+    Platform[192].orHigher {
+        from(provider { project(":kotlin-ultimate:ide:common-native").mainSourceSet.output })
+        from(provider { project(":kotlin-ultimate:ide:ultimate-native").mainSourceSet.output })
+    }
+
     from(preparedResources, { include("META-INF/plugin.xml") })
     from(mainSourceSet.output)
     archiveName = "kotlin-plugin.jar"
@@ -217,6 +224,11 @@ task<Copy>("ideaUltimatePlugin") {
     into(ideaUltimatePluginDir)
     from(ideaPluginDir) { exclude("lib/kotlin-plugin.jar") }
     from(jar, { into("lib") })
+    Platform[192].orHigher {
+        from(rootProject.extra["lldbFrontendLinuxDir"] as File) { into("bin/linux") }
+        from(rootProject.extra["lldbFrontendMacosDir"] as File) { into("bin/macos") }
+        from(rootProject.extra["lldbFrontendWindowsDir"] as File) { into("bin/windows") }
+    }
 }
 
 task("idea-ultimate-plugin") {

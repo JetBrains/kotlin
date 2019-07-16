@@ -15,3 +15,14 @@ versions.appcode.repo=ijplatform_IjPlatform192_CIDR_AppCode_PublicInstallers
 versions.clion=192.5728.28
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_PublicInstallers
+
+versions.nativeDebug=192.5728.12
+versions.nativeDebug.repo=ijplatform_IjPlatform192_Idea_InstallersForEapRelease
+
+versions.lldbFrontend.hash=180723343c866ad2d745e2f75f011cb54bd4d799
+versions.lldbFrontend.macos.artifact=LLDBFrontend
+versions.lldbFrontend.macos.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendOsX
+versions.lldbFrontend.windows.artifact=lldb-frontend.zip!x64/bin/LLDBFrontend.exe
+versions.lldbFrontend.windows.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendWin
+versions.lldbFrontend.linux.artifact=LLDBFrontend
+versions.lldbFrontend.linux.repo=ijplatform_master_CIDR_InternalTools_LLDBFrontendLinux

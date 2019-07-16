@@ -1,0 +1,42 @@
+<idea-plugin>
+  <application-components>
+    <component>
+      <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
+      <implementation-class>com.jetbrains.konan.IdeaKonanIconProvider</implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>com.jetbrains.konan.IdeaKonanWorkspace</implementation-class>
+    </component>
+  </project-components>
+
+  <extensions defaultExtensionNs="com.intellij">
+    <moduleType id="KONAN_MODULE" implementationClass="com.jetbrains.konan.KonanModuleType"/>
+
+    <configurationType implementation="com.jetbrains.konan.IdeaKonanRunConfigurationType"/>
+    <executionTargetProvider implementation="com.jetbrains.konan.IdeaKonanExecutionTargetProvider"/>
+    <stepsBeforeRunProvider implementation="com.jetbrains.konan.IdeaKonanBuildBeforeRunTaskProvider"/>
+    <programRunner implementation="com.jetbrains.konan.IdeaKonanRunner"/>
+    <projectTaskRunner implementation="com.jetbrains.konan.IdeaKonanProjectTaskRunner"/>
+
+    <externalProjectDataService implementation="com.jetbrains.konan.gradle.IdeaKonanProjectDataService"/>
+    <applicationService serviceInterface="com.intellij.openapi.module.ModuleTypeManager"
+                        serviceImplementation="com.jetbrains.konan.KonanModuleTypeManager"
+                        overrides="true"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="cidr.debugger">
+    <!--TODO: kotlin -> Kotlin/Native -->
+    <languageSupport language="kotlin" implementationClass="com.jetbrains.konan.debugger.KonanDebuggerLanguageSupport"/>
+    <lineBreakpointFileTypesProvider implementation="com.jetbrains.konan.debugger.KonanLineBreakpointFileTypesProvider"/>
+    <editorsExtension default="true" implementation="com.jetbrains.konan.debugger.KonanDebuggerEditorsExtension" />
+    <valueRendererFactory implementation="com.jetbrains.konan.debugger.KonanValueRendererFactory"/>
+    <!--    <backendConsoleInjectionHelper implementation="com.jetbrains.cidr.execution.debugger.CidrBackendConsoleInjectionHelper"/>-->
+    <!-- The default implementation ("Any" language) -->
+    <!--    <languageSupport language="" implementationClass="com.jetbrains.cidr.execution.debugger.OCDebuggerLanguageSupport"/>-->
+    <!--    <lineBreakpointFileTypesProvider implementation="com.jetbrains.cidr.execution.debugger.breakpoints.OCLineBreakpointFileTypesProvider"/>-->
+
+  </extensions>
+</idea-plugin>
