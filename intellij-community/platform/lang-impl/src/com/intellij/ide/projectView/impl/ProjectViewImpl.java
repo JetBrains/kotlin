@@ -169,6 +169,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       myCurrentState.setAutoscrollFromSource(selected);
       myDefaultState.setAutoscrollFromSource(selected);
       getGlobalOptions().setAutoscrollFromSource(selected);
+      if (selected && !myAutoScrollFromSourceHandler.isCurrentProjectViewPaneFocused()) {
+        myAutoScrollFromSourceHandler.scrollFromSource();
+      }
     }
   };
   private final Option myAutoscrollToSource = new Option() {
@@ -913,7 +916,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     String newSubId = myCurrentViewSubId = newPane.getSubId();
     myViewContentPanel.revalidate();
     myViewContentPanel.repaint();
-    createToolbarActions();
+    createToolbarActions(newPane);
 
     myAutoScrollToSourceHandler.install(newPane.myTree);
 
@@ -1006,7 +1009,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
   }
 
-  private void createToolbarActions() {
+  private void createToolbarActions(@NotNull AbstractProjectViewPane pane) {
     if (myActionGroup == null) return;
     myActionGroup.removeAll();
 
@@ -1027,14 +1030,14 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     myActionGroup.addAction(Action.FOLDERS_ALWAYS_ON_TOP).setAsSecondary(true);
     myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
 
-    myActionGroup.addAction(getAutoScrollToSourceAction()).setAsSecondary(true);
-    myActionGroup.addAction(getAutoScrollFromSourceAction()).setAsSecondary(true);
+    myActionGroup.addAction(Action.AUTOSCROLL_TO_SOURCE).setAsSecondary(true);
+    myActionGroup.addAction(Action.AUTOSCROLL_FROM_SOURCE).setAsSecondary(true);
     myActionGroup.addAction(Separator.getInstance()).setAsSecondary(true);
 
     AnAction editScopesAction = ActionManager.getInstance().getAction("ScopeView.EditScopes");
     if (editScopesAction != null) myActionGroup.addAction(editScopesAction).setAsSecondary(true);
 
-    getProjectViewPaneById(myCurrentViewId == null ? getDefaultViewId() : myCurrentViewId).addToolbarActions(myActionGroup);
+    pane.addToolbarActions(myActionGroup);
 
     List<AnAction> titleActions = ContainerUtil.newSmartList();
     createTitleActions(titleActions);
@@ -1047,9 +1050,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   }
 
   protected void createTitleActions(@NotNull List<? super AnAction> titleActions) {
-    if (!myAutoScrollFromSourceHandler.isAutoScrollEnabled()) {
-      titleActions.add(new ScrollFromSourceAction());
-    }
+    titleActions.add(new ScrollFromSourceAction());
     AnAction collapseAllAction = CommonActionsManager.getInstance().createCollapseAllAction(new TreeExpander() {
       @Override
       public boolean canExpand() {
@@ -1765,20 +1766,20 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   @Override
   public boolean isAutoscrollToSource(String paneId) {
-    return myAutoscrollToSource.isSelected();
+    return myAutoscrollToSource.isSelected() && myAutoscrollToSource.isEnabled(paneId);
   }
 
   public void setAutoscrollToSource(boolean autoscrollMode, String paneId) {
-    myAutoscrollToSource.setSelected(autoscrollMode);
+    if (myAutoscrollToSource.isEnabled(paneId)) myAutoscrollToSource.setSelected(autoscrollMode);
   }
 
   @Override
   public boolean isAutoscrollFromSource(String paneId) {
-    return myAutoscrollFromSource.isSelected();
+    return myAutoscrollFromSource.isSelected() && myAutoscrollFromSource.isEnabled(paneId);
   }
 
   public void setAutoscrollFromSource(boolean autoscrollMode, String paneId) {
-    myAutoscrollFromSource.setSelected(autoscrollMode);
+    if (myAutoscrollFromSource.isEnabled(paneId)) myAutoscrollFromSource.setSelected(autoscrollMode);
   }
 
   @Override
@@ -2010,10 +2011,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     @Override
     protected void setAutoScrollEnabled(boolean state) {
       myAutoscrollFromSource.setSelected(state);
-      if (state && !isCurrentProjectViewPaneFocused()) {
-        scrollFromSource();
-      }
-      createToolbarActions();
     }
 
     @Override
@@ -2103,6 +2100,11 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     public void actionPerformed(@NotNull AnActionEvent e) {
       myAutoScrollFromSourceHandler.scrollFromSource();
     }
+
+    @Override
+    public void update(@NotNull AnActionEvent event) {
+      event.getPresentation().setEnabledAndVisible(!isAutoscrollFromSource(myCurrentViewId));
+    }
   }
 
   private String getScrollToSourceShortcut() {
@@ -2148,12 +2150,12 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
   @NotNull
   public ToggleAction getAutoScrollToSourceAction() {
-    return myAutoScrollToSourceHandler.createToggleAction();
+    return Action.AUTOSCROLL_TO_SOURCE;
   }
 
   @NotNull
   public ToggleAction getAutoScrollFromSourceAction() {
-    return myAutoScrollFromSourceHandler.createToggleAction();
+    return Action.AUTOSCROLL_FROM_SOURCE;
   }
 
   private void updatePanes(boolean withComparator) {
@@ -2187,6 +2189,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   static class Action extends ToggleOptionAction implements DumbAware {
     static final Action ABBREVIATE_PACKAGE_NAMES =
       new Action(view -> view.myAbbreviatePackageNames, AllIcons.ObjectBrowser.AbbreviatePackageNames);
+    static final Action AUTOSCROLL_FROM_SOURCE = new Action(view -> view.myAutoscrollFromSource, AllIcons.General.AutoscrollFromSource);
+    static final Action AUTOSCROLL_TO_SOURCE = new Action(view -> view.myAutoscrollToSource, AllIcons.General.AutoscrollToSource);
     static final Action COMPACT_DIRECTORIES = new Action(view -> view.myCompactDirectories, null);
     static final Action FLATTEN_MODULES = new Action(view -> view.myFlattenModules, AllIcons.ObjectBrowser.FlattenModules);
     static final Action FLATTEN_PACKAGES = new Action(view -> view.myFlattenPackages, AllIcons.ObjectBrowser.FlattenPackages);
