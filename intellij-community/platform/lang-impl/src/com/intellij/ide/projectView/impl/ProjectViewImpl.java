@@ -111,8 +111,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   @NotNull private final Project myProject;
 
   private final ProjectViewState myCurrentState;
-  private final ProjectViewState myDefaultState;
-
   // + options
   private final Option myAbbreviatePackageNames = new Option() {
     @NotNull
@@ -141,7 +139,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setAbbreviatePackageNames(selected);
-      myDefaultState.setAbbreviatePackageNames(selected);
+      getDefaultState().setAbbreviatePackageNames(selected);
       getGlobalOptions().setAbbreviatePackages(selected);
       if (updated) updatePanes(false);
     }
@@ -167,7 +165,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     public void setSelected(boolean selected) {
       if (myProject.isDisposed()) return;
       myCurrentState.setAutoscrollFromSource(selected);
-      myDefaultState.setAutoscrollFromSource(selected);
+      getDefaultState().setAutoscrollFromSource(selected);
       getGlobalOptions().setAutoscrollFromSource(selected);
       if (selected && !myAutoScrollFromSourceHandler.isCurrentProjectViewPaneFocused()) {
         myAutoScrollFromSourceHandler.scrollFromSource();
@@ -195,7 +193,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     public void setSelected(boolean selected) {
       if (myProject.isDisposed()) return;
       myCurrentState.setAutoscrollToSource(selected);
-      myDefaultState.setAutoscrollToSource(selected);
+      getDefaultState().setAutoscrollToSource(selected);
       getGlobalOptions().setAutoscrollToSource(selected);
     }
   };
@@ -226,7 +224,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setCompactDirectories(selected);
-      myDefaultState.setCompactDirectories(selected);
+      getDefaultState().setCompactDirectories(selected);
       getGlobalOptions().setCompactDirectories(selected);
       if (updated) updatePanes(false);
     }
@@ -258,7 +256,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setFlattenModules(selected);
-      myDefaultState.setFlattenModules(selected);
+      getDefaultState().setFlattenModules(selected);
       getGlobalOptions().setFlattenModules(selected);
       if (updated) updatePanes(false);
     }
@@ -290,7 +288,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setFlattenPackages(selected);
-      myDefaultState.setFlattenPackages(selected);
+      getDefaultState().setFlattenPackages(selected);
       getGlobalOptions().setFlattenPackages(selected);
       if (updated) updatePanes(false);
     }
@@ -317,7 +315,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setFoldersAlwaysOnTop(selected);
-      myDefaultState.setFoldersAlwaysOnTop(selected);
+      getDefaultState().setFoldersAlwaysOnTop(selected);
       getGlobalOptions().setFoldersAlwaysOnTop(selected);
       if (updated) updatePanes(true);
     }
@@ -353,7 +351,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setHideEmptyMiddlePackages(selected);
-      myDefaultState.setHideEmptyMiddlePackages(selected);
+      getDefaultState().setHideEmptyMiddlePackages(selected);
       getGlobalOptions().setHideEmptyPackages(selected);
       if (updated) updatePanes(false);
     }
@@ -383,7 +381,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setManualOrder(selected);
-      myDefaultState.setManualOrder(selected);
+      getDefaultState().setManualOrder(selected);
       getGlobalOptions().setManualOrder(selected);
       if (updated) updatePanes(true);
     }
@@ -415,7 +413,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setShowExcludedFiles(selected);
-      myDefaultState.setShowExcludedFiles(selected);
+      getDefaultState().setShowExcludedFiles(selected);
       getGlobalOptions().setShowExcludedFiles(selected);
       if (updated) updatePanes(false);
     }
@@ -447,7 +445,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setShowLibraryContents(selected);
-      myDefaultState.setShowLibraryContents(selected);
+      getDefaultState().setShowLibraryContents(selected);
       getGlobalOptions().setShowLibraryContents(selected);
       if (updated) updatePanes(false);
     }
@@ -479,7 +477,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setShowMembers(selected);
-      myDefaultState.setShowMembers(selected);
+      getDefaultState().setShowMembers(selected);
       getGlobalOptions().setShowMembers(selected);
       if (updated) updatePanes(false);
     }
@@ -511,7 +509,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setShowModules(selected);
-      myDefaultState.setShowModules(selected);
+      getDefaultState().setShowModules(selected);
       getGlobalOptions().setShowModules(selected);
       if (updated) updatePanes(false);
     }
@@ -543,7 +541,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setShowVisibilityIcons(selected);
-      myDefaultState.setShowVisibilityIcons(selected);
+      getDefaultState().setShowVisibilityIcons(selected);
       getGlobalOptions().setShowVisibilityIcons(selected);
       if (updated) updatePanes(false);
     }
@@ -575,7 +573,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
       if (myProject.isDisposed()) return;
       boolean updated = selected != isSelected();
       myCurrentState.setSortByType(selected);
-      myDefaultState.setSortByType(selected);
+      getDefaultState().setSortByType(selected);
       getGlobalOptions().setSortByType(selected);
       if (updated) updatePanes(true);
     }
@@ -621,7 +619,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   public ProjectViewImpl(@NotNull Project project) {
     myProject = project;
     myCurrentState = ProjectViewState.getInstance(project);
-    myDefaultState = ProjectViewState.getDefaultInstance();
 
     constructUi();
 
@@ -741,6 +738,10 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
     }
 
     return result;
+  }
+
+  private static ProjectViewState getDefaultState() {
+    return ProjectViewState.getDefaultInstance();
   }
 
   private class ChangeViewAction extends AnAction {
