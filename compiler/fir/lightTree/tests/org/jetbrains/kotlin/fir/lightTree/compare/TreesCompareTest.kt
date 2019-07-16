@@ -7,20 +7,13 @@ package org.jetbrains.kotlin.fir.lightTree.compare
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiFileFactory
-import com.intellij.psi.PsiManager
-import com.intellij.psi.impl.PsiFileFactoryImpl
-import com.intellij.psi.impl.PsiManagerImpl
 import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
-import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
-import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
-import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
@@ -70,7 +63,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitMemberDeclaration: Boolean = false,
         visitVariable: Boolean = false,
         visitAnnotation: Boolean = false,
-        visitOperationCall: Boolean = false,
+        visitOperatorCall: Boolean = false,
         visitTypeOperatorCall: Boolean = false,
         visitStringConcatenationCall: Boolean = false,
         visitArrayOfCall: Boolean = false,
@@ -102,7 +95,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitMemberDeclaration = visitMemberDeclaration,
             visitVariable = visitVariable,
             visitAnnotation = visitAnnotation,
-            visitOperationCall = visitOperationCall,
+            visitOperatorCall = visitOperatorCall,
             visitTypeOperatorCall = visitTypeOperatorCall,
             visitStringConcatenationCall = visitStringConcatenationCall,
             visitArrayOfCall = visitArrayOfCall,
@@ -164,5 +157,9 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testCallExpression() {
         compare(stubMode = false, visitFunctionCall = true, visitLambdaExpression = false)
+    }
+
+    fun testQualifiedAccessExpression() {
+        compare(stubMode = false, visitFunctionCall = true, visitQualifiedAccessExpression = true)
     }
 }
