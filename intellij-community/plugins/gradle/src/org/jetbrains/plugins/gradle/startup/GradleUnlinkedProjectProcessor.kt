@@ -6,12 +6,14 @@ import com.intellij.notification.NotificationAction
 import com.intellij.notification.NotificationType
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationNamesInfo
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.ExternalSystemDataKeys
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
 import org.jetbrains.plugins.gradle.service.project.GradleNotification
@@ -30,7 +32,9 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
   }
 
   companion object {
-    private const val SHOW_UNLINKED_GRADLE_POPUP = "show.inlinked.gradle.project.popup"
+    private const val SHOW_UNLINKED_GRADLE_POPUP = "show.unlinked.gradle.project.popup"
+
+    private val LOG = Logger.getInstance(GradleUnlinkedProjectProcessor::class.java)
 
     private fun showNotification(project: Project) {
       if (!GradleSettings.getInstance(project).linkedProjectsSettings.isEmpty()) return
@@ -61,12 +65,15 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
         override fun actionPerformed(e: AnActionEvent) {}
       }
 
+      val subscription = Disposer.newDisposable()
       val settingsListener = object : GradleSettingsListenerAdapter() {
         override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) {
           notification.expire()
+          debug("Unlinked project notification expired")
+          Disposer.dispose(subscription)
         }
       }
-      ExternalSystemApiUtil.subscribe(project, GradleConstants.SYSTEM_ID, settingsListener)
+      ExternalSystemApiUtil.subscribe(project, GradleConstants.SYSTEM_ID, subscription, settingsListener)
 
       notification.notify(project)
     }
@@ -81,6 +88,10 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
 
     fun enableNotifications(project: Project) {
       PropertiesComponent.getInstance(project).setValue(SHOW_UNLINKED_GRADLE_POPUP, true, false)
+    }
+
+    private fun debug(message: String) {
+      if (LOG.isDebugEnabled) LOG.debug(message)
     }
   }
 }
