@@ -342,17 +342,17 @@ open class FirBodyResolveTransformer(
             file,
             container!!
         ) { it.resultType }
-        val resolver = CallResolver(jump, inferenceComponents)
-        resolver.callInfo = info
-        resolver.scopes = (scopes + localScopes).asReversed()
+        callResolver.reset()
+        callResolver.callInfo = info
+        callResolver.scopes = (scopes + localScopes).asReversed()
 
         val consumer = createVariableAndObjectConsumer(
             session,
             callee.name,
             info, inferenceComponents,
-            resolver.collector
+            callResolver.collector
         )
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
+        val result = callResolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
 
         val candidates = result.bestCandidates()
         val nameReference = createResolvedNamedReference(
@@ -548,6 +548,9 @@ open class FirBodyResolveTransformer(
 
     private val noExpectedType = FirImplicitTypeRefImpl(session, null)
     private val inferenceComponents = inferenceComponents(session, jump, scopeSession)
+    private val callResolver = CallResolver(jump, inferenceComponents)
+    private val conflictResolver = ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
+    val completer = ConstraintSystemCompleter(inferenceComponents)
 
     private fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?): FirFunctionCall {
 
@@ -573,18 +576,17 @@ open class FirBodyResolveTransformer(
             file,
             container!!
         ) { it.resultType }
-        val resolver = CallResolver(jump, inferenceComponents)
-        resolver.callInfo = info
-        resolver.scopes = (scopes + localScopes).asReversed()
+        callResolver.reset()
+        callResolver.callInfo = info
+        callResolver.scopes = (scopes + localScopes).asReversed()
 
-        val consumer = createFunctionConsumer(session, name, info, inferenceComponents, resolver.collector, resolver)
-        val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
+        val consumer = createFunctionConsumer(session, name, info, inferenceComponents, callResolver.collector, callResolver)
+        val result = callResolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
         val bestCandidates = result.bestCandidates()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
             bestCandidates.toSet()
         } else {
-            ConeOverloadConflictResolver(TypeSpecificityComparator.NONE, inferenceComponents)
-                .chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
+            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
 
 
@@ -662,7 +664,7 @@ open class FirBodyResolveTransformer(
         }
 
         val completionMode = candidate.computeCompletionMode(inferenceComponents, expectedTypeRef, initialType)
-        val completer = ConstraintSystemCompleter(inferenceComponents)
+
         val replacements = mutableMapOf<FirExpression, FirExpression>()
 
         val analyzer = PostponedArgumentsAnalyzer(object : LambdaAnalyzer {

@@ -783,7 +783,11 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         return group
     }
 
-    val collector by lazy { CandidateCollector(components) }
+    fun reset() {
+        collector.newDataSet()
+    }
+
+    val collector = CandidateCollector(components)
     lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue>
 
