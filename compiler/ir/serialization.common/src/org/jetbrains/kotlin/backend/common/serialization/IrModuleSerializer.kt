@@ -65,6 +65,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
@@ -489,6 +490,12 @@ open class IrModuleSerializer(
             memberAccess = serializeMemberAccessCommon(call)
         }.build()
 
+    private fun serializeFunctionExpression(functionExpression: IrFunctionExpression): ProtoFunctionExpression =
+        ProtoFunctionExpression.newBuilder().apply {
+            function = serializeIrFunction(functionExpression.function)
+            origin = serializeIrStatementOrigin(functionExpression.origin)
+        }.build()
+
     private fun serializeFunctionReference(callable: IrFunctionReference): ProtoFunctionReference {
         val proto = ProtoFunctionReference.newBuilder()
             .setSymbol(serializeIrSymbol(callable.symbol))
@@ -867,42 +874,32 @@ open class IrModuleSerializer(
         when (expression) {
             is IrBlock -> operationProto.block = serializeBlock(expression)
             is IrBreak -> operationProto.`break` = serializeBreak(expression)
-            is IrClassReference
-            -> operationProto.classReference = serializeClassReference(expression)
+            is IrClassReference -> operationProto.classReference = serializeClassReference(expression)
             is IrCall -> operationProto.call = serializeCall(expression)
             is IrConstructorCall -> operationProto.constructorCall = serializeConstructorCall(expression)
             is IrComposite -> operationProto.composite = serializeComposite(expression)
             is IrConst<*> -> operationProto.const = serializeConst(expression)
             is IrContinue -> operationProto.`continue` = serializeContinue(expression)
-            is IrDelegatingConstructorCall
-            -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
+            is IrDelegatingConstructorCall -> operationProto.delegatingConstructorCall = serializeDelegatingConstructorCall(expression)
             is IrDoWhileLoop -> operationProto.doWhile = serializeDoWhile(expression)
-            is IrEnumConstructorCall
-            -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
-            is IrFunctionReference
-            -> operationProto.functionReference = serializeFunctionReference(expression)
+            is IrEnumConstructorCall -> operationProto.enumConstructorCall = serializeEnumConstructorCall(expression)
+            is IrFunctionExpression -> operationProto.functionExpression = serializeFunctionExpression(expression)
+            is IrFunctionReference -> operationProto.functionReference = serializeFunctionReference(expression)
             is IrGetClass -> operationProto.getClass = serializeGetClass(expression)
             is IrGetField -> operationProto.getField = serializeGetField(expression)
             is IrGetValue -> operationProto.getValue = serializeGetValue(expression)
-            is IrGetEnumValue
-            -> operationProto.getEnumValue = serializeGetEnumValue(expression)
-            is IrGetObjectValue
-            -> operationProto.getObject = serializeGetObject(expression)
-            is IrInstanceInitializerCall
-            -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
-            is IrLocalDelegatedPropertyReference
-            -> operationProto.localDelegatedPropertyReference = serializeIrLocalDelegatedPropertyReference(expression)
-            is IrPropertyReference
-            -> operationProto.propertyReference = serializePropertyReference(expression)
+            is IrGetEnumValue -> operationProto.getEnumValue = serializeGetEnumValue(expression)
+            is IrGetObjectValue -> operationProto.getObject = serializeGetObject(expression)
+            is IrInstanceInitializerCall -> operationProto.instanceInitializerCall = serializeInstanceInitializerCall(expression)
+            is IrLocalDelegatedPropertyReference -> operationProto.localDelegatedPropertyReference = serializeIrLocalDelegatedPropertyReference(expression)
+            is IrPropertyReference -> operationProto.propertyReference = serializePropertyReference(expression)
             is IrReturn -> operationProto.`return` = serializeReturn(expression)
             is IrSetField -> operationProto.setField = serializeSetField(expression)
             is IrSetVariable -> operationProto.setVariable = serializeSetVariable(expression)
-            is IrStringConcatenation
-            -> operationProto.stringConcat = serializeStringConcat(expression)
+            is IrStringConcatenation -> operationProto.stringConcat = serializeStringConcat(expression)
             is IrThrow -> operationProto.`throw` = serializeThrow(expression)
             is IrTry -> operationProto.`try` = serializeTry(expression)
-            is IrTypeOperatorCall
-            -> operationProto.typeOp = serializeTypeOp(expression)
+            is IrTypeOperatorCall -> operationProto.typeOp = serializeTypeOp(expression)
             is IrVararg -> operationProto.vararg = serializeVararg(expression)
             is IrWhen -> operationProto.`when` = serializeWhen(expression)
             is IrWhileLoop -> operationProto.`while` = serializeWhile(expression)

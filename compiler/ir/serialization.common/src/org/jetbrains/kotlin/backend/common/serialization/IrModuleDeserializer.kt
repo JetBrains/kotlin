@@ -73,6 +73,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as P
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionBase as ProtoFunctionBase
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression as ProtoFunctionExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionReference as ProtoFunctionReference
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetClass as ProtoGetClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrGetEnumValue as ProtoGetEnumValue
@@ -414,6 +415,17 @@ abstract class IrModuleDeserializer(
         return call
     }
 
+    private fun deserializeFunctionExpression(
+        functionExpression: ProtoFunctionExpression,
+        start: Int,
+        end: Int,
+        type: IrType
+    ) =
+        IrFunctionExpressionImpl(
+            start, end, type,
+            deserializeIrFunction(functionExpression.function),
+            deserializeIrStatementOrigin(functionExpression.origin)
+        )
 
     private fun deserializeFunctionReference(
         proto: ProtoFunctionReference,
@@ -813,72 +825,40 @@ abstract class IrModuleDeserializer(
 
     private fun deserializeOperation(proto: ProtoOperation, start: Int, end: Int, type: IrType): IrExpression =
         when (proto.operationCase!!) {
-            BLOCK
-            -> deserializeBlock(proto.block, start, end, type)
-            BREAK
-            -> deserializeBreak(proto.`break`, start, end, type)
-            CLASS_REFERENCE
-            -> deserializeClassReference(proto.classReference, start, end, type)
-            CALL
-            -> deserializeCall(proto.call, start, end, type)
-            COMPOSITE
-            -> deserializeComposite(proto.composite, start, end, type)
-            CONST
-            -> deserializeConst(proto.const, start, end, type)
-            CONTINUE
-            -> deserializeContinue(proto.`continue`, start, end, type)
-            DELEGATING_CONSTRUCTOR_CALL
-            -> deserializeDelegatingConstructorCall(proto.delegatingConstructorCall, start, end)
-            DO_WHILE
-            -> deserializeDoWhile(proto.doWhile, start, end, type)
-            ENUM_CONSTRUCTOR_CALL
-            -> deserializeEnumConstructorCall(proto.enumConstructorCall, start, end, type)
-            FUNCTION_REFERENCE
-            -> deserializeFunctionReference(proto.functionReference, start, end, type)
-            GET_ENUM_VALUE
-            -> deserializeGetEnumValue(proto.getEnumValue, start, end, type)
-            GET_CLASS
-            -> deserializeGetClass(proto.getClass, start, end, type)
-            GET_FIELD
-            -> deserializeGetField(proto.getField, start, end, type)
-            GET_OBJECT
-            -> deserializeGetObject(proto.getObject, start, end, type)
-            GET_VALUE
-            -> deserializeGetValue(proto.getValue, start, end, type)
-            LOCAL_DELEGATED_PROPERTY_REFERENCE
-            -> deserializeIrLocalDelegatedPropertyReference(proto.localDelegatedPropertyReference, start, end, type)
-            INSTANCE_INITIALIZER_CALL
-            -> deserializeInstanceInitializerCall(proto.instanceInitializerCall, start, end)
-            PROPERTY_REFERENCE
-            -> deserializePropertyReference(proto.propertyReference, start, end, type)
-            RETURN
-            -> deserializeReturn(proto.`return`, start, end, type)
-            SET_FIELD
-            -> deserializeSetField(proto.setField, start, end)
-            SET_VARIABLE
-            -> deserializeSetVariable(proto.setVariable, start, end)
-            STRING_CONCAT
-            -> deserializeStringConcat(proto.stringConcat, start, end, type)
-            THROW
-            -> deserializeThrow(proto.`throw`, start, end, type)
-            TRY
-            -> deserializeTry(proto.`try`, start, end, type)
-            TYPE_OP
-            -> deserializeTypeOp(proto.typeOp, start, end, type)
-            VARARG
-            -> deserializeVararg(proto.vararg, start, end, type)
-            WHEN
-            -> deserializeWhen(proto.`when`, start, end, type)
-            WHILE
-            -> deserializeWhile(proto.`while`, start, end, type)
-            DYNAMIC_MEMBER
-            -> deserializeDynamicMemberExpression(proto.dynamicMember, start, end, type)
-            DYNAMIC_OPERATOR
-            -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
-            CONSTRUCTOR_CALL
-            -> deserializeConstructorCall(proto.constructorCall, start, end, type)
-            OPERATION_NOT_SET
-            -> error("Expression deserialization not implemented: ${proto.operationCase}")
+            BLOCK -> deserializeBlock(proto.block, start, end, type)
+            BREAK -> deserializeBreak(proto.`break`, start, end, type)
+            CLASS_REFERENCE -> deserializeClassReference(proto.classReference, start, end, type)
+            CALL -> deserializeCall(proto.call, start, end, type)
+            COMPOSITE -> deserializeComposite(proto.composite, start, end, type)
+            CONST -> deserializeConst(proto.const, start, end, type)
+            CONTINUE -> deserializeContinue(proto.`continue`, start, end, type)
+            DELEGATING_CONSTRUCTOR_CALL -> deserializeDelegatingConstructorCall(proto.delegatingConstructorCall, start, end)
+            DO_WHILE -> deserializeDoWhile(proto.doWhile, start, end, type)
+            ENUM_CONSTRUCTOR_CALL -> deserializeEnumConstructorCall(proto.enumConstructorCall, start, end, type)
+            FUNCTION_REFERENCE -> deserializeFunctionReference(proto.functionReference, start, end, type)
+            GET_ENUM_VALUE -> deserializeGetEnumValue(proto.getEnumValue, start, end, type)
+            GET_CLASS -> deserializeGetClass(proto.getClass, start, end, type)
+            GET_FIELD -> deserializeGetField(proto.getField, start, end, type)
+            GET_OBJECT -> deserializeGetObject(proto.getObject, start, end, type)
+            GET_VALUE -> deserializeGetValue(proto.getValue, start, end, type)
+            LOCAL_DELEGATED_PROPERTY_REFERENCE -> deserializeIrLocalDelegatedPropertyReference(proto.localDelegatedPropertyReference, start, end, type)
+            INSTANCE_INITIALIZER_CALL -> deserializeInstanceInitializerCall(proto.instanceInitializerCall, start, end)
+            PROPERTY_REFERENCE -> deserializePropertyReference(proto.propertyReference, start, end, type)
+            RETURN -> deserializeReturn(proto.`return`, start, end, type)
+            SET_FIELD -> deserializeSetField(proto.setField, start, end)
+            SET_VARIABLE -> deserializeSetVariable(proto.setVariable, start, end)
+            STRING_CONCAT -> deserializeStringConcat(proto.stringConcat, start, end, type)
+            THROW -> deserializeThrow(proto.`throw`, start, end, type)
+            TRY -> deserializeTry(proto.`try`, start, end, type)
+            TYPE_OP -> deserializeTypeOp(proto.typeOp, start, end, type)
+            VARARG -> deserializeVararg(proto.vararg, start, end, type)
+            WHEN -> deserializeWhen(proto.`when`, start, end, type)
+            WHILE -> deserializeWhile(proto.`while`, start, end, type)
+            DYNAMIC_MEMBER -> deserializeDynamicMemberExpression(proto.dynamicMember, start, end, type)
+            DYNAMIC_OPERATOR -> deserializeDynamicOperatorExpression(proto.dynamicOperator, start, end, type)
+            CONSTRUCTOR_CALL -> deserializeConstructorCall(proto.constructorCall, start, end, type)
+            FUNCTION_EXPRESSION -> deserializeFunctionExpression(proto.functionExpression, start, end, type)
+            OPERATION_NOT_SET -> error("Expression deserialization not implemented: ${proto.operationCase}")
         }
 
     private fun deserializeExpression(proto: ProtoExpression): IrExpression {

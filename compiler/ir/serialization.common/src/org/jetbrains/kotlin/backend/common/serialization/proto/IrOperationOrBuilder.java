@@ -294,4 +294,13 @@ public interface IrOperationOrBuilder extends
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall constructor_call = 32;</code>
    */
   org.jetbrains.kotlin.backend.common.serialization.proto.IrConstructorCall getConstructorCall();
+
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
+   */
+  boolean hasFunctionExpression();
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression function_expression = 33;</code>
+   */
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrFunctionExpression getFunctionExpression();
 }
