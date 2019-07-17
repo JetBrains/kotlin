@@ -47,7 +47,6 @@ import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
-import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -126,8 +125,9 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       else if (step instanceof GradleModuleWizardStep) {
         SelectExternalProjectDialog projectDialog = new SelectExternalProjectDialog(GradleConstants.SYSTEM_ID, project, null);
         Disposer.register(getTestRootDisposable(), projectDialog.getDisposable());
-        JComponent component = projectDialog.getPreferredFocusedComponent();
-        ProjectNode projectNode = (ProjectNode)((SimpleTree)component).getNodeFor(0);
+        SimpleTree component = (SimpleTree)projectDialog.getPreferredFocusedComponent();
+        PlatformTestUtil.waitWhileBusy(component);
+        ProjectNode projectNode = (ProjectNode)component.getNodeFor(0);
         assertEquals(projectName, projectNode.getName());
         ((GradleModuleWizardStep)step).setArtifactId("childModule");
       }
