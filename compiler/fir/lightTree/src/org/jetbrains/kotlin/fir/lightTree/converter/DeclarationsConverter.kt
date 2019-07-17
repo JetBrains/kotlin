@@ -103,9 +103,7 @@ class DeclarationsConverter(
             when (it.tokenType) {
                 //TODO("not implemented")
                 BLOCK -> ""
-                BINARY_EXPRESSION -> firStatements += expressionConverter.convertBinaryExpression(it)
-                PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> firStatements += expressionConverter.convertUnaryExpression(it)
-                else -> if (it.isExpression()) firStatements += expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firStatements += expressionConverter.getAsFirExpression<FirStatement>(it)
             }
         }
         return FirBlockImpl(session, null).apply {
@@ -263,7 +261,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotationOrList
      */
-    private fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
+    fun convertAnnotation(annotationNode: LighterASTNode): List<FirAnnotationCall> {
         var annotationTarget: AnnotationUseSiteTarget? = null
         return annotationNode.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
@@ -299,7 +297,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseAnnotation
      * can be treated as unescapedAnnotation
      */
-    private fun convertAnnotationEntry(
+    fun convertAnnotationEntry(
         unescapedAnnotation: LighterASTNode,
         defaultAnnotationUseSiteTarget: AnnotationUseSiteTarget? = null
     ): FirAnnotationCall {
@@ -429,16 +427,16 @@ class DeclarationsConverter(
         var modifiers = Modifier(session)
         lateinit var identifier: String
         var hasInitializerList = false
-        val enumSuperTypeCallEntry = mutableListOf<FirExpression>() //TODO get from INITIALIZER_LIST
+        val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
         val firDeclarations = mutableListOf<FirDeclaration>()
         enumEntry.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 IDENTIFIER -> identifier = it.getAsString()
-                INITIALIZER_LIST -> hasInitializerList = true //TODO implement
-                /*enumSuperTypeCallEntry += initializerList.valueParameters.map { firValueParameter ->
-                    firValueParameter.toFirExpression(stubMode)
-                }*/
+                INITIALIZER_LIST -> {
+                    hasInitializerList = true
+                    enumSuperTypeCallEntry += convertInitializerList(it)
+                }
                 CLASS_BODY -> firDeclarations += convertClassBody(it, classWrapper)
             }
         }
@@ -467,6 +465,22 @@ class DeclarationsConverter(
 
             return@withChildClassName firEnumEntry
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumEntry
+     */
+    private fun convertInitializerList(initializerList: LighterASTNode): List<FirExpression> {
+        val firValueArguments = mutableListOf<FirExpression>()
+        initializerList.forEachChildren {
+            when (it.tokenType) {
+                SUPER_TYPE_CALL_ENTRY -> convertConstructorInvocation(it).apply {
+                    firValueArguments += second
+                }
+            }
+        }
+
+        return firValueArguments
     }
 
     /**
@@ -678,13 +692,13 @@ class DeclarationsConverter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                PROPERTY_DELEGATE -> firDelegateExpression = expressionConverter.visitExpression(it)
+                PROPERTY_DELEGATE -> firDelegateExpression = expressionConverter.getAsFirExpression(it)
                 VAR_KEYWORD -> isVar = true
                 PROPERTY_ACCESSOR -> {
                     val propertyAccessor = convertGetterOrSetter(it, returnType)
                     if (propertyAccessor.isGetter) getter = propertyAccessor else setter = propertyAccessor
                 }
-                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
@@ -746,7 +760,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRef)
                 BLOCK -> firBlock = visitBlock(it)
-                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
@@ -823,7 +837,7 @@ class DeclarationsConverter(
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
                 BLOCK -> firBlock = visitBlock(it)
-                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
@@ -941,11 +955,11 @@ class DeclarationsConverter(
      *   ;
      */
     private fun convertConstructorInvocation(constructorInvocation: LighterASTNode): Pair<FirTypeRef, List<FirExpression>> {
-        lateinit var firTypeRef: FirTypeRef
+        var firTypeRef: FirTypeRef = implicitType
         val firValueArguments = mutableListOf<FirExpression>()
         constructorInvocation.forEachChildren {
             when (it.tokenType) {
-                CONSTRUCTOR_CALLEE -> firTypeRef = convertType(it)
+                CONSTRUCTOR_CALLEE -> if (it.getAsString().isNotEmpty()) firTypeRef = convertType(it)   //is empty in enum entry constructor
                 VALUE_ARGUMENT_LIST -> firValueArguments += expressionConverter.convertValueArguments(it)
             }
         }
@@ -965,7 +979,7 @@ class DeclarationsConverter(
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
-                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
@@ -1216,7 +1230,7 @@ class DeclarationsConverter(
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.getAsString()
                 TYPE_REFERENCE -> firType = convertType(it)
-                else -> if (it.isExpression()) firExpression = expressionConverter.visitExpression(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 

@@ -62,7 +62,7 @@ class FirPartialTransformer(
     }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return if (!visitNamedFunction || (namedFunction is FirAbstractCallableMember && namedFunction.visibility == Visibilities.LOCAL)) {
+        return if (!visitNamedFunction && namedFunction is FirAbstractCallableMember && namedFunction.visibility == Visibilities.LOCAL) {
             DummyFirDeclaration().compose()
         } else {
             (namedFunction.transformChildren(this, data) as FirNamedFunction).compose()
@@ -73,7 +73,7 @@ class FirPartialTransformer(
         memberDeclaration: FirMemberDeclaration,
         data: Nothing?
     ): CompositeTransformResult<FirDeclaration> {
-        return if (!visitMemberDeclaration || memberDeclaration.visibility == Visibilities.LOCAL) {
+        return if (!visitMemberDeclaration && memberDeclaration.visibility == Visibilities.LOCAL) {
             DummyFirDeclaration().compose()
         } else {
             (memberDeclaration.transformChildren(this, data) as FirMemberDeclaration).compose()
