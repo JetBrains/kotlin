@@ -204,6 +204,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/convertPropertyToFunction/");
     }
 
+    @TestMetadata("createActualWithRootPackage")
+    public void testCreateActualWithRootPackage() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createActualWithRootPackage/");
+    }
+
     @TestMetadata("createClassFromUsageImport")
     public void testCreateClassFromUsageImport() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createClassFromUsageImport/");
@@ -212,6 +217,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
     @TestMetadata("createClassFromUsageRef")
     public void testCreateClassFromUsageRef() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/createClassFromUsageRef/");
+    }
+
+    @TestMetadata("createExpectWithRootPackage")
+    public void testCreateExpectWithRootPackage() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/createExpectWithRootPackage/");
     }
 
     @TestMetadata("createFunInExpectClass")
