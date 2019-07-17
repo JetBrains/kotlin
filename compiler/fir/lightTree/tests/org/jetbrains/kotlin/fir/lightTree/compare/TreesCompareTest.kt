@@ -63,9 +63,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitMemberDeclaration: Boolean = false,
         visitVariable: Boolean = false,
         visitAnnotation: Boolean = false,
-        visitOperatorCall: Boolean = false,
         visitTypeOperatorCall: Boolean = false,
-        visitStringConcatenationCall: Boolean = false,
         visitArrayOfCall: Boolean = false,
         visitFunctionCall: Boolean = false,
         visitGetClassCall: Boolean = false,
@@ -95,9 +93,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitMemberDeclaration = visitMemberDeclaration,
             visitVariable = visitVariable,
             visitAnnotation = visitAnnotation,
-            visitOperatorCall = visitOperatorCall,
             visitTypeOperatorCall = visitTypeOperatorCall,
-            visitStringConcatenationCall = visitStringConcatenationCall,
             visitArrayOfCall = visitArrayOfCall,
             visitFunctionCall = visitFunctionCall,
             visitGetClassCall = visitGetClassCall,
@@ -161,5 +157,15 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     fun testQualifiedAccessExpression() {
         compare(stubMode = false, visitFunctionCall = true, visitQualifiedAccessExpression = true)
+    }
+
+    fun testTypeOperatorCall() {
+        compare(
+            stubMode = false,
+            visitTypeOperatorCall = true,
+            visitFunctionCall = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true
+        )
     }
 }

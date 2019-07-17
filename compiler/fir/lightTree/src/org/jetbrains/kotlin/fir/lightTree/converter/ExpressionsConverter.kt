@@ -51,6 +51,8 @@ class ExpressionsConverter(
         if (!stubMode) {
             return when (expression.tokenType) {
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)
+                BINARY_WITH_TYPE -> convertBinaryWithType(expression)
+                IS_EXPRESSION -> convertIsExpression(expression)
                 PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
                 ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
                 in qualifiedAccessTokens -> convertQualifiedExpression(expression)
@@ -130,6 +132,49 @@ class ExpressionsConverter(
                     arguments += rightArgAsFir
                 }
             }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.Precedence.parseRightHandSide
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitBinaryWithTypeRHSExpression
+     */
+    private fun convertBinaryWithType(binaryExpression: LighterASTNode): FirTypeOperatorCall {
+        lateinit var operationTokenName: String
+        lateinit var leftArgAsFir: FirExpression
+        lateinit var firType: FirTypeRef
+        binaryExpression.forEachChildren {
+            when (it.tokenType) {
+                OPERATION_REFERENCE -> operationTokenName = it.getAsString()
+                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
+                else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it)
+            }
+        }
+
+        val operation = operationTokenName.getOperationSymbol().toFirOperation()
+        return FirTypeOperatorCallImpl(session, null, operation, firType).apply {
+            arguments += leftArgAsFir
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIsExpression
+     */
+    private fun convertIsExpression(isExpression: LighterASTNode): FirTypeOperatorCall {
+        lateinit var operationTokenName: String
+        lateinit var leftArgAsFir: FirExpression
+        lateinit var firType: FirTypeRef
+        isExpression.forEachChildren {
+            when (it.tokenType) {
+                OPERATION_REFERENCE -> operationTokenName = it.getAsString()
+                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
+                else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it)
+            }
+        }
+
+        val operation = if (operationTokenName == "is") FirOperation.IS else FirOperation.NOT_IS
+        return FirTypeOperatorCallImpl(session, null, operation, firType).apply {
+            arguments += leftArgAsFir
         }
     }
 

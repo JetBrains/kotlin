@@ -19,8 +19,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.ExpressionsConverter
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.lexer.KtTokens.DOT
-import org.jetbrains.kotlin.lexer.KtTokens.SAFE_ACCESS
+import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -31,7 +30,8 @@ fun String.getOperationSymbol(): IElementType {
     KotlinExpressionParsing.ALL_OPERATIONS.types.forEach {
         if (it is KtSingleValueToken && it.value == this) return it
     }
-    return KtTokens.IDENTIFIER
+    if (this == "as?") return AS_SAFE
+    return IDENTIFIER
 }
 
 fun ExpressionsConverter.convertAssignment(
