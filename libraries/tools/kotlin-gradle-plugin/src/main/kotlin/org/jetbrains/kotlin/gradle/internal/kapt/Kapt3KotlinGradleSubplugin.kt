@@ -124,7 +124,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun Project.isIncrementalKapt(): Boolean {
-            return hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "true"
+            return !(hasProperty(INCREMENTAL_APT) && property(INCREMENTAL_APT) == "false")
         }
 
         fun Project.isInfoAsWarnings(): Boolean {
