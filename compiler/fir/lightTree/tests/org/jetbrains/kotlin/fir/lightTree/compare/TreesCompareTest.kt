@@ -173,4 +173,17 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitQualifiedAccessExpression = true
         )
     }
+
+    fun testDoubleColonSuffix() {
+        compare(
+            stubMode = false,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
+            visitFunctionCall = true,
+            visitGetClassCall = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitCallableReferenceAccess = true
+        )
+    }
 }
