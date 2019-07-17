@@ -22,6 +22,7 @@ import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.util.ArrayUtilRt;
@@ -97,22 +98,21 @@ public class ConversionContextImpl implements ConversionContext {
       files.add(myWorkspaceFile.toFile());
     }
     else {
-      addFilesRecursively(mySettingsBaseDir.toFile(), files);
+      File dotIdeaDirectory = mySettingsBaseDir.toFile();
+      addXmlFilesFromDirectory(dotIdeaDirectory, files);
+      for (String subdirectoryName : new String[]{"libraries", "artifacts", "runConfigurations"}) {
+        addXmlFilesFromDirectory(new File(dotIdeaDirectory, subdirectoryName), files);
+      }
     }
     return files;
   }
 
-  private static void addFilesRecursively(File file, Set<? super File> files) {
-    if (file.isDirectory()) {
-      final File[] children = file.listFiles();
-      if (children != null) {
-        for (File child : children) {
-          addFilesRecursively(child, files);
-        }
-      }
-    }
-    else if (StringUtil.endsWithIgnoreCase(file.getName(), ".xml") && !file.getName().startsWith(".")) {
-      files.add(file);
+  private static void addXmlFilesFromDirectory(File dir, Set<? super File> result) {
+    File[] children = dir.listFiles(
+      child -> child.isFile() && FileUtilRt.extensionEquals(child.getPath(), "xml") && !dir.getName().startsWith(".")
+    );
+    if (children != null) {
+      Collections.addAll(result, children);
     }
   }
 
