@@ -73,18 +73,16 @@ object JvmBackendFacade {
             facadeClassGenerator = ::facadeClassGenerator
         ).generateUnboundSymbolsAsDependencies()
 
-        val lower = JvmLower(context)
-
         for (irFile in irModuleFragment.files) {
-            try {
-                for (extension in IrGenerationExtension.getInstances(context.state.project)) {
-                    extension.generate(irFile, context, context.state.bindingContext)
-                }
-
-                lower.lower(irFile)
-            } catch (e: Throwable) {
-                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
+            for (extension in IrGenerationExtension.getInstances(context.state.project)) {
+                extension.generate(irFile, context, context.state.bindingContext)
             }
+        }
+
+        try {
+            JvmLower(context).lower(irModuleFragment)
+        } catch (e: Throwable) {
+            errorHandler.reportException(e, null)
         }
 
         for (irFile in irModuleFragment.files) {
@@ -98,7 +96,7 @@ object JvmBackendFacade {
                 }
                 state.afterIndependentPart()
             } catch (e: Throwable) {
-                errorHandler.reportException(e, null)
+                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
             }
         }
     }
