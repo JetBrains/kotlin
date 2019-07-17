@@ -182,7 +182,13 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
     override fun onFinish(file: ScratchFile) {
         ApplicationManager.getApplication().invokeLater {
             if (inlays.isNotEmpty()) {
-                val psiFile = file.getPsiFile()!!
+                val psiFile = file.getPsiFile()
+                    ?: error(
+                        "PsiFile cannot be found for scratch to render inlays in tests:\n" +
+                                "project.isDisposed = ${file.project.isDisposed}\n" +
+                                "inlays = ${inlays.joinToString { it.second }}\n" +
+                                "errors = ${errors.joinToString()}"
+                    )
                 testPrint(file, inlays.map { (expression, text) ->
                     "/** ${getLineInfo(psiFile, expression)} $text */"
                 })
