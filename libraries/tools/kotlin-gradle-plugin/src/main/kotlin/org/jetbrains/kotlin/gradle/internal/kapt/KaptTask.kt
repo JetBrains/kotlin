@@ -57,9 +57,12 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     @get:InputFiles
     internal var classpathStructure: FileCollection? = null
 
-    /** Output directory that contains caches necessary to support incremental annotation processing. */
-    @get:LocalState
-    @get:Optional
+    /**
+     * Output directory that contains caches necessary to support incremental annotation processing.
+     * [LocalState] should be used here, but in order to be compatible with Gradle 4.2, correct input
+     * annotations are specified during task configuration.
+     */
+    @get:Internal
     var incAptCache: File? = null
 
     @get:OutputDirectory
