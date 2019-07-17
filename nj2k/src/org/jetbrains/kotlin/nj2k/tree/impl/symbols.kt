@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 interface JKSymbol {
@@ -317,4 +318,48 @@ fun JKSymbol.deepestFqName(): String? {
             else -> null
         }
     return target.deepestFqNameForTarget() ?: fqName
+}
+
+interface JKTypeParameterSymbol : JKSymbol {
+    val index: Int
+    val name: String
+}
+
+class JKMultiverseTypeParameterSymbol(
+    override val target: PsiTypeParameter,
+    private val symbolProvider: JKSymbolProvider
+) : JKTypeParameterSymbol {
+    override val declaredIn: JKSymbol?
+        get() = target.owner?.let { symbolProvider.provideDirectSymbol(it) }
+    override val fqName: String
+        get() = target.getKotlinFqName()?.asString()!!
+    override val index: Int
+        get() = target.index
+    override val name: String
+        get() = target.name!!
+}
+
+class JKUniverseTypeParameterSymbol(
+    override val symbolProvider: JKSymbolProvider
+) : JKTypeParameterSymbol, JKUniverseSymbol<JKTypeParameter>() {
+    override val index: Int
+        get() = declaredIn?.safeAs<JKTypeParameterListOwner>()?.typeParameterList?.typeParameters?.indexOf(target) ?: -1
+    override val name: String
+        get() = target.name.value
+    override lateinit var target: JKTypeParameter
+}
+
+class JKMultiverseKtTypeParameterSymbol(
+    override val target: KtTypeParameter,
+    private val symbolProvider: JKSymbolProvider
+) : JKTypeParameterSymbol {
+    override val declaredIn: JKSymbol?
+        get() = target.getParentOfType<KtTypeParameterListOwner>(strict = false)
+            ?.let { symbolProvider.provideDirectSymbol(it) }
+    override val fqName: String
+        get() = target.getKotlinFqName()?.asString()!!
+    override val index: Int
+        get() = target.getParentOfType<KtTypeParameterListOwner>(strict = false)?.typeParameters?.indexOf(target) ?: -1
+    override val name: String
+        get() = target.name!!
 }

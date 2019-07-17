@@ -486,9 +486,9 @@ interface JKTypeParameterList : JKTreeElement {
     var typeParameters: List<JKTypeParameter>
 }
 
-interface JKTypeParameter : JKTreeElement {
-    var name: JKNameIdentifier
-    var upperBounds: List<JKTypeElement>
+abstract class JKTypeParameter : JKDeclaration() {
+    abstract var name: JKNameIdentifier
+    abstract var upperBounds: List<JKTypeElement>
 }
 
 interface JKTypeParameterListOwner : JKTreeElement {

@@ -34,6 +34,18 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractNewJavaToKotlinConverterSingleFileTest : AbstractJavaToKotlinConverterSingleFileTest() {
+    override fun doTest(javaPath: String) {
+        val directory = File(javaPath).parentFile
+        val expectedFileName = "${File(javaPath).nameWithoutExtension}.external"
+        val expectedFiles = directory.listFiles { _, name ->
+            name == "$expectedFileName.kt" || name == "$expectedFileName.java"
+        }!!.filterNotNull()
+        for (expectedFile in expectedFiles) {
+            addFile(expectedFile, dirName = null)
+        }
+        super.doTest(javaPath)
+    }
+
     override fun compareResults(expectedFile: File, actual: String) {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual) {
             val file = createKotlinFile(it)
