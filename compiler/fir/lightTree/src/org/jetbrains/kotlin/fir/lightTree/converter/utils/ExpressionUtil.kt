@@ -43,7 +43,7 @@ fun ExpressionsConverter.convertAssignment(
         return convertAssignment(leftArgNode.getExpressionInParentheses(), rightArgAsFir, operation)
     }
     if (leftArgNode.tokenType == ARRAY_ACCESS_EXPRESSION) {
-        val arrayAccessFunctionCall = visitExpression(leftArgNode) as FirFunctionCall
+        val arrayAccessFunctionCall = getAsFirExpression(leftArgNode) as FirFunctionCall
         val firArrayExpression = arrayAccessFunctionCall.explicitReceiver!!
         val arraySet = if (operation != FirOperation.ASSIGN) {
             FirArraySetCallImpl(session, null, rightArgAsFir, operation).apply {
@@ -74,7 +74,7 @@ fun ExpressionsConverter.convertAssignment(
     ) {
         return FirBlockImpl(session, null).apply {
             val name = Name.special("<complex-set>")
-            statements += generateTemporaryVariable(this@convertAssignment.session, null, name, visitExpression(leftArgNode))
+            statements += generateTemporaryVariable(this@convertAssignment.session, null, name, getAsFirExpression(leftArgNode))
             statements += FirVariableAssignmentImpl(this@convertAssignment.session, null, rightArgAsFir, operation).apply {
                 lValue = FirSimpleNamedReference(this@convertAssignment.session, null, name)
             }
@@ -96,12 +96,16 @@ fun ExpressionsConverter.generateIncrementOrDecrementBlock(
     }
     return FirBlockImpl(session, null).apply {
         val tempName = Name.special("<unary>")
-        val temporaryVariable = generateTemporaryVariable(this@generateIncrementOrDecrementBlock.session, null, tempName, visitExpression(argument))
+        val temporaryVariable = generateTemporaryVariable(
+            this@generateIncrementOrDecrementBlock.session, null, tempName, getAsFirExpression(argument)
+        )
         statements += temporaryVariable
         val resultName = Name.special("<unary-result>")
         val resultInitializer = FirFunctionCallImpl(this@generateIncrementOrDecrementBlock.session, null).apply {
             this.calleeReference = FirSimpleNamedReference(this@generateIncrementOrDecrementBlock.session, null, callName)
-            this.explicitReceiver = generateResolvedAccessExpression(this@generateIncrementOrDecrementBlock.session, null, temporaryVariable)
+            this.explicitReceiver = generateResolvedAccessExpression(
+                this@generateIncrementOrDecrementBlock.session, null, temporaryVariable
+            )
         }
         val resultVar = generateTemporaryVariable(this@generateIncrementOrDecrementBlock.session, null, resultName, resultInitializer)
         val assignment = convertAssignment(
@@ -128,7 +132,9 @@ fun ExpressionsConverter.generateIncrementOrDecrementBlock(
                 statements += generateResolvedAccessExpression(this@generateIncrementOrDecrementBlock.session, null, resultVar)
             } else {
                 appendAssignment()
-                statements += generateAccessExpression(this@generateIncrementOrDecrementBlock.session, null, argument.getAsString().nameAsSafeName())
+                statements += generateAccessExpression(
+                    this@generateIncrementOrDecrementBlock.session, null, argument.getAsString().nameAsSafeName()
+                )
             }
         } else {
             appendAssignment()
