@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.nj2k
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.conversions.parentOfType
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.getDisplayName
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitorWithCommentsPrinting
@@ -173,7 +175,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         }
 
         override fun visitFileRaw(file: JKFile) {
-            if (file.packageDeclaration.packageName.value.isNotEmpty()) {
+            if (file.packageDeclaration.name.value.isNotEmpty()) {
                 file.packageDeclaration.accept(this)
             }
             file.importList.accept(this)
@@ -183,8 +185,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
         override fun visitPackageDeclarationRaw(packageDeclaration: JKPackageDeclaration) {
             printer.printWithNoIndent("package ")
-            val packageNameEscaped =
-                packageDeclaration.packageName.value.escapedAsQualifiedName()
+            val packageNameEscaped = packageDeclaration.name.value.escapedAsQualifiedName()
             printer.printlnWithNoIndent(packageNameEscaped)
         }
 

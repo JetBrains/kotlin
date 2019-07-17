@@ -12,9 +12,9 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
+import org.jetbrains.kotlin.nj2k.symbols.fqNameToImport
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.fqNameToImport
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 

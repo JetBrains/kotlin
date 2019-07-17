@@ -9,6 +9,7 @@ import com.intellij.lang.jvm.JvmModifier
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.nullIfStubExpression
 import org.jetbrains.kotlin.nj2k.qualified
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull

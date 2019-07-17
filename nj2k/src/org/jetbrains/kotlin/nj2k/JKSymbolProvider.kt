@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.conversions.JKResolver
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 
 
@@ -43,7 +43,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             is KtParameter -> JKMultiversePropertySymbol(psi, this)
             is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
             is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
-            is PsiPackage -> JKMultiversePackageSymbol(psi)
+            is PsiPackage -> JKMultiversePackageSymbol(psi, this)
             else -> TODO(psi::class.toString())
         }
 
@@ -89,7 +89,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
     fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]?.also {
         @Suppress("UNCHECKED_CAST")
-        it as JKUniverseSymbol<JKTreeElement>
+        it as JKUniverseSymbol<JKDeclaration>
         it.target = to
         symbolsByJK[to] = it
     }

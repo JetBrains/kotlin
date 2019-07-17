@@ -16,7 +16,11 @@
 
 package org.jetbrains.kotlin.nj2k.tree
 
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBranchElementBase
+import org.jetbrains.kotlin.nj2k.tree.impl.JKModalityModifierElementImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKTokenElementImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKVisibilityModifierElementImpl
 
 abstract class JKField : JKVariable(), JKVisibilityOwner, JKMutabilityOwner, JKModalityOwner, JKOtherModifiersOwner, JKAnnotationListOwner
 

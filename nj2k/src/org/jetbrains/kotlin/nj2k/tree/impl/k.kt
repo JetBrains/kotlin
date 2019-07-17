@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.nj2k.tree.impl
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -259,6 +260,7 @@ class JKKtIsExpressionImpl(expression: JKExpression, type: JKTypeElement) : JKKt
 
 class JKKtInitDeclarationImpl(block: JKBlock) : JKKtInitDeclaration() {
     override var block: JKBlock by child(block)
+    override val name: JKNameIdentifier by child(JKNameIdentifierImpl("<name>"))
     override fun accept(visitor: JKVisitor) = visitor.visitKtInitDeclaration(this)
 }
 

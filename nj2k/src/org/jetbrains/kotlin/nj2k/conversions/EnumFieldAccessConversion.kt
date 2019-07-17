@@ -7,8 +7,12 @@ package org.jetbrains.kotlin.nj2k.conversions
 
 import com.intellij.psi.PsiEnumConstant
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKClassAccessExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKKtQualifierImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKQualifiedExpressionImpl
 import org.jetbrains.kotlin.psi.psiUtil.containingClass
 
 
