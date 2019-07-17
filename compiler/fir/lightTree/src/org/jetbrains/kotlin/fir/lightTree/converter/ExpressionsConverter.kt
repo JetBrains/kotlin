@@ -58,6 +58,7 @@ class ExpressionsConverter(
                 in qualifiedAccessTokens -> convertQualifiedExpression(expression)
                 CALL_EXPRESSION -> convertCallExpression(expression)
                 ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
+                COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpresion(expression)
                 STRING_TEMPLATE -> convertStringTemplate(expression)
                 is KtConstantExpressionElementType -> convertConstantExpression(expression)
                 REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
@@ -438,6 +439,20 @@ class ExpressionsConverter(
             calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, OperatorNameConventions.GET)
             explicitReceiver = firExpression
             arguments += indices
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseCollectionLiteralExpression
+     */
+    private fun convertCollectionLiteralExpresion(expression: LighterASTNode): FirExpression {
+        val firExpressionList = mutableListOf<FirExpression>()
+        expression.forEachChildren {
+            if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it)
+        }
+
+        return FirArrayOfCallImpl(session, null).apply {
+            arguments += firExpressionList
         }
     }
 

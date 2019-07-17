@@ -32,15 +32,12 @@ class FirPartialTransformer(
     private val visitReturnExpression: Boolean = false,
     private val visitThrowExpression: Boolean = false,
     private val visitForLoop: Boolean = false,
-    private val visitClassReferenceExpression: Boolean = false,
     private val visitConstExpression: Boolean = false,
     private val visitQualifiedAccessExpression: Boolean = false,
     private val visitCallableReferenceAccess: Boolean = false,
     private val visitTryExpression: Boolean = false,
     private val visitWhenExpression: Boolean = false,
-    private val visitNamedArgumentExpression: Boolean = false,
     private val visitLambdaArgumentExpression: Boolean = false,
-    private val visitSpreadArgumentExpression: Boolean = false,
     private val visitAnonymousObject: Boolean = false,
     private val visitDoWhileLoop: Boolean = false,
     private val visitWhileLoop: Boolean = false,
@@ -177,17 +174,6 @@ class FirPartialTransformer(
         }
     }
 
-    override fun transformClassReferenceExpression(
-        classReferenceExpression: FirClassReferenceExpression,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
-        return if (visitClassReferenceExpression) {
-            (classReferenceExpression.transformChildren(this, data) as FirClassReferenceExpression).compose()
-        } else {
-            DummyFirStatement().compose()
-        }
-    }
-
     override fun <T> transformConstExpression(
         constExpression: FirConstExpression<T>,
         data: Nothing?
@@ -237,34 +223,12 @@ class FirPartialTransformer(
         }
     }
 
-    override fun transformNamedArgumentExpression(
-        namedArgumentExpression: FirNamedArgumentExpression,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
-        return if (visitNamedArgumentExpression) {
-            (namedArgumentExpression.transformChildren(this, data) as FirNamedArgumentExpression).compose()
-        } else {
-            DummyFirStatement().compose()
-        }
-    }
-
     override fun transformLambdaArgumentExpression(
         lambdaArgumentExpression: FirLambdaArgumentExpression,
         data: Nothing?
     ): CompositeTransformResult<FirStatement> {
         return if (visitLambdaArgumentExpression) {
             (lambdaArgumentExpression.transformChildren(this, data) as FirLambdaArgumentExpression).compose()
-        } else {
-            DummyFirStatement().compose()
-        }
-    }
-
-    override fun transformSpreadArgumentExpression(
-        spreadArgumentExpression: FirSpreadArgumentExpression,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
-        return if (visitSpreadArgumentExpression) {
-            (spreadArgumentExpression.transformChildren(this, data) as FirSpreadArgumentExpression).compose()
         } else {
             DummyFirStatement().compose()
         }
