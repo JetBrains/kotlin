@@ -83,7 +83,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   }
 
   @Override
-  public WidgetPresentation getPresentation(@NotNull PlatformType type) {
+  public WidgetPresentation getPresentation() {
     return null;
   }
 
