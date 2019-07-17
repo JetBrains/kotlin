@@ -23,9 +23,7 @@ class FirPartialTransformer(
     private val visitMemberDeclaration: Boolean = false,
     private val visitVariable: Boolean = false,
     private val visitAnnotation: Boolean = false,
-    private val visitOperatorCall: Boolean = false,
     private val visitTypeOperatorCall: Boolean = false,
-    private val visitStringConcatenationCall: Boolean = false,
     private val visitArrayOfCall: Boolean = false,
     private val visitFunctionCall: Boolean = false,
     private val visitGetClassCall: Boolean = false,
@@ -104,28 +102,9 @@ class FirPartialTransformer(
         }
     }
 
-    override fun transformOperatorCall(operatorCall: FirOperatorCall, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitOperatorCall) {
-            (operatorCall.transformChildren(this, data) as FirOperatorCall).compose()
-        } else {
-            DummyFirStatement().compose()
-        }
-    }
-
     override fun transformTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: Nothing?): CompositeTransformResult<FirStatement> {
         return if (visitTypeOperatorCall) {
             (typeOperatorCall.transformChildren(this, data) as FirTypeOperatorCall).compose()
-        } else {
-            DummyFirStatement().compose()
-        }
-    }
-
-    override fun transformStringConcatenationCall(
-        stringConcatenationCall: FirStringConcatenationCall,
-        data: Nothing?
-    ): CompositeTransformResult<FirStatement> {
-        return if (visitStringConcatenationCall) {
-            (stringConcatenationCall.transformChildren(this, data) as FirStringConcatenationCall).compose()
         } else {
             DummyFirStatement().compose()
         }
