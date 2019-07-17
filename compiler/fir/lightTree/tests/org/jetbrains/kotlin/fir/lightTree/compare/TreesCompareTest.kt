@@ -72,15 +72,12 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitReturnExpression: Boolean = false,
         visitThrowExpression: Boolean = false,
         visitForLoop: Boolean = false,
-        visitClassReferenceExpression: Boolean = false,
         visitConstExpression: Boolean = false,
         visitQualifiedAccessExpression: Boolean = false,
         visitCallableReferenceAccess: Boolean = false,
         visitTryExpression: Boolean = false,
         visitWhenExpression: Boolean = false,
-        visitNamedArgumentExpression: Boolean = false,
         visitLambdaArgumentExpression: Boolean = false,
-        visitSpreadArgumentExpression: Boolean = false,
         visitAnonymousObject: Boolean = false,
         visitDoWhileLoop: Boolean = false,
         visitWhileLoop: Boolean = false,
@@ -102,15 +99,12 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitReturnExpression = visitReturnExpression,
             visitThrowExpression = visitThrowExpression,
             visitForLoop = visitForLoop,
-            visitClassReferenceExpression = visitClassReferenceExpression,
             visitConstExpression = visitConstExpression,
             visitQualifiedAccessExpression = visitQualifiedAccessExpression,
             visitCallableReferenceAccess = visitCallableReferenceAccess,
             visitTryExpression = visitTryExpression,
             visitWhenExpression = visitWhenExpression,
-            visitNamedArgumentExpression = visitNamedArgumentExpression,
             visitLambdaArgumentExpression = visitLambdaArgumentExpression,
-            visitSpreadArgumentExpression = visitSpreadArgumentExpression,
             visitAnonymousObject = visitAnonymousObject,
             visitDoWhileLoop = visitDoWhileLoop,
             visitWhileLoop = visitWhileLoop,
@@ -163,6 +157,17 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         compare(
             stubMode = false,
             visitTypeOperatorCall = true,
+            visitFunctionCall = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true
+        )
+    }
+
+    fun testArrayOfCall() {
+        compare(
+            stubMode = false,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
             visitFunctionCall = true,
             visitConstExpression = true,
             visitQualifiedAccessExpression = true
