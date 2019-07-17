@@ -15,7 +15,8 @@ FILE fqName:<root> fileName:/fun.kt
   FUN name:test3 visibility:public modality:FINAL <> (args:kotlin.Array<kotlin.String>) returnType:kotlin.Unit 
     VALUE_PARAMETER name:args index:0 type:kotlin.Array<kotlin.String> 
     BLOCK_BODY
-  FUN name:textExt1 visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
+  FUN name:textExt1 visibility:public modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     VALUE_PARAMETER name:i index:0 type:kotlin.Int 
     VALUE_PARAMETER name:j index:1 type:kotlin.String 
     BLOCK_BODY
@@ -25,15 +26,17 @@ FILE fqName:<root> fileName:/fun.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:testMembetExt1 visibility:public modality:FINAL <> ($this:<root>.Host, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
+    FUN name:testMembetExt1 visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
-      VALUE_PARAMETER name:i index:0 type:kotlin.Int 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
       VALUE_PARAMETER name:j index:1 type:kotlin.String 
       BLOCK_BODY
-    FUN name:testMembetExt2 visibility:public modality:FINAL <T> ($this:<root>.Host, i:kotlin.Int, j:T of <root>.Host.testMembetExt2) returnType:kotlin.Unit 
+    FUN name:testMembetExt2 visibility:public modality:FINAL <T> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:T of <root>.Host.testMembetExt2) returnType:kotlin.Unit
       TYPE_PARAMETER name:T index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
-      VALUE_PARAMETER name:i index:0 type:kotlin.Int 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
       VALUE_PARAMETER name:j index:1 type:T of <root>.Host.testMembetExt2 
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 

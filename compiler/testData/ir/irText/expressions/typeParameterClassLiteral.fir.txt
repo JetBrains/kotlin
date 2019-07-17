@@ -5,8 +5,9 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
       RETURN type=kotlin.Nothing from='public final fun classRefFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
           ERROR_CALL 'Unresolved reference: <Unresolved name: T>#' type=IrErrorType
-  FUN name:classRefExtFun visibility:public modality:FINAL <T> () returnType:kotlin.reflect.KClass<IrErrorType> [inline] 
+  FUN name:classRefExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun classRefExtFun <T> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>'
         GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
@@ -31,9 +32,10 @@ FILE fqName:<root> fileName:/typeParameterClassLiteral.kt
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberFun <TF> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>.Host'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>
             ERROR_CALL 'Unresolved reference: <Unresolved name: TF>#' type=IrErrorType
-    FUN name:classRefGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host) returnType:kotlin.reflect.KClass<IrErrorType> [inline] 
+    FUN name:classRefGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host, $receiver:kotlin.Any) returnType:kotlin.reflect.KClass<IrErrorType> [inline]
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun classRefGenericMemberExtFun <TF> (): kotlin.reflect.KClass<IrErrorType> [inline] declared in <root>.Host'
           GET_CLASS type=kotlin.reflect.KClass<IrErrorType>

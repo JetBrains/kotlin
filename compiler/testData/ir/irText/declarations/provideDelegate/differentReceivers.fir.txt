@@ -30,14 +30,16 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:provideDelegate visibility:public modality:FINAL <> (host:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String 
+  FUN name:provideDelegate visibility:public modality:FINAL <> ($receiver:<root>.MyClass, host:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.MyClass
     VALUE_PARAMETER name:host index:0 type:kotlin.Any? 
     VALUE_PARAMETER name:p index:1 type:kotlin.Any 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=null
           $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.MyClass
-  FUN name:getValue visibility:public modality:FINAL <> (receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String
+  FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? 
     VALUE_PARAMETER name:p index:1 type:kotlin.Any 
     BLOCK_BODY

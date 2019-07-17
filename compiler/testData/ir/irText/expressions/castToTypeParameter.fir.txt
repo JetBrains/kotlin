@@ -6,8 +6,9 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
       RETURN type=kotlin.Nothing from='public final fun castFun <T> (x: kotlin.Any): T of <root>.castFun declared in <root>'
         TYPE_OP type=T of <root>.castFun origin=CAST typeOperand=T of <root>.castFun
           GET_VAR 'x: kotlin.Any declared in <root>.castFun' type=kotlin.Any origin=null
-  FUN name:castExtFun visibility:public modality:FINAL <T> () returnType:T of <root>.castExtFun 
+  FUN name:castExtFun visibility:public modality:FINAL <T> ($receiver:kotlin.Any) returnType:T of <root>.castExtFun
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun castExtFun <T> (): T of <root>.castExtFun declared in <root>'
         TYPE_OP type=T of <root>.castExtFun origin=CAST typeOperand=T of <root>.castExtFun
@@ -41,15 +42,17 @@ FILE fqName:<root> fileName:/castToTypeParameter.kt
         RETURN type=kotlin.Nothing from='public final fun castGenericMemberFun <TF> (x: kotlin.Any): TF of <root>.Host.castGenericMemberFun declared in <root>.Host'
           TYPE_OP type=TF of <root>.Host.castGenericMemberFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberFun
             GET_VAR 'x: kotlin.Any declared in <root>.Host.castGenericMemberFun' type=kotlin.Any origin=null
-    FUN name:castMemberExtFun visibility:public modality:FINAL <> ($this:<root>.Host) returnType:T of <root>.Host 
+    FUN name:castMemberExtFun visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.Any) returnType:T of <root>.Host
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun castMemberExtFun (): T of <root>.Host declared in <root>.Host'
           TYPE_OP type=T of <root>.Host origin=CAST typeOperand=T of <root>.Host
             ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
-    FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host) returnType:TF of <root>.Host.castGenericMemberExtFun 
+    FUN name:castGenericMemberExtFun visibility:public modality:FINAL <TF> ($this:<root>.Host, $receiver:kotlin.Any) returnType:TF of <root>.Host.castGenericMemberExtFun
       TYPE_PARAMETER name:TF index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun castGenericMemberExtFun <TF> (): TF of <root>.Host.castGenericMemberExtFun declared in <root>.Host'
           TYPE_OP type=TF of <root>.Host.castGenericMemberExtFun origin=CAST typeOperand=TF of <root>.Host.castGenericMemberExtFun

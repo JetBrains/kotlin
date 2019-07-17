@@ -1,5 +1,6 @@
 FILE fqName:<root> fileName:/kt23030.kt
-  FUN name:compareTo visibility:public modality:FINAL <> (c:kotlin.Char) returnType:kotlin.Int 
+  FUN name:compareTo visibility:public modality:FINAL <> ($receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     VALUE_PARAMETER name:c index:0 type:kotlin.Char 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>'
@@ -58,9 +59,10 @@ FILE fqName:<root> fileName:/kt23030.kt
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:compareTo visibility:public modality:FINAL <> ($this:<root>.C, c:kotlin.Char) returnType:kotlin.Int 
+    FUN name:compareTo visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.C 
-      VALUE_PARAMETER name:c index:0 type:kotlin.Char 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+      VALUE_PARAMETER name:c index:0 type:kotlin.Char
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=0

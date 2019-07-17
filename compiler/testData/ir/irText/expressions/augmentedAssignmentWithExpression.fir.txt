@@ -30,7 +30,8 @@ FILE fqName:<root> fileName:/augmentedAssignmentWithExpression.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): <root>.Host declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Host' type=<root>.Host origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test2 visibility:public modality:FINAL <> ($receiver:<root>.Host) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Host
     BLOCK_BODY
       ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
   FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 

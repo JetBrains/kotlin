@@ -82,8 +82,9 @@ FILE fqName:<root> fileName:/classMembers.kt
       BLOCK_BODY
         CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value="1"
-    FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Unit 
+    FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.C 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
       BLOCK_BODY
         CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value="2"
@@ -98,8 +99,9 @@ FILE fqName:<root> fileName:/classMembers.kt
         BLOCK_BODY
           CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value="3"
-      FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C.NestedClass) returnType:kotlin.Unit 
+      FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C.NestedClass, $receiver:kotlin.Int) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.C.NestedClass 
+        $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
         BLOCK_BODY
           CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value="4"

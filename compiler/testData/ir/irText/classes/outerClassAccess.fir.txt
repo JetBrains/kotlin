@@ -29,8 +29,9 @@ FILE fqName:<root> fileName:/outerClassAccess.kt
           BLOCK_BODY
             CALL 'public final fun test (): kotlin.Unit declared in <root>.Outer.Inner' type=kotlin.Unit origin=null
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer' type=kotlin.Unit origin=null
-        FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer.Inner.Inner2) returnType:kotlin.Unit 
+        FUN name:test3 visibility:public modality:FINAL <> ($this:<root>.Outer.Inner.Inner2, $receiver:<root>.Outer) returnType:kotlin.Unit
           $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner.Inner2 
+          $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
           BLOCK_BODY
             CALL 'public final fun foo (): kotlin.Unit declared in <root>.Outer' type=kotlin.Unit origin=null
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 

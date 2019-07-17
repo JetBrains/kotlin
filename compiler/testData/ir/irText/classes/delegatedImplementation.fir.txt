@@ -7,9 +7,10 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       VALUE_PARAMETER name:s index:1 type:kotlin.String 
     FUN name:bar visibility:public modality:ABSTRACT <> ($this:<root>.IBase) returnType:kotlin.Int 
       $this: VALUE_PARAMETER name:<this> type:<root>.IBase 
-    FUN name:qux visibility:public modality:ABSTRACT <> ($this:<root>.IBase) returnType:kotlin.Unit 
+    FUN name:qux visibility:public modality:ABSTRACT <> ($this:<root>.IBase, $receiver:kotlin.String) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.IBase 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
@@ -38,8 +39,9 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun bar (): kotlin.Int declared in <root>.BaseImpl'
           CONST Int type=kotlin.Int value=42
-    FUN name:qux visibility:public modality:FINAL <> ($this:<root>.BaseImpl) returnType:kotlin.Unit 
+    FUN name:qux visibility:public modality:FINAL <> ($this:<root>.BaseImpl, $receiver:kotlin.String) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.BaseImpl 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:

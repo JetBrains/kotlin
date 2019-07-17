@@ -61,8 +61,9 @@ FILE fqName:<root> fileName:/multipleImplicitReceivers.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS INTERFACE name:IInvoke modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IInvoke 
-    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.IInvoke) returnType:kotlin.Int 
+    FUN name:invoke visibility:public modality:OPEN <> ($this:<root>.IInvoke, $receiver:<root>.B) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.IInvoke 
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.B
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun invoke (): kotlin.Int declared in <root>.IInvoke'
           CONST Int type=kotlin.Int value=42

@@ -67,8 +67,9 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.Host'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final] ' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Host declared in <root>.Host.<get-y>' type=<root>.Host origin=null
-    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host) returnType:<root>.Outer.Inner 
+    FUN name:test visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:<root>.Outer) returnType:<root>.Outer.Inner
       $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun test (): <root>.Outer.Inner declared in <root>.Host'
           BLOCK type=<root>.Host.test.<no name provided> origin=OBJECT_LITERAL
@@ -83,6 +84,7 @@ FILE fqName:<root> fileName:/multipleThisReferences.kt
                 FIELD PROPERTY_BACKING_FIELD name:xx type:kotlin.String visibility:public [final] 
                   EXPRESSION_BODY
                     CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin' type=kotlin.String origin=null
+                      $receiver: ERROR_CALL 'Unresolved reference: <Unresolved name: x>#' type=IrErrorType
                       other: GET_VAR 'y: kotlin.Int declared in <root>.Host.<init>' type=kotlin.Int origin=null
                 FUN DEFAULT_PROPERTY_ACCESSOR name:<get-xx> visibility:public modality:FINAL <> ($this:<root>.Host.test.<no name provided>) returnType:kotlin.String 
                   correspondingProperty: PROPERTY name:xx visibility:public modality:FINAL [val] 

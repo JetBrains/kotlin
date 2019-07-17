@@ -112,7 +112,8 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test4 visibility:public modality:FINAL <> () returnType:<root>.Outer.Inner 
+  FUN name:test4 visibility:public modality:FINAL <> ($receiver:<root>.Outer) returnType:<root>.Outer.Inner
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.Outer
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (): <root>.Outer.Inner declared in <root>'
         BLOCK type=<root>.test4.<no name provided> origin=OBJECT_LITERAL

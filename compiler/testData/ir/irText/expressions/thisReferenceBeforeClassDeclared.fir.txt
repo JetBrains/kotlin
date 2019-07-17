@@ -1,5 +1,6 @@
 FILE fqName:<root> fileName:/thisReferenceBeforeClassDeclared.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.WithCompanion) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.WithCompanion
     BLOCK_BODY
       VAR name:test1 type:<root>.WithCompanion [val] 
         BLOCK type=<root>.test.<no name provided> origin=OBJECT_LITERAL

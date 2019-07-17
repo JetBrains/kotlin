@@ -2,9 +2,10 @@ FILE fqName:<root> fileName:/useImportedMember.kt
   CLASS INTERFACE name:I modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I 
     TYPE_PARAMETER name:G index:0 variance: superTypes:[]
-    FUN name:fromInterface visibility:public modality:OPEN <T> ($this:<root>.I) returnType:T of <root>.I.fromInterface 
+    FUN name:fromInterface visibility:public modality:OPEN <T> ($this:<root>.I, $receiver:T of <root>.I.fromInterface) returnType:T of <root>.I.fromInterface
       TYPE_PARAMETER name:T index:0 variance: superTypes:[]
       $this: VALUE_PARAMETER name:<this> type:<root>.I 
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.fromInterface
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I'
           ERROR_CALL 'Unresolved reference: this#' type=T of <root>.I.fromInterface
@@ -71,8 +72,9 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun f (s: kotlin.String): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=2
-    FUN name:f visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int 
+    FUN name:f visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Boolean) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.C 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Boolean
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun f (): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=3
@@ -129,11 +131,12 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:fromInterface visibility:public modality:OPEN <> ($this:<root>.I) returnType:T of <root>.I.fromInterface 
+    FUN FAKE_OVERRIDE name:fromInterface visibility:public modality:OPEN <> ($this:<root>.I, $receiver:T of <root>.I.fromInterface) returnType:T of <root>.I.fromInterface
       overridden:
         public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.I 
-    FUN FAKE_OVERRIDE name:genericFromSuper visibility:public modality:OPEN <> ($this:<root>.I, g:kotlin.String) returnType:kotlin.String 
+      $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.fromInterface
+    FUN FAKE_OVERRIDE name:genericFromSuper visibility:public modality:OPEN <> ($this:<root>.I, g:kotlin.String) returnType:kotlin.String
       overridden:
         public open fun genericFromSuper (g: G of <root>.I): G of <root>.I declared in <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.I 

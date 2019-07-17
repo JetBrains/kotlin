@@ -40,8 +40,9 @@ FILE fqName:<root> fileName:/safeCalls.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   CLASS INTERFACE name:IHost modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.IHost 
-    FUN name:extLength visibility:public modality:OPEN <> ($this:<root>.IHost) returnType:kotlin.Int 
+    FUN name:extLength visibility:public modality:OPEN <> ($this:<root>.IHost, $receiver:kotlin.String) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.IHost 
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun extLength (): kotlin.Int declared in <root>.IHost'
           ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
@@ -82,17 +83,19 @@ FILE fqName:<root> fileName:/safeCalls.kt
     BLOCK_BODY
       SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public ' type=kotlin.Int origin=null
         value: CONST Int type=kotlin.Int? value=0
-  FUN name:test5 visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int
+  FUN name:test5 visibility:public modality:FINAL <> ($receiver:<root>.IHost, s:kotlin.String?) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.IHost
     VALUE_PARAMETER name:s index:0 type:kotlin.String? 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test5 (s: kotlin.String?): kotlin.Int declared in <root>'
         CALL 'public open fun extLength (): kotlin.Int declared in <root>.IHost' type=kotlin.Int origin=null
           $this: GET_VAR 's: kotlin.String? declared in <root>.test5' type=kotlin.String? origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun foo (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=239
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
       CALL 'public final fun foo (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-
+        $receiver: CONST Int type=kotlin.Int value=42

@@ -29,11 +29,13 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:component1 visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:component1 visibility:public modality:FINAL <> ($receiver:<root>.I1) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.I1
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:component2 visibility:public modality:FINAL <> () returnType:kotlin.String 
+  FUN name:component2 visibility:public modality:FINAL <> ($receiver:<root>.I2) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.I2
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
@@ -50,6 +52,7 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
         GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
       VAR name:c1 type:kotlin.Int [val] 
         CALL 'public final fun component1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-      VAR name:c2 type:IrErrorType [val] 
+          $receiver: GET_VAR 'val <destruct>: <root>.I1 [val] declared in <root>.test' type=<root>.I1 origin=null
+      VAR name:c2 type:IrErrorType [val]
         ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/component2]>#' type=IrErrorType
 
