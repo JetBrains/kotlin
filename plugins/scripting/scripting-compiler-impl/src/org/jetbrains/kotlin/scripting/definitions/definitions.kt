@@ -49,7 +49,7 @@ private fun findScriptDefinitionByFilePath(project: Project, file: File): Script
     return scriptDefinitionProvider.findDefinition(file) ?: scriptDefinitionProvider.getDefaultDefinition()
 }
 
-internal fun VirtualFile.isNonScript(): Boolean =
+fun VirtualFile.isNonScript(): Boolean =
     isDirectory ||
             extension == KotlinFileType.EXTENSION ||
             extension == JavaClassFileType.INSTANCE.defaultExtension ||
