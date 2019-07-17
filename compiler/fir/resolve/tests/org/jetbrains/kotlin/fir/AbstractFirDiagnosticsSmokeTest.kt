@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.PlatformDependentAnalyzerServices
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.io.File
@@ -72,7 +69,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             FirJavaModuleBasedSession(info, sessionProvider, scope)
         }
 
-        val firFiles = mutableListOf<FirFile>()
+        val firFilesPerSession = mutableMapOf<FirSession, MutableList<FirFile>>()
 
         for ((testModule, testFilesInModule) in groupedByModule) {
             val ktFiles = getKtFiles(testFilesInModule, true)
@@ -82,7 +79,8 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
 
             val firBuilder = RawFirBuilder(session, false)
 
-            ktFiles.mapTo(firFiles) {
+            val files = firFilesPerSession.getOrPut(session) { mutableListOf() }
+            ktFiles.mapTo(files) {
                 val firFile = firBuilder.buildFirFile(it)
 
                 (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
@@ -91,7 +89,9 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
             }
         }
 
-//        doFirResolveTestBench(firFiles, FirTotalResolveTransformer().transformers, gc = false)
+        for ((session, files) in firFilesPerSession) {
+            doFirResolveTestBench(files, FirTotalResolveTransformer(session).transformers, gc = false)
+        }
 
     }
 
