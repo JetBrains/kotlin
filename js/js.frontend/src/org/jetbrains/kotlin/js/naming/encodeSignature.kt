@@ -33,7 +33,8 @@ fun encodeSignature(descriptor: CallableDescriptor): String {
     val usedTypeParameters = currentParameters.toMutableSet()
     val typeParameterNamer = { typeParameter: TypeParameterDescriptor ->
         usedTypeParameters += typeParameter.original
-        typeParameterNames[typeParameter.original]!!
+        typeParameterNames[typeParameter.original]
+            ?: error("${typeParameter.original} is not found when encode the signature of $descriptor.")
     }
 
     val receiverParameter = descriptor.extensionReceiverParameter
