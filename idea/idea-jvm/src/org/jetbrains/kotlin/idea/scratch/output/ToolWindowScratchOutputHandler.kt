@@ -181,34 +181,34 @@ private object TestOutputHandler : ScratchOutputHandlerAdapter() {
 
     override fun onFinish(file: ScratchFile) {
         ApplicationManager.getApplication().invokeLater {
+            val psiFile = file.getPsiFile()
+                ?: error(
+                    "PsiFile cannot be found for scratch to render inlays in tests:\n" +
+                            "project.isDisposed = ${file.project.isDisposed}\n" +
+                            "inlays = ${inlays.joinToString { it.second }}\n" +
+                            "errors = ${errors.joinToString()}"
+                )
+
             if (inlays.isNotEmpty()) {
-                val psiFile = file.getPsiFile()
-                    ?: error(
-                        "PsiFile cannot be found for scratch to render inlays in tests:\n" +
-                                "project.isDisposed = ${file.project.isDisposed}\n" +
-                                "inlays = ${inlays.joinToString { it.second }}\n" +
-                                "errors = ${errors.joinToString()}"
-                    )
-                testPrint(file, inlays.map { (expression, text) ->
+                testPrint(psiFile, inlays.map { (expression, text) ->
                     "/** ${getLineInfo(psiFile, expression)} $text */"
                 })
                 inlays.clear()
             }
 
             if (errors.isNotEmpty()) {
-                testPrint(file, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
+                testPrint(psiFile, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
                 errors.clear()
             }
         }
     }
 
-    private fun testPrint(file: ScratchFile, comments: List<String>) {
+    private fun testPrint(file: PsiFile, comments: List<String>) {
         WriteCommandAction.runWriteCommandAction(file.project) {
-            val psiFile = file.getPsiFile()!!
             for (comment in comments) {
-                psiFile.addAfter(
+                file.addAfter(
                     KtPsiFactory(file.project).createComment(comment),
-                    psiFile.lastChild
+                    file.lastChild
                 )
             }
         }
