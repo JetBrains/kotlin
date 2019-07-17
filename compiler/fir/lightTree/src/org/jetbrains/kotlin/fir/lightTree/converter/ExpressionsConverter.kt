@@ -55,6 +55,8 @@ class ExpressionsConverter(
                 IS_EXPRESSION -> convertIsExpression(expression)
                 PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
                 ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
+                CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
+                CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
                 in qualifiedAccessTokens -> convertQualifiedExpression(expression)
                 CALL_EXPRESSION -> convertCallExpression(expression)
                 ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
@@ -220,6 +222,10 @@ class ExpressionsConverter(
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parsePrefixExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitAnnotatedExpression
+     */
     private fun convertAnnotatedExpression(annotatedExpression: LighterASTNode): FirElement {
         var firExpression: FirElement? = null
         val firAnnotationList = mutableListOf<FirAnnotationCall>()
@@ -234,6 +240,48 @@ class ExpressionsConverter(
         return (firExpression as? FirAbstractAnnotatedElement)?.apply {
             annotations += firAnnotationList
         } ?: FirErrorExpressionImpl(session, null, "Strange annotated expression: ${firExpression?.render()}")
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseDoubleColonSuffix
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitClassLiteralExpression
+     */
+    private fun convertClassLiteralExpression(classLiteralExpression: LighterASTNode): FirExpression {
+        lateinit var firReceiverExpression: FirExpression
+        classLiteralExpression.forEachChildren {
+            if (it.isExpression()) firReceiverExpression = getAsFirExpression(it)
+        }
+
+        return FirGetClassCallImpl(session, null).apply {
+            arguments += firReceiverExpression
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseDoubleColonSuffix
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitCallableReferenceExpression
+     */
+    private fun convertCallableReferenceExpression(callableReferenceExpression: LighterASTNode): FirExpression {
+        var isReceiver = true
+        var firReceiverExpression: FirExpression? = null
+        lateinit var firCallableReference: FirQualifiedAccess
+        callableReferenceExpression.forEachChildren {
+            when (it.tokenType) {
+                COLONCOLON -> isReceiver = false
+                else -> if (it.isExpression()) {
+                    if (isReceiver) {
+                        firReceiverExpression = getAsFirExpression(it)
+                    } else {
+                        firCallableReference = convertSimpleNameExpression(it)
+                    }
+                }
+            }
+        }
+
+        return FirCallableReferenceAccessImpl(session, null).apply {
+            calleeReference = firCallableReference.calleeReference
+            explicitReceiver = firReceiverExpression
+        }
     }
 
     /**
