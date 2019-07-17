@@ -14,7 +14,7 @@ fun CodeInsightTestFixture.configureWithExtraFile(path: String, vararg extraName
     val fileName = File(path).name
 
     val noExtensionPath = FileUtil.getNameWithoutExtension(fileName)
-    val extensions = arrayOf("kt", "java")
+    val extensions = arrayOf("kt", "java", "properties")
     val extraPaths: List<String> = extraNameParts
             .flatMap { extensions.map { ext -> "$noExtensionPath$it.$ext" } }
             .mapNotNull { File(testDataPath, it).takeIf { it.exists() }?.name }
