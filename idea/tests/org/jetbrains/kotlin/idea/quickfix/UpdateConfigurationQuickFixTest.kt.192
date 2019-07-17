@@ -14,7 +14,6 @@ import com.intellij.openapi.roots.ui.configuration.libraryEditor.NewLibraryEdito
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.JarFileSystem
 import com.intellij.openapi.vfs.LocalFileSystem
-import com.intellij.testFramework.exceptionCases.AbstractExceptionCase
 import com.intellij.testFramework.fixtures.LightPlatformCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments.Companion.DEFAULT
 import org.jetbrains.kotlin.config.CompilerSettings.Companion.DEFAULT_ADDITIONAL_ARGUMENTS
@@ -42,13 +41,7 @@ class UpdateConfigurationQuickFixTest : LightPlatformCodeInsightFixtureTestCase(
         myFixture.configureByText("foo.kt", "inline class My(val n: Int)")
 
         assertEquals(LanguageFeature.State.ENABLED_WITH_WARNING, inlineClassesSupport)
-        assertException(object : AbstractExceptionCase<AssertionError>() {
-            override fun getExpectedExceptionClass(): Class<AssertionError> = AssertionError::class.java
-
-            override fun tryClosure() {
-                myFixture.findSingleIntention("Disable inline classes support in the project")
-            }
-        })
+        assertTrue(myFixture.availableIntentions.none { it.text == "Disable inline classes support in the project" })
     }
 
     fun testEnableInlineClasses() {

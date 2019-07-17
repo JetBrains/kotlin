@@ -14,7 +14,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildArgumentString
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.idea.configuration.GroovyBuildScriptManipulator.Companion.getBlockOrCreate
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
@@ -156,6 +155,7 @@ class GroovyBuildScriptManipulator(
         forTests: Boolean
     ): PsiElement? {
         if (usesNewMultiplatform()) {
+            state.assertApplicableInMultiplatform()
             val kotlinBlock = scriptFile.getBlockOrCreate("kotlin")
             val sourceSetsBlock = kotlinBlock.getBlockOrCreate("sourceSets")
             val allBlock = sourceSetsBlock.getBlockOrCreate("all")
@@ -249,11 +249,6 @@ class GroovyBuildScriptManipulator(
                     }
                 """.trimIndent()
             )
-    }
-
-    private fun usesNewMultiplatform(): Boolean {
-        val fileText = runReadAction { scriptFile.text }
-        return fileText.contains("multiplatform")
     }
 
     private fun GrClosableBlock.addParameterAssignment(
