@@ -118,15 +118,20 @@ public class DependencyResultsTransformer {
     boolean resolveFromArtifacts = resultId instanceof ModuleComponentIdentifier;
 
     if (resultId instanceof ProjectComponentIdentifier) {
+      ProjectComponentIdentifier projectComponentIdentifier = (ProjectComponentIdentifier)resultId;
       Collection<ProjectDependency> projectDependencies = configurationProjectDependencies.get(componentIdentifier);
       Collection<Configuration> dependencyConfigurations;
-      String projectPath = ((ProjectComponentIdentifier)resultId).getProjectPath();
+      String projectPath = projectComponentIdentifier.getProjectPath();
       if (projectDependencies.isEmpty()) {
         Project dependencyProject = myProject.findProject(projectPath);
-        if (dependencyProject != null) {
+        if (dependencyProject != null && projectComponentIdentifier.getBuild().isCurrentBuild()) {
           Configuration dependencyProjectConfiguration =
-            dependencyProject.getConfigurations().getByName(Dependency.DEFAULT_CONFIGURATION);
-          dependencyConfigurations = Collections.singleton(dependencyProjectConfiguration);
+            dependencyProject.getConfigurations().findByName(Dependency.DEFAULT_CONFIGURATION);
+          if (dependencyProjectConfiguration != null) {
+            dependencyConfigurations = Collections.singleton(dependencyProjectConfiguration);
+          } else {
+            dependencyConfigurations = Collections.emptySet();
+          }
         }
         else {
           dependencyConfigurations = Collections.emptySet();
