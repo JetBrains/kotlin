@@ -16,18 +16,17 @@
 
 package org.jetbrains.kotlin.nj2k.tree.impl
 
-import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.BOOLEAN
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.NULL
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
-import org.jetbrains.kotlin.psi.KtClass
 
 class JKTreeRootImpl(element: JKTreeElement) : JKTreeRoot, JKBranchElementBase() {
     override var element by child(element)
@@ -527,8 +526,8 @@ fun JKStatement.isEmpty(): Boolean =
         else -> false
     }
 
-class JKPackageDeclarationImpl(packageName: JKNameIdentifier) : JKPackageDeclaration() {
-    override var packageName: JKNameIdentifier by child(packageName)
+class JKPackageDeclarationImpl(name: JKNameIdentifier) : JKPackageDeclaration() {
+    override var name: JKNameIdentifier by child(name)
     override fun accept(visitor: JKVisitor) = visitor.visitPackageDeclaration(this)
 }
 
@@ -636,7 +635,7 @@ class JKOtherModifierElementImpl(override var otherModifier: OtherModifier) : JK
 
 class JKMethodReferenceExpressionImpl(
     qualifier: JKExpression,
-    override val identifier: JKNamedSymbol,
+    override val identifier: JKSymbol,
     functionalType: JKTypeElement,
     override val isConstructorCall: Boolean
 ) : JKMethodReferenceExpression, JKBranchElementBase(), PsiOwner by PsiOwnerImpl() {

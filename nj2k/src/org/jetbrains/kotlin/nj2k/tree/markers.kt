@@ -17,9 +17,9 @@
 package org.jetbrains.kotlin.nj2k.tree
 
 import org.jetbrains.kotlin.j2k.ast.Nullability
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKTypeParameterSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.JKBranchElementBase
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
-import org.jetbrains.kotlin.nj2k.tree.impl.JKTypeParameterSymbol
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KProperty0

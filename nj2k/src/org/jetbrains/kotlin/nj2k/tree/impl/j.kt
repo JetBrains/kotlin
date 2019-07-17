@@ -21,6 +21,8 @@ import com.intellij.psi.impl.source.tree.ElementType.OPERATION_BIT_SET
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
@@ -432,5 +434,6 @@ class JKKtAnnotationArrayInitializerExpressionImpl(initializers: List<JKAnnotati
 
 class JKJavaStaticInitDeclarationImpl(block: JKBlock) : JKJavaStaticInitDeclaration() {
     override var block: JKBlock by child(block)
+    override var name: JKNameIdentifier by child(JKNameIdentifierImpl("<init>"))
     override fun accept(visitor: JKVisitor) = visitor.visitJavaStaticInitDeclaration(this)
 }

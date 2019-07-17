@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMethodDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 
 class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {

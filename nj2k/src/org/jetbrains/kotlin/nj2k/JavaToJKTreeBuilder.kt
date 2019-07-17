@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
@@ -356,16 +356,17 @@ class JavaToJKTreeBuilder constructor(
                 it.assignNonCodeElements(this)
             }
         }
+
         fun PsiFunctionalExpression.functionalType(): JKTypeElement =
             functionalInterfaceType?.toJK(symbolProvider)?.takeUnless { type ->
                 type.isKotlinFunctionType
             }?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
 
         fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
-            val symbol = symbolProvider.provideSymbolForReference<JKNamedSymbol>(this).let { symbol ->
+            val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this).let { symbol ->
                 when {
-                    symbol.isUnresolved() && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
-                    symbol.isUnresolved() && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
+                    symbol.isUnresolved && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
+                    symbol.isUnresolved && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
                     else -> symbol
                 }
             }
