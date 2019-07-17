@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateCompon
 import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateCopyFunction
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.fir.ClassWrapper
+import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
@@ -97,12 +98,20 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
-    private fun convertBlockExpression(block: LighterASTNode): FirBlock {
+    fun convertBlockExpression(block: LighterASTNode): FirBlock {
         val firStatements = mutableListOf<FirStatement>()
         block.forEachChildren {
             when (it.tokenType) {
                 //TODO("not implemented")
                 BLOCK -> ""
+
+                CLASS -> firStatements += convertClass(it) as FirStatement
+                FUN -> firStatements += convertFunctionDeclaration(it) as FirStatement
+                PROPERTY -> firStatements += convertPropertyDeclaration(it) as FirStatement
+                TYPEALIAS -> firStatements += convertTypeAlias(it) as FirStatement
+                OBJECT_DECLARATION -> firStatements += convertClass(it) as FirStatement
+                CLASS_INITIALIZER -> firStatements += convertAnonymousInitializer(it) as FirStatement
+
                 else -> if (it.isExpression()) firStatements += expressionConverter.getAsFirExpression<FirStatement>(it)
             }
         }
@@ -371,7 +380,7 @@ class DeclarationsConverter(
                 null,
                 FirClassSymbol(ClassNameUtil.currentClassId),
                 className,
-                if (FunctionUtil.firFunctions.isNotEmpty()) Visibilities.LOCAL else modifiers.getVisibility(),
+                if (classNode.getParent()?.tokenType == BLOCK) Visibilities.LOCAL else modifiers.getVisibility(),
                 modifiers.getModality(),
                 modifiers.hasExpect(),
                 modifiers.hasActual(),
@@ -569,14 +578,14 @@ class DeclarationsConverter(
         var modifiers = Modifier(session)
         val firValueParameters = mutableListOf<ValueParameter>()
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
-        var firBlock: FirBlock? = null
+        var block: LighterASTNode? = null
 
         secondaryConstructor.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 VALUE_PARAMETER_LIST -> firValueParameters += convertValueParameters(it)
                 CONSTRUCTOR_DELEGATION_CALL -> constructorDelegationCall = convertConstructorDelegationCall(it, classWrapper)
-                BLOCK -> firBlock = visitBlock(it)
+                BLOCK -> block = it
             }
         }
 
@@ -595,7 +604,7 @@ class DeclarationsConverter(
         firConstructor.annotations += modifiers.annotations
         firConstructor.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
         firConstructor.valueParameters += firValueParameters.map { it.firValueParameter }
-        firConstructor.body = visitFunctionBody(firBlock, null)
+        firConstructor.body = visitFunctionBody(block, null)
         FunctionUtil.firFunctions.removeLast()
         return firConstructor
     }
@@ -704,7 +713,7 @@ class DeclarationsConverter(
 
         val propertyName = identifier.nameAsSafeName()
 
-        return if (FunctionUtil.firFunctions.isNotEmpty()) {
+        return if (property.getParent()?.tokenType == BLOCK) {
             FirVariableImpl(
                 session,
                 null,
@@ -743,6 +752,44 @@ class DeclarationsConverter(
     }
 
     /**
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDestructuringDeclaration
+     */
+    private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
+        var isVar = false
+        val entries = mutableListOf<FirVariable>()
+        destructingDeclaration.forEachChildren {
+            when (it.tokenType) {
+                VAR_KEYWORD -> isVar = true
+                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+            }
+        }
+
+        return DestructuringDeclaration(isVar, entries)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
+     */
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable {
+        var modifiers = Modifier(session)
+        lateinit var identifier: String
+        var firType: FirTypeRef? = null
+        entry.forEachChildren {
+            when (it.tokenType) {
+                MODIFIER_LIST -> modifiers = convertModifierList(it)
+                IDENTIFIER -> identifier = it.getAsString()
+                TYPE_REFERENCE -> firType = convertType(it)
+            }
+        }
+
+        return FirVariableImpl(
+            session, null, identifier.nameAsSafeName(), firType ?: implicitType, false, null
+        ).apply {
+            annotations += modifiers.annotations
+        }
+    }
+
+    /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
      */
     private fun convertGetterOrSetter(getterOrSetter: LighterASTNode, propertyTypeRef: FirTypeRef): FirPropertyAccessor {
@@ -750,7 +797,7 @@ class DeclarationsConverter(
         var isGetter = true
         var returnType: FirTypeRef? = null
         var firValueParameters: FirValueParameter = FirDefaultSetterValueParameter(session, null, propertyTypeRef)
-        var firBlock: FirBlock? = null
+        var block: LighterASTNode? = null
         var firExpression: FirExpression? = null
         getterOrSetter.forEachChildren {
             if (it.getAsString() == "set") isGetter = false
@@ -759,7 +806,7 @@ class DeclarationsConverter(
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
                 TYPE_REFERENCE -> returnType = convertType(it)
                 VALUE_PARAMETER_LIST -> firValueParameters = convertSetterParameter(it, propertyTypeRef)
-                BLOCK -> firBlock = visitBlock(it)
+                BLOCK -> block = it
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
@@ -778,7 +825,7 @@ class DeclarationsConverter(
             firAccessor.valueParameters += firValueParameters
         }
 
-        firAccessor.body = visitFunctionBody(firBlock, firExpression)
+        firAccessor.body = visitFunctionBody(block, firExpression)
         FunctionUtil.firFunctions.removeLast()
         return firAccessor
     }
@@ -816,16 +863,16 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    private fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
+    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
         var modifiers = Modifier(session)
-        lateinit var identifier: String
+        var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         val valueParametersList = mutableListOf<ValueParameter>()
         var isReturnType = false
         var receiverType: FirTypeRef? = null
         var returnType: FirTypeRef? = null
         val typeConstraints = mutableListOf<TypeConstraint>()
-        var firBlock: FirBlock? = null
+        var block: LighterASTNode? = null
         var firExpression: FirExpression? = null
         functionDeclaration.forEachChildren {
             when (it.tokenType) {
@@ -836,47 +883,53 @@ class DeclarationsConverter(
                 COLON -> isReturnType = true
                 TYPE_REFERENCE -> if (isReturnType) returnType = convertType(it) else receiverType = convertType(it)
                 TYPE_CONSTRAINT_LIST -> typeConstraints += convertTypeConstraints(it)
-                BLOCK -> firBlock = visitBlock(it)
+                BLOCK -> block = it
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
         if (returnType == null) {
             returnType =
-                if (firBlock != null || (firBlock == null && firExpression == null)) implicitUnitType
+                if (block != null || (block == null && firExpression == null)) implicitUnitType
                 else implicitType
         }
 
-        val functionName = identifier.nameAsSafeName()
-        val isLocal = FunctionUtil.firFunctions.isNotEmpty()
-        val firFunction = FirMemberFunctionImpl(
-            session,
-            null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
-            functionName,
-            modifiers.getVisibility(),
-            modifiers.getModality(),
-            modifiers.hasExpect(),
-            modifiers.hasActual(),
-            modifiers.hasOverride(),
-            modifiers.hasOperator(),
-            modifiers.hasInfix(),
-            modifiers.hasInline(),
-            modifiers.hasTailrec(),
-            modifiers.hasExternal(),
-            modifiers.hasSuspend(),
-            receiverType,
-            returnType!!
-        )
+        val isLocal = functionDeclaration.getParent()?.tokenType == BLOCK
+        val firFunction = if (identifier == null) {
+            FirAnonymousFunctionImpl(session, null, returnType!!, receiverType)
+        } else {
+            val functionName = identifier.nameAsSafeName()
+            FirMemberFunctionImpl(
+                session,
+                null,
+                FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
+                functionName,
+                modifiers.getVisibility(),
+                modifiers.getModality(),
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
+                modifiers.hasOverride(),
+                modifiers.hasOperator(),
+                modifiers.hasInfix(),
+                modifiers.hasInline(),
+                modifiers.hasTailrec(),
+                modifiers.hasExternal(),
+                modifiers.hasSuspend(),
+                receiverType,
+                returnType!!
+            )
+        }
 
         FunctionUtil.firFunctions += firFunction
         firFunction.annotations += modifiers.annotations
 
-        firFunction.typeParameters += firTypeParameters
-        firFunction.joinTypeParameters(typeConstraints)
+        if (firFunction is FirMemberFunctionImpl) {
+            firFunction.typeParameters += firTypeParameters
+            firFunction.joinTypeParameters(typeConstraints)
+        }
 
         firFunction.valueParameters += valueParametersList.map { it.firValueParameter }
-        firFunction.body = visitFunctionBody(firBlock, firExpression)
+        firFunction.body = visitFunctionBody(block, firExpression)
         FunctionUtil.firFunctions.removeLast()
         return firFunction
     }
@@ -885,10 +938,10 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionBody
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.buildFirBody
      */
-    private fun visitFunctionBody(firBlock: FirBlock?, firExpression: FirExpression?): FirBlock? {
+    private fun visitFunctionBody(blockNode: LighterASTNode?, firExpression: FirExpression?): FirBlock? {
         return when {
-            firBlock != null -> if (!stubMode) {
-                return firBlock
+            blockNode != null -> if (!stubMode) {
+                return visitBlock(blockNode)
             } else {
                 FirSingleExpressionBlock(
                     session,
@@ -1205,7 +1258,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameterList
      */
-    private fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
+    fun convertValueParameters(valueParameters: LighterASTNode): List<ValueParameter> {
         return valueParameters.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 VALUE_PARAMETER -> container += convertValueParameter(node)
@@ -1223,6 +1276,7 @@ class DeclarationsConverter(
         var identifier: String? = null
         var firType: FirTypeRef? = null
         var firExpression: FirExpression? = null
+        var destructuringDeclaration: DestructuringDeclaration? = null
         valueParameter.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> modifiers = convertModifierList(it)
@@ -1230,6 +1284,7 @@ class DeclarationsConverter(
                 VAR_KEYWORD -> isVar = true
                 IDENTIFIER -> identifier = it.getAsString()
                 TYPE_REFERENCE -> firType = convertType(it)
+                DESTRUCTURING_DECLARATION -> destructuringDeclaration = convertDestructingDeclaration(it)
                 else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
@@ -1244,6 +1299,6 @@ class DeclarationsConverter(
             isNoinline = modifiers.hasNoinline(),
             isVararg = modifiers.hasVararg()
         ).apply { annotations += modifiers.annotations }
-        return ValueParameter(isVal, isVar, modifiers, firValueParameter)
+        return ValueParameter(isVal, isVar, modifiers, firValueParameter, destructuringDeclaration)
     }
 }

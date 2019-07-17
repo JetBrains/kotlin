@@ -186,4 +186,76 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitCallableReferenceAccess = true
         )
     }
+
+    fun testLocalMembers() {
+        compare(
+            stubMode = false,
+            visitNamedFunction = true,
+            visitMemberDeclaration = true,
+            visitAnnotation = true,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
+            visitFunctionCall = true,
+            visitGetClassCall = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitCallableReferenceAccess = true
+        )
+    }
+
+    fun testReturn() {
+        compare(
+            stubMode = false,
+            visitNamedFunction = true,
+            visitMemberDeclaration = true,
+            visitAnnotation = true,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
+            visitFunctionCall = true,
+            visitGetClassCall = true,
+            visitReturnExpression = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitCallableReferenceAccess = true
+        )
+    }
+
+    fun testLambdaExpression() {
+        compare(
+            stubMode = false,
+            visitAnonymousFunction = true,
+            visitLambdaExpression = true,
+            visitNamedFunction = true,
+            visitMemberDeclaration = true,
+            visitAnnotation = true,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
+            visitFunctionCall = true,
+            visitGetClassCall = true,
+            visitReturnExpression = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitCallableReferenceAccess = true
+        )
+    }
+
+    fun testLambdaArgument() {
+        compare(
+            stubMode = false,
+            visitAnonymousFunction = true,
+            visitLambdaExpression = true,
+            visitNamedFunction = true,
+            visitMemberDeclaration = true,
+            visitAnnotation = true,
+            visitTypeOperatorCall = true,
+            visitArrayOfCall = true,
+            visitFunctionCall = true,
+            visitGetClassCall = true,
+            visitReturnExpression = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitCallableReferenceAccess = true,
+            visitLambdaArgumentExpression = true
+        )
+    }
 }

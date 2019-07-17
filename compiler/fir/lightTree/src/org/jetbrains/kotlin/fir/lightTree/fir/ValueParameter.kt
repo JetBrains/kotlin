@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
 import org.jetbrains.kotlin.fir.lightTree.converter.ClassNameUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
@@ -20,7 +22,8 @@ class ValueParameter(
     private val isVal: Boolean,
     private val isVar: Boolean,
     private val modifiers: Modifier,
-    val firValueParameter: FirValueParameter
+    val firValueParameter: FirValueParameter,
+    val destructuringDeclaration: DestructuringDeclaration? = null
 ) {
     fun hasValOrVar(): Boolean {
         return isVal || isVar
