@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKBlockStatementImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.JKLambdaExpressionImpl
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
