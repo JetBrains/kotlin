@@ -35,10 +35,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         super.setUp()
         // warm up: open simple small project
         if (!warmedUp) {
-            val project = innerPerfOpenProject("helloKotlin", hwStats, "warm-up")
-            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", hwStats, "warm-up")
-            assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
-            closeProject(project)
+            warmUpProject(hwStats)
 
             warmedUp = true
         }
@@ -58,7 +55,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         tcSuite("Kotlin project") {
             val stats = Stats("kotlin project")
             stats.use {
-                perfOpenProject("perfTestProject", stats = it, path = "..")
+                perfOpenKotlinProject(it)
 
                 perfHighlightFile("compiler/psi/src/org/jetbrains/kotlin/psi/KtFile.kt", stats = it)
 
@@ -71,7 +68,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         tcSuite("Kotlin project highlight build gradle") {
             val stats = Stats("kotlin project highlight build gradle")
             stats.use {
-                perfOpenProject("perfTestProject", stats = it, path = "..")
+                perfOpenKotlinProject(it)
 
                 enableAnnotatorsAndLoadDefinitions()
 

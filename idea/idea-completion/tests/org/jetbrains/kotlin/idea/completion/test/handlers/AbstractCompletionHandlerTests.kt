@@ -24,6 +24,7 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
+    private val COMPLETION_CHARS_PREFIX = "CHARS:"
     private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     protected open fun doTest(testPath: String) {
@@ -42,12 +43,10 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
             val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
 
-            val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
-            val completionChar = when(completionCharString) {
-                "\\n", null -> '\n'
-                "\\t" -> '\t'
-                else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
-            }
+            val completionChars = completionChars(
+                char = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX),
+                chars = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHARS_PREFIX)
+            )
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
@@ -70,7 +69,15 @@ abstract class AbstractCompletionHandlerTest(private val defaultCompletionType: 
                 }
             }
 
-            doTestWithTextLoaded(completionType, invocationCount, lookupString, itemText, tailText, completionChar, File(testPath).name + ".after")
+            doTestWithTextLoaded(
+                completionType,
+                invocationCount,
+                lookupString,
+                itemText,
+                tailText,
+                completionChars,
+                File(testPath).name + ".after"
+            )
         } finally {
             if (configured) {
                 rollbackCompilerOptions(project, module)

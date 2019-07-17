@@ -26,7 +26,7 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     }
 
     public void testAllFilesPresentInCharFilter() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/charFilter"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/idea-completion/testData/handlers/charFilter"), Pattern.compile("^([^.]+)\\.kt$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("Colon.kt")
@@ -142,6 +142,11 @@ public class CompletionCharFilterTestGenerated extends AbstractCompletionCharFil
     @TestMetadata("LParenth.kt")
     public void testLParenth() throws Exception {
         runTest("idea/idea-completion/testData/handlers/charFilter/LParenth.kt");
+    }
+
+    @TestMetadata("MessageBundle1.kt")
+    public void testMessageBundle1() throws Exception {
+        runTest("idea/idea-completion/testData/handlers/charFilter/MessageBundle1.kt");
     }
 
     @TestMetadata("NamedParameter1.kt")

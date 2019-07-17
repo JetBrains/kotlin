@@ -103,6 +103,16 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         }
     }
 
+    protected fun warmUpProject(stats: Stats) {
+        val project = innerPerfOpenProject("helloKotlin", stats, "warm-up")
+        try {
+            val perfHighlightFile = perfHighlightFile(project, "src/HelloMain.kt", stats, "warm-up")
+            assertTrue("kotlin project has been not imported properly", perfHighlightFile.isNotEmpty())
+        } finally {
+            closeProject(project)
+        }
+    }
+
     override fun tearDown() {
         RunAll(
             ThrowableRunnable { super.tearDown() },
@@ -121,6 +131,9 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         val lastIndexOf = fileName.lastIndexOf('/')
         return if (lastIndexOf >= 0) fileName.substring(lastIndexOf + 1) else fileName
     }
+
+    protected fun perfOpenKotlinProject(stats: Stats) =
+        perfOpenProject("perfTestProject", stats = stats, path = "..")
 
     protected fun perfOpenProject(name: String, stats: Stats, path: String = "idea/testData/perfTest") {
         myProject = innerPerfOpenProject(name, stats, path = path, note = "")
@@ -291,8 +304,8 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         stats: Stats,
         note: String = ""
     ): List<HighlightInfo> {
-        var highlightInfos: List<HighlightInfo> = emptyList()
-        IdentifierHighlighterPassFactory.doWithHighlightingEnabled {
+        return highlightFile {
+            var highlightInfos: List<HighlightInfo> = emptyList()
             stats.perfTest<EditorFile, List<HighlightInfo>>(
                 testName = "highlighting ${if (note.isNotEmpty()) "$note " else ""}${simpleFilename(fileName)}",
                 setUp = {
@@ -309,9 +322,21 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                     PsiManager.getInstance(project).dropPsiCaches()
                 }
             )
+            highlightInfos
         }
-        //println("${"-".repeat(40)}\n$fileName ->\n${highlightInfos.joinToString("\n")}\n")
+    }
 
+    fun highlightFile(psiFile: PsiFile): List<HighlightInfo> {
+        return highlightFile {
+            highlightFile(myProject!!, psiFile)
+        }
+    }
+
+    private fun highlightFile(block: () -> List<HighlightInfo>): List<HighlightInfo> {
+        var highlightInfos: List<HighlightInfo> = emptyList()
+        IdentifierHighlighterPassFactory.doWithHighlightingEnabled {
+            highlightInfos = block()
+        }
         return highlightInfos
     }
 
@@ -392,7 +417,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         }
     }
 
-    private fun openFileInEditor(project: Project, name: String): EditorFile {
+    fun openFileInEditor(project: Project, name: String): EditorFile {
         val fileDocumentManager = FileDocumentManager.getInstance()
         val fileEditorManager = FileEditorManager.getInstance(project)
 
@@ -421,6 +446,6 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         return virtualFile!!.toPsiFile(project)!!
     }
 
-    private data class EditorFile(val psiFile: PsiFile, val document: Document)
+    data class EditorFile(val psiFile: PsiFile, val document: Document)
 
 }

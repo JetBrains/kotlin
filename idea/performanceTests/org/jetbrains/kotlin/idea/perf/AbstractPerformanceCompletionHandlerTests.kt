@@ -22,7 +22,7 @@ import org.junit.AfterClass
 import java.io.File
 
 /**
- * inspired by @see AbstractCompletionHandlerTest
+ * inspired by @see AbstractCompletionHandlerTests
  */
 abstract class AbstractPerformanceCompletionHandlerTests(
     private val defaultCompletionType: CompletionType,
@@ -34,6 +34,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
+    private val COMPLETION_CHARS_PREFIX = "CHARS:"
     private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     companion object {
@@ -74,12 +75,10 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
             val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
 
-            val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
-            val completionChar = when(completionCharString) {
-                "\\n", null -> '\n'
-                "\\t" -> '\t'
-                else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
-            }
+            val completionChars = completionChars(
+                char = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX),
+                chars = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHARS_PREFIX)
+            )
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
@@ -102,7 +101,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             }
 
             doPerfTestWithTextLoaded(
-                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChar
+                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars
             )
         } finally {
             if (configured) {
@@ -120,7 +119,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         lookupString: String?,
         itemText: String?,
         tailText: String?,
-        completionChar: Char
+        completionChars: String
     ) {
 
         val testName = getTestName(false)
@@ -132,7 +131,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
                 setUpFixture(testPath)
             },
             test = {
-                perfTestCore(completionType, time, lookupString, itemText, tailText, completionChar)
+                perfTestCore(completionType, time, lookupString, itemText, tailText, completionChars)
             },
             tearDown = {
                 runWriteAction {
@@ -147,14 +146,20 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         lookupString: String?,
         itemText: String?,
         tailText: String?,
-        completionChar: Char
+        completionChars: String
     ) {
+        completionChars?.let {
+            for (idx in 0 until it.length - 1) {
+                fixture.type(it[idx])
+            }
+        }
+
         fixture.complete(completionType, time)
 
         if (lookupString != null || itemText != null || tailText != null) {
             val item = getExistentLookupElement(lookupString, itemText, tailText)
             if (item != null) {
-                selectItem(item, completionChar)
+                selectItem(item, completionChars.last())
             }
         }
     }

@@ -924,7 +924,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompletionCharFilterTest> {
-            model("handlers/charFilter")
+            model("handlers/charFilter", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractMultiFileJvmBasicCompletionTest> {
@@ -1219,7 +1219,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractPerformanceCompletionCharFilterTest> {
-            model("handlers/charFilter", testMethod = "doPerfTest")
+            model("handlers/charFilter", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 /*
