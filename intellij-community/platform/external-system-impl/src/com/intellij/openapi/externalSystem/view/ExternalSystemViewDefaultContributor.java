@@ -309,6 +309,12 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
       }
     }
 
+    @NotNull
+    @Override
+    protected List<? extends ExternalSystemNode> doBuildChildren() {
+      return Collections.emptyList();
+    }
+
     @Override
     public ExternalProjectsStructure.ErrorLevel getChildrenErrorLevel() {
       return ExternalProjectsStructure.ErrorLevel.NONE;
