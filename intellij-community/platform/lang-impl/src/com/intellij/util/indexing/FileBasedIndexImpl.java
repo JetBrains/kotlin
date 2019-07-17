@@ -385,12 +385,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         );
 
         final InputFilter inputFilter = extension.getInputFilter();
-        final Set<FileType> addedTypes = new THashSet<>();
 
+        final Set<FileType> addedTypes;
         if (inputFilter instanceof FileBasedIndex.FileTypeSpecificInputFilter) {
+          addedTypes = new THashSet<>();
           ((FileBasedIndex.FileTypeSpecificInputFilter)inputFilter).registerFileTypesUsedForIndexing(type -> {
             if (type != null) addedTypes.add(type);
           });
+        } else {
+          addedTypes = null;
         }
 
         state.registerIndex(name,

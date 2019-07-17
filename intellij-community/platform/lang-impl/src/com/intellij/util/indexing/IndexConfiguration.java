@@ -66,7 +66,7 @@ class IndexConfiguration {
     synchronized (myIndices) {
       myIndexIdToVersionMap.put(name, version);
 
-      if (associatedFileTypes != null && !associatedFileTypes.isEmpty()) {
+      if (associatedFileTypes != null) {
         for(FileType fileType:associatedFileTypes) {
           List<ID<?, ?>> ids = myFileType2IndicesWithFileTypeInfoMap.computeIfAbsent(fileType, __ -> new ArrayList<>(5));
           ids.add(name);
