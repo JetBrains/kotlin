@@ -50,7 +50,8 @@ public class WordCompletionContributor extends CompletionContributor implements 
   }
 
   private static boolean isWordCompletionDefinitelyEnabled(@NotNull PsiFile file) {
-    return DumbService.isDumb(file.getProject()) || file instanceof PsiPlainTextFile;
+    return DumbService.isDumb(file.getProject()) ||
+           file instanceof PsiPlainTextFile && file.getViewProvider().getLanguages().size() == 1;
   }
 
   @Override
