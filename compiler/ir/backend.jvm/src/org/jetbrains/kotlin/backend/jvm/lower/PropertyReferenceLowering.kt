@@ -22,10 +22,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
@@ -331,6 +328,9 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
                     })
                 }
             })
+
+            context.localDelegatedProperties[irClass.attributeOwnerId as IrClass] =
+                kProperties.mapNotNull { it.key.symbol as? IrLocalDelegatedPropertySymbol }
         }
         irClass.declarations.addAll(0, kPropertyClasses.values)
     }
