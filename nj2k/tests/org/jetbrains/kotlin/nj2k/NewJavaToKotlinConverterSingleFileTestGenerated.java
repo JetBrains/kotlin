@@ -26,7 +26,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
     }
 
     public void testAllFilesPresentInNewJ2k() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
     }
 
     @TestMetadata("nj2k/testData/newJ2k/annotations")
@@ -38,7 +38,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInAnnotations() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/annotations"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/annotations"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("annotationArrayArgument.java")
@@ -146,7 +146,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInAnonymousBlock() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/anonymousBlock"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/anonymousBlock"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("oneAnonBlock.java")
@@ -169,7 +169,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInAnonymousClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/anonymousClass"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/anonymousClass"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("kt-13146.java")
@@ -192,7 +192,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInArrayAccessExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayAccessExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayAccessExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("expressionIndex.java")
@@ -220,7 +220,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInArrayInitializerExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayInitializerExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayInitializerExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("doubleArray.java")
@@ -293,7 +293,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInArrayType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayType"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/arrayType"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("arrayInitializationStatement.java")
@@ -356,7 +356,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInAssertStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/assertStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/assertStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("assertNotNull.java")
@@ -394,7 +394,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInAssignmentExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/assignmentExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/assignmentExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("and.java")
@@ -497,7 +497,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInBinaryExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/binaryExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/binaryExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("and.java")
@@ -610,7 +610,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInBlocks() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/blocks"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/blocks"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Blocks.java")
@@ -628,7 +628,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInBoxedType() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/boxedType"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/boxedType"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("boolean.java")
@@ -696,7 +696,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInBreakStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/breakStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/breakStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("breakWithLabel.java")
@@ -719,7 +719,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInCallChainExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/callChainExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/callChainExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("libraryFieldCall.java")
@@ -772,7 +772,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInClass() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/class"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/class"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("anonymousClass.java")
@@ -950,7 +950,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInClassExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/classExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/classExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("complexExample.java")
@@ -983,7 +983,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInComments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/comments"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/comments"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("commentInsideCall.java")
@@ -1031,7 +1031,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInConditionalExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/conditionalExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/conditionalExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("multiline.java")
@@ -1064,7 +1064,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInConstructors() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/constructors"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/constructors"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("artificialPrimary.java")
@@ -1272,7 +1272,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInContinueStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/continueStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/continueStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("continueWithLabel.java")
@@ -1295,7 +1295,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInDeclarationStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/declarationStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/declarationStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("multiplyFinalIntDeclaration.java")
@@ -1353,7 +1353,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInDetectProperties() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/detectProperties"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/detectProperties"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnonymousClass.java")
@@ -1591,7 +1591,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInDoWhileStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/doWhileStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/doWhileStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("whileWithAssignmentAsExpression.java")
@@ -1634,7 +1634,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInDocComments() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/docComments"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/docComments"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("deprecatedDocTag.java")
@@ -1717,7 +1717,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInEnum() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/enum"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/enum"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("colorEnum.java")
@@ -1820,7 +1820,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInEquals() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/equals"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/equals"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("EqOperator.java")
@@ -1863,7 +1863,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInField() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/field"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/field"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classChildExtendsBase.java")
@@ -1941,7 +1941,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInFor() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/for"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/for"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("arrayIndicesReversed.java")
@@ -2174,7 +2174,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInForeachStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/foreachStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/foreachStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("enhancedForWithBlock.java")
@@ -2217,7 +2217,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInFormatting() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/formatting"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/formatting"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("chainedCall.java")
@@ -2270,7 +2270,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInFunction() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/function"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/function"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classGenericParam.java")
@@ -2288,6 +2288,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/function/extendsBaseWhichExtendsObject.java");
         }
 
+        @TestMetadata("externalFunctionalInterface.java")
+        public void testExternalFunctionalInterface() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/externalFunctionalInterface.java");
+        }
+
+        @TestMetadata("externalKtFunctionalInterface.java")
+        public void testExternalKtFunctionalInterface() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/externalKtFunctionalInterface.java");
+        }
+
         @TestMetadata("final.java")
         public void testFinal() throws Exception {
             runTest("nj2k/testData/newJ2k/function/final.java");
@@ -2301,6 +2311,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("internal.java")
         public void testInternal() throws Exception {
             runTest("nj2k/testData/newJ2k/function/internal.java");
+        }
+
+        @TestMetadata("internalFunctionalInterface.java")
+        public void testInternalFunctionalInterface() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/internalFunctionalInterface.java");
         }
 
         @TestMetadata("java8Lambdas.java")
@@ -2453,7 +2468,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInIdentifier() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/identifier"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/identifier"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("finalFieldReference.java")
@@ -2481,7 +2496,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInIfStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/ifStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/ifStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("assignmentAsExpressionInIf.java")
@@ -2534,7 +2549,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInImportStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/importStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/importStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("importWithKeywords.java")
@@ -2572,7 +2587,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInInheritance() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/inheritance"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/inheritance"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classOneExtendsBaseGeneric.java")
@@ -2610,7 +2625,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInIsOperator() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/isOperator"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/isOperator"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("complicatedExpression.java")
@@ -2638,7 +2653,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInIssues() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/issues"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/issues"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("arrayLength.java")
@@ -2699,6 +2714,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-19296.java")
         public void testKt_19296() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-19296.java");
+        }
+
+        @TestMetadata("kt-19327.java")
+        public void testKt_19327() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-19327.java");
         }
 
         @TestMetadata("kt-19336.java")
@@ -2874,6 +2894,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-32436.java")
         public void testKt_32436() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-32436.java");
+        }
+
+        @TestMetadata("kt-32702.java")
+        public void testKt_32702() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-32702.java");
         }
 
         @TestMetadata("kt-5294.java")
@@ -3061,7 +3086,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInKotlinApiAccess() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/kotlinApiAccess"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/kotlinApiAccess"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ClassObjectMembers.java")
@@ -3169,7 +3194,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInLabelStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/labelStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/labelStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("complicatedExampleFromJavaTutorial.java")
@@ -3187,7 +3212,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInList() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/list"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/list"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ForEach.java")
@@ -3210,7 +3235,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInLiteralExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/literalExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/literalExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("char.java")
@@ -3303,7 +3328,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInLocalVariable() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/localVariable"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/localVariable"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("autoBangBang.java")
@@ -3361,7 +3386,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInMethodCallExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/methodCallExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/methodCallExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("callWithKeywords.java")
@@ -3439,7 +3464,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInMisc() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/misc"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/misc"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("packageWithClass.java")
@@ -3482,7 +3507,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInMutableCollections() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/mutableCollections"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/mutableCollections"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("FunctionParameters.java")
@@ -3535,7 +3560,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInNewClassExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/newClassExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/newClassExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classWithParam.java")
@@ -3623,7 +3648,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInNullability() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/nullability"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/nullability"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("autoNotNull.java")
@@ -3826,7 +3851,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInObjectLiteral() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/objectLiteral"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/objectLiteral"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("MyFrame.java")
@@ -3854,7 +3879,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInOverloads() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/overloads"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/overloads"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Annotations.java")
@@ -3892,7 +3917,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInPackageStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/packageStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/packageStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("keywordInPackageName.java")
@@ -3910,7 +3935,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInParenthesizedExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/parenthesizedExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/parenthesizedExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("parenthesized.java")
@@ -3933,7 +3958,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInPolyadicExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/polyadicExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/polyadicExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("divide.java")
@@ -3976,7 +4001,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInPostProcessing() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/postProcessing"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/postProcessing"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("AnonymousObject.java")
@@ -4044,7 +4069,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInPostfixOperator() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/postfixOperator"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/postfixOperator"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("decrement.java")
@@ -4067,7 +4092,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInPrefixOperator() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/prefixOperator"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/prefixOperator"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("decrement.java")
@@ -4110,7 +4135,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInProjections() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/projections"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/projections"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("projections.java")
@@ -4128,7 +4153,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInProtected() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/protected"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/protected"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("constructorProperty.java")
@@ -4176,7 +4201,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInRawGenerics() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/rawGenerics"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/rawGenerics"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("kt-540.java")
@@ -4209,7 +4234,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInReturnStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/returnStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/returnStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("currentMethodBug.java")
@@ -4247,7 +4272,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInSettings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/settings"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/settings"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("openByDefault.java")
@@ -4280,7 +4305,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInStaticMembers() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/staticMembers"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/staticMembers"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("PrivateStaticMembers.java")
@@ -4318,7 +4343,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInStrings() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/strings"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/strings"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("escapedBackslash.java")
@@ -4346,7 +4371,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInSuperExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/superExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/superExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classAdotSuperFoo.java")
@@ -4374,7 +4399,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInSwitch() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/switch"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/switch"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("caseWithBlock.java")
@@ -4467,7 +4492,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInSynchronizedStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/synchronizedStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/synchronizedStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("singleLineExample.java")
@@ -4485,7 +4510,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInThisExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/thisExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/thisExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classAdotThisFoo.java")
@@ -4508,7 +4533,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInThrowStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/throwStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/throwStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("simpleThrowStatement.java")
@@ -4526,7 +4551,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInToArray() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/toArray"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/toArray"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("toArray.java")
@@ -4544,7 +4569,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInToKotlinClasses() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/toKotlinClasses"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/toKotlinClasses"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("iterableAndIterator.java")
@@ -4587,7 +4612,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInTrait() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/trait"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/trait"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("emptyInterface.java")
@@ -4650,7 +4675,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInTryStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/tryStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/tryStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("commonCaseForTryStatement.java")
@@ -4688,7 +4713,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInTryWithResource() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/tryWithResource"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/tryWithResource"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("Multiline.java")
@@ -4751,7 +4776,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInTypeCastExpression() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/typeCastExpression"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/typeCastExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("beforeDot.java")
@@ -4819,7 +4844,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInTypeParameters() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/typeParameters"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/typeParameters"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("classDoubleParametrizationWithTwoBoundsWithExtending.java")
@@ -4907,7 +4932,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInVarArg() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/varArg"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/varArg"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("ellipsisTypeSeveralParams.java")
@@ -4935,7 +4960,7 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
 
         public void testAllFilesPresentInWhileStatement() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/whileStatement"), Pattern.compile("^(.+)\\.java$"), TargetBackend.ANY, true);
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/whileStatement"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
         @TestMetadata("whileWithAssignmentAsExpression.java")

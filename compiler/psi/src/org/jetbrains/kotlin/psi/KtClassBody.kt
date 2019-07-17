@@ -46,6 +46,9 @@ class KtClassBody : KtElementImplStub<KotlinPlaceHolderStub<KtClassBody>>, KtDec
     val properties: List<KtProperty>
         get() = getStubOrPsiChildrenAsList(KtStubElementTypes.PROPERTY)
 
+    val functions: List<KtFunction>
+        get() = getStubOrPsiChildrenAsList(KtStubElementTypes.FUNCTION)
+
     val enumEntries: List<KtEnumEntry>
         get() = getStubOrPsiChildrenAsList(KtStubElementTypes.ENUM_ENTRY).filterIsInstance<KtEnumEntry>()
 

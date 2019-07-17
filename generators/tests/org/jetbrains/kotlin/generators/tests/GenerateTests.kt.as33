@@ -950,7 +950,7 @@ fun main(args: Array<String>) {
 
     testGroup("nj2k/tests", "nj2k/testData") {
         testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
-            model("newJ2k", extension = "java")
+            model("newJ2k", pattern = """^([^\.]+)\.java$""")
         }
         testClass<AbstractNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste", pattern = """^([^\.]+)\.java$""")

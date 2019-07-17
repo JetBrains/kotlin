@@ -214,17 +214,11 @@ object JKNoTypeImpl : JKNoType {
 
 class JKStarProjectionTypeImpl : JKStarProjectionType
 
-fun JKType.fqName(): String =
-    when (this) {
-        is JKClassType -> {
-            when (val target = classReference.target) {
-                is KtClass -> target.fqName?.asString() ?: throw RuntimeException("FqName can not be calculated")
-                is PsiClass -> target.qualifiedName ?: throw RuntimeException("FqName can not be calculated")
-                else -> TODO(target.toString())
-            }
-        }
+val JKType.fqName: String?
+    get() = when (this) {
+        is JKClassType -> classReference.fqName
         is JKJavaPrimitiveType -> jvmPrimitiveType.name
-        else -> TODO(toString())
+        else -> null
     }
 
 class JKNullLiteral : JKLiteralExpression, JKElementBase(), PsiOwner by PsiOwnerImpl() {
@@ -481,7 +475,7 @@ class JKTypeParameterListImpl(typeParameters: List<JKTypeParameter> = emptyList(
     override fun accept(visitor: JKVisitor) = visitor.visitTypeParameterList(this)
 }
 
-class JKTypeParameterImpl(name: JKNameIdentifier, upperBounds: List<JKTypeElement>) : JKTypeParameter, JKBranchElementBase() {
+class JKTypeParameterImpl(name: JKNameIdentifier, upperBounds: List<JKTypeElement>) : JKTypeParameter() {
     override var name: JKNameIdentifier by child(name)
     override var upperBounds: List<JKTypeElement> by children(upperBounds)
     override fun accept(visitor: JKVisitor) = visitor.visitTypeParameter(this)
@@ -493,7 +487,7 @@ data class JKVarianceTypeParameterTypeImpl(
 ) : JKVarianceTypeParameterType
 
 data class JKTypeParameterTypeImpl(
-    override val name: String,
+    override val identifier: JKTypeParameterSymbol,
     override val nullability: Nullability = Nullability.Default
 ) : JKTypeParameterType
 
