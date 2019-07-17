@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test
 import java.io.File
@@ -18,7 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ScriptProviderTest : KtUsefulTestCase() {
+class ScriptProviderTest {
 
     @Test
     fun testLazyScriptDefinitionsProvider() {
