@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkVersion
 import com.intellij.openapi.roots.DependencyScope
@@ -25,7 +23,6 @@ import com.intellij.psi.search.FileTypeIndex
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.configuration.ui.notifications.ConfigureKotlinNotification
 import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.framework.JSLibraryKind
 import org.jetbrains.kotlin.idea.framework.effectiveKind
@@ -221,15 +218,14 @@ fun getConfigurationPossibilitiesForConfigureNotification(
         var moduleAlreadyConfigured = false
         for (configurator in configurators) {
             if (moduleCanBeConfigured && configurator in runnableConfigurators) continue
-            val status = configurator.getStatus(moduleSourceRootGroup)
-            when (status) {
+            when (configurator.getStatus(moduleSourceRootGroup)) {
                 ConfigureKotlinStatus.CAN_BE_CONFIGURED -> {
                     moduleCanBeConfigured = true
                     runnableConfigurators.add(configurator)
                 }
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
-                }
             }
+        }
         if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
                 moduleSourceRootGroup
             )
