@@ -17,6 +17,12 @@ public class MyKotlinParser {
         return builder.getLightTree();
     }
 
+    public static FlyweightCapableTreeStructure<LighterASTNode> parseLambdaExpression(PsiBuilder psiBuilder) {
+        KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(psiBuilder));
+        ktParsing.parseLambdaExpression();
+        return psiBuilder.getLightTree();
+    }
+
     public static FlyweightCapableTreeStructure<LighterASTNode> parseBlockExpression(PsiBuilder builder) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
         ktParsing.parseBlockExpression();

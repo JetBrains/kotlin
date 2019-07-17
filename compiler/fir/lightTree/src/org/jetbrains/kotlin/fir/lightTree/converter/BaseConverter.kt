@@ -26,6 +26,11 @@ open class BaseConverter(
     protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
     protected val implicitType = FirImplicitTypeRefImpl(session, null)
 
+    fun LighterASTNode.getParent(): LighterASTNode? {
+        val kidsRef = Ref<Array<LighterASTNode?>>()
+        return tree.getParent(this)
+    }
+
     fun LighterASTNode?.getChildNodesByType(type: IElementType): List<LighterASTNode> {
         return this?.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
