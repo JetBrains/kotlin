@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.idea.codeInsight.gradle
 
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.roots.DependencyScope
+import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.testFramework.runInEdtAndWait
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator
@@ -71,6 +74,49 @@ class GradleConfiguratorPlatformSpecificTest : GradleImportingTestCase() {
                 KotlinWithGradleConfigurator.changeFeatureConfiguration(
                     myTestFixture.module, LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED, false
                 )
+            }
+
+            checkFiles(files)
+        }
+    }
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatform() = doTestAddLibrary()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatformGSK() = doTestAddLibrary()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatformGSK2() = doTestAddLibrary()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatformGSK3() = doTestAddLibrary()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatformGSK4() = doTestAddLibrary()
+
+    @TargetVersions("4.7+")
+    @Test
+    fun testAddLibraryMultiplatformGSK5() = doTestAddLibrary()
+
+    private fun doTestAddLibrary() {
+        val files = importProjectFromTestData()
+
+        runInEdtAndWait {
+            myTestFixture.project.executeWriteCommand("") {
+                KotlinWithGradleConfigurator.addKotlinLibraryToModule(
+                    object : Module by myTestFixture.module {
+                        override fun getName(): String = "jvmMain"
+                    },
+                    DependencyScope.COMPILE,
+                    object : ExternalLibraryDescriptor("org.jetbrains.kotlin", "kotlin-reflect", "1.3.50", "1.3.50") {
+                        override fun getLibraryClassesRoots() = emptyList<String>()
+                    })
             }
 
             checkFiles(files)

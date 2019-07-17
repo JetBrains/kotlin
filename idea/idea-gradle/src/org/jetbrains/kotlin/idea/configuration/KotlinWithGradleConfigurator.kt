@@ -324,7 +324,7 @@ abstract class KotlinWithGradleConfigurator : KotlinProjectConfigurator {
                 return
             }
 
-            getManipulator(buildScript).addKotlinLibraryToModuleBuildScript(scope, libraryDescriptor)
+            getManipulator(buildScript).addKotlinLibraryToModuleBuildScript(module, scope, libraryDescriptor)
 
             buildScript.virtualFile?.let {
                 createConfigureKotlinNotificationCollector(buildScript.project)

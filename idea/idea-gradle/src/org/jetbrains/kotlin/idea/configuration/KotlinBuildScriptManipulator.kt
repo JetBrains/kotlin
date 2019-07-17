@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
@@ -116,20 +117,50 @@ class KotlinBuildScriptManipulator(
         scriptFile.changeKotlinTaskParameter("apiVersion", version, forTests)
 
     override fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     ) {
-        scriptFile.getDependenciesBlock()?.apply {
-            addExpressionIfMissing(
-                getCompileDependencySnippet(
-                    libraryDescriptor.libraryGroupId,
-                    libraryDescriptor.libraryArtifactId,
-                    libraryDescriptor.maxVersion,
-                    scope.toGradleCompileScope(module?.getBuildSystemType() == AndroidGradle)
-                )
-            )
+        val dependencyText = getCompileDependencySnippet(
+            libraryDescriptor.libraryGroupId,
+            libraryDescriptor.libraryArtifactId,
+            libraryDescriptor.maxVersion,
+            scope.toGradleCompileScope(scriptFile.module?.getBuildSystemType() == AndroidGradle)
+        )
+
+        if (usesNewMultiplatform()) {
+            val findOrCreateTargetSourceSet = scriptFile
+                .getKotlinBlock()
+                ?.getSourceSetsBlock()
+                ?.findOrCreateTargetSourceSet(targetModule.name.takeLastWhile { it != '.' })
+            val dependenciesBlock = findOrCreateTargetSourceSet?.getDependenciesBlock()
+            dependenciesBlock?.addExpressionIfMissing(dependencyText)
+        } else {
+            scriptFile.getDependenciesBlock()?.addExpressionIfMissing(dependencyText)
         }
     }
+
+    private fun KtBlockExpression.findOrCreateTargetSourceSet(moduleName: String) =
+        findTargetSourceSet(moduleName) ?: createTargetSourceSet(moduleName)
+
+    private fun KtBlockExpression.findTargetSourceSet(moduleName: String): KtBlockExpression? = statements.find {
+        it.isTargetSourceSetDeclaration(moduleName)
+    }?.getOrCreateBlock()
+
+    private fun KtExpression.getOrCreateBlock(): KtBlockExpression? = when (this) {
+        is KtCallExpression -> getBlock() ?: addBlock()
+        is KtReferenceExpression -> replace(KtPsiFactory(project).createExpression("$text {\n}")).cast<KtCallExpression>().getBlock()
+        is KtProperty -> delegateExpressionOrInitializer?.getOrCreateBlock()
+        else -> error("Impossible create block for $this")
+    }
+
+    private fun KtCallExpression.addBlock(): KtBlockExpression? = parent.addAfter(
+        KtPsiFactory(project).createEmptyBody(), this
+    ) as? KtBlockExpression
+
+    private fun KtBlockExpression.createTargetSourceSet(moduleName: String) = addExpressionIfMissing("getByName(\"$moduleName\") {\n}")
+        .cast<KtCallExpression>()
+        .getBlock()
 
     override fun getKotlinStdlibVersion(): String? = scriptFile.getKotlinStdlibVersion()
 
@@ -231,6 +262,7 @@ class KotlinBuildScriptManipulator(
 
     private fun KtCallExpression.getBlock(): KtBlockExpression? =
         (valueArguments.singleOrNull()?.getArgumentExpression() as? KtLambdaExpression)?.bodyExpression
+            ?: lambdaArguments.lastOrNull()?.getLambdaExpression()?.bodyExpression
 
     private fun KtFile.getKotlinStdlibVersion(): String? {
         return findScriptInitializer("dependencies")?.getBlock()?.let {
@@ -262,6 +294,10 @@ class KotlinBuildScriptManipulator(
 
     private fun KtFile.getPluginManagementBlock(): KtBlockExpression? = findOrCreateScriptInitializer("pluginManagement", true)
 
+    private fun KtFile.getKotlinBlock(): KtBlockExpression? = findOrCreateScriptInitializer("kotlin")
+
+    private fun KtBlockExpression.getSourceSetsBlock(): KtBlockExpression? = findOrCreateBlock("sourceSets")
+
     private fun KtFile.getRepositoriesBlock(): KtBlockExpression? = findOrCreateScriptInitializer("repositories")
 
     private fun KtFile.getDependenciesBlock(): KtBlockExpression? = findOrCreateScriptInitializer("dependencies")
@@ -289,7 +325,7 @@ class KotlinBuildScriptManipulator(
 
     private fun KtFile.changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
         val snippet = "experimental.coroutines = Coroutines.${coroutineOption.toUpperCase()}"
-        val kotlinBlock = findOrCreateScriptInitializer("kotlin") ?: return null
+        val kotlinBlock = getKotlinBlock() ?: return null
         addImportIfMissing("org.jetbrains.kotlin.gradle.dsl.Coroutines")
         val statement = kotlinBlock.statements.find { it.text.startsWith("experimental.coroutines") }
         return if (statement != null) {
@@ -306,7 +342,7 @@ class KotlinBuildScriptManipulator(
     ): PsiElement? {
         if (usesNewMultiplatform()) {
             state.assertApplicableInMultiplatform()
-            return findOrCreateScriptInitializer("kotlin")
+            return getKotlinBlock()
                 ?.findOrCreateBlock("sourceSets")
                 ?.findOrCreateBlock("all")
                 ?.addExpressionIfMissing("languageSettings.enableLanguageFeature(\"${feature.name}\")")
@@ -503,5 +539,13 @@ class KotlinBuildScriptManipulator(
                 else -> "kotlinModule(\"$moduleName\", ${"\"$version\""})"
             }
         }
+    }
+}
+
+private fun KtExpression.isTargetSourceSetDeclaration(moduleName: String): Boolean = with(text) {
+    when (this@isTargetSourceSetDeclaration) {
+        is KtProperty -> startsWith("val $moduleName by") || initializer?.isTargetSourceSetDeclaration(moduleName) == true
+        is KtCallExpression -> startsWith("getByName(\"$moduleName\")")
+        else -> false
     }
 }

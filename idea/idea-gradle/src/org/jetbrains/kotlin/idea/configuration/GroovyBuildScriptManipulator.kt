@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.openapi.util.text.StringUtil
@@ -139,7 +140,7 @@ class GroovyBuildScriptManipulator(
 
     override fun changeCoroutineConfiguration(coroutineOption: String): PsiElement? {
         val snippet = "coroutines \"$coroutineOption\""
-        val kotlinBlock = scriptFile.getBlockOrCreate("kotlin")
+        val kotlinBlock = scriptFile.getKotlinBlock()
         kotlinBlock.getBlockOrCreate("experimental").apply {
             addOrReplaceExpression(snippet) { stmt ->
                 (stmt as? GrMethodCall)?.invokedExpression?.text == "coroutines"
@@ -156,8 +157,8 @@ class GroovyBuildScriptManipulator(
     ): PsiElement? {
         if (usesNewMultiplatform()) {
             state.assertApplicableInMultiplatform()
-            val kotlinBlock = scriptFile.getBlockOrCreate("kotlin")
-            val sourceSetsBlock = kotlinBlock.getBlockOrCreate("sourceSets")
+            val kotlinBlock = scriptFile.getKotlinBlock()
+            val sourceSetsBlock = kotlinBlock.getSourceSetsBlock()
             val allBlock = sourceSetsBlock.getBlockOrCreate("all")
             allBlock.addLastExpressionInBlockIfNeeded("languageSettings.enableLanguageFeature(\"${feature.name}\")")
             return allBlock.statements.lastOrNull()
@@ -184,6 +185,7 @@ class GroovyBuildScriptManipulator(
         changeKotlinTaskParameter(scriptFile, "apiVersion", version, forTests)
 
     override fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     ) {
@@ -195,8 +197,17 @@ class GroovyBuildScriptManipulator(
             libraryDescriptor.maxVersion
         )
 
-        scriptFile.getDependenciesBlock().apply {
-            addLastExpressionInBlockIfNeeded(dependencyString)
+        if (usesNewMultiplatform()) {
+            scriptFile
+                .getKotlinBlock()
+                .getSourceSetsBlock()
+                .getBlockOrCreate(targetModule.name.takeLastWhile { it != '.' })
+                .getDependenciesBlock()
+                .addLastExpressionInBlockIfNeeded(dependencyString)
+        } else {
+            scriptFile.getDependenciesBlock().apply {
+                addLastExpressionInBlockIfNeeded(dependencyString)
+            }
         }
     }
 
@@ -282,7 +293,7 @@ class GroovyBuildScriptManipulator(
         replaceIt: GrStatement.(Boolean) -> GrStatement
     ): PsiElement? {
         if (usesNewMultiplatform()) {
-            val kotlinBlock = gradleFile.getBlockOrCreate("kotlin")
+            val kotlinBlock = gradleFile.getKotlinBlock()
             val kotlinTargets = kotlinBlock.getBlockOrCreate("targets")
             val targetNames = mutableListOf<String>()
 
@@ -378,10 +389,10 @@ class GroovyBuildScriptManipulator(
     }
 
     private fun GrStatementOwner.getBuildScriptRepositoriesBlock(): GrClosableBlock =
-        getBuildScriptBlock().getBlockOrCreate("repositories")
+        getBuildScriptBlock().getRepositoriesBlock()
 
     private fun GrStatementOwner.getBuildScriptDependenciesBlock(): GrClosableBlock =
-        getBuildScriptBlock().getBlockOrCreate("dependencies")
+        getBuildScriptBlock().getDependenciesBlock()
 
     private fun GrClosableBlock.addMavenCentralIfMissing(): Boolean =
         if (!isRepositoryConfigured(text)) addLastExpressionInBlockIfNeeded(MAVEN_CENTRAL) else false
@@ -389,6 +400,10 @@ class GroovyBuildScriptManipulator(
     private fun GrStatementOwner.getRepositoriesBlock() = getBlockOrCreate("repositories")
 
     private fun GrStatementOwner.getDependenciesBlock(): GrClosableBlock = getBlockOrCreate("dependencies")
+
+    private fun GrStatementOwner.getKotlinBlock(): GrClosableBlock = getBlockOrCreate("kotlin")
+
+    private fun GrStatementOwner.getSourceSetsBlock(): GrClosableBlock = getBlockOrCreate("sourceSets")
 
     private fun GrClosableBlock.addOrReplaceExpression(snippet: String, predicate: (GrStatement) -> Boolean) {
         statements.firstOrNull(predicate)?.let { stmt ->

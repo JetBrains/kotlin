@@ -12,5 +12,5 @@ apply plugin: 'kotlin'
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-1.1.0"
-    compile "org.jetbrains.kotlin:kotlin-reflect:1.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.0.0"
 }

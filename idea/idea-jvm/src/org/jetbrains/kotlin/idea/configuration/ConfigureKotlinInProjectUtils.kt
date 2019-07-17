@@ -87,12 +87,12 @@ fun isRepositoryConfigured(repositoriesBlockText: String): Boolean =
     repositoriesBlockText.contains(MAVEN_CENTRAL) || repositoriesBlockText.contains(JCENTER)
 
 fun DependencyScope.toGradleCompileScope(isAndroidModule: Boolean) = when (this) {
-    DependencyScope.COMPILE -> "compile"
+    DependencyScope.COMPILE -> "implementation"
     // TODO: We should add testCompile or androidTestCompile
-    DependencyScope.TEST -> if (isAndroidModule) "compile" else "testCompile"
+    DependencyScope.TEST -> if (isAndroidModule) "implementation" else "testImplementation"
     DependencyScope.RUNTIME -> "runtime"
-    DependencyScope.PROVIDED -> "compile"
-    else -> "compile"
+    DependencyScope.PROVIDED -> "implementation"
+    else -> "implementation"
 }
 
 fun RepositoryDescription.toGroovyRepositorySnippet() = "maven { url '$url' }"

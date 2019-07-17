@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.configuration
 
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ExternalLibraryDescriptor
 import com.intellij.psi.PsiElement
@@ -53,6 +54,7 @@ interface GradleBuildScriptManipulator<out Psi : PsiFile> {
     fun changeApiVersion(version: String, forTests: Boolean): PsiElement?
 
     fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     )

@@ -5,5 +5,5 @@ plugins {
 dependencies {
     testCompile("junit:junit:4.12")
     compile(kotlinModule("stdlib-jre8"))
-    compile(kotlin("reflect"))
+    implementation(kotlin("reflect"))
 }
