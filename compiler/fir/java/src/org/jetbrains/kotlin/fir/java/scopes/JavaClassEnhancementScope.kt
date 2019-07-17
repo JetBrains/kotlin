@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirConstExpressionImpl
+import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
 import org.jetbrains.kotlin.fir.java.declarations.*
 import org.jetbrains.kotlin.fir.java.enhancement.*
@@ -33,9 +34,11 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.PredefinedFunctionEnhancem
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Jsr305State
+import kotlin.concurrent.withLock
 
 class JavaClassEnhancementScope(
     private val session: FirSession,
+    val symbolProvider: JavaSymbolProvider,
     private val useSiteScope: JavaClassUseSiteScope
 ) : FirScope() {
     private val owner: FirRegularClass = useSiteScope.symbol.fir
@@ -241,7 +244,14 @@ class JavaClassEnhancementScope(
     private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
         when (typeRef) {
             is FirResolvedTypeRef -> appendConeType(typeRef.type)
-            is FirJavaTypeRef -> appendConeType(typeRef.toNotNullConeKotlinType(session, javaTypeParameterStack))
+            is FirJavaTypeRef -> symbolProvider.findClassLock.withLock {
+                appendConeType(
+                    typeRef.toNotNullConeKotlinType(
+                        session,
+                        javaTypeParameterStack
+                    )
+                )
+            }
         }
     }
 
@@ -278,7 +288,7 @@ class JavaClassEnhancementScope(
             parameterContainer = ownerFunction,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.Receiver
-        ).enhance(session, jsr305State)
+        ).enhance(session, jsr305State, symbolProvider.findClassLock)
         return signatureParts.type
     }
 
@@ -299,7 +309,7 @@ class JavaClassEnhancementScope(
             parameterContainer = ownerParameter,
             methodContext = memberContext,
             typeInSignature = TypeInSignature.ValueParameter(hasReceiver, index)
-        ).enhance(session, jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
+        ).enhance(session, jsr305State, symbolProvider.findClassLock, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
         val firResolvedTypeRef = signatureParts.type
         val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
             NullDefaultValue -> FirConstExpressionImpl(session, null, IrConstKind.Null, null)
@@ -324,7 +334,7 @@ class JavaClassEnhancementScope(
             if (owner is FirJavaField) AnnotationTypeQualifierResolver.QualifierApplicabilityType.FIELD
             else AnnotationTypeQualifierResolver.QualifierApplicabilityType.METHOD_RETURN_TYPE,
             typeInSignature = TypeInSignature.Return
-        ).enhance(session, jsr305State, predefinedEnhancementInfo?.returnTypeInfo)
+        ).enhance(session, jsr305State, symbolProvider.findClassLock, predefinedEnhancementInfo?.returnTypeInfo)
         return signatureParts.type
     }
 

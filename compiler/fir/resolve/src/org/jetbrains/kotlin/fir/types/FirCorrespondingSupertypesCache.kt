@@ -15,15 +15,20 @@ import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 class FirCorrespondingSupertypesCache(private val session: FirSession) {
     private val context = ConeTypeCheckerContext(false, session)
     private val cache = HashMap<ConeClassLikeSymbol, Map<ConeClassLikeSymbol, List<ConeClassLikeType>>?>(1000, 0.5f)
 
+    private val lock = ReentrantLock()
+
     fun getCorrespondingSupertypes(
         type: ConeKotlinType,
         supertypeConstructor: TypeConstructorMarker
-    ): List<ConeClassLikeType>? {
+    ): List<ConeClassLikeType>? = lock.withLock {
+
         if (type !is ConeClassLikeType || supertypeConstructor !is ConeClassLikeSymbol) return null
 
         val symbol = type.lookupTag.toSymbol(session) as? ConeClassLikeSymbol ?: return null

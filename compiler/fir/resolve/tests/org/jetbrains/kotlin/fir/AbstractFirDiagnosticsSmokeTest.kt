@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -90,7 +90,7 @@ abstract class AbstractFirDiagnosticsSmokeTest : BaseDiagnosticsTest() {
         }
 
         for ((session, files) in firFilesPerSession) {
-            doFirResolveTestBench(files, FirTotalResolveTransformer(session).transformers, gc = false)
+            doFirResolveTestBench(files, FirStagesTransformerFactory(session), gc = false)
         }
 
     }

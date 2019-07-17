@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
@@ -69,7 +69,7 @@ class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
         val session = createSession(environment, scope)
         val builder = RawFirBuilder(session, stubMode = false)
 
-        val totalTransformer = FirTotalResolveTransformer(session)
+        val totalTransformer = FirStagesTransformerFactory(session)
         val firFiles = ktFiles.toList().progress("Loading FIR").map {
             val firFile = builder.buildFirFile(it)
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)
@@ -79,6 +79,6 @@ class FirResolveTestTotalKotlin : AbstractFirResolveWithSessionTestCase() {
 
         println("Raw FIR up, files: ${firFiles.size}")
 
-        doFirResolveTestBench(firFiles, totalTransformer.transformers, withProgress = true)
+        doFirResolveTestBench(firFiles, totalTransformer, withProgress = true)
     }
 }

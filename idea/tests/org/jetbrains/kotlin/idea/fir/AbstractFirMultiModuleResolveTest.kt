@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.service
@@ -121,7 +121,7 @@ abstract class AbstractFirMultiModuleResolveTest : AbstractMultiModuleTest() {
             return result!!
         }
 
-        val transformer = FirTotalResolveTransformer(sessions)
+        val transformer = FirStagesTransformerFactory(sessions)
         transformer.processFiles(firFiles)
         for (file in firFiles) {
             val firFileDump = StringBuilder().also { file.accept(FirRenderer(it), null) }.toString()

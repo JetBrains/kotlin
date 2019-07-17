@@ -12,12 +12,15 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.io.PrintStream
+import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.system.measureNanoTime
@@ -30,13 +33,17 @@ fun checkFirProvidersConsistency(firFiles: List<FirFile>) {
     }
 }
 
-private data class FailureInfo(val transformer: KClass<*>, val throwable: Throwable, val file: String)
+private data class FailureInfo(val stageClass: KClass<*>, val throwable: Throwable, val file: String)
 private data class ErrorTypeReport(val report: String, var count: Int = 0)
+
+
+private val threadLocalTransformer = ThreadLocal<FirTransformer<Nothing?>>()
+
 
 class FirResolveBench(val withProgress: Boolean) {
 
-    val timePerTransformer = mutableMapOf<KClass<*>, Long>()
-    val counterPerTransformer = mutableMapOf<KClass<*>, Long>()
+    val summaryTimePerStage = mutableMapOf<KClass<*>, Long>()
+    val realTimePerStage = mutableMapOf<KClass<*>, Long>()
     var resolvedTypes = 0
     var errorTypes = 0
     var unresolvedTypes = 0
@@ -45,6 +52,11 @@ class FirResolveBench(val withProgress: Boolean) {
     var implicitTypes = 0
     var fileCount = 0
 
+    var parallelThreads = 6
+
+    val singleThreadPool = Executors.newSingleThreadExecutor()
+    val pool by lazy { Executors.newFixedThreadPool(parallelThreads) }
+
 
     private val fails = mutableListOf<FailureInfo>()
     val hasFiles get() = fails.isNotEmpty()
@@ -52,39 +64,64 @@ class FirResolveBench(val withProgress: Boolean) {
     private val errorTypesReports = mutableMapOf<String, ErrorTypeReport>()
 
     fun countBuilder(builder: RawFirBuilder, time: Long) {
-        timePerTransformer.merge(builder::class, time) { a, b -> a + b }
-        counterPerTransformer.merge(builder::class, 1) { a, b -> a + b }
+        summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
+        realTimePerStage.merge(builder::class, time) { a, b -> a + b }
     }
 
     fun processFiles(
         firFiles: List<FirFile>,
-        transformers: List<FirTransformer<Nothing?>>
+        factory: FirStagesTransformerFactory
     ) {
         fileCount += firFiles.size
         try {
-            for ((stage, transformer) in transformers.withIndex()) {
-                println("Starting stage #$stage. $transformer")
+            for ((stageNum, stage) in factory.resolveStages.withIndex()) {
+                val usedThreads = if (stage.isParallel) parallelThreads else 1
+                println("Starting stage #$stageNum, $stage, isParallel = ${stage.isParallel}, using threads: $usedThreads")
                 val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
-                for (firFile in firFileSequence) {
-                    var fail = false
-                    val time = measureNanoTime {
-                        try {
-                            transformer.transformFile(firFile, null)
-                        } catch (e: Throwable) {
-                            val ktFile = firFile.psi as KtFile
-                            println("Fail in file: ${ktFile.virtualFilePath}")
-                            fail = true
-                            fails += FailureInfo(transformer::class, e, ktFile.virtualFilePath)
-                            //println(ktFile.text)
-                            //throw e
-                        }
-                    }
-                    if (!fail) {
-                        timePerTransformer.merge(transformer::class, time) { a, b -> a + b }
-                        counterPerTransformer.merge(transformer::class, 1) { a, b -> a + b }
-                    }
-                    //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
+
+                val runPool = if (stage.isParallel) {
+                    pool
+                } else {
+                    singleThreadPool
                 }
+
+
+                val tQueue = ArrayBlockingQueue<FirTransformer<Nothing?>>(usedThreads)
+
+
+                val realTime = measureNanoTime {
+                    for (i in 0 until usedThreads) {
+                        tQueue.add(stage.createTransformer())
+                    }
+                    (firFileSequence).toList().map { firFile ->
+                        runPool.submit {
+                            val transformer = tQueue.poll()
+                            var fail = false
+                            val time = measureNanoTime {
+                                try {
+                                    transformer.transformFile(firFile, null)
+                                } catch (e: Throwable) {
+                                    val ktFile = firFile.psi as KtFile
+                                    println("Fail in file: ${ktFile.virtualFilePath}")
+                                    fail = true
+                                    fails += FailureInfo(stage::class, e, ktFile.virtualFilePath)
+                                    //println(ktFile.text)
+                                    //throw e
+                                }
+                            }
+                            if (!fail) {
+                                summaryTimePerStage.merge(stage::class, time) { a, b -> a + b }
+                            }
+                            tQueue.put(transformer)
+                        }
+                    }.forEach {
+                        it.get()
+                    }
+                }
+
+
+                realTimePerStage[stage::class] = realTime
+                //totalLength += StringBuilder().apply { FirRenderer(this).visitFile(firFile) }.length
                 checkFirProvidersConsistency(firFiles)
             }
 
@@ -212,25 +249,24 @@ class FirResolveBench(val withProgress: Boolean) {
 
 
         var totalTime = 0L
-        var totalFiles = 0L
+        var totalSummaryTime = 0L
 
-        timePerTransformer.forEach { (transformer, time) ->
-            val counter = counterPerTransformer[transformer]!!
-            stream.println("${transformer.simpleName}, TIME: ${time * 1e-6} ms, TIME PER FILE: ${(time / counter) * 1e-6} ms, FILES: OK/E/T $counter/${fileCount - counter}/$fileCount")
+
+        realTimePerStage.forEach { (stageClass, time) ->
+            val counter = fileCount - fails.count { it.stageClass == stageClass }
+            val summaryTime = summaryTimePerStage[stageClass]!!
+            stream.println("${stageClass.simpleName}, TIME: ${time * 1e-6} ms, TIME/FILE: ${(time / counter) * 1e-6} ms, S-TIME/TIME: ${summaryTime / (time * 1.0)}, S-TIME: ${summaryTime * 1e-6} ms, S-TIME/FILE: ${summaryTime / counter * 1e-6} ms, FILES: OK/E/T $counter/${fileCount - counter}/$fileCount")
             totalTime += time
-            totalFiles += counter
+            totalSummaryTime += summaryTime
         }
 
-        if (counterPerTransformer.keys.size > 0) {
-            totalFiles /= counterPerTransformer.keys.size
-            stream.println("Total, TIME: ${totalTime * 1e-6} ms, TIME PER FILE: ${(totalTime / totalFiles) * 1e-6} ms")
-        }
+        stream.println("Total, TIME: ${totalTime * 1e-6} ms, TIME PER FILE: ${(totalTime / fileCount) * 1e-6} ms, S-TIME/TIME: ${totalSummaryTime / (totalTime * 1.0)}, S-TIME: ${totalSummaryTime * 1e-6} ms, S-TIME/FILE: ${totalSummaryTime / fileCount * 1e-6} ms")
     }
 }
 
 fun doFirResolveTestBench(
     firFiles: List<FirFile>,
-    transformers: List<FirTransformer<Nothing?>>,
+    factory: FirStagesTransformerFactory,
     gc: Boolean = true,
     withProgress: Boolean = false
 ) {
@@ -240,7 +276,8 @@ fun doFirResolveTestBench(
     }
 
     val bench = FirResolveBench(withProgress)
-    bench.processFiles(firFiles, transformers)
+    bench.parallelThreads = 1
+    bench.processFiles(firFiles, factory)
     bench.report(System.out)
     bench.throwFailure()
 }

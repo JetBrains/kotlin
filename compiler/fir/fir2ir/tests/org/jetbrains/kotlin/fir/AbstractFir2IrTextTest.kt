@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConverter
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.ir.AbstractIrTextTestCase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import java.io.File
@@ -78,7 +78,7 @@ abstract class AbstractFir2IrTextTest : AbstractIrTextTestCase() {
 
         val builder = RawFirBuilder(session, stubMode = false)
 
-        val resolveTransformer = FirTotalResolveTransformer(session)
+        val resolveTransformer = FirStagesTransformerFactory(session)
         val firFiles = psiFiles.map {
             val firFile = builder.buildFirFile(it)
             (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)

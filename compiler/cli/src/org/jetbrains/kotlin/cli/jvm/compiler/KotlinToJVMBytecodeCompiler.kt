@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.fir.java.FirLibrarySession
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.javac.JavacWrapper
@@ -327,7 +327,7 @@ object KotlinToJVMBytecodeCompiler {
 
             }
             val builder = RawFirBuilder(session, stubMode = false)
-            val resolveTransformer = FirTotalResolveTransformer(session)
+            val resolveTransformer = FirStagesTransformerFactory(session)
             val firFiles = ktFiles.map {
                 val firFile = builder.buildFirFile(it)
                 (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile)

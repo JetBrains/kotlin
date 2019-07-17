@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
-import org.jetbrains.kotlin.fir.resolve.transformers.FirTotalResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -55,7 +55,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val session = createSession(environment, scope, librariesScope)
         val builder = RawFirBuilder(session, stubMode = false)
 
-        val totalTransformer = FirTotalResolveTransformer(session)
+        val factory = FirStagesTransformerFactory(session)
         val firFiles = ktFiles.toList().mapNotNull {
             var firFile: FirFile? = null
             val time = measureNanoTime {
@@ -69,7 +69,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         println("Raw FIR up, files: ${firFiles.size}")
 
-        bench.processFiles(firFiles, totalTransformer.transformers)
+        bench.processFiles(firFiles, factory)
 
         dumpFir(moduleData, firFiles)
         dumpFirHtml(moduleData, firFiles)

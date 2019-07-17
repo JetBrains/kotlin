@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.utils.Jsr305State
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 internal class EnhancementSignatureParts(
     private val typeQualifierResolver: FirAnnotationTypeQualifierResolver,
@@ -46,8 +48,9 @@ internal class EnhancementSignatureParts(
     internal fun enhance(
         session: FirSession,
         jsr305State: Jsr305State,
+        lock: ReentrantLock,
         predefined: TypeEnhancementInfo? = null
-    ): PartEnhancementResult {
+    ): PartEnhancementResult = lock.withLock {
         val qualifiers = computeIndexedQualifiersForOverride(session, jsr305State)
 
         val qualifiersWithPredefined = predefined?.let {

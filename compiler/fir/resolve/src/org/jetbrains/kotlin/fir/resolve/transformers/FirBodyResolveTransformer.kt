@@ -583,12 +583,13 @@ open class FirBodyResolveTransformer(
 
         val consumer = createFunctionConsumer(session, name, info, inferenceComponents, callResolver.collector, callResolver)
         val result = callResolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
-        val bestCandidates = result.bestCandidates()
+        val bestCandidates = result.bestCandidates().toSet()
         val reducedCandidates = if (result.currentApplicability < CandidateApplicability.SYNTHETIC_RESOLVED) {
-            bestCandidates.toSet()
+            bestCandidates
         } else {
             conflictResolver.chooseMaximallySpecificCandidates(bestCandidates, discriminateGenerics = false)
         }
+        (bestCandidates - reducedCandidates).forEach { pool.free(it.pooledCandidate) }
 
 
 //        fun isInvoke()
