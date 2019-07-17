@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
+import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -201,6 +202,7 @@ object ClassNameUtil {
 object FunctionUtil {
     val firFunctions = mutableListOf<FirFunction>()
     val firFunctionCalls = mutableListOf<FirFunctionCall>()
+    val firLabels = mutableListOf<FirLabel>()
 
     fun <T> MutableList<T>.removeLast() {
         removeAt(size - 1)

@@ -12,15 +12,22 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.labels.FirLabelImpl
+import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringUnescapedValue
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.toReturn
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.*
+import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
@@ -28,8 +35,11 @@ import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -50,9 +60,14 @@ class ExpressionsConverter(
     fun convertExpression(expression: LighterASTNode): FirElement {
         if (!stubMode) {
             return when (expression.tokenType) {
+                LAMBDA_EXPRESSION -> {
+                    val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.getAsString())
+                    ExpressionsConverter(session, stubMode, lambdaTree, declarationsConverter).convertLambdaExpression(lambdaTree.root)
+                }
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)
                 BINARY_WITH_TYPE -> convertBinaryWithType(expression)
                 IS_EXPRESSION -> convertIsExpression(expression)
+                LABELED_EXPRESSION -> convertLabeledExpression(expression)
                 PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
                 ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
                 CLASS_LITERAL_EXPRESSION -> convertClassLiteralExpression(expression)
@@ -64,15 +79,72 @@ class ExpressionsConverter(
                 STRING_TEMPLATE -> convertStringTemplate(expression)
                 is KtConstantExpressionElementType -> convertConstantExpression(expression)
                 REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
+                RETURN -> convertReturn(expression)
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
                 SUPER_EXPRESSION -> convertSuperExpression(expression)
+
+                FUN -> declarationsConverter.convertFunctionDeclaration(expression)
                 else -> FirExpressionStub(session, null)
             }
             //TODO("not fully implemented")
         }
 
         return FirExpressionStub(session, null)
+    }
+
+    private fun convertLambdaExpression(lambdaExpression: LighterASTNode): FirExpression {
+        val valueParameterList = mutableListOf<ValueParameter>()
+        lateinit var block: LighterASTNode
+        lambdaExpression.getChildNodesByType(FUNCTION_LITERAL).first().forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER_LIST -> valueParameterList += declarationsConverter.convertValueParameters(it)
+                BLOCK -> block = it
+            }
+        }
+
+        return FirAnonymousFunctionImpl(session, null, implicitType, implicitType).apply {
+            FunctionUtil.firFunctions += this
+            var destructuringBlock: FirExpression? = null
+            for (valueParameter in valueParameterList) {
+                val multiDeclaration = valueParameter.destructuringDeclaration
+                valueParameters += if (multiDeclaration != null) {
+                    val multiParameter = FirValueParameterImpl(
+                        this@ExpressionsConverter.session, null, Name.special("<destruct>"),
+                        FirImplicitTypeRefImpl(this@ExpressionsConverter.session, null),
+                        defaultValue = null, isCrossinline = false, isNoinline = false, isVararg = false
+                    )
+                    destructuringBlock = generateDestructuringBlock(
+                        this@ExpressionsConverter.session,
+                        multiDeclaration,
+                        multiParameter,
+                        tmpVariable = false
+                    )
+                    multiParameter
+                } else {
+                    valueParameter.firValueParameter
+                }
+            }
+            label = FunctionUtil.firLabels.pop() ?: FunctionUtil.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
+                FirLabelImpl(this@ExpressionsConverter.session, null, it.asString())
+            }
+            val bodyExpression = declarationsConverter.convertBlockExpression(block)
+            body = if (bodyExpression is FirBlockImpl) {
+                if (bodyExpression.statements.isEmpty()) {
+                    bodyExpression.statements.add(FirUnitExpression(this@ExpressionsConverter.session, null))
+                }
+                if (destructuringBlock is FirBlock) {
+                    for ((index, statement) in destructuringBlock.statements.withIndex()) {
+                        bodyExpression.statements.add(index, statement)
+                    }
+                }
+                bodyExpression
+            } else {
+                FirSingleExpressionBlock(this@ExpressionsConverter.session, bodyExpression.toReturn())
+            }
+
+            FunctionUtil.firFunctions.removeLast()
+        }
     }
 
     /**
@@ -179,6 +251,27 @@ class ExpressionsConverter(
         return FirTypeOperatorCallImpl(session, null, operation, firType).apply {
             arguments += leftArgAsFir
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseLabeledExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitLabeledExpression
+     */
+    private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
+        val size = FunctionUtil.firLabels.size
+        var firExpression: FirElement? = null
+        labeledExpression.forEachChildren {
+            when (it.tokenType) {
+                LABEL_QUALIFIER -> FunctionUtil.firLabels += FirLabelImpl(session, null, it.toString().replace("@", ""))
+                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+            }
+        }
+
+        if (size != FunctionUtil.firLabels.size) {
+            FunctionUtil.firLabels.removeLast()
+            //println("Unused label: ${labeledExpression.getAsString()}")
+        }
+        return firExpression ?: FirErrorExpressionImpl(session, null, "Empty label")
     }
 
     /**
@@ -322,14 +415,13 @@ class ExpressionsConverter(
     private fun convertCallExpression(callSuffix: LighterASTNode): FirExpression {
         var name: String? = null
         val firTypeArguments = mutableListOf<FirTypeProjection>()
-        val firValueArguments = mutableListOf<FirExpression>()
+        val valueArguments = mutableListOf<LighterASTNode>()
         var additionalArgument: FirExpression? = null
         callSuffix.forEachChildren {
             when (it.tokenType) {
                 REFERENCE_EXPRESSION -> name = it.getAsString()
                 TYPE_ARGUMENT_LIST -> firTypeArguments += declarationsConverter.convertTypeArguments(it)
-                VALUE_ARGUMENT_LIST -> firValueArguments += convertValueArguments(it)
-                LAMBDA_ARGUMENT -> firValueArguments += convertAnnotatedLambda(it)
+                VALUE_ARGUMENT_LIST, LAMBDA_ARGUMENT -> valueArguments += it
                 else -> additionalArgument = getAsFirExpression(it)
             }
         }
@@ -345,24 +437,10 @@ class ExpressionsConverter(
             }
             this.calleeReference = calleeReference
             FunctionUtil.firFunctionCalls += this
-            this.extractArgumentsFrom(firValueArguments, stubMode)
+            this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
             typeArguments += firTypeArguments
             FunctionUtil.firFunctionCalls.removeLast()
         }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseAnnotatedLambda
-     */
-    private fun convertAnnotatedLambda(annotatedLambda: LighterASTNode): FirExpression {
-        annotatedLambda.forEachChildren {
-            when (it.tokenType) {
-                LAMBDA_EXPRESSION -> ""
-                LABELED_EXPRESSION -> ""
-                ANNOTATED_EXPRESSION -> ""
-            }
-        }
-        return FirExpressionStub(session, null)
     }
 
     /**
@@ -528,6 +606,24 @@ class ExpressionsConverter(
     }
 
     /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseReturn
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitReturnExpression
+     */
+    private fun convertReturn(returnExpression: LighterASTNode): FirExpression {
+        var labelName: String? = null
+        var firExpression: FirExpression? = null
+        returnExpression.forEachChildren {
+            when (it.tokenType) {
+                LABEL_QUALIFIER -> labelName = it.getAsString().replace("@", "")
+                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+            }
+        }
+
+        val result = firExpression ?: FirUnitExpression(session, null)
+        return result.toReturn(labelName)
+    }
+
+    /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseThisExpression
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitThisExpression
      */
@@ -568,6 +664,9 @@ class ExpressionsConverter(
         return valueArguments.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 VALUE_ARGUMENT -> container += convertValueArgument(node)
+                LAMBDA_EXPRESSION,
+                LABELED_EXPRESSION,
+                ANNOTATED_EXPRESSION -> container += FirLambdaArgumentExpressionImpl(session, null, getAsFirExpression(node))
             }
         }
     }
@@ -596,20 +695,20 @@ class ExpressionsConverter(
         }
     }
 
+    /**
+     * @see org.jetbrains.kotlin.fir.builder.ConversionUtilsKt.initializeLValue
+     */
     fun convertLValue(leftArgNode: LighterASTNode, container: FirModifiableQualifiedAccess<*>): FirReference {
-        leftArgNode.forEachChildren {
-            return when (it.tokenType) {
-                THIS_EXPRESSION -> convertThisExpression(leftArgNode).calleeReference
-                REFERENCE_EXPRESSION -> FirSimpleNamedReference(session, null, it.getAsString().nameAsSafeName())
-                in qualifiedAccessTokens -> (getAsFirExpression(it) as FirQualifiedAccess).let { firQualifiedAccess ->
-                    container.explicitReceiver = firQualifiedAccess.explicitReceiver
-                    container.safe = firQualifiedAccess.safe
-                    return@let firQualifiedAccess.calleeReference
-                }
-                PARENTHESIZED -> convertLValue(it.getExpressionInParentheses(), container)
-                else -> FirErrorNamedReference(session, null, "Unsupported LValue: ${leftArgNode.tokenType}")
+        return when (leftArgNode.tokenType) {
+            THIS_EXPRESSION -> convertThisExpression(leftArgNode).calleeReference
+            REFERENCE_EXPRESSION -> FirSimpleNamedReference(session, null, leftArgNode.getAsString().nameAsSafeName())
+            in qualifiedAccessTokens -> (getAsFirExpression(leftArgNode) as FirQualifiedAccess).let { firQualifiedAccess ->
+                container.explicitReceiver = firQualifiedAccess.explicitReceiver
+                container.safe = firQualifiedAccess.safe
+                return@let firQualifiedAccess.calleeReference
             }
+            PARENTHESIZED -> convertLValue(leftArgNode.getExpressionInParentheses(), container)
+            else -> FirErrorNamedReference(session, null, "Unsupported LValue: ${leftArgNode.tokenType}")
         }
-        return FirErrorNamedReference(session, null, "Unsupported LValue: ${leftArgNode.tokenType}")
     }
 }

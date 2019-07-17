@@ -46,6 +46,13 @@ class LightTree2Fir(
             MyKotlinParser.parseBlockExpression(builder)
             return builder.lightTree
         }
+
+        fun buildLightTreeLambdaExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
+            val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
+            //KotlinParser.parseLambdaExpression(builder)
+            MyKotlinParser.parseLambdaExpression(builder)
+            return builder.lightTree
+        }
     }
 
     fun buildFirFile(path: Path): FirFile {
