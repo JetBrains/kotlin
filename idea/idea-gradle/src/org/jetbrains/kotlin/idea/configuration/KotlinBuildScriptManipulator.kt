@@ -299,17 +299,13 @@ class KotlinBuildScriptManipulator(
         }
     }
 
-    private fun usesNewMultiplatform(): Boolean {
-        val fileText = runReadAction { scriptFile.text }
-        return fileText.contains("multiplatform")
-    }
-
     private fun KtFile.changeLanguageFeatureConfiguration(
         feature: LanguageFeature,
         state: LanguageFeature.State,
         forTests: Boolean
     ): PsiElement? {
         if (usesNewMultiplatform()) {
+            state.assertApplicableInMultiplatform()
             return findOrCreateScriptInitializer("kotlin")
                 ?.findOrCreateBlock("sourceSets")
                 ?.findOrCreateBlock("all")
