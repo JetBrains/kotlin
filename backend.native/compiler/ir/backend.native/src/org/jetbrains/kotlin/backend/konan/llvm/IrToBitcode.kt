@@ -2032,6 +2032,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
                             lifetime = resultLifetime(callee), exceptionHandler = currentCodeContext.exceptionHandler)
                 }
 
+                // TODO: OBJC-CONSTRUCTOR-CALL. Move to InteropLowering.
                 constructedClass.isObjCClass() -> {
                     assert(constructedClass.isKotlinObjCClass()) // Calls to other ObjC class constructors must be lowered.
                     val symbols = context.ir.symbols

@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.backend.konan.optimizations
 import org.jetbrains.kotlin.backend.konan.DirectedGraph
 import org.jetbrains.kotlin.backend.konan.DirectedGraphNode
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.isObjCClass
+import org.jetbrains.kotlin.ir.util.parentAsClass
 
 internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.FunctionSymbol)
     : DirectedGraphNode<DataFlowIR.FunctionSymbol> {
@@ -95,6 +97,31 @@ internal class CallGraphBuilder(val context: Context,
     private inline fun DataFlowIR.FunctionBody.forEachCallSite(block: (DataFlowIR.Node.Call) -> Unit) =
             nodes.forEach { node ->
                 when (node) {
+                    // TODO: OBJC-CONSTRUCTOR-CALL
+                    is DataFlowIR.Node.NewObject -> {
+                        block(node)
+                        if (node.irCallSite?.symbol?.owner?.parentAsClass?.isObjCClass() == true) {
+                            block(DataFlowIR.Node.Call(
+                                    callee = moduleDFG.symbolTable.mapFunction(symbols.interopAllocObjCObject.owner),
+                                    arguments = listOf(DataFlowIR.Edge(DataFlowIR.Node.Null, null)),
+                                    returnType = moduleDFG.symbolTable.mapType(symbols.interopAllocObjCObject.owner.returnType),
+                                    irCallSite = null)
+                            )
+                            block(DataFlowIR.Node.Call(
+                                    callee = moduleDFG.symbolTable.mapFunction(symbols.interopInterpretObjCPointer.owner),
+                                    arguments = listOf(DataFlowIR.Edge(DataFlowIR.Node.Null, null)),
+                                    returnType = moduleDFG.symbolTable.mapType(symbols.interopInterpretObjCPointer.owner.returnType),
+                                    irCallSite = null)
+                            )
+                            block(DataFlowIR.Node.Call(
+                                    callee = moduleDFG.symbolTable.mapFunction(symbols.interopObjCRelease.owner),
+                                    arguments = listOf(DataFlowIR.Edge(DataFlowIR.Node.Null, null)),
+                                    returnType = moduleDFG.symbolTable.mapType(symbols.interopObjCRelease.owner.returnType),
+                                    irCallSite = null)
+                            )
+                        }
+                    }
+
                     is DataFlowIR.Node.Call -> block(node)
 
                     is DataFlowIR.Node.Singleton ->
