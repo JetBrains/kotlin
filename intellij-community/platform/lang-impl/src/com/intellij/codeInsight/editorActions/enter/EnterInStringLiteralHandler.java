@@ -65,18 +65,16 @@ public class EnterInStringLiteralHandler extends EnterHandlerDelegateAdapter {
           lexer.advance();
         }
 
-        int caretAdvance = caretAdvanceRef.get().intValue();        
         if (quoteHandler.needParenthesesAroundConcatenation(psiAtOffset)) {
           document.insertString(psiAtOffset.getTextRange().getEndOffset(), ")");
           document.insertString(psiAtOffset.getTextRange().getStartOffset(), "(");
           caretOffset++;
-          caretAdvance++;
         }
 
         final String insertedFragment = literalStart + " " + quoteHandler.getStringConcatenationOperatorRepresentation();
         document.insertString(caretOffset, insertedFragment + " " + literalStart);
         caretOffset += insertedFragment.length();
-        caretAdvance = 1;
+        int caretAdvance = 1;
         if (CodeStyle.getLanguageSettings(file).BINARY_OPERATION_SIGN_ON_NEXT_LINE) {
           caretOffset -= 1;
           caretAdvance = 3;
