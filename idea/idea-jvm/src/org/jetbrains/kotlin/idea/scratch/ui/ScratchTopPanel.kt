@@ -92,6 +92,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     }
 
     private val moduleChooser: ModulesComboBox
+    private val moduleChooserLabel: JLabel
     private val isReplCheckbox: JCheckBox
     private val isMakeBeforeRunCheckbox: JCheckBox
     private val isInteractiveCheckbox: JCheckBox
@@ -104,7 +105,8 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         add(actionsToolbar.component)
 
         moduleChooser = createModuleChooser(scratchFile.project)
-        add(JLabel("Use classpath of module"))
+        moduleChooserLabel = JLabel("Use classpath of module")
+        add(moduleChooserLabel)
         add(moduleChooser)
 
         isMakeBeforeRunCheckbox = JCheckBox("Make module before Run")
@@ -160,6 +162,11 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
         moduleChooser.selectedModule = module
     }
 
+    fun hideModuleSelector() {
+        moduleChooser.isVisible = false
+        moduleChooserLabel.isVisible = false
+    }
+
     fun addModuleListener(f: (PsiFile, Module?) -> Unit) {
         moduleChooser.addActionListener {
             val selectedModule = moduleChooser.selectedModule
@@ -187,6 +194,9 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : JPanel
     fun setInteractiveMode(isSelected: Boolean) {
         isInteractiveCheckbox.isSelected = isSelected
     }
+
+    @TestOnly
+    fun isModuleSelectorVisible(): Boolean = moduleChooser.isVisible && moduleChooserLabel.isVisible
 
     private fun changeMakeModuleCheckboxVisibility(isVisible: Boolean) {
         isMakeBeforeRunCheckbox.isVisible = isVisible

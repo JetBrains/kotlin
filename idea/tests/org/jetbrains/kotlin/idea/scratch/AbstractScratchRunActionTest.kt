@@ -192,7 +192,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
-        configureOptions(scratchPanel, text, myFixture.module)
+        // We want to check that correct module is selected automatically,
+        // that's why we set `module` to null so it wouldn't be changed
+        configureOptions(scratchPanel, text, null)
 
         return scratchPanel
     }
