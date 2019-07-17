@@ -117,8 +117,7 @@ public class EnterInStringLiteralHandler extends EnterHandlerDelegateAdapter {
       EditorHighlighter highlighter = ((EditorEx)editor).getHighlighter();
       HighlighterIterator iterator = highlighter.createIterator(offset - 1);
       final IElementType type = iterator.getTokenType();
-      if ((StringEscapesTokenTypes.STRING_LITERAL_ESCAPES.contains(type) || quoteHandler.isInsideLiteral(iterator))
-          && quoteHandler.getConcatenatableStringTokenTypes() != null) {
+      if (StringEscapesTokenTypes.STRING_LITERAL_ESCAPES.contains(type) || quoteHandler.isInsideLiteral(iterator)) {
         return true;
       }
     }
