@@ -8,7 +8,6 @@ import com.intellij.icons.AllIcons;
 import com.intellij.ide.DataManager;
 import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -40,6 +39,7 @@ import com.intellij.openapi.vcs.changes.Change;
 import com.intellij.openapi.vcs.changes.ChangeList;
 import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.*;
+import com.intellij.openapi.vfs.impl.VirtualFileManagerImpl;
 import com.intellij.packageDependencies.ChangeListsScopesProvider;
 import com.intellij.psi.*;
 import com.intellij.psi.search.*;
@@ -151,18 +151,19 @@ public class FindInProjectUtil {
     VirtualFile virtualFile = LocalFileSystem.getInstance().findFileByPath(path);
     if (virtualFile == null || !virtualFile.isDirectory()) {
       virtualFile = null;
-      VirtualFileSystem[] fileSystems = ApplicationManager.getApplication().getComponents(VirtualFileSystem.class);
+      // path doesn't contain file system prefix so try to find it inside archives (IDEA-216479)
+      List<VirtualFileSystem> fileSystems = ((VirtualFileManagerImpl)VirtualFileManager.getInstance()).getPhysicalFileSystems();
+
       for (VirtualFileSystem fs : fileSystems) {
-        if (fs instanceof LocalFileProvider) {
-          VirtualFile file = ((LocalFileProvider)fs).findLocalVirtualFileByPath(path);
-          if (file != null && file.isDirectory()) {
-            if (file.getChildren().length > 0) {
-              virtualFile = file;
-              break;
-            }
-            if (virtualFile == null) {
-              virtualFile = file;
-            }
+        if (!(fs instanceof LocalFileProvider)) continue;
+        VirtualFile file = fs.findFileByPath(path);
+        if (file != null && file.isDirectory()) {
+          if (file.getChildren().length > 0) {
+            virtualFile = file;
+            break;
+          }
+          if (virtualFile == null) {
+            virtualFile = file;
           }
         }
       }
