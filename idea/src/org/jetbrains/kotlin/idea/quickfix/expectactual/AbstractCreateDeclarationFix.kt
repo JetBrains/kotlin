@@ -68,7 +68,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
                     val packageDirective = originalFile.packageDirective
                     if (packageDirective != null) {
                         val oldPackageDirective = targetFile.packageDirective
-                        val newPackageDirective = factory.createPackageDirective(packageDirective.fqName)
+                        val newPackageDirective = packageDirective.copy() as KtPackageDirective
                         if (oldPackageDirective != null) {
                             oldPackageDirective.replace(newPackageDirective)
                         } else {
