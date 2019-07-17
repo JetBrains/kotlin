@@ -382,14 +382,8 @@ open class WrappedSimpleFunctionDescriptor(
     var originalDescriptor: FunctionDescriptor? = null
 
     override fun getOverriddenDescriptors() = owner.overriddenSymbols.map { it.descriptor }
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        val parent = owner.parent
-        return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
-            return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
-        } else {
-            (parent as IrSymbolOwner).symbol.descriptor
-        }
-    }
+
+    override fun getContainingDeclaration(): DeclarationDescriptor = getContainingDeclaration(owner)
 
     override fun getModality() = owner.modality
     override fun getName() = owner.name
@@ -841,14 +835,7 @@ open class WrappedPropertyDescriptor(
 
     override fun isConst() = owner.isConst
 
-    override fun getContainingDeclaration(): DeclarationDescriptor {
-        val parent = owner.parent
-        return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
-            return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
-        } else {
-            (parent as IrSymbolOwner).symbol.descriptor
-        }
-    }
+    override fun getContainingDeclaration(): DeclarationDescriptor = getContainingDeclaration(owner)
 
     override fun isLateInit() = owner.isLateinit
 
@@ -992,4 +979,15 @@ open class WrappedFieldDescriptor(
     }
 
     override fun <V : Any?> getUserData(key: CallableDescriptor.UserDataKey<V>?): V? = null
+}
+
+private fun getContainingDeclaration(declaration: IrDeclarationWithName): DeclarationDescriptor {
+    val parent = declaration.parent
+    return if (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS && parent.parent is IrExternalPackageFragment) {
+        // JVM IR adds facade classes for IR of functions/properties loaded from dependencies. However, these shouldn't exist
+        // in the descriptor hierarchy, since this is what the old backend (dealing with descriptors) expects.
+        return (parent.parent as IrExternalPackageFragment).packageFragmentDescriptor
+    } else {
+        (parent as IrSymbolOwner).symbol.descriptor
+    }
 }
