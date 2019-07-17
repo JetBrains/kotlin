@@ -66,7 +66,6 @@ object ConversionsRunner {
             +LiteralConversion()
             +ForConversion(context)
             +LabeledStatementConversion()
-            +TypeParametersNullabilityConversion()
             +ArrayOperationsConversion(context)
             +EqualsOperatorConversion(context)
             +TypeMappingConversion(context)

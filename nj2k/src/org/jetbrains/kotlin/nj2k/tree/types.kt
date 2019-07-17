@@ -8,16 +8,21 @@ package org.jetbrains.kotlin.nj2k.tree
 import com.intellij.psi.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
 import org.jetbrains.kotlin.nj2k.kotlinTypeByName
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.KtClass
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.psi.KtTypeReference
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -88,7 +93,7 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
                 null ->
                     JKClassTypeImpl(JKUnresolvedClassSymbol(rawType().canonicalText), parameters, nullability)
                 is PsiTypeParameter ->
-                    JKTypeParameterTypeImpl(target.name!!)
+                    JKTypeParameterTypeImpl(symbolProvider.provideDirectSymbol(target) as JKTypeParameterSymbol)
                 else -> {
                     JKClassTypeImpl(
                         target.let { symbolProvider.provideDirectSymbol(it) as JKClassSymbol },
@@ -133,12 +138,28 @@ fun JKType.isSubtypeOf(other: JKType, symbolProvider: JKSymbolProvider): Boolean
         ?.let { otherType -> this.toKtType(symbolProvider)?.isSubtypeOf(otherType) } == true
 
 
-fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKClassTypeImpl =
-    JKClassTypeImpl(
-        symbolProvider.provideClassSymbol(getJetTypeFqName(false)),
-        arguments.map { it.type.toJK(symbolProvider) },
-        if (isNullable()) Nullability.Nullable else Nullability.NotNull
-    )
+fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKType {
+    return when (val descriptor = constructor.declarationDescriptor) {
+        is TypeParameterDescriptor ->
+            JKTypeParameterTypeImpl(
+                symbolProvider.provideDirectSymbol(descriptor.findPsi() as? KtTypeParameter ?: return JKNoTypeImpl) as JKTypeParameterSymbol
+            )
+
+        else -> JKClassTypeImpl(
+            symbolProvider.provideClassSymbol(getJetTypeFqName(false)),
+            arguments.map { it.type.toJK(symbolProvider) },
+            if (isNullable()) Nullability.Nullable else Nullability.NotNull
+        )
+    }
+}
+
+val JKType.isKotlinFunctionType: Boolean
+    get() {
+        val fqName = safeAs<JKClassType>()?.fqName ?: return false
+        return functionalTypeRegex.matches(fqName)
+    }
+
+private val functionalTypeRegex = """(kotlin\.jvm\.functions|kotlin)\.Function[\d+]""".toRegex()
 
 
 fun KtTypeReference.toJK(symbolProvider: JKSymbolProvider): JKType? =
@@ -213,7 +234,7 @@ fun JKType.applyRecursive(transform: (JKType) -> JKType?): JKType =
 inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability): T =
     if (nullability == newNullability) this
     else when (this) {
-        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(name, newNullability)
+        is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(identifier, newNullability)
         is JKClassTypeImpl -> JKClassTypeImpl(classReference, parameters, newNullability)
         is JKNoType -> this
         is JKJavaVoidType -> this
@@ -228,7 +249,7 @@ inline fun <reified T : JKType> T.updateNullability(newNullability: Nullability)
 fun <T : JKType> T.updateNullabilityRecursively(newNullability: Nullability): T =
     applyRecursive {
         when (it) {
-            is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(it.name, newNullability)
+            is JKTypeParameterTypeImpl -> JKTypeParameterTypeImpl(it.identifier, newNullability)
             is JKClassTypeImpl ->
                 JKClassTypeImpl(
                     it.classReference,

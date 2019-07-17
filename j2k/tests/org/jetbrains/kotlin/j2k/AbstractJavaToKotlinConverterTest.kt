@@ -55,18 +55,20 @@ abstract class AbstractJavaToKotlinConverterTest : KotlinLightCodeInsightFixture
         super.tearDown()
     }
     
-    private fun addFile(fileName: String, dirName: String) {
+    protected fun addFile(fileName: String, dirName: String? = null) {
         addFile(File("j2k/testData/$fileName"), dirName)
     }
 
-    protected fun addFile(file: File, dirName: String): VirtualFile {
+    protected fun addFile(file: File, dirName: String?): VirtualFile {
         return addFile(FileUtil.loadFile(file, true), file.name, dirName)
     }
 
-    protected fun addFile(text: String, fileName: String, dirName: String): VirtualFile {
+    protected fun addFile(text: String, fileName: String, dirName: String?): VirtualFile {
         return runWriteAction {
             val root = LightPlatformTestCase.getSourceRoot()!!
-            val virtualDir = root.findChild(dirName) ?: root.createChildDirectory(null, dirName)
+            val virtualDir = dirName?.let {
+                root.findChild(it) ?: root.createChildDirectory(null, it)
+            } ?: root
             val virtualFile = virtualDir.createChildData(null, fileName)
             virtualFile.getOutputStream(null)!!.writer().use { it.write(text) }
             virtualFile

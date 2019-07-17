@@ -956,7 +956,7 @@ private class JKPrinter(
             is JKStarProjectionType ->
                 printWithNoIndent("*")
             is JKTypeParameterType ->
-                printWithNoIndent(type.name)
+                printWithNoIndent(type.identifier.name)
             is JKVarianceTypeParameterType -> {
                 when (type.variance) {
                     JKVarianceTypeParameterType.Variance.IN -> printWithNoIndent("in ")
