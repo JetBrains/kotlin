@@ -14,7 +14,7 @@ import kotlin.reflect.full.createType
 import kotlin.reflect.full.declaredMemberProperties
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
-class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
+class ScratchOptionsTest : AbstractScratchRunActionTest() {
 
     fun testOptionsSaveOnClosingFile() {
         val scratchPanelBeforeClosingFile = configureScratchByText("scratch_1.kts", testScratchText())
@@ -50,4 +50,27 @@ class ScratchOptionsSaveTest : AbstractScratchRunActionTest() {
             scratchPanelAfterClosingFile.scratchFile.options.isInteractiveMode
         )
     }
+
+    fun testModuleSelectionPanelIsVisibleForScratchFile() {
+        val scratchTopPanel = configureScratchByText("scratch_1.kts", testScratchText())
+
+        Assert.assertTrue("Module selector should be visible for scratches", scratchTopPanel.isModuleSelectorVisible())
+    }
+
+    fun testModuleSelectionPanelIsHiddenForWorksheetFile() {
+        val scratchTopPanel = configureWorksheetByText("worksheet.ws.kts", testScratchText())
+
+        Assert.assertFalse("Module selector should be hidden for worksheets", scratchTopPanel.isModuleSelectorVisible())
+    }
+
+    fun testCurrentModuleIsAutomaticallySelectedForWorksheetFile() {
+        val scratchTopPanel = configureWorksheetByText("worksheet.ws.kts", testScratchText())
+
+        Assert.assertEquals(
+            "Selected module should be equal to current project module for worksheets",
+            myFixture.module,
+            scratchTopPanel.getModule()
+        )
+    }
+
 }
