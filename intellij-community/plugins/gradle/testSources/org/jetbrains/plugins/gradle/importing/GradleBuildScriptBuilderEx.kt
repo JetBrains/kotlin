@@ -59,6 +59,14 @@ class GradleBuildScriptBuilderEx : GradleBuildScriptBuilder() {
     withMavenCentral()
     addDependency("testCompile 'junit:junit:$version'")
   }
+
+  fun version(version: String) = apply {
+    addPrefix("version = '$version'")
+  }
+
+  fun group(group: String) = apply {
+    addPrefix("group = '$group'")
+  }
 }
 
 fun GradleBuildScriptBuilder.withBuildScriptMavenCentral() = apply {
