@@ -59,16 +59,14 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         stubMode: Boolean,
         visitAnonymousFunction: Boolean = false,
         visitLambdaExpression: Boolean = false,
-        visitNamedFunction: Boolean = false,
-        visitMemberDeclaration: Boolean = false,
+        visitLocalMembers: Boolean = false,
         visitVariable: Boolean = false,
         visitAnnotation: Boolean = false,
         visitTypeOperatorCall: Boolean = false,
         visitArrayOfCall: Boolean = false,
         visitFunctionCall: Boolean = false,
         visitGetClassCall: Boolean = false,
-        visitBreakExpression: Boolean = false,
-        visitContinueExpression: Boolean = false,
+        visitLoopJump: Boolean = false,
         visitReturnExpression: Boolean = false,
         visitThrowExpression: Boolean = false,
         visitLoops: Boolean = false,
@@ -78,22 +76,19 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitTryExpression: Boolean = false,
         visitWhenExpression: Boolean = false,
         visitLambdaArgumentExpression: Boolean = false,
-        visitAnonymousObject: Boolean = false,
-        visitAssignment: Boolean = false
+        visitAnonymousObject: Boolean = false
     ) {
         val firVisitor = FirPartialTransformer(
             visitAnonymousFunction = visitAnonymousFunction,
             visitLambdaExpression = visitLambdaExpression,
-            visitNamedFunction = visitNamedFunction,
-            visitMemberDeclaration = visitMemberDeclaration,
+            visitLocalMembers = visitLocalMembers,
             visitVariable = visitVariable,
             visitAnnotation = visitAnnotation,
             visitTypeOperatorCall = visitTypeOperatorCall,
             visitArrayOfCall = visitArrayOfCall,
             visitFunctionCall = visitFunctionCall,
             visitGetClassCall = visitGetClassCall,
-            visitBreakExpression = visitBreakExpression,
-            visitContinueExpression = visitContinueExpression,
+            visitLoopJump = visitLoopJump,
             visitReturnExpression = visitReturnExpression,
             visitThrowExpression = visitThrowExpression,
             visitLoops = visitLoops,
@@ -103,8 +98,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitTryExpression = visitTryExpression,
             visitWhenExpression = visitWhenExpression,
             visitLambdaArgumentExpression = visitLambdaArgumentExpression,
-            visitAnonymousObject = visitAnonymousObject,
-            visitAssignment = visitAssignment
+            visitAnonymousObject = visitAnonymousObject
         )
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
         compareBase { file ->
@@ -186,8 +180,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     fun testLocalMembers() {
         compare(
             stubMode = false,
-            visitNamedFunction = true,
-            visitMemberDeclaration = true,
+            visitLocalMembers = true,
             visitAnnotation = true,
             visitTypeOperatorCall = true,
             visitArrayOfCall = true,
@@ -202,8 +195,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     fun testReturn() {
         compare(
             stubMode = false,
-            visitNamedFunction = true,
-            visitMemberDeclaration = true,
+            visitLocalMembers = true,
             visitAnnotation = true,
             visitTypeOperatorCall = true,
             visitArrayOfCall = true,
@@ -221,8 +213,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             stubMode = false,
             visitAnonymousFunction = true,
             visitLambdaExpression = true,
-            visitNamedFunction = true,
-            visitMemberDeclaration = true,
+            visitLocalMembers = true,
             visitAnnotation = true,
             visitTypeOperatorCall = true,
             visitArrayOfCall = true,
@@ -240,8 +231,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             stubMode = false,
             visitAnonymousFunction = true,
             visitLambdaExpression = true,
-            visitNamedFunction = true,
-            visitMemberDeclaration = true,
+            visitLocalMembers = true,
             visitAnnotation = true,
             visitTypeOperatorCall = true,
             visitArrayOfCall = true,
@@ -260,8 +250,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             stubMode = false,
             visitAnonymousFunction = true,
             visitLambdaExpression = true,
-            visitNamedFunction = true,
-            visitMemberDeclaration = true,
+            visitLocalMembers = true,
             visitAnnotation = true,
             visitTypeOperatorCall = true,
             visitArrayOfCall = true,
@@ -286,6 +275,22 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitLoops = true,
             visitConstExpression = true,
             visitQualifiedAccessExpression = true
+        )
+    }
+
+    fun testVariables() {
+        compare(
+            stubMode = false,
+            visitAnonymousFunction = true,
+            visitLambdaExpression = true,
+            visitLocalMembers = true,
+            visitVariable = true,
+            visitAnnotation = true,
+            visitFunctionCall = true,
+            visitLoops = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitAnonymousObject = true
         )
     }
 }

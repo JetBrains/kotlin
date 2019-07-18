@@ -105,6 +105,7 @@ class DeclarationsConverter(
                 CLASS -> firStatements += convertClass(it) as FirStatement
                 FUN -> firStatements += convertFunctionDeclaration(it) as FirStatement
                 PROPERTY -> firStatements += convertPropertyDeclaration(it) as FirStatement
+                DESTRUCTURING_DECLARATION -> firStatements += convertDestructingDeclaration(it).toFirDestructingDeclaration(session)
                 TYPEALIAS -> firStatements += convertTypeAlias(it) as FirStatement
                 OBJECT_DECLARATION -> firStatements += convertClass(it) as FirStatement
                 CLASS_INITIALIZER -> firStatements += convertAnonymousInitializer(it) as FirStatement
@@ -676,7 +677,6 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
     private fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
-        //TODO DESTRUCTURING_DECLARATION
         var modifiers = Modifier(session)
         lateinit var identifier: String
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -718,7 +718,9 @@ class DeclarationsConverter(
                 isVar,
                 firExpression,
                 delegate = firDelegateExpression
-            )
+            ).apply {
+                annotations += modifiers.annotations
+            }
         } else {
             FirMemberPropertyImpl(
                 session,
@@ -753,14 +755,16 @@ class DeclarationsConverter(
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
         val entries = mutableListOf<FirVariable>()
+        var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+                else -> if (it.isExpression()) firExpression = expressionConverter.getAsFirExpression(it)
             }
         }
 
-        return DestructuringDeclaration(isVar, entries)
+        return DestructuringDeclaration(isVar, entries, firExpression)
     }
 
     /**
