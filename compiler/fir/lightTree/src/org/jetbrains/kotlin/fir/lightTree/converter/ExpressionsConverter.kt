@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 import com.intellij.lang.LighterASTNode
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirReference
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorLoop
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -34,7 +33,6 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -83,6 +81,7 @@ class ExpressionsConverter(
                 DO_WHILE -> convertDoWhile(expression)
                 WHILE -> convertWhile(expression)
                 FOR -> convertFor(expression)
+                BREAK, CONTINUE -> convertLoopJump(expression)
                 RETURN -> convertReturn(expression)
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
@@ -748,6 +747,43 @@ class ExpressionsConverter(
         }
 
         return null
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseJump
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitBreakExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitContinueExpression
+     */
+    private fun convertLoopJump(jump: LighterASTNode): FirExpression {
+        var isBreak = true
+        var labelName: String? = null
+        jump.forEachChildren {
+            when (it.tokenType) {
+                CONTINUE_KEYWORD -> isBreak = false
+                //BREAK -> isBreak = true
+                LABEL_QUALIFIER -> labelName = it.getAsString().replace("@", "")
+            }
+        }
+
+        return (if (isBreak) FirBreakExpressionImpl(session, null) else FirContinueExpressionImpl(session, null)).apply {
+            target = FirLoopTarget(labelName)
+            val lastLoop = FunctionUtil.firLoops.lastOrNull()
+            if (labelName == null) {
+                if (lastLoop != null) {
+                    target.bind(lastLoop)
+                } else {
+                    target.bind(FirErrorLoop(this@ExpressionsConverter.session, null, "Cannot bind unlabeled jump to a loop"))
+                }
+            } else {
+                for (firLoop in FunctionUtil.firLoops.asReversed()) {
+                    if (firLoop.label?.name == labelName) {
+                        target.bind(firLoop)
+                        return this
+                    }
+                }
+                target.bind(FirErrorLoop(this@ExpressionsConverter.session, null, "Cannot bind label $labelName to a loop"))
+            }
+        }
     }
 
     /**

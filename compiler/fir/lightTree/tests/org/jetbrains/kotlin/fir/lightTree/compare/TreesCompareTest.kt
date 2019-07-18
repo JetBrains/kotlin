@@ -293,4 +293,15 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitAnonymousObject = true
         )
     }
+
+    fun testLoopJump() {
+        compare(
+            stubMode = false,
+            visitAnnotation = true,
+            visitLoopJump = true,
+            visitLoops = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true
+        )
+    }
 }
