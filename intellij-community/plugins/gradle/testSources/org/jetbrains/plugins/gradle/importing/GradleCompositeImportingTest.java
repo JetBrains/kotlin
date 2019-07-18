@@ -531,13 +531,11 @@ public class GradleCompositeImportingTest extends GradleImportingTestCase {
                                                      "dependencies {\n" +
                                                      "  implementation 'my.grp:myId:1.0'\n" +
                                                      "}");
-    createProjectSubFile("sub-project/src/main/java/my/grp/App.java", "pakage my.grp; public class App{};");
 
     createProjectSubFile("included-project/settings.gradle", "rootProject.name = 'myId'");
     createProjectSubFile("included-project/build.gradle", "apply plugin: 'java'\n" +
                                                           "group = 'my.grp'\n" +
                                                           "version = '1.0'");
-    createProjectSubFile("included-project/src/main/java/my/grp/Util.java", "package my.grp; public class Util{};");
 
     importProject(new GradleBuildScriptBuilderEx().generate());
 
