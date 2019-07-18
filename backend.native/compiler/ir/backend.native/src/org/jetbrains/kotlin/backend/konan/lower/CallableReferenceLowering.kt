@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.konan.ir.isFunctionOrKFunctionType
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -26,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
@@ -103,7 +103,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     break
                 }
 
-                if (!expression.type.isFunctionOrKFunctionType) {
+                if (!expression.type.isFunction() && !expression.type.isKFunction()
+                        && !expression.type.isKSuspendFunction()) {
                     // Not a subject of this lowering.
                     return expression
                 }
@@ -131,9 +132,8 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
     private val symbols = context.ir.symbols
     private val irBuiltIns = context.irBuiltIns
 
-    private val continuationClassDescriptor = symbols.continuationClassDescriptor
-
     private val getContinuationSymbol = symbols.getContinuation
+    private val continuationClassSymbol = getContinuationSymbol.owner.returnType.classifierOrFail as IrClassSymbol
 
     private inner class FunctionReferenceBuilder(val parent: IrDeclarationParent,
                                                  val functionReference: IrFunctionReference) {
@@ -183,48 +183,58 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             )
         }
 
-        private val kFunctionImplSymbol = symbols.kFunctionImpl
+        private fun IrClass.getInvokeFunction() = simpleFunctions().single { it.name.asString() == "invoke" }
 
+        private val kFunctionImplSymbol = symbols.kFunctionImpl
         private val kFunctionImplConstructorSymbol = kFunctionImplSymbol.constructors.single()
+        private val kSuspendFunctionImplSymbol = symbols.kSuspendFunctionImpl
+        private val kSuspendFunctionImplConstructorSymbol = kSuspendFunctionImplSymbol.constructors.single()
 
         val isKFunction = functionReference.type.isKFunction()
+        val isKSuspendFunction = functionReference.type.isKSuspendFunction()
 
         fun build(): BuiltFunctionReference {
-
-            val superClassType = if (isKFunction) {
-                kFunctionImplSymbol.typeWith(referencedFunction.returnType)
-            } else {
-                irBuiltIns.anyType
-            }
-
-            val superTypes = mutableListOf(superClassType)
-
             val numberOfParameters = unboundFunctionParameters.size
-
-            val functionIrClass = if (isKFunction) {
-                symbols.kFunctions[numberOfParameters].owner
-            } else {
-                symbols.functions[numberOfParameters].owner
-            }
-
             val functionParameterTypes = unboundFunctionParameters.map { it.type }
-            val functionClassTypeParameters = functionParameterTypes + referencedFunction.returnType
-            superTypes += functionIrClass.symbol.typeWith(functionClassTypeParameters)
-
-            var suspendFunctionIrClass: IrClass? = null
-            val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
-            if (lastParameterType != null && lastParameterType.classifierOrNull?.descriptor == continuationClassDescriptor) {
-                lastParameterType as IrSimpleType
-                // If the last parameter is Continuation<> inherit from SuspendFunction.
-                suspendFunctionIrClass = symbols.suspendFunctions[numberOfParameters - 1].owner
-                val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
-                        (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
-                superTypes += suspendFunctionIrClass.symbol.typeWith(suspendFunctionClassTypeParameters)
+            val superTypes = mutableListOf<IrType>()
+            val functionClass: IrClass
+            val suspendFunctionClass: IrClass?
+            if (isKSuspendFunction) {
+                superTypes += kSuspendFunctionImplSymbol.typeWith(referencedFunction.returnType)
+                functionClass = symbols.functions[numberOfParameters + 1].owner
+                val continuationType = continuationClassSymbol.typeWith(referencedFunction.returnType)
+                superTypes += functionClass.typeWith(functionParameterTypes + continuationType + irBuiltIns.anyNType)
+                suspendFunctionClass = symbols.kSuspendFunctions[numberOfParameters].owner
+                superTypes += suspendFunctionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
+            }
+            else {
+                superTypes += if (isKFunction)
+                    kFunctionImplSymbol.typeWith(referencedFunction.returnType)
+                else
+                    irBuiltIns.anyType
+                functionClass = (if (isKFunction) symbols.kFunctions else symbols.functions)[numberOfParameters].owner
+                superTypes += functionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
+                val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
+                if (lastParameterType?.classifierOrNull != continuationClassSymbol)
+                    suspendFunctionClass = null
+                else {
+                    lastParameterType as IrSimpleType
+                    // If the last parameter is Continuation<> inherit from SuspendFunction.
+                    suspendFunctionClass = symbols.suspendFunctions[numberOfParameters - 1].owner
+                    val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
+                            (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
+                    superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)
+                }
             }
 
             val constructor = buildConstructor()
-            buildInvokeMethod(functionIrClass.simpleFunctions().single { it.name.asString() == "invoke" })
-            suspendFunctionIrClass?.let { buildInvokeMethod(it.simpleFunctions().single { it.name.asString() == "invoke" }) }
+            if (!isKSuspendFunction)
+                buildInvokeMethod(functionClass.getInvokeFunction())
+            suspendFunctionClass?.let {
+                val invokeMethod = buildInvokeMethod(it.getInvokeFunction())
+                if (isKSuspendFunction)
+                    invokeMethod.overriddenSymbols += functionClass.getInvokeFunction().symbol
+            }
 
             functionReferenceClass.superTypes += superTypes
             functionReferenceClass.addFakeOverrides()
@@ -254,9 +264,13 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                 }
 
                 body = context.createIrBuilder(symbol, startOffset, endOffset).irBlockBody {
-                    if (!isKFunction)
-                        +irDelegatingConstructorCall(irBuiltIns.anyClass.owner.constructors.single())
-                    else +irDelegatingConstructorCall(kFunctionImplConstructorSymbol.owner).apply {
+                    val superConstructor = when {
+                        isKFunction -> kFunctionImplConstructorSymbol.owner
+                        isKSuspendFunction -> kSuspendFunctionImplConstructorSymbol.owner
+                        else -> irBuiltIns.anyClass.owner.constructors.single()
+                    }
+                    +irDelegatingConstructorCall(superConstructor).apply {
+                        if (!isKFunction && !isKSuspendFunction) return@apply
                         // TODO: Remove as soon as IR declarations have their originalDescriptor.
                         val name = (referencedFunction.descriptor as? WrappedSimpleFunctionDescriptor)?.originalDescriptor?.name
                                 ?: referencedFunction.name
@@ -302,7 +316,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                 this.createDispatchReceiverParameter()
 
                 superFunction.valueParameters.mapIndexedTo(valueParameters) { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
+                    parameter.copyTo(function, DECLARATION_ORIGIN_FUNCTION_REFERENCE_IMPL, index,
                             type = parameter.type.substitute(typeArgumentsMap))
                 }
 

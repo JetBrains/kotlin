@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.ir
 
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.getFunctionalClassKind
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -46,9 +44,6 @@ val IrTypeParameterSymbol.defaultType: IrType get() =  IrSimpleTypeImpl(
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 
-fun IrType.makeNullableAsSpecified(nullable: Boolean): IrType =
-        if (nullable) this.makeNullable() else this.makeNotNull()
-
 fun IrType.containsNull(): Boolean = if (this is IrSimpleType) {
     if (this.hasQuestionMark) {
         true
@@ -67,21 +62,3 @@ fun IrType.containsNull(): Boolean = if (this is IrSimpleType) {
 // TODO: get rid of these:
 fun IrType.isSubtypeOf(other: KotlinType): Boolean = this.toKotlinType().isSubtypeOf(other)
 fun IrType.isSubtypeOf(other: IrType): Boolean = this.isSubtypeOf(other.toKotlinType())
-
-val IrType.isFunctionOrKFunctionType: Boolean
-    get() = when (this) {
-        is IrSimpleType -> {
-            val kind = classifier.descriptor.getFunctionalClassKind()
-            kind == FunctionClassDescriptor.Kind.Function || kind == FunctionClassDescriptor.Kind.KFunction
-        }
-        else -> false
-    }
-
-internal tailrec fun IrType.getErasedTypeClass(): IrClassSymbol {
-    val classifier = this.classifierOrFail
-    return when (classifier) {
-        is IrClassSymbol -> classifier
-        is IrTypeParameterSymbol -> classifier.owner.superTypes.first().getErasedTypeClass()
-        else -> error(classifier)
-    }
-}
