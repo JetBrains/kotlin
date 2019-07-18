@@ -1695,6 +1695,26 @@ task coroutines_anonymousObject(type: KonanLocalTest) {
     source = "codegen/coroutines/anonymousObject.kt"
 }
 
+task coroutines_functionReference_simple(type: KonanLocalTest) {
+    goldValue = "42\n"
+    source = "codegen/coroutines/functionReference_simple.kt"
+}
+
+task coroutines_functionReference_eqeq_name(type: KonanLocalTest) {
+    goldValue = ""
+    source = "codegen/coroutines/functionReference_eqeq_name.kt"
+}
+
+task coroutines_functionReference_invokeAsFunction(type: KonanLocalTest) {
+    goldValue = "159\n"
+    source = "codegen/coroutines/functionReference_invokeAsFunction.kt"
+}
+
+task coroutines_functionReference_lambdaAsSuspendLambda(type: KonanLocalTest) {
+    goldValue = ""
+    source = "codegen/coroutines/functionReference_lambdaAsSuspendLambda.kt"
+}
+
 task AbstractMutableCollection(type: KonanLocalTest) {
     expectedExitStatus = 0
     source = "runtime/collections/AbstractMutableCollection.kt"
