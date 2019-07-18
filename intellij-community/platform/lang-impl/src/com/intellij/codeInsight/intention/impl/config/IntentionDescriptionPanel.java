@@ -32,7 +32,8 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 
-class IntentionDescriptionPanel {
+// used in Rider
+public class IntentionDescriptionPanel {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeInsight.intention.impl.config.IntentionDescriptionPanel");
   private JPanel myPanel;
 
@@ -46,7 +47,7 @@ class IntentionDescriptionPanel {
   @NonNls private static final String BEFORE_TEMPLATE = "before.java.template";
   @NonNls private static final String AFTER_TEMPLATE = "after.java.template";
 
-  IntentionDescriptionPanel() {
+  public IntentionDescriptionPanel() {
     myBeforePanel.setBorder(IdeBorderFactory.createTitledBorder("Before:", false, JBUI.insetsTop(8)).setShowLine(false));
     myAfterPanel.setBorder(IdeBorderFactory.createTitledBorder("After:", false, JBUI.insetsTop(8)).setShowLine(false));
     myPoweredByPanel.setBorder(IdeBorderFactory.createTitledBorder(
