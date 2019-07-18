@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.*
+import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -83,6 +85,7 @@ class ExpressionsConverter(
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
                 SUPER_EXPRESSION -> convertSuperExpression(expression)
+                OBJECT_LITERAL -> convertObjectLiteral(expression)
 
                 FUN -> declarationsConverter.convertFunctionDeclaration(expression)
                 else -> FirExpressionStub(session, null)
@@ -692,6 +695,20 @@ class ExpressionsConverter(
             identifier != null -> FirNamedArgumentExpressionImpl(session, null, identifier.nameAsSafeName(), isSpread, firExpression)
             isSpread -> FirSpreadArgumentExpressionImpl(session, null, firExpression)
             else -> firExpression
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseObjectLiteral
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitObjectLiteralExpression
+     */
+    private fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
+        val firObject = declarationsConverter.convertClass(objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()) as FirClass
+        return FirAnonymousObjectImpl(session, null).apply {
+            annotations += firObject.annotations
+            superTypeRefs += firObject.superTypeRefs
+            this.typeRef = superTypeRefs.first()
+            declarations += firObject.declarations
         }
     }
 
