@@ -83,6 +83,7 @@ class ExpressionsConverter(
                 FOR -> convertFor(expression)
                 BREAK, CONTINUE -> convertLoopJump(expression)
                 RETURN -> convertReturn(expression)
+                THROW -> convertThrow(expression)
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
                 SUPER_EXPRESSION -> convertSuperExpression(expression)
@@ -802,6 +803,19 @@ class ExpressionsConverter(
 
         val result = firExpression ?: FirUnitExpression(session, null)
         return result.toReturn(labelName)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseThrow
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitThrowExpression
+     */
+    private fun convertThrow(throwExpression: LighterASTNode): FirExpression {
+        var firExpression: FirExpression? = null
+        throwExpression.forEachChildren {
+            if (it.isExpression()) firExpression = getAsFirExpression(it)
+        }
+
+        return FirThrowExpressionImpl(session, null, firExpression ?: FirErrorExpressionImpl(session, null, "Nothing to throw"))
     }
 
     /**
