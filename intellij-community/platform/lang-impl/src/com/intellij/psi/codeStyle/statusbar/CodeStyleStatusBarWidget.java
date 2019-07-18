@@ -30,7 +30,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
   public static final String WIDGET_ID = CodeStyleStatusBarWidget.class.getName();
 
   public CodeStyleStatusBarWidget(@NotNull Project project) {
-    super(project);
+    super(project, true);
   }
 
   @NotNull
