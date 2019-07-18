@@ -4,14 +4,15 @@ package org.jetbrains.plugins.gradle.settings
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
-import org.jetbrains.plugins.gradle.importing.GradleBuildScriptBuilderEx
 import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
 import org.junit.runners.Parameterized
 
 abstract class GradleSubscriptionTestCase : GradleImportingTestCase() {
 
   protected fun linkProject() {
-    importProject(GradleBuildScriptBuilderEx().withJavaPlugin().generate())
+    val settings = ExternalSystemApiUtil.getSettings(myProject, externalSystemId)
+    currentExternalProjectSettings.externalProjectPath = projectPath
+    settings.linkProject(currentExternalProjectSettings)
   }
 
   protected fun unlinkProject() {
@@ -23,7 +24,7 @@ abstract class GradleSubscriptionTestCase : GradleImportingTestCase() {
     val settingsListener = object : GradleSettingsListenerAdapter() {
       override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) = listener()
     }
-    ExternalSystemApiUtil.subscribe(myProject, externalSystemId, subscription, settingsListener)
+    ExternalSystemApiUtil.subscribe(myProject, externalSystemId, settingsListener, subscription)
   }
 
   protected fun onProjectLinked(listener: () -> Unit) {
