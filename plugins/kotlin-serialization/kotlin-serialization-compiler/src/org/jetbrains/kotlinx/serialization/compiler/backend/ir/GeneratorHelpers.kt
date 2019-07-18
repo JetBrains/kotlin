@@ -12,36 +12,23 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrTypeParameterImpl
-import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
+import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.makeNotNull
-import org.jetbrains.kotlin.ir.types.toKotlinType
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.TypeProjectionImpl
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlinx.serialization.compiler.backend.common.findTypeSerializerOrContext
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.contextSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.enumSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.polymorphicSerializerId
-import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.referenceArraySerializerId
+import org.jetbrains.kotlinx.serialization.compiler.backend.jvm.*
 import org.jetbrains.kotlinx.serialization.compiler.resolve.*
 
 val BackendContext.externalSymbols: ReferenceSymbolTable get() = ir.symbols.externalSymbolTable
@@ -96,10 +83,11 @@ interface IrBuilderExtension {
         ) else compilerContext.externalSymbols.referenceConstructor(descriptor).owner
         c.parent = this
         c.returnType = descriptor.returnType.toIrType()
-        if (!fromStubs || overwriteValueParameters) c.createParameterDeclarations(receiver = null, overwriteValueParameters = overwriteValueParameters)
-        if (c.typeParameters.isEmpty()) {
-            c.copyTypeParamsFromDescriptor()
-        }
+        if (!fromStubs || overwriteValueParameters) c.createParameterDeclarations(
+            receiver = null,
+            overwriteValueParameters = overwriteValueParameters,
+            copyTypeParameters = false
+        )
         c.body = compilerContext.createIrBuilder(c.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
         this.addMember(c)
     }
@@ -247,8 +235,10 @@ interface IrBuilderExtension {
             propertyDescriptor
         )
         irProperty.parent = propertyParent
-        irProperty.backingField =
-            generatePropertyBackingField(propertyDescriptor, irProperty).apply { parent = propertyParent }
+        irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty).apply {
+            parent = propertyParent
+            correspondingProperty = irProperty
+        }
         val fieldSymbol = irProperty.backingField!!.symbol
         irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol) }
             ?.apply { parent = propertyParent }
@@ -356,7 +346,11 @@ interface IrBuilderExtension {
         }
     }
 
-    fun IrFunction.createParameterDeclarations(receiver: IrValueParameter?, overwriteValueParameters: Boolean = false) {
+    fun IrFunction.createParameterDeclarations(
+        receiver: IrValueParameter?,
+        overwriteValueParameters: Boolean = false,
+        copyTypeParameters: Boolean = true
+    ) {
         fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
             this@createParameterDeclarations.startOffset, this@createParameterDeclarations.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
@@ -377,7 +371,7 @@ interface IrBuilderExtension {
         valueParameters.addAll(descriptor.valueParameters.map { it.irValueParameter() })
 
         assert(typeParameters.isEmpty())
-        copyTypeParamsFromDescriptor()
+        if (copyTypeParameters) copyTypeParamsFromDescriptor()
     }
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
