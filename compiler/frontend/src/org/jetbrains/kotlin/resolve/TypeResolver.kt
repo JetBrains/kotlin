@@ -177,7 +177,8 @@ class TypeResolver(
                 else -> null
             }
 
-            if (targetType is KtFunctionType && annotationEntries != null) {
+            // `targetType.stub == null` means that we don't apply this check for files that are built with stubs (that aren't opened in IDE and not in compile time)
+            if (targetType is KtFunctionType && targetType.stub == null && annotationEntries != null) {
                 checkNonParenthesizedAnnotationsOnFunctionalType(targetType, annotationEntries, c.trace)
             }
         }
