@@ -6,15 +6,13 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirErrorLoop
-import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.labels.FirLabelImpl
@@ -29,6 +27,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.*
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
+import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
@@ -39,6 +38,7 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -73,6 +73,7 @@ class ExpressionsConverter(
                 CALLABLE_REFERENCE_EXPRESSION -> convertCallableReferenceExpression(expression)
                 in qualifiedAccessTokens -> convertQualifiedExpression(expression)
                 CALL_EXPRESSION -> convertCallExpression(expression)
+                WHEN -> convertWhenExpression(expression)
                 ARRAY_ACCESS_EXPRESSION -> convertArrayAccessExpression(expression)
                 COLLECTION_LITERAL_EXPRESSION -> convertCollectionLiteralExpresion(expression)
                 STRING_TEMPLATE -> convertStringTemplate(expression)
@@ -82,6 +83,7 @@ class ExpressionsConverter(
                 WHILE -> convertWhile(expression)
                 FOR -> convertFor(expression)
                 TRY -> convertTryExpression(expression)
+                IF -> convertIfExpression(expression)
                 BREAK, CONTINUE -> convertLoopJump(expression)
                 RETURN -> convertReturn(expression)
                 THROW -> convertThrow(expression)
@@ -555,6 +557,120 @@ class ExpressionsConverter(
     }
 
     /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhen
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitWhenExpression
+     */
+    private fun convertWhenExpression(whenExpression: LighterASTNode): FirExpression {
+        var subjectExpression: FirExpression? = null
+        var subjectVariable: FirVariable? = null
+        val whenEntries = mutableListOf<WhenEntry>()
+        whenExpression.forEachChildren {
+            when (it.tokenType) {
+                PROPERTY -> subjectVariable = declarationsConverter.convertPropertyDeclaration(it) as FirVariable
+                DESTRUCTURING_DECLARATION -> subjectExpression = getAsFirExpression(it)
+                WHEN_ENTRY -> whenEntries += convertWhenEntry(it)
+                else -> if (it.isExpression()) subjectExpression = getAsFirExpression(it)
+            }
+        }
+
+        subjectExpression = subjectVariable?.initializer ?: subjectExpression
+        val hasSubject = subjectExpression != null
+        val subject = FirWhenSubject()
+        return FirWhenExpressionImpl(
+            session,
+            null,
+            subjectExpression,
+            subjectVariable
+        ).apply {
+            if (hasSubject) {
+                subject.bind(this)
+            }
+            for (entry in whenEntries) {
+                val branch = entry.firBlock
+                branches += if (!entry.isElse) {
+                    if (hasSubject) {
+                        val firCondition = entry.toFirWhenCondition(this@ExpressionsConverter.session, subject)
+                        FirWhenBranchImpl(this@ExpressionsConverter.session, null, firCondition, branch)
+                    } else {
+                        val firCondition = entry.toFirWhenConditionWithoutSubject(this@ExpressionsConverter.session)
+                        FirWhenBranchImpl(this@ExpressionsConverter.session, null, firCondition, branch)
+                    }
+                } else {
+                    FirWhenBranchImpl(
+                        this@ExpressionsConverter.session, null, FirElseIfTrueCondition(this@ExpressionsConverter.session, null), branch
+                    )
+                }
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhenEntry
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhenEntryNotElse
+     */
+    private fun convertWhenEntry(whenEntry: LighterASTNode): WhenEntry {
+        var isElse = false
+        lateinit var firBlock: FirBlock
+        val conditions = mutableListOf<FirExpression>()
+        whenEntry.forEachChildren {
+            when (it.tokenType) {
+                WHEN_CONDITION_EXPRESSION -> conditions += convertWhenConditionExpression(it)
+                WHEN_CONDITION_IN_RANGE -> conditions += convertWhenConditionInRange(it)
+                WHEN_CONDITION_IS_PATTERN -> conditions += convertWhenConditionIsPattern(it)
+                ELSE_KEYWORD -> isElse = true
+                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
+                else -> if (it.isExpression()) firBlock = declarationsConverter.convertBlock(it)
+            }
+        }
+
+        return WhenEntry(conditions, firBlock, isElse)
+    }
+
+    private fun convertWhenConditionExpression(whenCondition: LighterASTNode): FirExpression {
+        lateinit var firExpression: FirExpression
+        whenCondition.forEachChildren {
+            when (it.tokenType) {
+                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+            }
+        }
+
+        return FirOperatorCallImpl(session, null, FirOperation.EQ).apply {
+            arguments += firExpression
+        }
+    }
+
+    private fun convertWhenConditionInRange(whenCondition: LighterASTNode): FirExpression {
+        var isNegate = false
+        lateinit var firExpression: FirExpression
+        whenCondition.forEachChildren {
+            when (it.tokenType) {
+                NOT_IN -> isNegate = true
+                else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
+            }
+        }
+
+        val name = if (isNegate) OperatorNameConventions.NOT else SpecialNames.NO_NAME_PROVIDED
+        return FirFunctionCallImpl(session, null).apply {
+            calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, name)
+            explicitReceiver = firExpression
+        }
+    }
+
+    private fun convertWhenConditionIsPattern(whenCondition: LighterASTNode): FirExpression {
+        lateinit var firOperation: FirOperation
+        lateinit var firType: FirTypeRef
+        whenCondition.forEachChildren {
+            when (it.tokenType) {
+                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
+                IS_KEYWORD -> firOperation = FirOperation.IS
+                NOT_IS -> firOperation = FirOperation.NOT_IS
+            }
+        }
+
+        return FirTypeOperatorCallImpl(session, null, firOperation, firType)
+    }
+
+    /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseArrayAccess
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitArrayAccessExpression
      */
@@ -768,29 +884,57 @@ class ExpressionsConverter(
      */
     private fun convertCatchClause(catchClause: LighterASTNode): Pair<ValueParameter?, FirBlock> {
         var valueParameter: ValueParameter? = null
-        lateinit var firBlock: FirBlock
+        var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
             when (it.tokenType) {
                 VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it).first()
-                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
+                BLOCK -> blockNode = it
             }
         }
 
-        return Pair(valueParameter, firBlock)
+        return Pair(valueParameter, declarationsConverter.convertBlock(blockNode))
     }
 
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
      */
     private fun convertFinally(finallyExpression: LighterASTNode): FirBlock {
-        lateinit var firBlock: FirBlock
+        var blockNode: LighterASTNode? = null
         finallyExpression.forEachChildren {
             when (it.tokenType) {
-                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
+                BLOCK -> blockNode = it
             }
         }
 
-        return firBlock
+        return declarationsConverter.convertBlock(blockNode)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseIf
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIfExpression
+     */
+    private fun convertIfExpression(ifExpression: LighterASTNode): FirExpression {
+        var condition: FirExpression? = null
+        var thenBlock: LighterASTNode? = null
+        var elseBlock: LighterASTNode? = null
+        ifExpression.forEachChildren {
+            when (it.tokenType) {
+                CONDITION -> condition = convertCondition(it)
+                THEN -> thenBlock = it
+                ELSE -> elseBlock = it
+            }
+        }
+
+        return FirWhenExpressionImpl(session, null).apply {
+            val firCondition =
+                condition ?: FirErrorExpressionImpl(this@ExpressionsConverter.session, null, "If statement should have condition")
+            val trueBranch = convertLoopBody(thenBlock)
+            branches += FirWhenBranchImpl(this@ExpressionsConverter.session, null, firCondition, trueBranch)
+            val elseBranch = convertLoopBody(elseBlock)
+            branches += FirWhenBranchImpl(
+                this@ExpressionsConverter.session, null, FirElseIfTrueCondition(this@ExpressionsConverter.session, null), elseBranch
+            )
+        }
     }
 
     /**
