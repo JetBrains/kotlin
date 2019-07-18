@@ -75,6 +75,7 @@ public class GotoImplementationHandler extends GotoTargetHandler {
     PsiElement[] targets = new ImplementationSearcher.FirstImplementationsSearcher() {
       @Override
       protected boolean accept(PsiElement element) {
+        if (reference != null && !reference.getElement().isValid()) return false;
         return instance.acceptImplementationForReference(reference, element);
       }
 
