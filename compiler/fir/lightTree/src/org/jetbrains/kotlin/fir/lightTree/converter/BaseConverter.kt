@@ -27,7 +27,6 @@ open class BaseConverter(
     protected val implicitType = FirImplicitTypeRefImpl(session, null)
 
     fun LighterASTNode.getParent(): LighterASTNode? {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
         return tree.getParent(this)
     }
 
