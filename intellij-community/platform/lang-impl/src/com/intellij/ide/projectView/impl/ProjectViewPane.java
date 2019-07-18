@@ -16,8 +16,6 @@ import com.intellij.ide.scratch.ScratchUtil;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.AbstractTreeNode;
 import com.intellij.ide.util.treeView.AbstractTreeUpdater;
-import com.intellij.openapi.actionSystem.ActionManager;
-import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.project.DumbAwareAction;
@@ -43,6 +41,7 @@ import javax.swing.tree.TreeModel;
 import java.awt.*;
 
 import static com.intellij.openapi.module.ModuleGrouperKt.isQualifiedModuleNamesEnabled;
+import static java.awt.EventQueue.isDispatchThread;
 
 public class ProjectViewPane extends AbstractProjectViewPSIPane {
   @NonNls public static final String ID = "ProjectPane";
@@ -139,6 +138,8 @@ public class ProjectViewPane extends AbstractProjectViewPSIPane {
    * @return {@code true} if 'Project View' have more than one top-level module node or have top-level module group nodes
    */
   private boolean hasSeveralTopLevelModuleNodes() {
+    if (!isDispatchThread()) return true; // do not check nodes during building
+    // TODO: have to rewrite this logic without using walking in a tree
     TreeModel treeModel = myTree.getModel();
     Object root = treeModel.getRoot();
     int count = treeModel.getChildCount(root);
