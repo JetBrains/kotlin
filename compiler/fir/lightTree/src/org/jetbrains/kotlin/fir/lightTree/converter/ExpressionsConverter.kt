@@ -81,6 +81,7 @@ class ExpressionsConverter(
                 DO_WHILE -> convertDoWhile(expression)
                 WHILE -> convertWhile(expression)
                 FOR -> convertFor(expression)
+                TRY -> convertTryExpression(expression)
                 BREAK, CONTINUE -> convertLoopJump(expression)
                 RETURN -> convertReturn(expression)
                 THROW -> convertThrow(expression)
@@ -737,6 +738,59 @@ class ExpressionsConverter(
             firBlock == null -> FirEmptyExpressionBlock(session)
             else -> firBlock!!
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitTryExpression
+     */
+    private fun convertTryExpression(tryExpression: LighterASTNode): FirExpression {
+        lateinit var tryBlock: FirBlock
+        val catchClauses = mutableListOf<Pair<ValueParameter?, FirBlock>>()
+        var finallyBlock: FirBlock? = null
+        tryExpression.forEachChildren {
+            when (it.tokenType) {
+                BLOCK -> tryBlock = declarationsConverter.convertBlock(it)
+                CATCH -> catchClauses += convertCatchClause(it)
+                FINALLY -> finallyBlock = convertFinally(it)
+            }
+        }
+        return FirTryExpressionImpl(session, null, tryBlock, finallyBlock).apply {
+            for ((parameter, block) in catchClauses) {
+                if (parameter == null) continue
+                catches += FirCatchImpl(this@ExpressionsConverter.session, null, parameter.firValueParameter, block)
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
+     */
+    private fun convertCatchClause(catchClause: LighterASTNode): Pair<ValueParameter?, FirBlock> {
+        var valueParameter: ValueParameter? = null
+        lateinit var firBlock: FirBlock
+        catchClause.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER_LIST -> valueParameter = declarationsConverter.convertValueParameters(it).first()
+                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
+            }
+        }
+
+        return Pair(valueParameter, firBlock)
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
+     */
+    private fun convertFinally(finallyExpression: LighterASTNode): FirBlock {
+        lateinit var firBlock: FirBlock
+        finallyExpression.forEachChildren {
+            when (it.tokenType) {
+                BLOCK -> firBlock = declarationsConverter.convertBlock(it)
+            }
+        }
+
+        return firBlock
     }
 
     /**
