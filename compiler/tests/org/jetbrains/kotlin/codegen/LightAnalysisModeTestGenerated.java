@@ -3667,6 +3667,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/classes/inner"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
             }
 
+            @TestMetadata("extensionWithOuter.kt")
+            public void testExtensionWithOuter() throws Exception {
+                runTest("compiler/testData/codegen/box/classes/inner/extensionWithOuter.kt");
+            }
+
             @TestMetadata("instantiateInDerived.kt")
             public void testInstantiateInDerived() throws Exception {
                 runTest("compiler/testData/codegen/box/classes/inner/instantiateInDerived.kt");
