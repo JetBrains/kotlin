@@ -276,6 +276,7 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
       public void processTerminated(@NotNull ProcessEvent event) {
         if (dropProcessInfo(key, null, event.getProcessHandler())) {
           fireModificationCountChanged();
+          onProcessTerminated(event);
         }
       }
 
@@ -330,6 +331,8 @@ public abstract class RemoteProcessSupport<Target, EntryPoint, Parameters> {
       }
     };
   }
+
+  protected void onProcessTerminated(ProcessEvent event) {}
 
   protected void sendDataAfterStart(ProcessHandler handler){}
 
