@@ -21,6 +21,8 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.TransactionGuard;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.components.PersistentStateComponent;
@@ -72,6 +74,7 @@ import com.intellij.ui.content.ContentManagerEvent;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.ui.tree.TreeVisitor;
 import com.intellij.util.*;
+import com.intellij.util.concurrency.AppExecutorUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.messages.MessageBusConnection;
@@ -91,6 +94,7 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -105,6 +109,8 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.projectView.impl.ProjectViewImpl");
   private static final Key<String> ID_KEY = Key.create("pane-id");
   private static final Key<String> SUB_ID_KEY = Key.create("pane-sub-id");
+  private static final ExecutorService ourParsingExecutor =
+    AppExecutorUtil.createBoundedApplicationPoolExecutor("Project View Autoscroll", 1);
   private final CopyPasteDelegator myCopyPasteDelegator;
   private boolean isInitialized;
   private final AtomicBoolean myExtensionsLoaded = new AtomicBoolean(false);
@@ -2054,8 +2060,28 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
 
     @Override
     void selectInCurrentTarget() {
-      PsiDocumentManager manager = PsiDocumentManager.getInstance(getProject());
-      if (manager != null) manager.performLaterWhenAllCommitted(super::selectInCurrentTarget);
+      if (PsiDocumentManager.getInstance(getProject()) == null) return;
+
+      runWhenPsiAtCaretIsParsed(super::selectInCurrentTarget);
+    }
+
+    private void runWhenPsiAtCaretIsParsed(Runnable runnable) {
+      int offset = editor.getCaretModel().getOffset();
+      ReadAction
+        .nonBlocking(() -> {
+          PsiFile file = getPsiFile();
+          return file == null ? null : file.findElementAt(offset);
+        })
+        .withDocumentsCommitted(getProject())
+        .finishOnUiThread(ModalityState.defaultModalityState(), parsedLeaf -> {
+          if (editor.getCaretModel().getOffset() != offset) {
+            runWhenPsiAtCaretIsParsed(runnable);
+          } else {
+            runnable.run();
+            ObjectUtils.reachabilityFence(parsedLeaf);
+          }
+        })
+        .submit(ourParsingExecutor);
     }
 
     @Override
