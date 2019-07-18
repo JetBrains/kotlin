@@ -154,7 +154,8 @@ public class FindInProjectUtil {
 
       for (VirtualFileSystem fs : fileSystems) {
         if (!(fs instanceof LocalFileProvider)) continue;
-        VirtualFile file = fs.findFileByPath(path);
+        // note that findLocalVirtualFileByPath works differently from findFileByPath e.g. for path =  Foo.jar
+        VirtualFile file = ((LocalFileProvider)fs).findLocalVirtualFileByPath(path);
         if (file != null && file.isDirectory()) {
           if (file.getChildren().length > 0) {
             virtualFile = file;
