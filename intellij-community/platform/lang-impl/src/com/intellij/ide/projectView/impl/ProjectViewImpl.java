@@ -2052,7 +2052,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
             runWhenPsiAtCaretIsParsed(runnable);
           } else {
             runnable.run();
-            ObjectUtils.reachabilityFence(parsedLeaf);
           }
         })
         .submit(ourParsingExecutor);
