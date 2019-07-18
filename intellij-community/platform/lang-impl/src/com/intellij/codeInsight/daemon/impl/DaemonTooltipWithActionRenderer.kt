@@ -118,7 +118,8 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
     val settingsComponent = createSettingsComponent(hintHint, tooltipReloader, hasMore, newLayout)
 
     val settingsConstraints = GridBagConstraints(1, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTH, GridBagConstraints.HORIZONTAL,
-                                                 JBUI.insets(if (newLayout) 7 else 4, 7, 4, if (newLayout) 2 else 4), 0, 0)
+                                                 JBUI.insets(if (newLayout) 7 else 4, 7, if (newLayout) 0 else 4, if (newLayout) 2 else 4),
+                                                 0, 0)
     grid.add(settingsComponent, settingsConstraints)
 
     if (isShowActions()) {
