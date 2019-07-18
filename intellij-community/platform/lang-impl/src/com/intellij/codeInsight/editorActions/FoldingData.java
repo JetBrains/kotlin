@@ -51,9 +51,9 @@ public class FoldingData implements Cloneable, Serializable {
       return ourFlavor;
     }
     try {
-      ourFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + FoldingData.class.getName(), "FoldingData");
+      ourFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + FoldingData.class.getName(), "FoldingData", FoldingData.class.getClassLoader());
     }
-    catch (NoClassDefFoundError | IllegalArgumentException e) {
+    catch (NoClassDefFoundError | IllegalArgumentException | ClassNotFoundException e) {
       return null;
     }
     return ourFlavor;

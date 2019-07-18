@@ -47,9 +47,9 @@ public class IndentTransferableData implements TextBlockTransferableData, Serial
       return ourFlavor;
     }
     try {
-      ourFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + IndentTransferableData.class.getName(), "Python indent transferable data");
+      ourFlavor = new DataFlavor(DataFlavor.javaJVMLocalObjectMimeType + ";class=" + IndentTransferableData.class.getName(), "Python indent transferable data", IndentTransferableData.class.getClassLoader());
     }
-    catch (NoClassDefFoundError | IllegalArgumentException e) {
+    catch (NoClassDefFoundError | IllegalArgumentException | ClassNotFoundException e) {
       return null;
     }
     return ourFlavor;
