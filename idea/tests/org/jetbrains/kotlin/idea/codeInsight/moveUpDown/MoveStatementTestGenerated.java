@@ -145,6 +145,26 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
                 runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtFunction2.kt");
             }
 
+            @TestMetadata("classAtImport.kt")
+            public void testClassAtImport() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtImport.kt");
+            }
+
+            @TestMetadata("classAtImportInScript.kts")
+            public void testClassAtImportInScript() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtImportInScript.kts");
+            }
+
+            @TestMetadata("classAtPackage.kt")
+            public void testClassAtPackage() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtPackage.kt");
+            }
+
+            @TestMetadata("classAtPackageInScript.kts")
+            public void testClassAtPackageInScript() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtPackageInScript.kts");
+            }
+
             @TestMetadata("classAtProperty1.kt")
             public void testClassAtProperty1() throws Exception {
                 runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/class/classAtProperty1.kt");

@@ -292,8 +292,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
 
         PsiElement sibling = getLastNonWhiteSiblingInLine(firstNonWhiteSibling(sourceRange, down), editor, down);
 
-        // Either reached last sibling, or jumped over multi-line whitespace
-        if (sibling == null)  {
+        if (sibling == null || sibling instanceof KtPackageDirective || sibling instanceof KtImportList)  {
             info.toMove2 = null;
             return true;
         }
