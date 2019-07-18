@@ -52,6 +52,7 @@ public class UnknownModuleType extends ModuleType {
     return myModuleType.getDescription();
   }
 
+  @NotNull
   @Override
   public Icon getNodeIcon(boolean isOpened) {
     return myModuleType.getIcon();

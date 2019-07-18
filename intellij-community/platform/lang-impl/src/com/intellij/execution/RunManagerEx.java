@@ -53,6 +53,7 @@ public abstract class RunManagerEx extends RunManager {
     return getConfigurationIcon(settings, false);
   }
 
+  @NotNull
   public abstract Icon getConfigurationIcon(@NotNull RunnerAndConfigurationSettings settings, boolean withLiveIndicator);
 
   /**

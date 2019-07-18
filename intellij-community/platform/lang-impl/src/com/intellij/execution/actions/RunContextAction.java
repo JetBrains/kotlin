@@ -30,6 +30,7 @@ public class RunContextAction extends BaseRunConfigurationAction {
 
   public RunContextAction(@NotNull final Executor executor) {
     super(ExecutionBundle.message("perform.action.with.context.configuration.action.name", executor.getStartActionText()), null, new IconLoader.LazyIcon() {
+      @NotNull
       @Override
       protected Icon compute() {
         return executor.getIcon();

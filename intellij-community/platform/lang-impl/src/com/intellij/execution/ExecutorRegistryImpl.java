@@ -205,6 +205,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
     private ExecutorAction(@NotNull final Executor executor) {
       super(executor.getStartActionText(), executor.getDescription(), new IconLoader.LazyIcon() {
+        @NotNull
         @Override
         protected Icon compute() {
           return executor.getIcon();

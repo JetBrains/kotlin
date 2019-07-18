@@ -40,6 +40,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
   private static final RepaintScheduler ourRepaintScheduler = new RepaintScheduler();
   @NotNull
   private final Icon myDelegateIcon;
+  @NotNull
   private volatile Icon myScaledDelegateIcon;
   private Function<? super T, ? extends Icon> myEvaluator;
   private volatile boolean myIsScheduled;
@@ -249,7 +250,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
     }
   }
 
-  @Nullable
+  @NotNull
   @Override
   public Icon retrieveIcon() {
     return isDone() ? myScaledDelegateIcon : evaluate();

@@ -25,6 +25,7 @@ public class EnforcedPlainTextFileTypeFactory extends FileTypeFactory {
   public static final String ENFORCED_PLAIN_TEXT = "Enforced Plain Text";
 
   private static final Icon ENFORCED_PLAIN_TEXT_LAZY_ICON = new IconLoader.LazyIcon() {
+    @NotNull
     @Override
     protected Icon compute() {
       return new LayeredIcon(AllIcons.FileTypes.Text, PlatformIcons.EXCLUDED_FROM_COMPILE_ICON);

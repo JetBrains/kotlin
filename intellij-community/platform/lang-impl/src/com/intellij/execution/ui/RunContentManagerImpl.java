@@ -30,8 +30,10 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 import com.intellij.ui.AppUIUtil;
 import com.intellij.ui.content.*;
 import com.intellij.ui.docking.DockManager;
+import com.intellij.util.ObjectUtils;
 import com.intellij.util.SmartList;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -300,8 +302,7 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
             if (manager == null) return;
 
             boolean alive = isAlive(manager);
-            Icon base = myToolwindowIdToBaseIconMap.get(toolWindowId);
-            toolWindow.setIcon(alive ? ExecutionUtil.getLiveIndicator(base) : base);
+            setToolWindowIcon(alive, toolWindowId, toolWindow);
 
             Icon icon = descriptor.getIcon();
             content.setIcon(icon == null ? executor.getDisabledIcon() : IconLoader.getTransparentIcon(icon));
@@ -474,6 +475,7 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
     return contentManager;
   }
 
+  @NotNull
   private static String getToolWindowIdForRunner(final Executor executor, final RunContentDescriptor descriptor) {
     if (descriptor != null && descriptor.getContentToolWindowId() != null) {
       return descriptor.getContentToolWindowId();
@@ -628,12 +630,16 @@ public class RunContentManagerImpl implements RunContentManager, Disposable {
         String toolWindowId = entry.getKey();
         ToolWindow toolWindow = ToolWindowManager.getInstance(myProject).getToolWindow(toolWindowId);
         if (toolWindow != null) {
-          Icon base = myToolwindowIdToBaseIconMap.get(toolWindowId);
-          toolWindow.setIcon(alive ? ExecutionUtil.getLiveIndicator(base) : base);
+          setToolWindowIcon(alive, toolWindowId, toolWindow);
         }
         return;
       }
     }
+  }
+
+  private void setToolWindowIcon(boolean alive, @NotNull String toolWindowId, @NotNull ToolWindow toolWindow) {
+    Icon base = myToolwindowIdToBaseIconMap.get(toolWindowId);
+    toolWindow.setIcon(alive ? ExecutionUtil.getLiveIndicator(base) : ObjectUtils.notNull(base, EmptyIcon.ICON_13));
   }
 
   private static boolean isAlive(@NotNull ContentManager contentManager) {

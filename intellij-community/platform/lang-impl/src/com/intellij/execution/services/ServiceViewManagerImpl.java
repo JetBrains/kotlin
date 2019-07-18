@@ -512,6 +512,7 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
     return ToolWindowId.SERVICES;
   }
 
+  @NotNull
   private static Icon getToolWindowIcon() {
     return AllIcons.Toolwindows.ToolWindowServices;
   }

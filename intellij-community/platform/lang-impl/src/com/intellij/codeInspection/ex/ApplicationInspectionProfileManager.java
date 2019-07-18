@@ -105,6 +105,7 @@ public class ApplicationInspectionProfileManager extends BaseInspectionProfileMa
         SeverityRegistrar.registerStandard(t, highlightSeverity);
         TextAttributesKey attributesKey = t.getAttributesKey();
         Icon icon = t instanceof HighlightInfoType.Iconable ? new IconLoader.LazyIcon() {
+          @NotNull
           @Override
           protected Icon compute() {
             return ((HighlightInfoType.Iconable)t).getIcon();
