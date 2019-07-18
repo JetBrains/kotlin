@@ -9,7 +9,7 @@ import com.intellij.task.ModuleBuildTask
 import com.intellij.task.ModuleFilesBuildTask
 import com.intellij.task.impl.AbstractProjectTask
 import com.jetbrains.cidr.execution.CidrBuildConfiguration
-import org.jetbrains.konan.KonanBundle
+import com.jetbrains.konan.KonanBundle
 
 internal fun ModuleBuildTask.isSupported() =
         when (this) {

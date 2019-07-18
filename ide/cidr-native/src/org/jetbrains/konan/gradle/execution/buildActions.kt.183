@@ -10,7 +10,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.text.StringUtil.shortenPathWithEllipsis
 import com.intellij.task.ProjectTaskManager
 import com.jetbrains.cidr.execution.build.BaseBuildAction
-import org.jetbrains.konan.KonanBundle.message
+import com.jetbrains.konan.KonanBundle.message
 import org.jetbrains.konan.gradle.GradleKonanWorkspace
 
 abstract class KonanProjectBasedBuildAction(text: String) : BaseBuildAction(text) {
