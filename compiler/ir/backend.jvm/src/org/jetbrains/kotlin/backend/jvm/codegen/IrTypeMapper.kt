@@ -51,14 +51,14 @@ class IrTypeMapper(private val context: JvmBackendContext) {
     fun mapFieldSignature(irField: IrField) =
         kotlinTypeMapper.mapFieldSignature(irField.type.toKotlinType(), irField.descriptor)
 
-    fun mapFunctionName(irReturnTarget: IrReturnTarget, ownerKind: OwnerKind): String =
-        kotlinTypeMapper.mapFunctionName(irReturnTarget.descriptor, ownerKind)
+    fun mapFunctionName(irFunction: IrFunction, ownerKind: OwnerKind): String =
+        kotlinTypeMapper.mapFunctionName(irFunction.descriptor, ownerKind)
 
     fun mapImplementationOwner(irDeclaration: IrDeclaration): Type =
         kotlinTypeMapper.mapImplementationOwner(irDeclaration.descriptor)
 
-    fun mapReturnType(irReturnTarget: IrReturnTarget): Type =
-        kotlinTypeMapper.mapReturnType(irReturnTarget.descriptor)
+    fun mapReturnType(irFunction: IrFunction): Type =
+        kotlinTypeMapper.mapReturnType(irFunction.descriptor)
 
     fun mapSignatureSkipGeneric(f: IrFunction, kind: OwnerKind = OwnerKind.IMPLEMENTATION): JvmMethodSignature =
         kotlinTypeMapper.mapSignatureSkipGeneric(f.descriptor, kind)
