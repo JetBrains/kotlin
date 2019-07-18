@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 
 class DeclarationsConverter(
     private val session: FirSession,
@@ -102,16 +103,12 @@ class DeclarationsConverter(
         val firStatements = mutableListOf<FirStatement>()
         block.forEachChildren {
             when (it.tokenType) {
-                //TODO("not implemented")
-                BLOCK -> ""
-
                 CLASS -> firStatements += convertClass(it) as FirStatement
                 FUN -> firStatements += convertFunctionDeclaration(it) as FirStatement
                 PROPERTY -> firStatements += convertPropertyDeclaration(it) as FirStatement
                 TYPEALIAS -> firStatements += convertTypeAlias(it) as FirStatement
                 OBJECT_DECLARATION -> firStatements += convertClass(it) as FirStatement
                 CLASS_INITIALIZER -> firStatements += convertAnonymousInitializer(it) as FirStatement
-
                 else -> if (it.isExpression()) firStatements += expressionConverter.getAsFirExpression<FirStatement>(it)
             }
         }
@@ -330,7 +327,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
-    private fun convertClass(classNode: LighterASTNode): FirDeclaration {
+    fun convertClass(classNode: LighterASTNode): FirDeclaration {
         var modifiers = Modifier(session)
         lateinit var classKind: ClassKind
         var identifier: String? = null
