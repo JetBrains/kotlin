@@ -469,7 +469,7 @@ fun generateTemporaryVariable(
         symbol.bind(this)
     }
 
-internal fun generateTemporaryVariable(
+fun generateTemporaryVariable(
     session: FirSession, psi: PsiElement?, specialName: String, initializer: FirExpression
 ): FirVariable<*> = generateTemporaryVariable(session, psi, Name.special("<$specialName>"), initializer)
 
