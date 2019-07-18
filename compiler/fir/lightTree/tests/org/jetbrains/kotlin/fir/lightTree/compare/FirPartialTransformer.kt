@@ -19,16 +19,14 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 class FirPartialTransformer(
     private val visitAnonymousFunction: Boolean = false,
     private val visitLambdaExpression: Boolean = false,
-    private val visitNamedFunction: Boolean = false,
-    private val visitMemberDeclaration: Boolean = false,
+    private val visitLocalMembers: Boolean = false,
     private val visitVariable: Boolean = false,
     private val visitAnnotation: Boolean = false,
     private val visitTypeOperatorCall: Boolean = false,
     private val visitArrayOfCall: Boolean = false,
     private val visitFunctionCall: Boolean = false,
     private val visitGetClassCall: Boolean = false,
-    private val visitBreakExpression: Boolean = false,
-    private val visitContinueExpression: Boolean = false,
+    private val visitLoopJump: Boolean = false,
     private val visitReturnExpression: Boolean = false,
     private val visitThrowExpression: Boolean = false,
     private val visitLoops: Boolean = false,
@@ -38,8 +36,7 @@ class FirPartialTransformer(
     private val visitTryExpression: Boolean = false,
     private val visitWhenExpression: Boolean = false,
     private val visitLambdaArgumentExpression: Boolean = false,
-    private val visitAnonymousObject: Boolean = false,
-    private val visitAssignment: Boolean = false
+    private val visitAnonymousObject: Boolean = false
 ) : FirAbstractTreeTransformer() {
     override fun transformAnonymousFunction(
         anonymousFunction: FirAnonymousFunction,
@@ -55,7 +52,7 @@ class FirPartialTransformer(
     }
 
     override fun transformNamedFunction(namedFunction: FirNamedFunction, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-        return if (!visitNamedFunction && namedFunction is FirAbstractCallableMember && namedFunction.visibility == Visibilities.LOCAL) {
+        return if (!visitLocalMembers && namedFunction is FirAbstractCallableMember && namedFunction.visibility == Visibilities.LOCAL) {
             DummyFirDeclaration().compose()
         } else {
             (namedFunction.transformChildren(this, data) as FirNamedFunction).compose()
@@ -66,7 +63,7 @@ class FirPartialTransformer(
         memberDeclaration: FirMemberDeclaration,
         data: Nothing?
     ): CompositeTransformResult<FirDeclaration> {
-        return if (!visitMemberDeclaration && memberDeclaration.visibility == Visibilities.LOCAL) {
+        return if (!visitLocalMembers && memberDeclaration.visibility == Visibilities.LOCAL) {
             DummyFirDeclaration().compose()
         } else {
             (memberDeclaration.transformChildren(this, data) as FirMemberDeclaration).compose()
@@ -130,7 +127,7 @@ class FirPartialTransformer(
     }
 
     override fun transformBreakExpression(breakExpression: FirBreakExpression, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitBreakExpression) {
+        return if (visitLoopJump) {
             (breakExpression.transformChildren(this, data) as FirBreakExpression).compose()
         } else {
             DummyFirStatement().compose()
@@ -141,7 +138,7 @@ class FirPartialTransformer(
         continueExpression: FirContinueExpression,
         data: Nothing?
     ): CompositeTransformResult<FirStatement> {
-        return if (visitContinueExpression) {
+        return if (visitLoopJump) {
             (continueExpression.transformChildren(this, data) as FirContinueExpression).compose()
         } else {
             DummyFirStatement().compose()
@@ -257,7 +254,7 @@ class FirPartialTransformer(
     }
 
     override fun transformAssignment(assignment: FirAssignment, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitAssignment) {
+        return if (visitVariable) {
             (assignment.transformChildren(this, data) as FirAssignment).compose()
         } else {
             DummyFirStatement().compose()
