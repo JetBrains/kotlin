@@ -46,7 +46,6 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.SpecialNames
 
 class DeclarationsConverter(
     private val session: FirSession,
@@ -557,7 +556,7 @@ class DeclarationsConverter(
         var firBlock: FirBlock? = null
         anonymousInitializer.forEachChildren {
             when (it.tokenType) {
-                BLOCK -> firBlock = visitBlock(it)
+                BLOCK -> firBlock = convertBlock(it)
             }
         }
 
@@ -601,7 +600,7 @@ class DeclarationsConverter(
         firConstructor.annotations += modifiers.annotations
         firConstructor.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
         firConstructor.valueParameters += firValueParameters.map { it.firValueParameter }
-        firConstructor.body = visitFunctionBody(block, null)
+        firConstructor.body = convertFunctionBody(block, null)
         FunctionUtil.firFunctions.removeLast()
         return firConstructor
     }
@@ -822,7 +821,7 @@ class DeclarationsConverter(
             firAccessor.valueParameters += firValueParameters
         }
 
-        firAccessor.body = visitFunctionBody(block, firExpression)
+        firAccessor.body = convertFunctionBody(block, firExpression)
         FunctionUtil.firFunctions.removeLast()
         return firAccessor
     }
@@ -901,7 +900,7 @@ class DeclarationsConverter(
                 null,
                 FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
                 functionName,
-                modifiers.getVisibility(),
+                if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
                 modifiers.getModality(),
                 modifiers.hasExpect(),
                 modifiers.hasActual(),
@@ -926,7 +925,7 @@ class DeclarationsConverter(
         }
 
         firFunction.valueParameters += valueParametersList.map { it.firValueParameter }
-        firFunction.body = visitFunctionBody(block, firExpression)
+        firFunction.body = convertFunctionBody(block, firExpression)
         FunctionUtil.firFunctions.removeLast()
         return firFunction
     }
@@ -935,10 +934,10 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunctionBody
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.buildFirBody
      */
-    private fun visitFunctionBody(blockNode: LighterASTNode?, firExpression: FirExpression?): FirBlock? {
+    private fun convertFunctionBody(blockNode: LighterASTNode?, firExpression: FirExpression?): FirBlock? {
         return when {
             blockNode != null -> if (!stubMode) {
-                return visitBlock(blockNode)
+                return convertBlock(blockNode)
             } else {
                 FirSingleExpressionBlock(
                     session,
@@ -958,7 +957,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
-    private fun visitBlock(block: LighterASTNode): FirBlock {
+    fun convertBlock(block: LighterASTNode): FirBlock {
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.getAsString())
             return DeclarationsConverter(session, stubMode, blockTree).convertBlockExpression(blockTree.root)
@@ -1266,7 +1265,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
      */
-    private fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
+    fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
         var modifiers = Modifier(session)
         var isVal = false
         var isVar = false

@@ -41,7 +41,6 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -81,6 +80,9 @@ class ExpressionsConverter(
                 STRING_TEMPLATE -> convertStringTemplate(expression)
                 is KtConstantExpressionElementType -> convertConstantExpression(expression)
                 REFERENCE_EXPRESSION -> convertSimpleNameExpression(expression)
+                DO_WHILE -> convertDoWhile(expression)
+                WHILE -> convertWhile(expression)
+                FOR -> convertFor(expression)
                 RETURN -> convertReturn(expression)
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
@@ -606,6 +608,146 @@ class ExpressionsConverter(
             calleeReference =
                 FirSimpleNamedReference(this@ExpressionsConverter.session, null, referenceExpression.getAsString().nameAsSafeName())
         }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseDoWhile
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDoWhileExpression
+     */
+    private fun convertDoWhile(doWhileLoop: LighterASTNode): FirElement {
+        var block: LighterASTNode? = null
+        var condition: FirExpression? = null
+        doWhileLoop.forEachChildren {
+            when (it.tokenType) {
+                BODY -> block = it
+                CONDITION -> condition = convertCondition(it)
+            }
+        }
+
+        return FirDoWhileLoopImpl(
+            session, null, condition ?: FirErrorExpressionImpl(session, null, "No condition in do-while loop")
+        ).configure { convertLoopBody(block) }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseWhile
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitWhileExpression
+     */
+    private fun convertWhile(whileLoop: LighterASTNode): FirElement {
+        var block: LighterASTNode? = null
+        var condition: FirExpression? = null
+        whileLoop.forEachChildren {
+            when (it.tokenType) {
+                BODY -> block = it
+                CONDITION -> condition = convertCondition(it)
+            }
+        }
+
+        return FirWhileLoopImpl(
+            session, null, condition ?: FirErrorExpressionImpl(session, null, "No condition in while loop")
+        ).configure { convertLoopBody(block) }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseFor
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitForExpression
+     */
+    private fun convertFor(forLoop: LighterASTNode): FirElement {
+        var parameter: ValueParameter? = null
+        var rangeExpression: FirExpression = FirErrorExpressionImpl(session, null, "No range in for loop")
+        var blockNode: LighterASTNode? = null
+        forLoop.forEachChildren {
+            when (it.tokenType) {
+                VALUE_PARAMETER -> parameter = declarationsConverter.convertValueParameter(it)
+                LOOP_RANGE -> convertCondition(it)?.apply { rangeExpression = this }
+                BODY -> blockNode = it
+            }
+        }
+
+        return FirBlockImpl(session, null).apply {
+            val rangeVal =
+                generateTemporaryVariable(this@ExpressionsConverter.session, null, Name.special("<range>"), rangeExpression)
+            statements += rangeVal
+            val iteratorVal = generateTemporaryVariable(
+                this@ExpressionsConverter.session, null, Name.special("<iterator>"),
+                FirFunctionCallImpl(this@ExpressionsConverter.session, null).apply {
+                    calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, Name.identifier("iterator"))
+                    explicitReceiver = generateResolvedAccessExpression(this@ExpressionsConverter.session, null, rangeVal)
+                }
+            )
+            statements += iteratorVal
+            statements += FirWhileLoopImpl(
+                this@ExpressionsConverter.session, null,
+                FirFunctionCallImpl(this@ExpressionsConverter.session, null).apply {
+                    calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, Name.identifier("hasNext"))
+                    explicitReceiver = generateResolvedAccessExpression(this@ExpressionsConverter.session, null, iteratorVal)
+                }
+            ).configure {
+                // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
+                val block = FirBlockImpl(this@ExpressionsConverter.session, null).apply {
+                    statements += convertLoopBody(blockNode).statements
+                }
+                if (parameter != null) {
+                    val multiDeclaration = parameter!!.destructuringDeclaration
+                    val firLoopParameter = generateTemporaryVariable(
+                        this@ExpressionsConverter.session, null,
+                        if (multiDeclaration != null) Name.special("<destruct>") else parameter!!.firValueParameter.name,
+                        FirFunctionCallImpl(this@ExpressionsConverter.session, null).apply {
+                            calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, Name.identifier("next"))
+                            explicitReceiver = generateResolvedAccessExpression(this@ExpressionsConverter.session, null, iteratorVal)
+                        }
+                    )
+                    if (multiDeclaration != null) {
+                        val destructuringBlock = generateDestructuringBlock(
+                            this@ExpressionsConverter.session,
+                            multiDeclaration,
+                            firLoopParameter,
+                            tmpVariable = true
+                        )
+                        if (destructuringBlock is FirBlock) {
+                            for ((index, statement) in destructuringBlock.statements.withIndex()) {
+                                block.statements.add(index, statement)
+                            }
+                        }
+                    } else {
+                        block.statements.add(0, firLoopParameter)
+                    }
+                }
+                block
+            }
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseLoopBody
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirBlock
+     */
+    private fun convertLoopBody(body: LighterASTNode?): FirBlock {
+        var firBlock: FirBlock? = null
+        var firStatement: FirStatement? = null
+        body?.forEachChildren {
+            when (it.tokenType) {
+                BLOCK -> firBlock = declarationsConverter.convertBlockExpression(it)
+                else -> if (it.isExpression()) firStatement = getAsFirExpression(it)
+            }
+        }
+
+        return when {
+            firStatement != null -> FirSingleExpressionBlock(session, firStatement!!)
+            firBlock == null -> FirEmptyExpressionBlock(session)
+            else -> firBlock!!
+        }
+    }
+
+    /**
+     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseCondition
+     */
+    private fun convertCondition(condition: LighterASTNode): FirExpression? {
+        condition.forEachChildren {
+            if (it.isExpression()) return getAsFirExpression(it)
+        }
+
+        return null
     }
 
     /**
