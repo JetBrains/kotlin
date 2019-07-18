@@ -321,4 +321,22 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitAnonymousObject = true
         )
     }
+
+    fun testTryExpression() {
+        compare(
+            stubMode = false,
+            visitAnonymousFunction = true,
+            visitLambdaExpression = true,
+            visitLocalMembers = true,
+            visitVariable = true,
+            visitAnnotation = true,
+            visitFunctionCall = true,
+            visitThrowExpression = true,
+            visitLoops = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true,
+            visitTryExpression = true,
+            visitAnonymousObject = true
+        )
+    }
 }
