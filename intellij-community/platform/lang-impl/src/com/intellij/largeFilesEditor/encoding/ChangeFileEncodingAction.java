@@ -65,8 +65,7 @@ public class ChangeFileEncodingAction extends com.intellij.openapi.vfs.encoding.
 
   @Override
   public void update(@NotNull AnActionEvent e) {
-    e.getPresentation().setEnabled(true);
-    e.getPresentation().setVisible(true);
+    e.getPresentation().setEnabledAndVisible(true);
   }
 
   ListPopup createPopup(VirtualFile vFile, Editor editor, Component componentParent) {

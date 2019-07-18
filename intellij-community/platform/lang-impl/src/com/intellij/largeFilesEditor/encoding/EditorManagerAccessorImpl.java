@@ -11,15 +11,10 @@ import org.jetbrains.annotations.Nullable;
 public class EditorManagerAccessorImpl implements EditorManagerAccessor {
   @Nullable
   @Override
-  public EditorManagerAccess getAccess(Project project, StatusBar statusBar) {
+  public EditorManagerAccess getAccess(@Nullable Project project, @Nullable StatusBar statusBar) {
     if (project == null || project.isDisposed()) return null;
 
     FileEditor fileEditor = StatusBarUtil.getCurrentFileEditor(project, statusBar);
-    if (fileEditor instanceof EditorManager) {
-      return ((EditorManager)fileEditor).createAccessForEncodingWidget();
-    }
-    else {
-      return null;
-    }
+    return fileEditor instanceof EditorManager ? ((EditorManager)fileEditor).createAccessForEncodingWidget() : null;
   }
 }

@@ -11,5 +11,5 @@ public interface EditorManagerAccessor {
    * @return null - if no access
    */
   @Nullable
-  EditorManagerAccess getAccess(Project project, StatusBar statusBar);
+  EditorManagerAccess getAccess(@Nullable Project project, @Nullable StatusBar statusBar);
 }

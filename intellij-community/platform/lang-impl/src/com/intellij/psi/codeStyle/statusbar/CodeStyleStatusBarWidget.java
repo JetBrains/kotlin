@@ -3,11 +3,11 @@ package com.intellij.psi.codeStyle.statusbar;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.actionSystem.*;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.impl.status.EditorBasedStatusBarPopup;
@@ -94,12 +94,10 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
 
 
   @Nullable
-  private PsiFile getPsiFile()  {
+  private PsiFile getPsiFile() {
     Editor editor = getEditor();
-    Project project = getProject();
-    if (editor != null && project != null) {
-      Document document = editor.getDocument();
-      return PsiDocumentManager.getInstance(project).getPsiFile(document);
+    if (editor != null) {
+      return PsiDocumentManager.getInstance(getProject()).getPsiFile(editor.getDocument());
     }
     return null;
   }
@@ -156,7 +154,9 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
 
   @Override
   protected void registerCustomListeners() {
-    CodeStyleSettingsManager.getInstance(getProject()).addListener(this);
+    Project project = getProject();
+    CodeStyleSettingsManager.getInstance(project).addListener(this);
+    Disposer.register(this, () -> CodeStyleSettingsManager.removeListener(project, this));
   }
 
   @Override
@@ -169,7 +169,6 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
   protected StatusBarWidget createInstance(Project project) {
     return new CodeStyleStatusBarWidget(project);
   }
-
 
   @NotNull
   @Override
@@ -211,11 +210,5 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
     public PsiFile getPsiFile() {
       return myPsiFile;
     }
-  }
-
-  @Override
-  public void dispose() {
-    CodeStyleSettingsManager.removeListener(myProject, this);
-    super.dispose();
   }
 }

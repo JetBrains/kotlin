@@ -28,31 +28,17 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private static final Logger logger = Logger.getInstance(EncodingWidget.class);
 
   private final TextPanel myComponent;
-  private final Alarm myUpdateAlarm;
+  private Alarm myUpdateAlarm;
 
-  private final EditorManagerAccessor editorManagerAccessor;
+  private final EditorManagerAccessor myEditorManagerAccessor;
 
   private boolean myActionEnabled;
 
   public EncodingWidget(@NotNull final Project project, EditorManagerAccessor editorManagerAccessor) {
     super(project);
-
-    this.editorManagerAccessor = editorManagerAccessor;
-
-    myUpdateAlarm = new Alarm(this);
-
+    myEditorManagerAccessor = editorManagerAccessor;
     myComponent = new TextPanel.WithIconAndArrows();
-
     myComponent.setBorder(WidgetBorder.WIDE);
-
-    new ClickListener() {
-      @Override
-      public boolean onClick(@NotNull MouseEvent e, int clickCount) {
-        requestUpdate();
-        tryShowPopup();
-        return true;
-      }
-    }.installOn(myComponent);
   }
 
   @Override
@@ -67,13 +53,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
 
   @Override
   public StatusBarWidget copy() {
-    if (getProject() != null) {
-      return new EncodingWidget(getProject(), editorManagerAccessor);
-    }
-    else {
-      logger.warn("[LargeFileEditorSubsystem] EncodingWidget.copy(): getProject() is Null");
-      return null;
-    }
+    return new EncodingWidget(getProject(), myEditorManagerAccessor);
   }
 
   @Override
@@ -90,14 +70,22 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   @Override
   public void install(@NotNull StatusBar statusBar) {
     super.install(statusBar);
+    myUpdateAlarm = new Alarm(this);
+    new ClickListener() {
+      @Override
+      public boolean onClick(@NotNull MouseEvent e, int clickCount) {
+        requestUpdate();
+        tryShowPopup();
+        return true;
+      }
+    }.installOn(myComponent);
   }
 
   private void tryShowPopup() {
     if (!myActionEnabled) {
       return;
     }
-    //EditorManager editorManager = tryGetActiveEditorManager();
-    EditorManagerAccess editorManagerAccess = editorManagerAccessor.getAccess(myProject, myStatusBar);
+    EditorManagerAccess editorManagerAccess = myEditorManagerAccessor.getAccess(getProject(), myStatusBar);
     if (editorManagerAccess != null) {
       showPopup(editorManagerAccess);
     }
@@ -109,8 +97,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   }
 
   private void showPopup(@NotNull EditorManagerAccess editorManagerAccess) {
-    ChangeFileEncodingAction action = new ChangeFileEncodingAction(
-      editorManagerAccessor, myProject, myStatusBar);
+    ChangeFileEncodingAction action = new ChangeFileEncodingAction(myEditorManagerAccessor, getProject(), myStatusBar);
     JComponent where = getComponent();
     ListPopup popup = action.createPopup(editorManagerAccess.getVirtualFile(), editorManagerAccess.getEditor(),
                                          where);
@@ -132,7 +119,7 @@ public class EncodingWidget extends EditorBasedWidget implements StatusBarWidget
   private void update() {
     if (isDisposed()) return;
 
-    EditorManagerAccess editorManagerAccess = editorManagerAccessor.getAccess(myProject, myStatusBar);
+    EditorManagerAccess editorManagerAccess = myEditorManagerAccessor.getAccess(getProject(), myStatusBar);
 
     myActionEnabled = false;
     String charsetName;

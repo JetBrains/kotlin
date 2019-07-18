@@ -13,6 +13,7 @@ import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.profile.codeInspection.InspectionProjectProfileManager;
 import com.intellij.psi.PsiFile;
@@ -32,10 +33,9 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   private Icon myCurrentIcon;
   private String myToolTipText;
 
-  public TogglePopupHintsPanel(@NotNull final Project project) {
+  public TogglePopupHintsPanel(@NotNull Project project) {
     super(project);
     myCurrentIcon = IconLoader.getDisabledIcon(AllIcons.Ide.HectorOff);
-    myConnection.subscribe(PowerSaveMode.TOPIC, this::updateStatus);
   }
 
   @Override
@@ -81,6 +81,12 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
   }
 
   @Override
+  public void install(@NotNull StatusBar statusBar) {
+    super.install(statusBar);
+    myConnection.subscribe(PowerSaveMode.TOPIC, this::updateStatus);
+  }
+
+  @Override
   @NotNull
   public String ID() {
     return "InspectionProfile";
@@ -108,13 +114,13 @@ public class TogglePopupHintsPanel extends EditorBasedWidget implements StatusBa
         myCurrentIcon = IconLoader.getDisabledIcon(AllIcons.Ide.HectorOff);
         myToolTipText = "Code analysis is disabled in power save mode.\n";
       }
-      else if (HighlightingLevelManager.getInstance(myProject).shouldInspect(file)) {
+      else if (HighlightingLevelManager.getInstance(getProject()).shouldInspect(file)) {
         myCurrentIcon = AllIcons.Ide.HectorOn;
         myToolTipText = "Current inspection profile: " +
                         InspectionProjectProfileManager.getInstance(file.getProject()).getCurrentProfile().getName() +
                         ".\n";
       }
-      else if (HighlightingLevelManager.getInstance(myProject).shouldHighlight(file)) {
+      else if (HighlightingLevelManager.getInstance(getProject()).shouldHighlight(file)) {
         myCurrentIcon = AllIcons.Ide.HectorSyntax;
         myToolTipText = "Highlighting level is: Syntax.\n";
       }
