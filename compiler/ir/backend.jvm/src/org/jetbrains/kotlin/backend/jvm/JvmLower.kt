@@ -36,6 +36,13 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
+// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
+private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
+    { ProvisionalFunctionExpressionLowering() },
+    name = "FunctionExpression",
+    description = "Transform IrFunctionExpression to a local function reference"
+)
+
 private val arrayConstructorPhase = makeIrFilePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
@@ -91,8 +98,9 @@ private val innerClassesPhase = makeIrFilePhase(
     prerequisite = setOf(localDeclarationsPhase)
 )
 
-private val jvmFilePhases = inventNamesForLocalClassesPhase then
-
+private val jvmFilePhases =
+        provisionalFunctionExpressionPhase then
+        inventNamesForLocalClassesPhase then
         kCallableNamePropertyPhase then
         arrayConstructorPhase then
 

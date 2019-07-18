@@ -98,6 +98,13 @@ private val lateinitLoweringPhase = makeJsModulePhase(
     description = "Insert checks for lateinit field references"
 )
 
+// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
+private val provisionalFunctionExpressionPhase = makeJsModulePhase(
+    { ProvisionalFunctionExpressionLowering() },
+    name = "FunctionExpression",
+    description = "Transform IrFunctionExpression to a local function reference"
+)
+
 private val arrayConstructorPhase = makeJsModulePhase(
     ::ArrayConstructorLowering,
     name = "ArrayConstructor",
@@ -389,6 +396,7 @@ val jsPhases = namedIrModulePhase(
     lower = validateIrBeforeLowering then
             testGenerationPhase then
             expectDeclarationsRemovingPhase then
+            provisionalFunctionExpressionPhase then
             arrayConstructorPhase then
             functionInliningPhase then
             lateinitLoweringPhase then
