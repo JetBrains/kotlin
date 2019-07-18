@@ -418,6 +418,16 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             public void testFunctionAtTheScriptEnd() throws Exception {
                 runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/functionAtTheScriptEnd.kts");
             }
+
+            @TestMetadata("singleLambdaExpressionFunction1.kt")
+            public void testSingleLambdaExpressionFunction1() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/singleLambdaExpressionFunction1.kt");
+            }
+
+            @TestMetadata("singleLambdaExpressionFunction2.kt")
+            public void testSingleLambdaExpressionFunction2() throws Exception {
+                runTest("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/function/singleLambdaExpressionFunction2.kt");
+            }
         }
 
         @TestMetadata("idea/testData/codeInsight/moveUpDown/classBodyDeclarations/functionAnchors")
