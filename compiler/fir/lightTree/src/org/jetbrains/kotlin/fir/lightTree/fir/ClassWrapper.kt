@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirUserTypeRefImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 class ClassWrapper(
     private val session: FirSession,
@@ -25,10 +26,16 @@ class ClassWrapper(
     private val classKind: ClassKind,
     val hasPrimaryConstructor: Boolean,
     val hasSecondaryConstructor: Boolean,
-    val delegatedSelfTypeRef: FirTypeRef,
+    var delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
     val superTypeCallEntry: MutableList<FirExpression>
 ) {
+    init {
+        if (className == SpecialNames.NO_NAME_PROVIDED) {
+            delegatedSelfTypeRef = delegatedSuperTypeRef
+        }
+    }
+
     private fun isObject(): Boolean {
         return classKind == ClassKind.OBJECT
     }
