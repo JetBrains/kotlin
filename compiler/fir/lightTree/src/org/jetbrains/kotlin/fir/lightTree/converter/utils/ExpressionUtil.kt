@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.ExpressionsConverter
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -193,4 +196,12 @@ private fun getSelectorType(qualifiedAccessChildren: Array<LighterASTNode?>): IE
         }
     }
     return null
+}
+
+fun FirAbstractLoop.configure(generateBlock: () -> FirBlock): FirAbstractLoop {
+    label = FunctionUtil.firLabels.pop()
+    FunctionUtil.firLoops += this
+    block = generateBlock()
+    FunctionUtil.firLoops.removeLast()
+    return this
 }

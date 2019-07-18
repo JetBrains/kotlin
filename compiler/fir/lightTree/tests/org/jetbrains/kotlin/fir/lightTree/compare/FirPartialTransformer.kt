@@ -31,7 +31,7 @@ class FirPartialTransformer(
     private val visitContinueExpression: Boolean = false,
     private val visitReturnExpression: Boolean = false,
     private val visitThrowExpression: Boolean = false,
-    private val visitForLoop: Boolean = false,
+    private val visitLoops: Boolean = false,
     private val visitConstExpression: Boolean = false,
     private val visitQualifiedAccessExpression: Boolean = false,
     private val visitCallableReferenceAccess: Boolean = false,
@@ -39,8 +39,6 @@ class FirPartialTransformer(
     private val visitWhenExpression: Boolean = false,
     private val visitLambdaArgumentExpression: Boolean = false,
     private val visitAnonymousObject: Boolean = false,
-    private val visitDoWhileLoop: Boolean = false,
-    private val visitWhileLoop: Boolean = false,
     private val visitAssignment: Boolean = false
 ) : FirAbstractTreeTransformer() {
     override fun transformAnonymousFunction(
@@ -167,7 +165,7 @@ class FirPartialTransformer(
     }
 
     override fun transformBlock(block: FirBlock, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (!visitForLoop && block.psi is KtForExpression) {
+        return if (!visitLoops && block.psi is KtForExpression) {
             DummyFirStatement().compose()
         } else {
             super.transformBlock(block, data)
@@ -243,7 +241,7 @@ class FirPartialTransformer(
     }
 
     override fun transformDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitDoWhileLoop) {
+        return if (visitLoops) {
             (doWhileLoop.transformChildren(this, data) as FirDoWhileLoop).compose()
         } else {
             DummyFirStatement().compose()
@@ -251,7 +249,7 @@ class FirPartialTransformer(
     }
 
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: Nothing?): CompositeTransformResult<FirStatement> {
-        return if (visitWhileLoop) {
+        return if (visitLoops) {
             (whileLoop.transformChildren(this, data) as FirWhileLoop).compose()
         } else {
             DummyFirStatement().compose()

@@ -203,6 +203,7 @@ object FunctionUtil {
     val firFunctions = mutableListOf<FirFunction>()
     val firFunctionCalls = mutableListOf<FirFunctionCall>()
     val firLabels = mutableListOf<FirLabel>()
+    val firLoops = mutableListOf<FirLoop>()
 
     fun <T> MutableList<T>.removeLast() {
         removeAt(size - 1)
