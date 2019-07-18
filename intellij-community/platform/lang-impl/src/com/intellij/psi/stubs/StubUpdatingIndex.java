@@ -42,6 +42,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.DataOutputStream;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
 
 public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
@@ -269,7 +270,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
     MyIndex(@NotNull FileBasedIndexExtension<Integer, SerializedStubTree> extension, @NotNull IndexStorage<Integer, SerializedStubTree> storage)
       throws StorageException, IOException {
-      super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(), null);
+      super(extension, storage, new EmptyForwardIndex(), new StubUpdatingForwardIndexAccessor(), null, null);
       ((StubUpdatingForwardIndexAccessor)getForwardIndexAccessor()).setIndex(this);
       checkNameStorage();
     }

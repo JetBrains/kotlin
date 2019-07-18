@@ -29,6 +29,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
 /**
  * @author Eugene Zhuravlev
@@ -67,15 +68,16 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
          snapshotInputMappings != null ? new SharedIntMapForwardIndex(extension, snapshotInputMappings.getInputIndexStorageFile(), true)
                                        : getForwardIndexMap(extension),
          snapshotInputMappings != null ? snapshotInputMappings.getForwardIndexAccessor() : getForwardIndexAccessor(extension),
-         snapshotInputMappings);
+         snapshotInputMappings, null);
   }
 
-  protected VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
-                                   @NotNull IndexStorage<Key, Value> storage,
-                                   @Nullable ForwardIndex forwardIndexMap,
-                                   @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
-                                   @Nullable SnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappings) {
-    super(extension, storage, forwardIndexMap, forwardIndexAccessor, null);
+  public VfsAwareMapReduceIndex(@NotNull IndexExtension<Key, Value, Input> extension,
+                                @NotNull IndexStorage<Key, Value> storage,
+                                @Nullable ForwardIndex forwardIndexMap,
+                                @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
+                                @Nullable SnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappings,
+                                @Nullable ReadWriteLock lock) {
+    super(extension, storage, forwardIndexMap, forwardIndexAccessor, null, lock);
     SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
     mySnapshotInputMappings = IndexImporterMappingIndex.wrap(snapshotInputMappings, extension);
     myUpdateMappings = snapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;

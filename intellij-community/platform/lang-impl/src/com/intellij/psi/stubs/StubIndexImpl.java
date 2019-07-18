@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @State(name = "FileBasedIndex", storages = {
@@ -53,7 +54,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubIndexImpl");
 
   private static class AsyncState {
-    private final Map<StubIndexKey<?, ?>, MyIndex<?>> myIndices = new THashMap<>();
+    private final Map<StubIndexKey<?, ?>, VfsAwareMapReduceIndex<?, StubIdList, Void>> myIndices = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
 
@@ -117,6 +118,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
       if (indexRootHasChildren) FileUtil.deleteWithRenaming(indexRootDir);
       IndexingStamp.rewriteVersion(indexKey, version); // todo snapshots indices
     }
+    ReadWriteLock lock =
+      ((MapReduceIndex)((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID)).getLock();
 
     for (int attempt = 0; attempt < 2; attempt++) {
       try {
@@ -130,7 +133,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
         );
 
         final MemoryIndexStorage<K, StubIdList> memStorage = new MemoryIndexStorage<>(storage, indexKey);
-        MyIndex<K> index = new MyIndex<>(new IndexExtension<K, StubIdList, Void>() {
+        VfsAwareMapReduceIndex<K, StubIdList, Void> index = new VfsAwareMapReduceIndex<>(new IndexExtension<K, StubIdList, Void>() {
           @NotNull
           @Override
           public ID<K, StubIdList> getName() {
@@ -159,7 +162,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
           public int getVersion() {
             return extension.getVersion();
           }
-        }, memStorage);
+        }, memStorage, null, null, null, lock);
         synchronized (state) {
           state.myIndices.put(indexKey, index);
         }
@@ -188,7 +191,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   public long getIndexModificationStamp(@NotNull StubIndexKey<?, ?> indexId, @NotNull Project project) {
-    MyIndex<?> index = getAsyncState().myIndices.get(indexId);
+    VfsAwareMapReduceIndex<?, StubIdList, Void> index = getAsyncState().myIndices.get(indexId);
     if (index != null) {
       FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, project, GlobalSearchScope.allScope(project));
       return index.getModificationStamp();
@@ -200,7 +203,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
     if (!myInitialized) {
       return;
     }
-    for (MyIndex<?> index : getAsyncState().myIndices.values()) {
+    for (VfsAwareMapReduceIndex<?, StubIdList, Void> index : getAsyncState().myIndices.values()) {
       index.flush();
     }
   }
@@ -245,7 +248,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   <K> void serializeIndexValue(@NotNull DataOutput out, @NotNull StubIndexKey<K, ?> stubIndexKey, @NotNull Map<K, StubIdList> map) throws IOException {
-    MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(stubIndexKey);
+    VfsAwareMapReduceIndex<K, StubIdList, Void> index = (VfsAwareMapReduceIndex<K, StubIdList, Void>)getAsyncState().myIndices.get(stubIndexKey);
     if (index == null) return;
     KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
 
@@ -258,7 +261,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
   @NotNull
   <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey) throws IOException {
-    MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(stubIndexKey);
+    VfsAwareMapReduceIndex<K, StubIdList, Void> index = (VfsAwareMapReduceIndex<K, StubIdList, Void>)getAsyncState().myIndices.get(stubIndexKey);
     KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
     int mapSize = DataInputOutputUtil.readINT(in);
 
@@ -300,7 +303,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                                        @NotNull StubIdListContainerAction action) {
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
-    final MyIndex<Key> index = (MyIndex<Key>)getAsyncState().myIndices.get(indexKey);   // wait for initialization to finish
+    final VfsAwareMapReduceIndex<Key, StubIdList, Void> index = (VfsAwareMapReduceIndex<Key, StubIdList, Void>)getAsyncState().myIndices.get(indexKey);   // wait for initialization to finish
     if (index == null) return true;
 
     fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
@@ -384,7 +387,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                                     @NotNull Processor<? super K> processor,
                                     @NotNull GlobalSearchScope scope,
                                     @Nullable IdFilter idFilter) {
-    final MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(indexKey); // wait for initialization to finish
+    final VfsAwareMapReduceIndex<K, StubIdList, Void> index = (VfsAwareMapReduceIndex<K, StubIdList, Void>)getAsyncState().myIndices.get(indexKey); // wait for initialization to finish
     if (index == null) return true;
     FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, scope.getProject(), scope);
 
@@ -503,7 +506,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   <K> void removeTransientDataForFile(@NotNull StubIndexKey<K, ?> key, int inputId, @NotNull Collection<? extends K> keys) {
-    MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(key);
+    VfsAwareMapReduceIndex<K, StubIdList, Void> index = (VfsAwareMapReduceIndex<K, StubIdList, Void>)getAsyncState().myIndices.get(key);
     index.removeTransientDataForKeys(inputId, keys);
   }
 
@@ -544,7 +547,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                               @NotNull final Map<K, StubIdList> oldValues,
                               @NotNull final Map<K, StubIdList> newValues) {
     try {
-      final MyIndex<K> index = (MyIndex<K>)getAsyncState().myIndices.get(key);
+      final VfsAwareMapReduceIndex<K, StubIdList, Void> index = (VfsAwareMapReduceIndex<K, StubIdList, Void>)getAsyncState().myIndices.get(key);
       if (index == null) return;
       final ThrowableComputable<InputDataDiffBuilder<K, StubIdList>, IOException>
         oldMapGetter = () -> new MapInputDataDiffBuilder<>(fileId, oldValues);
@@ -553,29 +556,6 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
     catch (StorageException e) {
       LOG.info(e);
       requestRebuild();
-    }
-  }
-
-  private static class MyIndex<K> extends VfsAwareMapReduceIndex<K, StubIdList, Void> {
-    @NotNull
-    @Override
-    protected ReentrantReadWriteLock createLock() {
-      UpdatableIndex<?, ?, FileContent> index = ((FileBasedIndexImpl)FileBasedIndex.getInstance()).getIndex(StubUpdatingIndex.INDEX_ID);
-      return ((MapReduceIndex)index).getLock();
-    }
-
-    MyIndex(@NotNull IndexExtension<K, StubIdList, Void> extension, @NotNull IndexStorage<K, StubIdList> storage) throws IOException {
-      super(extension, storage, null, null, null);
-    }
-
-    @Override
-    public void updateWithMap(final int inputId, @NotNull UpdateData<K, StubIdList> updateData) throws StorageException {
-      super.updateWithMap(inputId, updateData);
-    }
-
-    @NotNull
-    public IndexExtension<K, StubIdList, Void> getExtension() {
-      return myExtension;
     }
   }
 
