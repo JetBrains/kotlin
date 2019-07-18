@@ -71,7 +71,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitContinueExpression: Boolean = false,
         visitReturnExpression: Boolean = false,
         visitThrowExpression: Boolean = false,
-        visitForLoop: Boolean = false,
+        visitLoops: Boolean = false,
         visitConstExpression: Boolean = false,
         visitQualifiedAccessExpression: Boolean = false,
         visitCallableReferenceAccess: Boolean = false,
@@ -79,8 +79,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         visitWhenExpression: Boolean = false,
         visitLambdaArgumentExpression: Boolean = false,
         visitAnonymousObject: Boolean = false,
-        visitDoWhileLoop: Boolean = false,
-        visitWhileLoop: Boolean = false,
         visitAssignment: Boolean = false
     ) {
         val firVisitor = FirPartialTransformer(
@@ -98,7 +96,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitContinueExpression = visitContinueExpression,
             visitReturnExpression = visitReturnExpression,
             visitThrowExpression = visitThrowExpression,
-            visitForLoop = visitForLoop,
+            visitLoops = visitLoops,
             visitConstExpression = visitConstExpression,
             visitQualifiedAccessExpression = visitQualifiedAccessExpression,
             visitCallableReferenceAccess = visitCallableReferenceAccess,
@@ -106,8 +104,6 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitWhenExpression = visitWhenExpression,
             visitLambdaArgumentExpression = visitLambdaArgumentExpression,
             visitAnonymousObject = visitAnonymousObject,
-            visitDoWhileLoop = visitDoWhileLoop,
-            visitWhileLoop = visitWhileLoop,
             visitAssignment = visitAssignment
         )
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
@@ -277,6 +273,19 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitCallableReferenceAccess = true,
             visitLambdaArgumentExpression = true,
             visitAnonymousObject = true
+        )
+    }
+
+    fun testLoops() {
+        compare(
+            stubMode = false,
+            visitLambdaExpression = true,
+            visitAnnotation = true,
+            visitFunctionCall = true,
+            visitReturnExpression = true,
+            visitLoops = true,
+            visitConstExpression = true,
+            visitQualifiedAccessExpression = true
         )
     }
 }
