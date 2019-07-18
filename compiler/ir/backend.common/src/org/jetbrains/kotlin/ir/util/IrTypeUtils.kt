@@ -29,6 +29,7 @@ private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier(
 fun IrType.isFunction(): Boolean = this.isClassWithNamePrefix("Function", kotlinPackageFqn)
 fun IrType.isKFunction(): Boolean = this.isClassWithNamePrefix("KFunction", kotlinReflectionPackageFqn)
 fun IrType.isSuspendFunction(): Boolean = this.isClassWithNamePrefix("SuspendFunction", kotlinCoroutinesPackageFqn)
+fun IrType.isKSuspendFunction(): Boolean = this.isClassWithNamePrefix("KSuspendFunction", kotlinReflectionPackageFqn)
 
 private fun IrType.isClassWithNamePrefix(prefix: String, packageFqName: FqName): Boolean {
     val classifier = classifierOrNull ?: return false
