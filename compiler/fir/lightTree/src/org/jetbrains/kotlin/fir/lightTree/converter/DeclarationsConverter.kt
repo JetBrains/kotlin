@@ -676,7 +676,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
-    private fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
+    fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
         var modifiers = Modifier(session)
         lateinit var identifier: String
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -709,7 +709,8 @@ class DeclarationsConverter(
 
         val propertyName = identifier.nameAsSafeName()
 
-        return if (property.getParent()?.tokenType == BLOCK) {
+        val parentType = property.getParent()?.tokenType
+        return if (parentType == BLOCK || parentType == WHEN) {
             FirVariableImpl(
                 session,
                 null,
@@ -940,20 +941,8 @@ class DeclarationsConverter(
      */
     private fun convertFunctionBody(blockNode: LighterASTNode?, firExpression: FirExpression?): FirBlock? {
         return when {
-            blockNode != null -> if (!stubMode) {
-                return convertBlock(blockNode)
-            } else {
-                FirSingleExpressionBlock(
-                    session,
-                    FirExpressionStub(session, null).toReturn()
-                )
-            }
-            firExpression != null -> {
-                FirSingleExpressionBlock(
-                    session,
-                    firExpression.toReturn()
-                )
-            }
+            blockNode != null -> return convertBlock(blockNode)
+            firExpression != null -> FirSingleExpressionBlock(session, firExpression.toReturn())
             else -> null
         }
     }
@@ -961,7 +950,14 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
-    fun convertBlock(block: LighterASTNode): FirBlock {
+    fun convertBlock(block: LighterASTNode?): FirBlock {
+        if (block == null) return FirEmptyExpressionBlock(session)
+        if (block.tokenType != BLOCK) {
+            return FirSingleExpressionBlock(
+                session,
+                expressionConverter.getAsFirExpression(block)
+            )
+        }
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.getAsString())
             return DeclarationsConverter(session, stubMode, blockTree).convertBlockExpression(blockTree.root)
