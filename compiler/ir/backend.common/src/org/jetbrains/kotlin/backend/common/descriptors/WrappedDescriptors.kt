@@ -434,7 +434,7 @@ open class WrappedSimpleFunctionDescriptor(
         visibility: Visibility?,
         kind: CallableMemberDescriptor.Kind?,
         copyOverrides: Boolean
-    ): SimpleFunctionDescriptor {
+    ): Nothing {
         TODO("not implemented")
     }
 
@@ -797,10 +797,7 @@ open class WrappedPropertyDescriptor(
         TODO("not implemented")
     }
 
-    override fun getAccessors(): MutableList<PropertyAccessorDescriptor> = listOfNotNull(
-        owner.getter?.descriptor as? PropertyAccessorDescriptor,
-        owner.setter?.descriptor as? PropertyAccessorDescriptor
-    ).toMutableList()
+    override fun getAccessors(): List<PropertyAccessorDescriptor> = listOfNotNull(getter, setter)
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
 
@@ -866,6 +863,33 @@ open class WrappedPropertyDescriptor(
 class WrappedPropertyDescriptorWithContainerSource(
     override var containerSource: DeserializedContainerSource
 ) : WrappedPropertyDescriptor(), DescriptorWithContainerSource
+
+abstract class WrappedPropertyAccessorDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedSimpleFunctionDescriptor(annotations, sourceElement), PropertyAccessorDescriptor {
+    override fun isDefault(): Boolean = false
+
+    override fun getOriginal(): WrappedPropertyAccessorDescriptor = this
+
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertyAccessorDescriptor }
+
+    override fun getCorrespondingProperty(): PropertyDescriptor = owner.correspondingPropertySymbol!!.descriptor
+
+    override val correspondingVariable: VariableDescriptorWithAccessors get() = correspondingProperty
+}
+
+class WrappedPropertyGetterDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedPropertyAccessorDescriptor(annotations, sourceElement), PropertyGetterDescriptor {
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertyGetterDescriptor }
+
+    override fun getOriginal(): WrappedPropertyGetterDescriptor = this
+}
+
+class WrappedPropertySetterDescriptor(annotations: Annotations, sourceElement: SourceElement) :
+    WrappedPropertyAccessorDescriptor(annotations, sourceElement), PropertySetterDescriptor {
+    override fun getOverriddenDescriptors() = super.getOverriddenDescriptors().map { it as PropertySetterDescriptor }
+
+    override fun getOriginal(): WrappedPropertySetterDescriptor = this
+}
 
 open class WrappedFieldDescriptor(
     annotations: Annotations = Annotations.EMPTY,
