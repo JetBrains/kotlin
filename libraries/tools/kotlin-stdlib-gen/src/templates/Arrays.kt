@@ -6,8 +6,8 @@
 package templates
 
 import templates.Family.*
-import templates.Ordering.stableSortNote
 import templates.Ordering.appendStableSortNote
+import templates.Ordering.stableSortNote
 
 object ArrayOps : TemplateGroupBase() {
 
@@ -1273,15 +1273,41 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_fill = fn("fill(element: T, fromIndex: Int = 0, toIndex: Int = size)") {
-        platforms(Platform.JVM)
         include(InvariantArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         doc { "Fills original array with the provided value." }
         returns("Unit")
-        body {
-            """
-            java.util.Arrays.fill(this, fromIndex, toIndex, element)
-            """
+
+        on(Platform.JVM) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                java.util.Arrays.fill(this, fromIndex, toIndex, element)
+                """
+            }
+        }
+        on(Platform.JS) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                if (fromIndex !in 0..size) {
+                  throw IndexOutOfBoundsException("fromIndex ${'$'}fromIndex out of range [0, ${'$'}size]")
+                }
+                if (toIndex > size) {
+                  throw IndexOutOfBoundsException("toIndex ${'$'}toIndex out of range [${'$'}fromIndex, ${'$'}size]")
+                }
+                require(fromIndex <= toIndex) { "fromIndex(${'$'}fromIndex) > toIndex(${'$'}toIndex)" }
+                this.asDynamic().fill(element, fromIndex, toIndex);
+                """
+            }
+        }
+        on(Platform.Native) {
+            suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+            body {
+                """
+                arrayFill(this, element, fromIndex, toIndex)
+                """
+            }
         }
 
         specialFor(ArraysOfUnsigned) {
