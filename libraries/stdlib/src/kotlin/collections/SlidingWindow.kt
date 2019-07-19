@@ -187,11 +187,4 @@ private class RingBuffer<T>(val capacity: Int) : AbstractList<T>(), RandomAccess
 
     @Suppress("NOTHING_TO_INLINE")
     private inline fun Int.forward(n: Int): Int = (this + n) % capacity
-
-    // TODO: replace with Array.fill from stdlib when available in common
-    private fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit {
-        for (idx in fromIndex until toIndex) {
-            this[idx] = element
-        }
-    }
 }

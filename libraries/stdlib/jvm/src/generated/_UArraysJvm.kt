@@ -262,7 +262,8 @@ public fun UShortArray.binarySearch(element: UShort, fromIndex: Int = 0, toIndex
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun UIntArray.fill(element: UInt, fromIndex: Int = 0, toIndex: Int = size): Unit {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun UIntArray.fill(element: UInt, fromIndex: Int = 0, toIndex: Int = size): Unit {
     storage.fill(element.toInt(), fromIndex, toIndex)
 }
 
@@ -271,7 +272,8 @@ public fun UIntArray.fill(element: UInt, fromIndex: Int = 0, toIndex: Int = size
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun ULongArray.fill(element: ULong, fromIndex: Int = 0, toIndex: Int = size): Unit {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun ULongArray.fill(element: ULong, fromIndex: Int = 0, toIndex: Int = size): Unit {
     storage.fill(element.toLong(), fromIndex, toIndex)
 }
 
@@ -280,7 +282,8 @@ public fun ULongArray.fill(element: ULong, fromIndex: Int = 0, toIndex: Int = si
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun UByteArray.fill(element: UByte, fromIndex: Int = 0, toIndex: Int = size): Unit {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun UByteArray.fill(element: UByte, fromIndex: Int = 0, toIndex: Int = size): Unit {
     storage.fill(element.toByte(), fromIndex, toIndex)
 }
 
@@ -289,7 +292,8 @@ public fun UByteArray.fill(element: UByte, fromIndex: Int = 0, toIndex: Int = si
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
-public fun UShortArray.fill(element: UShort, fromIndex: Int = 0, toIndex: Int = size): Unit {
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun UShortArray.fill(element: UShort, fromIndex: Int = 0, toIndex: Int = size): Unit {
     storage.fill(element.toShort(), fromIndex, toIndex)
 }
 

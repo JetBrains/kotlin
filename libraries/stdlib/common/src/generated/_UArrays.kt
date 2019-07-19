@@ -3231,6 +3231,34 @@ public inline fun UShortArray.copyOfRange(fromIndex: Int, toIndex: Int): UShortA
 }
 
 /**
+ * Fills original array with the provided value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UIntArray.fill(element: UInt, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun ULongArray.fill(element: ULong, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UByteArray.fill(element: UByte, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+@SinceKotlin("1.3")
+@ExperimentalUnsignedTypes
+public expect fun UShortArray.fill(element: UShort, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
  * Returns the range of valid indices for the array.
  */
 @SinceKotlin("1.3")
