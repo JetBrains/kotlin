@@ -15,8 +15,7 @@ apply plugin: JetGradlePlugin
 
 class JetGradlePlugin implements Plugin<Gradle> {
   void apply(Gradle gradle) {
-    def extraModelBuilderInstance = new ExtraModelBuilder()
-    def processor = new RegistryProcessor(extraModelBuilderInstance)
+    def processor = new RegistryProcessor()
     gradle.addProjectEvaluationListener(processor)
     def projectEvaluationIsNotCalledForIncludedBuilds = GradleVersion.current() >= GradleVersion.version("3.1") &&
                                                         GradleVersion.current() < GradleVersion.version("4.0")
@@ -41,10 +40,6 @@ class JetGradlePlugin implements Plugin<Gradle> {
 class RegistryProcessor implements ProjectEvaluationListener {
   def extraModelBuilderInstance = new ExtraModelBuilder()
   CopyOnWriteArrayList<ToolingModelBuilderRegistry> processedRegistries = new CopyOnWriteArrayList<ToolingModelBuilderRegistry>()
-
-  RegistryProcessor(ExtraModelBuilder modelBuilder) {
-    extraModelBuilderInstance = modelBuilder
-  }
 
   @Override
   void beforeEvaluate(Project project) {
