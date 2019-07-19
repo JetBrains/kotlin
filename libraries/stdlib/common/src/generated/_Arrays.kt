@@ -6339,6 +6339,51 @@ public expect fun BooleanArray.copyOfRange(fromIndex: Int, toIndex: Int): Boolea
 public expect fun CharArray.copyOfRange(fromIndex: Int, toIndex: Int): CharArray
 
 /**
+ * Fills original array with the provided value.
+ */
+public expect fun <T> Array<T>.fill(element: T, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun ByteArray.fill(element: Byte, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun ShortArray.fill(element: Short, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun IntArray.fill(element: Int, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun LongArray.fill(element: Long, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun FloatArray.fill(element: Float, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun DoubleArray.fill(element: Double, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun BooleanArray.fill(element: Boolean, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
+ * Fills original array with the provided value.
+ */
+public expect fun CharArray.fill(element: Char, fromIndex: Int = 0, toIndex: Int = size): Unit
+
+/**
  * Returns the range of valid indices for the array.
  */
 public val <T> Array<out T>.indices: IntRange
