@@ -42,6 +42,9 @@ object DescriptorsToIrRemapper : DescriptorsRemapper {
     override fun remapDeclaredSimpleFunction(descriptor: FunctionDescriptor) =
         WrappedSimpleFunctionDescriptor(descriptor.annotations, descriptor.source)
 
+    override fun remapDeclaredProperty(descriptor: PropertyDescriptor) =
+        WrappedPropertyDescriptor(descriptor.annotations, descriptor.source)
+
     override fun remapDeclaredTypeParameter(descriptor: TypeParameterDescriptor) =
         WrappedTypeParameterDescriptor(descriptor.annotations, descriptor.source)
 
@@ -79,6 +82,11 @@ object WrappedDescriptorPatcher : IrElementVisitorVoid {
 
     override fun visitField(declaration: IrField) {
         (declaration.descriptor as WrappedFieldDescriptor).bind(declaration)
+        declaration.acceptChildrenVoid(this)
+    }
+
+    override fun visitProperty(declaration: IrProperty) {
+        (declaration.descriptor as WrappedPropertyDescriptor).bind(declaration)
         declaration.acceptChildrenVoid(this)
     }
 
