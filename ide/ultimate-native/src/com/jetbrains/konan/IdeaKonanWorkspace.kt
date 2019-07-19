@@ -15,8 +15,19 @@ import com.intellij.openapi.project.Project
 import org.jdom.Element
 import org.jetbrains.kotlin.gradle.KonanArtifactModel
 import org.jetbrains.kotlin.konan.KonanVersion
+import org.jetbrains.kotlin.konan.KonanVersionImpl
+import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import java.io.File
+
+private val DEBUG_INTRODUCED = KonanVersionImpl(MetaVersion.DEV, 1, 3, 50, -1)
+
+fun compare(lhs: KonanVersion, rhs: KonanVersion): Int {
+    if (lhs.major != rhs.major) return lhs.major - rhs.major
+    if (lhs.minor != rhs.minor) return lhs.minor - rhs.minor
+    if (lhs.maintenance != rhs.maintenance) return lhs.maintenance - rhs.maintenance
+    return 0
+}
 
 @State(name = "KonanWorkspace", storages = [(Storage(StoragePathMacros.WORKSPACE_FILE))])
 class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Element>, ProjectComponent {
@@ -28,9 +39,9 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     var konanVersion: KonanVersion? = null
         set(value) {
             value?.let {
-                if (it.major < 1 || it.minor < 3) {
+                if (compare(it, DEBUG_INTRODUCED) < 0) {
                     KonanLog.MESSAGES.createNotification(
-                        "You are using Kotlin/Native version $it. It is obsolete and some plugin functionality may be unavailable.",
+                        KonanBundle.message("warning.versionPrior1_3_50", it),
                         NotificationType.WARNING
                     ).notify(project)
                 }
@@ -41,7 +52,7 @@ class IdeaKonanWorkspace(val project: Project) : PersistentStateComponent<Elemen
     val isDebugPossible: Boolean
         get() {
             konanVersion?.let {
-                return it.major > 1 || (it.major == 1 && it.minor >= 3)
+                return compare(it, DEBUG_INTRODUCED) >= 0
             }
 
             return false
