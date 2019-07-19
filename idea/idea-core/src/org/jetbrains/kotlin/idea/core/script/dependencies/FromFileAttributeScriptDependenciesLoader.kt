@@ -39,6 +39,9 @@ class FromFileAttributeScriptDependenciesLoader(project: Project) : ScriptDepend
         }?.let {
             if (areDependenciesValid(file, it)) {
                 saveToCache(file, it.asSuccess(), skipSaveToAttributes = true)
+            } else {
+                file.scriptCompilationConfiguration = null
+                file.scriptDependencies = null
             }
         }
     }
