@@ -1,0 +1,7 @@
+// MOVE: down
+fun wrap() {
+    <caret>fun nested() {}
+    // comment1
+    // comment2
+    val b = 42
+}

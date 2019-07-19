@@ -859,6 +859,26 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/declaration2.kt");
         }
 
+        @TestMetadata("hasComment1.kt")
+        public void testHasComment1() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment1.kt");
+        }
+
+        @TestMetadata("hasComment2.kt")
+        public void testHasComment2() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment2.kt");
+        }
+
+        @TestMetadata("hasComment3.kt")
+        public void testHasComment3() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment3.kt");
+        }
+
+        @TestMetadata("hasComment4.kt")
+        public void testHasComment4() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/expressions/hasComment4.kt");
+        }
+
         @TestMetadata("If1.kt")
         public void testIf1() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/expressions/If1.kt");

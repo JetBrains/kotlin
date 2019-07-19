@@ -350,6 +350,28 @@ public class KotlinExpressionMover extends AbstractKotlinUpDownMover {
             }
         }
 
+        if (start == sibling && end == sibling) {
+            PsiElement comment = sibling;
+            while (true) {
+                int nextLine = getElementLine(comment, editor, !down) + (down ? 1 : -1);
+                comment = firstNonWhiteSibling(comment, down);
+                if (comment instanceof PsiComment && getElementLine(comment, editor, down) == nextLine) {
+                    if (down) {
+                        end = comment;
+                    } else {
+                        start = comment;
+                    }
+                }
+                else break;
+            }
+            if (down && end instanceof PsiComment) {
+                PsiElement next = firstNonWhiteSibling(end, true);
+                if (getElementLine(next, editor, true) == getElementLine(end, editor, false) + 1) {
+                    end = next;
+                }
+            }
+        }
+
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
     }
 
