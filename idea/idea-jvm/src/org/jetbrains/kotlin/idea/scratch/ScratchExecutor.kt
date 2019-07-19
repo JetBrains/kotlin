@@ -23,8 +23,11 @@ import com.intellij.openapi.editor.event.DocumentEvent
 import com.intellij.openapi.editor.event.DocumentListener
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.psi.PsiManager
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
+import java.util.concurrent.Semaphore
+import java.util.concurrent.TimeUnit
 
 abstract class ScratchExecutor(protected val file: ScratchFile) {
     abstract fun execute()
@@ -175,5 +178,15 @@ abstract class SequentialScratchExecutor(file: ScratchFile) : ScratchExecutor(fi
 
     private fun wasExpressionExecuted(index: Int): Boolean {
         return index <= lastExecuted
+    }
+
+    @TestOnly
+    fun stopAndWait() {
+        val lock = Semaphore(1)
+        lock.acquire()
+        stopExecution {
+            lock.release()
+        }
+        lock.tryAcquire(2, TimeUnit.SECONDS)
     }
 }

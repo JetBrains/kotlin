@@ -212,13 +212,25 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         action.actionPerformed(e)
     }
 
-    protected fun waitUntilScratchFinishes() {
+    protected fun waitUntilScratchFinishes(shouldStopRepl: Boolean = true) {
         UIUtil.dispatchAllInvocationEvents()
 
         val start = System.currentTimeMillis()
         // wait until output is displayed in editor or for 1 minute
         while (ScratchCompilationSupport.isAnyInProgress() && (System.currentTimeMillis() - start) < 60000) {
             Thread.sleep(100)
+        }
+
+        if (shouldStopRepl) stopReplProcess()
+
+        UIUtil.dispatchAllInvocationEvents()
+    }
+
+    protected fun stopReplProcess() {
+        if (myFixture.file != null) {
+            val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
+                ?: error("Couldn't find scratch panel")
+            scratchPanel.scratchFile.replScratchExecutor?.stopAndWait()
         }
 
         UIUtil.dispatchAllInvocationEvents()
@@ -259,12 +271,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     }
 
     override fun tearDown() {
-        if (myFixture.file != null) {
-            val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
-                ?: error("Couldn't find scratch panel")
-            scratchPanel.scratchFile.replScratchExecutor?.stop()
-        }
-
         super.tearDown()
 
         VfsRootAccess.disallowRootAccess(KotlinTestUtils.getHomeDirectory())
