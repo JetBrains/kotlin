@@ -238,7 +238,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
     return target;
   }
 
-  void setDone(@NotNull Icon result) {
+  private void setDone(@NotNull Icon result) {
     if (myEvalListener != null) {
       myEvalListener.evalDone(this, myParam, result);
     }
@@ -358,9 +358,7 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
       RepaintRequest request = (RepaintRequest)o;
 
       if (!component.equals(request.component)) return false;
-      if (rectangle != null ? !rectangle.equals(request.rectangle) : request.rectangle != null) return false;
-
-      return true;
+      return rectangle != null ? rectangle.equals(request.rectangle) : request.rectangle == null;
     }
 
     @Override
@@ -377,19 +375,15 @@ public class DeferredIconImpl<T> extends JBCachingScalableIcon<DeferredIconImpl<
   }
 
   static boolean equalIcons(Icon icon1, Icon icon2) {
-    if (icon1 instanceof DeferredIconImpl) {
-      return ((DeferredIconImpl)icon1).isDeferredAndEqual(icon2);
-    }
-    if (icon2 instanceof DeferredIconImpl) {
-      return ((DeferredIconImpl)icon2).isDeferredAndEqual(icon1);
+    if (icon1 instanceof DeferredIconImpl && icon2 instanceof DeferredIconImpl) {
+      return paramsEqual((DeferredIconImpl)icon1, (DeferredIconImpl)icon2);
     }
     return Comparing.equal(icon1, icon2);
   }
 
-  private boolean isDeferredAndEqual(Icon icon) {
-    return icon instanceof DeferredIconImpl &&
-           Comparing.equal(myParam, ((DeferredIconImpl)icon).myParam) &&
-           equalIcons(myScaledDelegateIcon, ((DeferredIconImpl)icon).myScaledDelegateIcon);
+  private static boolean paramsEqual(@NotNull DeferredIconImpl icon1, @NotNull DeferredIconImpl icon2) {
+    return Comparing.equal(icon1.myParam, icon2.myParam) &&
+      equalIcons(icon1.myScaledDelegateIcon, icon2.myScaledDelegateIcon);
   }
 
   @Override
