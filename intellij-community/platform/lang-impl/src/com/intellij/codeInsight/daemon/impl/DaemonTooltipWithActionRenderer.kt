@@ -34,7 +34,6 @@ import java.awt.event.InputEvent
 import java.awt.event.KeyEvent
 import java.awt.event.MouseEvent
 import java.awt.geom.RoundRectangle2D
-import java.util.*
 import javax.swing.JComponent
 import javax.swing.JPanel
 import javax.swing.KeyStroke
@@ -107,7 +106,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                          grid: JPanel,
                          hint: LightweightHint,
                          hintHint: HintHint,
-                         actions: ArrayList<AnAction>,
+                         actions: MutableList<in AnAction>,
                          tooltipReloader: TooltipReloader,
                          newLayout: Boolean,
                          highlightActions: Boolean) {
@@ -130,7 +129,7 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
   private fun addActionsRow(hintHint: HintHint,
                             hint: LightweightHint,
                             editor: Editor,
-                            actions: ArrayList<AnAction>,
+                            actions: MutableList<in AnAction>,
                             grid: JComponent,
                             newLayout: Boolean,
                             highlightActions: Boolean) {

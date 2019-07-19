@@ -782,7 +782,7 @@ public class CtrlMouseHandler {
       HyperlinkListener hyperlinkListener = docInfo.docProvider == null
                                    ? null
                                    : new QuickDocHyperlinkListener(docInfo.docProvider, info.myElementAtPointer);
-      Ref<Consumer<String>> newTextConsumerRef = new Ref<>();
+      Ref<Consumer<? super String>> newTextConsumerRef = new Ref<>();
       JComponent component = HintUtil.createInformationLabel(docInfo.text, hyperlinkListener, null, newTextConsumerRef);
       component.setBorder(JBUI.Borders.empty(6, 6, 5, 6));
 
@@ -793,7 +793,7 @@ public class CtrlMouseHandler {
 
       showHint(hint, editor);
 
-      Consumer<String> newTextConsumer = newTextConsumerRef.get();
+      Consumer<? super String> newTextConsumer = newTextConsumerRef.get();
       if (newTextConsumer != null) {
         updateOnPsiChanges(hint, info, newTextConsumer, docInfo.text, editor);
       }
