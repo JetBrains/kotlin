@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -35,11 +36,14 @@ import org.jetbrains.kotlin.psi2ir.containsNull
 import org.jetbrains.kotlin.psi2ir.findSingleFunction
 import org.jetbrains.kotlin.psi2ir.intermediate.safeCallOnDispatchReceiver
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.checker.intersectTypes
 import org.jetbrains.kotlin.types.isDynamic
+import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -190,9 +194,28 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         }
     }
 
+    private fun getResultTypeForElvis(expression: KtExpression): KotlinType {
+        val binaryExpression = KtPsiUtil.safeDeparenthesize(expression)
+        val expressionType = context.bindingContext.getType(binaryExpression)!!
+        if (binaryExpression !is KtBinaryExpression || binaryExpression.operationToken != KtTokens.ELVIS) return expressionType
+
+        val inferredType = getResolvedCall(binaryExpression)!!.resultingDescriptor.returnType!!
+
+        // OI has a rather complex bug with constraint system for special call for '?:' that breaks IR-based back-ends.
+        // In NI this bug is fixed.
+        if (context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)) return inferredType
+
+        if (!inferredType.isError) return inferredType
+
+        // Infer type for elvis manually. Take into account possibly nested elvises.
+        val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
+        val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
+        val leftNNType = intersectTypes(listOf(leftType, context.builtIns.anyType))
+        return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
+    }
+
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {
-        val specialCallForElvis = getResolvedCall(expression)!!
-        val resultType = specialCallForElvis.resultingDescriptor.returnType!!.toIrType()
+        val resultType = getResultTypeForElvis(expression).toIrType()
         val irArgument0 = expression.left!!.genExpr()
         val irArgument1 = expression.right!!.genExpr()
 

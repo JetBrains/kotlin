@@ -1017,6 +1017,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             runTest("compiler/testData/ir/irText/expressions/kt30020.kt");
         }
 
+        @TestMetadata("kt30796.kt")
+        public void testKt30796() throws Exception {
+            runTest("compiler/testData/ir/irText/expressions/kt30796.kt");
+        }
+
         @TestMetadata("lambdaInCAO.kt")
         public void testLambdaInCAO() throws Exception {
             runTest("compiler/testData/ir/irText/expressions/lambdaInCAO.kt");
