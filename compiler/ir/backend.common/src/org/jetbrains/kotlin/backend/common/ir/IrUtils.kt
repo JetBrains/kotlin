@@ -523,7 +523,8 @@ fun createStaticFunctionWithReceivers(
         oldFunction.visibility,
         Modality.FINAL,
         oldFunction.returnType,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+        isInline = oldFunction.isInline,
+        isExternal = false, isTailrec = false, isSuspend = false
     ).apply {
         descriptor.bind(this)
         parent = irParent
