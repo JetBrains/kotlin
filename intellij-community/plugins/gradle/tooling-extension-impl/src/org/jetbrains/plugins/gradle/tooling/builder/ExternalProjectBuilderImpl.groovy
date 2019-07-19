@@ -96,7 +96,7 @@ class ExternalProjectBuilderImpl implements ModelBuilderService {
 
     addArtifactsData(project, defaultExternalProject)
 
-    final Map<String, DefaultExternalProject> childProjects = new HashMap<String, DefaultExternalProject>(project.getChildProjects().size())
+    final Map<String, DefaultExternalProject> childProjects = new TreeMap<String, DefaultExternalProject>()
     for (Map.Entry<String, Project> projectEntry : project.getChildProjects().entrySet()) {
       final Object externalProjectChild = doBuild(modelName, projectEntry.getValue(), cache, tasksFactory, sourceSetFinder)
       if (externalProjectChild instanceof DefaultExternalProject) {
