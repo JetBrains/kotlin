@@ -19,13 +19,14 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.NotNullLazyValue;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.psi.codeStyle.NameUtil;
+import com.intellij.psi.codeStyle.WordPrefixMatcher;
 import com.intellij.ui.switcher.QuickActionProvider;
 import com.intellij.util.CollectConsumer;
 import com.intellij.util.Processor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
 import com.intellij.util.text.Matcher;
-import com.intellij.psi.codeStyle.WordPrefixMatcher;
 import gnu.trove.THashSet;
 import org.jetbrains.annotations.NotNull;
 
@@ -196,7 +197,7 @@ public class GotoActionItemProvider implements ChooseByNameItemProvider {
 
   @NotNull
   static Matcher buildMatcher(String pattern) {
-    return new WordPrefixMatcher(pattern);
+    return pattern.contains(" ") ? new WordPrefixMatcher(pattern) : NameUtil.buildMatcher("*" + pattern, NameUtil.MatchingCaseSensitivity.NONE);
   }
 
   private boolean processIntentions(String pattern, Processor<? super MatchedValue> consumer, DataContext dataContext) {

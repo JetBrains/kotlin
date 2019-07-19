@@ -30,6 +30,7 @@ import com.intellij.openapi.util.*;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.psi.codeStyle.WordPrefixMatcher;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.ui.components.OnOffButton;
@@ -404,7 +405,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
     if (text != null && matcher.matches(text)) {
       return MatchMode.NAME;
     }
-    else if (description != null && !description.equals(text) && matcher.matches(description)) {
+    else if (description != null && !description.equals(text) && new WordPrefixMatcher(pattern).matches(description)) {
       return MatchMode.DESCRIPTION;
     }
     if (text == null) {
