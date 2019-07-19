@@ -41,7 +41,7 @@ open class FunctionCodegen(
         try {
             doGenerate()
         } catch (e: Throwable) {
-            throw RuntimeException("${e.message} while generating code for:\n${irFunction.dump()}", e)
+            throw RuntimeException("Exception while generating code for:\n${irFunction.dump()}", e)
         }
 
     private fun doGenerate(): JvmMethodGenericSignature {
