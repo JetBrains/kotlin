@@ -59,7 +59,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.asDefinitelyNotNullType(): DefinitelyNotNullTypeMarker? = null
 
-    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).isMarkedNullable()
+    override fun SimpleTypeMarker.isMarkedNullable(): Boolean = (this as IrSimpleType).hasQuestionMark
 
     override fun SimpleTypeMarker.withNullability(nullable: Boolean): SimpleTypeMarker {
         val simpleType = this as IrSimpleType
