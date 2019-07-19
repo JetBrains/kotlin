@@ -11,10 +11,8 @@ import com.intellij.openapi.externalSystem.service.ui.ExternalToolWindowManager;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemUtil;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.util.DisposeAwareRunnable;
 import org.jetbrains.annotations.NotNull;
 
 final class ExternalSystemStartupActivity implements StartupActivity, DumbAware {
@@ -41,6 +39,6 @@ final class ExternalSystemStartupActivity implements StartupActivity, DumbAware 
       ProjectRenameAware.beAware(project);
     };
 
-    ApplicationManager.getApplication().invokeLater(task);
+    ApplicationManager.getApplication().invokeLater(task, project.getDisposed());
   }
 }
