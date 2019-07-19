@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 interface I
 
 abstract class AbstractTest {

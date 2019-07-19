@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 import kotlin.reflect.KProperty
 import kotlin.reflect.KProperty1
 

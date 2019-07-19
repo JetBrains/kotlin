@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: JVM_IR
 
 @Suppress("INLINE_CLASS_HAS_INAPPLICABLE_PARAMETER_TYPE")
 inline class NonNull<T : Any>(val x: T)

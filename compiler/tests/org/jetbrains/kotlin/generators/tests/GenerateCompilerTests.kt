@@ -384,6 +384,10 @@ fun main(args: Array<String>) {
             model("writeFlags", targetBackend = TargetBackend.JVM_IR)
         }
 
+        testClass<AbstractIrWriteSignatureTest> {
+            model("writeSignature", targetBackend = TargetBackend.JVM_IR)
+        }
+
         testClass<AbstractIrLoadJavaTest> {
             model("loadJava/compiledJava", extension = "java", testMethod = "doTestCompiledJava", targetBackend = TargetBackend.JVM_IR)
             model(

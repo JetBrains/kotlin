@@ -1,3 +1,5 @@
+// IGNORE_BACKEND: JVM_IR
+
 class MyList<T> {
 
     private fun noSignature(): T? = null
