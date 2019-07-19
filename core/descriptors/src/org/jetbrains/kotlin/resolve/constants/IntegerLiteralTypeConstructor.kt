@@ -36,7 +36,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
          */
         private fun findCommonSuperTypeOrIntersectionType(types: Collection<SimpleType>, mode: Mode): SimpleType? {
             if (types.isEmpty()) return null
-            return types.reduce { left: SimpleType?, right -> fold(left, right, mode) }
+            return types.reduce { left: SimpleType?, right: SimpleType? -> fold(left, right, mode) }
         }
 
         private fun fold(left: SimpleType?, right: SimpleType?, mode: Mode): SimpleType? {
