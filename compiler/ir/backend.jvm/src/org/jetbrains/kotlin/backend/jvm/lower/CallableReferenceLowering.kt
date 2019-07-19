@@ -64,6 +64,17 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 
     override fun lower(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+            override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+                if (expression.operator == IrTypeOperator.SAM_CONVERSION) {
+                    val invokable = expression.argument
+                    if (invokable is IrFunctionReference) {
+                        inlineLambdaReferences += invokable
+                    } else if (invokable is IrBlock && invokable.statements.last() is IrFunctionReference) {
+                        inlineLambdaReferences += invokable.statements.last() as IrFunctionReference
+                    }
+                }
+                return super.visitTypeOperator(expression)
+            }
 
             override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
                 val callee = expression.symbol.owner
@@ -177,6 +188,7 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
+            visibility = Visibilities.LOCAL
             origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
             name = Name.special("<function reference to ${callee.fqNameWhenAvailable}>")
         }.apply {
