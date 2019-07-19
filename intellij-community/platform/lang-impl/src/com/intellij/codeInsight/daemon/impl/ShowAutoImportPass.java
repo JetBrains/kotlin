@@ -60,10 +60,10 @@ public class ShowAutoImportPass extends TextEditorHighlightingPass {
 
   @Override
   public void doApplyInformationToEditor() {
-    TransactionGuard.submitTransaction(myProject, this::addImports);
+    TransactionGuard.submitTransaction(myProject, this::showImports);
   }
 
-  private void addImports() {
+  private void showImports() {
     Application application = ApplicationManager.getApplication();
     application.assertIsDispatchThread();
     if (!application.isHeadlessEnvironment() && !myEditor.getContentComponent().hasFocus()) return;

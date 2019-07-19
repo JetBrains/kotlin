@@ -32,7 +32,6 @@ public interface ReferenceImporter {
   /**
    * @deprecated implement {@link com.intellij.codeInspection.HintAction#fixSilently(Editor)} instead.
    */
-  @SuppressWarnings({"DeprecatedIsStillUsed", "unused"})
   @Deprecated
   default boolean autoImportReferenceAt(@NotNull Editor editor, @NotNull PsiFile file, int offset) {
     return false;

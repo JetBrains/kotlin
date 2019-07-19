@@ -80,7 +80,6 @@ import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -205,7 +204,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
    * the user presses a key);
    * {@code false} otherwise
    */
-  public boolean isCloseOnSneeze() {
+  boolean isCloseOnSneeze() {
     return myCloseOnSneeze;
   }
 
@@ -461,7 +460,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
   private void doShowJavaDocInfo(@NotNull PsiElement element,
                                  boolean requestFocus,
-                                 PopupUpdateProcessor updateProcessor,
+                                 @NotNull PopupUpdateProcessor updateProcessor,
                                  PsiElement originalElement,
                                  @Nullable Runnable closeCallback,
                                  @Nullable String documentation,
@@ -529,13 +528,10 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
 
     DocumentationComponent component = myTestDocumentationComponent == null ? new DocumentationComponent(this, useStoredPopupSize) :
                                        myTestDocumentationComponent;
-    ActionListener actionListener = new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        createToolWindow(element, originalElement);
-        JBPopup hint = getDocInfoHint();
-        if (hint != null && hint.isVisible()) hint.cancel();
-      }
+    ActionListener actionListener = __ -> {
+      createToolWindow(element, originalElement);
+      JBPopup hint = getDocInfoHint();
+      if (hint != null && hint.isVisible()) hint.cancel();
     };
     List<Pair<ActionListener, KeyStroke>> actions = ContainerUtil.newSmartList();
     AnAction quickDocAction = ActionManager.getInstance().getAction(IdeActions.ACTION_QUICK_JAVADOC);
@@ -1089,7 +1085,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
   }
 
   @Nullable
-  public Image getElementImage(@NotNull PsiElement element, @NotNull String imageSpec) {
+  Image getElementImage(@NotNull PsiElement element, @NotNull String imageSpec) {
     DocumentationProvider provider = getProviderFromElement(element);
     if (provider instanceof CompositeDocumentationProvider) {
       for (DocumentationProvider p : ((CompositeDocumentationProvider)provider).getAllProviders()) {

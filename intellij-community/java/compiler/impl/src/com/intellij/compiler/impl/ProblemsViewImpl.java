@@ -25,7 +25,6 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.util.EnumSet;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -38,8 +37,6 @@ public class ProblemsViewImpl extends ProblemsView{
 
   private final ProblemsViewPanel myPanel;
   private final ExecutorService myViewUpdater = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("ProblemsView Pool");
-  private final Icon myActiveIcon = AllIcons.Toolwindows.Problems;
-  private final Icon myPassiveIcon = AllIcons.Toolwindows.ProblemsEmpty;
 
   public ProblemsViewImpl(final Project project, final ToolWindowManager wm) {
     super(project);
@@ -132,7 +129,7 @@ public class ProblemsViewImpl extends ProblemsView{
         final ToolWindow tw = ToolWindowManager.getInstance(myProject).getToolWindow(PROBLEMS_TOOLWINDOW_ID);
         if (tw != null) {
           final boolean active = myPanel.getErrorViewStructure().hasMessages(EnumSet.of(ErrorTreeElementKind.ERROR, ErrorTreeElementKind.WARNING, ErrorTreeElementKind.NOTE));
-          tw.setIcon(active ? myActiveIcon : myPassiveIcon);
+          tw.setIcon(active ? AllIcons.Toolwindows.Problems : AllIcons.Toolwindows.ProblemsEmpty);
         }
       }
     });
