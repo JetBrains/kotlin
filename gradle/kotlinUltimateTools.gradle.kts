@@ -10,7 +10,7 @@ val ultimateTools: Map<String, KFunction<Any>> = listOf<KFunction<Any>>(
     ::enableTasksIfAtLeast,
     ::enableTasksIfOsIsNot,
     ::addCidrDeps,
-    ::addIdeaNativeModuleDepsComposite
+    ::addIdeaNativeModuleDeps
 ).map { it.name to it }.toMap()
 
 rootProject.extensions.add("ultimateTools", ultimateTools)
@@ -60,9 +60,12 @@ fun Project.disableBuildTasks(message: () -> String) {
 // Shared utils:
 // --------------------------------------------------
 
-val javaApiArtifacts: List<String> by rootProject.extra
-
+val excludesListFromIdeaPlugin: List<String> by rootProject.extra
+val platformDepsJarName: String by rootProject.extra
+val isStandaloneBuild: Boolean by rootProject.extra
 val cidrPluginsEnabled: Boolean? by rootProject.extra
+
+val javaApiArtifacts = listOf("java-api", "java-impl")
 
 fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
     dependencies {
@@ -70,6 +73,8 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         // (automatically brings all the necessary transient dependencies, include deps on IntelliJ platform)
         add("compile", project(":idea:idea-native"))
         add("compile", project(":idea:idea-gradle-native"))
+        add("compile", project(":idea:kotlin-gradle-tooling"))
+        add("compile", project(":kotlin-native:kotlin-native-utils"))
 
         // Detect IDE name and version
         // TODO: add dependency on base project artifacts
@@ -115,6 +120,41 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
         }
     }
 }
+fun addIdeaNativeModuleDepsStandalone(project: Project) = with(project) {
+    dependencies {
+        // contents of Kotlin plugin
+        val ideaPluginForCidrDir: String by rootProject.extra
+        val ideaPluginJars = fileTree(ideaPluginForCidrDir) {
+            exclude(excludesListFromIdeaPlugin)
+        }
+        add("compile", ideaPluginJars)
+
+        // IntelliJ platform (out of CIDR IDE distribution)
+        val cidrIdeDir: String by rootProject.extra
+        val cidrPlatform = fileTree(cidrIdeDir) {
+            include("lib/*.jar")
+            exclude("lib/kotlin*.jar") // because Kotlin should be taken from Kotlin plugin
+            exclude("lib/clion*.jar") // don't take scrambled JARs
+            exclude("lib/appcode*.jar")
+        }
+        add("compile", cidrPlatform)
+
+        // standard CIDR plugins
+        val cidrPlugins = fileTree(cidrIdeDir) {
+            include("plugins/cidr-*/lib/*.jar")
+            include("plugins/gradle/lib/*.jar")
+        }
+        add("compile", cidrPlugins)
+
+        // Java APIs (private artifact that goes together with CIDR IDEs)
+        val cidrPlatformDepsOrJavaPluginDir: String by rootProject.extra
+        val cidrPlatformDepsOrJavaPlugin = fileTree(cidrPlatformDepsOrJavaPluginDir) {
+            include(platformDepsJarName)
+            javaApiArtifacts.forEach { include("$it*.jar") }
+        }
+        add("compile", cidrPlatformDepsOrJavaPlugin)
+    }
+}
 
 fun addCidrDeps(project: Project) = with(project) {
     dependencies {
@@ -128,3 +168,10 @@ fun addCidrDeps(project: Project) = with(project) {
     }
 }
 
+fun addIdeaNativeModuleDeps(project: Project) = with(project) {
+    if (isStandaloneBuild) {
+        addIdeaNativeModuleDepsStandalone(project)
+    } else {
+        addIdeaNativeModuleDepsComposite(project)
+    }
+}

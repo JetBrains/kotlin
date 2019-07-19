@@ -4,20 +4,19 @@ plugins {
 
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addCidrDeps: (Project) -> Unit by ultimateTools
-val addIdeaNativeModuleDepsComposite: (Project) -> Unit by ultimateTools
+val addIdeaNativeModuleDeps: (Project) -> Unit by ultimateTools
 val cidrUnscrambledJarDir: File? by rootProject.extra
+val intellijBranch: Int by rootProject.extra
 
 dependencies {
     addCidrDeps(project)
-    addIdeaNativeModuleDepsComposite(project)
-    compile(project(":kotlin-native:kotlin-native-utils"))
+    addIdeaNativeModuleDeps(project)
 }
 
-sourceSets {
-    if (Ide.IJ192.orHigher() || cidrUnscrambledJarDir?.exists() == true) {
-        "main" { projectDefault() }
-    } else {
-        "main" {}
-    }
-    "test" {}
+if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
+    sourceSets["main"].java.setSrcDirs(listOf("src"))
+} else {
+    sourceSets["main"].java.setSrcDirs(emptyList<String>())
 }
+
+sourceSets["test"].java.setSrcDirs(emptyList<String>())

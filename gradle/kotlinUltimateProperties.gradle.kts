@@ -4,10 +4,10 @@ import java.lang.Boolean.parseBoolean
 import java.net.URL
 import java.util.*
 
-val isStandaloneBuild: Boolean = with(rootProject) {
+val isStandaloneBuild: Boolean by rootProject.extra(with(rootProject) {
     findProject(":idea") == null && findProject(":kotlin-ultimate") != null
             || findProject(":prepare-deps:idea-plugin") != null // workaround for buildSrc
-}
+})
 
 fun locatePropertiesFile(): File {
     val basePropertiesFilePath = if (isStandaloneBuild) { // in standalone build:
@@ -36,6 +36,14 @@ val prepareDepsPath: File = propertiesFile.parentFile.resolve("buildSrc/prepare-
 
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
         prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix)
+
+//val intellijBranchString = (rootProject.extra["versions.intellijSdk"] as? String?)?.substringBefore('.')?.toIntOrNull()
+val intellijBranch: Int by rootProject.extra(
+        if (rootProject.extra.has("versions.intellijSdk"))
+            (rootProject.extra["versions.intellijSdk"] as String).substringBefore('.').toInt()
+        else
+            192
+)
 
 val clionVersion: String by rootProject.extra(rootProject.extra["versions.clion"] as String)
 val clionVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.clion.strict"].toBoolean())
@@ -161,7 +169,14 @@ val clionPluginZipPath: File by rootProject.extra(
 )
 val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
-val javaApiArtifacts: List<String> by rootProject.extra(listOf("java-api", "java-impl"))
+val platformDepsJarName: String by rootProject.extra("kotlinNative-platformDeps.jar")
+val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
+        "lib/android-*.jar", // no need Android stuff
+        "lib/kapt3-*.jar", // no annotation processing
+        "lib/jps/**", // JSP plugin
+        "kotlinc/**"
+))
+//val isStandaloneBuild: Boolean by rootProject.extra(rootProject.findProject(":idea") == null)
 
 fun cidrProductBranch(productVersion: String): Int {
     return productVersion.substringBefore('.').toIntOrNull()

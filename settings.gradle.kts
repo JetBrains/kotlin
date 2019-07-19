@@ -14,6 +14,7 @@ pluginManagement {
 }
 
 includeSubprojects(
+        ":kotlin-ultimate:ide:common-native",
         ":kotlin-ultimate:ide:cidr-native",
         ":kotlin-ultimate:ide:clion-native",
         ":kotlin-ultimate:ide:appcode-native",

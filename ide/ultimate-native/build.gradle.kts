@@ -5,6 +5,7 @@ plugins {
 val ultimateTools: Map<String, Any> by rootProject.extensions
 val addCidrDeps: (Project) -> Unit by ultimateTools
 val cidrUnscrambledJarDir: File? by rootProject.extra
+val intellijBranch: Int by rootProject.extra
 
 dependencies {
     compile(kotlinStdlib("jdk8"))
@@ -25,16 +26,15 @@ dependencies {
     compileOnly(intellijUltimatePluginDep("java")) { includeJars("java-impl") }
     addCidrDeps(project)
 
-    Platform[192].orHigher {
+    if (intellijBranch >= 192) {
         compileOnly(intellijUltimateDep()) { includeJars("platform-util-ui") }
     }
 }
 
-sourceSets {
-    if (Ide.IJ192.orHigher() || cidrUnscrambledJarDir?.exists() == true) {
-        "main" { projectDefault() }
-    } else {
-        "main" {}
-    }
-    "test" {}
+if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
+    sourceSets["main"].java.setSrcDirs(listOf("src"))
+} else {
+    sourceSets["main"].java.setSrcDirs(emptyList<String>())
 }
+
+sourceSets["test"].java.setSrcDirs(emptyList<String>())
