@@ -27,11 +27,6 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
 
   protected abstract void apply();
 
-  @Override
-  public boolean needsReadAction() {
-    return true;
-  }
-
   @Nullable
   @Override
   public ChangeApplier prepareChange(@NotNull List<? extends VFileEvent> events) {
