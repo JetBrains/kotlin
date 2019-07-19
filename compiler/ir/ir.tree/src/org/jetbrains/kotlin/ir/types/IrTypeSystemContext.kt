@@ -288,9 +288,18 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         } ?: owner.superTypes.first()
 
     override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
-        // Code in inlineClassesUtils.kt loads the property with the same name and takes its type. This should have the same effect.
-        val irClass = (this as? IrType)?.classOrNull?.owner ?: return null
-        return irClass.primaryConstructor?.valueParameters?.singleOrNull()?.type
+        // Code in inlineClassesUtils.kt loads the property with the same name from the scope of the substituted type and takes its type.
+        // This code below should have the same effect.
+        val irClass = (this as? IrType)?.classOrNull?.owner?.takeIf { it.isInline } ?: return null
+        val inlineClassParameter = irClass.primaryConstructor?.valueParameters?.singleOrNull()
+        return inlineClassParameter?.let { parameter ->
+            // Taking only the type parameters of the class (and not its outer classes) is OK since inner classes are always top level
+            IrTypeSubstitutor(
+                irClass.typeParameters.map { it.symbol },
+                (this as? IrSimpleType)?.arguments.orEmpty(),
+                irBuiltIns
+            ).substitute(parameter.type)
+        }
     }
 
     override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
