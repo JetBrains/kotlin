@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
@@ -50,14 +51,12 @@ open class ClassCodegen protected constructor(
 
     val type: Type = typeMapper.mapClass(irClass)
 
-    private val fileEntry = context.psiSourceManager.getFileEntry(irClass.fileParent)
-
     val visitor: ClassBuilder = createClassBuilder()
 
     open fun createClassBuilder() = state.factory.newVisitor(
         OtherOrigin(descriptor.psiElement, descriptor),
         type,
-        listOf(File(fileEntry.name))
+        irClass.fileParent.loadSourceFilesInfo()
     )
 
     private var sourceMapper: DefaultSourceMapper? = null
@@ -97,9 +96,12 @@ open class ClassCodegen protected constructor(
             continuationCodegen.generate()
         }
 
-        /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
-        val shortName = File(fileEntry.name).name
-        visitor.visitSource(shortName, null)
+        val fileEntry = context.psiSourceManager.getFileEntry(irClass.fileParent)
+        if (fileEntry != null) {
+            /* TODO: Temporary workaround: ClassBuilder needs a pathless name. */
+            val shortName = File(fileEntry.name).name
+            visitor.visitSource(shortName, null)
+        }
 
         for (declaration in irClass.declarations) {
             generateDeclaration(declaration)
@@ -162,6 +164,14 @@ open class ClassCodegen protected constructor(
         }
 
         visitor.done()
+    }
+
+    private fun IrFile.loadSourceFilesInfo(): List<File> {
+        val entry = fileEntry
+        if (entry is MultifileFacadeFileEntry) {
+            return entry.partFiles.flatMap { it.loadSourceFilesInfo() }
+        }
+        return listOf(File(context.psiSourceManager.getFileEntry(this)!!.name))
     }
 
     companion object {

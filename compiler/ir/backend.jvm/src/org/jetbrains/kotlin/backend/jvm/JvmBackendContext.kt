@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi2ir.PsiSourceManager
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 class JvmBackendContext(
     val state: GenerationState,
@@ -62,6 +63,8 @@ class JvmBackendContext(
     }
 
     internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
+
+    internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
 
     override var inVerbosePhase: Boolean = false
 

@@ -184,7 +184,8 @@ val jvmPhases = namedIrModulePhase(
     description = "IR lowering",
     lower = expectDeclarationsRemovingPhase then
             fileClassPhase then
-            performByIrFile(lower = jvmFilePhases)
+            performByIrFile(lower = jvmFilePhases) then
+            generateMultifileFacadesPhase
 )
 
 class JvmLower(val context: JvmBackendContext) {

@@ -95,6 +95,6 @@ class PsiSourceManager : SourceManager {
     fun getKtFile(irFile: IrFile): KtFile? =
         (irFile.fileEntry as? PsiFileEntry)?.let { ktFileByFileEntry[it] }
 
-    override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry =
-        fileEntriesByIrFile[irFile]!!
+    override fun getFileEntry(irFile: IrFile): SourceManager.FileEntry? =
+        fileEntriesByIrFile[irFile]
 }
