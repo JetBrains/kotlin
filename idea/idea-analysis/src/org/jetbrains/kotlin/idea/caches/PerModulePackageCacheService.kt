@@ -106,7 +106,10 @@ class KotlinPackageStatementPsiTreeChangePreprocessor(private val project: Proje
                     LOG.debugIfEnabled(project, true) { "Got PsiEvent: $event without parent" }
                     return
                 }
-                if (!event.isGenericChange && (parent.getChildrenOfType<KtPackageDirective>().any() || parent is KtPackageDirective))
+                val childrenOfType = parent.getChildrenOfType<KtPackageDirective>()
+                if ((!event.isGenericChange && (childrenOfType.any() || parent is KtPackageDirective)) ||
+                    (childrenOfType.any { it.name.isEmpty() } && parent is KtFile)
+                )
                     ServiceManager.getService(project, PerModulePackageCacheService::class.java).notifyPackageChange(file)
             }
             else -> {
