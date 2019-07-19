@@ -65,9 +65,9 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
   }
 
   @Override
-  protected void bootstrapPicoContainer(@NotNull String name) {
+  protected MutablePicoContainer bootstrapPicoContainer(@NotNull String name) {
     Extensions.instantiateArea(ExtensionAreas.IDEA_MODULE, this, (AreaInstance)getParentComponentManager());
-    super.bootstrapPicoContainer(name);
+    return super.bootstrapPicoContainer(name);
   }
 
   @Override
