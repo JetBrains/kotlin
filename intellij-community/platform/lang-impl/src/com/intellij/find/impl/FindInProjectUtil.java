@@ -167,6 +167,9 @@ public class FindInProjectUtil {
           }
         }
       }
+      if (virtualFile == null && !path.contains(JarFileSystem.JAR_SEPARATOR)) {
+        virtualFile = JarFileSystem.getInstance().findFileByPath(path + JarFileSystem.JAR_SEPARATOR);
+      }
     }
     return virtualFile;
   }
