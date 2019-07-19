@@ -570,9 +570,10 @@ internal fun KtExpression?.generateAssignment(
     }
 }
 
-internal fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession, member: Boolean) {
+internal fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession, member: Boolean, stubMode: Boolean) {
     val variable = this as FirVariable<*>
     val delegateFieldSymbol = delegateFieldSymbol ?: return
+    val delegate = delegate as? FirWrappedDelegateExpressionImpl ?: return
     fun delegateAccess() = FirQualifiedAccessExpressionImpl(session, null).apply {
         calleeReference = FirDelegateFieldReferenceImpl(session, null, delegateFieldSymbol)
     }
@@ -588,6 +589,13 @@ internal fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: Fi
         typeRef = FirImplicitKPropertyTypeRef(session, null, ConeStarProjection)
     }
 
+    delegate.delegateProvider = if (stubMode) FirExpressionStub(session, null) else FirFunctionCallImpl(session, null).apply {
+        explicitReceiver = delegate.expression
+        calleeReference = FirSimpleNamedReference(session, null, PROVIDE_DELEGATE)
+        arguments += thisRef()
+        arguments += propertyRef()
+    }
+    if (stubMode) return
     getter = (getter as? FirPropertyAccessorImpl)
         ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(session, null)).apply Accessor@{
             body = FirSingleExpressionBlock(
@@ -631,4 +639,5 @@ internal fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: Fi
 
 private val GET_VALUE = Name.identifier("getValue")
 private val SET_VALUE = Name.identifier("setValue")
+private val PROVIDE_DELEGATE = Name.identifier("provideDelegate")
 private val DELEGATED_SETTER_PARAM = Name.special("<set-?>")

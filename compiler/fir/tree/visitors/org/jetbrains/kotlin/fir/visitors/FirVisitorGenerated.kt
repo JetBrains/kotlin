@@ -320,8 +320,12 @@ abstract class FirVisitor<out R, in D> {
         return visitUnknownTypeExpression(whenSubjectExpression, data)
     }
 
+    open fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: D): R {
+        return visitExpression(wrappedExpression, data)
+    }
+
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): R {
-        return visitExpression(wrappedArgumentExpression, data)
+        return visitWrappedExpression(wrappedArgumentExpression, data)
     }
 
     open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): R {
@@ -334,6 +338,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): R {
         return visitWrappedArgumentExpression(spreadArgumentExpression, data)
+    }
+
+    open fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): R {
+        return visitWrappedExpression(wrappedDelegateExpression, data)
     }
 
     open fun visitClass(klass: FirClass, data: D): R {

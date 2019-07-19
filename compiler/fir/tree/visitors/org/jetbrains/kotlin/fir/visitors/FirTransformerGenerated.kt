@@ -320,8 +320,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformUnknownTypeExpression(whenSubjectExpression, data)
     }
 
+    open fun transformWrappedExpression(wrappedExpression: FirWrappedExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformExpression(wrappedExpression, data)
+    }
+
     open fun transformWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
-        return transformExpression(wrappedArgumentExpression, data)
+        return transformWrappedExpression(wrappedArgumentExpression, data)
     }
 
     open fun transformLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
@@ -334,6 +338,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformWrappedArgumentExpression(spreadArgumentExpression, data)
+    }
+
+    open fun transformWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformWrappedExpression(wrappedDelegateExpression, data)
     }
 
     open fun transformClass(klass: FirClass, data: D): CompositeTransformResult<FirStatement> {
@@ -870,6 +878,14 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: D): CompositeTransformResult<FirElement> {
         return transformWrappedArgumentExpression(wrappedArgumentExpression, data)
+    }
+
+    final override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformWrappedDelegateExpression(wrappedDelegateExpression, data)
+    }
+
+    final override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformWrappedExpression(wrappedExpression, data)
     }
 
     final override fun visitElement(element: FirElement, data: D): CompositeTransformResult<FirElement> {

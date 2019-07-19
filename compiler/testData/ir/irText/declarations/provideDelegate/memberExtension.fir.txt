@@ -55,17 +55,20 @@ FILE fqName:<root> fileName:/memberExtension.kt
           CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.Host.StringDelegate' type=<root>.Host.StringDelegate origin=null
             s: ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
     PROPERTY name:plusK visibility:public modality:FINAL [delegated,val]
-      FIELD DELEGATE name:plusK$delegate type:IrErrorType visibility:private [final]
+      FIELD DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final]
         EXPRESSION_BODY
-          CONST String type=IrErrorType value="K"
+          CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): <root>.Host.StringDelegate declared in <root>.Host' type=<root>.Host.StringDelegate origin=null
+            $this: CONST String type=kotlin.String value="K"
+            host: ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+            p: PROPERTY_REFERENCE 'public final plusK: IrErrorType [delegated,val]' field=null getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-plusK> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType
         correspondingProperty: PROPERTY name:plusK visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-plusK> (): IrErrorType declared in <root>.Host'
-            ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/Host.StringDelegate.getValue]>#' type=IrErrorType
               ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
-              PROPERTY_REFERENCE 'public final plusK: IrErrorType [delegated,val]' field='FIELD DELEGATE name:plusK$delegate type:IrErrorType visibility:private [final] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+              PROPERTY_REFERENCE 'public final plusK: IrErrorType [delegated,val]' field='FIELD DELEGATE name:plusK$delegate type:<root>.Host.StringDelegate visibility:private [final] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     PROPERTY name:ok visibility:public modality:FINAL [val] 
       FIELD PROPERTY_BACKING_FIELD name:ok type:IrErrorType visibility:public [final] 
         EXPRESSION_BODY

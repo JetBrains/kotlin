@@ -46,17 +46,21 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
   PROPERTY name:testO visibility:public modality:FINAL [delegated,val] 
-    FIELD DELEGATE name:testO$delegate type:<root>.MyClass visibility:private [final,static]
+    FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
-        CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.MyClass' type=<root>.MyClass origin=null
-          value: CONST String type=kotlin.String value="O"
-    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:public modality:FINAL <> () returnType:IrErrorType
+        CALL 'public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
+          $receiver: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.MyClass' type=<root>.MyClass origin=null
+            value: CONST String type=kotlin.String value="O"
+          host: CONST Null type=kotlin.Nothing? value=null
+          p: PROPERTY_REFERENCE 'public final testO: kotlin.String [delegated,val]' field=null getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+    FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testO> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testO visibility:public modality:FINAL [delegated,val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testO> (): IrErrorType declared in <root>'
-          ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/getValue]>#' type=IrErrorType
-            CONST Null type=kotlin.Nothing? value=null
-            PROPERTY_REFERENCE 'public final testO: IrErrorType [delegated,val]' field='FIELD DELEGATE name:testO$delegate type:<root>.MyClass visibility:private [final,static] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+        RETURN type=kotlin.Nothing from='public final fun <get-testO> (): kotlin.String declared in <root>'
+          CALL 'public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>' type=kotlin.String origin=null
+            $receiver: GET_FIELD 'FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static] ' type=kotlin.String origin=GET_PROPERTY
+            receiver: CONST Null type=kotlin.Nothing? value=null
+            p: PROPERTY_REFERENCE 'public final testO: kotlin.String [delegated,val]' field='FIELD DELEGATE name:testO$delegate type:kotlin.String visibility:private [final,static] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:testK visibility:public modality:FINAL [delegated,val]
     FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
@@ -70,13 +74,13 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testK: kotlin.String [delegated,val]' field='FIELD DELEGATE name:testK$delegate type:kotlin.String visibility:private [final,static] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
   PROPERTY name:testOK visibility:public modality:FINAL [val] 
-    FIELD PROPERTY_BACKING_FIELD name:testOK type:IrErrorType visibility:public [final,static] 
+    FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
-        ERROR_CALL 'Unresolved reference: <Ambiguity: plus, [kotlin/plus, kotlin/plus, kotlin/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/collections/plus, kotlin/sequences/plus, kotlin/text/plus]>#' type=IrErrorType
-          CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=null
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:IrErrorType 
+        CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=null
+          $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+          other: CALL 'public final fun <get-testK> (): kotlin.String declared in <root>' type=kotlin.String origin=null
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-testOK> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:testOK visibility:public modality:FINAL [val] 
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-testOK> (): IrErrorType declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testOK type:IrErrorType visibility:public [final,static] ' type=IrErrorType origin=null
-
+        RETURN type=kotlin.Nothing from='public final fun <get-testOK> (): kotlin.String declared in <root>'
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null

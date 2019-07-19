@@ -83,18 +83,22 @@ FILE fqName:<root> fileName:/member.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] 
-      FIELD DELEGATE name:testMember$delegate type:<root>.DelegateProvider visibility:private [final]
+      FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]
         EXPRESSION_BODY
-          CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
-            value: CONST String type=kotlin.String value="OK"
-      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:IrErrorType
+          CALL 'public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider' type=<root>.Delegate origin=null
+            $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
+              value: CONST String type=kotlin.String value="OK"
+            thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+            property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val]' field=null getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+      FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val] 
         $this: VALUE_PARAMETER name:<this> type:<root>.Host 
         BLOCK_BODY
-          RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): IrErrorType declared in <root>.Host'
-            ERROR_CALL 'Unresolved reference: <Unresolved name: getValue>#' type=IrErrorType
-              ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
-              PROPERTY_REFERENCE 'public final testMember: IrErrorType [delegated,val]' field='FIELD DELEGATE name:testMember$delegate type:<root>.DelegateProvider visibility:private [final] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
+          RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): kotlin.String declared in <root>.Host'
+            CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
+              $this: GET_FIELD 'FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final] ' type=<root>.Delegate origin=GET_PROPERTY
+              thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+              property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val]' field='FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final] ' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

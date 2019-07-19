@@ -78,5 +78,4 @@ FILE fqName:<root> fileName:/local.kt
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
   FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit 
     BLOCK_BODY
-      VAR name:testMember type:IrErrorType [val] 
-
+      VAR name:testMember type:kotlin.String [val]

@@ -625,6 +625,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("${constExpression.kind}(${constExpression.value})")
     }
 
+    override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression) {
+        wrappedDelegateExpression.expression.accept(this)
+    }
+
     override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
         print(namedArgumentExpression.name)
         print(" = ")

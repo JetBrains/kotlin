@@ -70,7 +70,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
         }
 
     private inner class Visitor : KtVisitor<FirElement, Unit>() {
-        private inline fun <reified R : FirElement> KtElement?. convertSafe(): R? =
+        private inline fun <reified R : FirElement> KtElement?.convertSafe(): R? =
             this?.accept(this@Visitor, Unit) as? R
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =
@@ -774,6 +774,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val initializer = if (property.hasInitializer()) {
                 { property.initializer }.toFirExpression("Should have initializer")
             } else null
+            val delegateExpression by lazy { property.delegate?.expression }
             val firProperty = if (property.isLocal) {
                 FirVariableImpl(
                     session,
@@ -782,9 +783,14 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     propertyType,
                     isVar,
                     initializer,
-                    delegate = property.delegate?.expression?.toFirExpression("Incorrect delegate expression")
+                    delegate = delegateExpression?.let {
+                        FirWrappedDelegateExpressionImpl(
+                            session, it,
+                            it.toFirExpression("Incorrect delegate expression")
+                        )
+                    }
                 ).apply {
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false)
+                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = false, stubMode = stubMode)
                 }
             } else {
                 FirMemberPropertyImpl(
@@ -804,13 +810,16 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     isVar,
                     initializer,
                     if (property.hasDelegate()) {
-                        { property.delegate?.expression }.toFirExpression("Should have delegate")
+                        FirWrappedDelegateExpressionImpl(
+                            session, if (stubMode) null else delegateExpression,
+                            { delegateExpression }.toFirExpression("Should have delegate")
+                        )
                     } else null
                 ).apply {
                     property.extractTypeParametersTo(this)
                     getter = property.getter.toFirPropertyAccessor(property, propertyType, isGetter = true)
                     setter = if (isVar) property.setter.toFirPropertyAccessor(property, propertyType, isGetter = false) else null
-                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = !property.isTopLevel)
+                    generateAccessorsByDelegate(this@RawFirBuilder.session, member = !property.isTopLevel, stubMode = stubMode)
                 }
             }
             property.extractAnnotationsTo(firProperty)

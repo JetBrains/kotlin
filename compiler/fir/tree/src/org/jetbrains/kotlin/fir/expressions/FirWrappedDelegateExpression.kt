@@ -10,16 +10,21 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirWrappedArgumentExpression(
+abstract class FirWrappedDelegateExpression(
     session: FirSession,
     psi: PsiElement?
 ) : FirWrappedExpression(session, psi) {
-    open val isSpread: Boolean
-        get() = false
+    abstract val delegateProvider: FirExpression
 
     override val typeRef: FirTypeRef
         get() = expression.typeRef
 
-    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
-        visitor.visitWrappedArgumentExpression(this, data)
+    override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R {
+        return visitor.visitWrappedDelegateExpression(this, data)
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        delegateProvider.accept(visitor, data)
+        super.acceptChildren(visitor, data)
+    }
 }

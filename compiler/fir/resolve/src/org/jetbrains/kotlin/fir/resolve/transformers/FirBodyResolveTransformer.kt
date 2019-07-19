@@ -1063,6 +1063,20 @@ open class FirBodyResolveTransformer(
         }
     }
 
+    override fun transformWrappedDelegateExpression(
+        wrappedDelegateExpression: FirWrappedDelegateExpression,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        super.transformWrappedDelegateExpression(wrappedDelegateExpression, data)
+        with(wrappedDelegateExpression) {
+            val delegateProviderTypeRef = delegateProvider.typeRef
+            val useDelegateProvider = delegateProviderTypeRef is FirResolvedTypeRef &&
+                    delegateProviderTypeRef !is FirErrorTypeRef &&
+                    delegateProviderTypeRef.type !is ConeKotlinErrorType
+            return if (useDelegateProvider) delegateProvider.compose() else expression.compose()
+        }
+    }
+
     override fun <F : FirVariable<F>> transformVariable(variable: FirVariable<F>, data: Any?): CompositeTransformResult<FirDeclaration> {
         variable.transformChildrenWithoutAccessors(this, variable.returnTypeRef)
         if (variable.initializer != null) {
@@ -1100,7 +1114,7 @@ open class FirBodyResolveTransformer(
     }
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
-        if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedArgumentExpression) {
+        if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
             val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression::class} is not supported")
             expression.resultType = type
         }
