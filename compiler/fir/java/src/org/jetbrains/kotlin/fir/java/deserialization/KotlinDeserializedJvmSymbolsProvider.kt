@@ -176,10 +176,10 @@ class KotlinDeserializedJvmSymbolsProvider(
     private fun ConeClassifierSymbol?.toDefaultResolvedTypeRef(classId: ClassId): FirResolvedTypeRef {
         return this?.let {
             FirResolvedTypeRefImpl(
-                session, null, it.constructType(emptyList(), isNullable = false),
+                null, it.constructType(emptyList(), isNullable = false),
                 annotations = emptyList()
             )
-        } ?: FirErrorTypeRefImpl(session, null, "Symbol not found for $classId")
+        } ?: FirErrorTypeRefImpl(null, "Symbol not found for $classId")
 
     }
 
@@ -202,13 +202,13 @@ class KotlinDeserializedJvmSymbolsProvider(
                 val literalLookupTag = ConeClassLikeLookupTagImpl(classId)
                 val literalSymbol = literalLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
                 return FirClassReferenceExpressionImpl(
-                    this@KotlinDeserializedJvmSymbolsProvider.session, null,
+                    null,
                     literalSymbol.toDefaultResolvedTypeRef(classId)
                 )
             }
 
             private fun ClassId.toEnumEntryReferenceExpression(name: Name): FirExpression {
-                return FirFunctionCallImpl(session, null).apply {
+                return FirFunctionCallImpl(null).apply {
                     val entryClassId = createNestedClassId(name)
                     val entryLookupTag = ConeClassLikeLookupTagImpl(entryClassId)
                     val entryClassSymbol = entryLookupTag.toSymbol(this@KotlinDeserializedJvmSymbolsProvider.session)
@@ -220,17 +220,17 @@ class KotlinDeserializedJvmSymbolsProvider(
                     this.calleeReference = when {
                         entryClassSymbol != null && (entryClassSymbol as? FirClassSymbol)?.fir is FirEnumEntry -> {
                             FirResolvedCallableReferenceImpl(
-                                this@KotlinDeserializedJvmSymbolsProvider.session, null, name, entryClassSymbol
+                                null, name, entryClassSymbol
                             )
                         }
                         entryCallableSymbol != null -> {
                             FirResolvedCallableReferenceImpl(
-                                this@KotlinDeserializedJvmSymbolsProvider.session, null, name, entryCallableSymbol
+                                null, name, entryCallableSymbol
                             )
                         }
                         else -> {
                             FirErrorNamedReference(
-                                this@KotlinDeserializedJvmSymbolsProvider.session, null,
+                                null,
                                 errorReason = "Strange deserialized enum value: ${this@toEnumEntryReferenceExpression}.$name"
                             )
                         }
@@ -239,7 +239,7 @@ class KotlinDeserializedJvmSymbolsProvider(
             }
 
             override fun visitClassLiteral(name: Name, value: ClassLiteralValue) {
-                argumentMap[name] = FirGetClassCallImpl(session, null).apply {
+                argumentMap[name] = FirGetClassCallImpl(null).apply {
                     arguments += value.toFirClassReferenceExpression()
                 }
             }
@@ -265,7 +265,7 @@ class KotlinDeserializedJvmSymbolsProvider(
                     }
 
                     override fun visitEnd() {
-                        argumentMap[name] = FirArrayOfCallImpl(session, null).apply {
+                        argumentMap[name] = FirArrayOfCallImpl(null).apply {
                             arguments += elements
                         }
                     }
@@ -284,10 +284,10 @@ class KotlinDeserializedJvmSymbolsProvider(
             }
 
             override fun visitEnd() {
-                result += FirAnnotationCallImpl(session, null, null, symbol.toDefaultResolvedTypeRef(annotationClassId)).apply {
+                result += FirAnnotationCallImpl(null, null, symbol.toDefaultResolvedTypeRef(annotationClassId)).apply {
                     for ((name, expression) in argumentMap) {
                         arguments += FirNamedArgumentExpressionImpl(
-                            this@KotlinDeserializedJvmSymbolsProvider.session, null, name, false, expression
+                            null, name, false, expression
                         )
                     }
                 }

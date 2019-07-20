@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirErrorFunction(
-    session: FirSession,
+    override val session: FirSession,
     psi: PsiElement?,
     override val reason: String
-) : FirAbstractElement(session, psi), FirErrorDeclaration, FirFunction {
+) : FirAbstractElement(psi), FirErrorDeclaration, FirFunction {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 

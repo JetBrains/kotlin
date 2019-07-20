@@ -104,7 +104,6 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
             valueParameter.transformReturnTypeRef(
                 StoreType,
                 valueParameter.returnTypeRef.withReplacedConeType(
-                    session,
                     returnType.createArrayOf(session)
                 )
             )

@@ -7,10 +7,13 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
 interface FirDeclaration : FirElement {
+
+    val session: FirSession
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitDeclaration(this, data)

@@ -10,6 +10,5 @@ import com.intellij.psi.PsiElement
 abstract class FirPureAbstractElement : FirElement
 
 abstract class FirAbstractElement(
-    final override val session: FirSession,
     final override val psi: PsiElement?
 ) : FirPureAbstractElement()

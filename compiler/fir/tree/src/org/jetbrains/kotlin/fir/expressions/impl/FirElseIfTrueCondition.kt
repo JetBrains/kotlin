@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -15,12 +14,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 // Representation of "dummy" condition at else branch
-class FirElseIfTrueCondition(
-    session: FirSession,
-    psi: PsiElement?
-) : FirExpression(session, psi) {
+class FirElseIfTrueCondition(psi: PsiElement?) : FirExpression(psi) {
 
-    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(psi)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 

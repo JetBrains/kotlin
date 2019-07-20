@@ -6,11 +6,9 @@
 package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 
 class FirDynamicTypeRefImpl(
-    session: FirSession,
     psi: PsiElement?,
     isNullable: Boolean
-) : FirAbstractAnnotatedTypeRef(session, psi, isNullable), FirDynamicTypeRef
+) : FirAbstractAnnotatedTypeRef(psi, isNullable), FirDynamicTypeRef

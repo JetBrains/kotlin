@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirWrappedExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirExpression(session, psi) {
+abstract class FirWrappedExpression(psi: PsiElement?) : FirExpression(psi) {
     abstract val expression: FirExpression
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {

@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeProjectionWithVarianceImpl
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
-import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.types.Variance
 
@@ -47,13 +46,12 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
-        val resultType = typeRef.withReplacedConeType(session, finalType)
+        val resultType = typeRef.withReplacedConeType(finalType)
         qualifiedAccessExpression.replaceTypeRef(resultType)
 
         return qualifiedAccessExpression.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedCallableReferenceImpl(
-                calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -70,7 +68,6 @@ class FirCallCompletionResultsWriterTransformer(
         return variableAssignment.transformCalleeReference(
             StoreCalleeReference,
             FirResolvedCallableReferenceImpl(
-                calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -92,18 +89,16 @@ class FirCallCompletionResultsWriterTransformer(
                     is FirTypeProjectionWithVariance -> {
                         val typeRef = argument.typeRef as FirResolvedTypeRef
                         FirTypeProjectionWithVarianceImpl(
-                            session,
                             argument.psi,
                             argument.variance,
-                            typeRef.withReplacedConeType(session, type)
+                            typeRef.withReplacedConeType(type)
                         )
                     }
                     else -> {
                         FirTypeProjectionWithVarianceImpl(
-                            session,
                             argument?.psi,
                             Variance.INVARIANT,
-                            FirResolvedTypeRefImpl(session, null, type, emptyList())
+                            FirResolvedTypeRefImpl(null, type, emptyList())
                         )
                     }
                 }
@@ -114,13 +109,12 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = subCandidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
 
-        val resultType = typeRef.withReplacedConeType(session, finalType)
+        val resultType = typeRef.withReplacedConeType(finalType)
 
         return functionCall.copy(
             resultType = resultType,
             typeArguments = newTypeParameters,
             calleeReference = FirResolvedCallableReferenceImpl(
-                calleeReference.session,
                 calleeReference.psi,
                 calleeReference.name,
                 calleeReference.candidateSymbol
@@ -137,7 +131,7 @@ class FirCallCompletionResultsWriterTransformer(
         if (initialType != null) {
             val finalType = finalSubstitutor.substituteOrNull(initialType)
 
-            val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(session, finalType)
+            val resultType = anonymousFunction.returnTypeRef.withReplacedConeType(finalType)
 
             anonymousFunction.transformReturnTypeRef(StoreType, resultType)
 

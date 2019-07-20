@@ -68,7 +68,7 @@ fun deserializeClassToSymbol(
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
             if (it == null) return@mapNotNullTo null
-            FirResolvedTypeRefImpl(session, null, it)
+            FirResolvedTypeRefImpl(null, it)
         }
 
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
@@ -95,7 +95,6 @@ fun deserializeClassToSymbol(
                 val symbol = FirClassSymbol(enumEntryId)
                 FirEnumEntryImpl(session, null, symbol, enumEntryId.shortClassName).apply {
                     superTypeRefs += FirResolvedTypeRefImpl(
-                        session,
                         null,
                         ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false),
                         emptyList()

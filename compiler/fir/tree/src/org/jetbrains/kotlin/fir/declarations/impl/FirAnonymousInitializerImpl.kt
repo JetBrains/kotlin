@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirAnonymousInitializerImpl(
-    session: FirSession,
+    override val session: FirSession,
     psi: PsiElement?,
     override var body: FirBlock?
-) : FirAnonymousInitializer, FirAbstractElement(session, psi) {
+) : FirAnonymousInitializer, FirAbstractElement(psi) {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         body = body?.transformSingle(transformer, data)
         return this

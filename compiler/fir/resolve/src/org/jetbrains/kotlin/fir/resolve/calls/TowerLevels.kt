@@ -207,8 +207,7 @@ class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(
         val scope = FirExplicitSimpleImportingScope(
             listOf(
                 FirResolvedImportImpl(
-                    session,
-                    FirImportImpl(session, null, FqName.topLevel(name), false, null),
+                    FirImportImpl(null, FqName.topLevel(name), false, null),
                     qualifiedReceiver.packageFqName,
                     qualifiedReceiver.relativeClassFqName
                 )

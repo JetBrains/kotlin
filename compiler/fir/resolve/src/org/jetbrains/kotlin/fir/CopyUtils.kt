@@ -29,13 +29,10 @@ fun FirFunctionCall.copy(
     explicitReceiver: FirExpression? = this.explicitReceiver,
     psi: PsiElement? = this.psi,
     safe: Boolean = this.safe,
-    session: FirSession = this.session,
     typeArguments: List<FirTypeProjection> = this.typeArguments,
     resultType: FirTypeRef = this.typeRef
 ): FirFunctionCall {
-    return FirFunctionCallImpl(
-        session, psi, safe
-    ).apply {
+    return FirFunctionCallImpl(psi, safe).apply {
         this.annotations.addAll(annotations)
         this.arguments.addAll(arguments)
         this.calleeReference = calleeReference
@@ -69,9 +66,7 @@ fun FirAnonymousFunction.copy(
 fun FirTypeRef.resolvedTypeFromPrototype(
     type: ConeKotlinType
 ): FirResolvedTypeRef {
-    return FirResolvedTypeRefImpl(
-        session, psi, type, annotations
-    )
+    return FirResolvedTypeRefImpl(psi, type, annotations)
 }
 
 fun FirTypeParameter.copy(

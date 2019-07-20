@@ -144,7 +144,7 @@ class FirSupertypeResolverTransformer : FirAbstractTreeTransformer() {
 
                 if (superTypeClassId.outerClasses().any(currentlyComputing::contains)) {
                     resultingTypeRefs.add(
-                        FirErrorTypeRefImpl(session, superTypeRef.psi, "Recursion detected: ${superTypeRef.render()}")
+                        FirErrorTypeRefImpl(superTypeRef.psi, "Recursion detected: ${superTypeRef.render()}")
                     )
 
                     continue

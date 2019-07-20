@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.transformInplace
@@ -15,10 +14,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-class FirAnonymousObjectImpl(
-    session: FirSession,
-    psi: PsiElement?
-) : FirAnonymousObject(session, psi), FirModifiableClass {
+class FirAnonymousObjectImpl(psi: PsiElement?) : FirAnonymousObject(psi), FirModifiableClass {
     override val superTypeRefs = mutableListOf<FirTypeRef>()
 
     override val declarations = mutableListOf<FirDeclaration>()

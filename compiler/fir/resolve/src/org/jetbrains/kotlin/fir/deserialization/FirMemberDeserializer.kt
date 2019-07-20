@@ -136,7 +136,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             Flags.IS_EXPECT_CLASS.get(flags),
             false,
             FirResolvedTypeRefImpl(
-                c.session,
                 null,
                 local.typeDeserializer.type(proto.underlyingType(c.typeTable)),
                 emptyList() /* TODO */
@@ -239,7 +238,6 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         }
 
         val delegatedSelfType = FirResolvedTypeRefImpl(
-            c.session,
             null,
             ConeClassTypeImpl(
                 klass.symbol.toLookupTag(),
@@ -280,7 +278,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
     private fun defaultValue(flags: Int): FirExpression? {
         if (Flags.DECLARES_DEFAULT_VALUE.get(flags)) {
-            return FirExpressionStub(c.session, null)
+            return FirExpressionStub(null)
         }
         return null
     }
@@ -306,7 +304,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private fun ProtoBuf.Type.toTypeRef(context: FirDeserializationContext): FirTypeRef {
         val coneType = context.typeDeserializer.type(this)
         return FirResolvedTypeRefImpl(
-            context.session, null, coneType,
+            null, coneType,
             context.annotationDeserializer.loadTypeAnnotations(this, context.nameResolver)
         )
     }

@@ -94,7 +94,7 @@ class FirCallCompleter(
                         session,
                         null,
                         Name.identifier("it"),
-                        FirResolvedTypeRefImpl(session, null, parameters.single(), emptyList()),
+                        FirResolvedTypeRefImpl(null, parameters.single(), emptyList()),
                         defaultValue = null,
                         isCrossinline = false,
                         isNoinline = false,

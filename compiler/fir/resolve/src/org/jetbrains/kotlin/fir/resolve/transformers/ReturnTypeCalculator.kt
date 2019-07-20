@@ -31,7 +31,7 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         if (declaration.returnTypeRef is FirComputingImplicitTypeRef) {
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
-                FirErrorTypeRefImpl(session, null, "cycle")
+                FirErrorTypeRefImpl(null, "cycle")
             )
             return declaration.returnTypeRef as FirResolvedTypeRef
         }
@@ -45,7 +45,6 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
             declaration.transformReturnTypeRef(
                 TransformImplicitType,
                 FirErrorTypeRefImpl(
-                    session,
                     null,
                     "Unsupported: implicit VP type"
                 )
@@ -69,7 +68,6 @@ class ReturnTypeCalculatorWithJump(val session: FirSession, val scopeSession: Sc
         }.mapTo(mutableListOf()) { provider.getFirClassifierByFqName(it) }
 
         if (file == null || outerClasses.any { it == null }) return FirErrorTypeRefImpl(
-            session,
             null,
             "I don't know what todo"
         )

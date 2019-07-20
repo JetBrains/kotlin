@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -15,10 +14,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirUnknownTypeExpression(
-    session: FirSession,
     psi: PsiElement?
-) : FirExpression(session, psi) {
-    final override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
+) : FirExpression(psi) {
+    final override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     final override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

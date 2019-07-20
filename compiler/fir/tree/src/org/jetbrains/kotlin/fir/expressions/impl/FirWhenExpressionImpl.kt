@@ -14,11 +14,10 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirWhenExpressionImpl(
-    session: FirSession,
     psiElement: PsiElement?,
     override var subject: FirExpression? = null,
     override var subjectVariable: FirVariable<*>? = null
-) : FirWhenExpression(session, psiElement) {
+) : FirWhenExpression(psiElement) {
     override val branches = mutableListOf<FirWhenBranch>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

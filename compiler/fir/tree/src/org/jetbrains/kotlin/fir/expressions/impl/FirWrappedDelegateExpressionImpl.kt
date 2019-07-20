@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirWrappedDelegateExpressionImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var expression: FirExpression
-) : FirWrappedDelegateExpression(session, psi) {
+) : FirWrappedDelegateExpression(psi) {
     override lateinit var delegateProvider: FirExpression
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

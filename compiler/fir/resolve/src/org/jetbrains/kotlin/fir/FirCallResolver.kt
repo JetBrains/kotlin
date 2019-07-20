@@ -188,7 +188,7 @@ class FirCallResolver(
             else -> null
         }
         if (referencedSymbol is ConeClassLikeSymbol) {
-            return FirResolvedQualifierImpl(session, nameReference.psi, referencedSymbol.classId).apply {
+            return FirResolvedQualifierImpl(nameReference.psi, referencedSymbol.classId).apply {
                 resultType = typeForQualifier(this)
             }
         }
@@ -209,15 +209,14 @@ class FirCallResolver(
         applicability: CandidateApplicability
     ): FirNamedReference {
         val name = namedReference.name
-        val firSession = namedReference.session
         val psi = namedReference.psi
         return when {
             candidates.isEmpty() -> FirErrorNamedReference(
-                firSession, psi, "Unresolved name: $name"
+                psi, "Unresolved name: $name"
             )
             applicability < CandidateApplicability.SYNTHETIC_RESOLVED -> {
                 FirErrorNamedReference(
-                    firSession, psi,
+                    psi,
                     "Inapplicable($applicability): ${candidates.map { describeSymbol(it.symbol) }}",
                     namedReference.name
                 )
@@ -226,15 +225,15 @@ class FirCallResolver(
                 val candidate = candidates.single()
                 val coneSymbol = candidate.symbol
                 when {
-                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(firSession, psi, coneSymbol)
+                    coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(psi, coneSymbol)
                     coneSymbol is FirVariableSymbol &&
                             (coneSymbol !is FirPropertySymbol || coneSymbol.firUnsafe<FirMemberDeclaration>().typeParameters.isEmpty()) ->
-                        FirResolvedCallableReferenceImpl(firSession, psi, name, coneSymbol)
-                    else -> FirNamedReferenceWithCandidate(firSession, psi, name, candidate)
+                        FirResolvedCallableReferenceImpl(psi, name, coneSymbol)
+                    else -> FirNamedReferenceWithCandidate(psi, name, candidate)
                 }
             }
             else -> FirErrorNamedReference(
-                firSession, psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}",
+                psi, "Ambiguity: $name, ${candidates.map { describeSymbol(it.symbol) }}",
                 namedReference.name
             )
         }

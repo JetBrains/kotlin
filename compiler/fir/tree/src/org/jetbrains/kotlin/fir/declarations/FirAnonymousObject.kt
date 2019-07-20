@@ -7,16 +7,11 @@ package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirAnonymousObject(
-    session: FirSession,
-    psi: PsiElement?
-) : @VisitedSupertype FirClass, FirUnknownTypeExpression(session, psi) {
+abstract class FirAnonymousObject(psi: PsiElement?) : @VisitedSupertype FirClass, FirUnknownTypeExpression(psi) {
     override val classKind: ClassKind
         get() = ClassKind.OBJECT
 

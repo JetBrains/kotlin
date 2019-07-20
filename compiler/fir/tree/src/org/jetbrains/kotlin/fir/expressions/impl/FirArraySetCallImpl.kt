@@ -13,11 +13,10 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirArraySetCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var rValue: FirExpression,
     override val operation: FirOperation
-) : FirArraySetCall(session, psi), FirModifiableQualifiedAccess<FirReference> {
+) : FirArraySetCall(psi), FirModifiableQualifiedAccess<FirReference> {
     override lateinit var calleeReference: FirReference
 
     override var lValue: FirReference
@@ -30,7 +29,7 @@ class FirArraySetCallImpl(
         get() = null
         set(_) {}
 
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

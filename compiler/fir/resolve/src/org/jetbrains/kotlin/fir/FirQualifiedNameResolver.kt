@@ -58,12 +58,10 @@ class FirQualifiedNameResolver(components: BodyResolveComponents) : BodyResolveC
         if (resolved != null) {
             qualifierPartsToDrop = qualifierParts.size - 1
             return FirResolvedQualifierImpl(
-                session,
                 null /* TODO */,
                 resolved.packageFqName,
                 resolved.relativeClassFqName
-            )
-                .apply { resultType = typeForQualifier(this) }
+            ).apply { resultType = typeForQualifier(this) }
         }
 
         return null

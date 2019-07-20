@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirNamedReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirComponentCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
@@ -19,18 +18,17 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
 class FirComponentCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     override val componentIndex: Int,
     override var explicitReceiver: FirExpression
-) : FirComponentCall(session, psi) {
+) : FirComponentCall(psi) {
     override fun <D> transformExplicitReceiver(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
         explicitReceiver = explicitReceiver.transformSingle(transformer, data)
         return this
     }
 
     override var calleeReference: FirNamedReference =
-        FirSimpleNamedReference(session, psi, Name.identifier("component$componentIndex"))
+        FirSimpleNamedReference(psi, Name.identifier("component$componentIndex"))
 
     override val typeArguments: List<FirTypeProjection>
         get() = emptyList()

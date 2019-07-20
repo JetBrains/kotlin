@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirWrappedArgumentExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirWrappedExpression(session, psi) {
+abstract class FirWrappedArgumentExpression(psi: PsiElement?) : FirWrappedExpression(psi) {
     open val isSpread: Boolean
         get() = false
 

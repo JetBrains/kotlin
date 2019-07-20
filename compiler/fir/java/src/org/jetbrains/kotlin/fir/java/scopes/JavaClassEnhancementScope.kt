@@ -302,7 +302,7 @@ class JavaClassEnhancementScope(
         ).enhance(session, jsr305State, predefinedEnhancementInfo?.parametersInfo?.getOrNull(index))
         val firResolvedTypeRef = signatureParts.type
         val defaultValueExpression = when (val defaultValue = ownerParameter.getDefaultValueFromAnnotation()) {
-            NullDefaultValue -> FirConstExpressionImpl(session, null, IrConstKind.Null, null)
+            NullDefaultValue -> FirConstExpressionImpl(null, IrConstKind.Null, null)
             is StringDefaultValue -> firResolvedTypeRef.type.lexicalCastFrom(session, defaultValue.value)
             null -> null
         }

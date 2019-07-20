@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirDelegateFieldReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 
 class FirDelegateFieldReferenceImpl(
-    session: FirSession,
     psi: PsiElement?,
     override val coneSymbol: FirDelegateFieldSymbol<*>
-) : FirAbstractElement(session, psi), FirDelegateFieldReference
+) : FirAbstractElement(psi), FirDelegateFieldReference

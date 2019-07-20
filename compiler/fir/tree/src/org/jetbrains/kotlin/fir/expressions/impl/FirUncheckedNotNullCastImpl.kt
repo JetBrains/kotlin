@@ -6,15 +6,10 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirUncheckedNotNullCast
 
-class FirUncheckedNotNullCastImpl(
-    session: FirSession,
-    psi: PsiElement?,
-    expression: FirExpression
-) : FirUncheckedNotNullCast(session, psi) {
+class FirUncheckedNotNullCastImpl(psi: PsiElement?, expression: FirExpression) : FirUncheckedNotNullCast(psi) {
     init {
         arguments += expression
     }

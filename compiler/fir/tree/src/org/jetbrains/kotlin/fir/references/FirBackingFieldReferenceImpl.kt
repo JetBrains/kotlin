@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirBackingFieldReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 
 class FirBackingFieldReferenceImpl(
-    session: FirSession,
     psi: PsiElement?,
     override val coneSymbol: FirBackingFieldSymbol
-) : FirAbstractElement(session, psi), FirBackingFieldReference
+) : FirAbstractElement(psi), FirBackingFieldReference

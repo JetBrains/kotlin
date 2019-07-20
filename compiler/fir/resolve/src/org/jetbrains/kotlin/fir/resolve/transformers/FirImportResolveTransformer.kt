@@ -50,7 +50,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): CompositeTransformResult<FirImport> {
         val (packageFqName, relativeClassFqName) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate.compose()
-        return FirResolvedImportImpl(session, delegate, packageFqName, relativeClassFqName).compose()
+        return FirResolvedImportImpl(delegate, packageFqName, relativeClassFqName).compose()
     }
 
 

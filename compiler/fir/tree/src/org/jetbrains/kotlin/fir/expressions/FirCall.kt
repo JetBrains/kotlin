@@ -7,15 +7,11 @@ package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.BaseTransformedType
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-abstract class FirCall(
-    session: FirSession,
-    psi: PsiElement?
-) : FirExpression(session, psi) {
+abstract class FirCall(psi: PsiElement?) : FirExpression(psi) {
     abstract val arguments: List<FirExpression>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

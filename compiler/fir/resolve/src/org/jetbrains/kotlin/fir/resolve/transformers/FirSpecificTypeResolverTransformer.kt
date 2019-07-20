@@ -33,7 +33,6 @@ class FirSpecificTypeResolverTransformer(
         functionTypeRef.transformChildren(this, data)
         return FirResolvedFunctionTypeRefImpl(
             functionTypeRef.psi,
-            session,
             functionTypeRef.isMarkedNullable,
             functionTypeRef.annotations as MutableList<FirAnnotationCall>,
             functionTypeRef.receiverTypeRef,
@@ -45,7 +44,6 @@ class FirSpecificTypeResolverTransformer(
 
     private fun transformType(typeRef: FirTypeRef, resolvedType: ConeKotlinType): CompositeTransformResult<FirTypeRef> {
         return FirResolvedTypeRefImpl(
-            session,
             typeRef.psi,
             resolvedType,
             typeRef.annotations

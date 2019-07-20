@@ -48,7 +48,7 @@ open class FirBodyResolveTransformer(
 ) : FirTransformer<Any?>(), BodyResolveComponents {
     final override val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession)
     override val labels: SetMultimap<Name, ConeKotlinType> = LinkedHashMultimap.create()
-    override val noExpectedType = FirImplicitTypeRefImpl(session, null)
+    override val noExpectedType = FirImplicitTypeRefImpl(null)
 
     override val symbolProvider = session.service<FirSymbolProvider>()
     val scopes = mutableListOf<FirScope>()
@@ -157,7 +157,7 @@ open class FirBodyResolveTransformer(
         val notNullCast = super.transformUncheckedNotNullCast(uncheckedNotNullCast, data).single as FirUncheckedNotNullCast
         val resultType = notNullCast.expression.resultType
         notNullCast.resultType =
-            resultType.withReplacedConeType(session, resultType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NOT_NULL))
+            resultType.withReplacedConeType(resultType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NOT_NULL))
         return notNullCast.compose()
     }
 
@@ -167,7 +167,6 @@ open class FirBodyResolveTransformer(
         when ((resolved as FirTypeOperatorCall).operation) {
             FirOperation.IS, FirOperation.NOT_IS -> {
                 resolved.resultType = FirResolvedTypeRefImpl(
-                    session,
                     null,
                     StandardClassIds.Boolean(symbolProvider).constructType(emptyArray(), isNullable = false),
                     emptyList()
@@ -179,7 +178,6 @@ open class FirBodyResolveTransformer(
             FirOperation.SAFE_AS -> {
                 resolved.resultType =
                     resolved.conversionTypeRef.withReplacedConeType(
-                        session,
                         resolved.conversionTypeRef.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
                     )
             }
@@ -198,7 +196,7 @@ open class FirBodyResolveTransformer(
                 val labelName = callee.labelName
                 val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
                 val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
-                qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(session, null, type, emptyList())
+                qualifiedAccessExpression.resultType = FirResolvedTypeRefImpl(null, type, emptyList())
                 return qualifiedAccessExpression.compose()
             }
             is FirSuperReference -> {
@@ -207,7 +205,7 @@ open class FirBodyResolveTransformer(
                 } else {
                     val superTypeRef = implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
                         ?.boundSymbol?.fir?.superTypeRefs?.firstOrNull()
-                        ?: FirErrorTypeRefImpl(session, qualifiedAccessExpression.psi, "No super type")
+                        ?: FirErrorTypeRefImpl(qualifiedAccessExpression.psi, "No super type")
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
                 }
@@ -277,7 +275,7 @@ open class FirBodyResolveTransformer(
                                     session,
                                     null,
                                     Name.identifier("it"),
-                                    FirResolvedTypeRefImpl(session, null, singleParameterType, emptyList()),
+                                    FirResolvedTypeRefImpl(null, singleParameterType, emptyList()),
                                     defaultValue = null,
                                     isCrossinline = false,
                                     isNoinline = false,
@@ -311,7 +309,7 @@ open class FirBodyResolveTransformer(
                     returnTypeRef = (af.returnTypeRef as? FirResolvedTypeRef)
                         ?: resolvedLambdaAtom?.returnType?.let { af.returnTypeRef.resolvedTypeFromPrototype(it) }
                         ?: af.body?.resultType?.takeIf { af.returnTypeRef is FirImplicitTypeRef }
-                        ?: FirErrorTypeRefImpl(session, af.psi, "No result type for lambda")
+                        ?: FirErrorTypeRefImpl(af.psi, "No result type for lambda")
                 )
                 af.replaceTypeRef(af.constructFunctionalTypeRef(session))
                 af.compose()
@@ -361,9 +359,9 @@ open class FirBodyResolveTransformer(
             val type = commonSuperType((listOf(tryExpression.tryBlock) + tryExpression.catches.map { it.block }).map {
                 val expression = it.statements.lastOrNull() as? FirExpression
                 if (expression != null) {
-                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for when branch result")
+                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, "No type for when branch result")
                 } else {
-                    FirImplicitUnitTypeRef(session, null)
+                    FirImplicitUnitTypeRef(null)
                 }
             })
             if (type != null) tryExpression.resultType = type
@@ -414,9 +412,9 @@ open class FirBodyResolveTransformer(
             else -> null
         }
         block.resultType = if (resultExpression == null) {
-            FirImplicitUnitTypeRef(session, block.psi)
+            FirImplicitUnitTypeRef(block.psi)
         } else {
-            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for block")
+            (resultExpression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, "No type for block")
         }
 
         return block.compose()
@@ -429,7 +427,7 @@ open class FirBodyResolveTransformer(
                 commonSuperType(types.map { it.coneTypeUnsafe() })
             }
         } as ConeKotlinType
-        return FirResolvedTypeRefImpl(session, null, commonSuperType, emptyList())
+        return FirResolvedTypeRefImpl(null, commonSuperType, emptyList())
     }
 
     override fun transformWhenExpression(whenExpression: FirWhenExpression, data: Any?): CompositeTransformResult<FirStatement> {
@@ -438,9 +436,9 @@ open class FirBodyResolveTransformer(
             val type = commonSuperType(whenExpression.branches.map {
                 val expression = it.result.statements.lastOrNull() as? FirExpression
                 if (expression != null) {
-                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(session, null, "No type for when branch result")
+                    (expression.resultType as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(null, "No type for when branch result")
                 } else {
-                    FirImplicitUnitTypeRef(session, null)
+                    FirImplicitUnitTypeRef(null)
                 }
             })
             if (type != null) whenExpression.resultType = type
@@ -482,7 +480,7 @@ open class FirBodyResolveTransformer(
 
             val type = ConeClassTypeImpl(symbol.toLookupTag(), emptyArray(), isNullable = kind == IrConstKind.Null)
 
-            constExpression.resultType = FirResolvedTypeRefImpl(session, null, type, emptyList())
+            constExpression.resultType = FirResolvedTypeRefImpl(null, type, emptyList())
         } else {
             constExpression.resultType = expectedType
         }
@@ -576,7 +574,6 @@ open class FirBodyResolveTransformer(
                         this,
                         when (val resultType = initializer.resultType) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                                session,
                                 null,
                                 "No result type for initializer"
                             )
@@ -589,7 +586,6 @@ open class FirBodyResolveTransformer(
                         this,
                         when (val resultType = variable.getter?.returnTypeRef) {
                             is FirImplicitTypeRef -> FirErrorTypeRefImpl(
-                                session,
                                 null,
                                 "No result type for getter"
                             )
@@ -599,7 +595,7 @@ open class FirBodyResolveTransformer(
                 }
                 else -> {
                     variable.transformReturnTypeRef(
-                        this, FirErrorTypeRefImpl(session, null, "Cannot infer variable type without initializer / getter / delegate")
+                        this, FirErrorTypeRefImpl(null, "Cannot infer variable type without initializer / getter / delegate")
                     )
                 }
             }
@@ -674,7 +670,7 @@ open class FirBodyResolveTransformer(
 
     override fun transformExpression(expression: FirExpression, data: Any?): CompositeTransformResult<FirStatement> {
         if (expression.resultType is FirImplicitTypeRef && expression !is FirWrappedExpression) {
-            val type = FirErrorTypeRefImpl(session, expression.psi, "Type calculating for ${expression::class} is not supported")
+            val type = FirErrorTypeRefImpl(expression.psi, "Type calculating for ${expression::class} is not supported")
             expression.resultType = type
         }
         return (expression.transformChildren(this, data) as FirStatement).compose()
@@ -705,7 +701,6 @@ open class FirBodyResolveTransformer(
 
         transformedGetClassCall.resultType =
             FirResolvedTypeRefImpl(
-                session,
                 null,
                 kClassSymbol.constructType(arrayOf(typeOfExpression), false),
                 emptyList()

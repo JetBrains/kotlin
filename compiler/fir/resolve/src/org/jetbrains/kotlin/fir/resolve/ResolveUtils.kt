@@ -169,7 +169,7 @@ fun FirFunction.constructFunctionalTypeRef(session: FirSession): FirResolvedType
     val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
     val functionalType = functionalTypeId(session.service()).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
 
-    return FirResolvedTypeRefImpl(session, psi, functionalType)
+    return FirResolvedTypeRefImpl(psi, functionalType)
 }
 
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {
@@ -214,7 +214,7 @@ fun <T : FirQualifiedAccess> BodyResolveComponents.typeFromCallee(access: T): Fi
 
     return when (val newCallee = access.calleeReference) {
         is FirErrorNamedReference ->
-            FirErrorTypeRefImpl(session, access.psi, newCallee.errorReason)
+            FirErrorTypeRefImpl(access.psi, newCallee.errorReason)
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(newCallee.candidateSymbol, makeNullable)
         }
@@ -225,7 +225,7 @@ fun <T : FirQualifiedAccess> BodyResolveComponents.typeFromCallee(access: T): Fi
             val labelName = newCallee.labelName
             val types = if (labelName == null) labels.values() else labels[Name.identifier(labelName)]
             val type = types.lastOrNull() ?: ConeKotlinErrorType("Unresolved this@$labelName")
-            FirResolvedTypeRefImpl(session, null, type, emptyList())
+            FirResolvedTypeRefImpl(null, type, emptyList())
         }
         else -> error("Failed to extract type from: $newCallee")
     }
@@ -237,7 +237,6 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
             val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
             if (makeNullable) {
                 returnType.withReplacedConeType(
-                    session,
                     returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
                 )
             } else {
@@ -249,13 +248,12 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
             // TODO: unhack
             if (fir is FirEnumEntry) {
                 (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(
-                    session,
                     null,
                     "no enum item supertype"
                 )
             } else
                 FirResolvedTypeRefImpl(
-                    session, null, symbol.constructType(emptyArray(), isNullable = false),
+                    null, symbol.constructType(emptyArray(), isNullable = false),
                     annotations = emptyList()
                 )
         }
