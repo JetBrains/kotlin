@@ -19,7 +19,6 @@ import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.initialization.IncludedBuild
 import org.gradle.api.invocation.Gradle
-import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -29,7 +28,7 @@ import org.jetbrains.annotations.NotNull
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.internal.ExtraModelBuilder
 
-import static org.jetbrains.plugins.gradle.tooling.ModelBuilderContext.*
+import static org.jetbrains.plugins.gradle.tooling.ModelBuilderContext.DataProvider
 
 /**
  * @author Vladislav.Soroka
@@ -110,7 +109,7 @@ class SourceSetCachedFinder {
       projects = exposeIncludedBuilds(gradle, projects)
     }
     for (Project p : projects) {
-      SourceSetContainer sourceSetContainer = getSourceSetContainer(p)
+      SourceSetContainer sourceSetContainer = JavaPluginUtil.getSourceSetContainer(p)
       if (sourceSetContainer == null || sourceSetContainer.isEmpty()) continue
 
       for (SourceSet sourceSet : sourceSetContainer) {
@@ -136,14 +135,5 @@ class SourceSetCachedFinder {
     }
     return projects
   }
-
-  static SourceSetContainer getSourceSetContainer(Project p) {
-    JavaPluginUtil.getJavaPluginConvention(p)?.sourceSets
-  }
 }
 
-public class JavaPluginUtil {
-  static JavaPluginConvention getJavaPluginConvention(Project p) {
-    p.convention.findPlugin(JavaPluginConvention)
-  }
-}
