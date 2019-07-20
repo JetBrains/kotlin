@@ -203,8 +203,7 @@ val DEFAULT_DISPATCH_CALL = object : IrStatementOriginImpl("DEFAULT_DISPATCH_CAL
 open class DefaultParameterInjector(
     open val context: CommonBackendContext,
     private val skipInline: Boolean = true,
-    private val skipExternalMethods: Boolean = false,
-    private val shiftMaskForExtraArgs: Boolean = false
+    private val skipExternalMethods: Boolean = false
 ) : IrElementTransformerVoid(), BodyLoweringPass, FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
@@ -228,7 +227,7 @@ open class DefaultParameterInjector(
         if (argumentsCount == functionDeclaration.valueParameters.size)
             return expression
 
-        val (symbol, params) = parametersForCall(expression, shiftMaskForExtraArgs)
+        val (symbol, params) = parametersForCall(expression)
         val descriptor = symbol.descriptor
         val declaration = symbol.owner
 
@@ -325,16 +324,9 @@ open class DefaultParameterInjector(
     }
 
     private fun parametersForCall(
-        expression: IrFunctionAccessExpression,
-        shiftMaskForExtraArgs: Boolean
+        expression: IrFunctionAccessExpression
     ): Pair<IrFunctionSymbol, List<Pair<IrValueParameter, IrExpression?>>> {
         val declaration = expression.symbol.owner
-
-        val extraArgsShift = when {
-            shiftMaskForExtraArgs && declaration is IrConstructor && declaration.parentAsClass.isEnumClass -> 2
-            shiftMaskForExtraArgs && declaration is IrConstructor && declaration.parentAsClass.isInner -> 1 // skip the `$outer` parameter
-            else -> 0
-        }
 
         val keyFunction = declaration.findSuperMethodWithDefaultArguments()!!
         val realFunction =
@@ -346,14 +338,13 @@ open class DefaultParameterInjector(
             )
 
         log { "$declaration -> $realFunction" }
-        val maskValues = Array((declaration.valueParameters.size - extraArgsShift + 31) / 32) { 0 }
+        val maskValues = Array((declaration.valueParameters.size + 31) / 32) { 0 }
         val params = mutableListOf<Pair<IrValueParameter, IrExpression?>>()
         params += declaration.valueParameters.mapIndexed { argIndex, _ ->
             val valueArgument = expression.getValueArgument(argIndex)
-            val shiftedArgIndex = argIndex - extraArgsShift
             if (valueArgument == null) {
-                val maskIndex = shiftedArgIndex / 32
-                maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (shiftedArgIndex % 32))
+                val maskIndex = argIndex / 32
+                maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (argIndex % 32))
             }
             val valueParameterDeclaration = realFunction.valueParameters[argIndex]
             val defaultValueArgument = if (valueParameterDeclaration.varargElementType != null) {
@@ -415,16 +406,6 @@ class DefaultParameterCleaner constructor(val context: CommonBackendContext) : F
     override fun lower(irFunction: IrFunction) {
         irFunction.valueParameters.forEach { it.defaultValue = null }
     }
-}
-
-// Some later lowerings produce bodies that need to undergo default parameter injection.
-fun IrBody.insertCallsToDefaultArgumentStubs(
-    context: CommonBackendContext,
-    skipInline: Boolean = true,
-    skipExternalMethods: Boolean = false,
-    shiftMaskForExtraArgs: Boolean = false
-) {
-    DefaultParameterInjector(context, skipInline, skipExternalMethods, shiftMaskForExtraArgs).lower(this)
 }
 
 // TODO this implementation is exponential
