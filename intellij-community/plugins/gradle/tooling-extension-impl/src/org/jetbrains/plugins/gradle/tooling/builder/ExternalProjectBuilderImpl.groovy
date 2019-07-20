@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.ContentFilterable
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileCopyDetails
+import org.gradle.api.invocation.Gradle
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
@@ -24,17 +25,36 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.model.*
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
 import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
+
+import static org.jetbrains.plugins.gradle.tooling.ModelBuilderContext.*
 
 /**
  * @author Vladislav.Soroka
  */
-class ExternalProjectBuilderImpl implements ModelBuilderService {
+class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
 
-  private static is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
+  private static final is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
+
+  static final DataProvider<Map<Project, ExternalProject>> PROJECTS_PROVIDER = new DataProvider<Map<Project, ExternalProject>>() {
+    @NotNull
+    @Override
+    Map<Project, ExternalProject> create(@NotNull Gradle gradle) {
+      return new HashMap<Project, ExternalProject>();
+    }
+  }
+
+  static final DataProvider<TasksFactory> TASKS_PROVIDER = new DataProvider<TasksFactory>() {
+    @NotNull
+    @Override
+    TasksFactory create(@NotNull Gradle gradle) {
+      return new TasksFactory();
+    }
+  }
 
   @Override
   boolean canBuild(String modelName) {
@@ -43,20 +63,13 @@ class ExternalProjectBuilderImpl implements ModelBuilderService {
 
   @Nullable
   @Override
-  Object buildAll(final String modelName, final Project project) {
-    def cache = getOrSetExt(project, 'projects cache: ' + ExternalProject.name, { new HashMap<Project, ExternalProject>()}) as Map<Project, ExternalProject>
-    def tasksFactory = getOrSetExt(project , 'tasks cache: ' + ExternalProject.name,  { new TasksFactory()}) as TasksFactory
-    def sourceSetFinder = getOrSetExt(project , 'sourceSets finder: ' + ExternalProject.name,  { new SourceSetCachedFinder(project)}) as SourceSetCachedFinder
-    return doBuild(modelName, project, cache, tasksFactory, sourceSetFinder)
-  }
+  Object buildAll(@NotNull final String modelName, @NotNull final Project project, @NotNull ModelBuilderContext context) {
+    if (project != project.rootProject) return null
 
-  private static getOrSetExt(final Project project, String name, Closure<Object> valueProvider) {
-    def rootProject = project.getRootProject()
-    def extraProperties = rootProject.extensions.extraProperties
-    if(!extraProperties.has(name)) {
-      extraProperties.set(name, valueProvider())
-    }
-    return extraProperties.get(name)
+    def cache = context.getData(PROJECTS_PROVIDER)
+    def tasksFactory = context.getData(TASKS_PROVIDER)
+    def sourceSetFinder = new SourceSetCachedFinder(context)
+    return doBuild(modelName, project, cache, tasksFactory, sourceSetFinder)
   }
 
   @Nullable

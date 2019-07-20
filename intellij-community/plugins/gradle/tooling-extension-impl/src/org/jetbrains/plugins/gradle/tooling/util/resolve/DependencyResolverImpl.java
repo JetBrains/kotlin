@@ -69,21 +69,11 @@ public class DependencyResolverImpl implements DependencyResolver {
   public static final String COMPILE_SCOPE = CompileDependenciesProvider.SCOPE;
   public static final String RUNTIME_SCOPE = RuntimeDependenciesProvider.SCOPE;
 
-  @SuppressWarnings("GroovyUnusedDeclaration")
-  public DependencyResolverImpl(@NotNull Project project, boolean isPreview) {
-    myProject = project;
-    myIsPreview = isPreview;
-    myDownloadJavadoc = false;
-    myDownloadSources = false;
-    mySourceSetFinder = new SourceSetCachedFinder(project);
-  }
-
-  public DependencyResolverImpl(
-    @NotNull Project project,
-    boolean isPreview,
-    boolean downloadJavadoc,
-    boolean downloadSources,
-    SourceSetCachedFinder sourceSetFinder) {
+  public DependencyResolverImpl(@NotNull Project project,
+                                boolean isPreview,
+                                boolean downloadJavadoc,
+                                boolean downloadSources,
+                                @NotNull SourceSetCachedFinder sourceSetFinder) {
     myProject = project;
     myIsPreview = isPreview;
     myDownloadJavadoc = downloadJavadoc;
