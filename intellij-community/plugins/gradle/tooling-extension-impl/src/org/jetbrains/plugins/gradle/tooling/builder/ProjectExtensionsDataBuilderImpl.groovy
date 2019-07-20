@@ -71,6 +71,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
   }
 
+  @NotNull
   @Override
   ErrorMessageBuilder getErrorMessageBuilder(@NotNull Project project, @NotNull Exception e) {
     return ErrorMessageBuilder.create(

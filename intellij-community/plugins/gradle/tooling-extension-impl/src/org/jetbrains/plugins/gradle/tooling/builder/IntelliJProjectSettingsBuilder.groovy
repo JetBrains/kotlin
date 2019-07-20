@@ -15,6 +15,7 @@
  */
 package org.jetbrains.plugins.gradle.tooling.builder
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.plugins.ide.idea.IdeaPlugin
@@ -27,6 +28,7 @@ import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 /**
  * @author Vladislav.Soroka
  */
+@CompileStatic
 class IntelliJProjectSettingsBuilder implements ModelBuilderService {
 
   @Override
@@ -48,6 +50,7 @@ class IntelliJProjectSettingsBuilder implements ModelBuilderService {
     return null
   }
 
+  @NotNull
   @Override
   ErrorMessageBuilder getErrorMessageBuilder(@NotNull Project project, @NotNull Exception e) {
     return ErrorMessageBuilder

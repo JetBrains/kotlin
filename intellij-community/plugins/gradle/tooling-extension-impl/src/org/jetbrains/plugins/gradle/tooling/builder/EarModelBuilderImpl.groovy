@@ -15,11 +15,13 @@
  */
 package org.jetbrains.plugins.gradle.tooling.builder
 
+import groovy.transform.CompileStatic
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.file.FileVisitDetails
 import org.gradle.api.java.archives.Manifest
+import org.gradle.api.java.archives.internal.ManifestInternal
 import org.gradle.plugins.ear.Ear
 import org.gradle.plugins.ear.EarPlugin
 import org.gradle.util.GradleVersion
@@ -39,15 +41,16 @@ import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 /**
  * @author Vladislav.Soroka
  */
+@CompileStatic
 class EarModelBuilderImpl extends AbstractModelBuilderService {
 
   private static final String APP_DIR_PROPERTY = "appDirName"
   private SourceSetCachedFinder mySourceSetFinder = null
-  private static is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
+  private static boolean is4OrBetter = GradleVersion.current().baseVersion >= GradleVersion.version("4.0")
 
   @Override
   boolean canBuild(String modelName) {
-    return EarConfiguration.name.equals(modelName)
+    return EarConfiguration.name == modelName
   }
 
   @Nullable
@@ -116,10 +119,11 @@ class EarModelBuilderImpl extends AbstractModelBuilderService {
         Manifest manifest = earTask.manifest
         if (manifest != null) {
           if(is4OrBetter) {
-            if(manifest instanceof org.gradle.api.java.archives.internal.ManifestInternal) {
-              ByteArrayOutputStream baos = new ByteArrayOutputStream()
-              manifest.writeTo(baos)
-              earModel.manifestContent = baos.toString(manifest.contentCharset)
+            if (manifest instanceof ManifestInternal) {
+              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()
+              manifest.writeTo(outputStream)
+              def contentCharset = (manifest as ManifestInternal).contentCharset
+              earModel.manifestContent = outputStream.toString(contentCharset)
             }
           } else {
             def writer = new StringWriter()
@@ -143,13 +147,12 @@ class EarModelBuilderImpl extends AbstractModelBuilderService {
     ).withDescription("Ear Artifacts may not be configured properly")
   }
 
-  private static addPath(
-    String buildDirPath,
-    List<EarConfiguration.EarResource> earResources,
-    String earRelativePath,
-    String fileRelativePath,
-    File file,
-    Configuration... earConfigurations) {
+  private static boolean addPath(String buildDirPath,
+                                 List<EarConfiguration.EarResource> earResources,
+                                 String earRelativePath,
+                                 String fileRelativePath,
+                                 File file,
+                                 Configuration... earConfigurations) {
 
     if(file.absolutePath.startsWith(buildDirPath)) return
 
