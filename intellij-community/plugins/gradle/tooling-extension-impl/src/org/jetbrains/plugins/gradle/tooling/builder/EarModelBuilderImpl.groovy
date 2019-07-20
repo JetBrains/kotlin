@@ -26,8 +26,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.plugins.gradle.model.ear.EarConfiguration
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarConfigurationImpl
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarModelImpl
 import org.jetbrains.plugins.gradle.tooling.internal.ear.EarResourceImpl
@@ -38,7 +39,7 @@ import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 /**
  * @author Vladislav.Soroka
  */
-class EarModelBuilderImpl implements ModelBuilderService {
+class EarModelBuilderImpl extends AbstractModelBuilderService {
 
   private static final String APP_DIR_PROPERTY = "appDirName"
   private SourceSetCachedFinder mySourceSetFinder = null
@@ -51,11 +52,11 @@ class EarModelBuilderImpl implements ModelBuilderService {
 
   @Nullable
   @Override
-  Object buildAll(String modelName, Project project) {
+  Object buildAll(String modelName, Project project, @NotNull ModelBuilderContext context) {
     final EarPlugin earPlugin = project.plugins.findPlugin(EarPlugin)
     if (earPlugin == null) return null
 
-    if(mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(project)
+    if (mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(context)
 
     final String appDirName = !project.hasProperty(APP_DIR_PROPERTY) ?
                               "src/main/application" : String.valueOf(project.property(APP_DIR_PROPERTY))

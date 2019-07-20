@@ -23,8 +23,9 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.*;
+import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
-import org.jetbrains.plugins.gradle.tooling.ModelBuilderService;
+import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
 import org.jetbrains.plugins.gradle.tooling.internal.BuildScriptClasspathModelImpl;
 import org.jetbrains.plugins.gradle.tooling.internal.ClasspathEntryModelImpl;
 import org.jetbrains.plugins.gradle.tooling.util.DependencyTraverser;
@@ -38,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author Vladislav.Soroka
  */
-public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService {
+public class ModelBuildScriptClasspathBuilderImpl extends AbstractModelBuilderService {
 
   private static final String CLASSPATH_CONFIGURATION_NAME = "classpath";
   private final Map<String, BuildScriptClasspathModelImpl> cache = new ConcurrentHashMap<String, BuildScriptClasspathModelImpl>();
@@ -51,11 +52,11 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
 
   @Nullable
   @Override
-  public Object buildAll(final String modelName, final Project project) {
+  public Object buildAll(@NotNull final String modelName, @NotNull final Project project, @NotNull ModelBuilderContext context) {
     BuildScriptClasspathModelImpl buildScriptClasspath = cache.get(project.getPath());
     if (buildScriptClasspath != null) return buildScriptClasspath;
 
-    if(mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(project);
+    if (mySourceSetFinder == null) mySourceSetFinder = new SourceSetCachedFinder(context);
 
     buildScriptClasspath = new BuildScriptClasspathModelImpl();
     final File gradleHomeDir = project.getGradle().getGradleHomeDir();
@@ -74,7 +75,7 @@ public class ModelBuildScriptClasspathBuilderImpl implements ModelBuilderService
 
     Project parent = project.getParent();
     if (parent != null) {
-      BuildScriptClasspathModelImpl parentBuildScriptClasspath = (BuildScriptClasspathModelImpl)buildAll(modelName, parent);
+      BuildScriptClasspathModelImpl parentBuildScriptClasspath = (BuildScriptClasspathModelImpl)buildAll(modelName, parent, context);
       if (parentBuildScriptClasspath != null) {
         for (ClasspathEntryModel classpathEntryModel : parentBuildScriptClasspath.getClasspath()) {
           buildScriptClasspath.add(classpathEntryModel);
