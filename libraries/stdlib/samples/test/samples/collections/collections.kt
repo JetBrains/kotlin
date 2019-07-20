@@ -200,6 +200,14 @@ class Collections {
         }
 
         @Sample
+        fun firstIndexOfList() {
+            assertPrints(emptyList<Any>().firstIndex, "-1")
+            val list = listOf("a", "x", "y")
+            assertPrints(list.firstIndex, "0")
+            assertPrints(list[list.lastIndex], "a")
+        }
+
+        @Sample
         fun listOrEmpty() {
             val nullList: List<Any>? = null
             assertPrints(nullList.orEmpty(), "[]")

@@ -69,6 +69,12 @@ class ListSpecificTest {
     }
 
     @Test
+    fun firstIndex() {
+        assertEquals(-1, empty.firstIndex)
+        assertEquals(0, data.firstIndex)
+    }
+
+    @Test
     fun indexOfLast() {
         expect(-1) { data.indexOfLast { it.contains("p") } }
         expect(1) { data.indexOfLast { it.length == 3 } }

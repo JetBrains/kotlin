@@ -169,6 +169,14 @@ public val <T> List<T>.lastIndex: Int
     get() = this.size - 1
 
 /**
+ * Returns the index of the first item in the list or -1 if the list is empty.
+ *
+ * @sample samples.collections.Collections.Lists.firstIndexOfList
+ */
+public val <T> List<T>.firstIndex: Int
+    get() = if (isNotEmpty()) 0 else -1
+
+/**
  * Returns `true` if the collection is not empty.
  * @sample samples.collections.Collections.Collections.collectionIsNotEmpty
  */
