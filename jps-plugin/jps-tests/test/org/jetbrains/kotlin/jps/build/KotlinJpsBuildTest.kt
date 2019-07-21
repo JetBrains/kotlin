@@ -20,7 +20,6 @@ import com.google.common.collect.Lists
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.util.io.FileUtil.toSystemIndependentName
 import com.intellij.openapi.util.io.FileUtilRt
-import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
@@ -60,9 +59,9 @@ import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.KotlinCompilerVersion.TEST_IS_PRE_RELEASE_SYSTEM_PROPERTY
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.incremental.withIC
-import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTest.LibraryDependency.*
+import org.jetbrains.kotlin.jps.build.KotlinJpsBuildTestBase.LibraryDependency.*
+import org.jetbrains.kotlin.jps.incremental.CacheAttributesDiff
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
@@ -82,15 +81,12 @@ import java.io.FileNotFoundException
 import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URLClassLoader
-import java.nio.file.Paths
 import java.util.*
 import java.util.zip.ZipOutputStream
 
-open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
+open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
     companion object {
-        private val PROJECT_NAME = "kotlinProject"
         private val ADDITIONAL_MODULE_NAME = "module2"
-        private val JDK_NAME = "IDEA_JDK"
 
         private val EXCLUDE_FILES = arrayOf("Excluded.class", "YetAnotherExcluded.class")
         private val NOTHING = arrayOf<String>()
@@ -110,43 +106,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         }
 
         @JvmStatic
-        protected fun assertFilesExistInOutput(module: JpsModule, vararg relativePaths: String) {
-            for (path in relativePaths) {
-                val outputFile = findFileInOutputDir(module, path)
-                assertTrue("Output not written: " + outputFile.absolutePath + "\n Directory contents: \n" + dirContents(outputFile.parentFile), outputFile.exists())
-            }
-        }
-
-        @JvmStatic
-        protected fun findFileInOutputDir(module: JpsModule, relativePath: String): File {
-            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
-            assertNotNull(outputUrl)
-            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
-            return File(outputDir, relativePath)
-        }
-
-
-        @JvmStatic
-        protected fun assertFilesNotExistInOutput(module: JpsModule, vararg relativePaths: String) {
-            val outputUrl = JpsJavaExtensionService.getInstance().getOutputUrl(module, false)
-            assertNotNull(outputUrl)
-            val outputDir = File(JpsPathUtil.urlToPath(outputUrl))
-            for (path in relativePaths) {
-                val outputFile = File(outputDir, path)
-                assertFalse("Output directory \"" + outputFile.absolutePath + "\" contains \"" + path + "\"", outputFile.exists())
-            }
-        }
-
-        private fun dirContents(dir: File): String {
-            val files = dir.listFiles() ?: return "<not found>"
-            val builder = StringBuilder()
-            for (file in files) {
-                builder.append(" * ").append(file.name).append("\n")
-            }
-            return builder.toString()
-        }
-
-        @JvmStatic
         protected fun klass(moduleName: String, classFqName: String): String {
             val outputDirPrefix = "out/production/$moduleName/"
             return outputDirPrefix + classFqName.replace('.', '/') + ".class"
@@ -155,48 +114,6 @@ open class KotlinJpsBuildTest : AbstractKotlinJpsBuildTestCase() {
         @JvmStatic
         protected fun module(moduleName: String): String {
             return "out/production/$moduleName/${JvmCodegenUtil.getMappingFileName(moduleName)}"
-        }
-    }
-
-    annotation class WorkingDir(val name: String)
-
-    enum class LibraryDependency {
-        NONE,
-        JVM_MOCK_RUNTIME,
-        JVM_FULL_RUNTIME,
-        JS_STDLIB,
-    }
-
-    protected lateinit var originalProjectDir: File
-    private val expectedOutputFile: File
-        get() = File(originalProjectDir, "expected-output.txt")
-
-    override fun setUp() {
-        super.setUp()
-        val currentTestMethod = this::class.members.firstOrNull { it.name == "test" + getTestName(false) }
-        val workingDirFromAnnotation = currentTestMethod?.annotations?.filterIsInstance<WorkingDir>()?.firstOrNull()?.name
-        val projDirPath = Paths.get(TEST_DATA_PATH, "general", workingDirFromAnnotation ?: getTestName(false))
-        originalProjectDir = projDirPath.toFile()
-        workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(originalProjectDir)
-        orCreateProjectDir
-    }
-
-    override fun tearDown() {
-        FileUtil.delete(workDir)
-        super.tearDown()
-    }
-
-    override fun doGetProjectDir(): File = workDir
-
-    protected fun initProject(libraryDependency: LibraryDependency = NONE) {
-        addJdk(JDK_NAME)
-        loadProject(workDir.absolutePath + File.separator + PROJECT_NAME + ".ipr")
-
-        when (libraryDependency) {
-            NONE -> {}
-            JVM_MOCK_RUNTIME -> addKotlinMockRuntimeDependency()
-            JVM_FULL_RUNTIME -> addKotlinStdlibDependency()
-            JS_STDLIB -> addKotlinJavaScriptStdlibDependency()
         }
     }
 
