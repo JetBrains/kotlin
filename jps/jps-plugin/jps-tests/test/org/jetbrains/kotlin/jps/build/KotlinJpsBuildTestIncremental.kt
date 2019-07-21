@@ -58,58 +58,6 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkOutputFilesList(File(workDir, "out/production"))
     }
 
-    fun testRelocatableCaches() {
-        fun buildAndGetMappings(): String {
-            workDir.deleteRecursively()
-            workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(originalProjectDir)
-            myDataStorageRoot.deleteRecursively()
-            myDataStorageRoot.mkdirs()
-
-            initProject(LibraryDependency.JVM_FULL_RUNTIME)
-
-            val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
-            val logger = AbstractIncrementalJpsTest.MyLogger(workDirPath)
-            val projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
-
-            val lookupTracker = TestLookupTracker()
-            val testingContext = TestingContext(lookupTracker, buildLogger = null)
-            myProject.setTestingContext(testingContext)
-
-            try {
-                doBuild(projectDescriptor, CompileScopeTestBuilder.rebuild().allModules()).assertSuccessful()
-
-                assertFilesExistInOutput(
-                    myProject.modules.single(),
-                    "MainKt.class", "Foo.class", "FooChild.class", "utils/Utils.class"
-                )
-
-                val kotlinContext = testingContext.kotlinCompileContext!!
-                val lookups = lookupTracker.lookups.mapTo(HashSet()) { LookupSymbol(it.name, it.scopeFqName) }
-
-                return createKotlinCachesDump(projectDescriptor, kotlinContext, lookups)
-            } finally {
-                projectDescriptor.release()
-            }
-        }
-
-        val mappings1 = buildAndGetMappings()
-        val projectDir1 = workDir
-        tearDown()
-        // hack to prevent setUp from creating the same dir after tearDown
-        projectDir1.mkdirs()
-
-        try {
-            setUp()
-            val projectDir2 = workDir
-            Assert.assertNotEquals(projectDir1, projectDir2)
-
-            val mappings2 = buildAndGetMappings()
-            Assert.assertEquals(mappings1, mappings2)
-        } finally {
-            projectDir1.deleteRecursively()
-        }
-    }
-
     fun testJpsDaemonIC() {
         fun testImpl() {
             assertTrue("Daemon was not enabled!", isDaemonEnabled())
