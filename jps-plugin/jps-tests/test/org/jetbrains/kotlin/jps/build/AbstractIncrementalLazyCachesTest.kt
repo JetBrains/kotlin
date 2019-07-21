@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.incremental.KOTLIN_CACHE_DIRECTORY_NAME
 import org.jetbrains.kotlin.incremental.storage.BasicMapsOwner
 import org.jetbrains.kotlin.incremental.testingUtils.Modification
 import org.jetbrains.kotlin.incremental.testingUtils.ModifyContent
+import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.KotlinDataContainerTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.utils.Printer
@@ -33,16 +34,15 @@ abstract class AbstractIncrementalLazyCachesTest : AbstractIncrementalJpsTest() 
     private val expectedCachesFileName: String
         get() = "expected-kotlin-caches.txt"
 
-    private var isICEnabledBackup: Boolean = false
+    private val enableICFixture = EnableICFixture()
 
     override fun setUp() {
         super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabledForJvm(true)
+        enableICFixture.setUp()
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
+        enableICFixture.tearDown()
         super.tearDown()
     }
 
