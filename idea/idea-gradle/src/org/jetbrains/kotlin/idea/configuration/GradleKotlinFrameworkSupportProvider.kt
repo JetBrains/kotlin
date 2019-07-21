@@ -39,7 +39,7 @@ import java.io.File
 import java.io.Writer
 import javax.swing.Icon
 import javax.swing.JComponent
-import javax.swing.JLabel
+import javax.swing.JTextPane
 
 abstract class GradleKotlinFrameworkSupportProvider(
     val frameworkTypeId: String,
@@ -61,7 +61,11 @@ abstract class GradleKotlinFrameworkSupportProvider(
                 configurable.addSupport(module, rootModel, modifiableModelsProvider)
             }
 
-            override fun createComponent(): JComponent = JLabel(getDescription())
+            override fun createComponent(): JComponent {
+                val jTextPane = JTextPane()
+                jTextPane.text = getDescription()
+                return jTextPane
+            }
         }
     }
 
@@ -298,7 +302,9 @@ open class GradleKotlinMPPFrameworkSupportProvider : GradleKotlinFrameworkSuppor
     override fun getDependencies(sdk: Sdk?): List<String> = listOf()
     override fun getTestDependencies(): List<String> = listOf()
 
-    override fun getDescription() = "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules"
+    override fun getDescription() =
+        "Multi-targeted (JVM, JS, iOS, etc.) project with shared code in common modules. " +
+                "The targets can be configured in the project's build script."
 }
 
 open class GradleKotlinMPPSourceSetsFrameworkSupportProvider : GradleKotlinMPPFrameworkSupportProvider() {
