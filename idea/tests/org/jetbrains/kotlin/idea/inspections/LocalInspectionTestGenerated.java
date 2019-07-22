@@ -9007,6 +9007,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/comment2.kt");
             }
 
+            @TestMetadata("hasElse.kt")
+            public void testHasElse() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/hasElse.kt");
+            }
+
+            @TestMetadata("hasElse2.kt")
+            public void testHasElse2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/hasElse2.kt");
+            }
+
+            @TestMetadata("hasElse3.kt")
+            public void testHasElse3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/hasElse3.kt");
+            }
+
             @TestMetadata("not.kt")
             public void testNot() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/require/not.kt");
@@ -9033,6 +9048,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("basic.kt")
             public void testBasic() throws Exception {
                 runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull/basic.kt");
+            }
+
+            @TestMetadata("hasElse.kt")
+            public void testHasElse() throws Exception {
+                runTest("idea/testData/inspectionsLocal/replaceGuardClauseWithFunctionCall/requireNotNull/hasElse.kt");
             }
         }
     }
