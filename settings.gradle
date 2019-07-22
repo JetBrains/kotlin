@@ -243,9 +243,11 @@ if (flags.includeCidrPlugins) {
             ":kotlin-ultimate:ide:cidr-native",
             ":kotlin-ultimate:ide:clion-native",
             ":kotlin-ultimate:ide:appcode-native",
+            ":kotlin-ultimate:ide:mobile-native",
             ":kotlin-ultimate:prepare:cidr-plugin",
             ":kotlin-ultimate:prepare:clion-plugin",
-            ":kotlin-ultimate:prepare:appcode-plugin"
+            ":kotlin-ultimate:prepare:appcode-plugin",
+            ":kotlin-ultimate:prepare:mobile-plugin"
 } else {
     logger.info("NOT including CIDR plugins in settings.gradle")
 }
