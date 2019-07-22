@@ -1,7 +1,7 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
-import com.intellij.ide.actions.ShowFilePathAction;
+import com.intellij.ide.actions.RevealFileAction;
 import com.intellij.ide.impl.ProjectViewSelectInTarget;
 import com.intellij.ide.projectView.impl.ProjectViewPane;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
@@ -43,6 +43,6 @@ public class PsiNavigationSupportImpl extends PsiNavigationSupport {
 
   @Override
   public void openDirectoryInSystemFileManager(@NotNull File file) {
-    ShowFilePathAction.openDirectory(file);
+    RevealFileAction.openDirectory(file);
   }
 }

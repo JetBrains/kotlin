@@ -7,7 +7,7 @@ import com.intellij.configurationStore.schemeManager.ROOT_CONFIG
 import com.intellij.configurationStore.schemeManager.SchemeManagerFactoryBase
 import com.intellij.ide.IdeBundle
 import com.intellij.ide.actions.ImportSettingsFilenameFilter
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.plugins.IdeaPluginDescriptor
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.ide.plugins.PluginManagerCore
@@ -86,8 +86,8 @@ open class ExportSettingsAction : AnAction(), DumbAware {
       }
 
       exportSettings(saveFile, markedComponents)
-      ShowFilePathAction.showDialog(getEventProject(e), IdeBundle.message("message.settings.exported.successfully"),
-                                    IdeBundle.message("title.export.successful"), saveFile.toFile(), null)
+      RevealFileAction.showDialog(getEventProject(e), IdeBundle.message("message.settings.exported.successfully"),
+                                  IdeBundle.message("title.export.successful"), saveFile.toFile(), null)
     }
     catch (e: IOException) {
       Messages.showErrorDialog(IdeBundle.message("error.writing.settings", e.toString()), IdeBundle.message("title.error.writing.file"))

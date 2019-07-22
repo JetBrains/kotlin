@@ -4,7 +4,7 @@ package org.jetbrains.plugins.gradle.issue.quickfix
 import com.intellij.build.SyncViewManager
 import com.intellij.build.issue.BuildIssueQuickFix
 import com.intellij.execution.executors.DefaultRunExecutor
-import com.intellij.ide.actions.ShowFilePathAction
+import com.intellij.ide.actions.RevealFileAction
 import com.intellij.ide.actions.ShowLogAction
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.diagnostic.logger
@@ -60,7 +60,7 @@ class GradleVersionQuickFix(private val projectPath: String,
           .apply {
             isBalloonNotification = true
             balloonGroup = "Gradle Import"
-            setListener("#open_log") { _, _ -> ShowFilePathAction.openFile(File(PathManager.getLogPath(), "idea.log")) }
+            setListener("#open_log") { _, _ -> RevealFileAction.openFile(File(PathManager.getLogPath(), "idea.log")) }
           }
         ExternalSystemNotificationManager.getInstance(project).showNotification(GradleConstants.SYSTEM_ID, notification)
         throw it
