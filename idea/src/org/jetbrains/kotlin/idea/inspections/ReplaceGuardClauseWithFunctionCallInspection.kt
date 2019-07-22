@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -82,7 +83,7 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
                 } else {
                     psiFactory.createExpressionByPattern("${kotlinFunction.fqName}($excl$0) { $1 }", newCondition, argument)
                 }
-                val replaced = element.replaced(newExpression)
+                val replaced = element.replaceWith(newExpression, psiFactory)
                 val newCall = (replaced as? KtDotQualifiedExpression)?.callExpression
                 val negatedExpression = newCall?.valueArguments?.firstOrNull()?.getArgumentExpression() as? KtPrefixExpression
                 if (negatedExpression != null) {
@@ -97,12 +98,26 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
                 } else {
                     psiFactory.createExpressionByPattern("${kotlinFunction.fqName}($0) { $1 }", nullCheckedExpression, argument)
                 }
-                element.replaced(newExpression)
+                element.replaceWith(newExpression, psiFactory)
             }
             else -> return
         }
         commentSaver.restore(replaced)
+        editor?.caretModel?.moveToOffset(replaced.startOffset) 
         ShortenReferences.DEFAULT.process(replaced)
+    }
+    
+    private fun KtIfExpression.replaceWith(newExpression: KtExpression, psiFactory: KtPsiFactory): KtExpression {
+        val parent = parent
+        val elseBranch = `else`
+        return if (elseBranch != null) {
+            val added = parent.addBefore(newExpression, this) as KtExpression
+            parent.addBefore(psiFactory.createNewLine(), this)
+            replaceWithBranch(elseBranch, isUsedAsExpression = false, keepBraces = false)
+            added
+        } else {
+            replaced(newExpression)
+        }
     }
 
     private fun KtIfExpression.getCallExpression(): KtCallExpression? {
