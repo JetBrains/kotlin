@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
@@ -58,9 +59,10 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
         val valueArguments = call.valueArguments
         if (valueArguments.size > 1) return false
         if (calleeText != ILLEGAL_STATE_EXCEPTION && calleeText != ILLEGAL_ARGUMENT_EXCEPTION) return false
-        val context = call.analyze(BodyResolveMode.PARTIAL)
+        val context = call.analyze(BodyResolveMode.PARTIAL_WITH_CFA)
         val argumentType = valueArguments.firstOrNull()?.getArgumentExpression()?.getType(context)
         if (argumentType != null && !KotlinBuiltIns.isStringOrNullableString(argumentType)) return false
+        if (element.isUsedAsExpression(context)) return false
         val fqName = call.getResolvedCall(context)?.resultingDescriptor?.fqNameSafe?.parent()
         return fqName == FqName("kotlin.$calleeText") || fqName == FqName("java.lang.$calleeText")
     }
