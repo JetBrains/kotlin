@@ -61,7 +61,7 @@ open class KtLightMethodImpl protected constructor(
     protected open fun buildParametersForList(): List<PsiParameter> {
         val clsParameters by lazyPub { clsDelegate.parameterList.parameters }
         return (dummyDelegate?.parameterList?.parameters ?: clsParameters).mapIndexed { index, dummyParameter ->
-            KtLightParameter(
+            KtLightParameterImpl(
                 dummyParameter,
                 { clsParameters.getOrNull(index) },
                 index,

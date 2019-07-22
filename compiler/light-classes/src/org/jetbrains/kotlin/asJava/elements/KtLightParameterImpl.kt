@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
-class KtLightParameter(
+class KtLightParameterImpl(
     private val dummyDelegate: PsiParameter,
     private val clsDelegateProvider: () -> PsiParameter?,
     private val index: Int,
@@ -104,7 +104,7 @@ class KtLightParameter(
             val kotlinOrigin = kotlinOrigin
             if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
 
-            if (another is KtLightParameter && kotlinOrigin != null) {
+            if (another is KtLightParameterImpl && kotlinOrigin != null) {
                 kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
             }
             else {
