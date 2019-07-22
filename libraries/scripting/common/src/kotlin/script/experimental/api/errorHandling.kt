@@ -10,6 +10,7 @@ package kotlin.script.experimental.api
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
+import java.lang.RuntimeException
 
 /**
  * The single script diagnostic report
@@ -220,3 +221,14 @@ inline fun <R> ResultWithDiagnostics<R>.valueOr(body: (ResultWithDiagnostics.Fai
     is ResultWithDiagnostics.Success<R> -> value
     is ResultWithDiagnostics.Failure -> body(this)
 }
+
+/**
+ * Extracts the result value from the receiver wrapper or throw RuntimeException with diagnostics
+ */
+fun <R> ResultWithDiagnostics<R>.valueOrThrow(): R = valueOr {
+    throw RuntimeException(
+        reports.joinToString("\n") { it.exception?.toString() ?: it.message },
+        reports.find { it.exception != null }?.exception
+    )
+}
+
