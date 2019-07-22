@@ -9,10 +9,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.LocalSearchScope
 import com.intellij.psi.search.SearchScope
 import org.jetbrains.annotations.NonNls
-import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
-import org.jetbrains.kotlin.asJava.elements.KtLightMethod
-import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
-import org.jetbrains.kotlin.asJava.elements.LightParameter
+import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
@@ -26,11 +23,12 @@ internal class KtUltraLightSuspendContinuationParameter(
     private val support: KtUltraLightSupport,
     method: KtLightMethod
 ) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
-    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
+    KtLightParameter,
+    KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
-    override val kotlinOrigin: KtDeclaration? = null
+    override val kotlinOrigin: KtParameter? = null
     override val clsDelegate: PsiParameter
         get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
 
@@ -68,7 +66,7 @@ internal class KtUltraLightSuspendContinuationParameter(
 
 internal abstract class KtUltraLightParameter(
     name: String,
-    override val kotlinOrigin: KtDeclaration?,
+    override val kotlinOrigin: KtParameter?,
     protected val support: KtUltraLightSupport,
     method: KtLightMethod
 ) : org.jetbrains.kotlin.asJava.elements.LightParameter(
@@ -76,7 +74,7 @@ internal abstract class KtUltraLightParameter(
     PsiType.NULL,
     method,
     method.language
-), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
+), KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter>, KtLightParameter {
 
     override fun isEquivalentTo(another: PsiElement?): Boolean = kotlinOrigin == another
 
@@ -137,7 +135,7 @@ internal abstract class KtUltraLightParameter(
 
 internal abstract class KtAbstractUltraLightParameterForDeclaration(
     name: String,
-    kotlinOrigin: KtDeclaration?,
+    kotlinOrigin: KtParameter?,
     support: KtUltraLightSupport,
     method: KtLightMethod,
     protected val containingDeclaration: KtCallableDeclaration
@@ -192,12 +190,11 @@ internal class KtUltraLightReceiverParameter(
 
 internal class KtUltraLightParameterForDescriptor(
     private val descriptor: ParameterDescriptor,
-    kotlinOrigin: KtDeclaration?,
     support: KtUltraLightSupport,
     method: KtLightMethod
 ) : KtUltraLightParameter(
     if (descriptor.name.isSpecial) "\$self" else descriptor.name.identifier,
-    kotlinOrigin, support, method
+    null, support, method
 ) {
     override val kotlinType: KotlinType?
         get() = descriptor.type

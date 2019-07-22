@@ -16,19 +16,16 @@ import com.intellij.util.IncorrectOperationException
 import org.jetbrains.annotations.NonNls
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtParameter
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPropertyAccessor
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isExtensionDeclaration
 
-class KtLightParameterImpl(
+internal class KtLightParameterImpl(
     private val dummyDelegate: PsiParameter,
     private val clsDelegateProvider: () -> PsiParameter?,
     private val index: Int,
     method: KtLightMethod
 ) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
-        KtLightDeclaration<KtParameter, PsiParameter> {
+        KtLightDeclaration<KtParameter, PsiParameter>, KtLightParameter {
 
     private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
 
