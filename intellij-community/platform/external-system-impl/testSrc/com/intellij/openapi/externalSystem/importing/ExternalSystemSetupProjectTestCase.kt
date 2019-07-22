@@ -35,9 +35,19 @@ interface ExternalSystemSetupProjectTestCase {
 
   fun assertDefaultProjectSettings(project: Project)
 
-  fun attachProject(project: Project, projectFile: VirtualFile)
+  fun attachProject(project: Project, projectFile: VirtualFile) {
+    doAttachProject(project, projectFile)
+    waitForImportCompletion(project)
+  }
 
-  fun attachProjectFromScript(project: Project, projectFile: VirtualFile)
+  fun attachProjectFromScript(project: Project, projectFile: VirtualFile) {
+    doAttachProjectFromScript(project, projectFile)
+    waitForImportCompletion(project)
+  }
+
+  fun doAttachProject(project: Project, projectFile: VirtualFile)
+  fun doAttachProjectFromScript(project: Project, projectFile: VirtualFile)
+  fun waitForImportCompletion(project: Project)
 
   fun openPlatformProjectFrom(projectDirectory: VirtualFile): Project {
     return invokeAndWaitIfNeeded {

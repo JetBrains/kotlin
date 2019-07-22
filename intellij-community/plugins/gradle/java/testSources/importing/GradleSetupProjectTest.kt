@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.importing
 
+import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.externalSystem.action.AttachExternalProjectAction
 import com.intellij.openapi.externalSystem.importing.ExternalSystemSetupProjectTest
 import com.intellij.openapi.externalSystem.importing.ExternalSystemSetupProjectTestCase
@@ -8,6 +9,7 @@ import com.intellij.openapi.externalSystem.model.ProjectSystemId
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.plugins.gradle.action.ImportProjectFromScriptAction
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants.SYSTEM_ID
@@ -48,12 +50,16 @@ class GradleSetupProjectTest : ExternalSystemSetupProjectTest, GradleImportingTe
     assertEquals(settings.storeProjectFilesExternally, true)
   }
 
-  override fun attachProject(project: Project, projectFile: VirtualFile) {
+  override fun doAttachProject(project: Project, projectFile: VirtualFile) {
     AttachExternalProjectAction().perform(project, selectedFile = projectFile)
   }
 
-  override fun attachProjectFromScript(project: Project, projectFile: VirtualFile) {
+  override fun doAttachProjectFromScript(project: Project, projectFile: VirtualFile) {
     ImportProjectFromScriptAction().perform(project, selectedFile = projectFile)
+  }
+
+  override fun waitForImportCompletion(project: Project) {
+    invokeAndWaitIfNeeded { PlatformTestUtil.dispatchAllEventsInIdeEventQueue() }
   }
 
   companion object {
