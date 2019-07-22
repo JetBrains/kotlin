@@ -60,6 +60,9 @@ class ExternalDependenciesGenerator(
         ArrayList(symbolTable.unboundTypeParameters).forEach {
             stubGenerator.generateOrGetTypeParameterStub(it.descriptor)
         }
+        ArrayList(symbolTable.unboundTypeAliases).forEach {
+            stubGenerator.generateTypeAliasStub(it.descriptor)
+        }
 
         deserializer?.declareForwardDeclarations()
 
@@ -70,6 +73,7 @@ class ExternalDependenciesGenerator(
         assertEmpty(symbolTable.unboundSimpleFunctions, "simple functions")
         assertEmpty(symbolTable.unboundProperties, "properties")
         assertEmpty(symbolTable.unboundTypeParameters, "type parameters")
+        assertEmpty(symbolTable.unboundTypeAliases, "type aliases")
     }
 
     private fun assertEmpty(s: Set<IrSymbol>, marker: String) {

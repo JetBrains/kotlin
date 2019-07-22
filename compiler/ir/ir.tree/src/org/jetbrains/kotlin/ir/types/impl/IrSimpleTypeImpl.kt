@@ -17,15 +17,17 @@ class IrSimpleTypeImpl(
     override val classifier: IrClassifierSymbol,
     override val hasQuestionMark: Boolean,
     override val arguments: List<IrTypeArgument>,
-    annotations: List<IrConstructorCall>
+    annotations: List<IrConstructorCall>,
+    override val abbreviation: IrTypeAbbreviation? = null
 ) : IrTypeBase(kotlinType, annotations, Variance.INVARIANT), IrSimpleType, IrTypeProjection {
 
     constructor(
         classifier: IrClassifierSymbol,
         hasQuestionMark: Boolean,
         arguments: List<IrTypeArgument>,
-        annotations: List<IrConstructorCall>
-    ) : this(null, classifier, hasQuestionMark, arguments, annotations)
+        annotations: List<IrConstructorCall>,
+        abbreviation: IrTypeAbbreviation? = null
+    ) : this(null, classifier, hasQuestionMark, arguments, annotations, abbreviation)
 
     override fun equals(other: Any?): Boolean =
         other is IrSimpleTypeImpl &&
@@ -45,6 +47,7 @@ class IrSimpleTypeBuilder {
     var hasQuestionMark = false
     var arguments: List<IrTypeArgument> = emptyList()
     var annotations: List<IrConstructorCall> = emptyList()
+    var abbreviation: IrTypeAbbreviation? = null
     var variance = Variance.INVARIANT
 }
 
@@ -55,6 +58,7 @@ fun IrSimpleType.toBuilder() =
         b.hasQuestionMark = hasQuestionMark
         b.arguments = arguments
         b.annotations = annotations
+        b.abbreviation = abbreviation
     }
 
 fun IrSimpleTypeBuilder.buildSimpleType() =
@@ -63,7 +67,8 @@ fun IrSimpleTypeBuilder.buildSimpleType() =
         classifier ?: throw AssertionError("Classifier not provided"),
         hasQuestionMark,
         arguments,
-        annotations
+        annotations,
+        abbreviation
     )
 
 fun IrSimpleTypeBuilder.buildTypeProjection() =

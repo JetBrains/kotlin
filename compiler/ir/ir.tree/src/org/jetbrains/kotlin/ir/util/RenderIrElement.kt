@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -113,9 +114,30 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                 if (hasQuestionMark) {
                     append('?')
                 }
+                abbreviation?.let {
+                    append(it.renderTypeAbbreviation())
+                }
             }
 
             else -> "{${javaClass.simpleName} $this}"
+        }
+
+    private fun IrTypeAbbreviation.renderTypeAbbreviation(): String =
+        buildString {
+            append("{ ")
+            append(renderTypeAnnotations(annotations))
+            append(typeAlias.renderTypeAliasFqn())
+            if (arguments.isNotEmpty()) {
+                append(
+                    arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
+                        it.renderTypeArgument()
+                    }
+                )
+            }
+            if (hasQuestionMark) {
+                append('?')
+            }
+            append(" }")
         }
 
     private fun IrTypeArgument.renderTypeArgument(): String =
@@ -473,6 +495,12 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
                     "name:$name type:${type.render()} flags:${renderLocalDelegatedPropertyFlags()}"
         }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
+        declaration.run {
+            "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}" +
+                    "name:$name visibility:$visibility expandedType:${expandedType.render()}"
+        }
+
     private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
         if (isVar) "var" else "val"
 
@@ -667,7 +695,14 @@ internal fun IrClassifierSymbol.renderClassifierFqn(): String =
             is IrTypeParameter -> owner.renderTypeParameterFqn()
             else -> "`unexpected classifier: ${owner.render()}`"
         }
-    else "<unbound ${this.javaClass.simpleName}>"
+    else
+        "<unbound ${this.javaClass.simpleName}>"
+
+internal fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
+    if (isBound)
+        StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
+    else
+        "<unbound $this: ${this.descriptor}>"
 
 internal fun IrClass.renderClassFqn(): String =
     StringBuilder().also { renderDeclarationFqn(it) }.toString()

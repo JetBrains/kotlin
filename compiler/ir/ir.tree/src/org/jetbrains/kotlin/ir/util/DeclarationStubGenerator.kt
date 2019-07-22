@@ -243,4 +243,15 @@ class DeclarationStubGenerator(
             IrLazyTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
         }
     }
+
+    internal fun generateTypeAliasStub(descriptor: TypeAliasDescriptor): IrTypeAlias {
+        val referenced = symbolTable.referenceTypeAlias(descriptor)
+        if (referenced.isBound) {
+            return referenced.owner
+        }
+        val origin = computeOrigin(descriptor)
+        return symbolTable.declareTypeAlias(descriptor) {
+            IrLazyTypeAlias(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+        }
+    }
 }

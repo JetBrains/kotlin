@@ -111,3 +111,7 @@ class IrPropertySymbolImpl(descriptor: PropertyDescriptor) :
 class IrLocalDelegatedPropertySymbolImpl(descriptor: VariableDescriptorWithAccessors) :
     IrBindableSymbolBase<VariableDescriptorWithAccessors, IrLocalDelegatedProperty>(descriptor),
     IrLocalDelegatedPropertySymbol
+
+class IrTypeAliasSymbolImpl(descriptor: TypeAliasDescriptor) :
+    IrBindableSymbolBase<TypeAliasDescriptor, IrTypeAlias>(descriptor),
+    IrTypeAliasSymbol

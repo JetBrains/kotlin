@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.types
 
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.*
 
@@ -33,9 +34,10 @@ interface IrSimpleType : IrType, SimpleTypeMarker, TypeArgumentListMarker {
     val classifier: IrClassifierSymbol
     val hasQuestionMark: Boolean
     val arguments: List<IrTypeArgument>
+    val abbreviation: IrTypeAbbreviation?
 }
 
-interface IrTypeArgument: TypeArgumentMarker {
+interface IrTypeArgument : TypeArgumentMarker {
     override fun equals(other: Any?): Boolean
 
     override fun hashCode(): Int
@@ -46,4 +48,10 @@ interface IrStarProjection : IrTypeArgument
 interface IrTypeProjection : IrTypeArgument {
     val variance: Variance
     val type: IrType
+}
+
+interface IrTypeAbbreviation : IrAnnotationContainer {
+    val typeAlias: IrTypeAliasSymbol
+    val hasQuestionMark: Boolean
+    val arguments: List<IrTypeArgument>
 }

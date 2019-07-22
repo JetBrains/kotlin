@@ -179,3 +179,10 @@ interface IrLocalDelegatedPropertySymbol :
     override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
         visitor.visitLocalDelegatedPropertySymbol(this, data)
 }
+
+interface IrTypeAliasSymbol :
+    IrBindableSymbol<TypeAliasDescriptor, IrTypeAlias> {
+
+    override fun <D, R> accept(visitor: IrSymbolVisitor<R, D>, data: D): R =
+        visitor.visitTypeAliasSymbol(this, data)
+}

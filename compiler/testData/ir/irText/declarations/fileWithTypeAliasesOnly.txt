@@ -1,1 +1,3 @@
 FILE fqName:<root> fileName:/fileWithTypeAliasesOnly.kt
+  TYPEALIAS name:Bar visibility:public expandedType:kotlin.Function1<T of <root>.Bar, kotlin.String>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]

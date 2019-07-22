@@ -1607,6 +1607,11 @@ public class Fir2IrTextTestGenerated extends AbstractFir2IrTextTest {
             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
         }
 
+        @TestMetadata("abbreviatedTypes.kt")
+        public void testAbbreviatedTypes() throws Exception {
+            runTest("compiler/testData/ir/irText/types/abbreviatedTypes.kt");
+        }
+
         public void testAllFilesPresentInTypes() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/ir/irText/types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }

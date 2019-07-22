@@ -51,6 +51,7 @@ interface SymbolRenamer {
     fun getVariableName(symbol: IrVariableSymbol): Name = symbol.owner.name
     fun getTypeParameterName(symbol: IrTypeParameterSymbol): Name = symbol.owner.name
     fun getValueParameterName(symbol: IrValueParameterSymbol): Name = symbol.owner.name
+    fun getTypeAliasName(symbol: IrTypeAliasSymbol): Name = symbol.owner.name
 
     object DEFAULT : SymbolRenamer
 }
@@ -331,6 +332,19 @@ open class DeepCopyIrTreeWithSymbols(
         ).apply {
             transformAnnotations(declaration)
             defaultValue = declaration.defaultValue?.transform()
+        }
+
+    override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
+        IrTypeAliasImpl(
+            declaration.startOffset, declaration.endOffset,
+            symbolRemapper.getDeclaredTypeAlias(declaration.symbol),
+            symbolRenamer.getTypeAliasName(declaration.symbol),
+            declaration.visibility,
+            declaration.expandedType.remapType(),
+            mapDeclarationOrigin(declaration.origin)
+        ).apply {
+            transformAnnotations(declaration)
+            copyTypeParametersFrom(declaration)
         }
 
     override fun visitBody(body: IrBody): IrBody =

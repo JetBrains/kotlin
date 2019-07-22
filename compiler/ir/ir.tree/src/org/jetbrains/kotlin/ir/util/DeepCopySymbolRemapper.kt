@@ -43,6 +43,7 @@ open class DeepCopySymbolRemapper(
     private val valueParameters = hashMapOf<IrValueParameterSymbol, IrValueParameterSymbol>()
     private val variables = hashMapOf<IrVariableSymbol, IrVariableSymbol>()
     private val localDelegatedProperties = hashMapOf<IrLocalDelegatedPropertySymbol, IrLocalDelegatedPropertySymbol>()
+    private val typeAliases = hashMapOf<IrTypeAliasSymbol, IrTypeAliasSymbol>()
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
@@ -138,6 +139,13 @@ open class DeepCopySymbolRemapper(
         declaration.acceptChildrenVoid(this)
     }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias) {
+        remapSymbol(typeAliases, declaration) {
+            IrTypeAliasSymbolImpl(descriptorsRemapper.remapDeclaredTypeAlias(it.descriptor))
+        }
+        declaration.acceptChildrenVoid(this)
+    }
+
     override fun visitBlock(expression: IrBlock) {
         if (expression is IrReturnableBlock) {
             remapSymbol(returnableBlocks, expression) {
@@ -170,6 +178,8 @@ open class DeepCopySymbolRemapper(
     override fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol = valueParameters.getDeclared(symbol)
     override fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol =
         localDelegatedProperties.getDeclared(symbol)
+
+    override fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getDeclared(symbol)
 
     override fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol = classes.getReferenced(symbol)
     override fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol? = symbol?.let { classes.getReferenced(it) }
@@ -205,4 +215,6 @@ open class DeepCopySymbolRemapper(
             is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
             else -> throw IllegalArgumentException("Unexpected symbol $symbol ${symbol.descriptor}")
         }
+
+    override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)
 }

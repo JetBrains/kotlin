@@ -77,6 +77,9 @@ interface IrElementVisitorVoid : IrElementVisitor<Unit, Nothing?> {
     fun visitValueParameter(declaration: IrValueParameter) = visitDeclaration(declaration)
     override fun visitValueParameter(declaration: IrValueParameter, data: Nothing?) = visitValueParameter(declaration)
 
+    fun visitTypeAlias(declaration: IrTypeAlias) = visitDeclaration(declaration)
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?) = visitTypeAlias(declaration)
+
     fun visitBody(body: IrBody) = visitElement(body)
     override fun visitBody(body: IrBody, data: Nothing?) = visitBody(body)
 

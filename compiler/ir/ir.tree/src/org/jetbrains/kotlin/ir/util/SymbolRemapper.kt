@@ -31,6 +31,8 @@ interface SymbolRemapper {
     fun getDeclaredLocalDelegatedProperty(symbol: IrLocalDelegatedPropertySymbol): IrLocalDelegatedPropertySymbol
     fun getDeclaredTypeParameter(symbol: IrTypeParameterSymbol): IrTypeParameterSymbol
     fun getDeclaredValueParameter(symbol: IrValueParameterSymbol): IrValueParameterSymbol
+    fun getDeclaredTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
+
     fun getReferencedClass(symbol: IrClassSymbol): IrClassSymbol
     fun getReferencedClassOrNull(symbol: IrClassSymbol?): IrClassSymbol?
     fun getReferencedEnumEntry(symbol: IrEnumEntrySymbol): IrEnumEntrySymbol
@@ -44,4 +46,5 @@ interface SymbolRemapper {
     fun getReferencedSimpleFunction(symbol: IrSimpleFunctionSymbol): IrSimpleFunctionSymbol
     fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol
     fun getReferencedClassifier(symbol: IrClassifierSymbol): IrClassifierSymbol
+    fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol
 }

@@ -77,6 +77,13 @@ class DumpIrTreeVisitor(
         }
     }
 
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: String) {
+        declaration.dumpLabeledElementWith(data) {
+            dumpAnnotations(declaration)
+            declaration.typeParameters.dumpElements()
+        }
+    }
+
     override fun visitTypeParameter(declaration: IrTypeParameter, data: String) {
         declaration.dumpLabeledElementWith(data) {
             dumpAnnotations(declaration)

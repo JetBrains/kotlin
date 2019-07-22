@@ -49,6 +49,7 @@ interface IrElementTransformer<in D> : IrElementVisitor<IrElement, D> {
     override fun visitVariable(declaration: IrVariable, data: D) = visitDeclaration(declaration, data)
     override fun visitTypeParameter(declaration: IrTypeParameter, data: D) = visitDeclaration(declaration, data)
     override fun visitValueParameter(declaration: IrValueParameter, data: D) = visitDeclaration(declaration, data)
+    override fun visitTypeAlias(declaration: IrTypeAlias, data: D) = visitDeclaration(declaration, data)
 
     override fun visitBody(body: IrBody, data: D): IrBody =
         body.also { it.transformChildren(this, data) }
