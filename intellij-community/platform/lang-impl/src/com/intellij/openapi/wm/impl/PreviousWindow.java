@@ -18,4 +18,9 @@ final class PreviousWindow extends AnAction implements DumbAware {
     Component recentFocusOwner = window.getMostRecentFocusOwner();
     (recentFocusOwner == null ? window : recentFocusOwner).requestFocus();
   }
+
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    e.getPresentation().setEnabled(true);
+  }
 }
