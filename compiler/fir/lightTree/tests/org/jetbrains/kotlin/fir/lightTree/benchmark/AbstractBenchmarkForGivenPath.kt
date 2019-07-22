@@ -30,6 +30,6 @@ abstract class AbstractBenchmarkForGivenPath(
 
     @Benchmark
     fun testBuildFirForGivenPath() {
-        forEachFile { text, file -> generator.generateFir(text, file) }
+        forEachFile { text, file -> generator.generateFir(text, file, stubMode) }
     }
 }

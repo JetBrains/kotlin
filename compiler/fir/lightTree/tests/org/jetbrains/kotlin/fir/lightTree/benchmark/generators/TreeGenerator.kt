@@ -9,7 +9,7 @@ import java.io.File
 
 interface TreeGenerator {
     fun generateBaseTree(text: String, file: File)
-    fun generateFir(text: String, file: File)
+    fun generateFir(text: String, file: File, stubMode: Boolean)
     fun setUp()
     fun tearDown()
 }
