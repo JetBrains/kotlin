@@ -88,7 +88,7 @@ val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<RefineEvaluationConfigurationData>()
+val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>()
 
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation
@@ -103,7 +103,7 @@ fun ScriptEvaluationConfiguration.Builder.enableScriptsInstancesSharing() {
  * A helper to enable passing lambda directly to the refinement "keyword"
  */
 fun ScriptEvaluationConfiguration.Builder.refineConfigurationBeforeEvaluate(handler: RefineScriptEvaluationConfigurationHandler) {
-    set(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate, RefineEvaluationConfigurationData(handler))
+    ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate.append(RefineEvaluationConfigurationData(handler))
 }
 
 /**
@@ -117,6 +117,14 @@ data class RefineEvaluationConfigurationData(
 ) : Serializable {
     companion object { private const val serialVersionUID: Long = 1L }
 }
+
+fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
+    script: CompiledScript<*>,
+    contextData: ScriptEvaluationContextData? = null
+): ResultWithDiagnostics<ScriptEvaluationConfiguration> =
+    simpleRefineImpl(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate) { config, refineData ->
+        refineData.handler.invoke(ScriptEvaluationConfigurationRefinementContext(script, config, contextData))
+    }
 
 /**
  * The script evaluation result value

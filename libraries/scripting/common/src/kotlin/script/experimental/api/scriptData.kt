@@ -94,7 +94,7 @@ val ScriptCollectedDataKeys.foundAnnotations by PropertiesCollection.key<List<An
 /**
  * The facade to the script data for compilation configuration refinement callbacks
  */
-class ScriptConfigurationRefinementContext(
+data class ScriptConfigurationRefinementContext(
     val script: SourceCode,
     val compilationConfiguration: ScriptCompilationConfiguration,
     val collectedData: ScriptCollectedData? = null
@@ -114,7 +114,7 @@ class ScriptEvaluationContextData(properties: Map<PropertiesCollection.Key<*>, A
 /**
  * The facade to the script data for evaluation configuration refinement callbacks
  */
-class ScriptEvaluationConfigurationRefinementContext(
+data class ScriptEvaluationConfigurationRefinementContext(
     val compiledScript: CompiledScript<*>,
     val evaluationConfiguration: ScriptEvaluationConfiguration,
     val contextData: ScriptEvaluationContextData? = null

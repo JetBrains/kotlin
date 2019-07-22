@@ -39,24 +39,17 @@ open class JvmScriptCompiler(
     override suspend operator fun invoke(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> {
-        val refineConfigurationFn = scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeParsing]
-        val refinedConfiguration =
-            refineConfigurationFn?.handler?.invoke(ScriptConfigurationRefinementContext(script, scriptCompilationConfiguration))?.let {
-                when (it) {
-                    is ResultWithDiagnostics.Failure -> return it
-                    is ResultWithDiagnostics.Success -> it.value
+    ): ResultWithDiagnostics<CompiledScript<*>> =
+        scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess { refinedConfiguration ->
+            val cached = cache.get(script, refinedConfiguration)
+
+            if (cached != null) return cached.asSuccess()
+
+            compilerProxy.compile(script, refinedConfiguration).also {
+                if (it is ResultWithDiagnostics.Success) {
+                    cache.store(it.value, script, refinedConfiguration)
                 }
-            } ?: scriptCompilationConfiguration
-        val cached = cache.get(script, refinedConfiguration)
-
-        if (cached != null) return cached.asSuccess()
-
-        return compilerProxy.compile(script, refinedConfiguration).also {
-            if (it is ResultWithDiagnostics.Success) {
-                cache.store(it.value, script, refinedConfiguration)
             }
         }
-    }
 }
 

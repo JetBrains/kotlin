@@ -111,7 +111,7 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
         // generic for lists
 
         operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
-            data[this] = vals.toList()
+            append(vals.asIterable())
         }
 
         // generic for maps:
