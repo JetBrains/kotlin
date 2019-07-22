@@ -273,18 +273,6 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
     if (component != null) popup.setSize(component.getPreferredSize());
   }
 
-  private static void closePopup(AbstractPopup popup) {
-    popup.cancel();
-
-    IdeEventQueue eventQueue = IdeEventQueue.getInstance();
-    AWTEvent currentEvent = eventQueue.getTrueCurrentEvent();
-    if (currentEvent instanceof MouseEvent && currentEvent.getID() == MouseEvent.MOUSE_PRESSED) { // e.g. on link activation
-      // this is to prevent mouse released (and dragged, dispatched due to some reason) event to be dispatched into editor
-      // alternative solution would be to activate links on mouse release, not on press
-      eventQueue.blockNextEvents((MouseEvent)currentEvent);
-    }
-  }
-
   private static int getTargetOffset(EditorMouseEvent event) {
     Editor editor = event.getEditor();
     Point point = event.getMouseEvent().getPoint();
@@ -542,7 +530,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
           try {
             AbstractPopup popup = popupBridge.getPopup();
             if (popup != null) {
-              closePopup(popup);
+              popup.cancel();
             }
           }
           finally {
@@ -612,7 +600,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
         }
         AbstractPopup popup = popupBridge.getPopup();
         if (popup != null) {
-          closePopup(popup);
+          popup.cancel();
         }
       });
       popupBridge.performWhenAvailable(component::setHint);
