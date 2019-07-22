@@ -223,11 +223,11 @@ fun KtUltraLightClass.createGeneratedMethodFromDescriptor(
     val wrapper = KtUltraLightMethodForDescriptor(descriptor, lightMethod, lightMemberOrigin, support, this)
 
     descriptor.extensionReceiverParameter?.let { receiver ->
-        lightMethod.addParameter(KtUltraLightParameterForDescriptor(receiver, kotlinOrigin, support, wrapper))
+        lightMethod.addParameter(KtUltraLightParameterForDescriptor(receiver, support, wrapper))
     }
 
     for (valueParameter in descriptor.valueParameters) {
-        lightMethod.addParameter(KtUltraLightParameterForDescriptor(valueParameter, kotlinOrigin, support, wrapper))
+        lightMethod.addParameter(KtUltraLightParameterForDescriptor(valueParameter, support, wrapper))
     }
 
     lightMethod.setMethodReturnType {
