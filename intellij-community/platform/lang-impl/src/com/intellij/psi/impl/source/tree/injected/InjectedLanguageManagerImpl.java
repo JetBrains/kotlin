@@ -55,24 +55,24 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
 
     MultiHostInjector.MULTIHOST_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<MultiHostInjector>() {
       @Override
-      public void extensionAdded(@NotNull MultiHostInjector injector, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionAdded(@NotNull MultiHostInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
       }
 
       @Override
-      public void extensionRemoved(@NotNull MultiHostInjector injector, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionRemoved(@NotNull MultiHostInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
       }
     }, false, this);
 
     LanguageInjector.EXTENSION_POINT_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<LanguageInjector>() {
       @Override
-      public void extensionAdded(@NotNull LanguageInjector extension, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionAdded(@NotNull LanguageInjector extension, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
       }
 
       @Override
-      public void extensionRemoved(@NotNull LanguageInjector extension, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionRemoved(@NotNull LanguageInjector extension, @NotNull PluginDescriptor pluginDescriptor) {
         clearInjectorCache();
       }
     }, false, this);

@@ -23,7 +23,6 @@ import com.intellij.psi.util.CachedValuesManager;
 import com.intellij.psi.util.ParameterizedCachedValue;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -36,12 +35,12 @@ public final class ConcatenationInjectorManager extends SimpleModificationTracke
   public ConcatenationInjectorManager(@NotNull Project project, @NotNull PsiManagerEx psiManagerEx) {
     CONCATENATION_INJECTOR_EP_NAME.getPoint(project).addExtensionPointListener(new ExtensionPointListener<ConcatenationAwareInjector>() {
       @Override
-      public void extensionAdded(@NotNull ConcatenationAwareInjector injector, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionAdded(@NotNull ConcatenationAwareInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
         registerConcatenationInjector(injector);
       }
 
       @Override
-      public void extensionRemoved(@NotNull ConcatenationAwareInjector injector, @Nullable PluginDescriptor pluginDescriptor) {
+      public void extensionRemoved(@NotNull ConcatenationAwareInjector injector, @NotNull PluginDescriptor pluginDescriptor) {
         unregisterConcatenationInjector(injector);
       }
     }, true, project);

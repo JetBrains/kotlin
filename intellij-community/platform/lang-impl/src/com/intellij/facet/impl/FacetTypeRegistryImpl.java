@@ -93,12 +93,12 @@ public class FacetTypeRegistryImpl extends FacetTypeRegistry {
 
     FacetType.EP_NAME.getPoint(null).addExtensionPointListener(new ExtensionPointListener<FacetType>() {
       @Override
-      public void extensionAdded(@NotNull final FacetType extension, @Nullable final PluginDescriptor pluginDescriptor) {
+      public void extensionAdded(@NotNull final FacetType extension, @NotNull final PluginDescriptor pluginDescriptor) {
         registerFacetType(extension);
       }
 
       @Override
-      public void extensionRemoved(@NotNull final FacetType extension, @Nullable final PluginDescriptor pluginDescriptor) {
+      public void extensionRemoved(@NotNull final FacetType extension, @NotNull final PluginDescriptor pluginDescriptor) {
         unregisterFacetType(extension);
       }
     }, true, null);

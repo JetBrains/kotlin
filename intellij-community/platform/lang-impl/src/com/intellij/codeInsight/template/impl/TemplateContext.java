@@ -44,12 +44,12 @@ public class TemplateContext {
           }
 
           @Override
-          public void extensionAdded(@NotNull TemplateContextType extension, @Nullable PluginDescriptor pluginDescriptor) {
+          public void extensionAdded(@NotNull TemplateContextType extension, @NotNull PluginDescriptor pluginDescriptor) {
             drop();
           }
 
           @Override
-          public void extensionRemoved(@NotNull TemplateContextType extension, @Nullable PluginDescriptor pluginDescriptor) {
+          public void extensionRemoved(@NotNull TemplateContextType extension, @NotNull PluginDescriptor pluginDescriptor) {
             drop();
           }
         }, false, null);
