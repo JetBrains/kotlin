@@ -3809,6 +3809,11 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
             v.goTo(end);
 
             v.mark(ifNull);
+            Integer leftLineNumber = CodegenUtil.getLineNumberForElement(left, false);
+            Integer rightLineNumber = CodegenUtil.getLineNumberForElement(expression.getRight(), false);
+            if (rightLineNumber != null && rightLineNumber.equals(leftLineNumber)) {
+                v.visitLineNumber(rightLineNumber, ifNull);
+            }
             v.pop();
             gen(expression.getRight(), exprType, exprKotlinType);
             v.mark(end);
