@@ -126,6 +126,7 @@ public class CompletionData {
   @Nullable
   public static String getReferencePrefix(@NotNull PsiElement insertedElement, int offsetInFile) {
     try {
+      PsiUtilCore.ensureValid(insertedElement);
       PsiReference ref = insertedElement.getContainingFile().findReferenceAt(offsetInFile);
       if (ref != null) {
         PsiElement element = ref.getElement();

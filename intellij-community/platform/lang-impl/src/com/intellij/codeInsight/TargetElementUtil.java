@@ -28,6 +28,7 @@ import com.intellij.psi.search.PsiSearchHelper;
 import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.psi.util.PsiTreeUtilKt;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.BitUtil;
 import com.intellij.util.Consumer;
 import com.intellij.util.ThreeState;
@@ -300,6 +301,8 @@ public class TargetElementUtil extends TargetElementUtilBase {
   @Nullable
   public PsiElement getNamedElement(@Nullable final PsiElement element, final int offsetInElement) {
     if (element == null) return null;
+
+    PsiUtilCore.ensureValid(element);
 
     final List<PomTarget> targets = new ArrayList<>();
     final Consumer<PomTarget> consumer = target -> {
