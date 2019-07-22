@@ -12,6 +12,9 @@ dependencies {
     testCompile(projectTests(":generators:test-generator"))
     testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep())
+    Platform[192].orHigher {
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
 }
 
 sourceSets {
