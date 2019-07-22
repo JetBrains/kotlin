@@ -86,6 +86,7 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.CancellablePromise;
 
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -2080,6 +2081,7 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
             runnable.run();
           }
         })
+        .expireWhen(editor::isDisposed)
         .submit(ourParsingExecutor);
     }
 
