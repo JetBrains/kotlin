@@ -4,10 +4,13 @@ package com.intellij.find.findUsages;
 import com.intellij.find.FindBundle;
 import com.intellij.find.FindSettings;
 import com.intellij.ide.util.scopeChooser.ScopeChooserCombo;
+import com.intellij.internal.statistic.eventLog.FeatureUsageData;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PredefinedSearchScopeProvider;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.ui.IdeBorderFactory;
 import com.intellij.ui.SeparatorFactory;
 import com.intellij.ui.SimpleColoredComponent;
@@ -274,5 +277,9 @@ public abstract class AbstractFindUsagesDialog extends DialogWrapper {
     return getPreferredFocusedControl();
   }
 
-
+  protected final void addScopeData(FeatureUsageData data, SearchScope scope) {
+    if (PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(myProject, null, true, true, false, false, true).contains(scope)) {
+      data.addData("searchScope", scope.getDisplayName());
+    }
+  }
 }
