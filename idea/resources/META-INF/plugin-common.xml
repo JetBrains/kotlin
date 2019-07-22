@@ -3400,10 +3400,9 @@
                      groupPath="Kotlin"
                      groupName="Style issues"
                      enabledByDefault="true"
-                     level="WEAK WARNING"
+                     level="INFORMATION"
                      language="kotlin"
     />
-
 
     <localInspection implementationClass="org.jetbrains.kotlin.idea.inspections.RedundantEmptyInitializerBlockInspection"
                      displayName="Redundant empty initializer block"
