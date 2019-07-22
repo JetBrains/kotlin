@@ -2,23 +2,38 @@
 package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
+import com.intellij.openapi.fileEditor.FileEditor;
+import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.TextEditor;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
+import com.intellij.openapi.fileTypes.FileTypeRegistry;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.PsiDirectory;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VfsUtil;
+import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.psi.*;
+import com.intellij.psi.codeStyle.CodeStyleManager;
+import com.intellij.psi.impl.PsiManagerImpl;
+import com.intellij.psi.impl.file.PsiDirectoryImpl;
+import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.io.IOException;
 
 /**
  * @author peter
  * @deprecated Use {@link CreateDirectoryFix} or {@link CreateFileWithScopeFix} instead.
 */
 @Deprecated
-public class CreateFileFix extends AbstractCreateFileFix {
+public class CreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
   private static final int REFRESH_INTERVAL = 1000;
 
   private final boolean myIsDirectory;
@@ -46,14 +61,13 @@ public class CreateFileFix extends AbstractCreateFileFix {
   }
 
   public CreateFileFix(@NotNull String newFileName, @NotNull PsiDirectory directory, String text) {
-    this(false, newFileName, directory, text, "create.file.text");
+    this(false,newFileName,directory, text, "create.file.text");
   }
 
   public CreateFileFix(final boolean isDirectory, @NotNull String newFileName, @NotNull PsiDirectory directory) {
-    this(isDirectory, newFileName, directory, null, isDirectory ? "create.directory.text" : "create.file.text");
+    this(isDirectory,newFileName,directory,null, isDirectory ? "create.directory.text":"create.file.text" );
   }
 
-  @Override
   @Nullable
   protected String getFileText() {
     return myText;
@@ -78,7 +92,7 @@ public class CreateFileFix extends AbstractCreateFileFix {
   }
 
   @Override
-  public void invoke(@NotNull Project project,
+  public void invoke(@NotNull final Project project,
                      @NotNull PsiFile file,
                      Editor editor,
                      @NotNull PsiElement startElement,
@@ -117,11 +131,60 @@ public class CreateFileFix extends AbstractCreateFileFix {
         myDirectory.createSubdirectory(myNewFileName);
       }
       else {
-        createFile(project, myDirectory, myNewFileName);
+        String newFileName = myNewFileName;
+        String newDirectories = null;
+        if (myNewFileName.contains("/")) {
+          int pos = myNewFileName.lastIndexOf('/');
+          newFileName = myNewFileName.substring(pos + 1);
+          newDirectories = myNewFileName.substring(0, pos);
+        }
+        PsiDirectory directory = myDirectory;
+        if (newDirectories != null) {
+          try {
+            VfsUtil.createDirectoryIfMissing(myDirectory.getVirtualFile(), newDirectories);
+            VirtualFile vfsDir = VfsUtil.findRelativeFile(myDirectory.getVirtualFile(),
+                                                          ArrayUtilRt.toStringArray(StringUtil.split(newDirectories, "/")));
+            directory = new PsiDirectoryImpl((PsiManagerImpl)myDirectory.getManager(), vfsDir);
+          }
+          catch (IOException e) {
+            throw new IncorrectOperationException(e.getMessage());
+          }
+        }
+        final PsiFile newFile = directory.createFile(newFileName);
+        String text = getFileText();
+
+        if (text != null) {
+          final FileType type = FileTypeRegistry.getInstance().getFileTypeByFileName(newFileName);
+          final PsiFile psiFile = PsiFileFactory.getInstance(project).createFileFromText("_" + newFileName, type, text);
+          final PsiElement psiElement = CodeStyleManager.getInstance(project).reformat(psiFile);
+          text = psiElement.getText();
+        }
+
+        openFile(project, directory, newFile, text);
       }
     }
     catch (IncorrectOperationException e) {
       myIsAvailable = false;
+    }
+  }
+
+  protected void openFile(@NotNull Project project, PsiDirectory directory, PsiFile newFile, String text) {
+    final FileEditorManager editorManager = FileEditorManager.getInstance(directory.getProject());
+    final FileEditor[] fileEditors = editorManager.openFile(newFile.getVirtualFile(), true);
+
+    if (text != null) {
+      for(FileEditor fileEditor: fileEditors) {
+        if (fileEditor instanceof TextEditor) { // JSP is not safe to edit via Psi
+          final Document document = ((TextEditor)fileEditor).getEditor().getDocument();
+          document.setText(text);
+
+          if (ApplicationManager.getApplication().isUnitTestMode()) {
+            FileDocumentManager.getInstance().saveDocument(document);
+          }
+          PsiDocumentManager.getInstance(project).commitDocument(document);
+          break;
+        }
+      }
     }
   }
 }

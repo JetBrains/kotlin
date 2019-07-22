@@ -3,7 +3,6 @@
 package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.daemon.impl.quickfix.RenameFileFix;
-import com.intellij.codeInsight.daemon.quickFix.CreateFileWithScopeFix.TargetDirectory;
 import com.intellij.codeInspection.LocalQuickFix;
 import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
@@ -15,13 +14,15 @@ import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ProjectFileIndex;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReference;
 import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileReferenceSet;
+import com.intellij.psi.impl.source.resolve.reference.impl.providers.FileTargetContext;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.SmartList;
 import org.jetbrains.annotations.NotNull;
@@ -31,8 +32,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
@@ -79,172 +78,163 @@ public class FileReferenceQuickFixProvider {
     Module module = containingFile == null ? null : ModuleUtilCore.findModuleForPsiElement(containingFile);
 
     if (reference.isLast()) {
-      List<TargetDirectory> targetDirectories = getFileTargets(reference, module, newFileName);
+      List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, false);
       if (targetDirectories.isEmpty()) return emptyList();
 
-      return singletonList(new MyCreateFileFix(newFileName, element, targetDirectories));
+      return singletonList(new MyCreateFileFix(element, targetDirectories, getPathToReferencePart(reference), newFileName));
     }
     else {
-      PsiDirectory directory = getDirectoryTarget(reference, module, newFileName);
-      if (directory == null) return emptyList();
+      List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, true);
+      if (targetDirectories.isEmpty()) return emptyList();
 
-      return singletonList(new CreateDirectoryFix(newFileName, element, directory));
+      return singletonList(new CreateDirectoryFix(element, targetDirectories, getPathToReferencePart(reference), newFileName));
     }
-  }
-
-  @Nullable
-  private static PsiDirectory getDirectoryTarget(@NotNull FileReference reference,
-                                                 @Nullable Module module,
-                                                 String newFileName) {
-    PsiFileSystemItem context = null;
-    FileReferenceSet fileReferenceSet = reference.getFileReferenceSet();
-    int index = reference.getIndex();
-
-    if (index > 0) {
-      context = fileReferenceSet.getReference(index - 1).resolve();
-    }
-    else { // index == 0
-      Collection<PsiFileSystemItem> defaultContexts = fileReferenceSet.getDefaultContexts();
-      if (defaultContexts.isEmpty()) {
-        return null;
-      }
-
-      for (PsiFileSystemItem defaultContext : defaultContexts) {
-        if (defaultContext != null) {
-          final VirtualFile virtualFile = defaultContext.getVirtualFile();
-          if (virtualFile != null && defaultContext.isDirectory() && virtualFile.isInLocalFileSystem()) {
-            if (context == null) {
-              context = defaultContext;
-            }
-            if (module != null && module == getModuleForContext(defaultContext)) {
-              // fixes IDEA-64156
-              // todo: fix it on PsiFileReferenceHelper level in 10.X
-              context = defaultContext;
-              break;
-            }
-          }
-        }
-      }
-      if (context == null && ApplicationManager.getApplication().isUnitTestMode()) {
-        context = defaultContexts.iterator().next();
-      }
-    }
-    if (context == null) return null;
-
-    VirtualFile virtualFile = context.getVirtualFile();
-    if (virtualFile == null || !virtualFile.isValid()) return null;
-
-    PsiDirectory directory = context.getManager().findDirectory(virtualFile);
-    if (directory == null) return null;
-
-    try {
-      directory.checkCreateSubdirectory(newFileName);
-    }
-    catch (IncorrectOperationException ex) {
-      return null;
-    }
-
-    return directory;
   }
 
   @NotNull
-  private static List<TargetDirectory> getFileTargets(@NotNull FileReference reference,
-                                                      @Nullable Module module,
-                                                      String newFileName) {
-    List<PsiFileSystemItem> contexts = getSuitableContexts(reference, module);
+  private static List<TargetDirectory> getTargets(@NotNull FileReference reference,
+                                                  @Nullable Module module,
+                                                  String newFileName,
+                                                  boolean isDirectory) {
+    List<FileTargetContext> contexts = getSuitableContexts(reference, module);
 
-    Stream<PsiDirectory> directories = contexts.stream()
-      .flatMap(context -> {
-        VirtualFile virtualFile = context.getVirtualFile();
-        if (virtualFile == null || !virtualFile.isValid()) return Stream.empty();
+    List<TargetDirectory> targetDirectories = new SmartList<>();
 
-        PsiDirectory directory = context.getManager().findDirectory(virtualFile);
-        if (directory == null) return Stream.empty();
+    for (FileTargetContext targetContext : contexts) {
+      PsiFileSystemItem context = targetContext.getContext();
 
+      VirtualFile virtualFile = context.getVirtualFile();
+      if (virtualFile == null || !virtualFile.isValid()) continue;
+
+      if (!isDirectory) {
         FileType ft = FileTypeManager.getInstance().getFileTypeByFileName(newFileName);
-        if (ft instanceof UnknownFileType) return Stream.empty();
+        if (ft instanceof UnknownFileType) continue;
+      }
 
-        try {
-          directory.checkCreateFile(newFileName);
-        }
-        catch (IncorrectOperationException ex) {
-          return Stream.empty();
-        }
+      PsiDirectory directory = context.getManager().findDirectory(virtualFile);
+      if (directory == null) continue;
 
-        return Stream.of(directory);
-      });
+      if (!checkFileWriteAccess(reference, directory, targetContext.getPathToCreate(), newFileName, isDirectory)) {
+        continue;
+      }
 
-    List<TargetDirectory> targetDirectories;
-    if (module != null) {
-      ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(module.getProject()).getFileIndex();
-
-      targetDirectories = directories
-        .map(d -> {
-          Module targetModule = projectFileIndex.getModuleForFile(d.getVirtualFile());
-          if (targetModule == null) return new TargetDirectory(d);
-
-          return new TargetDirectory(d, getSourceFolder(targetModule, d));
-        })
-        .collect(Collectors.toList());
-    }
-    else {
-      targetDirectories = directories
-        .map(d -> new TargetDirectory(d, null))
-        .collect(Collectors.toList());
+      if (module != null) {
+        targetDirectories.add(new TargetDirectory(directory, targetContext.getPathToCreate()));
+      }
+      else {
+        targetDirectories.add(new TargetDirectory(directory));
+      }
     }
     return targetDirectories;
   }
 
-  @Nullable
-  private static SourceFolder getSourceFolder(@NotNull Module module, @NotNull PsiDirectory directory) {
-    ContentEntry[] entries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (ContentEntry contentEntry : entries) {
-      for (SourceFolder sourceFolder : contentEntry.getSourceFolders()) {
-        if (sourceFolder.getFile() != null
-            && VfsUtilCore.isAncestor(sourceFolder.getFile(), directory.getVirtualFile(), false)) {
-          return sourceFolder;
+  private static boolean checkFileWriteAccess(FileReference reference,
+                                              PsiDirectory targetRoot,
+                                              String[] pathToCreate,
+                                              String newFileName,
+                                              boolean isDirectory) {
+    PsiDirectory currentDirectory = targetRoot;
+    for (String part : pathToCreate) {
+      PsiDirectory subDirectory = currentDirectory.findSubdirectory(part);
+      if (subDirectory == null) {
+        return checkCreateSubdirectory(currentDirectory, part);
+      }
+
+      currentDirectory = subDirectory;
+    }
+
+    if (reference.getIndex() > 0) {
+      FileReference[] references = reference.getFileReferenceSet().getAllReferences();
+
+      // check that we can create first unresolved directory
+      for (int i = 0; i < references.length - 1; i++) {
+        String part = references[i].getFileNameToCreate();
+
+        PsiDirectory subDirectory = currentDirectory.findSubdirectory(part);
+        if (subDirectory == null) {
+          return checkCreateSubdirectory(currentDirectory, part);
         }
+
+        currentDirectory = subDirectory;
       }
     }
 
-    return null;
+    if (isDirectory) {
+      return checkCreateSubdirectory(currentDirectory, newFileName);
+    } else {
+      // if all directories exist check if we can create file in the last
+      return checkCreateFile(currentDirectory, newFileName);
+    }
   }
 
-  private static List<PsiFileSystemItem> getSuitableContexts(@NotNull FileReference reference, @Nullable Module module) {
-    FileReferenceSet fileReferenceSet = reference.getFileReferenceSet();
-    int index = reference.getIndex();
-
-    if (index > 0) {
-      return singletonList(fileReferenceSet.getReference(index - 1).resolve());
+  private static boolean checkCreateFile(PsiDirectory directory, String newFileName) {
+    try {
+      directory.checkCreateFile(newFileName);
     }
-    else { // index == 0
-      Collection<PsiFileSystemItem> defaultContexts = fileReferenceSet.getDefaultContexts();
-      if (defaultContexts.isEmpty()) {
-        return emptyList();
-      }
+    catch (IncorrectOperationException ex) {
+      return false;
+    }
+    return true;
+  }
 
-      SmartList<PsiFileSystemItem> contexts = new SmartList<>();
-      for (PsiFileSystemItem defaultContext : defaultContexts) {
-        if (defaultContext != null) {
-          VirtualFile virtualFile = defaultContext.getVirtualFile();
-          if (virtualFile != null && defaultContext.isDirectory() && virtualFile.isInLocalFileSystem()) {
-            if (module != null) {
-              if (module == getModuleForContext(defaultContext)) {
-                contexts.add(defaultContext);
-              }
+  private static boolean checkCreateSubdirectory(PsiDirectory directory, String part) {
+    try {
+      directory.checkCreateSubdirectory(part);
+    }
+    catch (IncorrectOperationException ex) {
+      return false;
+    }
+    // we assume that we will be able create the rest of file tree in a new directory
+    return true;
+  }
+
+  @NotNull
+  private static String[] getPathToReferencePart(FileReference reference) {
+    if (reference.getIndex() == 0) {
+      return ArrayUtil.EMPTY_STRING_ARRAY;
+    }
+
+    FileReference[] references = reference.getFileReferenceSet().getAllReferences();
+    String[] path = new String[reference.getIndex()];
+    for (int i = 0; i < reference.getIndex(); i++) {
+      path[i] = references[i].getFileNameToCreate();
+    }
+    return path;
+  }
+
+  @NotNull
+  private static List<FileTargetContext> getSuitableContexts(@NotNull FileReference reference, @Nullable Module module) {
+    FileReferenceSet fileReferenceSet = reference.getFileReferenceSet();
+
+    // index == 0 or we have unresolved path
+    Collection<FileTargetContext> targetContexts = fileReferenceSet.getTargetContexts();
+
+    if (targetContexts.isEmpty()) {
+      return emptyList();
+    }
+
+    SmartList<FileTargetContext> contexts = new SmartList<>();
+    for (FileTargetContext targetContext : targetContexts) {
+      if (targetContext != null) {
+        PsiFileSystemItem fsContext = targetContext.getContext();
+        VirtualFile virtualFile = fsContext.getVirtualFile();
+        if (virtualFile != null && fsContext.isDirectory() && virtualFile.isInLocalFileSystem()) {
+          if (module != null) {
+            if (module == getModuleForContext(fsContext)) {
+              contexts.add(targetContext);
             }
-            else {
-              contexts.add(defaultContext);
-            }
+          }
+          else {
+            contexts.add(targetContext);
           }
         }
       }
-
-      if (contexts.isEmpty() && ApplicationManager.getApplication().isUnitTestMode()) {
-        return singletonList(defaultContexts.iterator().next());
-      }
-      return contexts;
     }
+
+    if (contexts.isEmpty() && ApplicationManager.getApplication().isUnitTestMode()) {
+      return singletonList(targetContexts.iterator().next());
+    }
+    return contexts;
   }
 
   @Nullable
@@ -256,10 +246,11 @@ public class FileReferenceQuickFixProvider {
   private static class MyCreateFileFix extends CreateFileWithScopeFix {
     private final String myNewFileTemplateName;
 
-    private MyCreateFileFix(@NotNull String newFileTemplateName,
-                            @NotNull PsiElement psiElement,
-                            @NotNull List<TargetDirectory> directories) {
-      super(newFileTemplateName, psiElement, directories);
+    private MyCreateFileFix(@NotNull PsiElement psiElement,
+                            @NotNull List<TargetDirectory> directories,
+                            @NotNull String[] subPath,
+                            @NotNull String newFileTemplateName) {
+      super(psiElement, directories, subPath, newFileTemplateName);
 
       myNewFileTemplateName = newFileTemplateName;
     }

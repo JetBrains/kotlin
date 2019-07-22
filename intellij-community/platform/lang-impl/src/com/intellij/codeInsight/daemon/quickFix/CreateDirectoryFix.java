@@ -2,41 +2,35 @@
 package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.CodeInsightBundle;
-import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CreateDirectoryFix extends LocalQuickFixAndIntentionActionOnPsiElement {
-  private static final int REFRESH_INTERVAL = 1000;
+import java.util.List;
 
-  private final String myNewFileName;
-  @NotNull private final String myKey;
-  private final SmartPsiElementPointer<PsiDirectory> myDirectory;
-  private boolean myIsAvailable;
-  private long myIsAvailableTimeStamp;
-
+public class CreateDirectoryFix extends AbstractCreateFileFix {
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
-  public CreateDirectoryFix(@NotNull String newFileName,
-                            @NotNull PsiElement element,
-                            @NotNull PsiDirectory directory,
-                            @NotNull String key) {
-    super(element);
+  public CreateDirectoryFix(@NotNull PsiElement psiElement,
+                            @NotNull List<TargetDirectory> directories,
+                            @NotNull String[] subPath,
+                            @NotNull String newDirectoryName,
+                            @NotNull String fixLocaleKey) {
+    super(psiElement, newDirectoryName, directories, subPath, fixLocaleKey);
 
-    myDirectory = SmartPointerManager.getInstance(directory.getProject()).createSmartPsiElementPointer(directory);
-    myNewFileName = newFileName;
-    myKey = key;
     myIsAvailable = true;
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
-  public CreateDirectoryFix(@NotNull String newFileName, @NotNull PsiElement element, @NotNull PsiDirectory directory) {
-    this(newFileName, element, directory, "create.directory.text");
+  public CreateDirectoryFix(@NotNull PsiElement psiElement,
+                            @NotNull List<TargetDirectory> directories,
+                            @NotNull String[] subPath,
+                            @NotNull String newDirectoryName) {
+    this(psiElement, directories, subPath, newDirectoryName, "create.directory.text");
   }
 
   @Override
@@ -58,48 +52,22 @@ public class CreateDirectoryFix extends LocalQuickFixAndIntentionActionOnPsiElem
   }
 
   @Override
-  public void invoke(@NotNull Project project,
-                     @NotNull PsiFile file,
-                     @Nullable Editor editor,
-                     @NotNull PsiElement startElement,
-                     @NotNull PsiElement endElement) {
-    if (isAvailable(project, null, file)) {
-      assert myDirectory.getElement() != null;
-
-      invoke(myDirectory.getElement());
-    }
-  }
-
-  @Override
-  public void applyFix() {
-    PsiDirectory directory = myDirectory.getElement();
-    if (directory == null) return;
-    invoke(directory);
-  }
-
-  @Override
-  public boolean isAvailable(@NotNull Project project,
-                             @NotNull PsiFile file,
-                             @NotNull PsiElement startElement,
-                             @NotNull PsiElement endElement) {
-    PsiDirectory directory = myDirectory.getElement();
-    if (directory == null) return false;
-
-    long current = System.currentTimeMillis();
-
-    if (ApplicationManager.getApplication().isUnitTestMode() || current - myIsAvailableTimeStamp > REFRESH_INTERVAL) {
-      myIsAvailable &= directory.getVirtualFile().findChild(myNewFileName) == null;
-      myIsAvailableTimeStamp = current;
-    }
-
-    return myIsAvailable;
-  }
-
-  private void invoke(PsiDirectory myDirectory) throws IncorrectOperationException {
+  protected void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException {
     myIsAvailableTimeStamp = 0; // to revalidate applicability
 
+    PsiDirectory currentDirectory = directory.getDirectory();
+    if (currentDirectory == null) {
+      return;
+    }
+
     try {
-      myDirectory.createSubdirectory(myNewFileName);
+      for (String pathPart : directory.getPathToCreate()) {
+        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      }
+      for (String pathPart : mySubPath) {
+        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      }
+      currentDirectory.createSubdirectory(myNewFileName);
     }
     catch (IncorrectOperationException e) {
       myIsAvailable = false;
