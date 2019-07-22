@@ -15,8 +15,10 @@ dependencies {
 
 if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
     sourceSets["main"].java.setSrcDirs(listOf("src"))
+    sourceSets["main"].resources.setSrcDirs(listOf("resources"))
 } else {
     sourceSets["main"].java.setSrcDirs(emptyList<String>())
+    sourceSets["main"].resources.setSrcDirs(emptyList<String>())
 }
 
 sourceSets["test"].java.setSrcDirs(emptyList<String>())
