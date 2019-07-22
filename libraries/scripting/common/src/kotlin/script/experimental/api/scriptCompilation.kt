@@ -130,17 +130,17 @@ val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.k
 /**
  * The callback that will be called on the script compilation before parsing the script
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<RefineConfigurationUnconditionallyData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>()
 
 /**
  * The callback that will be called on the script compilation after parsing script file annotations
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<RefineConfigurationOnAnnotationsData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>()
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<RefineConfigurationUnconditionallyData>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>()
 
 /**
  * The list of script fragments that should be compiled intead of the whole text
@@ -166,7 +166,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     fun beforeParsing(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptCompilationConfiguration.refineConfigurationBeforeParsing, RefineConfigurationUnconditionallyData(handler))
+        ScriptCompilationConfiguration.refineConfigurationBeforeParsing.append(RefineConfigurationUnconditionallyData(handler))
     }
 
     /**
@@ -176,7 +176,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      */
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
         // TODO: implement handlers composition
-        set(ScriptCompilationConfiguration.refineConfigurationOnAnnotations, RefineConfigurationOnAnnotationsData(annotations, handler))
+        ScriptCompilationConfiguration.refineConfigurationOnAnnotations.append(RefineConfigurationOnAnnotationsData(annotations, handler))
     }
 
     /**
@@ -220,7 +220,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     fun beforeCompiling(handler: RefineScriptCompilationConfigurationHandler) {
-        set(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling, RefineConfigurationUnconditionallyData(handler))
+        ScriptCompilationConfiguration.refineConfigurationBeforeCompiling.append(RefineConfigurationUnconditionallyData(handler))
     }
 }
 
@@ -230,19 +230,71 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
 typealias RefineScriptCompilationConfigurationHandler =
             (ScriptConfigurationRefinementContext) -> ResultWithDiagnostics<ScriptCompilationConfiguration>
 
+/**
+ * The refinement callback function signature for simple handlers (without diagnostics or errors)
+ */
+typealias SimpleRefineScriptCompilationConfigurationHandler =
+            (ScriptConfigurationRefinementContext) -> ScriptCompilationConfiguration
+
 data class RefineConfigurationUnconditionallyData(
     val handler: RefineScriptCompilationConfigurationHandler
 ) : Serializable {
-    companion object { private const val serialVersionUID: Long = 1L }
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
 
 data class RefineConfigurationOnAnnotationsData(
     val annotations: List<KotlinType>,
     val handler: RefineScriptCompilationConfigurationHandler
 ) : Serializable {
-    companion object { private const val serialVersionUID: Long = 1L }
+    companion object {
+        private const val serialVersionUID: Long = 1L
+    }
 }
 
+
+fun ScriptCompilationConfiguration.refineBeforeParsing(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeParsing) { config, refineData ->
+        refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
+    }
+
+fun ScriptCompilationConfiguration.refineOnAnnotations(
+    script: SourceCode,
+    collectedData: ScriptCollectedData
+): ResultWithDiagnostics<ScriptCompilationConfiguration> {
+    val foundAnnotationNames = collectedData[ScriptCollectedData.foundAnnotations]?.mapTo(HashSet()) { it.annotationClass.java.name }
+    if (foundAnnotationNames.isNullOrEmpty()) return this.asSuccess()
+
+    val refinedConfig = this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
+        ?.fold(this) { config, (annotations, handler) ->
+            // checking that the collected data contains expected annotations
+            if (annotations.none { foundAnnotationNames.contains(it.typeName) }) config
+            else handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData)).valueOr { return it }
+        }
+    return (refinedConfig ?: this).asSuccess()
+}
+
+fun ScriptCompilationConfiguration.refineBeforeCompiling(
+    script: SourceCode,
+    collectedData: ScriptCollectedData? = null
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationBeforeCompiling) { config, refineData ->
+        refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
+    }
+
+internal inline fun <Configuration: PropertiesCollection, RefineData> Configuration.simpleRefineImpl(
+    key: PropertiesCollection.Key<List<RefineData>>,
+    refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
+): ResultWithDiagnostics<Configuration> = (
+        this[key]
+            ?.fold(this) { config, refineData ->
+                refineFn(config, refineData).valueOr { return it }
+            } ?: this
+        ).asSuccess()
 
 /**
  * The functional interface to the script compiler

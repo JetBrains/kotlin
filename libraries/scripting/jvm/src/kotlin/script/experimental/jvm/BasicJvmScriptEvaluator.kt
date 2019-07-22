@@ -31,18 +31,9 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        configuration[ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate]
-                            ?.handler?.invoke(
-                            ScriptEvaluationConfigurationRefinementContext(
-                                compiledScript,
-                                configuration
-                            )
-                        )
-                            ?.onFailure {
-                                return@invoke ResultWithDiagnostics.Failure(it.reports)
-                            }
-                            ?.valueOrNull()
-                            ?: configuration
+                        configuration.refineBeforeEvaluation(compiledScript).valueOr {
+                            return@invoke ResultWithDiagnostics.Failure(it.reports)
+                        }
 
                     val resultValue = try {
                         val instance =

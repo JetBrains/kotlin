@@ -227,15 +227,12 @@ fun refineScriptCompilationConfiguration(
         val collectedData =
             getScriptCollectedData(ktFileSource.ktFile, compilationConfiguration, project, definition.contextClassLoader)
 
-        return compilationConfiguration.refineWith(
-            compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler, collectedData, script
-        ).onSuccess {
-            it.refineWith(
-                compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeCompiling]?.handler, collectedData, script
-            )
-        }.onSuccess {
-            ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(ktFileSource, it).asSuccess()
-        }
+        return compilationConfiguration.refineOnAnnotations(script, collectedData)
+            .onSuccess {
+                it.refineBeforeCompiling(script, collectedData)
+            }.onSuccess {
+                ScriptCompilationConfigurationWrapper.FromCompilationConfiguration(ktFileSource, it).asSuccess()
+            }
     } else {
         val file = script.getVirtualFile(definition)
         val scriptContents =
@@ -335,8 +332,10 @@ fun getScriptCollectedData(
     val jvmGetScriptingClass = (getScriptingClass as? JvmGetScriptingClass)
         ?: throw IllegalArgumentException("Expecting JvmGetScriptingClass in the hostConfiguration[getScriptingClass], got $getScriptingClass")
     val acceptedAnnotations =
-        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.annotations?.mapNotNull {
-            jvmGetScriptingClass(it, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+        compilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.flatMap {
+            it.annotations.mapNotNull { ann ->
+                jvmGetScriptingClass(ann, contextClassLoader, hostConfiguration) as? KClass<Annotation> // TODO errors
+            }
         }.orEmpty()
     val annotations = scriptFile.annotationEntries.construct(contextClassLoader, acceptedAnnotations, project)
     return ScriptCollectedData(

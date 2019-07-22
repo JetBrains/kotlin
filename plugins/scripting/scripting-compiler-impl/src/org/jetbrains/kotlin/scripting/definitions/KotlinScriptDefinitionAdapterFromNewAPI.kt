@@ -56,12 +56,14 @@ abstract class KotlinScriptDefinitionAdapterFromNewAPIBase : KotlinScriptDefinit
     }
 
     override val acceptedAnnotations: List<KClass<out Annotation>> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.annotations
-            .orEmpty()
-            .map {
-                @Suppress("UNCHECKED_CAST")
-                getScriptingClass(it) as KClass<out Annotation>
+        scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
+            ?.flatMap {
+                it.annotations.map { ann ->
+                    @Suppress("UNCHECKED_CAST")
+                    getScriptingClass(ann) as KClass<out Annotation>
+                }
             }
+            .orEmpty()
     }
 
     override val implicitReceivers: List<KType> by lazy(LazyThreadSafetyMode.PUBLICATION) {
