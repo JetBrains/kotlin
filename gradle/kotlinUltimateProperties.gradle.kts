@@ -129,6 +129,7 @@ val artifactsForCidrDir: File by rootProject.extra(rootProject.rootDir.resolve("
 val clionPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("clionPlugin/Kotlin"))
 val appcodePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("appcodePlugin/Kotlin"))
 val mobileMppPluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobileMppPlugin/mobile-mpp"))
+val mobilePluginDir: File by rootProject.extra(artifactsForCidrDir.resolve("mobilePlugin/Kotlin"))
 
 val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
 val cidrVersion: String by rootProject.extra(if (useAppCodeForCommon) appcodeVersion else clionVersion)
@@ -191,6 +192,18 @@ val clionPluginZipPath: File by rootProject.extra(
                 ?: defaultCidrPluginZipPath(clionPluginVersionFull)
 )
 val clionCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
+
+// Note:
+// - "mobilePluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
+// - "mobilePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
+// - "mobilePluginRepoUrl" Gradle property can be used to override the URL of custom plugin repo specified in updatePlugins-*.xml
+val mobilePluginNumber: String = findProperty("mobilePluginNumber")?.toString() ?: "SNAPSHOT"
+val mobilePluginVersionFull: String by rootProject.extra(cidrPluginVersionFull("CLion", clionVersion, mobilePluginNumber))
+val mobilePluginZipPath: File by rootProject.extra(
+        propertyAsPath("mobilePluginZipPath")
+                ?: defaultCidrPluginZipPath(mobilePluginVersionFull)
+)
+val mobileCustomPluginRepoUrl: URL by rootProject.extra(cidrCustomPluginRepoUrl("clionPluginRepoUrl", clionPluginZipPath))
 
 val platformDepsJarName: String by rootProject.extra("kotlinNative-platformDeps.jar")
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(

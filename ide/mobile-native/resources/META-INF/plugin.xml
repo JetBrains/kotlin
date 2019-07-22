@@ -1,0 +1,42 @@
+<idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
+  <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+
+  <id>org.jetbrains.kotlin.mobile.plugin</id>
+  <name>Mobile for CLion</name>
+  <!--version_placeholder-->
+  <vendor>JetBrains</vendor>
+
+  <!--idea_version_placeholder-->
+
+  <change-notes/>
+
+  <depends>com.intellij.modules.clion</depends>
+  <!--java_plugin_dependency-->
+
+  <application-components>
+    <component>
+      <interface-class>com.jetbrains.konan.KonanIconProvider</interface-class>
+      <implementation-class>org.jetbrains.konan.GenericIconProvider</implementation-class>
+    </component>
+  </application-components>
+
+  <extensions defaultExtensionNs="org.jetbrains.kotlin.native">
+<!--    <gradleLauncherProvider implementation="org.jetbrains.konan.gradle.execution.CLionGradleKonanLauncherProvider"/>-->
+  </extensions>
+  <extensions defaultExtensionNs="com.intellij">
+<!--    <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>-->
+    <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
+
+    <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
+    <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
+    <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
+    <runLineMarkerContributor language="ObjectiveC"
+                              implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
+
+    <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
+  </extensions>
+
+  <extensions defaultExtensionNs="clion">
+<!--    <buildConfigurationProvider id="CLionKonanBuildConfigurationProvider" implementation="org.jetbrains.konan.gradle.execution.CLionKonanBuildConfigurationProvider" />-->
+  </extensions>
+</idea-plugin>

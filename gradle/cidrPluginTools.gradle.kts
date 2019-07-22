@@ -1,11 +1,8 @@
+
 import org.apache.tools.ant.filters.LineContains
-import org.gradle.api.Project
-import org.gradle.api.tasks.Copy
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.extra
 import org.w3c.dom.Attr
 import org.w3c.dom.Element
-import java.io.File
 import java.net.URL
 import java.util.*
 import java.util.regex.Pattern
@@ -92,6 +89,7 @@ fun Project.guessCidrProductNameFromProject(lowerCase: Boolean): String = with(n
     when {
         startsWith("appcode") -> "AppCode"
         startsWith("clion") -> "CLion"
+        startsWith("mobile") -> "Mobile"
         else -> error("Invalid CIDR project name: $name")
     }.let { if (lowerCase) it.toLowerCase() else it }
 }
@@ -317,6 +315,7 @@ val clionProjectTemplateInfoFile = "template.info"
 
 fun Copy.includeProjectTemplates(sourceProject: Project) {
     val templatesDir = sourceProject.file("templates")
+    if (!templatesDir.exists()) return
     inputs.dir(templatesDir)
 
     val templateParameters = project.getTemplateParameters()
