@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.not
+import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -580,7 +581,7 @@ class MoveConflictChecker(
             declaration: DeclarationDescriptor,
             report: (String, String) -> Unit
         ) {
-            fun descrText(d: DeclarationDescriptor) = d.findPsi()?.text ?: "unknown"
+            fun descrText(d: DeclarationDescriptor) = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(d)
             when (currentScopeDeclaration) {
                 is PackageFragmentDescriptor -> {
                     fun getPackage(decl: PackageFragmentDescriptor) = decl.containingDeclaration.getPackage(decl.fqName)
@@ -617,10 +618,12 @@ class MoveConflictChecker(
                 if (declarationDescriptor is DeclarationDescriptor) {
                     val baseDescriptor = moveTarget.getContainerDescriptor()
                     if (baseDescriptor != null) {
+                        val declarationSignature =
+                            IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.render(declarationDescriptor)
                         walkDeclarations(baseDescriptor, declarationDescriptor) { conflictingDecl, scopeName ->
                             conflicts.putValue(
                                 declaration,
-                                "Following declarations would clash: \"${declaration.getText()}\" (element to move) " +
+                                "Following declarations would clash: \"$declarationSignature\" (element to move) " +
                                         "and \"\n$conflictingDecl\" declared in scope " +
                                         "$scopeName (move destination)"
                             )
