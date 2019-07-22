@@ -13,6 +13,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,6 +90,12 @@ public class CodeStyleGroupProvider extends CodeStyleSettingsProvider {
     @Override
     public String getId() {
       return myGroup.getId();
+    }
+
+    @Nullable
+    @Override
+    public String getHelpTopic() {
+      return myGroup.getHelpTopic();
     }
   }
 }
