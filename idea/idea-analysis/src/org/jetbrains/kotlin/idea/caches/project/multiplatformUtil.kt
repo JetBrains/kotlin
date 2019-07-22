@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.config.KotlinFacetSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.project.SourceType.PRODUCTION
 import org.jetbrains.kotlin.idea.caches.project.SourceType.TEST
+import org.jetbrains.kotlin.idea.core.isAndroidModule
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType
 import org.jetbrains.kotlin.idea.facet.KotlinFacetType.Companion.ID
@@ -68,7 +69,8 @@ val Module.implementedModules: List<Module>
             CachedValueProvider.Result(
                 if (isNewMPPModule) {
                     rootManager.dependencies.filter {
-                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && it.isTestModule == isTestModule
+                        // TODO: remove additional android check
+                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && (isAndroidModule() || it.isTestModule == isTestModule)
                     }
                 } else {
                     val modelsProvider = IdeModelsProviderImpl(project)
