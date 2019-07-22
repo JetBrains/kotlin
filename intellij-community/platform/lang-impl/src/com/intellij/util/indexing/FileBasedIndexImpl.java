@@ -1456,6 +1456,17 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   @Override
   public void requestRebuild(@NotNull final ID<?, ?> indexId, final Throwable throwable) {
+    if (!myExtensionsRelatedDataWasLoaded) {
+      IndexInfrastructure.submitGenesisTask(() -> {
+        waitUntilIndicesAreInitialized(); // should be always true here since the pool os sequential
+        doRequestRebuild(indexId, throwable);
+        return null;
+      });
+    }
+    doRequestRebuild(indexId, throwable);
+  }
+
+  private void doRequestRebuild(@NotNull ID<?, ?> indexId, Throwable throwable) {
     cleanupProcessedFlag();
     if (!myExtensionsRelatedDataWasLoaded) reportUnexpectedAsyncInitState();
 
