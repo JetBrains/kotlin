@@ -19,7 +19,7 @@ fun case_1(x: Any) {
     if (x is Interface1) {
         if (x is Interface2) {
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & Interface2 & kotlin.Any")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any"), DEBUG_INFO_SMARTCAST!>x<!>.itest()
+            <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any"), DEBUG_INFO_SMARTCAST!>x<!>.itest()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface1 & kotlin.Any"), DEBUG_INFO_SMARTCAST!>x<!>.itest1()
             <!DEBUG_INFO_EXPRESSION_TYPE("Interface2 & kotlin.Any"), DEBUG_INFO_SMARTCAST!>x<!>.itest2()
         }
