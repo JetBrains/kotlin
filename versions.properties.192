@@ -8,11 +8,11 @@ versions.ideaPluginForCidr=1.3.60-dev-112
 versions.ideaPluginForCidr.ide=IJ2019.2-1
 versions.ideaPluginForCidr.repo=Kotlin_dev_Aggregate
 
-versions.appcode=192.5728.22
+versions.appcode=192.5728.75
 versions.appcode.strict=true
 versions.appcode.repo=ijplatform_IjPlatform192_CIDR_AppCode_PublicInstallers
 
-versions.clion=192.5728.28
+versions.clion=192.5728.70
 versions.clion.strict=true
 versions.clion.repo=ijplatform_IjPlatform192_CIDR_CLion_PublicInstallers
 
