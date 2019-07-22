@@ -107,7 +107,7 @@ internal class DoNotSaveDefaultsTest {
       return
     }
 
-    val directoryTree = Paths.get(componentManager.stateStore.storageManager.expandMacros(APP_CONFIG)).getDirectoryTree(setOf(
+    val directoryTree = Paths.get(componentManager.stateStore.storageManager.expandMacros(APP_CONFIG)).getDirectoryTree(hashSetOf(
       "path.macros.xml" /* todo EP to register (provide) macro dynamically */,
       "stubIndex.xml" /* low-level non-roamable stuff */,
       UsageStatisticsPersistenceComponent.USAGE_STATISTICS_XML /* SHOW_NOTIFICATION_ATTR in internal mode */,
@@ -141,7 +141,7 @@ internal class DoNotSaveDefaultsTest {
 }
 
 internal inline fun useAppConfigDir(task: () -> Unit) {
-  val configDir = Paths.get(PathManager.getConfigPath())!!
+  val configDir = Paths.get(PathManager.getConfigPath())
   val newConfigDir = if (configDir.exists()) Paths.get(PathManager.getConfigPath() + "__old") else null
   if (newConfigDir != null) {
     newConfigDir.delete()
