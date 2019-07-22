@@ -117,8 +117,9 @@ abstract class PrebuiltStubsProviderBase : PrebuiltIndexProviderBase<SerializedS
     }
     val stubSerializationVersion = versionFileText[0]
     val currentSerializationVersion = StringUtilRt.parseInt(stubSerializationVersion, 0)
-    if (currentSerializationVersion != FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex::class.java)!!.version) {
-      LOG.error("Stub serialization version mismatch: $stubSerializationVersion, current version is $currentSerializationVersion")
+    val expected = FileBasedIndexExtension.EXTENSION_POINT_NAME.findExtension(StubUpdatingIndex::class.java)!!.version
+    if (currentSerializationVersion != expected) {
+      LOG.error("Stub serialization version mismatch: $expected, current version is $currentSerializationVersion")
       return null
     }
     val prebuiltIndexVersion = versionFileText[1]
