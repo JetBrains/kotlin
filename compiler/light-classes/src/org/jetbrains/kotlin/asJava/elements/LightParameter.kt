@@ -14,66 +14,36 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.asJava.elements;
+package org.jetbrains.kotlin.asJava.elements
 
-import com.intellij.lang.Language;
-import com.intellij.psi.*;
-import org.jetbrains.annotations.NotNull;
+import com.intellij.lang.Language
+import com.intellij.psi.*
 
 // Based on com.intellij.psi.impl.light.LightParameter
-public class LightParameter extends LightVariableBuilder implements PsiParameter {
-    public static final LightParameter[] EMPTY_ARRAY = new LightParameter[0];
+open class LightParameter @JvmOverloads constructor(
+    private val myName: String,
+    type: PsiType,
+    val method: KtLightMethod,
+    language: Language?,
+    private val myVarArgs: Boolean = type is PsiEllipsisType
+) : LightVariableBuilder(method.manager, myName, type, language),
+    PsiParameter {
+    override fun getDeclarationScope(): KtLightMethod = method
 
-    private final String myName;
-    private final KtLightMethod myDeclarationScope;
-    private final boolean myVarArgs;
-
-    public LightParameter(@NotNull String name, @NotNull PsiType type, @NotNull KtLightMethod declarationScope, Language language) {
-        this(name, type, declarationScope, language, type instanceof PsiEllipsisType);
-    }
-
-    public LightParameter(
-            @NotNull String name,
-            @NotNull PsiType type,
-            @NotNull KtLightMethod declarationScope,
-            Language language,
-            boolean isVarArgs
-    ) {
-        super(declarationScope.getManager(), name, type, language);
-        myName = name;
-        myDeclarationScope = declarationScope;
-        myVarArgs = isVarArgs;
-    }
-
-    @NotNull
-    @Override
-    public KtLightMethod getDeclarationScope() {
-        return myDeclarationScope;
-    }
-
-    public KtLightMethod getMethod() {
-        return myDeclarationScope;
-    }
-
-    @Override
-    public void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof JavaElementVisitor) {
-            ((JavaElementVisitor) visitor).visitParameter(this);
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitParameter(this)
         }
     }
 
-    public String toString() {
-        return "Light Parameter";
+    override fun toString(): String = "Light Parameter"
+
+    override fun isVarArgs(): Boolean = myVarArgs
+
+    override fun getName(): String = myName
+
+    companion object {
+        val EMPTY_ARRAY = arrayOfNulls<LightParameter>(0)
     }
 
-    @Override
-    public boolean isVarArgs() {
-        return myVarArgs;
-    }
-
-    @Override
-    @NotNull
-    public String getName() {
-        return myName;
-    }
 }
