@@ -15,6 +15,8 @@ import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderService
 import org.jetbrains.plugins.gradle.tooling.util.JavaPluginUtil
 
+import static org.codehaus.groovy.runtime.StringGroovyMethods.capitalize
+
 @CompileStatic
 class ExternalTestsModelBuilderImpl implements ModelBuilderService {
   @Override
@@ -37,19 +39,19 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
 
   private static List<ExternalTestSourceMapping> getMapping(Project project) {
     def taskToClassesDirs = new LinkedHashMap<Test, Set<String>>()
-    for (def task : project.tasks) {
+    for (task in project.tasks) {
       if (task instanceof Test) {
-        taskToClassesDirs[task as Test] = getClassesDirs(task)
+        taskToClassesDirs.put(task as Test, getClassesDirs(task))
       }
     }
 
     def sourceSetContainer = JavaPluginUtil.getSourceSetContainer(project)
     if (sourceSetContainer == null) return Collections.emptyList()
     def classesDirToSourceDirs = new LinkedHashMap<String, Set<String>>()
-    for (def sourceSet : sourceSetContainer) {
+    for (sourceSet in sourceSetContainer) {
       def sourceDirectorySet = sourceSet.allSource
       def sourceFolders = sourceDirectorySet.srcDirs.collect { it -> it.absolutePath }
-      for (def classDirectory : getPaths(sourceSet.output)) {
+      for (classDirectory in getPaths(sourceSet.output)) {
         def storedSourceFolders = classesDirToSourceDirs.get(classDirectory)
         if (storedSourceFolders == null) {
           storedSourceFolders = new LinkedHashSet<String>()
@@ -59,16 +61,16 @@ class ExternalTestsModelBuilderImpl implements ModelBuilderService {
       }
     }
     def testSourceMappings = new ArrayList<ExternalTestSourceMapping>()
-    for (def entry : taskToClassesDirs.entrySet()) {
+    for (entry in taskToClassesDirs.entrySet()) {
       def sourceFolders = new LinkedHashSet<String>()
-      for (def classDirectory : entry.value) {
-        def storedSourceFolders = classesDirToSourceDirs[classDirectory]
+      for (classDirectory in entry.value) {
+        def storedSourceFolders = classesDirToSourceDirs.get(classDirectory)
         if (storedSourceFolders == null) continue
-        sourceFolders.addAll(storedSourceFolders)
+        for (folder in storedSourceFolders) sourceFolders.add(folder)
       }
       def task = entry.key
       def taskProjectPath = task.project.path == ":" ? "" : task.project.path
-      def cleanTestTaskName = "clean" + task.name.capitalize()
+      def cleanTestTaskName = "clean" + capitalize(task.name)
       def defaultExternalTestSourceMapping = new DefaultExternalTestSourceMapping()
       defaultExternalTestSourceMapping.testName = task.name
       defaultExternalTestSourceMapping.testTaskPath = task.path
