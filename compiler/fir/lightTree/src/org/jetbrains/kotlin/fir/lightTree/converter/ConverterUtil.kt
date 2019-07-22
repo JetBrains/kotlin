@@ -64,10 +64,6 @@ object ConverterUtil {
         return this.toString()
     }
 
-    fun LighterASTNode.getAsStringUnescapedValue(): String {
-        return this.toString().replaceFirst("\\", "")
-    }
-
     fun LighterASTNode.isExpression(): Boolean {
         return when (this.tokenType) {
             is KtNodeType,
@@ -157,9 +153,15 @@ object ConverterUtil {
         return this
     }
 
-    fun FirValueParameter.toFirExpression(stubMode: Boolean): FirExpression {
-        return if (stubMode) FirExpressionStub(this.session, null)
-        else TODO("not implemeted")
+    inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
+        var currentNode: LighterASTNode? = classNode
+        while (currentNode != null) {
+            if (currentNode.tokenType == KtNodeTypes.BLOCK) {
+                return true
+            }
+            currentNode = currentNode.getParent()
+        }
+        return false
     }
 }
 

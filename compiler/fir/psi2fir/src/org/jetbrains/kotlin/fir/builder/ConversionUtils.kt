@@ -58,7 +58,7 @@ fun String.parseCharacter(): Char? {
     }
 }
 
-internal fun escapedStringToCharacter(text: String): Char? {
+fun escapedStringToCharacter(text: String): Char? {
     assert(text.isNotEmpty() && text[0] == '\\') {
         "Only escaped sequences must be passed to this routine: $text"
     }
