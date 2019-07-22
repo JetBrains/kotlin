@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.idea.core.replaced
 import org.jetbrains.kotlin.idea.intentions.callExpression
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.idea.util.textRangeIn
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
@@ -44,6 +45,8 @@ class ReplaceGuardClauseWithFunctionCallInspection : AbstractApplicabilityBasedI
 
     override fun fixText(element: KtIfExpression) =
         element.getKotlinFunction()?.let { "Replace with '${it.functionName}()' call" } ?: defaultFixText
+
+    override fun inspectionHighlightRangeInElement(element: KtIfExpression) = element.ifKeyword.textRangeIn(element)
 
     override fun isApplicable(element: KtIfExpression): Boolean {
         val languageVersionSettings = element.languageVersionSettings
