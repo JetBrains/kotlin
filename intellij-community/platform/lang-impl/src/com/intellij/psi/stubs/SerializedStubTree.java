@@ -46,7 +46,6 @@ public class SerializedStubTree {
   // serialized tree
   final byte[] myTreeBytes;
   final int myTreeByteLength;
-  final byte[] mySerializedTreeHash;
   private Stub myStubElement;
 
   // stub forward indexes
@@ -54,11 +53,10 @@ public class SerializedStubTree {
   final int myIndexedStubByteLength;
   private Map<StubIndexKey, Map<Object, StubIdList>> myIndexedStubs;
 
-  public SerializedStubTree(@NotNull byte[] treeBytes, int treeByteLength, @Nullable byte[] serializedTreeHash, @Nullable Stub stubElement,
+  public SerializedStubTree(@NotNull byte[] treeBytes, int treeByteLength, @Nullable Stub stubElement,
                             @NotNull byte[] indexedStubBytes, int indexedStubByteLength, @Nullable Map<StubIndexKey, Map<Object, StubIdList>> indexedStubs) {
     myTreeBytes = treeBytes;
     myTreeByteLength = treeByteLength;
-    mySerializedTreeHash = serializedTreeHash == null ? calculateHash(treeBytes, treeByteLength) : serializedTreeHash;
     myStubElement = stubElement;
 
     myIndexedStubBytes = indexedStubBytes;
@@ -73,7 +71,6 @@ public class SerializedStubTree {
     serializationManager.serialize(rootStub, bytes);
     myTreeBytes = bytes.getInternalBuffer();
     myTreeByteLength = bytes.size();
-    mySerializedTreeHash = calculateHash(myTreeBytes, myTreeByteLength);
     ObjectStubBase root = (ObjectStubBase)rootStub;
     myIndexedStubs = indexTree(root);
     final BufferExposingByteArrayOutputStream indexBytes = new BufferExposingByteArrayOutputStream();
@@ -108,7 +105,7 @@ public class SerializedStubTree {
       reSerializedIndexByteLength = reSerializedStubIndices.size();
     }
 
-    return new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), mySerializedTreeHash, null,
+    return new SerializedStubTree(outStub.getInternalBuffer(), outStub.size(), null,
                                   reSerializedIndexBytes, reSerializedIndexByteLength, myIndexedStubs);
   }
 
@@ -215,18 +212,22 @@ public class SerializedStubTree {
     return (Map<StubIndexKey, Map<Object, StubIdList>>)(Map)map;
   }
 
+  private byte[] myTreeHash;
   @NotNull
-  private static byte[] calculateHash(@NotNull byte[] content, int length) {
-    MessageDigest digest = HASHER.getValue();
-    digest.update(content, 0, length);
-    return digest.digest();
+  synchronized byte[] getTreeHash() {
+    if (myTreeHash == null) {
+      MessageDigest digest = HASHER.getValue();
+      digest.update(myTreeBytes, 0, myTreeByteLength);
+      myTreeHash = digest.digest();
+    }
+    return myTreeHash;
   }
 
   static void reportStubTreeHashCollision(@NotNull SerializedStubTree newTree,
                                           @NotNull SerializedStubTree existingTree) {
     String oldTreeDump = "\nexisting tree " + existingTree.dumpStub();
     String newTreeDump = "\nnew tree " + newTree.dumpStub();
-    byte[] hash = newTree.mySerializedTreeHash;
+    byte[] hash = newTree.getTreeHash();
     LOG.info("Stub tree hashing collision. Different trees have the same hash = " + toHexString(hash, hash.length) +
              ". Hashing algorithm = " + HASHER.getValue().getAlgorithm() + "." + oldTreeDump + newTreeDump, new Exception());
   }

@@ -17,13 +17,10 @@ public class SerializedStubTreeDataExternalizer implements DataExternalizer<Seri
     if (PersistentHashMapValueStorage.COMPRESSION_ENABLED) {
       DataInputOutputUtil.writeINT(out, tree.myTreeByteLength);
       out.write(tree.myTreeBytes, 0, tree.myTreeByteLength);
-      DataInputOutputUtil.writeINT(out, tree.mySerializedTreeHash.length);
-      out.write(tree.mySerializedTreeHash);
       DataInputOutputUtil.writeINT(out, tree.myIndexedStubByteLength);
       out.write(tree.myIndexedStubBytes, 0, tree.myIndexedStubByteLength);
     } else {
       CompressionUtil.writeCompressed(out, tree.myTreeBytes, 0, tree.myTreeByteLength);
-      CompressionUtil.writeCompressed(out, tree.mySerializedTreeHash, 0, tree.mySerializedTreeHash.length);
       CompressionUtil.writeCompressed(out, tree.myIndexedStubBytes, 0, tree.myIndexedStubByteLength);
     }
   }
@@ -35,17 +32,14 @@ public class SerializedStubTreeDataExternalizer implements DataExternalizer<Seri
       int serializedStubsLength = DataInputOutputUtil.readINT(in);
       byte[] bytes = new byte[serializedStubsLength];
       in.readFully(bytes);
-      byte[] hash = new byte[DataInputOutputUtil.readINT(in)];
-      in.readFully(hash);
       int indexedStubByteLength = DataInputOutputUtil.readINT(in);
       byte[] indexedStubBytes = new byte[indexedStubByteLength];
       in.readFully(indexedStubBytes);
-      return new SerializedStubTree(bytes, bytes.length, hash, null, indexedStubBytes, indexedStubByteLength, null);
+      return new SerializedStubTree(bytes, bytes.length,  null, indexedStubBytes, indexedStubByteLength, null);
     } else {
       byte[] treeBytes = CompressionUtil.readCompressed(in);
-      byte[] treeHash = CompressionUtil.readCompressed(in);
       byte[] indexedStubBytes = CompressionUtil.readCompressed(in);
-      return new SerializedStubTree(treeBytes, treeBytes.length, treeHash, null, indexedStubBytes, indexedStubBytes.length, null);
+      return new SerializedStubTree(treeBytes, treeBytes.length, null, indexedStubBytes, indexedStubBytes.length, null);
     }
   }
 }

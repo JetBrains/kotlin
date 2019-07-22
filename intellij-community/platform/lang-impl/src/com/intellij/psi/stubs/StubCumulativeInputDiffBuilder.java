@@ -45,7 +45,7 @@ class StubCumulativeInputDiffBuilder extends InputDataDiffBuilder<Integer, Seria
 
   private static boolean treesAreEqual(@NotNull SerializedStubTree newSerializedStubTree,
                                        @NotNull SerializedStubTree currentTree) {
-    return Arrays.equals(currentTree.mySerializedTreeHash, newSerializedStubTree.mySerializedTreeHash) &&
+    return Arrays.equals(currentTree.getTreeHash(), newSerializedStubTree.getTreeHash()) &&
            treesAreReallyEqual(newSerializedStubTree, currentTree);
   }
 
