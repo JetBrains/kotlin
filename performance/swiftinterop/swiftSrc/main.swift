@@ -15,7 +15,7 @@ let companion = BenchmarkEntryWithInit.Companion()
 
 var swiftLauncher = SwiftLauncher()
 
-runner.runBenchmarks(args: args, run: { (parser: ArgParser) -> [BenchmarkResult] in
+runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [BenchmarkResult] in
     swiftLauncher.add(name: "createMultigraphOfInt", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).createMultigraphOfInt() }))
     swiftLauncher.add(name: "fillCityMap", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
@@ -38,12 +38,16 @@ runner.runBenchmarks(args: args, run: { (parser: ArgParser) -> [BenchmarkResult]
         lambda: { ($0 as! SwiftInteropBenchmarks).stringInterop() }))
     swiftLauncher.add(name: "simpleFunction", benchmark: companion.create(ctor: { return SwiftInteropBenchmarks() },
         lambda: { ($0 as! SwiftInteropBenchmarks).simpleFunction() }))
-    return swiftLauncher.launch(numWarmIterations: parser.get(name: "warmup") as! Int32,
-        numberOfAttempts: parser.get(name: "repeat") as! Int32,
-        prefix: parser.get(name: "prefix") as! String, filters: parser.getAll(name: "filter"),
-        filterRegexes: parser.getAll(name: "filterRegex"))
-}, parseArgs: { (args: KotlinArray,  benchmarksListAction: ((ArgParser) -> KotlinUnit)) -> ArgParser? in
+    if arguments is BaseBenchmarkArguments {
+        let argumentsList: BaseBenchmarkArguments = arguments as! BaseBenchmarkArguments
+        return swiftLauncher.launch(numWarmIterations: argumentsList.warmup,
+            numberOfAttempts: argumentsList.repeat,
+            prefix: argumentsList.prefix, filters: argumentsList.filter,
+            filterRegexes: argumentsList.filterRegex)
+    }
+    return [BenchmarkResult]()
+}, parseArgs: { (args: KotlinArray,  benchmarksListAction: (() -> KotlinUnit)) -> BenchmarkArguments? in
     return runner.parse(args: args, benchmarksListAction: swiftLauncher.benchmarksListAction) },
-  collect: { (benchmarks: [BenchmarkResult], parser: ArgParser) -> Void in
-    runner.collect(results: benchmarks, parser: parser)
+  collect: { (benchmarks: [BenchmarkResult], arguments: BenchmarkArguments) -> Void in
+    runner.collect(results: benchmarks, arguments: arguments)
 }, benchmarksListAction: swiftLauncher.benchmarksListAction)

@@ -135,9 +135,9 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
     cd tools/benchmarksAnalyzer/build/bin/<target>/benchmarksAnalyzerReleaseExecutable/
     ./benchmarksAnalyzer.kexe <file1> <file2>
     
- Tool has several renders which allow produce output report in different forms (text, html, etc.). To set up render use flag `-render/-r`.
- Output can be redirected to file with flag `-output/-o`.
- To get detailed information about supported options, please use `-help/-h`.
+ Tool has several renders which allow produce output report in different forms (text, html, etc.). To set up render use flag `--render/-r`.
+ Output can be redirected to file with flag `--output/-o`.
+ To get detailed information about supported options, please use `--help/-h`.
  
  Analyzer tool can compare both local files and files placed on Bintray/TeamCity.
  

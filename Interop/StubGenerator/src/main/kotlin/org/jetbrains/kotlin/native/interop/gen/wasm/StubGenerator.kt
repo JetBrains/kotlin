@@ -4,8 +4,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.native.interop.gen.argsToCompiler
 import org.jetbrains.kotlin.native.interop.gen.wasm.idl.*
 import org.jetbrains.kliopt.ArgParser
-import org.jetbrains.kotlin.native.interop.tool.getJSInteropArguments
-import org.jetbrains.kotlin.native.interop.tool.getValuesAsArray
+import org.jetbrains.kotlin.native.interop.tool.JSInteropArguments
 
 fun kotlinHeader(packageName: String): String {
     return  "package $packageName\n" +
@@ -392,22 +391,20 @@ fun generateJs(interfaces: List<Interface>): String =
 const val idlMathPackage = "kotlinx.interop.wasm.math"
 const val idlDomPackage = "kotlinx.interop.wasm.dom"
 
-fun processIdlLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
-    val argParser = ArgParser(getJSInteropArguments(), useDefaultHelpShortName = false)
-    if (!argParser.parse(args))
-        return null
+fun processIdlLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String> {
+    val jsInteropArguments = JSInteropArguments()
+    jsInteropArguments.argParser.parse(args)
     // TODO: Refactor me.
-    val ktGenRoot = File(argParser.get<String>("generated")!!).mkdirs()
-    val nativeLibsDir = File(argParser.get<String>("natives")!!).mkdirs()
+    val ktGenRoot = File(jsInteropArguments.generated).mkdirs()
+    val nativeLibsDir = File(jsInteropArguments.natives).mkdirs()
 
-    val idl = when (argParser.get<String>("pkg")) {
-        idlMathPackage-> idlMath
+    val idl = when (jsInteropArguments.pkg) {
+        idlMathPackage -> idlMath
         idlDomPackage -> idlDom
         else -> throw IllegalArgumentException("Please choose either $idlMathPackage or $idlDomPackage for -pkg argument")
     }
-
-    File(ktGenRoot, "kotlin_stubs.kt").writeText(generateKotlin(argParser.get<String>("pkg")!!, idl))
+    File(ktGenRoot, "kotlin_stubs.kt").writeText(generateKotlin(jsInteropArguments.pkg!!, idl))
     File(nativeLibsDir, "js_stubs.js").writeText(generateJs(idl))
     File((additionalArgs["manifest"] as? String)!!).writeText("") // The manifest is currently unused for wasm.
-    return argsToCompiler(argParser.getValuesAsArray("staticLibrary"), argParser.getValuesAsArray("libraryPath"))
+    return argsToCompiler(jsInteropArguments.staticLibrary.toTypedArray(), jsInteropArguments.libraryPath.toTypedArray())
 }

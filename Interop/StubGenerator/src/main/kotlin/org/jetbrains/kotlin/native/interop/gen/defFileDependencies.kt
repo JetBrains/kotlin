@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.native.interop.gen.jvm.buildNativeLibrary
 import org.jetbrains.kotlin.native.interop.gen.jvm.prepareTool
 import org.jetbrains.kotlin.native.interop.indexer.NativeLibraryHeaders
 import org.jetbrains.kotlin.native.interop.indexer.getHeaderPaths
-import org.jetbrains.kotlin.native.interop.tool.getCInteropArguments
+import org.jetbrains.kotlin.native.interop.tool.CInteropArguments
 import org.jetbrains.kliopt.ArgParser
 import java.io.File
 
@@ -39,13 +39,13 @@ private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>) 
 
 private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>): SingleTargetDependencyAssigner {
     val tool = prepareTool(target, KotlinPlatform.NATIVE)
-    val argParser = ArgParser(getCInteropArguments(), useDefaultHelpShortName = false)
-    argParser.parse(arrayOf<String>())
+    val cinteropArguments = CInteropArguments()
+    cinteropArguments.argParser.parse(arrayOf<String>())
     val libraries = defFiles.associateWith {
         buildNativeLibrary(
                 tool,
                 DefFile(it, tool.substitutions),
-                argParser,
+                cinteropArguments,
                 ImportsImpl(emptyMap())
         ).getHeaderPaths()
     }

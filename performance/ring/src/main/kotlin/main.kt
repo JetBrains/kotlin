@@ -209,8 +209,10 @@ class RingLauncher : Launcher() {
 
 fun main(args: Array<String>) {
     val launcher = RingLauncher()
-    BenchmarksRunner.runBenchmarks(args, { parser: ArgParser ->
-        launcher.launch(parser.get<Int>("warmup")!!, parser.get<Int>("repeat")!!, parser.get<String>("prefix")!!,
-                parser.getAll<String>("filter"), parser.getAll<String>("filterRegex"))
+    BenchmarksRunner.runBenchmarks(args, { arguments: BenchmarkArguments ->
+        if (arguments is BaseBenchmarkArguments) {
+            launcher.launch(arguments.warmup, arguments.repeat, arguments.prefix,
+                    arguments.filter, arguments.filterRegex)
+        } else emptyList()
     }, benchmarksListAction = launcher::benchmarksListAction)
 }

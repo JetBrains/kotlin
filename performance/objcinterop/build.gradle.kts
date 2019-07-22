@@ -14,7 +14,7 @@ plugins {
 
 benchmark {
     applicationName = "ObjCInterop"
-    commonSrcDirs = listOf("../../tools/benchmarks/shared/src", "src/main/kotlin", "../shared/src/main/kotlin", "../../tools/kliopt")
+    commonSrcDirs = listOf("../../tools/benchmarks/shared/src", "src/main/kotlin", "../shared/src/main/kotlin")
     jvmSrcDirs = listOf("src/main/kotlin-jvm", "../shared/src/main/kotlin-jvm")
     nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native")
     linkerOpts = listOf("-L$buildDir", "-lcomplexnumbers")

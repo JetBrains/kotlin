@@ -1,0 +1,29 @@
+def endorsedLibrariesList = ['kliopt']
+
+task clean {
+    doLast {
+        delete buildDir
+    }
+}
+
+task jvmJar {
+    endorsedLibrariesList.each { library ->
+        dependsOn "$library:jvmJar"
+    }
+}
+
+// Build all default libraries.
+targetList.each { target ->
+    task("${target}EndorsedLibraries", type: Copy) {
+        endorsedLibrariesList.each { library ->
+            dependsOn "$library:${target}${library.capitalize()}"
+        }
+        destinationDir project.buildDir
+        endorsedLibrariesList.each { library ->
+            from(project("$library").file("build/${target}${library.capitalize()}")) {
+                include('**')
+                into("$library")
+            }
+        }
+    }
+}

@@ -39,12 +39,13 @@ kotlin {
             }
             kotlin.srcDir "src"
             kotlin.srcDir "../shared/src/main/kotlin"
-            kotlin.srcDir "$toolsPath/kliopt"
-            kotlin.srcDir "$toolsPath/benchmarks/shared/src"
+            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin"
+            kotlin.srcDir "$toolsPath/benchmarks/shared/src/main/kotlin"
         }
         macosMain {
             dependsOn commonMain
             kotlin.srcDir "../shared/src/main/kotlin-native"
+            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin-native"
         }
     }
 

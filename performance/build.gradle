@@ -170,5 +170,5 @@ task swiftinterop {
 
 task videoplayer {
     dependsOn 'clean'
-    dependsOn 'swiftinterop:konanRun'
+    dependsOn 'videoplayer:konanRun'
 }

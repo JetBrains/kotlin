@@ -158,35 +158,34 @@ private fun findFilesByGlobs(roots: List<Path>, globs: List<String>): Map<Path, 
 }
 
 
-private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String>? {
-    val argParser = ArgParser(getCInteropArguments(), useDefaultHelpShortName = false)
-    if (!argParser.parse(args))
-        return null
-    val ktGenRoot = argParser.get<String>("generated")
-    val nativeLibsDir = argParser.get<String>("natives")
-    val flavorName = argParser.get<String>("flavor")
+private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = mapOf()): Array<String> {
+    val cinteropArguments = CInteropArguments()
+    cinteropArguments.argParser.parse(args)
+    val ktGenRoot = cinteropArguments.generated
+    val nativeLibsDir = cinteropArguments.natives
+    val flavorName = cinteropArguments.flavor
     val flavor = KotlinPlatform.values().single { it.name.equals(flavorName, ignoreCase = true) }
-    val defFile = argParser.get<String>("def")?.let { File(it) }
+    val defFile = cinteropArguments.def?.let { File(it) }
     val manifestAddend = (additionalArgs["manifest"] as? String)?.let { File(it) }
 
-    if (defFile == null && argParser.get<String>("pkg") == null) {
-        argParser.printError("-def or -pkg should provided!")
+    if (defFile == null && cinteropArguments.pkg == null) {
+        cinteropArguments.argParser.printError("-def or -pkg should provided!")
     }
 
-    val tool = prepareTool(argParser.get<String>("target"), flavor)
+    val tool = prepareTool(cinteropArguments.target, flavor)
 
     val def = DefFile(defFile, tool.substitutions)
-    val isLinkerOptsSetByUser = (argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (argParser.getOrigin("linker-option") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (argParser.getOrigin("linker-options") == ArgParser.ValueOrigin.SET_BY_USER) ||
-            (argParser.getOrigin("lopt") == ArgParser.ValueOrigin.SET_BY_USER)
+    val isLinkerOptsSetByUser = (cinteropArguments.argParser.getOrigin("linkerOpts") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (cinteropArguments.argParser.getOrigin("linker-option") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (cinteropArguments.argParser.getOrigin("linker-options") == ArgParser.ValueOrigin.SET_BY_USER) ||
+            (cinteropArguments.argParser.getOrigin("lopt") == ArgParser.ValueOrigin.SET_BY_USER)
     if (flavorName == "native" && isLinkerOptsSetByUser) {
         warn("-linker-option(s)/-linkerOpts/-lopt option is not supported by cinterop. Please add linker options to .def file or binary compilation instead.")
     }
 
-    val additionalLinkerOpts = argParser.getValuesAsArray("linkerOpts") + argParser.getValuesAsArray("linker-option") +
-            argParser.getValuesAsArray("linker-options") + argParser.getValuesAsArray("lopt")
-    val verbose = argParser.get<Boolean>("verbose")!!
+    val additionalLinkerOpts = cinteropArguments.linkerOpts.toTypedArray() + cinteropArguments.linkerOption.toTypedArray() +
+            cinteropArguments.linkerOptions.toTypedArray() + cinteropArguments.lopt.toTypedArray()
+    val verbose = cinteropArguments.verbose
 
     val language = selectNativeLanguage(def.config)
 
@@ -195,14 +194,14 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
             def.config.linkerOpts.toTypedArray() + 
             tool.defaultCompilerOpts + 
             additionalLinkerOpts
-    val linkerName = argParser.get<String>("linker") ?: def.config.linker
+    val linkerName = cinteropArguments.linker ?: def.config.linker
     val linker = "${tool.llvmHome}/bin/$linkerName"
     val compiler = "${tool.llvmHome}/bin/clang"
     val excludedFunctions = def.config.excludedFunctions.toSet()
     val excludedMacros = def.config.excludedMacros.toSet()
-    val staticLibraries = def.config.staticLibraries + argParser.getValuesAsArray("staticLibrary")
-    val libraryPaths = def.config.libraryPaths + argParser.getValuesAsArray("libraryPath")
-    val fqParts = (argParser.get<String>("pkg") ?: def.config.packageName)?.split('.')
+    val staticLibraries = def.config.staticLibraries + cinteropArguments.staticLibrary.toTypedArray()
+    val libraryPaths = def.config.libraryPaths + cinteropArguments.libraryPath.toTypedArray()
+    val fqParts = (cinteropArguments.pkg ?: def.config.packageName)?.split('.')
             ?: defFile!!.name.split('.').reversed().drop(1)
 
     val outKtFileName = fqParts.last() + ".kt"
@@ -213,11 +212,11 @@ private fun processCLib(args: Array<String>, additionalArgs: Map<String, Any> = 
 
     val libName = (additionalArgs["cstubsname"] as? String)?: fqParts.joinToString("") + "stubs"
 
-    val tempFiles = TempFiles(libName, argParser.get<String>("Xtemporary-files-dir"))
+    val tempFiles = TempFiles(libName, cinteropArguments.tempDir)
 
     val imports = parseImports((additionalArgs["import"] as? List<String>)?.toTypedArray() ?: arrayOf())
 
-    val library = buildNativeLibrary(tool, def, argParser, imports)
+    val library = buildNativeLibrary(tool, def, cinteropArguments, imports)
 
     val (nativeIndex, compilation) = buildNativeIndex(library, verbose)
 
@@ -303,13 +302,13 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
-        arguments: ArgParser,
+        arguments: CInteropArguments,
         imports: ImportsImpl
 ): NativeLibrary {
-    val additionalHeaders = arguments.getValuesAsArray("header") + arguments.getValuesAsArray("h")
-    val additionalCompilerOpts = arguments.getValuesAsArray("compilerOpts") +
-            arguments.getValuesAsArray("compiler-options") + arguments.getValuesAsArray("compiler-option") +
-            arguments.getValuesAsArray("copt")
+    val additionalHeaders = (arguments.header + arguments.shortHeaderForm).toTypedArray()
+    val additionalCompilerOpts = (arguments.compilerOpts +
+            arguments.compilerOptions + arguments.compilerOption +
+            arguments.copt).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
     val language = selectNativeLanguage(def.config)
@@ -317,7 +316,7 @@ internal fun buildNativeLibrary(
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
         addAll(additionalCompilerOpts)
-        addAll(getCompilerFlagsForVfsOverlay(arguments.getValuesAsArray("headerFilterAdditionalSearchPrefix"), def))
+        addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         addAll(when (language) {
             Language.C -> emptyList()
             Language.OBJECTIVE_C -> {

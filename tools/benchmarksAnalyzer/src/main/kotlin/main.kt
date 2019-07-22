@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+@file:UseExperimental(ExperimentalCli::class)
 import org.jetbrains.analyzer.sendGetRequest
 import org.jetbrains.analyzer.readFile
 import org.jetbrains.analyzer.SummaryBenchmarksReport
@@ -103,108 +103,94 @@ fun parseNormalizeResults(results: String): Map<String, Map<String, Double>> {
     return parsedNormalizeResults
 }
 
-// Prints text summary by users request.
-fun summaryAction(argParser: ArgParser) {
-    val benchsReport = SummaryBenchmarksReport(getBenchmarkReport(argParser.get<String>("mainReport")!!, argParser.get<String>("user")))
-    val results = mutableListOf<String>()
-    val executionNormalize = argParser.get<String>("exec-normalize")?.let {
-        parseNormalizeResults(getFileContent(it))
-    }
-    val compileNormalize = argParser.get<String>("compile-normalize")?.let {
-        parseNormalizeResults(getFileContent(it))
-    }
-    val codesizeNormalize = argParser.get<String>("codesize-normalize")?.let {
-        parseNormalizeResults(getFileContent(it))
-    }
-    results.apply {
-        add(benchsReport.failedBenchmarks.size.toString())
-        argParser.getAll<String>("exec-samples")?. let {
-            val filter = if (it.first() == "all") null else it
-            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
-                    argParser.get<String>("exec")!! == "geomean", filter, executionNormalize).joinToString(";"))
-        }
-        argParser.getAll<String>("compile-samples")?. let {
-            val filter = if (it.first() == "all") null else it
-            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
-                    argParser.get<String>("compile")!! == "geomean", filter, compileNormalize).joinToString(";"))
-        }
-        argParser.getAll<String>("codesize-samples")?. let {
-            val filter = if (it.first() == "all") null else it
-            add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
-                    argParser.get<String>("codesize")!! == "geomean", filter, codesizeNormalize).joinToString(";"))
-        }
-    }
-    println(results.joinToString())
-}
-
 fun main(args: Array<String>) {
+    class Summary: Subcommand("summary") {
+        val exec by option(ArgType.Choice(listOf("samples", "geomean")),
+                description = "Execution time way of calculation", defaultValue = "geomean")
+        val execSamples by options(ArgType.String, "exec-samples",
+                description = "Samples used for execution time metric (value 'all' allows use all samples)",
+                delimiter = ",")
+        val execNormalize by option(ArgType.String, "exec-normalize",
+                description = "File with golden results which should be used for normalization")
+        val compile by option(ArgType.Choice(listOf("samples", "geomean")),
+                description = "Compile time way of calculation", defaultValue = "geomean")
+        val compileSamples by options(ArgType.String, "compile-samples",
+                description = "Samples used for compile time metric (value 'all' allows use all samples)",
+                delimiter = ",")
+        val compileNormalize by option(ArgType.String, "compile-normalize",
+                description = "File with golden results which should be used for normalization")
+        val codesize by option(ArgType.Choice(listOf("samples", "geomean")),
+                description = "Code size way of calculation", defaultValue = "geomean")
+        val codesizeSamples by options(ArgType.String, "codesize-samples",
+                description = "Samples used for code size metric (value 'all' allows use all samples)",
+                delimiter = ",")
+        val codesizeNormalize by option(ArgType.String, "codesize-normalize",
+                description = "File with golden results which should be used for normalization")
+        val user by option(ArgType.String, shortName = "u", description = "User access information for authorization")
+        val mainReport by argument(ArgType.String, description = "Main report for analysis")
 
-    val actions = mapOf( "summary" to Action(
-            ::summaryAction,
-            ArgParser(
-                    listOf(
-                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "exec",
-                                description = "Execution time way of calculation", defaultValue = "geomean"),
-                        OptionDescriptor(ArgType.String(), "exec-samples",
-                                description = "Samples used for execution time metric (value 'all' allows use all samples)",
-                                delimiter = ","),
-                        OptionDescriptor(ArgType.String(), "exec-normalize",
-                                description = "File with golden results which should be used for normalization"),
-                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "compile",
-                                description = "Compile time way of calculation", defaultValue = "geomean"),
-                        OptionDescriptor(ArgType.String(), "compile-samples",
-                                description = "Samples used for compile time metric (value 'all' allows use all samples)",
-                                delimiter = ","),
-                        OptionDescriptor(ArgType.String(), "compile-normalize",
-                                description = "File with golden results which should be used for normalization"),
-                        OptionDescriptor(ArgType.Choice(listOf("samples", "geomean")), "codesize",
-                                description = "Code size way of calculation", defaultValue = "geomean"),
-                        OptionDescriptor(ArgType.String(), "codesize-samples",
-                                description = "Samples used for code size metric (value 'all' allows use all samples)",
-                                delimiter = ","),
-                        OptionDescriptor(ArgType.String(), "codesize-normalize",
-                                description = "File with golden results which should be used for normalization"),
-                        OptionDescriptor(ArgType.String(), "user", "u", "User access information for authorization")
-                ), listOf(ArgDescriptor(ArgType.String(), "mainReport", "Main report for analysis"))
-            )
-        )
-    )
+        override fun execute() {
+            val benchsReport = SummaryBenchmarksReport(getBenchmarkReport(mainReport!!, user))
+            val results = mutableListOf<String>()
+            val executionNormalize = execNormalize?.let {
+                parseNormalizeResults(getFileContent(it))
+            }
+            val compileNormalize = compileNormalize?.let {
+                parseNormalizeResults(getFileContent(it))
+            }
+            val codesizeNormalize = codesizeNormalize?.let {
+                parseNormalizeResults(getFileContent(it))
+            }
+            results.apply {
+                add(benchsReport.failedBenchmarks.size.toString())
 
-    val options = listOf(
-            OptionDescriptor(ArgType.String(), "output", "o", "Output file"),
-            OptionDescriptor(ArgType.Double(), "eps", "e", "Meaningful performance changes", "1.0"),
-            OptionDescriptor(ArgType.Boolean(), "short", "s", "Show short version of report", "false"),
-            OptionDescriptor(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
-                    "renders", "r", "Renders for showing information", "text", isMultiple = true),
-            OptionDescriptor(ArgType.String(), "user", "u", "User access information for authorization")
-    )
+                val filterExec = if (execSamples.first() == "all") null else execSamples
+                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
+                        exec == "geomean", filterExec, executionNormalize).joinToString(";"))
 
-    val arguments = listOf(
-            ArgDescriptor(ArgType.String(), "mainReport", "Main report for analysis"),
-            ArgDescriptor(ArgType.String(), "compareToReport", "Report to compare to", isRequired = false)
-    )
+                val filterCompile = if (compileSamples.first() == "all") null else compileSamples
+                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
+                        compile == "geomean", filterCompile, compileNormalize).joinToString(";"))
 
-    // Parse args.
-    val argParser = ArgParser(options, arguments, actions)
-    if (argParser.parse(args)) {
-        // Read contents of file.
-        val mainBenchsReport = getBenchmarkReport(argParser.get<String>("mainReport")!!, argParser.get<String>("user"))
-        var compareToBenchsReport = argParser.get<String>("compareToReport")?.let {
-            getBenchmarkReport(it, argParser.get<String>("user"))
+                val filterCodesize = if (codesizeSamples.first() == "all") null else codesizeSamples
+                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
+                        codesize == "geomean", filterCodesize, codesizeNormalize).joinToString(";"))
+
+            }
+            println(results.joinToString())
         }
+    }
+    val action = Summary()
+    // Parse args.
+    val argParser = ArgParser("benchmarksAnalyzer")
+    argParser.subcommands(action)
+    val mainReport by argParser.argument(ArgType.String, description = "Main report for analysis")
+    val compareToReport by argParser.argument(ArgType.String, description = "Report to compare to", required = false)
 
-        val renders = argParser.getAll<String>("renders")
+    val output by argParser.option(ArgType.String, shortName = "o", description = "Output file")
+    val epsValue by argParser.option(ArgType.Double, "eps", "e", "Meaningful performance changes", 1.0)
+    val useShortForm by argParser.option(ArgType.Boolean, "short", "s",
+            "Show short version of report", defaultValue = false)
+    val renders by argParser.options(ArgType.Choice(listOf("text", "html", "teamcity", "statistics", "metrics")),
+        shortName = "r", description = "Renders for showing information", defaultValue = listOf("text"), multiple = true)
+    val user by argParser.option(ArgType.String, shortName = "u", description = "User access information for authorization")
+
+    if (argParser.parse(args).commandName == "benchmarksAnalyzer") {
+        // Read contents of file.
+        val mainBenchsReport = getBenchmarkReport(mainReport!!, user)
+        var compareToBenchsReport = compareToReport?.let {
+            getBenchmarkReport(it, user)
+        }
 
         // Generate comparasion report.
         val summaryReport = SummaryBenchmarksReport(mainBenchsReport,
                 compareToBenchsReport,
-                argParser.get<Double>("eps")!!)
+                epsValue)
 
-        var output = argParser.get<String>("output")
-
+        var outputFile = output
         renders?.forEach {
-            Render.getRenderByName(it).print(summaryReport, argParser.get<Boolean>("short")!!, output)
-            output = null
+            Render.getRenderByName(it).print(summaryReport, useShortForm, outputFile)
+            outputFile = null
         }
     }
 }

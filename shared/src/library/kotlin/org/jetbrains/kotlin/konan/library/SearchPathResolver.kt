@@ -164,7 +164,6 @@ internal open class KonanLibrarySearchPathResolver(
         if (!noStdLib) {
             result.add(resolve(UnresolvedLibrary(KONAN_STDLIB_NAME, null), true))
         }
-
         if (!noDefaultLibs) {
             val defaultLibs = defaultRoots.flatMap { it.listFiles }
                     .asSequence()

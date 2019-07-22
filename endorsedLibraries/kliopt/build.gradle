@@ -1,0 +1,105 @@
+import org.jetbrains.kotlin.konan.target.HostManager
+
+buildscript {
+    repositories {
+        maven {
+            url 'https://cache-redirector.jetbrains.com/jcenter'
+        }
+        maven {
+            url kotlinCompilerRepo
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+    }
+}
+
+apply plugin: 'kotlin-multiplatform'
+
+repositories {
+    maven {
+        url 'https://cache-redirector.jetbrains.com/jcenter'
+    }
+    maven {
+        url kotlinCompilerRepo
+    }
+    maven {
+        url buildKotlinCompilerRepo
+    }
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/main/kotlin'
+
+        }
+        commonTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-common:$kotlinVersion"
+                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common:$kotlinVersion"
+            }
+            kotlin.srcDir 'src/tests'
+        }
+        jvm().compilations.main.defaultSourceSet {
+            dependencies {
+                implementation kotlin('stdlib-jdk8')
+            }
+            kotlin.srcDir 'src/main/kotlin-jvm'
+        }
+        // JVM-specific tests and their dependencies:
+        jvm().compilations.test.defaultSourceSet {
+            dependencies {
+                implementation kotlin('test-junit')
+            }
+        }
+
+        jvm().compilations.all {
+            kotlinOptions {
+                freeCompilerArgs = ["-Xuse-experimental=org.jetbrains.kliopt.ExperimentalCli"]
+                suppressWarnings = true
+            }
+        }
+    }
+}
+
+def commonSrc = new File("$projectDir/src/main/kotlin")
+def nativeSrc = new File("$projectDir/src/main/kotlin-native")
+
+targetList.each { target ->
+    def konanJvmArgs =  [*HostManager.regularJvmArgs,
+                         "-Dkonan.home=${rootProject.projectDir}/dist",
+                         "-Djava.library.path=${project.buildDir}/nativelibs/$hostName",
+    ]
+
+    def defaultArgs = ['-nopack', '-nodefaultlibs']
+    if (target != "wasm32") defaultArgs += '-g'
+    def konanArgs = [*defaultArgs,
+                     '-target', target,
+                     "-Xruntime=${project(':runtime').file('build/' + target + '/runtime.bc')}",
+                     *project.globalBuildArgs]
+
+    task("${target}Kliopt", type: JavaExec) {
+        dependsOn ":${target}CrossDistRuntime"
+
+        main = 'org.jetbrains.kotlin.cli.bc.K2NativeKt'
+        classpath = project(":backend.native").configurations.cli_bc
+        jvmArgs = konanJvmArgs
+        args = [*konanArgs,
+                '-output', project.file("build/${target}Kliopt"),
+                '-produce', 'library', '-module-name', 'kliopt', '-XXLanguage:+AllowContractsForCustomFunctions',
+                '-Xmulti-platform', '-Xuse-experimental=org.jetbrains.kliopt.ExperimentalCli',
+                '-Xuse-experimental=kotlin.ExperimentalMultiplatform',
+                '-Xallow-result-return-type',
+                commonSrc.absolutePath,
+                "-Xcommon-sources=${commonSrc.absolutePath}",
+                nativeSrc]
+        inputs.dir(nativeSrc)
+        inputs.dir(commonSrc)
+        outputs.dir(project.file("build/${target}Kliopt"))
+    }
+}

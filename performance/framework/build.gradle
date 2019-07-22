@@ -37,7 +37,8 @@ kotlin {
             }
             kotlin.srcDir "$toolsPath/benchmarks/shared/src"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin"
-            kotlin.srcDir "$toolsPath/kliopt"
+            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin"
+            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin-native"
             kotlin.srcDir "$toolsPath/benchmarksAnalyzer/src/main/kotlin-native"
         }
     }

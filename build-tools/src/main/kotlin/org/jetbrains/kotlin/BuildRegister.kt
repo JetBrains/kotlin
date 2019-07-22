@@ -102,10 +102,10 @@ open class BuildRegister : DefaultTask() {
         val target = System.getProperty("os.name").replace("\\s".toRegex(), "")
 
         // Get summary information.
-        val output = arrayOf("$analyzer", "summary", "-exec-samples", "all", "-compile", "samples",
-                "-compile-samples", "HelloWorld,Videoplayer", "-codesize-samples", "all",
-                "-exec-normalize", "bintray:goldenResults.csv",
-                "-codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
+        val output = arrayOf("$analyzer", "summary", "--exec-samples", "all", "--compile", "samples",
+                "--compile-samples", "HelloWorld,Videoplayer", "--codesize-samples", "all",
+                "--exec-normalize", "bintray:goldenResults.csv",
+                "--codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
                 .runCommand()
 
         // Postprocess information.
@@ -129,9 +129,9 @@ open class BuildRegister : DefaultTask() {
         // Collect framework run details.
         if (target == "MacOSX") {
 
-            val frameworkOutput = arrayOf("$analyzer", "summary", "-compile", "samples",
-                    "-compile-samples", "FrameworkBenchmarksAnalyzer", "-codesize-samples", "FrameworkBenchmarksAnalyzer",
-                    "-codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
+            val frameworkOutput = arrayOf("$analyzer", "summary", "--compile", "samples",
+                    "--compile-samples", "FrameworkBenchmarksAnalyzer", "--codesize-samples", "FrameworkBenchmarksAnalyzer",
+                    "--codesize-normalize", "bintray:goldenResults.csv", "$currentBenchmarksReportFile")
                     .runCommand()
 
             val buildInfoPartsFramework = frameworkOutput.split(',')
