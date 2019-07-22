@@ -22,9 +22,9 @@ open class Psi2FirGenerator : TreeGenerator, AbstractRawFirBuilderTestCase() {
         DebugUtil.psiTreeToString(ktFile, false)
     }
 
-    override fun generateFir(text: String, file: File) {
+    override fun generateFir(text: String, file: File, stubMode: Boolean) {
         val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
-        val firFile = ktFile.toFirFile(stubMode = true)
+        val firFile = ktFile.toFirFile(stubMode)
         StringBuilder().also { FirRenderer(it).visitFile(firFile) }.toString()
     }
 
