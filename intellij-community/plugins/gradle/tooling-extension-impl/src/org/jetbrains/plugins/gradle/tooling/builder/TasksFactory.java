@@ -18,20 +18,20 @@ package org.jetbrains.plugins.gradle.tooling.builder;
 import org.gradle.api.Project;
 import org.gradle.api.Task;
 
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class TasksFactory {
-  private Map<Project, Set<Task>> allTasks;
+  private final Map<Project, Set<Task>> allTasks = new HashMap<Project, Set<Task>>();
+  private final Set<Project> processedRootProjects = new HashSet<Project>();
 
   private void collectTasks(Project root) {
-    allTasks = root.getAllTasks(true);
+    allTasks.putAll(root.getAllTasks(true));
   }
 
   public Set<Task> getTasks(Project project) {
-    if (allTasks == null) {
-      collectTasks(project.getRootProject());
+    Project rootProject = project.getRootProject();
+    if (processedRootProjects.add(rootProject)) {
+      collectTasks(rootProject);
     }
 
     Set<Task> tasks = new LinkedHashSet<Task>(allTasks.get(project));
