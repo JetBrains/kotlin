@@ -135,7 +135,7 @@ public class CompletionData {
           if (refRange.contains(offsetInElement)) {
             int beginIndex = refRange.getStartOffset();
             String text = element.getText();
-            if (beginIndex > offsetInElement || beginIndex < 0 || offsetInElement < 0 || offsetInElement > text.length() || beginIndex > text.length()) {
+            if (beginIndex < 0 || beginIndex > offsetInElement || offsetInElement > text.length()) {
               throw new AssertionError("Inconsistent reference range:" +
                                        " ref=" + ref.getClass() +
                                        " element=" + element.getClass() +
@@ -185,6 +185,7 @@ public class CompletionData {
     return substr.substring(i).trim();
   }
 
+  @NotNull
   public static LookupElement objectToLookupItem(final @NotNull Object object) {
     if (object instanceof LookupElement) return (LookupElement)object;
 
@@ -209,7 +210,7 @@ public class CompletionData {
       throw new AssertionError("Null string for object: " + object + " of class " + object.getClass());
     }
 
-    LookupItem item = new LookupItem(object, s);
+    LookupItem<?> item = new LookupItem<>(object, s);
 
     if (object instanceof LookupValueWithUIHint && ((LookupValueWithUIHint) object).isBold()) {
       item.setBold();
@@ -221,7 +222,7 @@ public class CompletionData {
 
   protected void addLookupItem(Set<? super LookupElement> set, TailType tailType, @NotNull Object completion, final CompletionVariant variant) {
     LookupElement ret = objectToLookupItem(completion);
-    if (ret == null) return;
+
     if (!(ret instanceof LookupItem)) {
       set.add(ret);
       return;
@@ -229,7 +230,7 @@ public class CompletionData {
 
     LookupItem item = (LookupItem)ret;
 
-    final InsertHandler insertHandler = variant.getInsertHandler();
+    InsertHandler<?> insertHandler = variant.getInsertHandler();
     if(insertHandler != null && item.getInsertHandler() == null) {
       item.setInsertHandler(insertHandler);
       item.setTailType(TailType.UNKNOWN);
