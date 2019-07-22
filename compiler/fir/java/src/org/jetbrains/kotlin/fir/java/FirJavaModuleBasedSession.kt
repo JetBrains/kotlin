@@ -34,23 +34,20 @@ class FirJavaModuleBasedSession(
     init {
         sessionProvider.sessionCache[moduleInfo] = this
 
-        _firSymbolProvider = FirCompositeSymbolProvider(
-            listOf(
-                service<FirProvider>(),
-                JavaSymbolProvider(this, sessionProvider.project, scope),
-                dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
-            )
-        )
-
         registerComponent(
             FirSymbolProvider::class,
-            _firSymbolProvider as FirSymbolProvider
+            FirCompositeSymbolProvider(
+                listOf(
+                    service<FirProvider>(),
+                    JavaSymbolProvider(this, sessionProvider.project, scope),
+                    dependenciesProvider ?: FirDependenciesSymbolProviderImpl(this)
+                )
+            ) as FirSymbolProvider
         )
 
-        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
         registerComponent(
             FirCorrespondingSupertypesCache::class,
-            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
+            FirCorrespondingSupertypesCache(this)
         )
     }
 }
@@ -68,7 +65,9 @@ class FirLibrarySession private constructor(
     init {
         sessionProvider.sessionCache[moduleInfo] = this
         val javaSymbolProvider = JavaSymbolProvider(this, sessionProvider.project, scope)
-        _firSymbolProvider =
+
+        registerComponent(
+            FirSymbolProvider::class,
             FirCompositeSymbolProvider(
                 listOf(
                     FirLibrarySymbolProviderImpl(this),
@@ -82,18 +81,13 @@ class FirLibrarySession private constructor(
                     javaSymbolProvider,
                     FirDependenciesSymbolProviderImpl(this)
                 )
-            )
-
-        registerComponent(
-            FirSymbolProvider::class,
-            _firSymbolProvider as FirSymbolProvider
+            ) as FirSymbolProvider
         )
         registerComponent(FirClassDeclaredMemberScopeProvider::class, FirClassDeclaredMemberScopeProvider())
 
-        _correspondingSupertypesCache = FirCorrespondingSupertypesCache(this)
         registerComponent(
             FirCorrespondingSupertypesCache::class,
-            _correspondingSupertypesCache as FirCorrespondingSupertypesCache
+            FirCorrespondingSupertypesCache(this)
         )
     }
 
