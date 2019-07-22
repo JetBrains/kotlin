@@ -6,28 +6,33 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
+import com.intellij.psi.impl.source.tree.java.PsiForStatementImpl
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousObjectImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorLoop
+import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.labels.FirLabelImpl
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringUnescapedValue
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.toReturn
-import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.*
+import org.jetbrains.kotlin.fir.lightTree.fir.ClassWrapper
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
+import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
@@ -39,6 +44,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
@@ -90,12 +96,11 @@ class ExpressionsConverter(
                 PARENTHESIZED, PROPERTY_DELEGATE, INDICES -> convertExpression(expression.getExpressionInParentheses())
                 THIS_EXPRESSION -> convertThisExpression(expression)
                 SUPER_EXPRESSION -> convertSuperExpression(expression)
-                OBJECT_LITERAL -> convertObjectLiteral(expression)
 
+                OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
                 FUN -> declarationsConverter.convertFunctionDeclaration(expression)
                 else -> FirExpressionStub(session, null)
             }
-            //TODO("not fully implemented")
         }
 
         return FirExpressionStub(session, null)
@@ -467,8 +472,8 @@ class ExpressionsConverter(
                     FirConstExpressionImpl(session, null, IrConstKind.String, it.getAsString())
                 }
                 ESCAPE_STRING_TEMPLATE_ENTRY -> {
-                    sb.append(it.getAsStringUnescapedValue())
-                    FirConstExpressionImpl(session, null, IrConstKind.String, it.getAsStringUnescapedValue())
+                    sb.append(escapedStringToCharacter(it.getAsString()))
+                    FirConstExpressionImpl(session, null, IrConstKind.String, escapedStringToCharacter(it.getAsString())?.toString() ?: "")
                 }
                 SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                     hasExpressions = true
@@ -781,7 +786,8 @@ class ExpressionsConverter(
             }
         }
 
-        return FirBlockImpl(session, null).apply {
+        //TODO psi must be null
+        return FirBlockImpl(session, KtForExpression(PsiForStatementImpl())).apply {
             val rangeVal =
                 generateTemporaryVariable(this@ExpressionsConverter.session, null, Name.special("<range>"), rangeExpression)
             statements += rangeVal
@@ -1085,20 +1091,6 @@ class ExpressionsConverter(
             identifier != null -> FirNamedArgumentExpressionImpl(session, null, identifier.nameAsSafeName(), isSpread, firExpression)
             isSpread -> FirSpreadArgumentExpressionImpl(session, null, firExpression)
             else -> firExpression
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseObjectLiteral
-     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitObjectLiteralExpression
-     */
-    private fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
-        val firObject = declarationsConverter.convertClass(objectLiteral.getChildNodesByType(OBJECT_DECLARATION).first()) as FirClass
-        return FirAnonymousObjectImpl(session, null).apply {
-            annotations += firObject.annotations
-            superTypeRefs += firObject.superTypeRefs
-            this.typeRef = superTypeRefs.first()
-            declarations += firObject.declarations
         }
     }
 
