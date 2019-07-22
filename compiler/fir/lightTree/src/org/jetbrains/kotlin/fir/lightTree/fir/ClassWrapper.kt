@@ -26,16 +26,10 @@ class ClassWrapper(
     private val classKind: ClassKind,
     val hasPrimaryConstructor: Boolean,
     val hasSecondaryConstructor: Boolean,
-    var delegatedSelfTypeRef: FirTypeRef,
+    val delegatedSelfTypeRef: FirTypeRef,
     val delegatedSuperTypeRef: FirTypeRef,
     val superTypeCallEntry: MutableList<FirExpression>
 ) {
-    init {
-        if (className == SpecialNames.NO_NAME_PROVIDED) {
-            delegatedSelfTypeRef = delegatedSuperTypeRef
-        }
-    }
-
     private fun isObject(): Boolean {
         return classKind == ClassKind.OBJECT
     }
