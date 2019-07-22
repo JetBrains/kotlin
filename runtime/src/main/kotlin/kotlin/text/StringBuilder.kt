@@ -227,6 +227,10 @@ actual class StringBuilder private constructor (
         val toAppend = csq ?: "null"
         if (start < 0 || end < start || start > toAppend.length) throw IndexOutOfBoundsException()
         ensureExtraCapacity(end - start)
+        (toAppend as? String)?.let {
+            _length += insertString(array, _length, it, start, end - start)
+            return this
+        }
         var index = start
         while (index < end)
             array[_length++] = toAppend[index++]

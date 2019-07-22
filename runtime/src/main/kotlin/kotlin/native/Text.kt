@@ -112,6 +112,9 @@ internal fun checkBoundsIndexes(startIndex: Int, endIndex: Int, size: Int) {
     }
 }
 
+internal fun insertString(array: CharArray, start: Int, value: String): Int =
+        insertString(array, start, value, 0, value.length)
+
 @SymbolName("Kotlin_ByteArray_unsafeStringFromUtf8")
 internal external fun ByteArray.unsafeStringFromUtf8(start: Int, size: Int) : String
 
@@ -128,7 +131,7 @@ internal external fun String.unsafeStringToUtf8OrThrow(start: Int, size: Int) : 
 internal external fun unsafeStringFromCharArray(array: CharArray, start: Int, size: Int) : String
 
 @SymbolName("Kotlin_StringBuilder_insertString")
-internal external fun insertString(array: CharArray, start: Int, value: String): Int
+internal external fun insertString(array: CharArray, distIndex: Int, value: String, sourceIndex: Int, count: Int): Int
 
 @SymbolName("Kotlin_StringBuilder_insertInt")
 internal external fun insertInt(array: CharArray, start: Int, value: Int): Int

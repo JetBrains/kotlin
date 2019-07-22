@@ -902,13 +902,14 @@ OBJ_GETTER(Kotlin_String_unsafeStringToUtf8OrThrow, KString thiz, KInt start, KI
   RETURN_RESULT_OF(unsafeUtf16ToUtf8Impl<utf16toUtf8OrThrow>, thiz, start, size);
 }
 
-KInt Kotlin_StringBuilder_insertString(KRef builder, KInt position, KString fromString) {
+KInt Kotlin_StringBuilder_insertString(KRef builder, KInt distIndex, KString fromString, KInt sourceIndex, KInt count) {
   auto toArray = builder->array();
-  RuntimeAssert(toArray->count_ >= fromString->count_ + position, "must be true");
-  memcpy(CharArrayAddressOfElementAt(toArray, position),
-         CharArrayAddressOfElementAt(fromString, 0),
-         fromString->count_ * sizeof(KChar));
-  return fromString->count_;
+  RuntimeAssert(sourceIndex >= 0 && sourceIndex + count <= fromString->count_, "must be true");
+  RuntimeAssert(distIndex >= 0 && distIndex + count <= toArray->count_, "must be true");
+  memcpy(CharArrayAddressOfElementAt(toArray, distIndex),
+         CharArrayAddressOfElementAt(fromString, sourceIndex),
+         count * sizeof(KChar));
+  return count;
 }
 
 KInt Kotlin_StringBuilder_insertInt(KRef builder, KInt position, KInt value) {
