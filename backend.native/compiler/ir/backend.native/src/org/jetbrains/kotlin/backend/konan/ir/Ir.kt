@@ -37,11 +37,7 @@ import kotlin.properties.Delegates
 
 // This is what Context collects about IR.
 internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context>(context, irModule) {
-
-    val propertiesWithBackingFields = mutableSetOf<PropertyDescriptor>()
-
     override var symbols: KonanSymbols by Delegates.notNull()
-
 }
 
 internal class KonanSymbols(context: Context, private val symbolTable: SymbolTable, lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {

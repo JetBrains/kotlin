@@ -76,9 +76,6 @@ internal class KonanSerializerExtension(val context: Context, override val metad
                                    childSerializer: DescriptorSerializer) {
         proto.setExtension(KonanProtoBuf.propertyFile, sourceFileMap.assign(descriptor.source.containingFile))
         uniqId(descriptor) ?.let { proto.setExtension(KonanProtoBuf.propertyUniqId, it) }
-        proto.setExtension(KonanProtoBuf.hasBackingField,
-            context.ir.propertiesWithBackingFields.contains(descriptor))
-
         super.serializeProperty(descriptor, proto, versionRequirementTable, childSerializer)
     }
 
