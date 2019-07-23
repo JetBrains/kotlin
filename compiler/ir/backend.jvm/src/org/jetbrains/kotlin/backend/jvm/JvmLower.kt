@@ -36,6 +36,12 @@ private fun makePatchParentsPhase(number: Int) = namedIrFilePhase(
     nlevels = 0
 )
 
+private val stripTypeAliasDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
+    { StripTypeAliasDeclarationsLowering() },
+    name = "StripTypeAliasDeclarations",
+    description = "Strip typealias declarations"
+)
+
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
 private val provisionalFunctionExpressionPhase = makeIrFilePhase<CommonBackendContext>(
     { ProvisionalFunctionExpressionLowering() },
@@ -106,6 +112,7 @@ private val innerClassesPhase = makeIrFilePhase(
 )
 
 private val jvmFilePhases =
+        stripTypeAliasDeclarationsPhase then
         provisionalFunctionExpressionPhase then
         inventNamesForLocalClassesPhase then
         kCallableNamePropertyPhase then
