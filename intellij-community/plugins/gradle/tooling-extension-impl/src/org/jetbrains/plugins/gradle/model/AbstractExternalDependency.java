@@ -151,12 +151,13 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
     return Objects.equal(myId, that.myId) &&
            Objects.equal(myScope, that.myScope) &&
            Objects.equal(myDependencies, that.myDependencies) &&
-           Objects.equal(mySelectionReason, that.mySelectionReason);
+           Objects.equal(mySelectionReason, that.mySelectionReason) &&
+           myClasspathOrder == that.myClasspathOrder;
   }
 
   @Override
   public int hashCode() {
-    return 31 + Objects.hashCode(myId, myScope, myDependencies, mySelectionReason);
+    return 31 + Objects.hashCode(myId, myScope, myDependencies, mySelectionReason, myClasspathOrder);
   }
 }
 

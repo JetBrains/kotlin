@@ -73,9 +73,6 @@ public interface ProjectResolverContext extends UserDataHolderEx {
   @Nullable
   <T> T getExtraProject(@Nullable IdeaModule module, Class<T> modelClazz);
 
-  @NotNull
-  Collection<String> findModulesWithModel(@NotNull Class modelClazz);
-
   boolean hasModulesWithModel(@NotNull Class modelClazz);
 
   void checkCancelled() throws ProcessCanceledException;

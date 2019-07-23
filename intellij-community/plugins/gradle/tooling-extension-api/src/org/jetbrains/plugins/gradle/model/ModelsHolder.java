@@ -18,9 +18,12 @@ package org.jetbrains.plugins.gradle.model;
 import org.gradle.tooling.model.Model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 
+import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
 * @author Vladislav.Soroka
@@ -29,9 +32,14 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
 
   @NotNull private final K myRootModel;
   @NotNull private final Map<String, Object> myModelsById = new HashMap<String, Object>();
+  @Nullable private ToolingSerializer mySerializer;
 
   public ModelsHolder(@NotNull K rootModel) {
     myRootModel = rootModel;
+  }
+
+  public void initToolingSerializer() {
+    mySerializer = new ToolingSerializer();
   }
 
   @NotNull
@@ -46,34 +54,45 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
 
   @Nullable
   public <T> T getExtraProject(@Nullable V model, Class<T> modelClazz) {
-    Object project = myModelsById.get(extractMapKey(modelClazz, model));
+    String key = extractMapKey(modelClazz, model);
+    Object project = myModelsById.get(key);
+    if (project == null) return null;
     if (modelClazz.isInstance(project)) {
       //noinspection unchecked
       return (T)project;
     }
+    else {
+      T deserializedData = deserialize(project, modelClazz);
+      if (modelClazz.isInstance(deserializedData)) {
+        myModelsById.put(key, deserializedData);
+        return deserializedData;
+      }
+    }
+    myModelsById.remove(key);
     return null;
   }
 
-  /**
-   * Return collection path of modules provides the model
-   *
-   * @param modelClazz extra project model
-   * @return modules path collection
-   */
-  @NotNull
-  public Collection<String> findModulesWithModel(@NotNull Class modelClazz) {
-    List<String> modules = new ArrayList<String>();
-    for (Map.Entry<String, Object> set : myModelsById.entrySet()) {
-      if (modelClazz.isInstance(set.getValue())) {
-        modules.add(extractModulePath(modelClazz, set.getKey()));
-      }
+  @Nullable
+  private <T> T deserialize(Object data, Class<T> modelClazz) {
+    if (mySerializer == null || !(data instanceof byte[])) {
+      return null;
     }
-    return modules;
+    try {
+      return mySerializer.read((byte[])data, modelClazz);
+    }
+    catch (IllegalArgumentException ignore) {
+      // related serialization service was not found
+    }
+    catch (IOException e) {
+      //noinspection UseOfSystemOutOrSystemErr
+      System.err.println(e.getMessage());
+    }
+    return null;
   }
 
-  public boolean hasModulesWithModel(@NotNull Class modelClazz) {
-    for (Map.Entry<String, Object> set : myModelsById.entrySet()) {
-      if (modelClazz.isInstance(set.getValue())) return true;
+  public boolean hasModelKeyStaringWith(@NotNull String keyPrefix) {
+    for (String key : myModelsById.keySet()) {
+      if (key.startsWith(keyPrefix)) return true;
     }
     return false;
   }
@@ -88,11 +107,6 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
 
   @NotNull
   protected abstract String extractMapKey(Class modelClazz, @Nullable V module);
-
-  @NotNull
-  private static String extractModulePath(Class modelClazz, String key) {
-    return key.replaceFirst(modelClazz.getName() + '@', "");
-  }
 
   @Override
   public String toString() {

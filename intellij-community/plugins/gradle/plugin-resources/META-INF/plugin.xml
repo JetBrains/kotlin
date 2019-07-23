@@ -127,6 +127,8 @@
                  description="Enables some deprecated setting in the Gradle settings dialog for troubleshooting"/>
     <registryKey key="gradle.java11.issue.workaround" defaultValue="true"
                  description="Enable experimental workaround for Gradle tooling problem when it's used with Java 9+. See details at https://github.com/gradle/gradle/issues/8431, https://github.com/gradle/gradle/issues/3355"/>
+    <registryKey key="gradle.tooling.custom.serializer" defaultValue="false"
+                 description="Enable custom serialization of custom tooling objects"/>
   </extensions>
 
   <actions>

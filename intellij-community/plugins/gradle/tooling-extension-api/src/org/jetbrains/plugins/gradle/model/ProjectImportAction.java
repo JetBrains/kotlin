@@ -30,9 +30,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider.BuildModelConsumer;
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider.ProjectModelConsumer;
+import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -45,15 +49,20 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   private final boolean myIsPreviewMode;
   private final boolean myIsGradleProjectDirSupported;
   private final boolean myIsCompositeBuildsSupported;
+  private final boolean myUseCustomSerialization;
 
   public ProjectImportAction(boolean isPreviewMode) {
-    this(isPreviewMode, false, false);
+    this(isPreviewMode, false, false, false);
   }
 
-  public ProjectImportAction(boolean isPreviewMode, boolean isGradleProjectDirSupported, boolean isCompositeBuildsSupported) {
+  public ProjectImportAction(boolean isPreviewMode,
+                             boolean isGradleProjectDirSupported,
+                             boolean isCompositeBuildsSupported,
+                             boolean useCustomSerialization) {
     myIsPreviewMode = isPreviewMode;
     myIsGradleProjectDirSupported = isGradleProjectDirSupported;
     myIsCompositeBuildsSupported = isCompositeBuildsSupported;
+    myUseCustomSerialization = useCustomSerialization;
   }
 
   public void addProjectImportExtraModelProvider(@NotNull ProjectImportExtraModelProvider provider) {
@@ -85,9 +94,10 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     allModels.setBuildEnvironment(buildEnvironment);
     allModels.logPerformance("Get model BuildEnvironment", System.currentTimeMillis() - startTimeBuildEnv);
 
-    addExtraProjectModels(controller, allModels, null);
+    ToolingSerializerAdapter serializerHolder = new ToolingSerializerAdapter();
+    addExtraProjectModels(serializerHolder, controller, allModels, null);
     for (IdeaModule module : ideaProject.getModules()) {
-      addExtraProjectModels(controller, allModels, module);
+      addExtraProjectModels(serializerHolder, controller, allModels, module);
     }
     addExtraBuildModels(controller, allModels, ideaProject);
 
@@ -99,7 +109,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         IdeaProject ideaIncludedProject = controller.findModel(build, IdeaProject.class);
         allModels.getIncludedBuilds().add(ideaIncludedProject);
         for (IdeaModule module : ideaIncludedProject.getModules()) {
-          addExtraProjectModels(controller, allModels, module);
+          addExtraProjectModels(serializerHolder, controller, allModels, module);
         }
         addExtraBuildModels(controller, allModels, ideaIncludedProject);
       }
@@ -143,7 +153,8 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
   }
 
-  private void addExtraProjectModels(@NotNull BuildController controller,
+  private void addExtraProjectModels(@NotNull final ToolingSerializerAdapter serializerAdapter,
+                                     @NotNull BuildController controller,
                                      @NotNull final AllModels allModels,
                                      @Nullable final IdeaModule model) {
     try {
@@ -153,6 +164,9 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         ProjectModelConsumer modelConsumer = new ProjectModelConsumer() {
           @Override
           public void consume(@NotNull Object object, @NotNull Class clazz) {
+            if (myUseCustomSerialization) {
+              object = serializerAdapter.serialize(object);
+            }
             allModels.addExtraProject(object, clazz, model != null ? model.getGradleProject() : null);
             obtainedModels.add(clazz.getName());
           }
@@ -262,17 +276,23 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       super.addExtraProject(project, modelClazz, subPropject != null ? subPropject.getGradleProject() : null);
     }
 
+    public boolean hasModulesWithModel(@NotNull Class modelClazz) {
+      String key = extractMapKey(modelClazz, null);
+      String keyPrefix = key.substring(0, key.indexOf('/'));
+      return super.hasModelKeyStaringWith(keyPrefix);
+    }
+
     @NotNull
     @Override
     protected String extractMapKey(Class modelClazz, @Nullable GradleProject gradleProject) {
       if (gradleProject != null) {
         String id = isGradleProjectDirSupported ?
-                    gradleProject.getProjectDirectory().getPath() :
+                    gradleProject.getProjectDirectory().getPath().hashCode() + ':' + gradleProject.getPath() :
                     gradleProject.getPath();
-        return modelClazz.getName() + '@' + id;
+        return modelClazz.getSimpleName() + modelClazz.getName().hashCode() + '/' + id;
       }
       else {
-        return modelClazz.getName() + '@' + ("root" + getRootModel().getName().hashCode());
+        return modelClazz.getSimpleName() + modelClazz.getName().hashCode() + '/' + ("root" + getRootModel().getName().hashCode());
       }
     }
 
@@ -282,6 +302,68 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
 
     public Map<String, Long> getPerformanceTrace() {
       return performanceTrace;
+    }
+  }
+
+  private static class ToolingSerializerAdapter {
+    private ClassLoader myModelBuildersClassLoader;
+    private Object mySerializer;
+    private Method mySerializerWriteMethod;
+
+    private Object prepare(Object object) throws IOException {
+      try {
+        object = new ProtocolToModelAdapter().unpack(object);
+      }
+      catch (IllegalArgumentException ignore) {
+      }
+
+      try {
+        ClassLoader objectClassLoader = object.getClass().getClassLoader();
+        if (myModelBuildersClassLoader == null) {
+          Class<?> toolingSerializerClass = objectClassLoader.loadClass(ToolingSerializer.class.getName());
+          mySerializer = toolingSerializerClass.newInstance();
+          mySerializerWriteMethod = toolingSerializerClass.getMethod("write", Object.class, Class.class);
+          myModelBuildersClassLoader = objectClassLoader;
+        }
+        else if (objectClassLoader != myModelBuildersClassLoader) {
+          //The object has not been created by custom model builders
+          return null;
+        }
+      }
+      catch (ClassNotFoundException e) {
+        // The object has not been created by custom model builders
+        return null;
+      }
+      catch (Exception e) {
+        throw new IOException(e);
+      }
+
+      return object;
+    }
+
+    private Object serialize(Object object) {
+      try {
+        Object preparedObject = prepare(object);
+        if (preparedObject != null) {
+          return mySerializerWriteMethod.invoke(mySerializer, preparedObject, preparedObject.getClass());
+        }
+      }
+      catch (InvocationTargetException e) {
+        Throwable targetException = e.getTargetException();
+        if (targetException instanceof IllegalArgumentException) {
+          // related serialization service was not found
+          return object;
+        }
+        else {
+          //noinspection UseOfSystemOutOrSystemErr
+          System.err.println(e.getMessage());
+        }
+      }
+      catch (Exception e) {
+        //noinspection UseOfSystemOutOrSystemErr
+        System.err.println(e.getMessage());
+      }
+      return object;
     }
   }
 }

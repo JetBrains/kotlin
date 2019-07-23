@@ -16,6 +16,7 @@ import com.intellij.openapi.util.Factory;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.Function;
 import com.intellij.util.SmartList;
@@ -175,8 +176,9 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       isCompositeBuildsSupported = isGradleProjectDirSupported && gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
       resolverCtx.setBuildEnvironment(buildEnvironment);
     }
+    boolean useCustomSerialization = Registry.is("gradle.tooling.custom.serializer", false);
     final ProjectImportAction projectImportAction =
-      new ProjectImportAction(resolverCtx.isPreviewMode(), isGradleProjectDirSupported, isCompositeBuildsSupported);
+      new ProjectImportAction(resolverCtx.isPreviewMode(), isGradleProjectDirSupported, isCompositeBuildsSupported, useCustomSerialization);
 
     GradleExecutionSettings executionSettings = resolverCtx.getSettings();
     if (executionSettings == null) {
@@ -273,12 +275,14 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
 
     resolverCtx.checkCancelled();
+    if(useCustomSerialization) {
+      allModels.initToolingSerializer();
+    }
 
     allModels.setBuildEnvironment(buildEnvironment);
 
     final long startDataConversionTime = System.currentTimeMillis();
-    extractExternalProjectModels(allModels, resolverCtx);
-
+    extractExternalProjectModels(allModels, resolverCtx, useCustomSerialization);
     // import project data
     ProjectData projectData = tracedResolverChain.createProject();
     DataNode<ProjectData> projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
@@ -495,13 +499,14 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
   }
 
   private static void extractExternalProjectModels(@NotNull ProjectImportAction.AllModels models,
-                                                   @NotNull ProjectResolverContext resolverCtx) {
+                                                   @NotNull ProjectResolverContext resolverCtx, boolean useCustomSerialization) {
     resolverCtx.setModels(models);
     final Class<? extends ExternalProject> modelClazz = resolverCtx.isPreviewMode() ? ExternalProjectPreview.class : ExternalProject.class;
     final ExternalProject externalRootProject = models.getExtraProject((IdeaModule)null, modelClazz);
     if (externalRootProject == null) return;
 
-    final DefaultExternalProject wrappedExternalRootProject = new DefaultExternalProject(externalRootProject);
+    final DefaultExternalProject wrappedExternalRootProject =
+      useCustomSerialization ? (DefaultExternalProject)externalRootProject : new DefaultExternalProject(externalRootProject);
     models.addExtraProject(wrappedExternalRootProject, ExternalProject.class);
     final Map<String, DefaultExternalProject> externalProjectsMap = createExternalProjectsMap(null, wrappedExternalRootProject);
 
@@ -524,7 +529,9 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       }
       final ExternalProject externalIncludedRootProject = models.getExtraProject(gradleProject, modelClazz);
       if (externalIncludedRootProject == null) continue;
-      final DefaultExternalProject wrappedExternalIncludedRootProject = new DefaultExternalProject(externalIncludedRootProject);
+      final DefaultExternalProject wrappedExternalIncludedRootProject =
+        useCustomSerialization ? (DefaultExternalProject)externalIncludedRootProject
+                               : new DefaultExternalProject(externalIncludedRootProject);
       wrappedExternalRootProject.getChildProjects().put(wrappedExternalIncludedRootProject.getName(), wrappedExternalIncludedRootProject);
       String compositePrefix = project.getName();
       final Map<String, DefaultExternalProject> externalIncludedProjectsMap =

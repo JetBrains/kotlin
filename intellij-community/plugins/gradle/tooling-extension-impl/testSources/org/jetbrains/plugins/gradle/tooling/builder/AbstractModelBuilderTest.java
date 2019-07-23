@@ -150,8 +150,8 @@ public abstract class AbstractModelBuilderTest {
     try {
       boolean isGradleProjectDirSupported = _gradleVersion.compareTo(GradleVersion.version("2.4")) >= 0;
       boolean isCompositeBuildsSupported = isGradleProjectDirSupported && _gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
-      final ProjectImportAction projectImportAction = new ProjectImportAction(false, isGradleProjectDirSupported,
-                                                                              isCompositeBuildsSupported);
+      final ProjectImportAction projectImportAction =
+        new ProjectImportAction(false, isGradleProjectDirSupported, isCompositeBuildsSupported, false);
       projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
       BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
       File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
