@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
@@ -132,7 +133,8 @@ class CreateExpectedClassFix(
 
 private fun KtDeclaration.canAddActualModifier() = when (this) {
     is KtEnumEntry, is KtClassInitializer -> false
-    is KtParameter -> this.hasValOrVar()
+    is KtParameter -> hasValOrVar()
+    is KtProperty -> !hasModifier(KtTokens.LATEINIT_KEYWORD) && !hasModifier(KtTokens.CONST_KEYWORD)
     else -> true
 }
 
