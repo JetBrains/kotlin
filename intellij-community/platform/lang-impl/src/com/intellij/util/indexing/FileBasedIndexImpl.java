@@ -1462,8 +1462,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         doRequestRebuild(indexId, throwable);
         return null;
       });
+    } else {
+      doRequestRebuild(indexId, throwable);
     }
-    doRequestRebuild(indexId, throwable);
   }
 
   private void doRequestRebuild(@NotNull ID<?, ?> indexId, Throwable throwable) {
