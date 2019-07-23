@@ -70,7 +70,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val codeFragment = constructor(project, "fragment.kt", item.text, initImports(item.imports), contextElement)
         supplyDebugInformation(item, codeFragment, context)
 
-        codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR, { expression: KtExpression ->
+        codeFragment.putCopyableUserData(KtCodeFragment.RUNTIME_TYPE_EVALUATOR) { expression: KtExpression ->
             val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
             val debuggerSession = debuggerContext.debuggerSession
             if (debuggerSession == null || debuggerContext.suspendContext == null) {
@@ -97,10 +97,10 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
                 nameRef.get()
             }
-        })
+        }
 
         if (contextElement != null && contextElement !is KtElement) {
-            codeFragment.putCopyableUserData(KtCodeFragment.FAKE_CONTEXT_FOR_JAVA_FILE, {
+            codeFragment.putCopyableUserData(KtCodeFragment.FAKE_CONTEXT_FOR_JAVA_FILE) {
                 val emptyFile = createFakeFileWithJavaContextElement("", contextElement)
 
                 val debuggerContext = DebuggerManagerEx.getInstanceEx(project).context
@@ -120,12 +120,14 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 }
 
                 val receiverTypeReference =
-                    frameDescriptor.thisObject?.let { createKotlinProperty(project, FAKE_JAVA_THIS_NAME, it.type().name(), it) }?.typeReference
+                    frameDescriptor.thisObject?.let { createKotlinProperty(project, FAKE_JAVA_THIS_NAME, it.type().name(), it) }
+                        ?.typeReference
                 val receiverTypeText = receiverTypeReference?.let { "${it.text}." } ?: ""
 
                 val kotlinVariablesText =
                     frameDescriptor.visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project)
 
+                @Suppress("RemoveCurlyBracesFromTemplate")
                 val fakeFunctionText = "fun ${receiverTypeText}$FAKE_JAVA_CONTEXT_FUNCTION_NAME() {\n$kotlinVariablesText\n}"
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
@@ -133,7 +135,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 val fakeContext = fakeFunction?.bodyBlockExpression?.statements?.lastOrNull()
 
                 return@putCopyableUserData fakeContext ?: emptyFile
-            })
+            }
         }
 
         return codeFragment
@@ -203,7 +205,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
     private class FrameInfo(val thisObject: Value?, val visibleVariables: Map<LocalVariable, Value>)
 
     private fun initImports(imports: String?): String? {
-        if (imports != null && !imports.isEmpty()) {
+        if (imports != null && imports.isNotEmpty()) {
             return imports.split(KtCodeFragment.IMPORT_SEPARATOR)
                 .mapNotNull { fixImportIfNeeded(it) }
                 .joinToString(KtCodeFragment.IMPORT_SEPARATOR)
@@ -332,7 +334,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                 return KtPsiFactory(project).createProperty(variableName.quoteIfNeeded(), renderedType, false)
             }
 
-            fun String.addArraySuffix() = if (value is ArrayReference) this + "[]" else this
+            fun String.addArraySuffix() = if (value is ArrayReference) "$this[]" else this
 
             val className = variableTypeName.replace("$", ".").substringBefore("[]")
             val classType = PsiType.getTypeByName(className, project, GlobalSearchScope.allScope(project))
