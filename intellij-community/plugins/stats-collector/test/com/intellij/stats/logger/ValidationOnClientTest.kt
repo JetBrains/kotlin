@@ -20,14 +20,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.stats.completion.*
 import com.intellij.stats.completion.events.DownPressedEvent
 import com.intellij.stats.completion.events.LogEvent
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import junit.framework.TestCase
 import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * @author Vitaliy.Bibaev
  */
-class ValidationOnClientTest : PlatformTestCase() {
+class ValidationOnClientTest : HeavyPlatformTestCase() {
     private companion object {
         val EMPTY_STATE = LookupState(emptyList(), emptyList(), emptyList(), 1)
     }

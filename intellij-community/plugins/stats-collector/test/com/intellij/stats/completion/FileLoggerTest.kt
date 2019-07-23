@@ -5,7 +5,7 @@ import com.intellij.codeInsight.lookup.impl.LookupImpl
 import com.intellij.openapi.editor.CaretModel
 import com.intellij.openapi.editor.Editor
 import com.intellij.stats.storage.FilePathProvider
-import com.intellij.testFramework.PlatformTestCase
+import com.intellij.testFramework.HeavyPlatformTestCase
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import org.mockito.ArgumentMatchers
@@ -17,7 +17,7 @@ import java.nio.file.StandardWatchEventKinds
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class FileLoggerTest : PlatformTestCase() {
+class FileLoggerTest : HeavyPlatformTestCase() {
   private lateinit var dir: File
   private lateinit var logFile: File
 

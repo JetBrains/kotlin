@@ -10,7 +10,7 @@ import com.intellij.openapi.externalSystem.service.project.IdeModifiableModelsPr
 import com.intellij.openapi.externalSystem.util.Order;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Computable;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class ProjectDataManagerImplTest extends PlatformTestCase {
+public class ProjectDataManagerImplTest extends HeavyPlatformTestCase {
   public void testDataServiceIsCalledIfNoNodes() {
     final List<String> callTrace = new ArrayList<>();
 

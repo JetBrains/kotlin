@@ -4,7 +4,7 @@ package com.intellij.compiler;
 import com.intellij.module.ModuleGroupTestsKt;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.JDOMUtil;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import org.jdom.JDOMException;
 import org.jetbrains.jps.model.java.compiler.ProcessorConfigProfile;
 import org.jetbrains.jps.model.java.impl.compiler.ProcessorConfigProfileImpl;
@@ -15,7 +15,7 @@ import java.util.List;
 
 import static com.intellij.testFramework.assertions.Assertions.assertThat;
 
-public class CompilerConfigurationTest extends PlatformTestCase {
+public class CompilerConfigurationTest extends HeavyPlatformTestCase {
   public void testUpdateTargetLevelOnModuleRename() {
     Module module = createModule("foo");
     getConfiguration().setBytecodeTargetLevel(module, "1.6");

@@ -4,7 +4,7 @@ package com.intellij.largeFilesEditor.file;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import org.junit.Test;
 
 import java.io.File;
@@ -27,7 +27,7 @@ public class LargeFileManagerImplTest {
     File tempFile = null;
     try {
       tempFile = FileUtil.createTempFile("test", ".txt");
-      PlatformTestCase.setContentOnDisk(tempFile, null, fileContent, CharsetToolkit.US_ASCII_CHARSET);
+      HeavyPlatformTestCase.setContentOnDisk(tempFile, null, fileContent, CharsetToolkit.US_ASCII_CHARSET);
       VirtualFile virtualFile = new MockVirtualFile(tempFile);
       assertNotNull(virtualFile);
 

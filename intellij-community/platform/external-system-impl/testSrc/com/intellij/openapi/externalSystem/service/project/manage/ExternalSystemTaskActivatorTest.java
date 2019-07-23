@@ -26,7 +26,7 @@ import com.intellij.openapi.util.KeyWithDefaultValue;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.task.*;
-import com.intellij.testFramework.PlatformTestCase;
+import com.intellij.testFramework.HeavyPlatformTestCase;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.concurrency.Semaphore;
 import one.util.streamex.StreamEx;
@@ -41,7 +41,7 @@ import static com.intellij.openapi.externalSystem.util.ExternalSystemConstants.U
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
-public class ExternalSystemTaskActivatorTest extends PlatformTestCase {
+public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
 
   private static final Key<StringBuilder> TASKS_TRACE = KeyWithDefaultValue.create("tasks trace", StringBuilder::new);
   private static final String TEST_MODULE_NAME = "MyModule";
