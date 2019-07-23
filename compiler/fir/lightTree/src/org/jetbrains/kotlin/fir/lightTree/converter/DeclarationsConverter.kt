@@ -591,7 +591,7 @@ class DeclarationsConverter(
         return FirPrimaryConstructorImpl(
             session,
             null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
+            FirConstructorSymbol(ClassNameUtil.callableIdForClassConstructor()),
             if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
             modifiers.hasExpect(),
             modifiers.hasActual(),
@@ -644,7 +644,7 @@ class DeclarationsConverter(
         val firConstructor = FirConstructorImpl(
             session,
             null,
-            FirFunctionSymbol(ClassNameUtil.callableIdForClassConstructor()),
+            FirConstructorSymbol(ClassNameUtil.callableIdForClassConstructor()),
             modifiers.getVisibility(),
             modifiers.hasExpect(),
             modifiers.hasActual(),
@@ -811,7 +811,7 @@ class DeclarationsConverter(
      */
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
-        val entries = mutableListOf<FirVariable>()
+        val entries = mutableListOf<FirVariable<*>>()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
@@ -827,7 +827,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*> {
         var modifiers = Modifier(session)
         lateinit var identifier: String
         var firType: FirTypeRef? = null
@@ -960,7 +960,7 @@ class DeclarationsConverter(
             FirMemberFunctionImpl(
                 session,
                 null,
-                FirFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
+                FirNamedFunctionSymbol(ClassNameUtil.callableIdForName(functionName, isLocal)),
                 functionName,
                 if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
                 modifiers.getModality(),

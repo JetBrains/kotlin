@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.utils.generateDestructuringB
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val entries: List<FirVariable>,
+    val entries: List<FirVariable<*>>,
     val initializer: FirExpression?
 ) {
     fun toFirDestructingDeclaration(session: FirSession): FirExpression {

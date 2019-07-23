@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
@@ -229,7 +230,7 @@ object DataClassUtil {
             if (!property.isVal && !property.isVar) continue
             val name = Name.identifier("component$componentIndex")
             componentIndex++
-            val symbol = FirFunctionSymbol(
+            val symbol = FirNamedFunctionSymbol(
                 CallableId(
                     ClassNameUtil.packageFqName,
                     ClassNameUtil.className,
@@ -276,7 +277,7 @@ object DataClassUtil {
         firPrimaryConstructor: FirConstructor,
         properties: List<FirProperty>
     ) {
-        val symbol = FirFunctionSymbol(
+        val symbol = FirNamedFunctionSymbol(
             CallableId(
                 ClassNameUtil.packageFqName,
                 ClassNameUtil.className,

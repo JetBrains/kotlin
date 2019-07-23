@@ -153,7 +153,7 @@ fun ExpressionsConverter.generateIncrementOrDecrementBlock(
 fun generateDestructuringBlock(
     session: FirSession,
     multiDeclaration: DestructuringDeclaration,
-    container: FirVariable,
+    container: FirVariable<*>,
     tmpVariable: Boolean
 ): FirExpression {
     return FirBlockImpl(session, null).apply {
