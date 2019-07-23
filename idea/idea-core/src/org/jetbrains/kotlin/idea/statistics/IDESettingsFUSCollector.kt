@@ -25,6 +25,6 @@ class IDESettingsFUSCollector : ProjectUsagesCollector() {
         return usages
     }
 
-    override fun getGroupId() = "kotlin.ide.settings";
+    override fun getGroupId() = "kotlin.ide.settings"
     override fun getVersion(): Int = 1
 }
