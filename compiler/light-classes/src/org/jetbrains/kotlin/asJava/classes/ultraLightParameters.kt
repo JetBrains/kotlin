@@ -23,11 +23,12 @@ internal class KtUltraLightSuspendContinuationParameter(
     private val support: KtUltraLightSupport,
     method: KtLightMethod
 ) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
-    KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
+    KtLightParameter,
+    KtUltraLightElementWithNullabilityAnnotation<KtParameter, PsiParameter> {
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType
     override val psiTypeForNullabilityAnnotation: PsiType? get() = psiType
-    override val kotlinOrigin: KtDeclaration? = null
+    override val kotlinOrigin: KtParameter? = null
     override val clsDelegate: PsiParameter
         get() = throw IllegalStateException("Cls delegate shouldn't be loaded for ultra-light PSI!")
 
