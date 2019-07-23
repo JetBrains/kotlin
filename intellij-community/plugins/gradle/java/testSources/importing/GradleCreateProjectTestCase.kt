@@ -7,6 +7,7 @@ import com.intellij.ide.projectWizard.ProjectSettingsStep
 import com.intellij.ide.projectWizard.ProjectTypeStep
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
@@ -14,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.DefaultModulesProvider
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.testFramework.PlatformTestUtil
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep
@@ -111,9 +113,11 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
 
   private fun createWizard(project: Project?, directory: String): AbstractProjectWizard {
     val modulesProvider = project?.let { DefaultModulesProvider(it) } ?: ModulesProvider.EMPTY_MODULES_PROVIDER
-    return NewProjectWizard(project, modulesProvider, directory).also {
+    val projectWizard = NewProjectWizard(project, modulesProvider, directory).also {
       PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue()
     }
+    Disposer.register(testRootDisposable, Disposable { invokeAndWaitIfNeeded { Disposer.dispose(projectWizard.disposable) } })
+    return projectWizard
   }
 
   private fun AbstractProjectWizard.runWizard(configure: ModuleWizardStep.() -> Unit) {
