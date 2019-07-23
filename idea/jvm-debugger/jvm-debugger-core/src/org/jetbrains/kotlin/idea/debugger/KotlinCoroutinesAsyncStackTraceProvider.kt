@@ -142,6 +142,8 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
         val stackTraceElement = context.invokeMethod(debugMetadataKtType, getStackTraceElementMethod, args) as? ObjectReference
             ?: return null
 
+        context.keepReference(stackTraceElement)
+
         val stackTraceElementType = stackTraceElement.referenceType().takeIf { it.name() == StackTraceElement::class.java.name }
             ?: return null
 
