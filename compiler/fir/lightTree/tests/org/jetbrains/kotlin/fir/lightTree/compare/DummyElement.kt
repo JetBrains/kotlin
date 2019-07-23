@@ -33,7 +33,7 @@ class DummyFirStatement(
     session: FirSession = object : FirSessionBase(null) {}
 ) : FirUnknownTypeExpression(session, psi), DummyElement
 
-class DummyFirVariable(
+class DummyFirVariable<F: FirVariable<F>>(
     override val psi: PsiElement? = null,
     override val session: FirSession = object : FirSessionBase(null) {},
     override val annotations: List<FirAnnotationCall> = mutableListOf(),
@@ -42,9 +42,9 @@ class DummyFirVariable(
     override var returnTypeRef: FirTypeRef = FirImplicitTypeRefImpl(session, psi),
     override val isVar: Boolean = false,
     override var initializer: FirExpression? = null,
-    override val symbol: FirVariableSymbol = FirVariableSymbol(name),
+    override val symbol: FirVariableSymbol<F> = FirVariableSymbol(name),
     override var delegate: FirExpression? = null
-) : FirVariable, DummyElement {
+) : FirVariable<F>, DummyElement {
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
     }

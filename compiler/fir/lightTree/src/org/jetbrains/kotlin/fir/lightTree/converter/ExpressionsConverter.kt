@@ -567,11 +567,11 @@ class ExpressionsConverter(
      */
     private fun convertWhenExpression(whenExpression: LighterASTNode): FirExpression {
         var subjectExpression: FirExpression? = null
-        var subjectVariable: FirVariable? = null
+        var subjectVariable: FirVariable<*>? = null
         val whenEntries = mutableListOf<WhenEntry>()
         whenExpression.forEachChildren {
             when (it.tokenType) {
-                PROPERTY -> subjectVariable = declarationsConverter.convertPropertyDeclaration(it) as FirVariable
+                PROPERTY -> subjectVariable = declarationsConverter.convertPropertyDeclaration(it) as FirVariable<*>
                 DESTRUCTURING_DECLARATION -> subjectExpression = getAsFirExpression(it)
                 WHEN_ENTRY -> whenEntries += convertWhenEntry(it)
                 else -> if (it.isExpression()) subjectExpression = getAsFirExpression(it)
