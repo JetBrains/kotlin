@@ -307,27 +307,17 @@ class MultifileClassCodegenImpl(
 
         val extraFlags = if (shouldGeneratePartHierarchy) JvmAnnotationNames.METADATA_MULTIFILE_PARTS_INHERIT_FLAG else 0
 
-        writeKotlinMetadata(classBuilder, state, KotlinClassHeader.Kind.MULTIFILE_CLASS, extraFlags) { av ->
-            val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
-            for (internalName in partInternalNamesSorted) {
-                arv.visit(null, internalName)
-            }
-            arv.visitEnd()
+        val kotlinPackageFqName =
+            packageFragment?.fqName ?: compiledPackageFragment?.fqName
+            ?: error("Either source package or compiled package should not be null: $facadeClassType ($files)")
 
-            val kotlinPackageFqName =
-                packageFragment?.fqName ?: compiledPackageFragment?.fqName
-                ?: error("Either source package or compiled package should not be null: $facadeClassType ($files)")
+        if (files.any { it.packageFqName != kotlinPackageFqName })
+            throw UnsupportedOperationException(
+                "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
+                        files.joinToString("\n  ") { file -> "$file: package ${file.packageFqName}" }
+            )
 
-            if (files.any { it.packageFqName != kotlinPackageFqName })
-                throw UnsupportedOperationException(
-                    "Multi-file parts of a facade with JvmPackageName should all lie in the same Kotlin package:\n  " +
-                            files.joinToString("\n  ") { file -> "$file: package ${file.packageFqName}" }
-                )
-
-            if (kotlinPackageFqName != JvmClassName.byInternalName(facadeClassType.internalName).packageFqName) {
-                av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, kotlinPackageFqName.asString())
-            }
-        }
+        writeMetadata(classBuilder, state, extraFlags, partInternalNamesSorted, facadeClassType, kotlinPackageFqName)
     }
 
     private fun createCodegenForDelegatesInMultifileFacade(facadeContext: FieldOwnerContext<*>): MemberCodegen<KtFile> =
@@ -374,6 +364,27 @@ class MultifileClassCodegenImpl(
             } as IncrementalPackageFragmentProvider.IncrementalPackageFragment?
 
             return incrementalPackageFragment?.getPackageFragmentForMultifileClass(facadeFqName)
+        }
+
+        fun writeMetadata(
+            classBuilder: ClassBuilder,
+            state: GenerationState,
+            flags: Int,
+            partInternalNames: List<String>,
+            facadeClassType: Type,
+            kotlinPackageFqName: FqName
+        ) {
+            writeKotlinMetadata(classBuilder, state, KotlinClassHeader.Kind.MULTIFILE_CLASS, flags) { av ->
+                val arv = av.visitArray(JvmAnnotationNames.METADATA_DATA_FIELD_NAME)
+                for (internalName in partInternalNames) {
+                    arv.visit(null, internalName)
+                }
+                arv.visitEnd()
+
+                if (kotlinPackageFqName != JvmClassName.byInternalName(facadeClassType.internalName).packageFqName) {
+                    av.visit(JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME, kotlinPackageFqName.asString())
+                }
+            }
         }
     }
 }

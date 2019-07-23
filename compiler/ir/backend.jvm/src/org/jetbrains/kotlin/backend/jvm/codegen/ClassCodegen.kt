@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAbi
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
@@ -144,13 +145,31 @@ open class ClassCodegen protected constructor(
 
                 serializerExtension.serializeJvmPackage(packageProto, type)
 
-                writeKotlinMetadata(visitor, state, KotlinClassHeader.Kind.FILE_FACADE, 0) {
-                    AsmUtil.writeAnnotationData(it, serializer, packageProto.build())
+                val facadeClassName = context.multifileFacadeForPart[irClass.attributeOwnerId]
+                val kind = if (facadeClassName != null) KotlinClassHeader.Kind.MULTIFILE_CLASS_PART else KotlinClassHeader.Kind.FILE_FACADE
+                writeKotlinMetadata(visitor, state, kind, 0) { av ->
+                    AsmUtil.writeAnnotationData(av, serializer, packageProto.build())
+
+                    if (facadeClassName != null) {
+                        av.visit(JvmAnnotationNames.METADATA_MULTIFILE_CLASS_NAME_FIELD_NAME, facadeClassName.internalName)
+                    }
+
                     // TODO: JvmPackageName
                 }
             }
             else -> {
-                writeSyntheticClassMetadata(visitor, state)
+                val entry = irClass.fileParent.fileEntry
+                if (entry is MultifileFacadeFileEntry) {
+                    val partInternalNames = entry.partFiles.mapNotNull { partFile ->
+                        val fileClass = partFile.declarations.singleOrNull { it.origin == IrDeclarationOrigin.FILE_CLASS } as IrClass?
+                        if (fileClass != null) typeMapper.mapClass(fileClass).internalName else null
+                    }
+                    MultifileClassCodegenImpl.writeMetadata(
+                        visitor, state, 0 /* TODO */, partInternalNames, type, irClass.fqNameWhenAvailable!!.parent()
+                    )
+                } else {
+                    writeSyntheticClassMetadata(visitor, state)
+                }
             }
         }
     }

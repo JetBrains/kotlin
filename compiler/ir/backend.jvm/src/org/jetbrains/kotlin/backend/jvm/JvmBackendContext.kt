@@ -65,6 +65,7 @@ class JvmBackendContext(
     internal val localDelegatedProperties = mutableMapOf<IrClass, List<IrLocalDelegatedPropertySymbol>>()
 
     internal val multifileFacadesToAdd = mutableMapOf<JvmClassName, MutableList<IrClass>>()
+    internal val multifileFacadeForPart = mutableMapOf<IrClass, JvmClassName>()
 
     override var inVerbosePhase: Boolean = false
 

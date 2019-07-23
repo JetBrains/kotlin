@@ -85,6 +85,8 @@ private fun generateMultifileFacades(module: ModuleDescriptor, context: JvmBacke
         file.declarations.add(facadeClass)
 
         for (partClass in partClasses) {
+            context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
+
             for (member in partClass.declarations) {
                 member.createMultifileDelegateIfNeeded(context, facadeClass)
             }
