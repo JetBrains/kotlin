@@ -39,15 +39,22 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
         return try {
             getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext)
-        } catch (e: ObjectCollectedException) {
+        } catch (e: Exception) {
+            handleException(e)
             null
-        } catch (e: IncompatibleThreadStateException) {
-            null
-        } catch (e: VMDisconnectedException) {
-            null
-        } catch (e: EvaluateException) {
-            LOG.debug("Cannot evaluate async stack trace", e)
-            null
+        }
+    }
+
+    private fun handleException(e: Exception) {
+        when (if (e is EvaluateException) e.cause ?: e else e) {
+            is ObjectCollectedException, is IncompatibleThreadStateException, is VMDisconnectedException -> {}
+            else -> {
+                if (e is EvaluateException) {
+                    LOG.debug("Cannot evaluate async stack trace", e)
+                } else {
+                    throw e
+                }
+            }
         }
     }
 
