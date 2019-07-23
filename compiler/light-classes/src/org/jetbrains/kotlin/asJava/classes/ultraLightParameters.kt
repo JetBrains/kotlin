@@ -190,12 +190,11 @@ internal class KtUltraLightReceiverParameter(
 
 internal class KtUltraLightParameterForDescriptor(
     private val descriptor: ParameterDescriptor,
-    kotlinOrigin: KtParameter?,
     support: KtUltraLightSupport,
     method: KtLightMethod
 ) : KtUltraLightParameter(
     if (descriptor.name.isSpecial) "\$self" else descriptor.name.identifier,
-    kotlinOrigin, support, method
+    null, support, method
 ) {
     override val kotlinType: KotlinType?
         get() = descriptor.type
