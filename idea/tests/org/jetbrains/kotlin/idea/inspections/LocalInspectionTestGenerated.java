@@ -7220,6 +7220,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/redundantOverride/delegatedMemberHidesSuperTypeOverride4.kt");
         }
 
+        @TestMetadata("getterWithDerivedProperty.kt")
+        public void testGetterWithDerivedProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty2.kt")
+        public void testGetterWithDerivedProperty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty2.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty3.kt")
+        public void testGetterWithDerivedProperty3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty3.kt");
+        }
+
+        @TestMetadata("getterWithDerivedProperty4.kt")
+        public void testGetterWithDerivedProperty4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/getterWithDerivedProperty4.kt");
+        }
+
         @TestMetadata("notCallSuper.kt")
         public void testNotCallSuper() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/notCallSuper.kt");
@@ -7233,6 +7253,26 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("overrideModifireVisibility.kt")
         public void testOverrideModifireVisibility() throws Exception {
             runTest("idea/testData/inspectionsLocal/redundantOverride/overrideModifireVisibility.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty.kt")
+        public void testSetterWithDerivedProperty() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty2.kt")
+        public void testSetterWithDerivedProperty2() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty2.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty3.kt")
+        public void testSetterWithDerivedProperty3() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty3.kt");
+        }
+
+        @TestMetadata("setterWithDerivedProperty4.kt")
+        public void testSetterWithDerivedProperty4() throws Exception {
+            runTest("idea/testData/inspectionsLocal/redundantOverride/setterWithDerivedProperty4.kt");
         }
 
         @TestMetadata("singleExpressionFunction.kt")
