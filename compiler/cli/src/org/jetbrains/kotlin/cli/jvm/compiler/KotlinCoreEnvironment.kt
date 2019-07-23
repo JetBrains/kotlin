@@ -293,6 +293,11 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
+    fun addKotlinSourceRoots(rootDirs: List<File>) {
+        val roots = rootDirs.map { KotlinSourceRoot(it.absolutePath, isCommon = false) }
+        sourceFiles += createSourceFilesFromSourceRoots(configuration, project, roots)
+    }
+
     fun createPackagePartProvider(scope: GlobalSearchScope): JvmPackagePartProvider {
         return JvmPackagePartProvider(configuration.languageVersionSettings, scope).apply {
             addRoots(initialRoots, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
