@@ -15,6 +15,7 @@
  */
 package com.intellij.formatting;
 
+import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.codeStyle.CodeStyleConstraints;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
@@ -37,16 +38,25 @@ public class CoreFormatterUtil {
   @NotNull
   public static FormattingModel buildModel(@NotNull FormattingModelBuilder builder,
                                            @NotNull PsiElement element,
+                                           @NotNull TextRange range,
                                            @NotNull CodeStyleSettings settings,
                                            @NotNull FormattingMode mode) {
     if (builder instanceof FormattingModelBuilderEx) {
-      return ((FormattingModelBuilderEx)builder).createModel(element, settings, mode);
+      return ((FormattingModelBuilderEx)builder).createModel(element, range, settings, mode);
     }
     else {
       return builder.createModel(element, settings);
     }
   }
   
+  @NotNull
+  public static FormattingModel buildModel(@NotNull FormattingModelBuilder builder,
+                                           @NotNull PsiElement element,
+                                           @NotNull CodeStyleSettings settings,
+                                           @NotNull FormattingMode mode) {
+    return buildModel(builder, element, element.getTextRange(), settings, mode);
+  }
+
   /**
    * Checks if there is an {@link AlignmentImpl} object that should be used during adjusting
    * {@link AbstractBlockWrapper#getWhiteSpace() white space} of the given block.
