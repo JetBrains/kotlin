@@ -101,6 +101,13 @@ class KotlinFacetEditorGeneralTab(
             }
         }
 
+        // Fixes sorting of JVM versions.
+        // JVM 1.6, ... JVM 1.8 -> unchanged
+        // JVM 9 -> JVM 1.9
+        // JVM 11.. -> unchanged
+        // As result JVM 1.8 < JVM 1.9 < JVM 11 in UI representation
+        fun unifyJvmVersion(version: String) = if (version.equals("JVM 9")) "JVM 1.9" else version
+
         fun initialize() {
             if (isMultiEditor) {
                 editableCommonArguments = object : CommonCompilerArguments() {}
@@ -128,8 +135,9 @@ class KotlinFacetEditorGeneralTab(
             )
 
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
+
             targetPlatformWrappers =
-                CommonPlatforms.allDefaultTargetPlatforms.sortedBy { it.oldFashionedDescription }.map { TargetPlatformWrapper(it) }
+                CommonPlatforms.allDefaultTargetPlatforms.sortedBy { unifyJvmVersion(it.oldFashionedDescription) }.map { TargetPlatformWrapper(it) }
             targetPlatformLabel = JLabel() //JTextField()? targetPlatformLabel.isEditable = false
             targetPlatformSelectSingleCombobox =
                 ComboBox(targetPlatformWrappers.toTypedArray()).apply {
