@@ -6,7 +6,11 @@
 package org.jetbrains.konan.internal
 
 import com.intellij.codeInspection.LocalInspectionEP
+import com.intellij.execution.actions.RunConfigurationProducer
+import com.intellij.execution.configurations.ConfigurationType
+import com.intellij.execution.runners.ProgramRunner
 import com.intellij.ide.util.TipAndTrickBean
+import com.intellij.openapi.extensions.ExtensionPoint
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
 import com.intellij.openapi.extensions.impl.ExtensionComponentAdapter
@@ -19,52 +23,85 @@ import java.util.function.Predicate
 /**
  * @author Vladislav.Soroka
  */
+@Suppress("SameParameterValue")
 class KotlinNativeIdeInitializer {
 
     private companion object {
         val PLUGINS_TO_UNREGISTER_TIP_AND_TRICKS = setOf(
-                KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString, // all tips & tricks that come from the main Kotlin plugin
-                "org.intellij.intelliLang", // Java plugin specific
-                "com.intellij.diagram" // Java plugin specific
+            KotlinPluginUtil.KOTLIN_PLUGIN_ID.idString, // all tips & tricks that come from the main Kotlin plugin
+            "org.intellij.intelliLang", // Java plugin specific
+            "com.intellij.diagram" // Java plugin specific
+        )
+
+        val PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS = setOf(
+            "com.intellij.kotlinNative.platformDeps", // Platform Deps (Java)
+            "com.intellij.java" // Java
         )
     }
 
     init {
-        unregisterGroovyInspections()
-        suppressIrrelevantTipsAndTricks()
-        disableJps()
+        // There are groovy local inspections which should not be loaded w/o groovy plugin enabled.
+        // Those plugin definitions should become optional and dependant on groovy plugin.
+        // This is a temp workaround before it happens.
+        unregisterExtensionInstances(LocalInspectionEP.LOCAL_INSPECTION) {
+            it.groupDisplayName == "Kotlin" && it.language == "Groovy"
+        }
+
+        // Suppress irrelevant tips & tricks
+        unregisterExtensionsFromPlugins(TipAndTrickBean.EP_NAME, PLUGINS_TO_UNREGISTER_TIP_AND_TRICKS)
+
+        // Disable JPS
+        unregisterExtensionsByClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class.java)
+
+        // Disable run configurations provided by Java plugin
+        unregisterExtensionsFromPlugins(ConfigurationType.CONFIGURATION_TYPE_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
+        unregisterExtensionsFromPlugins(RunConfigurationProducer.EP_NAME, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
+        unregisterExtensionsFromPlugins(ProgramRunner.PROGRAM_RUNNER_EP, PLUGINS_TO_UNREGISTER_RUN_CONFIGURATIONS)
     }
 
-    // There are groovy local inspections which should not be loaded w/o groovy plugin enabled.
-    // Those plugin definitions should become optional and dependant on groovy plugin.
-    // This is a temp workaround before it happens.
-    private fun unregisterGroovyInspections() = unregisterExtensionInstances(LocalInspectionEP.LOCAL_INSPECTION) {
-        it.groupDisplayName == "Kotlin" && it.language == "Groovy"
-    }
-
-    private fun suppressIrrelevantTipsAndTricks() = unregisterExtensionInstances(TipAndTrickBean.EP_NAME) {
-        it.pluginId?.idString in PLUGINS_TO_UNREGISTER_TIP_AND_TRICKS
-    }
-
-    private fun disableJps() = unregisterExtensionClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class.java)
-
-    private fun <T : Any> unregisterExtensionClass(extensionPointName: ExtensionPointName<T>, extensionClass: Class<out T>) {
+    private fun <T : Any> unregisterExtensionsByClass(
+        extensionPointName: ExtensionPointName<T>,
+        extensionClass: Class<out T>
+    ) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val extensionClassesToUnregister: Set<String> = extensionPoint.extensions.filter { extensionClass.isInstance(it) }.map { it::class.java.name }.toSet()
+        val extensionClassesToUnregister = extensionPoint.extensionList
+            .filter(extensionClass::isInstance)
+            .map { it::class.java.name }
+            .toSet()
 
-        val negatedPredicate = BiPredicate<String, ExtensionComponentAdapter> { className, _ ->
-            className in extensionClassesToUnregister
-        }.negate()
+        unregisterExtensions(extensionPoint) { className, _ -> className in extensionClassesToUnregister }
+    }
 
+    private fun <T : Any> unregisterExtensionsFromPlugins(
+        extensionPointName: ExtensionPointName<T>,
+        pluginIds: Set<String>
+    ) {
+        val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
+        unregisterExtensions(extensionPoint) { _, adapter -> adapter.pluginDescriptor?.pluginId?.idString in pluginIds }
+    }
+
+    private fun <T : Any> unregisterExtensions(
+        extensionPoint: ExtensionPoint<T>,
+        predicate: (String, ExtensionComponentAdapter) -> Boolean
+    ) {
+        val negatedPredicate = predicate.negate()
         extensionPoint.unregisterExtensions(negatedPredicate, false)
     }
 
-    private fun <T : Any> unregisterExtensionInstances(extensionPointName: ExtensionPointName<T>, predicate: (T) -> Boolean) {
+    // TODO: drop this method as it forces all extensions to instantiate and then unregisters some of them.
+    @Suppress("DEPRECATION")
+    private fun <T : Any> unregisterExtensionInstances(
+        extensionPointName: ExtensionPointName<T>,
+        predicate: (T) -> Boolean
+    ) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
-        val negatedPredicate = Predicate<T> { predicate(it) }.negate()
-
-        // TODO: how to avoid dependency on deprecated method?
-        @Suppress("DEPRECATION")
+        val negatedPredicate = predicate.negate()
         extensionPoint.unregisterExtensions(negatedPredicate)
     }
+
+    private fun <T : Any> ((T) -> Boolean).negate(): Predicate<T> =
+        Predicate<T> { extension -> this(extension) }.negate()
+
+    private fun ((String, ExtensionComponentAdapter) -> Boolean).negate(): BiPredicate<String, ExtensionComponentAdapter> =
+        BiPredicate<String, ExtensionComponentAdapter> { className, adapter -> this(className, adapter) }.negate()
 }
