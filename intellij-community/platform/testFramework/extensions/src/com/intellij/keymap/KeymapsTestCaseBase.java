@@ -15,6 +15,7 @@
  */
 package com.intellij.keymap;
 
+import com.intellij.execution.ExecutorRegistry;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.keymap.Keymap;
 import com.intellij.openapi.keymap.KeymapManager;
@@ -238,6 +239,12 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
     }
   }
 
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    ExecutorRegistry.getInstance();
+  }
+
   @NotNull
   private Map<String, Map<Shortcut, List<String>>> collectExpectedDuplicatedShortcuts() {
     Map<String, Map<String, List<String>>> knownDuplicates = getKnownDuplicates();
@@ -441,11 +448,8 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
 
       for (String actionId : keymapImpl.getActionIds()) {
         if (knownBoundActions.contains(actionId)) continue;
-
-        Shortcut[] ownShortcuts = keymapImpl.getOwnShortcuts(actionId);
         boolean isBound = keymapImpl.isActionBound(actionId);
-
-        if (isBound && ownShortcuts != null) {
+        if (isBound) {
           unboundActionsWithShortcut.add(actionId);
         }
       }
