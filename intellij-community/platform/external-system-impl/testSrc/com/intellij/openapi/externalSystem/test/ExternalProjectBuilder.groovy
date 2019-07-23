@@ -105,7 +105,7 @@ class ExternalProjectBuilder extends BuilderSupport {
       case 'folder':
         DataNode<ContentRootData> parentNode = current as DataNode
         ContentRootData data = parentNode.data
-        data.storePath(attributes.type, attributes.path)
+        data.storePath(attributes.type, attributes.path, attributes.packagePrefix)
         return null
         
       default: throw new IllegalArgumentException("Unexpected entry: $name")

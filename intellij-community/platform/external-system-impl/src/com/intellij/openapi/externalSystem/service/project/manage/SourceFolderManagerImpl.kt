@@ -10,6 +10,7 @@ import com.intellij.openapi.externalSystem.util.PathPrefixTreeMapImpl
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.roots.SourceFolder
 import com.intellij.openapi.util.Computable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
@@ -19,7 +20,8 @@ import com.intellij.openapi.vfs.VirtualFileListener
 import com.intellij.openapi.vfs.VirtualFileManager
 import gnu.trove.THashMap
 import gnu.trove.THashSet
-import org.jetbrains.jps.model.java.JavaSourceRootProperties
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 
 class SourceFolderManagerImpl(private val project: Project) : SourceFolderManager, Disposable {
@@ -29,12 +31,14 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
   private val sourceFolders = PathPrefixTreeMapImpl<SourceFolderModel>()
   private val sourceFoldersByModule = THashMap<String, ModuleModel>()
 
-  override fun addSourceFolder(module: Module, url: String, type: JpsModuleSourceRootType<*>, packagePrefix: String, generated: Boolean) {
+  override fun addSourceFolder(module: Module, url: String, type: JpsModuleSourceRootType<*>) {
     synchronized(mutex) {
-      sourceFolders[url] = SourceFolderModel(module, url, type, packagePrefix, generated)
+      sourceFolders[url] = SourceFolderModel(module, url, type)
       val moduleModel = sourceFoldersByModule.getOrPut(module.name) {
         ModuleModel(module).also {
-          Disposer.register(module, it)
+          Disposer.register(module, Disposable {
+            removeSourceFolders(module)
+          })
         }
       }
       moduleModel.sourceFolders.add(url)
@@ -45,10 +49,17 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     })
   }
 
-  override fun setSourceFolderPackagePrefix(url: String, packagePrefix: String) {
+  override fun setSourceFolderPackagePrefix(url: String, packagePrefix: String?) {
     synchronized(mutex) {
       val sourceFolder = sourceFolders[url] ?: return
       sourceFolder.packagePrefix = packagePrefix
+    }
+  }
+
+  override fun setSourceFolderGenerated(url: String, generated: Boolean) {
+    synchronized(mutex) {
+      val sourceFolder = sourceFolders[url] ?: return
+      sourceFolder.generated = generated
     }
   }
 
@@ -64,8 +75,10 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
     isDisposed = true
   }
 
+  @TestOnly
   fun isDisposed() = isDisposed
 
+  @TestOnly
   fun getSourceFolders(moduleName: String) = synchronized(mutex) {
     sourceFoldersByModule[moduleName]?.sourceFolders
   }
@@ -105,8 +118,10 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
               val contentEntry = MarkRootActionBase.findContentEntry(modifiableModuleModel, event.file)
               if (contentEntry != null) {
                 val sourceFolder = contentEntry.addSourceFolder(url, type)
-                sourceFolder.packagePrefix = packagePrefix
-                (sourceFolder.jpsElement.getProperties(type) as? JavaSourceRootProperties)?.let { it.isForGeneratedSources = generated }
+                if (packagePrefix != null && packagePrefix.isNotEmpty()) {
+                  sourceFolder.packagePrefix = packagePrefix
+                }
+                setForGeneratedSources(sourceFolder, generated)
               }
             }
             finally {
@@ -116,15 +131,26 @@ class SourceFolderManagerImpl(private val project: Project) : SourceFolderManage
         }
       })
     }
+
+    private fun setForGeneratedSources(folder: SourceFolder, generated: Boolean) {
+      val jpsElement = folder.jpsElement
+      val properties = jpsElement.getProperties(JavaModuleSourceRootTypes.SOURCES)
+      if (properties != null) properties.isForGeneratedSources = generated
+    }
   }
 
-  private data class SourceFolderModel(val module: Module, val url: String, val type: JpsModuleSourceRootType<*>, var packagePrefix: String, val generated: Boolean = false)
+  private data class SourceFolderModel(
+    val module: Module,
+    val url: String,
+    val type: JpsModuleSourceRootType<*>,
+    var packagePrefix: String? = null,
+    var generated: Boolean = false
+  )
 
-  private inner class ModuleModel(val module: Module, val sourceFolders: MutableSet<String>) : Disposable {
-    constructor(module: Module) : this(module, THashSet(FileUtil.PATH_HASHING_STRATEGY))
-
-    override fun dispose() = removeSourceFolders(module)
-  }
+  private data class ModuleModel(
+    val module: Module,
+    val sourceFolders: MutableSet<String> = THashSet(FileUtil.PATH_HASHING_STRATEGY)
+  )
 
   init {
     val virtualFileManager = VirtualFileManager.getInstance()

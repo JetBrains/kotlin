@@ -15,12 +15,15 @@
  */
 package com.intellij.openapi.externalSystem.service.project
 
+import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.application.WriteAction
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.project.ProjectData
 import com.intellij.openapi.externalSystem.test.AbstractExternalSystemTest
 import com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.module.Module
+import com.intellij.openapi.module.ModuleManager
 import com.intellij.openapi.projectRoots.JavaSdk
 import com.intellij.openapi.projectRoots.ProjectJdkTable
 import com.intellij.openapi.projectRoots.Sdk
@@ -28,16 +31,20 @@ import com.intellij.openapi.projectRoots.impl.SdkConfigurationUtil
 import com.intellij.openapi.roots.*
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.LocalFileSystem
+import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
 import com.intellij.pom.java.LanguageLevel
 import com.intellij.testFramework.IdeaTestUtil
 import com.intellij.util.ArrayUtil
+import com.intellij.util.PathUtil
+import org.jetbrains.annotations.NotNull
+import org.jetbrains.annotations.Nullable
 
 import static com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType.*
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestCase.collectRootsInside
 
-class ExternalProjectServiceTest extends AbstractExternalSystemTest {
+class ExternalProjectServiceTest extends ExternalProjectServiceTestCase {
 
   void 'test module names deduplication'() {
     DataNode<ProjectData> projectNode = buildExternalProjectInfo {
@@ -284,5 +291,46 @@ class ExternalProjectServiceTest extends AbstractExternalSystemTest {
     assertNotNull(sdk)
     LanguageLevelProjectExtension languageLevelExtension = LanguageLevelProjectExtension.getInstance(project)
     assertEquals(LanguageLevel.JDK_1_7, languageLevelExtension.languageLevel)
+  }
+
+  void 'test package prefix setup'() {
+    def rootPath = ExternalSystemApiUtil.toCanonicalPath(projectDir.path)
+    createProjectSubDirectory("src/main/java")
+    applyProjectState([
+      buildExternalProjectInfo {
+        project {
+          module {
+            contentRoot(rootPath) {
+              folder(type: SOURCE, path: "$rootPath/src/main/java", packagePrefix: 'org.example')
+            }
+          }
+        }
+      }
+    ])
+    assertSourcePackagePrefix('module', 'src/main/java', 'org.example')
+    applyProjectState([
+      buildExternalProjectInfo {
+        project {
+          module {
+            contentRoot(rootPath) {
+              folder(type: SOURCE, path: "$rootPath/src/main/java", packagePrefix: 'org.jetbrains')
+            }
+          }
+        }
+      }
+    ])
+    assertSourcePackagePrefix('module', 'src/main/java', 'org.jetbrains')
+    applyProjectState([
+      buildExternalProjectInfo {
+        project {
+          module {
+            contentRoot(rootPath) {
+              folder(type: SOURCE, path: "$rootPath/src/main/java", packagePrefix: '')
+            }
+          }
+        }
+      }
+    ])
+    assertSourcePackagePrefix('module', 'src/main/java', 'org.jetbrains')
   }
 }
