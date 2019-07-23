@@ -801,6 +801,20 @@ class KotlinChangeSignatureTest : KotlinLightCodeInsightFixtureTestCase() {
         }
     }
 
+    fun testPrimaryConstructorOnConstructorKeyword() = doTest {
+        val defaultValueForCall = KtPsiFactory(project).createExpression("\"foo\"")
+        addParameter(
+            KotlinParameterInfo(
+                originalBaseFunctionDescriptor,
+                -1,
+                "s",
+                KotlinTypeInfo(false, BUILT_INS.stringType),
+                null,
+                defaultValueForCall
+            )
+        )
+    }
+
     fun testJavaConstructorInDelegationCall() {
         doJavaTest { newParameters.add(ParameterInfoImpl(-1, "s", stringPsiType, "\"foo\"")) }
     }
