@@ -10,27 +10,26 @@ import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
+/**
+ * Quick fix that creates a new directory in one of the target directories. Automatically creates all intermediate directories of
+ * {@link TargetDirectory#getPathToCreate()} and {@link NewFileLocation#getSubPath()}. If there are multiple target directories it shows
+ * a popup where users can select desired target directory.
+ */
 public class CreateDirectoryFix extends AbstractCreateFileFix {
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
   public CreateDirectoryFix(@NotNull PsiElement psiElement,
-                            @NotNull List<TargetDirectory> directories,
-                            @NotNull String[] subPath,
-                            @NotNull String newDirectoryName,
+                            @NotNull NewFileLocation newFileLocation,
                             @NotNull String fixLocaleKey) {
-    super(psiElement, newDirectoryName, directories, subPath, fixLocaleKey);
+    super(psiElement, newFileLocation, fixLocaleKey);
 
     myIsAvailable = true;
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
   public CreateDirectoryFix(@NotNull PsiElement psiElement,
-                            @NotNull List<TargetDirectory> directories,
-                            @NotNull String[] subPath,
-                            @NotNull String newDirectoryName) {
-    this(psiElement, directories, subPath, newDirectoryName, "create.directory.text");
+                            @NotNull NewFileLocation newFileLocation) {
+    this(psiElement, newFileLocation, "create.directory.text");
   }
 
   @Override

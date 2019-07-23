@@ -79,14 +79,15 @@ public class FileReferenceQuickFixProvider {
       List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, false);
       if (targetDirectories.isEmpty()) return emptyList();
 
-      return singletonList(new MyCreateFileFix(element, targetDirectories, getPathToReferencePart(reference), newFileName,
-                                               reference.getNewFileTemplateName()));
+      NewFileLocation location = new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
+      return singletonList(new MyCreateFileFix(element, location, reference.getNewFileTemplateName()));
     }
     else {
       List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, true);
       if (targetDirectories.isEmpty()) return emptyList();
 
-      return singletonList(new CreateDirectoryFix(element, targetDirectories, getPathToReferencePart(reference), newFileName));
+      NewFileLocation location = new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
+      return singletonList(new CreateDirectoryFix(element, location));
     }
   }
 
@@ -100,7 +101,7 @@ public class FileReferenceQuickFixProvider {
     List<TargetDirectory> targetDirectories = new SmartList<>();
 
     for (FileTargetContext targetContext : contexts) {
-      PsiFileSystemItem context = targetContext.getContext();
+      PsiFileSystemItem context = targetContext.getFileSystemItem();
 
       VirtualFile virtualFile = context.getVirtualFile();
       if (virtualFile == null || !virtualFile.isValid()) continue;
@@ -215,7 +216,7 @@ public class FileReferenceQuickFixProvider {
     SmartList<FileTargetContext> contexts = new SmartList<>();
     for (FileTargetContext targetContext : targetContexts) {
       if (targetContext != null) {
-        PsiFileSystemItem fsContext = targetContext.getContext();
+        PsiFileSystemItem fsContext = targetContext.getFileSystemItem();
         VirtualFile virtualFile = fsContext.getVirtualFile();
         if (virtualFile != null && fsContext.isDirectory() && virtualFile.isInLocalFileSystem()) {
           if (module != null) {
@@ -246,11 +247,9 @@ public class FileReferenceQuickFixProvider {
     private final String myNewFileTemplateName;
 
     private MyCreateFileFix(@NotNull PsiElement psiElement,
-                            @NotNull List<TargetDirectory> directories,
-                            @NotNull String[] subPath,
-                            @NotNull String newFileName,
+                            @NotNull NewFileLocation newFileLocation,
                             @Nullable String newFileTemplateName) {
-      super(psiElement, directories, subPath, newFileName);
+      super(psiElement, newFileLocation);
 
       myNewFileTemplateName = newFileTemplateName;
     }

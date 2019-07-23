@@ -26,43 +26,40 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.function.Supplier;
 
+/**
+ * Quick fix that creates a new file in one of the target directories. Automatically creates all intermediate directories of
+ * {@link TargetDirectory#getPathToCreate()} and {@link NewFileLocation#getSubPath()}. If there are multiple target directories it shows
+ * a popup where users can select desired target directory.
+ */
 public class CreateFileWithScopeFix extends AbstractCreateFileFix {
   private final String myText;
   @Nullable
   private Supplier<String> myFileTextSupplier;
 
-  // todo JavaDoc
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
   public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull List<TargetDirectory> directories,
-                                @NotNull String[] subPath,
-                                @NotNull String newFileName,
+                                @NotNull NewFileLocation newFileLocation,
                                 @Nullable String fileText,
                                 @NotNull String fixLocaleKey) {
-    super(psiElement, newFileName, directories, subPath, fixLocaleKey);
+    super(psiElement, newFileLocation, fixLocaleKey);
 
     myText = fileText;
-    myIsAvailable = !FileTypeManager.getInstance().getFileTypeByFileName(newFileName).isBinary();
+    myIsAvailable = !FileTypeManager.getInstance().getFileTypeByFileName(myNewFileName).isBinary();
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
   public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull List<TargetDirectory> directories,
-                                @NotNull String[] subPath,
-                                @NotNull String newFileName) {
-    this(psiElement, directories, subPath, newFileName, null, "create.file.text");
+                                @NotNull NewFileLocation newFileLocation) {
+    this(psiElement, newFileLocation, null, "create.file.text");
   }
 
   public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull List<TargetDirectory> directories,
-                                @NotNull String[] subPath,
-                                @NotNull String newFileName,
+                                @NotNull NewFileLocation newFileLocation,
                                 @NotNull Supplier<String> fileTextSupplier) {
-    this(psiElement, directories, subPath, newFileName, null, "create.file.text");
+    this(psiElement, newFileLocation, null, "create.file.text");
 
     myFileTextSupplier = fileTextSupplier;
   }

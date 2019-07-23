@@ -8,6 +8,12 @@ import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Describes target directory for quick fixes that create new files.
+ *
+ * @see CreateDirectoryFix
+ * @see CreateFileWithScopeFix
+ */
 public class TargetDirectory {
   private final SmartPsiElementPointer<PsiDirectory> myDirectory;
   @NotNull

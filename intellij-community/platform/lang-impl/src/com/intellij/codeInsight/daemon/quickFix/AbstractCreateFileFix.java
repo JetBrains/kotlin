@@ -4,30 +4,28 @@ package com.intellij.codeInsight.daemon.quickFix;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.icons.AllIcons;
+import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectUtil;
-import com.intellij.openapi.roots.*;
+import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.roots.SourceFolder;
+import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.ui.popup.*;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.util.IconUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.jps.model.java.JavaResourceRootType;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import javax.swing.*;
 import java.util.List;
@@ -48,15 +46,13 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
   protected long myIsAvailableTimeStamp;
 
   protected AbstractCreateFileFix(@Nullable PsiElement element,
-                                  String newFileName,
-                                  List<TargetDirectory> directories,
-                                  String[] subPath,
+                                  @NotNull NewFileLocation newFileLocation,
                                   @NotNull String fixLocaleKey) {
     super(element);
 
-    myNewFileName = newFileName;
-    myDirectories = directories;
-    mySubPath = subPath;
+    myNewFileName = newFileLocation.getNewFileName();
+    myDirectories = newFileLocation.getDirectories();
+    mySubPath = newFileLocation.getSubPath();
     myKey = fixLocaleKey;
   }
 
@@ -98,35 +94,18 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
           return;
         }
 
-        List<TargetDirectoryListItem> sortedDirectories = getTargetDirectoryListItems(directories);
-        sortWithResourcePriority(file, sortedDirectories);
-
         if (editor == null) {
           // run on first item of sorted list in batch mode
           apply(myStartElement.getProject(), directories.get(0));
         }
         else {
-          showOptionsPopup(project, editor, sortedDirectories);
+          showOptionsPopup(project, editor, directories);
         }
       }
     }
   }
 
   protected abstract void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException;
-
-  // todo move sorting and source sets logic to extension point like FileReferenceHelper ?
-  protected void sortWithResourcePriority(@NotNull PsiFile file, List<TargetDirectoryListItem> sortedDirectories) {
-    // sort only if we have resource roots
-    if (sortedDirectories.stream().anyMatch(AbstractCreateFileFix::isResourceRoot)) {
-      ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(file.getProject());
-      if (projectFileIndex.isInTestSourceContent(file.getVirtualFile())) {
-        sortedDirectories.sort(AbstractCreateFileFix::compareTargetsForTests);
-      }
-      else if (projectFileIndex.isInSourceContent(file.getVirtualFile())) {
-        sortedDirectories.sort(AbstractCreateFileFix::compareTargetsForProduction);
-      }
-    }
-  }
 
   protected static PsiDirectory findOrCreateSubdirectory(PsiDirectory directory, String subDirectoryName) {
     PsiDirectory existingDirectory = directory.findSubdirectory(subDirectoryName);
@@ -138,7 +117,9 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
   protected void showOptionsPopup(@NotNull Project project,
                                   @NotNull Editor editor,
-                                  List<TargetDirectoryListItem> items) {
+                                  List<TargetDirectory> directories) {
+    List<TargetDirectoryListItem> items = getTargetDirectoryListItems(directories);
+
     String filePath = myNewFileName;
     if (mySubPath.length > 0) {
       filePath = StringUtil.join(mySubPath, VFS_SEPARATOR_CHAR + "") + VFS_SEPARATOR_CHAR + myNewFileName;
@@ -148,14 +129,20 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       new BaseListPopupStep<TargetDirectoryListItem>(CodeInsightBundle.message(myKey, filePath), items) {
         @Override
         public Icon getIconFor(TargetDirectoryListItem value) {
-          JpsModuleSourceRootType type = value.getSourceRootType();
+          PsiDirectory directory = value.getTarget().getDirectory();
+          if (directory == null) {
+            return PlatformIcons.FOLDER_ICON;
+          }
 
-          if (isSourceItem(type)) return AllIcons.Modules.SourceRoot;
-          if (isTestSourceItem(type)) return AllIcons.Nodes.TestSourceFolder;
-          if (isResourceItem(type)) return AllIcons.Modules.ResourcesRoot;
-          if (isTestResourceItem(type)) return AllIcons.Modules.TestResourcesRoot;
+          VirtualFile file = directory.getVirtualFile();
 
-          return PlatformIcons.FOLDER_ICON;
+          ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+          SourceFolder sourceFolder = projectFileIndex.getSourceFolder(file);
+          if (sourceFolder != null && sourceFolder.getFile() != null) {
+            return IconUtil.getIcon(sourceFolder.getFile(), 0, project);
+          }
+
+          return IconUtil.getIcon(file, 0, project);
         }
 
         @NotNull
@@ -193,59 +180,10 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       PsiDirectory d = targetDirectory.getDirectory();
       assert d != null : "Invalid PsiDirectory instances found";
 
-      ProjectFileIndex projectFileIndex = ProjectRootManager.getInstance(d.getProject()).getFileIndex();
-
-      Module targetModule = projectFileIndex.getModuleForFile(d.getVirtualFile());
-      JpsModuleSourceRootType sourceRootType = null;
-      if (targetModule != null) {
-        SourceFolder folder = getSourceFolder(targetModule, d);
-        if (folder != null) {
-          sourceRootType = folder.getRootType();
-        }
-      }
-
       String presentablePath = getPresentableContentRootPath(d.getProject(), d.getVirtualFile(), targetDirectory.getPathToCreate());
 
-      return new TargetDirectoryListItem(targetDirectory, sourceRootType, presentablePath);
+      return new TargetDirectoryListItem(targetDirectory, presentablePath);
     });
-  }
-
-  private static int getTestsTargetOrdinal(TargetDirectoryListItem item) {
-    JpsModuleSourceRootType type = item.getSourceRootType();
-
-    if (isSourceItem(type)) return 4;
-    if (isTestSourceItem(type)) return 3;
-    if (isResourceItem(type)) return 2;
-    if (isTestResourceItem(type)) return 1;
-
-    return 0;
-  }
-
-  private static int getSourcesTargetOrdinal(TargetDirectoryListItem item) {
-    JpsModuleSourceRootType type = item.getSourceRootType();
-
-    if (isTestSourceItem(type)) return 4;
-    if (isSourceItem(type)) return 3;
-    if (isTestResourceItem(type)) return 2;
-    if (isResourceItem(type)) return 1;
-
-    return 0;
-  }
-
-  private static boolean isTestResourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaResourceRootType.TEST_RESOURCE;
-  }
-
-  private static boolean isResourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaResourceRootType.RESOURCE;
-  }
-
-  private static boolean isTestSourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaSourceRootType.TEST_SOURCE;
-  }
-
-  private static boolean isSourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaSourceRootType.SOURCE;
   }
 
   @NotNull
@@ -260,61 +198,14 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     return toProjectPath;
   }
 
-  protected static int compareTargetsForTests(@NotNull TargetDirectoryListItem d1, @NotNull TargetDirectoryListItem d2) {
-    int o1 = getTestsTargetOrdinal(d1);
-    int o2 = getTestsTargetOrdinal(d2);
-
-    if (o1 > 0 && o2 > 0) {
-      return Integer.compare(o1, o2);
-    }
-
-    return compareDirectoryPaths(d1, d2);
-  }
-
-  protected static int compareTargetsForProduction(@NotNull TargetDirectoryListItem d1, @NotNull TargetDirectoryListItem d2) {
-    int o1 = getSourcesTargetOrdinal(d1);
-    int o2 = getSourcesTargetOrdinal(d2);
-
-    if (o1 > 0 && o2 > 0) {
-      return Integer.compare(o1, o2);
-    }
-
-    return compareDirectoryPaths(d1, d2);
-  }
-
-  private static int compareDirectoryPaths(@NotNull TargetDirectoryListItem d1, @NotNull TargetDirectoryListItem d2) {
-    PsiDirectory directory1 = d1.getTarget().getDirectory();
-    PsiDirectory directory2 = d2.getTarget().getDirectory();
-
-    assert directory1 != null : "Invalid PsiDirectory instances found";
-    assert directory2 != null : "Invalid PsiDirectory instances found";
-
-    VirtualFile f1 = directory1.getVirtualFile();
-    VirtualFile f2 = directory2.getVirtualFile();
-    return f1.getPath().compareTo(f2.getPath());
-  }
-
-  protected static boolean isResourceRoot(TargetDirectoryListItem d) {
-    return isResourceItem(d.getSourceRootType()) ||
-           isTestResourceItem(d.getSourceRootType());
-  }
-
   protected static class TargetDirectoryListItem {
     private final TargetDirectory myTargetDirectory;
-    private final JpsModuleSourceRootType mySourceRootType;
     private final String myPresentablePath;
 
     public TargetDirectoryListItem(@NotNull TargetDirectory targetDirectory,
-                                   @Nullable JpsModuleSourceRootType type,
                                    @NotNull String presentablePath) {
       myTargetDirectory = targetDirectory;
-      mySourceRootType = type;
       myPresentablePath = presentablePath;
-    }
-
-    @Nullable
-    private JpsModuleSourceRootType getSourceRootType() {
-      return mySourceRootType;
     }
 
     private String getPresentablePath() {
@@ -324,20 +215,5 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     private TargetDirectory getTarget() {
       return myTargetDirectory;
     }
-  }
-
-  @Nullable
-  private static SourceFolder getSourceFolder(@NotNull Module module, @NotNull PsiDirectory directory) {
-    ContentEntry[] entries = ModuleRootManager.getInstance(module).getContentEntries();
-    for (ContentEntry contentEntry : entries) {
-      for (SourceFolder sourceFolder : contentEntry.getSourceFolders()) {
-        if (sourceFolder.getFile() != null
-            && VfsUtilCore.isAncestor(sourceFolder.getFile(), directory.getVirtualFile(), false)) {
-          return sourceFolder;
-        }
-      }
-    }
-
-    return null;
   }
 }
