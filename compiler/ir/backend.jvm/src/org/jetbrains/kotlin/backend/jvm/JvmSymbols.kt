@@ -136,6 +136,8 @@ class JvmSymbols(
             addValueParameter("receiver", irBuiltIns.anyNType)
         }
 
+        klass.addField("receiver", irBuiltIns.anyNType, Visibilities.PROTECTED)
+
         generateCallableReferenceMethods(klass)
     }.symbol
 
