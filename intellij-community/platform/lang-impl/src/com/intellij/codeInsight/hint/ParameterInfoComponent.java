@@ -414,7 +414,10 @@ public class ParameterInfoComponent extends JPanel {
       removeAll();
       setBackground(background);
 
-      String[] lines = UIUtil.splitText(text, getFontMetrics(BOLD_FONT), myWidthLimit, ',');
+      String[] lines = UIUtil.splitText(text, getFontMetrics(BOLD_FONT),
+                                        // disable splitting by width, to avoid depending on platform's font in tests
+                                        ApplicationManager.getApplication().isUnitTestMode() ? Integer.MAX_VALUE : myWidthLimit,
+                                        ',');
 
       myOneLineComponents = new OneLineComponent[lines.length];
 
