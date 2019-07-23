@@ -459,7 +459,7 @@ object KotlinToJVMBytecodeCompiler {
         environment: KotlinCoreEnvironment,
         targetDescription: String?
     ): AnalysisResult? {
-        if (result is AnalysisResult.RetryWithAdditionalJavaRoots) {
+        if (result is AnalysisResult.RetryWithAdditionalRoots) {
             val configuration = environment.configuration
 
             val oldReadOnlyValue = configuration.isReadOnly
@@ -469,6 +469,10 @@ object KotlinToJVMBytecodeCompiler {
 
             if (result.addToEnvironment) {
                 environment.updateClasspath(result.additionalJavaRoots.map { JavaSourceRoot(it, null) })
+            }
+
+            if (result.additionalKotlinRoots.isNotEmpty()) {
+                environment.addKotlinSourceRoots(result.additionalKotlinRoots)
             }
 
             KotlinJavaPsiFacade.getInstance(environment.project).clearPackageCaches()
@@ -562,7 +566,7 @@ object KotlinToJVMBytecodeCompiler {
 
         val analysisResult = analyzerWithCompilerReport.analysisResult
 
-        return if (!analyzerWithCompilerReport.hasErrors() || analysisResult is AnalysisResult.RetryWithAdditionalJavaRoots)
+        return if (!analyzerWithCompilerReport.hasErrors() || analysisResult is AnalysisResult.RetryWithAdditionalRoots)
             analysisResult
         else
             null
