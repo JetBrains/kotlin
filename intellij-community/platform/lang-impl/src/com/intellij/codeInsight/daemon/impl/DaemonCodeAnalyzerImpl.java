@@ -643,7 +643,7 @@ public class DaemonCodeAnalyzerImpl extends DaemonCodeAnalyzerEx implements Pers
     final List<HighlightInfo> foundInfoList = new SmartList<>();
     processHighlightsNearOffset(document, myProject, minSeverity, offset, includeFixRange,
         info -> {
-          if (info.getSeverity() == HighlightInfoType.ELEMENT_UNDER_CARET_SEVERITY) {
+          if (info.getSeverity() == HighlightInfoType.ELEMENT_UNDER_CARET_SEVERITY || info.type == HighlightInfoType.TODO) {
             return true;
           }
           if (!foundInfoList.isEmpty()) {
