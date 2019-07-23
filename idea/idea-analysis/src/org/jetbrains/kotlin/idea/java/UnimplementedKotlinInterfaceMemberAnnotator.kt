@@ -18,6 +18,7 @@ import com.intellij.psi.*
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForSourceDeclaration
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.resolve.annotations.JVM_STATIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_DEFAULT_FQ_NAME
 import org.jetbrains.kotlin.utils.ifEmpty
 
@@ -46,7 +47,8 @@ class UnimplementedKotlinInterfaceMemberAnnotator : Annotator {
         return signaturesFromKotlinInterfaces.firstOrNull {
             it !in signaturesVisibleThroughKotlinSuperClass &&
                     it.method.modifierList.annotations.none { annotation ->
-                        annotation.qualifiedName == JVM_DEFAULT_FQ_NAME.asString()
+                        val qualifiedName = annotation.qualifiedName
+                        qualifiedName == JVM_DEFAULT_FQ_NAME.asString() || qualifiedName == JVM_STATIC_ANNOTATION_FQ_NAME.asString()
                     }
         }?.method as? KtLightMethod
     }
