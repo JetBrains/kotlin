@@ -125,6 +125,41 @@ class ConfigurationDslTest : TestCase() {
 
         Assert.assertEquals(propAnn1 + propAnn12, (evalRes.returnValue as ResultValue.Value).value)
     }
+
+    @Test
+    fun testDefaultConfiguration() {
+        val script = "val x = 1".toScriptSource()
+
+        val evalRes = runBlocking {
+            JvmScriptCompiler(defaultJvmScriptingHostConfiguration).invoke(script, ScriptCompilationConfiguration()).onSuccess {
+                BasicJvmScriptEvaluator().invoke(it, ScriptEvaluationConfiguration())
+            }.valueOrThrow()
+        }
+
+        val scriptObj = evalRes.returnValue.scriptInstance!!
+
+        Assert.assertEquals(Any::class.java, scriptObj::class.java.superclass)
+    }
+
+    @Test
+    fun testReplaceOnlyDefault() {
+        val conf = ScriptCompilationConfiguration {
+            displayName("1")
+            baseClass(KotlinType(Any::class))
+        }
+
+        val conf2 = conf.with {
+            displayName.replaceOnlyDefault("2")
+            baseClass.replaceOnlyDefault(KotlinType(Int::class))
+            fileExtension.replaceOnlyDefault("ktx")
+            filePathPattern.replaceOnlyDefault("x.*x")
+        }
+
+        Assert.assertEquals("1", conf2[ScriptCompilationConfiguration.displayName])
+        Assert.assertEquals(KotlinType(Int::class), conf2[ScriptCompilationConfiguration.baseClass])
+        Assert.assertEquals("ktx", conf2[ScriptCompilationConfiguration.fileExtension])
+        Assert.assertEquals("x.*x", conf2[ScriptCompilationConfiguration.filePathPattern])
+    }
 }
 
 @Target(AnnotationTarget.FILE)

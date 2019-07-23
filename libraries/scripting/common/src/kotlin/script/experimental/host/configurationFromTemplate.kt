@@ -72,18 +72,10 @@ fun createEvaluationConfigurationFromTemplate(
 private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
     templateClass: KClass<*>, baseClassType: KotlinType, mainAnnotation: KotlinScript
 ) {
-    if (baseClass() == null) {
-        baseClass(if (templateClass == baseClassType.fromClass) baseClassType else KotlinType(templateClass))
-    }
-    if (fileExtension() == null) {
-        fileExtension(mainAnnotation.fileExtension)
-    }
-    if (filePathPattern() == null) {
-        filePathPattern(mainAnnotation.filePathPattern)
-    }
-    if (displayName() == null) {
-        displayName(mainAnnotation.displayName)
-    }
+    baseClass.replaceOnlyDefault(if (templateClass == baseClassType.fromClass) baseClassType else KotlinType(templateClass))
+    fileExtension.replaceOnlyDefault(mainAnnotation.fileExtension)
+    filePathPattern.replaceOnlyDefault(mainAnnotation.filePathPattern)
+    displayName.replaceOnlyDefault(mainAnnotation.displayName)
 }
 
 private val KClass<*>.kotlinScriptAnnotation: KotlinScript
