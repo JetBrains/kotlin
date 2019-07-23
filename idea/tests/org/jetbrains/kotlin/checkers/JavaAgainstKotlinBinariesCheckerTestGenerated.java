@@ -109,9 +109,19 @@ public class JavaAgainstKotlinBinariesCheckerTestGenerated extends AbstractJavaA
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InferenceReturnType_1_8.kt");
     }
 
+    @TestMetadata("Interface.kt")
+    public void testInterface() throws Exception {
+        runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/Interface.kt");
+    }
+
     @TestMetadata("InterfaceDefaultImpls.kt")
     public void testInterfaceDefaultImpls() throws Exception {
         runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InterfaceDefaultImpls.kt");
+    }
+
+    @TestMetadata("InterfaceWithJvmStatic.kt")
+    public void testInterfaceWithJvmStatic() throws Exception {
+        runTest("idea/testData/kotlinAndJavaChecker/javaAgainstKotlin/InterfaceWithJvmStatic.kt");
     }
 
     @TestMetadata("JvmOverloadsFunctions.kt")
