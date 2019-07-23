@@ -96,11 +96,11 @@ fun createTextForHelpers(isReleaseCoroutines: Boolean, checkStateMachine: Boolea
 
         fun check(numberOfSuspensions: Int) {
             for (i in 1..numberOfSuspensions) {
-                if (counter != i) error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + i + ", got " + counter)
+                if (counter != i) error("Wrong state-machine generated: suspendHere should be called exactly once in one state. Expected " + i + ", got " + counter)
                 proceed()
             }
             if (counter != numberOfSuspensions)
-                error("Wrong state-machine generated: suspendHere called should be called exactly once in one state. Expected " + numberOfSuspensions + ", got " + counter)
+                error("Wrong state-machine generated: wrong number of overall suspensions. Expected " + numberOfSuspensions + ", got " + counter)
             if (finished) error("Wrong state-machine generated: it is finished early")
             proceed()
             if (!finished) error("Wrong state-machine generated: it is not finished yet")
