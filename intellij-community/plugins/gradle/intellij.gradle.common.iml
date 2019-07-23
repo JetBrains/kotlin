@@ -28,5 +28,6 @@
     <orderEntry type="library" name="gson" level="project" />
     <orderEntry type="module" module-name="intellij.platform.objectSerializer.annotations" />
     <orderEntry type="module" module-name="intellij.gradle.toolingLoaderRt" />
+    <orderEntry type="library" name="ion" level="project" />
   </component>
 </module>

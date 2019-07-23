@@ -1,6 +1,7 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.service.project;
 
+import com.amazon.ion.IonType;
 import com.google.gson.GsonBuilder;
 import com.intellij.execution.configurations.SimpleJavaParameters;
 import com.intellij.openapi.application.PathManager;
@@ -24,6 +25,7 @@ import com.intellij.openapi.externalSystem.util.PathPrefixTreeMapImpl;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.DependencyScope;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.io.StreamUtil;
@@ -37,6 +39,7 @@ import com.intellij.util.containers.MultiMap;
 import com.intellij.util.execution.ParametersListUtil;
 import com.intellij.util.net.HttpConfigurable;
 import com.intellij.util.text.CharArrayUtil;
+import gnu.trove.THash;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.model.DomainObjectSet;
@@ -756,7 +759,13 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
       // repacked gradle guava
       Multimap.class,
       GsonBuilder.class,
-      ShortTypeHandling.class
+      ShortTypeHandling.class,
+      // trove4j jar
+      THash.class,
+      // ion-java jar
+      IonType.class,
+      // util-rt jat
+      SystemInfoRt.class // !!! do not replace it with SystemInfo.class from util module
     );
   }
 

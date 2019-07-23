@@ -33,7 +33,6 @@ import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 
 import java.io.File;
-import java.util.Collection;
 
 /**
  * @author Vladislav.Soroka
@@ -174,12 +173,6 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Override
   public <T> T getExtraProject(@Nullable IdeaModule module, Class<T> modelClazz) {
     return myModels.getExtraProject(module != null ? module.getGradleProject() : null, modelClazz);
-  }
-
-  @NotNull
-  @Override
-  public Collection<String> findModulesWithModel(@NotNull Class modelClazz) {
-    return myModels.findModulesWithModel(modelClazz);
   }
 
   @Override
