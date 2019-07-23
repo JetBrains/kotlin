@@ -19,10 +19,8 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.descriptors.isFunctionOrKFunctionType
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -31,15 +29,22 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.*
+import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
+import org.jetbrains.kotlin.ir.builders.declarations.addField
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
+import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -67,9 +72,6 @@ internal val callableReferencePhase = makeIrFilePhase(
 
 //Originally was copied from K/Native
 internal class CallableReferenceLowering(val context: JvmBackendContext) : FileLoweringPass {
-
-    private var functionReferenceCount = 0
-
     private val inlineLambdaReferences = mutableSetOf<IrFunctionReference>()
 
     override fun lower(irFile: IrFile) {
@@ -188,15 +190,20 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)
             origin = JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL
-            name = "${callee.name.safeName()}\$${functionReferenceCount++}".synthesizedName
+            name = Name.special("<function reference to ${callee.fqNameWhenAvailable}>")
         }.apply {
             parent = referenceParent
             superTypes += functionReferenceOrLambda.owner.defaultType
             createImplicitParameterDeclarationWithWrappedDescriptor()
+            copyAttributes(irFunctionReference)
         }
 
-        private val argumentToFieldMap = boundCalleeParameters.associate {
-            it to buildField(it.name.safeName(), it.type)
+        private val argumentToFieldMap = boundCalleeParameters.associateWith { parameter ->
+            // TODO: do not store receivers to fields and get rid of this
+            val safeName = parameter.name.takeUnless(Name::isSpecial) ?: parameter.name.asString().let { name ->
+                Name.identifier("$${name.substring(1, name.length - 1)}")
+            }
+            buildField(safeName, parameter.type)
         }
 
         fun build(): BuiltFunctionReference {
@@ -441,13 +448,5 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                 })
             }
         }
-    }
-
-    //TODO rewrite
-    private fun Name.safeName(): Name {
-        return if (isSpecial) {
-            val name = asString()
-            Name.identifier("$${name.substring(1, name.length - 1)}")
-        } else this
     }
 }

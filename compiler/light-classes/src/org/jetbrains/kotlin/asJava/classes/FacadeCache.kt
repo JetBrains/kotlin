@@ -11,8 +11,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.SLRUCache
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
 import org.jetbrains.kotlin.name.FqName
 
 private data class FacadeCacheKey(val fqName: FqName, val searchScope: GlobalSearchScope)
@@ -34,7 +34,12 @@ class FacadeCache(private val project: Project) {
     }
 
     private val cachedValue: CachedValue<FacadeCacheData> = CachedValuesManager.getManager(project).createCachedValue(
-        { CachedValueProvider.Result.create(FacadeCacheData(), PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT) }, false
+        {
+            CachedValueProvider.Result.create(
+                FacadeCacheData(),
+                KotlinModificationTrackerService.getInstance(project).outOfBlockModificationTracker
+            )
+        }, false
     )
 
     operator fun get(qualifiedName: FqName, searchScope: GlobalSearchScope): KtLightClassForFacade? {

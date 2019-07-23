@@ -58,7 +58,6 @@ dependencies {
     compile(project(":core:descriptors"))
     compile(project(":core:descriptors.jvm"))
     compile(project(":compiler:backend"))
-    compile(project(":compiler:cli-common"))
     compile(project(":compiler:frontend"))
     compile(project(":compiler:frontend.common"))
     compile(project(":compiler:frontend.java"))
@@ -181,6 +180,7 @@ dependencies {
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
     performanceTestCompile(project(":nj2k"))
+    performanceTestCompile(intellijPluginDep("gradle"))
     performanceTestRuntime(sourceSets["performanceTest"].output)
 }
 

@@ -23,6 +23,7 @@ import com.intellij.execution.ui.ConsoleViewContentType
 import com.intellij.ide.scratch.ScratchFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.project.Project
@@ -32,7 +33,6 @@ import com.intellij.openapi.wm.ToolWindowAnchor
 import com.intellij.openapi.wm.ToolWindowFactory
 import com.intellij.openapi.wm.ToolWindowManager
 import com.intellij.psi.PsiFile
-import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -169,23 +169,47 @@ private class ScratchToolWindowFactory : ToolWindowFactory {
 }
 
 private object TestOutputHandler : ScratchOutputHandlerAdapter() {
+    private val errors = arrayListOf<String>()
+    private val inlays = arrayListOf<Pair<ScratchExpression, String>>()
+
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
-        testPrint(file, output.text, expression)
+        inlays.add(expression to output.text)
     }
 
     override fun error(file: ScratchFile, message: String) {
-        testPrint(file, message)
+        errors.add(message)
     }
 
-    private fun testPrint(file: ScratchFile, output: String, expression: ScratchExpression? = null) {
-        ApplicationManager.getApplication().invokeLater {
-            WriteCommandAction.runWriteCommandAction(file.project) {
-                val psiFile = file.getPsiFile()!!
-                psiFile.addAfter(
-                    KtPsiFactory(file.project).createComment(
-                        "/** ${expression?.let { getLineInfo(psiFile, expression) + " " } ?: ""}$output */"
-                    ),
-                    psiFile.lastChild
+    override fun onFinish(file: ScratchFile) {
+        TransactionGuard.submitTransaction(file.project, Runnable {
+            val psiFile = file.getPsiFile()
+                ?: error(
+                    "PsiFile cannot be found for scratch to render inlays in tests:\n" +
+                            "project.isDisposed = ${file.project.isDisposed}\n" +
+                            "inlays = ${inlays.joinToString { it.second }}\n" +
+                            "errors = ${errors.joinToString()}"
+                )
+
+            if (inlays.isNotEmpty()) {
+                testPrint(psiFile, inlays.map { (expression, text) ->
+                    "/** ${getLineInfo(psiFile, expression)} $text */"
+                })
+                inlays.clear()
+            }
+
+            if (errors.isNotEmpty()) {
+                testPrint(psiFile, listOf(errors.joinToString(prefix = "/** ", postfix = " */")))
+                errors.clear()
+            }
+        })
+    }
+
+    private fun testPrint(file: PsiFile, comments: List<String>) {
+        WriteCommandAction.runWriteCommandAction(file.project) {
+            for (comment in comments) {
+                file.addAfter(
+                    KtPsiFactory(file.project).createComment(comment),
+                    file.lastChild
                 )
             }
         }

@@ -53,7 +53,7 @@ class StaticMemberAccessConversion(private val context: NewJ2kConverterContext) 
                 ?.safeAs<KtObjectDeclaration>()
                 ?.isCompanion() == true
             is JKTreeElement ->
-                target.safeAs<JKExtraModifiersOwner>()?.hasExtraModifier(ExtraModifier.STATIC) == true
+                target.safeAs<JKOtherModifiersOwner>()?.hasOtherModifier(OtherModifier.STATIC) == true
                         || target.parentOfType<JKClass>()?.classKind == JKClass.ClassKind.OBJECT
             else -> false
         }

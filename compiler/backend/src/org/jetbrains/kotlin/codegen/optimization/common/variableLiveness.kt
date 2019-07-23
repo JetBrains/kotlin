@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.common
 
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.org.objectweb.asm.Type
@@ -98,4 +98,4 @@ private fun useVar(
 private fun String.isInvisibleDebuggerVariable(): Boolean =
     startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT) ||
             startsWith(JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_FUNCTION) ||
-            this == SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+            this == SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME

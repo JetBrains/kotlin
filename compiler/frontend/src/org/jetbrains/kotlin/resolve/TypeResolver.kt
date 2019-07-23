@@ -34,6 +34,9 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.codeFragmentUtil.suppressDiagnosticsInDebugMode
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.psiUtil.checkReservedYield
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.getPrevSiblingIgnoringWhitespaceAndComments
+import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.PossiblyBareType.bare
 import org.jetbrains.kotlin.resolve.PossiblyBareType.type
@@ -69,6 +72,9 @@ class TypeResolver(
     private val platformToKotlinClassMap: PlatformToKotlinClassMap,
     private val languageVersionSettings: LanguageVersionSettings
 ) {
+    private val isNonParenthesizedAnnotationsOnFunctionalTypesEnabled =
+        languageVersionSettings.getFeatureSupport(LanguageFeature.NonParenthesizedAnnotationsOnFunctionalTypes) == LanguageFeature.State.ENABLED
+
     open class TypeTransformerForTests {
         open fun transformType(kotlinType: KotlinType): KotlinType? = null
     }
@@ -129,11 +135,53 @@ class TypeResolver(
     internal fun KtElementImplStub<*>.getAllModifierLists(): Array<out KtDeclarationModifierList> =
         getStubOrPsiChildren(KtStubElementTypes.MODIFIER_LIST, KtStubElementTypes.MODIFIER_LIST.arrayFactory)
 
+    // TODO: remove this method and its usages in 1.4
+    private fun checkNonParenthesizedAnnotationsOnFunctionalType(
+        typeElement: KtFunctionType,
+        annotationEntries: List<KtAnnotationEntry>,
+        trace: BindingTrace
+    ) {
+        val lastAnnotationEntry = annotationEntries.lastOrNull()
+        val isAnnotationsGroupedUsingBrackets =
+            lastAnnotationEntry?.getNextSiblingIgnoringWhitespaceAndComments()?.node?.elementType == KtTokens.RBRACKET
+        val hasAnnotationParentheses = lastAnnotationEntry?.valueArgumentList != null
+        val isFunctionalTypeStartingWithParentheses = typeElement.firstChild is KtParameterList
+        val hasSuspendModifierBeforeParentheses =
+            typeElement.getPrevSiblingIgnoringWhitespaceAndComments().run { this is KtDeclarationModifierList && hasSuspendModifier() }
+
+        if (lastAnnotationEntry != null &&
+            isFunctionalTypeStartingWithParentheses &&
+            !hasAnnotationParentheses &&
+            !isAnnotationsGroupedUsingBrackets &&
+            !hasSuspendModifierBeforeParentheses
+        ) {
+            trace.report(Errors.NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES.on(lastAnnotationEntry))
+        }
+    }
+
     private fun resolveTypeAnnotations(c: TypeResolutionContext, modifierListsOwner: KtElementImplStub<*>): Annotations {
         val modifierLists = modifierListsOwner.getAllModifierLists()
 
         var result = Annotations.EMPTY
         var isSplitModifierList = false
+
+        if (!isNonParenthesizedAnnotationsOnFunctionalTypesEnabled) {
+            val targetType = when (modifierListsOwner) {
+                is KtNullableType -> modifierListsOwner.innerType
+                is KtTypeReference -> modifierListsOwner.typeElement
+                else -> null
+            }
+            val annotationEntries = when (modifierListsOwner) {
+                is KtNullableType -> modifierListsOwner.modifierList?.annotationEntries
+                is KtTypeReference -> modifierListsOwner.annotationEntries
+                else -> null
+            }
+
+            // `targetType.stub == null` means that we don't apply this check for files that are built with stubs (that aren't opened in IDE and not in compile time)
+            if (targetType is KtFunctionType && targetType.stub == null && annotationEntries != null) {
+                checkNonParenthesizedAnnotationsOnFunctionalType(targetType, annotationEntries, c.trace)
+            }
+        }
 
         for (modifierList in modifierLists) {
             if (isSplitModifierList) {

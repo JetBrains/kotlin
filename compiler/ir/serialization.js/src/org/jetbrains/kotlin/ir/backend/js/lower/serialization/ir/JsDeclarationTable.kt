@@ -11,11 +11,9 @@ import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
-class JsDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTable)
-    : DeclarationTable(builtIns, descriptorTable, JsMangler) {
+class JsDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTable) : DeclarationTable(builtIns, descriptorTable, JsMangler) {
 
-    override var currentIndex = 0x1_0000_0000L
-
+    override var currentIndex = PUBLIC_LOCAL_UNIQ_ID_EDGE
     private val FUNCTION_INDEX_START: Long = loadKnownBuiltins()
 
     init {

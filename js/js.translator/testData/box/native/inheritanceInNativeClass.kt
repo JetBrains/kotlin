@@ -1,6 +1,7 @@
 // SKIP_MINIFICATION
 // Contains calls from external JS code
 
+@JsExport
 open class A {
     @JsName("foo")
     open protected fun foo(n: Int) = 23
@@ -9,6 +10,7 @@ open class A {
     fun bar(n: Int) = foo(n) + 100
 }
 
+@JsExport
 open class B {
     @JsName("foo")
     protected fun foo(n: Int) = 42

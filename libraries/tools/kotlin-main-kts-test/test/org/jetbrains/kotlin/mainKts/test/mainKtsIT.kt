@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.mainKts.test
 
 import junit.framework.Assert.*
+import org.jetbrains.kotlin.scripting.compiler.plugin.runWithK2JVMCompiler
 import org.junit.Test
 import java.io.File
 import java.io.InputStream
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.thread
 
-class mainKtsIT {
+class MainKtsIT {
 
     // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
     private fun runWithKotlinc(
@@ -22,7 +23,9 @@ class mainKtsIT {
         workDirectory: File? = null
     ) {
         val executableName = "kotlinc"
-        val executableFileName = if (System.getProperty("os.name").startsWith("windows")) "$executableName.bat" else executableName
+        // TODO:
+        val executableFileName =
+            if (System.getProperty("os.name").contains("windows", ignoreCase = true)) "$executableName.bat" else executableName
         val launcherFile = File("dist/kotlinc/bin/$executableFileName")
         assertTrue("Launcher script not found, run dist task: ${launcherFile.absolutePath}", launcherFile.exists())
 
@@ -57,22 +60,21 @@ class mainKtsIT {
         val (stdoutThread, stdoutException, processOut) = process.inputStream.captureStream()
         val (stderrThread, stderrException, processErr) = process.errorStream.captureStream()
 
-        process.waitFor(10000, TimeUnit.MILLISECONDS)
+        process.waitFor(30000, TimeUnit.MILLISECONDS)
 
         try {
             if (process.isAlive) {
                 process.destroyForcibly()
                 fail("Process terminated forcibly")
             }
-            stdoutThread.join(100)
+            stdoutThread.join(300)
             assertFalse("stdout thread not finished", stdoutThread.isAlive)
             assertNull(stdoutException.value)
+            stderrThread.join(300)
             assertFalse("stderr thread not finished", stderrThread.isAlive)
             assertNull(stderrException.value)
             assertEquals(expectedOutPatterns.size, processOut.size)
-            for (i in 0 until expectedOutPatterns.size) {
-                val expectedPattern = expectedOutPatterns[i]
-                val actualLine = processOut[i]
+            for ((expectedPattern, actualLine) in expectedOutPatterns.zip(processOut)) {
                 assertTrue(
                     "line \"$actualLine\" do not match with expected pattern \"$expectedPattern\"",
                     Regex(expectedPattern).matches(actualLine)
@@ -90,5 +92,10 @@ class mainKtsIT {
     @Test
     fun testResolveJunit() {
         runWithKotlinc("$TEST_DATA_ROOT/hello-resolve-junit.main.kts", listOf("Hello, World!"))
+    }
+
+    @Test
+    fun testImport() {
+        runWithK2JVMCompiler("$TEST_DATA_ROOT/import-test.main.kts", listOf("Hi from common", "Hi from middle", "sharedVar == 5"))
     }
 }

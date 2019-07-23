@@ -5,17 +5,15 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.expressions.*
@@ -29,31 +27,45 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 
-val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
+private val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
 
-class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPass {
+class PrivateMembersLowering(val context: JsIrBackendContext) : FileLoweringPass {
     private val memberMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunction>()
 
-    override fun lower(irClass: IrClass) {
+    override fun lower(irFile: IrFile) {
+        transformPrivateDeclarations(irFile)
+        transformPrivateUseSites(irFile)
 
+        memberMap.clear()
+    }
 
-        irClass.declarations.transformFlat {
-            when (it) {
-                is IrSimpleFunction -> transformMemberToStaticFunction(it)?.let { staticFunction ->
-                    memberMap[it.symbol] = staticFunction
-                    listOf(staticFunction)
+    private fun transformPrivateDeclarations(irFile: IrFile) {
+        irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
+                declaration.transformChildrenVoid(this)
+                declaration.declarations.transformFlat {
+                    when (it) {
+                        is IrSimpleFunction -> transformMemberToStaticFunction(it)?.let { staticFunction ->
+                            memberMap[it.symbol] = staticFunction
+                            listOf(staticFunction)
+                        }
+                        is IrProperty -> listOf(it.apply {
+                            this.getter = this.getter?.let { g -> transformAccessor(g) }
+                            this.setter = this.setter?.let { s -> transformAccessor(s) }
+                        })
+                        else -> null
+                    }
                 }
-                is IrProperty -> listOf(it.apply {
-                    getter = getter?.let { g -> transformAccessor(g) }
-                    setter = setter?.let { s -> transformAccessor(s) }
-                })
-                else -> null
+                return declaration
             }
-        }
+        })
+    }
 
-        irClass.transform(object : IrElementTransformerVoid() {
+    private fun transformPrivateUseSites(irFile: IrFile) {
+        irFile.transform(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
                 super.visitCall(expression)
 
@@ -62,19 +74,25 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                 } ?: expression
             }
 
-            override fun visitFunctionReference(expression: IrFunctionReference) = memberMap[expression.symbol]?.let {
-                transformPrivateToStaticReference(expression) {
-                    IrFunctionReferenceImpl(
-                        expression.startOffset, expression.endOffset,
-                        expression.type,
-                        it.symbol, it.descriptor,
-                        expression.typeArgumentsCount, expression.valueArgumentsCount,
-                        expression.origin
-                    )
-                }
-            } ?: expression
+            override fun visitFunctionReference(expression: IrFunctionReference): IrExpression {
+                super.visitFunctionReference(expression)
+
+                return memberMap[expression.symbol]?.let {
+                    transformPrivateToStaticReference(expression) {
+                        IrFunctionReferenceImpl(
+                            expression.startOffset, expression.endOffset,
+                            expression.type,
+                            it.symbol, it.descriptor,
+                            expression.typeArgumentsCount, expression.valueArgumentsCount,
+                            expression.origin
+                        )
+                    }
+                } ?: expression
+            }
 
             override fun visitPropertyReference(expression: IrPropertyReference): IrExpression {
+                super.visitPropertyReference(expression)
+
                 return if (expression.getter in memberMap || expression.setter in memberMap) {
                     transformPrivateToStaticReference(expression) {
                         IrPropertyReferenceImpl(
@@ -90,7 +108,6 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : ClassLoweringPas
                     }
                 } else expression
             }
-
 
             private fun transformPrivateToStaticCall(expression: IrCall, staticTarget: IrSimpleFunction): IrCall {
                 val newExpression = IrCallImpl(

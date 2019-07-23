@@ -1,5 +1,6 @@
 // EXPECTED_REACHABLE_NODES: 1290
 
+@JsExport
 data class A(val value: Int)
 
 fun box(): String {

@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.idea.imports
 import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
+import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
@@ -46,16 +47,20 @@ import org.jetbrains.kotlin.resolve.scopes.utils.*
 class KotlinImportOptimizer : ImportOptimizer {
     override fun supports(file: PsiFile?) = file is KtFile
 
-    override fun processFile(file: PsiFile?): Runnable {
-        val ktFile = (file as? KtFile) ?: return Runnable { /* empty runnable */ }
-        val preparedImports = prepareImports(ktFile) ?: return Runnable { /* empty runnable */ }
+    override fun processFile(file: PsiFile?): ImportOptimizer.CollectingInfoRunnable {
+        val ktFile = (file as? KtFile) ?: return DO_NOTHING
+        val (add, remove, imports) = prepareImports(ktFile) ?: return DO_NOTHING
 
-        return Runnable {
-            replaceImports(ktFile, preparedImports)
+        return object : ImportOptimizer.CollectingInfoRunnable {
+            override fun getUserNotificationInfo(): String = if (remove == 0) "Rearranged imports"
+            else "Removed $remove ${StringUtil.pluralize("import", remove)}" +
+                    if (add > 0) ", added $add ${StringUtil.pluralize("import", add)}" else ""
+
+            override fun run() = replaceImports(ktFile, imports)
         }
     }
 
-    private fun prepareImports(file: KtFile): List<ImportPath>? {
+    private fun prepareImports(file: KtFile): OptimizeInformation? {
         ApplicationManager.getApplication().assertReadAccessAllowed()
 
         val moduleInfo = file.getNullableModuleInfo()
@@ -68,8 +73,16 @@ class KotlinImportOptimizer : ImportOptimizer {
 
         val descriptorsToImport = collectDescriptorsToImport(file)
 
-        return prepareOptimizedImports(file, descriptorsToImport)
+        val imports = prepareOptimizedImports(file, descriptorsToImport) ?: return null
+        val intersect = imports.intersect(oldImports.map { it.importPath })
+        return OptimizeInformation(
+            add = imports.size - intersect.size,
+            remove = oldImports.size - intersect.size,
+            imports = imports
+        )
     }
+
+    private data class OptimizeInformation(val add: Int, val remove: Int, val imports: List<ImportPath>)
 
     private class CollectUsedDescriptorsVisitor(file: KtFile) : KtVisitorVoid() {
         private val currentPackageName = file.packageFqName
@@ -219,6 +232,12 @@ class KotlinImportOptimizer : ImportOptimizer {
             //class qualifiers that refer to companion objects should be considered (containing) class references
             return bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, element as? KtReferenceExpression]?.let { listOf(it) }
                 ?: resolveToDescriptors(bindingContext)
+        }
+
+        private val DO_NOTHING = object : ImportOptimizer.CollectingInfoRunnable {
+            override fun run() = Unit
+
+            override fun getUserNotificationInfo() = "Unused imports not found"
         }
     }
 }

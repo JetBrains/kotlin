@@ -92,7 +92,9 @@ public final class MutableClosure implements CalculatedClosure {
         }
 
         if (captureEnclosingReceiver) {
-            ReceiverParameterDescriptor parameter = getEnclosingReceiverDescriptor();
+            CallableDescriptor descriptor = getEnclosingCallableDescriptorWithReceiver();
+            assert descriptor != null : "Receiver callable descriptor should exist";
+            ReceiverParameterDescriptor parameter = descriptor.getExtensionReceiverParameter();
             assert parameter != null : "Receiver parameter should exist in " + enclosingFunWithReceiverDescriptor;
             return parameter.getType();
         }
@@ -190,7 +192,8 @@ public final class MutableClosure implements CalculatedClosure {
     }
 
     @Nullable
-    public ReceiverParameterDescriptor getEnclosingReceiverDescriptor() {
-        return enclosingFunWithReceiverDescriptor != null ? enclosingFunWithReceiverDescriptor.getExtensionReceiverParameter() : null;
+    @Override
+    public CallableDescriptor getEnclosingCallableDescriptorWithReceiver() {
+        return enclosingFunWithReceiverDescriptor;
     }
 }

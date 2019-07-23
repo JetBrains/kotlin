@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isPropertyParameter
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.uast.*
+import org.jetbrains.uast.kotlin.expressions.KotlinLocalFunctionULambdaExpression
 import org.jetbrains.uast.kotlin.expressions.KotlinUElvisExpression
 import org.jetbrains.uast.kotlin.internal.KotlinUElementWithComments
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
@@ -188,7 +189,7 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         }
     }
 
-    if (result is UMethod
+    if ((result is UMethod || result is KotlinLocalFunctionULambdaExpression)
         && result !is KotlinConstructorUMethod // no sense to wrap super calls with `return`
         && element is UExpression
         && element !is UBlockExpression
@@ -197,6 +198,10 @@ fun doConvertParent(element: UElement, parent: PsiElement?): UElement? {
         return KotlinUBlockExpression.KotlinLazyUBlockExpression(result, { block ->
             listOf(KotlinUImplicitReturnExpression(block).apply { returnExpression = element })
         }).expressions.single()
+    }
+
+    if (result is KotlinULambdaExpression.Body && element is UExpression && result.implicitReturn?.returnExpression == element) {
+        return result.implicitReturn!!
     }
 
     return result

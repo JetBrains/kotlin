@@ -1,5 +1,6 @@
 // SKIP_MINIFICATION
 
+@JsExport
 val top = "TOP LEVEL"
 
 fun box(): String {

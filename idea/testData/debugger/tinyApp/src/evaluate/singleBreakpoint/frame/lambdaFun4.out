@@ -5,8 +5,6 @@ lambdaFun4.kt:8
 Compile bytecode for this
 Compile bytecode for this@Foo
  frame    = invoke:8, Foo$foo$1 {lambdaFun4}
-   unknown  = this (anonymous fun) = {lambdaFun4.LambdaFun4Kt$main$1@uniqueID}
-              - Class has no fields
    local    = this: java.lang.String = abc (sp = null)
      field    = value: char[] = {char[3]@uniqueID} (sp = String.!EXT!)
        element  = 0 = 'a' 97

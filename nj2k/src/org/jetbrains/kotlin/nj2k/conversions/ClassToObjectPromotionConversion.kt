@@ -50,7 +50,7 @@ class ClassToObjectPromotionConversion(private val context: NewJ2kConverterConte
                             }.map { it.detached(element.classBody) }
                         },
                         JKAnnotationListImpl(),
-                        element.extraModifierElements,
+                        element.otherModifierElements,
                         element.visibilityElement,
                         JKModalityModifierElementImpl(Modality.FINAL)
                     ).withNonCodeElementsFrom(element)

@@ -35,7 +35,7 @@ abstract class JKKtProperty : JKField(), PsiOwner {
 
 abstract class JKKtFunction : JKMethod(), PsiOwner
 
-abstract class JKKtConstructor : JKMethod(), JKExtraModifiersOwner {
+abstract class JKKtConstructor : JKMethod(), JKOtherModifiersOwner {
     abstract var delegationCall: JKExpression
 }
 

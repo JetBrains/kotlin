@@ -80,7 +80,6 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 
             buildScriptData
                 .addPluginDefinitionInPluginsGroup(getPluginDefinition() + " version \"$kotlinVersion\"")
-                .addDependencyNotation(getRuntimeLibrary(rootModel, null))
         } else {
             if (additionalRepository != null) {
                 val repository = additionalRepository.toKotlinRepositorySnippet()
@@ -95,7 +94,6 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
                 .addBuildscriptRepositoriesDefinition("mavenCentral()")
                 // TODO: in gradle > 4.1 this could be single declaration e.g. 'val kotlin_version: String by extra { "1.1.11" }'
                 .addBuildscriptPropertyDefinition("var $GSK_KOTLIN_VERSION_PROPERTY_NAME: String by extra\n    $GSK_KOTLIN_VERSION_PROPERTY_NAME = \"$kotlinVersion\"")
-                .addDependencyNotation(getRuntimeLibrary(rootModel, "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME"))
                 .addBuildscriptDependencyNotation(getKotlinGradlePluginClassPathSnippet())
         }
 
@@ -112,10 +110,15 @@ abstract class KotlinDslGradleKotlinFrameworkSupportProvider(
 
     private fun RepositoryDescription.toKotlinRepositorySnippet() = "maven { setUrl(\"$url\") }"
 
-    protected abstract fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?): String
-
     protected abstract fun getOldSyntaxPluginDefinition(): String
     protected abstract fun getPluginDefinition(): String
+
+    protected fun composeDependency(buildScriptData: BuildScriptDataBuilder, artifactId: String): String {
+        return if (buildScriptData.gradleVersion >= MIN_GRADLE_VERSION_FOR_NEW_PLUGIN_SYNTAX)
+            "implementation(${getKotlinModuleDependencySnippet(artifactId, null)})"
+        else
+            "implementation(${getKotlinModuleDependencySnippet(artifactId, "\$$GSK_KOTLIN_VERSION_PROPERTY_NAME")})"
+    }
 }
 
 class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
@@ -123,9 +126,6 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
 
     override fun getOldSyntaxPluginDefinition() = "plugin(\"${KotlinGradleModuleConfigurator.KOTLIN}\")"
     override fun getPluginDefinition() = "kotlin(\"jvm\")"
-
-    override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
-        "implementation(${getKotlinModuleDependencySnippet(getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion()), version)})"
 
     override fun addSupport(
         projectId: ProjectId,
@@ -141,6 +141,9 @@ class KotlinDslGradleKotlinJavaFrameworkSupportProvider :
                 .addImport("import org.jetbrains.kotlin.gradle.tasks.KotlinCompile")
                 .addOther("tasks.withType<KotlinCompile> {\n    kotlinOptions.jvmTarget = \"1.8\"\n}\n")
         }
+
+        val artifactId = getStdlibArtifactId(rootModel.sdk, bundledRuntimeVersion())
+        buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
 }
 
@@ -160,13 +163,13 @@ abstract class AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider(
         super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
 
         buildScriptData.addOther("kotlin.target.$jsSubTargetName { }")
+        val artifactId = MAVEN_JS_STDLIB_ID.removePrefix("kotlin-")
+        buildScriptData.addDependencyNotation(composeDependency(buildScriptData, artifactId))
     }
 
     override fun getOldSyntaxPluginDefinition(): String = "plugin(\"${KotlinJsGradleModuleConfigurator.KOTLIN_JS}\")"
     override fun getPluginDefinition(): String = "id(\"org.jetbrains.kotlin.js\")"
 
-    override fun getRuntimeLibrary(rootModel: ModifiableRootModel, version: String?) =
-        "implementation(${getKotlinModuleDependencySnippet(MAVEN_JS_STDLIB_ID.removePrefix("kotlin-"), version)})"
 }
 
 class KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider :
@@ -179,4 +182,43 @@ class KotlinDslGradleKotlinJSNodeFrameworkSupportProvider :
     AbstractKotlinDslGradleKotlinJSFrameworkSupportProvider("KOTLIN_JS_NODE", "Kotlin/JS for Node.js") {
     override val jsSubTargetName: String
         get() = "nodejs"
+}
+
+class KotlinDslGradleKotlinMPPFrameworkSupportProvider :
+    KotlinDslGradleKotlinFrameworkSupportProvider("KOTLIN_MPP", "Kotlin/Multiplatform", KotlinIcons.MPP) {
+
+    override fun getOldSyntaxPluginDefinition() = "plugin(\"org.jetbrains.kotlin.multiplatform\")"
+    override fun getPluginDefinition() = "kotlin(\"multiplatform\")"
+
+    override fun addSupport(
+        projectId: ProjectId,
+        module: Module,
+        rootModel: ModifiableRootModel,
+        modifiableModelsProvider: ModifiableModelsProvider,
+        buildScriptData: BuildScriptDataBuilder
+    ) {
+        super.addSupport(projectId, module, rootModel, modifiableModelsProvider, buildScriptData)
+
+        buildScriptData.addOther(
+            """kotlin {
+    /* Targets configuration omitted. 
+    *  To find out how to configure the targets, please follow the link:
+    *  https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#setting-up-targets */
+
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+            }
+        }
+        val commonTest by getting {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+    }
+}"""
+        )
+    }
 }

@@ -25,7 +25,7 @@ open class FirValueParameterImpl(
     override val isCrossinline: Boolean,
     override val isNoinline: Boolean,
     override val isVararg: Boolean,
-    override val symbol: FirVariableSymbol = FirVariableSymbol(name)
+    override val symbol: FirVariableSymbol<FirValueParameter> = FirVariableSymbol(name)
 ) : FirAbstractNamedAnnotatedDeclaration(session, psi, name), FirValueParameter {
 
     init {

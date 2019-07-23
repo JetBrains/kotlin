@@ -317,9 +317,8 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
         catch (ProcessCanceledException | CompilationException e) {
             throw e;
         }
-        catch (Throwable error) {
-            String message = error.getMessage();
-            throw new CompilationException(message != null ? message : "null", error, selector);
+        catch (Throwable e) {
+            throw new CompilationException("Failed to generate expression: " + selector.getClass().getSimpleName(), e, selector);
         }
     }
 
@@ -365,23 +364,27 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     private void putStackValue(@Nullable KtElement expr, @NotNull Type type, @Nullable KotlinType kotlinType, @NotNull StackValue value) {
         // for repl store the result of the last line into special field
-        if (value.type != Type.VOID_TYPE && state.getReplSpecific().getShouldGenerateScriptResultValue()) {
+        if (value.type != Type.VOID_TYPE) {
             ScriptContext context = getScriptContext();
-            if (expr == context.getLastStatement()) {
-                StackValue.Field resultValue = StackValue.field(context.getResultFieldInfo(), StackValue.LOCAL_0);
-                resultValue.store(value, v);
-                state.getReplSpecific().setHasResult(true);
-                return;
+            if (context != null && expr == context.getLastStatement()) {
+                FieldInfo resultFieldInfo = context.getResultFieldInfo();
+                if (resultFieldInfo != null) {
+                    StackValue.Field resultValue = StackValue.field(resultFieldInfo, StackValue.LOCAL_0);
+                    resultValue.store(value, v);
+                    state.getScriptSpecific().setResultType(resultFieldInfo.getFieldKotlinType());
+                    state.getScriptSpecific().setResultFieldName(resultFieldInfo.getFieldName());
+                    return;
+                }
             }
         }
 
         value.put(type, kotlinType, v);
     }
 
-    @NotNull
+    @Nullable
     private ScriptContext getScriptContext() {
         CodegenContext context = getContext();
-        while (!(context instanceof ScriptContext)) {
+        while (context != null && !(context instanceof ScriptContext)) {
             context = context.getParentContext();
         }
         return (ScriptContext) context;
@@ -1119,9 +1122,20 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
         KotlinType captureReceiver = closure.getCapturedReceiverFromOuterContext();
         if (captureReceiver != null) {
-            StackValue capturedReceiver =
-                    functionReferenceReceiver != null ? functionReferenceReceiver :
-                    generateExtensionReceiver(unwrapOriginalReceiverOwnerForSuspendLambda(context));
+            StackValue capturedReceiver = functionReferenceReceiver;
+            if (capturedReceiver == null) {
+                CallableDescriptor descriptor = unwrapOriginalReceiverOwnerForSuspendLambda(context);
+                if (descriptor.getExtensionReceiverParameter() != null) {
+                    capturedReceiver = generateExtensionReceiver(descriptor);
+                }
+            }
+            if (capturedReceiver == null) {
+                CallableDescriptor descriptor = closure.getEnclosingCallableDescriptorWithReceiver();
+                if (descriptor != null) {
+                    capturedReceiver = generateExtensionReceiver(descriptor);
+                }
+            }
+            assert capturedReceiver != null : "Captured receiver is null for closure " + closure;
             callGenerator.putCapturedValueOnStack(capturedReceiver, capturedReceiver.type, paramIndex++);
         }
 

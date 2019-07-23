@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
 import org.jetbrains.kotlin.name.Name
 
-open class FirResolvedCallableReferenceImpl(
+class FirResolvedCallableReferenceImpl(
     session: FirSession,
     psi: PsiElement?,
     override val name: Name,

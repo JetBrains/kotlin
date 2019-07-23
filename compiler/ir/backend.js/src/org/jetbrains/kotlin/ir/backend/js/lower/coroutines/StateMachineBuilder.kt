@@ -657,8 +657,7 @@ class StateMachineBuilder(
             context.irBuiltIns.booleanType,
             IrTypeOperator.INSTANCEOF,
             value,
-            toType,
-            toType.classifierOrNull!!
+            toType
         )
 
     private fun tempVar(type: IrType, name: String = "tmp") =

@@ -11,6 +11,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiMember
+import com.intellij.psi.PsiMethod
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.analysis.analyzeAsReplacement
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
@@ -31,7 +32,8 @@ class RemoveRedundantQualifierNameInspection : AbstractKotlinInspection(), Clean
     override fun buildVisitor(holder: ProblemsHolder, isOnTheFly: Boolean): PsiElementVisitor =
         object : KtVisitorVoid() {
             override fun visitDotQualifiedExpression(expression: KtDotQualifiedExpression) {
-                if (expression.parent is KtDotQualifiedExpression || expression.isInImportDirective()) return
+                val expressionParent = expression.parent
+                if (expressionParent is KtDotQualifiedExpression || expressionParent is KtPackageDirective || expressionParent is KtImportDirective) return
                 val expressionForAnalyze = expression.firstExpressionWithoutReceiver() ?: return
 
                 val parent = expressionForAnalyze.parent
@@ -72,7 +74,8 @@ private tailrec fun KtDotQualifiedExpression.firstExpressionWithoutReceiver(): K
     val element = getQualifiedElementSelector()?.mainReference?.resolve() ?: return null
     return if (element is KtClassOrObject ||
         element is KtCallableDeclaration && element.receiverTypeReference == null ||
-        element is PsiMember && element.hasModifier(JvmModifier.STATIC)
+        element is PsiMember && element.hasModifier(JvmModifier.STATIC) ||
+        element is PsiMethod && element.isConstructor
     ) this else (receiverExpression as? KtDotQualifiedExpression)?.firstExpressionWithoutReceiver()
 }
 

@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.idea.core.util.toPsiDirectory
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.jsonUtils.getNullableString
 import org.jetbrains.kotlin.idea.jsonUtils.getString
-import org.jetbrains.kotlin.idea.refactoring.*
+import org.jetbrains.kotlin.idea.refactoring.AbstractMultifileRefactoringTest
+import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.changePackage.KotlinChangePackageRefactoring
 import org.jetbrains.kotlin.idea.refactoring.move.moveClassesOrPackages.KotlinAwareDelegatingMoveDestination
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*
+import org.jetbrains.kotlin.idea.refactoring.runRefactoringTest
 import org.jetbrains.kotlin.idea.search.allScope
 import org.jetbrains.kotlin.idea.search.projectScope
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
@@ -69,12 +71,12 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveClassesOrPackagesProcessor(
-                    mainFile.project,
-                    classesToMove.toTypedArray(),
-                    MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
-                    /* searchInComments = */ false,
-                    /* searchInNonJavaFiles = */ true,
-                    /* moveCallback = */ null
+                mainFile.project,
+                classesToMove.toTypedArray(),
+                MultipleRootsMoveDestination(PackageWrapper(mainFile.manager, targetPackage)),
+                /* searchInComments = */ false,
+                /* searchInNonJavaFiles = */ true,
+                /* moveCallback = */ null
             ).run()
         }
     },
@@ -93,22 +95,21 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val moveDestination = if (targetDirectory != null) {
                 val targetSourceRoot = ProjectRootManager.getInstance(project).fileIndex.getSourceRootForFile(targetDirectory.virtualFile)!!
                 KotlinAwareDelegatingMoveDestination(
-                        AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, targetSourceRoot),
-                        targetPackage,
-                        targetDirectory
+                    AutocreatingSingleSourceRootMoveDestination(targetPackageWrapper, targetSourceRoot),
+                    targetPackage,
+                    targetDirectory
                 )
-            }
-            else {
+            } else {
                 MultipleRootsMoveDestination(targetPackageWrapper)
             }
 
             MoveClassesOrPackagesProcessor(
-                    project,
-                    arrayOf(sourcePackage),
-                    moveDestination,
-                    /* searchInComments = */ false,
-                    /* searchInNonJavaFiles = */ true,
-                    /* moveCallback = */ null
+                project,
+                arrayOf(sourcePackage),
+                moveDestination,
+                /* searchInComments = */ false,
+                /* searchInNonJavaFiles = */ true,
+                /* moveCallback = */ null
             ).run()
         }
     },
@@ -121,12 +122,12 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val targetClass = config.getString("targetClass")
 
             MoveClassToInnerProcessor(
-                    project,
-                    classesToMove.toTypedArray(),
-                    JavaPsiFacade.getInstance(project).findClass(targetClass, project.allScope())!!,
-                    /* searchInComments = */ false,
-                    /* searchInNonJavaFiles = */ true,
-                    /* moveCallback = */ null
+                project,
+                classesToMove.toTypedArray(),
+                JavaPsiFacade.getInstance(project).findClass(targetClass, project.allScope())!!,
+                /* searchInComments = */ false,
+                /* searchInNonJavaFiles = */ true,
+                /* moveCallback = */ null
             ).run()
         }
     },
@@ -141,12 +142,12 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val targetPackage = config.getString("targetPackage")
 
             MoveInnerProcessor(
-                    project,
-                    classToMove,
-                    newClassName,
-                    outerInstanceParameterName != null,
-                    outerInstanceParameterName,
-                    JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
+                project,
+                classToMove,
+                newClassName,
+                outerInstanceParameterName != null,
+                outerInstanceParameterName,
+                JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
             ).run()
         }
     },
@@ -161,29 +162,27 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
                 ActionRunner.runInsideWriteAction { VfsUtil.createDirectoryIfMissing(rootDir, targetDirPath) }
                 val newParent = if (targetPackage != null) {
                     JavaPsiFacade.getInstance(project).findPackage(targetPackage)!!.directories[0]
-                }
-                else {
+                } else {
                     rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
                 }
                 MoveFilesOrDirectoriesProcessor(
-                        project,
-                        arrayOf(mainFile),
-                        newParent,
-                        /* searchInComments = */ false,
-                        /* searchInNonJavaFiles = */ true,
-                        /* moveCallback = */ null,
-                        /* prepareSuccessfulCallback = */ null
+                    project,
+                    arrayOf(mainFile),
+                    newParent,
+                    /* searchInComments = */ false,
+                    /* searchInNonJavaFiles = */ true,
+                    /* moveCallback = */ null,
+                    /* prepareSuccessfulCallback = */ null
                 ).run()
-            }
-            else {
+            } else {
                 val targetFile = config.getString("targetFile")
 
                 MoveHandler.doMove(
-                        project,
-                        arrayOf(mainFile),
-                        PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
-                        /* dataContext = */ null,
-                        /* callback = */ null
+                    project,
+                    arrayOf(mainFile),
+                    PsiManager.getInstance(project).findFile(rootDir.findFileByRelativePath(targetFile)!!)!!,
+                    /* dataContext = */ null,
+                    /* callback = */ null
                 )
             }
         }
@@ -199,13 +198,13 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val targetDirPath = config.getString("targetDirectory")
             val targetDir = rootDir.findFileByRelativePath(targetDirPath)!!.toPsiDirectory(project)!!
             KotlinAwareMoveFilesOrDirectoriesProcessor(
-                    project,
-                    elementsToMove,
-                    targetDir,
-                    true,
-                    searchInComments = true,
-                    searchInNonJavaFiles = true,
-                    moveCallback = null
+                project,
+                elementsToMove,
+                targetDir,
+                true,
+                searchInComments = true,
+                searchInNonJavaFiles = true,
+                moveCallback = null
             ).run()
         }
     },
@@ -251,7 +250,7 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val project = mainFile.project
             val sourceDir = rootDir.findFileByRelativePath(config.getString("sourceDir"))!!.toPsiDirectory(project)!!
             val targetDir = rootDir.findFileByRelativePath(config.getString("targetDir"))!!.toPsiDirectory(project)!!
-            MoveDirectoryWithClassesProcessor(project, arrayOf(sourceDir), targetDir, true, true, true, {}).run()
+            MoveDirectoryWithClassesProcessor(project, arrayOf(sourceDir), targetDir, true, true, true) {}.run()
         }
     },
 
@@ -261,24 +260,24 @@ enum class MoveAction : AbstractMultifileRefactoringTest.RefactoringAction {
             val elementToMove = elementsAtCaret.single().getNonStrictParentOfType<KtClassOrObject>()!!
             val targetClassName = config.getNullableString("targetClass")
             val targetClass =
-                    if (targetClassName != null) {
-                        KotlinFullClassNameIndex.getInstance().get(targetClassName, project, project.projectScope()).first()!!
-                    }
-                    else null
-            val delegate = MoveDeclarationsDelegate.NestedClass(config.getNullableString("newName"),
-                                                                config.getNullableString("outerInstanceParameter"))
+                if (targetClassName != null) {
+                    KotlinFullClassNameIndex.getInstance().get(targetClassName, project, project.projectScope()).first()!!
+                } else null
+            val delegate = MoveDeclarationsDelegate.NestedClass(
+                config.getNullableString("newName"),
+                config.getNullableString("outerInstanceParameter")
+            )
             val moveTarget =
-                    if (targetClass != null) {
-                        KotlinMoveTargetForExistingElement(targetClass)
+                if (targetClass != null) {
+                    KotlinMoveTargetForExistingElement(targetClass)
+                } else {
+                    val fileName = (delegate.newClassName ?: elementToMove.name!!) + ".kt"
+                    val targetPackageFqName = (mainFile as KtFile).packageFqName
+                    val targetDir = mainFile.containingDirectory!!
+                    KotlinMoveTargetForDeferredFile(targetPackageFqName, targetDir, null) {
+                        createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
                     }
-                    else {
-                        val fileName = (delegate.newClassName ?: elementToMove.name!!) + ".kt"
-                        val targetPackageFqName = (mainFile as KtFile).packageFqName
-                        val targetDir = mainFile.containingDirectory!!
-                        KotlinMoveTargetForDeferredFile(targetPackageFqName, targetDir, null) {
-                            createKotlinFile(fileName, targetDir, targetPackageFqName.asString())
-                        }
-                    }
+                }
             val descriptor = MoveDeclarationsDescriptor(project, MoveSource(elementToMove), moveTarget, delegate)
             MoveKotlinDeclarationsProcessor(descriptor).run()
         }

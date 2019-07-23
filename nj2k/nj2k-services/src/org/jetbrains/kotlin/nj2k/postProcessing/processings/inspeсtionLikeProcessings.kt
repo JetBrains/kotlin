@@ -199,12 +199,12 @@ class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
     override val writeActionNeeded = true
 
     override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
-        if (element !is KtSimpleNameExpression || element.mainReference.resolve() == null) return null
+        if (element !is KtSimpleNameExpression) return null
+        val anonymousObject = element.getParentOfType<KtClassOrObject>(true)?.takeIf { it.name == null } ?: return null
 
         val resolved = element.mainReference.resolve() ?: return null
         if (resolved.isAncestor(element, strict = true)) {
             if (resolved is KtVariableDeclaration && resolved.hasInitializer()) {
-                val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
                 if (resolved.initializer!!.getChildOfType<KtClassOrObject>() == anonymousObject) {
                     return { element.replaced(KtPsiFactory(element).createThisExpression()) }
                 }
@@ -317,11 +317,11 @@ class RemoveRedundantConstructorKeywordProcessing :
 
 class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
     override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean {
-        val modalityModifier = element.modalityModifier() ?: return false
-        val modalityModifierType = modalityModifier.node.elementType
-        val implicitModality = element.implicitModality()
-
-        return modalityModifierType == implicitModality
+        if (element.hasModifier(KtTokens.FINAL_KEYWORD)) {
+            return !element.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+        }
+        val modalityModifierType = element.modalityModifierType() ?: return false
+        return modalityModifierType == element.implicitModality()
     }
 
     override fun apply(element: KtDeclaration) {
@@ -331,16 +331,14 @@ class RemoveRedundantModalityModifierProcessing : ApplicabilityBasedInspectionLi
 
 
 class RemoveRedundantVisibilityModifierProcessing : ApplicabilityBasedInspectionLikeProcessing<KtDeclaration>(KtDeclaration::class) {
-    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?): Boolean {
-        val visibilityModifier = element.visibilityModifier() ?: return false
-        val implicitVisibility = element.implicitVisibility()
-        return when {
-            visibilityModifier.node.elementType == implicitVisibility ->
-                true
-            element.hasModifier(KtTokens.INTERNAL_KEYWORD) && element.containingClassOrObject?.isLocal == true ->
-                true
-            else -> false
-        }
+    override fun isApplicableTo(element: KtDeclaration, settings: ConverterSettings?) = when {
+        element.hasModifier(KtTokens.PUBLIC_KEYWORD) && element.hasModifier(KtTokens.OVERRIDE_KEYWORD) ->
+            false
+        element.hasModifier(KtTokens.INTERNAL_KEYWORD) && element.containingClassOrObject?.isLocal == true ->
+            true
+        element.visibilityModifierType() == element.implicitVisibility() ->
+            true
+        else -> false
     }
 
     override fun apply(element: KtDeclaration) {

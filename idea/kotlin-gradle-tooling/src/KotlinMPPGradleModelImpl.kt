@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.tasks.Exec
 import java.io.File
-import java.util.*
 import kotlin.collections.HashSet
 
-data class KotlinSourceSetImpl(
+class KotlinSourceSetImpl(
     override val name: String,
     override val languageSettings: KotlinLanguageSettings,
     override val sourceDirs: Set<File>,
     override val resourceDirs: Set<File>,
-    override val dependencies: Set<KotlinDependency>,
+    override val dependencies: Array<KotlinDependencyId>,
     override val dependsOnSourceSets: Set<String>,
     val defaultPlatform: KotlinPlatformContainerImpl = KotlinPlatformContainerImpl(),
     val defaultIsTestModule: Boolean = false
@@ -25,7 +25,7 @@ data class KotlinSourceSetImpl(
         KotlinLanguageSettingsImpl(kotlinSourceSet.languageSettings),
         HashSet(kotlinSourceSet.sourceDirs),
         HashSet(kotlinSourceSet.resourceDirs),
-        kotlinSourceSet.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
+        kotlinSourceSet.dependencies,
         HashSet(kotlinSourceSet.dependsOnSourceSets),
         KotlinPlatformContainerImpl(kotlinSourceSet.actualPlatforms),
         kotlinSourceSet.isTestModule
@@ -46,7 +46,7 @@ data class KotlinLanguageSettingsImpl(
     override val isProgressiveMode: Boolean,
     override val enabledLanguageFeatures: Set<String>,
     override val experimentalAnnotationsInUse: Set<String>,
-    override val compilerPluginArguments: List<String>,
+    override val compilerPluginArguments: Array<String>,
     override val compilerPluginClasspath: Set<File>
 ) : KotlinLanguageSettings {
     constructor(settings: KotlinLanguageSettings) : this(
@@ -73,19 +73,23 @@ data class KotlinCompilationOutputImpl(
 }
 
 data class KotlinCompilationArgumentsImpl(
-    override val defaultArguments: List<String>,
-    override val currentArguments: List<String>
+    override val defaultArguments: Array<String>,
+    override val currentArguments: Array<String>
 ) : KotlinCompilationArguments {
-    constructor(arguments: KotlinCompilationArguments) : this(ArrayList(arguments.defaultArguments), ArrayList(arguments.currentArguments))
+    constructor(arguments: KotlinCompilationArguments) : this(
+        arguments.defaultArguments,
+        arguments.currentArguments
+    )
 }
 
 data class KotlinCompilationImpl(
     override val name: String,
     override val sourceSets: Collection<KotlinSourceSet>,
-    override val dependencies: Set<KotlinDependency>,
+    override val dependencies: Array<KotlinDependencyId>,
     override val output: KotlinCompilationOutput,
     override val arguments: KotlinCompilationArguments,
-    override val dependencyClasspath: List<String>
+    override val dependencyClasspath: Array<String>,
+    override val kotlinTaskProperties: KotlinTaskProperties
 ) : KotlinCompilation {
 
     // create deep copy
@@ -96,10 +100,11 @@ data class KotlinCompilationImpl(
                 cloningCache[initialSourceSet] = it
             }
         }.toList(),
-        kotlinCompilation.dependencies.map { it.deepCopy(cloningCache) }.toSet(),
+        kotlinCompilation.dependencies,
         KotlinCompilationOutputImpl(kotlinCompilation.output),
         KotlinCompilationArgumentsImpl(kotlinCompilation.arguments),
-        ArrayList(kotlinCompilation.dependencyClasspath)
+        kotlinCompilation.dependencyClasspath,
+        KotlinTaskPropertiesImpl(kotlinCompilation.kotlinTaskProperties)
     ) {
         disambiguationClassifier = kotlinCompilation.disambiguationClassifier
         platform = kotlinCompilation.platform
@@ -128,7 +133,9 @@ data class KotlinTargetImpl(
     override val disambiguationClassifier: String?,
     override val platform: KotlinPlatform,
     override val compilations: Collection<KotlinCompilation>,
-    override val jar: KotlinTargetJar?
+    override val testTasks: Collection<KotlinTestTask>,
+    override val jar: KotlinTargetJar?,
+    override val konanArtifacts: List<KonanArtifactModel>
 ) : KotlinTarget {
     override fun toString() = name
 
@@ -142,19 +149,31 @@ data class KotlinTargetImpl(
                 cloningCache[initialCompilation] = it
             }
         }.toList(),
-        KotlinTargetJarImpl(target.jar?.archiveFile)
+        target.testTasks.map { initialTestTask ->
+            (cloningCache[initialTestTask] as? KotlinTestTask) ?: KotlinTestTaskImpl(initialTestTask.taskName).also {
+                cloningCache[initialTestTask] = it
+            }
+        },
+        KotlinTargetJarImpl(target.jar?.archiveFile),
+        target.konanArtifacts.map { KonanArtifactModelImpl(it) }.toList()
     )
 }
 
+data class KotlinTestTaskImpl(
+    override val taskName: String
+) : KotlinTestTask
+
 data class ExtraFeaturesImpl(
-    override val coroutinesState: String?
+    override val coroutinesState: String?,
+    override val isHMPPEnabled: Boolean
 ) : ExtraFeatures
 
 data class KotlinMPPGradleModelImpl(
     override val sourceSets: Map<String, KotlinSourceSet>,
     override val targets: Collection<KotlinTarget>,
     override val extraFeatures: ExtraFeatures,
-    override val kotlinNativeHome: String
+    override val kotlinNativeHome: String,
+    override val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
 ) : KotlinMPPGradleModel {
 
     constructor(mppModel: KotlinMPPGradleModel, cloningCache: MutableMap<Any, Any>) : this(
@@ -169,8 +188,9 @@ data class KotlinMPPGradleModelImpl(
                 cloningCache[initialTarget] = it
             }
         }.toList(),
-        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState),
-        mppModel.kotlinNativeHome
+        ExtraFeaturesImpl(mppModel.extraFeatures.coroutinesState, mppModel.extraFeatures.isHMPPEnabled),
+        mppModel.kotlinNativeHome,
+        mppModel.dependencyMap.map { it.key to it.value.deepCopy(cloningCache) }.toMap()
     )
 }
 
@@ -191,4 +211,45 @@ class KotlinPlatformContainerImpl() : KotlinPlatformContainer {
     override fun addSimplePlatforms(platforms: Collection<KotlinPlatform>) {
         (myPlatforms ?: HashSet<KotlinPlatform>().apply { myPlatforms = this }).addAll(platforms)
     }
+}
+
+data class KonanArtifactModelImpl(
+    override val targetName: String,
+    override val executableName: String,
+    override val type: String,
+    override val targetPlatform: String,
+    override val file: File,
+    override val buildTaskPath: String,
+    override val runConfiguration: KonanRunConfigurationModel,
+    override val isTests: Boolean
+) : KonanArtifactModel {
+    constructor(artifact: KonanArtifactModel) : this(
+        artifact.targetName,
+        artifact.executableName,
+        artifact.type,
+        artifact.targetPlatform,
+        artifact.file,
+        artifact.buildTaskPath,
+        KonanRunConfigurationModelImpl(artifact.runConfiguration),
+        artifact.isTests
+    )
+}
+
+data class KonanRunConfigurationModelImpl(
+    override val workingDirectory: String,
+    override val programParameters: List<String>,
+    override val environmentVariables: Map<String, String>
+) : KonanRunConfigurationModel {
+    constructor(configuration: KonanRunConfigurationModel) : this(
+        configuration.workingDirectory,
+        ArrayList(configuration.programParameters),
+        HashMap(configuration.environmentVariables)
+    )
+
+    constructor(runTask: Exec?) : this(
+        runTask?.workingDir?.path ?: KonanRunConfigurationModel.NO_WORKING_DIRECTORY,
+        runTask?.args as List<String>? ?: KonanRunConfigurationModel.NO_PROGRAM_PARAMETERS,
+        (runTask?.environment as Map<String, Any>?)
+            ?.mapValues { it.value.toString() } ?: KonanRunConfigurationModel.NO_ENVIRONMENT_VARIABLES
+    )
 }

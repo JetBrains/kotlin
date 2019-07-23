@@ -23,7 +23,7 @@ import com.intellij.psi.impl.light.LightElement
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtElement
 
-abstract class KtLightElementBase(private val parent: PsiElement): LightElement(parent.manager, KotlinLanguage.INSTANCE) {
+abstract class KtLightElementBase(private val parent: PsiElement) : LightElement(parent.manager, KotlinLanguage.INSTANCE) {
     override fun toString() = "${this.javaClass.simpleName} of $parent"
     override fun getParent(): PsiElement = parent
 
@@ -38,7 +38,7 @@ abstract class KtLightElementBase(private val parent: PsiElement): LightElement(
     override fun getUseScope() = kotlinOrigin?.useScope ?: super.getUseScope()
     override fun getContainingFile() = parent.containingFile
     override fun getPresentation() = (kotlinOrigin ?: this).let { ItemPresentationProviders.getItemPresentation(it) }
-    override fun isValid() = parent.isValid
+    override fun isValid() = parent.isValid && (kotlinOrigin?.isValid != false)
     override fun findElementAt(offset: Int) = kotlinOrigin?.findElementAt(offset)
     override fun isEquivalentTo(another: PsiElement?): Boolean =
         super.isEquivalentTo(another) || kotlinOrigin?.isEquivalentTo(another) == true

@@ -61,13 +61,12 @@ open class OverloadingConflictResolver<C : Any>(
     fun chooseMaximallySpecificCandidates(
         candidates: Collection<C>,
         checkArgumentsMode: CheckArgumentTypesMode,
-        discriminateGenerics: Boolean,
-        isDebuggerContext: Boolean
+        discriminateGenerics: Boolean
     ): Set<C> {
         candidates.setIfOneOrEmpty()?.let { return it }
 
         val fixedCandidates = if (getVariableCandidates(candidates.first()) != null) {
-            findMaximallySpecificVariableAsFunctionCalls(candidates, isDebuggerContext) ?: return LinkedHashSet(candidates)
+            findMaximallySpecificVariableAsFunctionCalls(candidates) ?: return LinkedHashSet(candidates)
         } else {
             candidates
         }
@@ -93,13 +92,13 @@ open class OverloadingConflictResolver<C : Any>(
             return noOverrides
         }
 
-        val maximallySpecific = findMaximallySpecific(noOverrides, checkArgumentsMode, false, isDebuggerContext)
+        val maximallySpecific = findMaximallySpecific(noOverrides, checkArgumentsMode, false)
         if (maximallySpecific != null) {
             return setOf(maximallySpecific)
         }
 
         if (discriminateGenerics) {
-            val maximallySpecificGenericsDiscriminated = findMaximallySpecific(noOverrides, checkArgumentsMode, true, isDebuggerContext)
+            val maximallySpecificGenericsDiscriminated = findMaximallySpecific(noOverrides, checkArgumentsMode, true)
             if (maximallySpecificGenericsDiscriminated != null) {
                 return setOf(maximallySpecificGenericsDiscriminated)
             }
@@ -141,8 +140,7 @@ open class OverloadingConflictResolver<C : Any>(
     private fun findMaximallySpecific(
         candidates: Set<C>,
         checkArgumentsMode: CheckArgumentTypesMode,
-        discriminateGenerics: Boolean,
-        isDebuggerContext: Boolean
+        discriminateGenerics: Boolean
     ): C? =
         if (candidates.size <= 1)
             candidates.firstOrNull()
@@ -155,29 +153,29 @@ open class OverloadingConflictResolver<C : Any>(
                 }
 
             CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS ->
-                findMaximallySpecificCall(candidates, discriminateGenerics, isDebuggerContext)
+                findMaximallySpecificCall(candidates, discriminateGenerics)
                     ?: hasSAMConversion?.let { hasConversion ->
                         findMaximallySpecificCall(
                             candidates.filterNotTo(mutableSetOf()) { hasConversion(it) },
-                            discriminateGenerics, isDebuggerContext
+                            discriminateGenerics
                         )
                     }
 
                     ?: findMaximallySpecificCall(
                         candidates.filterNotTo(mutableSetOf()) { createFlatSignature(it).isSyntheticMember },
-                        discriminateGenerics, isDebuggerContext
+                        discriminateGenerics
                     )
         }
 
     // null means ambiguity between variables
-    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Collection<C>, isDebuggerContext: Boolean): Set<C>? {
+    private fun findMaximallySpecificVariableAsFunctionCalls(candidates: Collection<C>): Set<C>? {
         val variableCalls = candidates.mapTo(newResolvedCallSet(candidates.size)) {
             getVariableCandidates(it) ?: throw AssertionError("Regular call among variable-as-function calls: $it")
         }
 
         val maxSpecificVariableCalls = chooseMaximallySpecificCandidates(
             variableCalls, CheckArgumentTypesMode.CHECK_VALUE_ARGUMENTS,
-            isDebuggerContext = isDebuggerContext, discriminateGenerics = false
+            discriminateGenerics = false
         )
 
         val maxSpecificVariableCall = maxSpecificVariableCalls.singleOrNull() ?: return null
@@ -186,11 +184,7 @@ open class OverloadingConflictResolver<C : Any>(
         }
     }
 
-    private fun findMaximallySpecificCall(
-        candidates: Set<C>,
-        discriminateGenerics: Boolean,
-        isDebuggerContext: Boolean
-    ): C? {
+    private fun findMaximallySpecificCall(candidates: Set<C>, discriminateGenerics: Boolean): C? {
         val filteredCandidates = uniquifyCandidatesSet(candidates)
 
         if (filteredCandidates.size <= 1) return filteredCandidates.singleOrNull()
@@ -205,9 +199,7 @@ open class OverloadingConflictResolver<C : Any>(
             }
         }
 
-        return bestCandidatesByParameterTypes.exactMaxWith { call1, call2 ->
-            isOfNotLessSpecificShape(call1, call2) && isOfNotLessSpecificVisibilityForDebugger(call1, call2, isDebuggerContext)
-        }?.origin
+        return bestCandidatesByParameterTypes.exactMaxWith { call1, call2 -> isOfNotLessSpecificShape(call1, call2) }?.origin
     }
 
     private inline fun <C : Any> Collection<C>.exactMaxWith(isNotWorse: (C, C) -> Boolean): C? {
@@ -356,19 +348,6 @@ open class OverloadingConflictResolver<C : Any>(
 
         if (call1.numDefaults > call2.numDefaults) {
             return false
-        }
-
-        return true
-    }
-
-    private fun isOfNotLessSpecificVisibilityForDebugger(
-        call1: FlatSignature<C>,
-        call2: FlatSignature<C>,
-        isDebuggerContext: Boolean
-    ): Boolean {
-        if (isDebuggerContext) {
-            val isMoreVisible1 = Visibilities.compare(call1.descriptorVisibility(), call2.descriptorVisibility())
-            if (isMoreVisible1 != null && isMoreVisible1 < 0) return false
         }
 
         return true

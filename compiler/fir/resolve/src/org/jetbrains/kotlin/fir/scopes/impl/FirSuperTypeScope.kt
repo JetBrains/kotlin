@@ -8,9 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.impl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeVariableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirSuperTypeScope(
@@ -18,7 +18,7 @@ class FirSuperTypeScope(
     val scopes: List<FirScope>
 ) : AbstractFirOverrideScope(session) {
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val accepted = HashSet<ConeFunctionSymbol>()
         val pending = mutableListOf<ConeFunctionSymbol>()
         for (scope in scopes) {
@@ -40,9 +40,9 @@ class FirSuperTypeScope(
         return super.processFunctionsByName(name, processor)
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
-        val accepted = HashSet<ConeCallableSymbol>()
-        val pending = mutableListOf<ConeVariableSymbol>()
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
+        val accepted = HashSet<FirCallableSymbol<*>>()
+        val pending = mutableListOf<FirCallableSymbol<*>>()
         for (scope in scopes) {
             if (scope.processPropertiesByName(name) {
                     if (it !in accepted && it.isOverridden(accepted) == null) {

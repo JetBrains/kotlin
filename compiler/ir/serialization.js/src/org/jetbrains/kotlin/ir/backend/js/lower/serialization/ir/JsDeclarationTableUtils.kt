@@ -27,10 +27,11 @@ private val kotlinFqn = FqName("kotlin")
 private val functionalPackages =
     listOf(kotlinFqn, kotlinFqn.child(Name.identifier("coroutines")), kotlinFqn.child(Name.identifier("reflect")))
 
-internal val BUILT_IN_FUNCTION_CLASS_COUNT = 4
-internal val BUILT_IN_FUNCTION_ARITY_COUNT = 256
-internal val BUILT_IN_UNIQ_ID_GAP = 2 * BUILT_IN_FUNCTION_ARITY_COUNT * BUILT_IN_FUNCTION_CLASS_COUNT
-internal val BUILT_IN_UNIQ_ID_CLASS_OFFSET = BUILT_IN_FUNCTION_CLASS_COUNT * BUILT_IN_FUNCTION_ARITY_COUNT
+internal const val PUBLIC_LOCAL_UNIQ_ID_EDGE = 0x7FFF_FFFF_FFFF_FFFFL + 1L
+internal const val BUILT_IN_FUNCTION_CLASS_COUNT = 4
+internal const val BUILT_IN_FUNCTION_ARITY_COUNT = 256
+internal const val BUILT_IN_UNIQ_ID_GAP = 2 * BUILT_IN_FUNCTION_ARITY_COUNT * BUILT_IN_FUNCTION_CLASS_COUNT
+internal const val BUILT_IN_UNIQ_ID_CLASS_OFFSET = BUILT_IN_FUNCTION_CLASS_COUNT * BUILT_IN_FUNCTION_ARITY_COUNT
 
 internal fun isBuiltInFunction(value: IrDeclaration): Boolean = when (value) {
     is IrSimpleFunction ->

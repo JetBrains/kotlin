@@ -36,6 +36,18 @@ open class ScriptEvaluationConfiguration(baseEvaluationConfigurations: Iterable<
 }
 
 /**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptEvaluationConfiguration?.with(body: ScriptEvaluationConfiguration.Builder.() -> Unit): ScriptEvaluationConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptEvaluationConfiguration(body = body)
+        else ScriptEvaluationConfiguration(this, body = body)
+    return if (newConfiguration != this) newConfiguration else this
+}
+
+
+/**
  * The list of actual script implicit receiver object, in the same order as specified in {@link ScriptCompilationConfigurationKeys#implicitReceivers}
  */
 val ScriptEvaluationConfigurationKeys.implicitReceivers by PropertiesCollection.key<List<Any>>()
@@ -109,17 +121,40 @@ data class RefineEvaluationConfigurationData(
 /**
  * The script evaluation result value
  */
-sealed class ResultValue {
-    class Value(val name: String, val value: Any?, val type: String, val scriptInstance: Any) : ResultValue() {
+sealed class ResultValue(val scriptInstance: Any? = null) {
+
+    /**
+     * The result value representing a script return value - the value of the last expression in the script
+     * @param name assigned name of the result field - used e.g. in REPL
+     * @param value actual result value
+     * @param type name of the result type
+     * @param scriptInstance instance of the script class
+     */
+    class Value(val name: String, val value: Any?, val type: String, scriptInstance: Any) : ResultValue(scriptInstance) {
         override fun toString(): String = "$name: $type = $value"
     }
 
-    class UnitValue(val scriptInstance: Any) : ResultValue() {
+    /**
+     * The result value representing unit result, e.g. when the script ends with a statement
+     * @param scriptInstance instance of the script class
+     */
+    class Unit(scriptInstance: Any) : ResultValue(scriptInstance) {
         override fun toString(): String = "Unit"
     }
 
-    // TODO: obsolete it, use differently named value in the saving evaluators
-    object Unit : ResultValue()
+    /**
+     * The result value representing an exception from script itself
+     * @param error the actual exception thrown on script evaluation
+     * @param wrappingException the wrapping exception e.g. InvocationTargetException, sometimes useful for calculating the relevant stacktrace
+     */
+    class Error(val error: Throwable, val wrappingException: Throwable? = null) : ResultValue() {
+        override fun toString(): String = error.toString()
+    }
+
+    /**
+     * The result value used in non-evaluating "evaluators"
+     */
+    object NotEvaluated : ResultValue()
 }
 
 /**

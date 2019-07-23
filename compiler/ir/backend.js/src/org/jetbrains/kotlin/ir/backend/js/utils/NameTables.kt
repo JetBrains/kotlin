@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isEnumClass
-import org.jetbrains.kotlin.ir.util.isInlined
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -279,7 +276,7 @@ class NameTables(packages: List<IrPackageFragment>) {
         if (name == null && signature is ParameterTypeBasedSignature && signature.suggestedName.startsWith("invoke"))
             return signature.suggestedName
         require(name != null) {
-            "Can't find name for member function $function"
+            "Can't find name for member function ${function.render()}"
         }
         return name
     }

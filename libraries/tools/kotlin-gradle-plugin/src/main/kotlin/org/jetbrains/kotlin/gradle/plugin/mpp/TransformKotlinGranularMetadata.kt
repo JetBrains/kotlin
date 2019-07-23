@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.API_SCOP
 import org.jetbrains.kotlin.gradle.plugin.sources.KotlinDependencyScope.IMPLEMENTATION_SCOPE
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.targets.metadata.ALL_COMPILE_METADATA_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import java.io.File
 import javax.inject.Inject
 
@@ -64,13 +65,22 @@ open class TransformKotlinGranularMetadata
                 .allDependencies.map { listOf(it.group, it.name, it.version) }.toSet()
         }
 
-    private val transformation =
+    @get:Internal
+    internal val transformation: GranularMetadataTransformation by lazy {
         GranularMetadataTransformation(
             project,
             kotlinSourceSet,
             listOf(API_SCOPE, IMPLEMENTATION_SCOPE),
-            listOf(project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME))
+            project.configurations.getByName(ALL_COMPILE_METADATA_CONFIGURATION_NAME),
+            lazy {
+                KotlinMetadataTargetConfigurator.dependsOnWithInterCompilationDependencies(project, kotlinSourceSet).map {
+                    project.tasks.withType(TransformKotlinGranularMetadata::class.java)
+                        .getByName(KotlinMetadataTargetConfigurator.transformGranularMetadataTaskName(it))
+                        .transformation
+                }
+            }
         )
+    }
 
     @get:Internal
     internal val metadataDependencyResolutions: Iterable<MetadataDependencyResolution>

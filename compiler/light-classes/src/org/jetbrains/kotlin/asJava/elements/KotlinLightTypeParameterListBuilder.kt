@@ -26,7 +26,12 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 
 class KotlinLightTypeParameterListBuilder(private val owner: PsiTypeParameterListOwner) :
     LightTypeParameterListBuilder(owner.manager, KotlinLanguage.INSTANCE) {
-    override fun processDeclarations(processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement): Boolean {
+    override fun processDeclarations(
+        processor: PsiScopeProcessor,
+        state: ResolveState,
+        lastParent: PsiElement?,
+        place: PsiElement
+    ): Boolean {
         return typeParameters.all { processor.execute(it, state) }
     }
 

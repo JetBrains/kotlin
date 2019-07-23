@@ -160,6 +160,8 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         } ?: KotlinModuleKind.DEFAULT
         isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
         externalProjectId = element.getAttributeValue("externalProjectId") ?: ""
+        isHmppEnabled = element.getAttribute("isHmppProject")?.booleanValue ?: false
+        pureKotlinSourceFolders = element.getAttributeValue("pureKotlinSourceFolders")?.split(";")?.toList() ?: emptyList()
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)
@@ -295,6 +297,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     val filter = SkipDefaultsSerializationFilter()
 
     targetPlatform?.let {
+        element.setAttribute("platform", it.oldFashionedDescription)
         element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.joinToString(separator = "/"))
     }
     if (!useProjectSettings) {
@@ -325,6 +328,12 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     }
     if (externalProjectId.isNotEmpty()) {
         element.setAttribute("externalProjectId", externalProjectId)
+    }
+    if (isHmppEnabled) {
+        element.setAttribute("isHmppProject", isHmppEnabled.toString())
+    }
+    if (pureKotlinSourceFolders.isNotEmpty()) {
+        element.setAttribute("pureKotlinSourceFolders", pureKotlinSourceFolders.joinToString(";"))
     }
     productionOutputPath?.let {
         if (it != (compilerArguments as? K2JSCompilerArguments)?.outputFile) {

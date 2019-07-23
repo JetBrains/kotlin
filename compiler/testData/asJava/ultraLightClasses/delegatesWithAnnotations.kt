@@ -1,15 +1,13 @@
 import kotlin.reflect.KClass
 
-/** should load cls */
 annotation class SimpleAnn(val value: String)
 
-/** should load cls */
 annotation class Ann(
     val x: Int,
     val y: String,
     val z: KClass<*>,
     val e: Array<KClass<*>>,
-    val depr: DeprecationLevel
+    val depr: DeprecationLevel,
     vararg val t: SimpleAnn
 )
 

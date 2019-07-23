@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.backend.ast.JsLocationWithSource;
 import org.jetbrains.kotlin.js.sourceMap.SourceFilePathResolver;
 import org.jetbrains.kotlin.js.sourceMap.SourceMapMappingConsumer;
 import org.jetbrains.kotlin.js.translate.utils.PsiUtils;
+import org.jetbrains.kotlin.resolve.calls.callUtil.CallUtilKt;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -87,6 +88,7 @@ public class SourceMapBuilderConsumer implements SourceLocationConsumer {
         }
         if (sourceInfo instanceof PsiElement) {
             PsiElement element = (PsiElement) sourceInfo;
+            if (CallUtilKt.isFakePsiElement(element)) return;
             try {
                 JsLocation location = PsiUtils.extractLocationFromPsi(element, pathResolver);
                 PsiFile psiFile = element.getContainingFile();

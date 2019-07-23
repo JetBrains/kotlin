@@ -1271,6 +1271,8 @@ public actual inline fun <T> Array<out T>.plusElement(element: T): Array<T> {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun IntArray.sort(): Unit {
@@ -1279,6 +1281,8 @@ public actual fun IntArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public actual fun LongArray.sort(): Unit {
     if (size > 1) sort { a: Long, b: Long -> a.compareTo(b) }
@@ -1286,6 +1290,8 @@ public actual fun LongArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun ByteArray.sort(): Unit {
@@ -1294,6 +1300,8 @@ public actual fun ByteArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun ShortArray.sort(): Unit {
@@ -1302,6 +1310,8 @@ public actual fun ShortArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun DoubleArray.sort(): Unit {
@@ -1310,6 +1320,8 @@ public actual fun DoubleArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun FloatArray.sort(): Unit {
@@ -1318,6 +1330,8 @@ public actual fun FloatArray.sort(): Unit {
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 @library("primitiveArraySort")
 public actual fun CharArray.sort(): Unit {
@@ -1328,6 +1342,8 @@ public actual fun CharArray.sort(): Unit {
  * Sorts the array in-place according to the natural order of its elements.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 public actual fun <T : Comparable<T>> Array<out T>.sort(): Unit {
     if (size > 1) sortArray(this)

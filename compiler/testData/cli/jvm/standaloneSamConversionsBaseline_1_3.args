@@ -1,0 +1,3 @@
+$TESTDATA_DIR$/standaloneSamConversionsAreEnabledWithNewInference.kt
+-d
+$TEMP_DIR$

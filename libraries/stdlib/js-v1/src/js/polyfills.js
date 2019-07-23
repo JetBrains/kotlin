@@ -230,6 +230,17 @@ if (typeof Math.log2 === "undefined") {
         return Math.log(x) * Math.LOG2E;
     };
 }
+if (typeof Math.clz32 === "undefined") {
+    Math.clz32 = (function(log, LN2) {
+        return function(x) {
+            var asUint = x >>> 0;
+            if (asUint === 0) {
+                return 32;
+            }
+            return 31 - (log(asUint) / LN2 | 0) | 0; // the "| 0" acts like math.floor
+        };
+    })(Math.log, Math.LN2);
+}
 
 // For HtmlUnit and PhantomJs
 if (typeof ArrayBuffer.isView === "undefined") {

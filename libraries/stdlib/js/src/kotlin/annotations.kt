@@ -160,3 +160,13 @@ public annotation class JsNonModule
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
 public annotation class JsQualifier(val value: String)
+
+/**
+ * Exports top-level declaration.
+ *
+ * Used in future IR-based backend.
+ * Has no effect in current JS backend.
+ */
+@Retention(AnnotationRetention.BINARY)
+@Target(CLASS, PROPERTY, FUNCTION, FILE)
+public annotation class JsExport

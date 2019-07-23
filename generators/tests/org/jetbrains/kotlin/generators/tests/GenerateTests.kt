@@ -155,6 +155,7 @@ import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.nj2k.AbstractNullabilityAnalysisTest
+import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
 import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
@@ -806,9 +807,13 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractScratchRunActionTest> {
-            model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling", recursive = false)
-            model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl", recursive = false)
-            model("scratch/multiFile", extension = null, testMethod = "doMultiFileTest", recursive = false)
+            model("scratch", extension = "kts", testMethod = "doScratchCompilingTest", testClassName = "ScratchCompiling", recursive = false)
+            model("scratch", extension = "kts", testMethod = "doScratchReplTest", testClassName = "ScratchRepl", recursive = false)
+            model("scratch/multiFile", extension = null, testMethod = "doScratchMultiFileTest", testClassName = "ScratchMultiFile", recursive = false)
+
+            model("worksheet", extension = "ws.kts", testMethod = "doWorksheetCompilingTest", testClassName = "WorksheetCompiling", recursive = false)
+            model("worksheet", extension = "ws.kts", testMethod = "doWorksheetReplTest", testClassName = "WorksheetRepl", recursive = false)
+            model("worksheet/multiFile", extension = null, testMethod = "doWorksheetMultiFileTest", testClassName = "WorksheetMultiFile", recursive = false)
         }
 
         testClass<AbstractScratchLineMarkersTest> {
@@ -923,7 +928,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractCompletionCharFilterTest> {
-            model("handlers/charFilter")
+            model("handlers/charFilter", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
         testClass<AbstractMultiFileJvmBasicCompletionTest> {
@@ -984,6 +989,9 @@ fun main(args: Array<String>) {
         }
         testClass<AbstractNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste", pattern = """^([^\.]+)\.java$""")
+        }
+        testClass<AbstractTextNewJavaToKotlinCopyPasteConversionTest> {
+            model("copyPastePlainText", pattern = """^([^\.]+)\.txt$""")
         }
         testClass<AbstractNullabilityAnalysisTest> {
             model("nullabilityAnalysis")
@@ -1190,6 +1198,11 @@ fun main(args: Array<String>) {
             model("highlighter", testMethod = "doPerfTest")
         }
 
+        testClass<AbstractPerformanceAddImportTest> {
+            model("addImport", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+
     }
 
     testGroup("idea/performanceTests", "idea/idea-completion/testData") {
@@ -1210,7 +1223,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractPerformanceCompletionCharFilterTest> {
-            model("handlers/charFilter", testMethod = "doPerfTest")
+            model("handlers/charFilter", testMethod = "doPerfTest", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 /*

@@ -1,0 +1,282 @@
+KtFile: forDestructuring.kt
+  PACKAGE_DIRECTIVE
+    <empty list>
+  IMPORT_LIST
+    <empty list>
+  PsiComment(EOL_COMMENT)('// Issue: KT-31734')
+  PsiWhiteSpace('\n\n')
+  FUN
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('foo')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiWhiteSpace(' ')
+    BLOCK
+      PsiElement(LBRACE)('{')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('i')
+                PsiErrorElement:Unexpected type specification
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
+        PsiErrorElement:Expecting 'in'
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('i')
+                PsiErrorElement:Expecting ')'
+                  PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            PsiErrorElement:Expecting a name
+              <empty list>
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiErrorElement:Expecting 'in'
+          PsiElement(ARROW)('->')
+        PsiErrorElement:Expecting ')'
+          <empty list>
+        PsiWhiteSpace(' ')
+        BODY
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('Unit')
+      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('y')
+        PsiElement(RPAR)(')')
+      PsiWhiteSpace(' ')
+      LAMBDA_EXPRESSION
+        FUNCTION_LITERAL
+          PsiElement(LBRACE)('{')
+          BLOCK
+            <empty list>
+          PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('i')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
+        PsiErrorElement:Expecting 'in'
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('i')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('j')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
+        PsiErrorElement:Expecting 'in'
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+              PsiWhiteSpace(' ')
+              VALUE_ARGUMENT_LIST
+                PsiElement(LPAR)('(')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('i')
+                PsiElement(COMMA)(',')
+                PsiWhiteSpace(' ')
+                VALUE_ARGUMENT
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('j')
+                PsiErrorElement:Unexpected type specification
+                  PsiElement(COLON)(':')
+                  PsiWhiteSpace(' ')
+                  PsiElement(IDENTIFIER)('Int')
+                PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(in)('in')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('y')
+        PsiErrorElement:Expecting 'in'
+          <empty list>
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('i')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('Int')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('y')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('Foo')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('i')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('y')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n')
+      PsiElement(RBRACE)('}')

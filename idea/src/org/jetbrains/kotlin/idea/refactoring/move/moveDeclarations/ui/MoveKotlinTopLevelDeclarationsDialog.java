@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
@@ -24,7 +13,6 @@ import com.intellij.openapi.editor.event.DocumentListener;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.JavaProjectRootsUtil;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.TextFieldWithBrowseButton;
 import com.intellij.openapi.util.Pair;
@@ -32,8 +20,10 @@ import com.intellij.openapi.util.Pass;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
+import com.intellij.psi.impl.source.PsiFileImpl;
 import com.intellij.refactoring.*;
 import com.intellij.refactoring.classMembers.AbstractMemberInfoModel;
+import com.intellij.refactoring.classMembers.MemberInfoBase;
 import com.intellij.refactoring.classMembers.MemberInfoChange;
 import com.intellij.refactoring.classMembers.MemberInfoChangeListener;
 import com.intellij.refactoring.move.MoveCallback;
@@ -46,18 +36,16 @@ import com.intellij.refactoring.util.CommonRefactoringUtil;
 import com.intellij.ui.ComboboxWithBrowseButton;
 import com.intellij.ui.RecentsManager;
 import com.intellij.ui.ReferenceEditorComboWithBrowseButton;
-import com.intellij.util.Function;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.ui.UIUtil;
 import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function0;
-import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.core.util.PhysicalFileSystemUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringBundle;
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberInfo;
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KotlinMemberSelectionPanel;
@@ -70,19 +58,18 @@ import org.jetbrains.kotlin.idea.util.application.ApplicationUtilsKt;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtFile;
 import org.jetbrains.kotlin.psi.KtNamedDeclaration;
+import org.jetbrains.kotlin.psi.KtPureElement;
 import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
+import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
 import static java.util.Collections.emptyList;
-import static org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessorKt.MoveSource;
 
 public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static final String RECENTS_KEY = "MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY";
@@ -143,12 +130,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         return CollectionsKt.distinct(
                 CollectionsKt.map(
                         elementsToMove,
-                        new Function1<KtNamedDeclaration, KtFile>() {
-                            @Override
-                            public KtFile invoke(KtNamedDeclaration declaration) {
-                                return declaration.getContainingKtFile();
-                            }
-                        }
+                        KtPureElement::getContainingKtFile
                 )
         );
     }
@@ -159,12 +141,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 CollectionsKt.distinct(
                         CollectionsKt.map(
                                 sourceFiles,
-                                new Function1<KtFile, PsiDirectory>() {
-                                    @Override
-                                    public PsiDirectory invoke(KtFile jetFile) {
-                                        return jetFile.getParent();
-                                    }
-                                }
+                                PsiFileImpl::getParent
                         )
                 )
         );
@@ -174,12 +151,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         return CollectionsKt.filterIsInstance(
                 CollectionsKt.flatMap(
                         sourceFiles,
-                        new Function1<KtFile, Iterable<?>>() {
-                            @Override
-                            public Iterable<?> invoke(KtFile ktFile) {
-                                return KtPsiUtilKt.getFileOrScriptDeclarations(ktFile);
-                            }
-                        }
+                        KtPsiUtilKt::getFileOrScriptDeclarations
                 ),
                 KtNamedDeclaration.class
         );
@@ -187,7 +159,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private static boolean arePackagesAndDirectoryMatched(List<KtFile> sourceFiles) {
         for (KtFile sourceFile : sourceFiles) {
-            if (!PackageUtilsKt.packageMatchesDirectory(sourceFile)) return false;
+            if (!PackageUtilsKt.packageMatchesDirectoryOrImplicit(sourceFile)) return false;
         }
         return true;
     }
@@ -196,7 +168,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private static List<PsiFile> getFilesExistingInTargetDir(
             @NotNull List<KtFile> sourceFiles,
             @Nullable String targetFileName,
-            @Nullable final PsiDirectory targetDirectory
+            @Nullable PsiDirectory targetDirectory
     ) {
         if (targetDirectory == null) return emptyList();
 
@@ -205,62 +177,44 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 ? Collections.singletonList(targetFileName)
                 : CollectionsKt.map(
                         sourceFiles,
-                        new Function1<KtFile, String>() {
-                            @Override
-                            public String invoke(KtFile jetFile) {
-                                return jetFile.getName();
-                            }
-                        }
+                        PsiFileImpl::getName
                 );
 
         return CollectionsKt.filterNotNull(
                 CollectionsKt.map(
                         fileNames,
-                        new Function1<String, PsiFile>() {
-                            @Override
-                            public PsiFile invoke(String s) {
-                                return targetDirectory.findFile(s);
-                            }
-                        }
+                        targetDirectory::findFile
                 )
         );
     }
 
     private void initMemberInfo(
-            @NotNull final Set<KtNamedDeclaration> elementsToMove,
+            @NotNull Set<KtNamedDeclaration> elementsToMove,
             @NotNull List<KtFile> sourceFiles
     ) {
-        final List<KotlinMemberInfo> memberInfos = CollectionsKt.map(
+        List<KotlinMemberInfo> memberInfos = CollectionsKt.map(
                 getAllDeclarations(sourceFiles),
-                new Function1<KtNamedDeclaration, KotlinMemberInfo>() {
-                    @Override
-                    public KotlinMemberInfo invoke(KtNamedDeclaration declaration) {
-                        KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration, false);
-                        memberInfo.setChecked(elementsToMove.contains(declaration));
-                        return memberInfo;
-                    }
+                declaration -> {
+                    KotlinMemberInfo memberInfo = new KotlinMemberInfo(declaration, false);
+                    memberInfo.setChecked(elementsToMove.contains(declaration));
+                    return memberInfo;
                 }
         );
         KotlinMemberSelectionPanel selectionPanel = new KotlinMemberSelectionPanel(getTitle(), memberInfos, null);
         memberTable = selectionPanel.getTable();
         MemberInfoModelImpl memberInfoModel = new MemberInfoModelImpl();
-        memberInfoModel.memberInfoChanged(new MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo>(memberInfos));
+        memberInfoModel.memberInfoChanged(new MemberInfoChange<>(memberInfos));
         selectionPanel.getTable().setMemberInfoModel(memberInfoModel);
         selectionPanel.getTable().addMemberInfoChangeListener(memberInfoModel);
         selectionPanel.getTable().addMemberInfoChangeListener(
                 new MemberInfoChangeListener<KtNamedDeclaration, KotlinMemberInfo>() {
-                    private boolean shouldUpdateFileNameField(final Collection<KotlinMemberInfo> changedMembers) {
+                    private boolean shouldUpdateFileNameField(Collection<KotlinMemberInfo> changedMembers) {
                         if (!tfFileNameInPackage.isEnabled()) return true;
 
                         Collection<KtNamedDeclaration> previousDeclarations = CollectionsKt.filterNotNull(
                                 CollectionsKt.map(
                                         memberInfos,
-                                        new Function1<KotlinMemberInfo, KtNamedDeclaration>() {
-                                            @Override
-                                            public KtNamedDeclaration invoke(KotlinMemberInfo info) {
-                                                return changedMembers.contains(info) != info.isChecked() ? info.getMember() : null;
-                                            }
-                                        }
+                                        info -> changedMembers.contains(info) != info.isChecked() ? info.getMember() : null
                                 )
                         );
                         String suggestedText = previousDeclarations.isEmpty()
@@ -270,7 +224,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     }
 
                     @Override
-                    public void memberInfoChanged(MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo> event) {
+                    public void memberInfoChanged(@NotNull MemberInfoChange<KtNamedDeclaration, KotlinMemberInfo> event) {
                         updatePackageDirectiveCheckBox();
                         updateFileNameInPackageField();
                         // Update file name field only if it user hasn't changed it to some non-default value
@@ -285,7 +239,6 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
     private void updateSuggestedFileName() {
         tfFileNameInPackage.setText(MoveUtilsKt.guessNewFileName(getSelectedElementsToMove()));
-
     }
 
     private void updateFileNameInPackageField() {
@@ -316,14 +269,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 classPackageChooser.getChildComponent()
         );
 
-        cbSpecifyFileNameInPackage.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(@NotNull ActionEvent e) {
-                        updateFileNameInPackageField();
-                    }
-                }
-        );
+        cbSpecifyFileNameInPackage.addActionListener(e -> updateFileNameInPackageField());
 
         cbUpdatePackageDirective.setSelected(arePackagesAndDirectoryMatched(sourceFiles));
     }
@@ -342,22 +288,16 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         rbMoveToPackage.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(@NotNull ActionEvent e) {
-                        classPackageChooser.requestFocus();
-                        updateControls();
-                    }
+                e -> {
+                    classPackageChooser.requestFocus();
+                    updateControls();
                 }
         );
 
         rbMoveToFile.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(@NotNull ActionEvent e) {
-                        fileChooser.requestFocus();
-                        updateControls();
-                    }
+                e -> {
+                    fileChooser.requestFocus();
+                    updateControls();
                 }
         );
     }
@@ -367,33 +307,30 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             @NotNull Set<KtNamedDeclaration> elementsToMove,
             @NotNull List<KtFile> sourceFiles
     ) {
-        final PsiDirectory sourceDir = sourceFiles.get(0).getParent();
+        PsiDirectory sourceDir = sourceFiles.get(0).getParent();
         assert sourceDir != null : sourceFiles.get(0).getVirtualFile().getPath();
 
         fileChooser.addActionListener(
-                new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        KotlinFileChooserDialog dialog = new KotlinFileChooserDialog("Choose Containing File", myProject);
+                e -> {
+                    KotlinFileChooserDialog dialog = new KotlinFileChooserDialog("Choose Containing File", myProject);
 
-                        File targetFile = new File(getTargetFilePath());
-                        PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile, myProject);
-                        if (targetPsiFile instanceof KtFile) {
-                            dialog.select((KtFile) targetPsiFile);
+                    File targetFile1 = new File(getTargetFilePath());
+                    PsiFile targetPsiFile = PhysicalFileSystemUtilsKt.toPsiFile(targetFile1, myProject);
+                    if (targetPsiFile instanceof KtFile) {
+                        dialog.select((KtFile) targetPsiFile);
+                    }
+                    else {
+                        PsiDirectory targetDir = PhysicalFileSystemUtilsKt.toPsiDirectory(targetFile1.getParentFile(), myProject);
+                        if (targetDir == null) {
+                            targetDir = sourceDir;
                         }
-                        else {
-                            PsiDirectory targetDir = PhysicalFileSystemUtilsKt.toPsiDirectory(targetFile.getParentFile(), myProject);
-                            if (targetDir == null) {
-                                targetDir = sourceDir;
-                            }
-                            dialog.selectDirectory(targetDir);
-                        }
+                        dialog.selectDirectory(targetDir);
+                    }
 
-                        dialog.showDialog();
-                        KtFile selectedFile = dialog.isOK() ? dialog.getSelected() : null;
-                        if (selectedFile != null) {
-                            fileChooser.setText(selectedFile.getVirtualFile().getPath());
-                        }
+                    dialog.showDialog();
+                    KtFile selectedFile = dialog.isOK() ? dialog.getSelected() : null;
+                    if (selectedFile != null) {
+                        fileChooser.setText(selectedFile.getVirtualFile().getPath());
                     }
                 }
         );
@@ -446,12 +383,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private boolean isFullFileMove() {
         Map<KtFile, List<KtNamedDeclaration>> fileToElements = CollectionsKt.groupBy(
                 getSelectedElementsToMove(),
-                new Function1<KtNamedDeclaration, KtFile>() {
-                    @Override
-                    public KtFile invoke(KtNamedDeclaration declaration) {
-                        return declaration.getContainingKtFile();
-                    }
-                }
+                KtPureElement::getContainingKtFile
         );
         for (Map.Entry<KtFile, List<KtNamedDeclaration>> entry : fileToElements.entrySet()) {
             if (KtPsiUtilKt.getFileOrScriptDeclarations(entry.getKey()).size() != entry.getValue().size()) return false;
@@ -464,11 +396,11 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     }
 
     private boolean hasAnySourceRoots() {
-        return !JavaProjectRootsUtil.getSuitableDestinationSourceRoots(myProject).isEmpty();
+        return !getSuitableDestinationSourceRoots(myProject).isEmpty();
     }
 
     private void saveRefactoringSettings() {
-        JavaRefactoringSettings refactoringSettings = JavaRefactoringSettings.getInstance();
+        KotlinRefactoringSettings refactoringSettings = KotlinRefactoringSettings.getInstance();
         refactoringSettings.MOVE_SEARCH_IN_COMMENTS = isSearchInComments();
         refactoringSettings.MOVE_SEARCH_FOR_TEXT = isSearchInNonJavaFiles();
         refactoringSettings.MOVE_PREVIEW_USAGES = isPreviewUsages();
@@ -486,7 +418,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             if (ret != Messages.YES) return null;
         }
 
-        DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper)destinationFolderCB.getComboBox().getSelectedItem();
+        DirectoryChooser.ItemWrapper selectedItem = (DirectoryChooser.ItemWrapper) destinationFolderCB.getComboBox().getSelectedItem();
         PsiDirectory selectedPsiDirectory = selectedItem != null ? selectedItem.getDirectory() : null;
         if (selectedPsiDirectory == null) {
             if (initialTargetDirectory != null) {
@@ -525,9 +457,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             if (targetDirWithMoveDestination == null) return null;
 
             VirtualFile targetDir = targetDirWithMoveDestination.getFirst();
-            final MoveDestination moveDestination = targetDirWithMoveDestination.getSecond();
+            MoveDestination moveDestination = targetDirWithMoveDestination.getSecond();
 
-            final String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
+            String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
             if (targetFileName != null && !checkTargetFileName(targetFileName)) return null;
 
             PsiDirectory targetDirectory = moveDestination.getTargetIfExists(sourceDirectory);
@@ -537,12 +469,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                 if (filesExistingInTargetDir.size() > 1) {
                     String filePathsToReport = StringUtil.join(
                             filesExistingInTargetDir,
-                            new Function<PsiFile, String>() {
-                                @Override
-                                public String fun(PsiFile file) {
-                                    return file.getVirtualFile().getPath();
-                                }
-                            },
+                            file -> file.getVirtualFile().getPath(),
                             "\n"
                     );
                     Messages.showErrorDialog(
@@ -560,7 +487,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                             "File '%s' already exists. Do you want to move selected declarations to this file?",
                             targetFile.getVirtualFile().getPath()
                     );
-                    int ret=
+                    int ret =
                             Messages.showYesNoDialog(myProject, question, RefactoringBundle.message("move.title"),
                                                      Messages.getQuestionIcon());
                     if (ret != Messages.YES) return null;
@@ -576,19 +503,14 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     new FqName(getTargetPackage()),
                     moveDestination.getTargetIfExists(sourceFiles.get(0)),
                     targetDir,
-                    new Function1<KtFile, KtFile>() {
-                        @Override
-                        public KtFile invoke(@NotNull KtFile originalFile) {
-                            return KotlinRefactoringUtilKt.getOrCreateKotlinFile(
-                                    targetFileName != null ? targetFileName : originalFile.getName(),
-                                    moveDestination.getTargetDirectory(originalFile)
-                            );
-                        }
-                    }
+                    originalFile -> KotlinRefactoringUtilKt.getOrCreateKotlinFile(
+                            targetFileName != null ? targetFileName : originalFile.getName(),
+                            moveDestination.getTargetDirectory(originalFile)
+                    )
             );
         }
 
-        final File targetFile = new File(getTargetFilePath());
+        File targetFile = new File(getTargetFilePath());
         if (!checkTargetFileName(targetFile.getName())) return null;
         KtFile jetFile = (KtFile) PhysicalFileSystemUtilsKt.toPsiFile(targetFile, myProject);
         if (jetFile != null) {
@@ -602,7 +524,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         Path targetFilePath = targetFile.toPath();
         Path targetDirPath = targetFilePath.getParent();
-        if (targetDirPath == null || !targetDirPath.startsWith(getProject().getBasePath())) {
+        if (targetDirPath == null || !targetDirPath.startsWith(Objects.requireNonNull(getProject().getBasePath()))) {
             setErrorText("Incorrect target path. Directory " + targetDirPath + " does not belong to current project.");
             return null;
         }
@@ -625,7 +547,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
         }
 
         File targetDir = targetDirPath.toFile();
-        final PsiDirectory psiDirectory = targetDir != null ? PhysicalFileSystemUtilsKt.toPsiDirectory(targetDir, myProject) : null;
+        PsiDirectory psiDirectory = targetDir != null ? PhysicalFileSystemUtilsKt.toPsiDirectory(targetDir, myProject) : null;
         if (psiDirectory == null) {
             setErrorText("No directory found for file: " + targetFile.getPath());
             return null;
@@ -633,13 +555,8 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         Set<FqName> sourcePackageFqNames = CollectionsKt.mapTo(
                 sourceFiles,
-                new LinkedHashSet<FqName>(),
-                new Function1<KtFile, FqName>() {
-                    @Override
-                    public FqName invoke(KtFile file) {
-                        return file.getPackageFqName();
-                    }
-                }
+                new LinkedHashSet<>(),
+                KtFile::getPackageFqName
         );
         FqName targetPackageFqName = CollectionsKt.singleOrNull(sourcePackageFqNames);
         if (targetPackageFqName == null) {
@@ -651,17 +568,12 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             targetPackageFqName = new FqName(psiPackage.getQualifiedName());
         }
 
-        final String finalTargetPackageFqName = targetPackageFqName.asString();
+        String finalTargetPackageFqName = targetPackageFqName.asString();
         return new KotlinMoveTargetForDeferredFile(
                 targetPackageFqName,
                 psiDirectory,
                 null,
-                new Function1<KtFile, KtFile>() {
-                    @Override
-                    public KtFile invoke(@NotNull KtFile originalFile) {
-                        return KotlinRefactoringUtilKt.getOrCreateKotlinFile(targetFile.getName(), psiDirectory, finalTargetPackageFqName);
-                    }
-                }
+                originalFile -> KotlinRefactoringUtilKt.getOrCreateKotlinFile(targetFile.getName(), psiDirectory, finalTargetPackageFqName)
         );
     }
 
@@ -692,12 +604,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
     private List<KtNamedDeclaration> getSelectedElementsToMove() {
         return CollectionsKt.map(
                 memberTable.getSelectedMemberInfos(),
-                new Function1<KotlinMemberInfo, KtNamedDeclaration>() {
-                    @Override
-                    public KtNamedDeclaration invoke(KotlinMemberInfo info) {
-                        return info.getMember();
-                    }
-                }
+                MemberInfoBase::getMember
         );
     }
 
@@ -736,7 +643,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
         List<KtNamedDeclaration> elementsToMove = getSelectedElementsToMove();
         List<KtFile> sourceFiles = getSourceFiles(elementsToMove);
-        final PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
+        PsiDirectory sourceDirectory = getSourceDirectory(sourceFiles);
 
         for (PsiElement element : elementsToMove) {
             String message = target.verify(element.getContainingFile());
@@ -754,7 +661,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     Pair<VirtualFile, ? extends MoveDestination> sourceRootWithMoveDestination =
                             selectPackageBasedTargetDirAndDestination(false);
                     //noinspection ConstantConditions
-                    final MoveDestination moveDestination = sourceRootWithMoveDestination.getSecond();
+                    MoveDestination moveDestination = sourceRootWithMoveDestination.getSecond();
 
                     PsiDirectory targetDir = moveDestination.getTargetIfExists(sourceDirectory);
                     String targetFileName = sourceFiles.size() > 1 ? null : tfFileNameInPackage.getText();
@@ -762,12 +669,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
                     if (filesExistingInTargetDir.isEmpty()
                         || (filesExistingInTargetDir.size() == 1 && sourceFiles.contains(filesExistingInTargetDir.get(0)))) {
                         PsiDirectory targetDirectory = ApplicationUtilsKt.runWriteAction(
-                                new Function0<PsiDirectory>() {
-                                    @Override
-                                    public PsiDirectory invoke() {
-                                        return moveDestination.getTargetDirectory(sourceDirectory);
-                                    }
-                                }
+                                () -> moveDestination.getTargetDirectory(sourceDirectory)
                         );
 
                         for (KtFile sourceFile : sourceFiles) {
@@ -809,7 +711,7 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
 
             MoveDeclarationsDescriptor options = new MoveDeclarationsDescriptor(
                     myProject,
-                    MoveSource(elementsToMove),
+                    MoveKotlinDeclarationsProcessorKt.MoveSource(elementsToMove),
                     target,
                     MoveDeclarationsDelegate.TopLevel.INSTANCE,
                     isSearchInComments(),

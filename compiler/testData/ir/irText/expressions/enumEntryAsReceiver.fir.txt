@@ -26,12 +26,11 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
       PROPERTY name:value visibility:public modality:FINAL [val] 
         FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Function0<kotlin.String> visibility:public [final]
           EXPRESSION_BODY
-            BLOCK type=kotlin.Function0<kotlin.String> origin=LAMBDA
+            FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
               FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.String
                 $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
                 BLOCK_BODY
                   CALL 'public final fun <get-value2> (): kotlin.String declared in <root>.X.B' type=kotlin.String origin=null
-              FUNCTION_REFERENCE 'local final fun <anonymous> (): kotlin.String declared in <root>.X.B.value' type=kotlin.Function0<kotlin.String> origin=LAMBDA
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.X.B) returnType:kotlin.Function0<kotlin.String>
           correspondingProperty: PROPERTY name:value visibility:public modality:FINAL [val] 
           $this: VALUE_PARAMETER name:<this> type:<root>.X.B 
@@ -81,5 +80,5 @@ FILE fqName:<root> fileName:/enumEntryAsReceiver.kt
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
-        ERROR_CALL 'Unresolved reference: <Unresolved name: value>#' type=IrErrorType
-
+        CALL 'public abstract fun invoke (): kotlin.String declared in kotlin.Function0' type=kotlin.String origin=null
+          $this: CALL 'public abstract fun <get-value> (): kotlin.Function0<kotlin.String> declared in <root>.X' type=kotlin.Function0<kotlin.String> origin=null

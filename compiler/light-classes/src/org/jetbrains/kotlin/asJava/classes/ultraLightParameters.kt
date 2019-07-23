@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightSimpleModifierList
 import org.jetbrains.kotlin.asJava.elements.LightParameter
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.psi.*
@@ -25,7 +25,7 @@ internal class KtUltraLightSuspendContinuationParameter(
     private val ktFunction: KtFunction,
     private val support: KtUltraLightSupport,
     method: KtLightMethod
-) : LightParameter(SUSPEND_FUNCTION_CONTINUATION_PARAMETER, PsiType.NULL, method, method.language),
+) : LightParameter(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME, PsiType.NULL, method, method.language),
     KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiParameter> {
 
     override val kotlinTypeForNullabilityAnnotation: KotlinType? get() = ktType

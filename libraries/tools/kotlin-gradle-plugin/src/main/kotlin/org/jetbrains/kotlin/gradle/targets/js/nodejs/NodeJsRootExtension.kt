@@ -1,15 +1,29 @@
 package org.jetbrains.kotlin.gradle.targets.js.nodejs
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolveTask
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
+import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinRootNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolver.KotlinRootNpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.yarn.Yarn
 import java.io.File
 
-open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
-    private val gradleHome = project.gradle.gradleUserHomeDir.also {
-        project.logger.kotlinInfo("Storing cached files in $it")
+open class NodeJsRootExtension(val rootProject: Project) {
+    init {
+        check(rootProject.rootProject == rootProject)
+    }
+
+    private val gradleHome = rootProject.gradle.gradleUserHomeDir.also {
+        rootProject.logger.kotlinInfo("Storing cached files in $it")
     }
 
     var installationDir = gradleHome.resolve("nodejs")
@@ -22,14 +36,21 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
 
     var packageManager: NpmApi = Yarn
 
-    val nodeJsSetupTask: NodeJsSetupTask
-        get() = project.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+    class Experimental {
+        var generateKotlinExternals: Boolean = false
+        var discoverTypes: Boolean = false
+    }
 
-    val npmResolveTask: NpmResolveTask
-        get() = project.tasks.getByName(NpmResolveTask.NAME) as NpmResolveTask
+    val experimental = Experimental()
+
+    val nodeJsSetupTask: NodeJsSetupTask
+        get() = rootProject.tasks.getByName(NodeJsSetupTask.NAME) as NodeJsSetupTask
+
+    val npmInstallTask: KotlinNpmInstallTask
+        get() = rootProject.tasks.getByName(KotlinNpmInstallTask.NAME) as KotlinNpmInstallTask
 
     val rootPackageDir: File
-        get() = project.buildDir.resolve("js")
+        get() = rootProject.buildDir.resolve("js")
 
     val projectPackagesDir: File
         get() = rootPackageDir.resolve("packages")
@@ -75,9 +96,10 @@ open class NodeJsRootExtension(project: Project) : NodeJsExtension(project) {
         }
     }
 
+    val versions = NpmVersions()
+    internal val npmResolutionManager = KotlinNpmResolutionManager(this)
+
     companion object {
         const val EXTENSION_NAME: String = "kotlinNodeJs"
-
-        operator fun get(project: Project) = NodeJsPlugin.apply(project.rootProject) as NodeJsRootExtension
     }
 }

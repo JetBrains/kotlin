@@ -31,6 +31,7 @@ interface KotlinCacheService {
     }
 
     fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade
+    fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade
     fun getResolutionFacadeByFile(file: PsiFile, platform: TargetPlatform): ResolutionFacade?
 
     fun getSuppressionCache(): KotlinSuppressCache

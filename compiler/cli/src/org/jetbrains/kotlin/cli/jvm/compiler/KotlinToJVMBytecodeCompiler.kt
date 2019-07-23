@@ -83,14 +83,14 @@ object KotlinToJVMBytecodeCompiler {
     private fun writeOutput(
         configuration: CompilerConfiguration,
         outputFiles: OutputFileCollection,
-        mainClass: FqName?
+        mainClassProvider: MainClassProvider?
     ) {
         val reportOutputFiles = configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         val jarPath = configuration.get(JVMConfigurationKeys.OUTPUT_JAR)
         val messageCollector = configuration.get(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, MessageCollector.NONE)
         if (jarPath != null) {
             val includeRuntime = configuration.get(JVMConfigurationKeys.INCLUDE_RUNTIME, false)
-            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, mainClass, outputFiles)
+            CompileEnvironmentUtil.writeToJar(jarPath, includeRuntime, mainClassProvider?.mainClassFqName, outputFiles)
             if (reportOutputFiles) {
                 val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
                 messageCollector.report(OUTPUT, message)
@@ -108,7 +108,7 @@ object KotlinToJVMBytecodeCompiler {
         }
         return GenerationStateEventCallback { state ->
             val currentOutput = SimpleOutputFileCollection(state.factory.currentOutput)
-            writeOutput(configuration, currentOutput, mainClass = null)
+            writeOutput(configuration, currentOutput, null)
             if (!configuration.get(JVMConfigurationKeys.RETAIN_OUTPUT_IN_MEMORY, false)) {
                 state.factory.releaseGeneratedOutput()
             }
@@ -207,7 +207,8 @@ object KotlinToJVMBytecodeCompiler {
         try {
             for ((_, state) in outputs) {
                 ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-                writeOutput(state.configuration, state.factory, null)
+                val mainClassProvider = if (outputs.size == 1) MainClassProvider(state, environment) else null
+                writeOutput(state.configuration, state.factory, mainClassProvider)
             }
 
             if (projectConfiguration.getBoolean(JVMConfigurationKeys.COMPILE_JAVA)) {
@@ -397,16 +398,20 @@ object KotlinToJVMBytecodeCompiler {
             (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
         }
 
-    private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
-        val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext, generationState.languageVersionSettings)
-        return files.asSequence()
-            .map { file ->
-                if (mainFunctionDetector.hasMain(file.declarations))
-                    JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
-                else
-                    null
-            }
-            .singleOrNull { it != null }
+    private class MainClassProvider(generationState: GenerationState, environment: KotlinCoreEnvironment) {
+        val mainClassFqName: FqName? by lazy { findMainClass(generationState, environment.getSourceFiles()) }
+
+        private fun findMainClass(generationState: GenerationState, files: List<KtFile>): FqName? {
+            val mainFunctionDetector = MainFunctionDetector(generationState.bindingContext, generationState.languageVersionSettings)
+            return files.asSequence()
+                .map { file ->
+                    if (mainFunctionDetector.hasMain(file.declarations))
+                        JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
+                    else
+                        null
+                }
+                .singleOrNull { it != null }
+        }
     }
 
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
@@ -421,10 +426,8 @@ object KotlinToJVMBytecodeCompiler {
 
         val generationState = analyzeAndGenerate(environment) ?: return false
 
-        val mainClass = findMainClass(generationState, environment.getSourceFiles())
-
         try {
-            writeOutput(environment.configuration, generationState.factory, mainClass)
+            writeOutput(environment.configuration, generationState.factory, MainClassProvider(generationState, environment))
             return true
         } finally {
             generationState.destroy()

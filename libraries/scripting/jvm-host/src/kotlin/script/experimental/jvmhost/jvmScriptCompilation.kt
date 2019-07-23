@@ -7,10 +7,11 @@
 
 package kotlin.script.experimental.jvmhost
 
+import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptJvmCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
-import kotlin.script.experimental.jvmhost.impl.KJvmCompilerImpl
 import kotlin.script.experimental.jvmhost.impl.withDefaults
 
 interface CompiledJvmScriptsCache {
@@ -31,7 +32,7 @@ interface CompiledJvmScriptsCache {
 
 open class JvmScriptCompiler(
     hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    val compilerProxy: KJvmCompilerProxy = KJvmCompilerImpl(hostConfiguration.withDefaults()),
+    val compilerProxy: ScriptJvmCompilerProxy = ScriptJvmCompilerIsolated(hostConfiguration.withDefaults()),
     val cache: CompiledJvmScriptsCache = CompiledJvmScriptsCache.NoCache
 ) : ScriptCompiler {
 
@@ -57,12 +58,5 @@ open class JvmScriptCompiler(
             }
         }
     }
-}
-
-interface KJvmCompilerProxy {
-    fun compile(
-        script: SourceCode,
-        scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>>
 }
 

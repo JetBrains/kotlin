@@ -36,13 +36,10 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
     KtNameReferenceExpression::class.java,
     "Add import for member"
 ), HighPriorityAction {
-
-    private fun getFullQualifier(element: KtNameReferenceExpression): KtQualifiedExpression? = element.getTopmostParentOfType()
-
     override fun isApplicableTo(element: KtNameReferenceExpression): Boolean {
         if (element.getQualifiedElement() == element) return false //Ignore simple name expressions
 
-        val qualifiedExpression = getFullQualifier(element) ?: element.getQualifiedElement()
+        val qualifiedExpression = element.getQualifiedElement()
 
         if (element.isInImportDirective()) return false
 
@@ -54,7 +51,7 @@ class ImportMemberIntention : SelfTargetingOffsetIndependentIntention<KtNameRefe
 
     override fun applyTo(element: KtNameReferenceExpression, editor: Editor?) {
 
-        val qualifiedElement = getFullQualifier(element)
+        val qualifiedElement = element.getQualifiedElement() as? KtQualifiedExpression
 
         // If expression is fqn reference, take full qualified selector, otherwise (Type reference) take element
         val targetElement = qualifiedElement?.selectorExpression?.getQualifiedElementSelector() ?: element

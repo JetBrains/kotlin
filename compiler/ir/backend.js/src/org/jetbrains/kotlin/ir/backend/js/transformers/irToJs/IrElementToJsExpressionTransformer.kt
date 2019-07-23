@@ -87,21 +87,12 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitGetValue(expression: IrGetValue, context: JsGenerationContext): JsExpression =
         context.getNameForValueDeclaration(expression.symbol.owner).makeRef()
 
-    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext) = when (expression.symbol.owner.kind) {
-        ClassKind.OBJECT -> {
-            val obj = expression.symbol.owner
-            if (obj.isEffectivelyExternal()) {
-                context.getRefForExternalClass(obj)
-            } else {
-                val className = context.getNameForClass(expression.symbol.owner)
-                // TODO: Don't use implicit naming
-                val getInstanceName = className.ident + "_getInstance"
-                JsInvocation(JsNameRef(getInstanceName))
-            }
-        }
-        else -> TODO()
+    override fun visitGetObjectValue(expression: IrGetObjectValue, context: JsGenerationContext): JsExpression {
+        val obj = expression.symbol.owner
+        assert(obj.kind == ClassKind.OBJECT)
+        assert(obj.isEffectivelyExternal()) { "Non external IrGetObjectValue must be lowered" }
+        return context.getRefForExternalClass(obj)
     }
-
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsExpression {
         val fieldName = context.getNameForField(expression.symbol.owner)
@@ -122,7 +113,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         val fromPrimary = context.currentFunction is IrConstructor
         val thisRef =
             if (fromPrimary) JsThisRef() else context.getNameForValueDeclaration(context.currentFunction!!.valueParameters.last()).makeRef()
-        val arguments = translateCallArguments(expression, context)
+        val arguments = translateCallArguments(expression, context, this)
 
         val constructor = expression.symbol.owner
         if (constructor.parentAsClass.isInline) {
@@ -137,13 +128,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitConstructorCall(expression: IrConstructorCall, context: JsGenerationContext): JsExpression {
         val function = expression.symbol.owner
-        val symbol = expression.symbol
-
-        context.staticContext.intrinsics[symbol]?.let {
-            return it(expression, context)
-        }
-
-        val arguments = translateCallArguments(expression, context)
+        val arguments = translateCallArguments(expression, context, this)
         val klass = function.parentAsClass
         return if (klass.isInline) {
             assert(function.isPrimary) {
@@ -164,153 +149,32 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     }
 
     override fun visitCall(expression: IrCall, context: JsGenerationContext): JsExpression {
-        val function = expression.symbol.owner.realOverrideTarget
-        val symbol = function.symbol
+        if (context.checkIfJsCode(expression.symbol)) {
+            val statements = translateJsCodeIntoStatementList(expression.getValueArgument(0) ?: error("JsCode is expected"))
+            if (statements.isEmpty()) return JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)) // TODO: report warning or even error
 
-        context.staticContext.intrinsics[symbol]?.let {
-            return it(expression, context)
-        }
-
-        val jsDispatchReceiver = expression.dispatchReceiver?.accept(this, context)
-        val jsExtensionReceiver = expression.extensionReceiver?.accept(this, context)
-        val arguments = translateCallArguments(expression, context)
-
-        // Transform external property accessor call
-        // @JsName-annotated external property accessors are translated as function calls
-        if (function is IrSimpleFunction && function.getJsName() == null) {
-            val property = function.correspondingPropertySymbol?.owner
-            if (property != null && property.isEffectivelyExternal()) {
-                val nameRef = JsNameRef(context.getNameForProperty(property), jsDispatchReceiver)
-                return when (function) {
-                    property.getter -> nameRef
-                    property.setter -> jsAssignment(nameRef, arguments.single())
-                    else -> error("Function must be an accessor of corresponding property")
-                }
-            }
-        }
-
-        if (isNativeInvoke(expression)) {
-            return JsInvocation(jsDispatchReceiver!!, arguments)
-        }
-
-        expression.superQualifierSymbol?.let { superQualifier ->
-            require(function is IrSimpleFunction)
-
-            val (target, klass) = if (superQualifier.owner.isInterface) {
-                val impl = function.resolveFakeOverride()!!
-                Pair(impl, impl.parentAsClass)
-            } else {
-                Pair(function, superQualifier.owner)
+            val lastStatement = statements.last()
+            if (statements.size == 1) {
+                if (lastStatement is JsExpressionStatement) return lastStatement.expression
             }
 
-            val qualifierName = context.getNameForClass(klass).makeRef()
-            val targetName = context.getNameForMemberFunction(target)
-            val qPrototype = JsNameRef(targetName, prototypeOf(qualifierName))
-            val callRef = JsNameRef(Namer.CALL_FUNCTION, qPrototype)
-            return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
-        }
+            val newStatements = statements.toMutableList()
 
-        val varargParameterIndex = function.valueParameters.indexOfFirst { it.varargElementType != null }
-        val isExternalVararg = function.isEffectivelyExternal() && varargParameterIndex != -1
-
-
-        if (function is IrConstructor) {
-            // Inline class primary constructor takes a single value of to
-            // initialize underlying property.
-            // TODO: Support initialization block
-            val klass = function.parentAsClass
-            return if (klass.isInline) {
-                assert(function.isPrimary) {
-                    "Inline class secondary constructors must be lowered into static methods"
+            when (lastStatement) {
+                is JsReturn -> {
                 }
-                // Argument value constructs unboxed inline class instance
-                arguments.single()
-            } else {
-                val ref = when {
-                    klass.isEffectivelyExternal() ->
-                        context.getRefForExternalClass(klass)
-
-                    else ->
-                        context.getNameForClass(klass).makeRef()
+                is JsExpressionStatement -> {
+                    newStatements[statements.lastIndex] = JsReturn(lastStatement.expression)
                 }
-                JsNew(ref, arguments)
+                // TODO: report warning or even error
+                else -> newStatements += JsReturn(JsPrefixOperation(JsUnaryOperator.VOID, JsIntLiteral(3)))
             }
+
+            val syntheticFunction = JsFunction(emptyScope, JsBlock(newStatements), "")
+            return JsInvocation(syntheticFunction)
+
         }
-
-        require(function is IrSimpleFunction)
-
-        val symbolName = when (jsDispatchReceiver) {
-            null -> context.getNameForStaticFunction(function)
-            else -> context.getNameForMemberFunction(function)
-        }
-
-        val ref = when (jsDispatchReceiver) {
-            null -> JsNameRef(symbolName)
-            else -> JsNameRef(symbolName, jsDispatchReceiver)
-        }
-
-        return if (isExternalVararg) {
-
-            // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
-            // We are using `Function.prototype.apply` function to pass all arguments as a single array.
-            // For this purpose are concatenating non-vararg arguments with vararg.
-            // TODO: Don't use `Function.prototype.apply` when number of arguments is known at compile time (e.g. there are no spread operators)
-            val arrayConcat = JsNameRef("concat", JsArrayLiteral())
-            val arraySliceCall = JsNameRef("call", JsNameRef("slice", JsArrayLiteral()))
-
-            val argumentsAsSingleArray = JsInvocation(
-                arrayConcat,
-                listOfNotNull(jsExtensionReceiver) + arguments.mapIndexed { index, argument ->
-                    when (index) {
-
-                        // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
-                        // TODO: Optimize for proper arrays
-                        varargParameterIndex -> JsInvocation(arraySliceCall, argument)
-
-                        // TODO: Don't wrap non-array-like arguments with array literal
-                        // TODO: Wrap adjacent non-vararg arguments in a single array literal
-                        else -> JsArrayLiteral(listOf(argument))
-                    }
-                }
-            )
-
-            if (jsDispatchReceiver != null) {
-                // TODO: Do not create IIFE when receiver expression is simple or has no side effects
-                // TODO: Do not create IIFE at all? (Currently there is no reliable way to create temporary variable in current scope)
-                val receiverName = context.currentScope.declareFreshName("\$externalVarargReceiverTmp")
-                val receiverRef = receiverName.makeRef()
-                JsInvocation(
-                    // Create scope for temporary variable holding dispatch receiver
-                    // It is used both during method reference and passing `this` value to `apply` function.
-                    JsNameRef(
-                    "call",
-                    JsFunction(
-                        context.currentScope,
-                        JsBlock(
-                            JsVars(JsVars.JsVar(receiverName, jsDispatchReceiver)),
-                            JsReturn(
-                                JsInvocation(
-                                    JsNameRef("apply", JsNameRef(symbolName, receiverRef)),
-                                    listOf(
-                                        receiverRef,
-                                        argumentsAsSingleArray
-                                    )
-                                )
-                            )
-                        ),
-                        "VarargIIFE"
-                    )),
-                    JsThisRef()
-                )
-            } else {
-                JsInvocation(
-                    JsNameRef("apply", JsNameRef(symbolName)),
-                    listOf(JsNullLiteral(), argumentsAsSingleArray)
-                )
-            }
-        } else {
-            JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
-        }
+        return translateCall(expression, context, this)
     }
 
     override fun visitWhen(expression: IrWhen, context: JsGenerationContext): JsExpression {
@@ -329,7 +193,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
     override fun visitTypeOperator(expression: IrTypeOperatorCall, data: JsGenerationContext): JsExpression {
         return when (expression.operator) {
             IrTypeOperator.IMPLICIT_CAST -> expression.argument.accept(this, data)
-            else -> throw IllegalStateException("All type operator calls except IMPLICIT_CAST should be lowered at this point")
+            else -> error("All type operator calls except IMPLICIT_CAST should be lowered at this point")
         }
     }
 
@@ -405,13 +269,4 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             expression.left.accept(this, data),
             expression.right.accept(this, data)
         )
-
-    private fun isNativeInvoke(call: IrCall): Boolean {
-        val simpleFunction = call.symbol.owner as? IrSimpleFunction ?: return false
-        val receiverType = simpleFunction.dispatchReceiverParameter?.type ?: return false
-
-        if (simpleFunction.isSuspend) return false
-
-        return simpleFunction.name == OperatorNameConventions.INVOKE && receiverType.isFunctionTypeOrSubtype()
-    }
 }

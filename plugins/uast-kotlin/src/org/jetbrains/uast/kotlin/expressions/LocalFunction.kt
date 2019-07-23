@@ -7,6 +7,7 @@ import com.intellij.psi.PsiVariable
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.*
+import org.jetbrains.uast.kotlin.declarations.wrapExpressionBody
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiVariable
 
@@ -36,13 +37,15 @@ internal class KotlinLocalFunctionUVariable(
 }
 
 
-private class KotlinLocalFunctionULambdaExpression(
+internal class KotlinLocalFunctionULambdaExpression(
         override val sourcePsi: KtFunction,
         givenParent: UElement?
 ): KotlinAbstractUExpression(givenParent), ULambdaExpression {
     override val functionalInterfaceType: PsiType? = null
 
-    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.bodyExpression, this) }
+    override val body by lz {
+        sourcePsi.bodyExpression?.let { wrapExpressionBody(this, it) } ?: UastEmptyExpression(this)
+    }
 
     override val valueParameters by lz {
         sourcePsi.valueParameters.mapIndexed { i, p ->

@@ -51,6 +51,7 @@ import org.jetbrains.kotlin.idea.references.resolveMainReferenceToDescriptors
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.isOneSegmentFQN
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
@@ -239,18 +240,21 @@ class KotlinAddImportAction internal constructor(
                 // for class or package we use ShortenReferences because we not necessary insert an import but may want to
                 // insert partly qualified name
 
-                val importAlias = descriptor.importableFqName?.let { file.findAliasByFqName(it) }
-                if (importAlias != null || descriptor is ClassDescriptor || descriptor is PackageViewDescriptor) {
+                val importableFqName = descriptor.importableFqName
+                val importAlias = importableFqName?.let { file.findAliasByFqName(it) }
+                if (importableFqName?.isOneSegmentFQN() != true &&
+                    (importAlias != null || descriptor is ClassDescriptor || descriptor is PackageViewDescriptor)
+                ) {
                     if (element is KtSimpleNameExpression) {
                         if (importAlias != null) {
                             importAlias.nameIdentifier?.copy()?.let { element.getIdentifier()?.replace(it) }
                             val resultDescriptor = element.resolveMainReferenceToDescriptors().firstOrNull()
-                            if (descriptor.importableFqName == resultDescriptor?.importableFqName) {
+                            if (importableFqName == resultDescriptor?.importableFqName) {
                                 return@forEach
                             }
                         }
 
-                        descriptor.importableFqName?.let {
+                        importableFqName?.let {
                             element.mainReference.bindToFqName(
                                 it,
                                 KtSimpleNameReference.ShorteningMode.FORCED_SHORTENING
@@ -343,8 +347,11 @@ private class SingleImportVariant(
     val descriptors: Collection<DeclarationDescriptor>
 ) : AutoImportVariant {
     override val descriptorsToImport: Collection<DeclarationDescriptor>
-        get() =
-            listOf(descriptors.singleOrNull() ?: descriptors.sortedBy { if (it is ClassDescriptor) 0 else 1 }.first())
+        get() = listOf(
+            descriptors.singleOrNull()
+                ?: descriptors.minBy { if (it is ClassDescriptor) 0 else 1 }
+                ?: error("we create the class with not-empty descriptors always")
+        )
 
     override val hint: String get() = excludeFqNameCheck.asString()
 }

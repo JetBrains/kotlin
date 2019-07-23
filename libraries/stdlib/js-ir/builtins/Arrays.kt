@@ -20,7 +20,10 @@ package kotlin
 public class ByteArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Byte)
 
@@ -43,7 +46,10 @@ public class ByteArray(size: Int) {
 public class CharArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Char)
 
@@ -66,7 +72,10 @@ public class CharArray(size: Int) {
 public class ShortArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Short)
 
@@ -89,7 +98,10 @@ public class ShortArray(size: Int) {
 public class IntArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Int)
 
@@ -112,7 +124,10 @@ public class IntArray(size: Int) {
 public class LongArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Long)
 
@@ -135,7 +150,10 @@ public class LongArray(size: Int) {
 public class FloatArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Float)
 
@@ -158,7 +176,10 @@ public class FloatArray(size: Int) {
 public class DoubleArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Double)
 
@@ -181,7 +202,10 @@ public class DoubleArray(size: Int) {
 public class BooleanArray(size: Int) {
     /**
      * Creates a new array of the specified [size], where each element is calculated by calling the specified
-     * [init] function. The [init] function returns an array element given its index.
+     * [init] function.
+     *
+     * The function [init] is called for each array element sequentially starting from the first one.
+     * It should return the value for an array element given its index.
      */
     public inline constructor(size: Int, init: (Int) -> Boolean)
 

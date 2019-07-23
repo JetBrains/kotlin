@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -51,8 +50,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
             val irThenBranch = ktLastIf.then?.genExpr() ?: generateEmptyBlockForMissingBranch(ktLastIf)
             irBranches.add(IrBranchImpl(irCondition, irThenBranch))
 
-            val ktElse = ktLastIf.`else`?.deparenthesize()
-            when (ktElse) {
+            when (val ktElse = ktLastIf.`else`?.deparenthesize()) {
                 null -> break@whenBranches
                 is KtIfExpression -> ktLastIf = ktElse
                 is KtExpression -> {
@@ -67,7 +65,7 @@ class BranchingExpressionGenerator(statementGenerator: StatementGenerator) : Sta
     }
 
     private fun generateEmptyBlockForMissingBranch(ktLastIf: KtIfExpression) =
-        IrBlockImpl(ktLastIf.startOffset, ktLastIf.endOffset, context.irBuiltIns.nothingType, IrStatementOrigin.IF, listOf())
+        IrBlockImpl(ktLastIf.startOffset, ktLastIf.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.IF, listOf())
 
     private fun createIrWhen(
         ktIf: KtIfExpression,

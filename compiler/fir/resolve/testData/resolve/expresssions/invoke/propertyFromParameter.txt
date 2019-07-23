@@ -1,0 +1,10 @@
+FILE: propertyFromParameter.kt
+    public final class Bar : R|kotlin/Any| {
+        public constructor(name: R|kotlin/Function0<kotlin/String>|): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val name: R|kotlin/String| = R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
+            public get(): R|kotlin/String|
+
+    }

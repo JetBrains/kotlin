@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectPackage
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
 
 object Yarn : NpmApi {
     private fun getDelegate(project: Project): NpmApi =
@@ -17,9 +17,12 @@ object Yarn : NpmApi {
     override fun setup(project: Project) =
         getDelegate(project.rootProject).setup(project)
 
-    override fun resolveProject(resolvedNpmProject: NpmProjectPackage) =
+    override fun resolveProject(resolvedNpmProject: KotlinCompilationNpmResolution) =
         getDelegate(resolvedNpmProject.project).resolveProject(resolvedNpmProject)
 
-    override fun resolveRootProject(rootProject: Project, subProjects: MutableList<NpmProjectPackage>) =
-        getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects)
+    override fun resolveRootProject(
+        rootProject: Project,
+        subProjects: Collection<KotlinCompilationNpmResolution>,
+        skipExecution: Boolean
+    ) = getDelegate(rootProject.project).resolveRootProject(rootProject, subProjects, skipExecution)
 }

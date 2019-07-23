@@ -48,6 +48,10 @@ interface KtLightMember<out D : PsiMember> : PsiMember, KtLightDeclaration<KtDec
 
 interface KtLightField : PsiField, KtLightMember<PsiField>, PsiVariableEx
 
+interface KtLightFieldForSourceDeclarationSupport : PsiField {
+    val kotlinOrigin: KtDeclaration?
+}
+
 interface KtLightMethod : PsiAnnotationMethod, KtLightMember<PsiMethod> {
     val isDelegated: Boolean
         get() = lightMemberOrigin?.originKind == JvmDeclarationOriginKind.DELEGATION

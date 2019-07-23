@@ -901,6 +901,108 @@ public class ParsingTestGenerated extends AbstractParsingTest {
                 }
             }
 
+            @TestMetadata("compiler/testData/psi/annotation/functionalTypes")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class FunctionalTypes extends AbstractParsingTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInFunctionalTypes() throws Exception {
+                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                }
+
+                @TestMetadata("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class RegressionForSimilarSyntax extends AbstractParsingTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInRegressionForSimilarSyntax() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("forDestructuring.kt")
+                    public void testForDestructuring() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax/forDestructuring.kt");
+                    }
+
+                    @TestMetadata("lambdaParameterDeclaration.kt")
+                    public void testLambdaParameterDeclaration() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax/lambdaParameterDeclaration.kt");
+                    }
+
+                    @TestMetadata("variableDestructuring.kt")
+                    public void testVariableDestructuring() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/regressionForSimilarSyntax/variableDestructuring.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/testData/psi/annotation/functionalTypes/withParentheses")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class WithParentheses extends AbstractParsingTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInWithParentheses() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withParentheses"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("withParameter.kt")
+                    public void testWithParameter() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withParentheses/withParameter.kt");
+                    }
+
+                    @TestMetadata("withoutParameter.kt")
+                    public void testWithoutParameter() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withParentheses/withoutParameter.kt");
+                    }
+                }
+
+                @TestMetadata("compiler/testData/psi/annotation/functionalTypes/withoutParentheses")
+                @TestDataPath("$PROJECT_ROOT")
+                @RunWith(JUnit3RunnerWithInners.class)
+                public static class WithoutParentheses extends AbstractParsingTest {
+                    private void runTest(String testDataFilePath) throws Exception {
+                        KotlinTestUtils.runTest(this::doParsingTest, TargetBackend.ANY, testDataFilePath);
+                    }
+
+                    public void testAllFilesPresentInWithoutParentheses() throws Exception {
+                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/psi/annotation/functionalTypes/withoutParentheses"), Pattern.compile("^(.*)\\.kts?$"), TargetBackend.ANY, true);
+                    }
+
+                    @TestMetadata("annotationList.kt")
+                    public void testAnnotationList() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withoutParentheses/annotationList.kt");
+                    }
+
+                    @TestMetadata("withParameter.kt")
+                    public void testWithParameter() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withoutParentheses/withParameter.kt");
+                    }
+
+                    @TestMetadata("withReveiver.kt")
+                    public void testWithReveiver() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withoutParentheses/withReveiver.kt");
+                    }
+
+                    @TestMetadata("withoutParameter.kt")
+                    public void testWithoutParameter() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withoutParentheses/withoutParameter.kt");
+                    }
+
+                    @TestMetadata("withoutParameterOnSuspend.kt")
+                    public void testWithoutParameterOnSuspend() throws Exception {
+                        runTest("compiler/testData/psi/annotation/functionalTypes/withoutParentheses/withoutParameterOnSuspend.kt");
+                    }
+                }
+            }
+
             @TestMetadata("compiler/testData/psi/annotation/list")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)

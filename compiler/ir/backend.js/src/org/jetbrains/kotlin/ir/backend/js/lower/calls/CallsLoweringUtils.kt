@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -48,7 +47,7 @@ internal fun <K> MutableMap<K, (IrFunctionAccessExpression) -> IrExpression>.add
 internal typealias MemberToTransformer = HashMap<SimpleMemberKey, (IrFunctionAccessExpression) -> IrExpression>
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunctionSymbol) {
-    add(type, name) { irCall(it, v, dispatchReceiverAsFirstArgument = true) }
+    add(type, name) { irCall(it, v, receiversAsArguments = true) }
 }
 
 internal fun MemberToTransformer.add(type: IrType, name: Name, v: IrFunction) {

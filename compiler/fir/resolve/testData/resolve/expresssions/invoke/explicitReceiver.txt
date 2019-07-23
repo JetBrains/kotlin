@@ -13,8 +13,8 @@ FILE: explicitReceiver.kt
             ^invoke this#
         }
 
-        public final fun bar(): R|kotlin/Unit| {
-            ^bar R|/x|()
+        public final fun bar(): R|Foo| {
+            ^bar R|/Foo.x|.R|/Foo.invoke|()
         }
 
     }

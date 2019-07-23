@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.definitions
 
 import com.intellij.openapi.util.UserDataHolderBase
+import com.intellij.openapi.util.io.FileUtilRt
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import java.io.File
 import kotlin.reflect.KClass
@@ -21,12 +22,13 @@ import kotlin.script.experimental.jvm.jvm
 // TODO: name could be confused with KotlinScriptDefinition, discuss naming
 abstract class ScriptDefinition : UserDataHolderBase() {
 
+    @Deprecated("Use configurations instead")
     abstract val legacyDefinition: KotlinScriptDefinition
     abstract val hostConfiguration: ScriptingHostConfiguration
     abstract val compilationConfiguration: ScriptCompilationConfiguration
-    abstract val evaluationConfiguration: ScriptEvaluationConfiguration
+    abstract val evaluationConfiguration: ScriptEvaluationConfiguration?
 
-    abstract fun isScript(fileName: String): Boolean
+    abstract fun isScript(file: File): Boolean
     abstract val fileExtension: String
     abstract val name: String
     // TODO: used in settings, find out the reason and refactor accordingly
@@ -43,9 +45,15 @@ abstract class ScriptDefinition : UserDataHolderBase() {
     abstract val baseClassType: KotlinType
     abstract val compilerOptions: Iterable<String>
 
+    @Suppress("DEPRECATION")
     inline fun <reified T : KotlinScriptDefinition> asLegacyOrNull(): T? =
         if (this is FromLegacy) legacyDefinition as? T else null
 
+    override fun toString(): String {
+        return "ScriptDefinition($name)"
+    }
+
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     open class FromLegacy(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val legacyDefinition: KotlinScriptDefinition
@@ -65,7 +73,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             )
         }
 
-        override fun isScript(fileName: String): Boolean = legacyDefinition.isScript(fileName)
+        override fun isScript(file: File): Boolean = legacyDefinition.isScript(file.name)
 
         override val fileExtension: String get() = legacyDefinition.fileExtension
 
@@ -105,6 +113,7 @@ abstract class ScriptDefinition : UserDataHolderBase() {
 
     abstract class FromConfigurationsBase : ScriptDefinition() {
 
+        @Suppress("OverridingDeprecatedMember", "DEPRECATION")
         override val legacyDefinition by lazy {
             KotlinScriptDefinitionAdapterFromNewAPI(
                 compilationConfiguration,
@@ -112,11 +121,22 @@ abstract class ScriptDefinition : UserDataHolderBase() {
             )
         }
 
-        override fun isScript(fileName: String): Boolean = fileName.endsWith(".$fileExtension")
+        private val filePathPattern by lazy {
+            compilationConfiguration[ScriptCompilationConfiguration.filePathPattern]?.takeIf { it.isNotBlank() }
+        }
+
+        override fun isScript(file: File): Boolean =
+            file.name.endsWith(".$fileExtension") &&
+                    (filePathPattern?.let {
+                        Regex(it).matches(FileUtilRt.toSystemIndependentName(file.path))
+                    } ?: true)
 
         override val fileExtension: String get() = compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!
 
-        override val name: String get() = compilationConfiguration[ScriptCompilationConfiguration.displayName]!!
+        override val name: String
+            get() =
+                compilationConfiguration[ScriptCompilationConfiguration.displayName]?.takeIf { it.isNotBlank() }
+                    ?: compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName.substringAfterLast('.')
 
         override val definitionId: String get() = compilationConfiguration[ScriptCompilationConfiguration.baseClass]!!.typeName
 
@@ -136,13 +156,13 @@ abstract class ScriptDefinition : UserDataHolderBase() {
                     compilationConfiguration == it.compilationConfiguration && evaluationConfiguration == it.evaluationConfiguration
                 } == true
 
-        override fun hashCode(): Int = compilationConfiguration.hashCode() + 37 * evaluationConfiguration.hashCode()
+        override fun hashCode(): Int = compilationConfiguration.hashCode() + 37 * (evaluationConfiguration?.hashCode() ?: 0)
     }
 
     open class FromConfigurations(
         override val hostConfiguration: ScriptingHostConfiguration,
         override val compilationConfiguration: ScriptCompilationConfiguration,
-        override val evaluationConfiguration: ScriptEvaluationConfiguration
+        override val evaluationConfiguration: ScriptEvaluationConfiguration?
     ) : FromConfigurationsBase()
 
     open class FromTemplate(

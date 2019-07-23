@@ -25,9 +25,9 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
 
 class KtLightParameterList(
-        private val parent: KtLightMethod,
-        private val parametersCount: Int,
-        computeParameters: () -> List<PsiParameter>
+    private val parent: KtLightMethod,
+    private val parametersCount: Int,
+    computeParameters: () -> List<PsiParameter>
 ) : KtLightElementBase(parent), PsiParameterList {
 
     override val kotlinOrigin: KtElement?

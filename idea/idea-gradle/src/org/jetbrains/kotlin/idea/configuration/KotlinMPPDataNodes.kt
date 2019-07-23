@@ -15,10 +15,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.util.Key
 import com.intellij.util.containers.MultiMap
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.gradle.KotlinModule
-import org.jetbrains.kotlin.gradle.KotlinPlatform
-import org.jetbrains.kotlin.gradle.KotlinPlatformContainer
-import org.jetbrains.kotlin.gradle.KotlinPlatformContainerImpl
+import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.idea.util.CopyableDataNodeUserDataProperty
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -59,6 +56,7 @@ class KotlinAndroidSourceSetData(
 class KotlinTargetData(name: String) : AbstractNamedData(GradleConstants.SYSTEM_ID, name) {
     var moduleIds: Set<String> = emptySet()
     var archiveFile: File? = null
+    var konanArtifacts: Collection<KonanArtifactModel>? = null
 
     companion object {
         val KEY = ExternalKey.create(KotlinTargetData::class.java, ProjectKeys.MODULE.processingWeight + 1)

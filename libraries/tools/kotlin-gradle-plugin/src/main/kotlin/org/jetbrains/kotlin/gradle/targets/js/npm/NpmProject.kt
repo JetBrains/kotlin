@@ -10,7 +10,9 @@ import org.gradle.process.ExecSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import java.io.File
 
 val KotlinJsCompilation.npmProject: NpmProject
@@ -20,14 +22,17 @@ val KotlinJsCompilation.npmProject: NpmProject
  * Basic info for [NpmProject] created from [compilation].
  * This class contains only basic info.
  *
- * More info can be obtained from [NpmProjectPackage], which is available after project resolution (after [NpmResolveTask] execution).
+ * More info can be obtained from [KotlinCompilationNpmResolution], which is available after project resolution (after [KotlinNpmInstallTask] execution).
  */
 open class NpmProject(val compilation: KotlinJsCompilation) {
     val name: String
         get() = buildNpmProjectName()
 
+    val nodeJs
+        get() = NodeJsRootPlugin.apply(project.rootProject)
+
     val dir: File
-        get() = project.nodeJs.root.projectPackagesDir.resolve(name)
+        get() = nodeJs.projectPackagesDir.resolve(name)
 
     val target: KotlinTarget
         get() = compilation.target
@@ -41,19 +46,31 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
     val packageJsonFile: File
         get() = dir.resolve(PACKAGE_JSON)
 
+    val packageJsonTaskName: String
+        get() = compilation.disambiguateName("packageJson")
+
+    val packageJsonTask: KotlinPackageJsonTask
+        get() = project.tasks.getByName(packageJsonTaskName) as KotlinPackageJsonTask
+
     val main: String
         get() = "kotlin/$name.js"
 
-    private val modules = object : NpmProjectModules(dir, nodeModulesDir) {
+    val externalsDirRoot: File
+        get() = project.buildDir.resolve("externals").resolve(name)
+
+    val externalsDir: File
+        get() = externalsDirRoot.resolve("src")
+
+    internal val modules = object : NpmProjectModules(dir, nodeModulesDir) {
         override val parent get() = rootNodeModules
     }
 
     private val rootNodeModules: NpmProjectModules?
-        get() = NpmProjectModules(project.nodeJs.root.rootPackageDir)
+        get() = NpmProjectModules(nodeJs.rootPackageDir)
 
     fun useTool(exec: ExecSpec, tool: String, vararg args: String) {
         exec.workingDir = dir
-        exec.executable = project.nodeJs.root.environment.nodeExecutable
+        exec.executable = nodeJs.environment.nodeExecutable
         exec.args = listOf(require(tool)) + args
     }
 
@@ -61,7 +78,7 @@ open class NpmProject(val compilation: KotlinJsCompilation) {
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        NpmResolver.requireResolved(project)
+        nodeJs.npmResolutionManager.requireAlreadyInstalled(project)
         return modules.require(request)
     }
 

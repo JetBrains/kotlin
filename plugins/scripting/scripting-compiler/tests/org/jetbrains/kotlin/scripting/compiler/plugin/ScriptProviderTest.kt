@@ -8,15 +8,16 @@ package org.jetbrains.kotlin.scripting.compiler.plugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsSource
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
 import org.junit.Test
+import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.templates.standard.ScriptTemplateWithArgs
 
-class ScriptProviderTest : KtUsefulTestCase() {
+class ScriptProviderTest {
 
     @Test
     fun testLazyScriptDefinitionsProvider() {
@@ -64,13 +65,15 @@ class ScriptProviderTest : KtUsefulTestCase() {
             Assert.assertEquals(2, genDefCounter.get())
         }
     }
+
+    private fun ScriptDefinitionProvider.isScript(fileName: String) = isScript(File(fileName))
 }
 
 private open class FakeScriptDefinition(val suffix: String = ".kts") :
     ScriptDefinition.FromLegacy(defaultJvmScriptingHostConfiguration, KotlinScriptDefinition(ScriptTemplateWithArgs::class))
 {
     val matchCounter = AtomicInteger()
-    override fun isScript(fileName: String): Boolean = fileName.endsWith(suffix).also {
+    override fun isScript(file: File): Boolean = file.name.endsWith(suffix).also {
         if (it) matchCounter.incrementAndGet()
     }
 

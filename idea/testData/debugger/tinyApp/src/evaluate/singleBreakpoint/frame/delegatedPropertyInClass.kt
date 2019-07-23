@@ -23,5 +23,7 @@ class MyDelegateThrowsException {
 }
 
 // PRINT_FRAME
+// RENDER_DELEGATED_PROPERTIES
+
 // SKIP: suppressedExceptions
 // SKIP: stackTrace

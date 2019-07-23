@@ -25,15 +25,16 @@ UFile (package = )
                             USimpleNameReferenceExpression (identifier = java)
                         ULambdaExpression
                             UBlockExpression
-                                UObjectLiteralExpression
-                                    UClass (name = null)
-                                        UAnnotationMethod (name = onError)
-                                            UParameter (name = throwable)
-                                                UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-                                            UBlockExpression
-                                                UThrowExpression
-                                                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
-                                                        UIdentifier (Identifier (UnsupportedOperationException))
-                                                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
-                                                        ULiteralExpression (value = "")
-                                        UAnnotationMethod (name = Model$1$1)
+                                UReturnExpression
+                                    UObjectLiteralExpression
+                                        UClass (name = null)
+                                            UAnnotationMethod (name = onError)
+                                                UParameter (name = throwable)
+                                                    UAnnotation (fqName = org.jetbrains.annotations.NotNull)
+                                                UBlockExpression
+                                                    UThrowExpression
+                                                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1))
+                                                            UIdentifier (Identifier (UnsupportedOperationException))
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException)
+                                                            ULiteralExpression (value = "")
+                                            UAnnotationMethod (name = Model$1$1)

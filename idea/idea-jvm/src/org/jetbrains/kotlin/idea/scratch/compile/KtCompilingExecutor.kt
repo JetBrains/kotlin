@@ -45,6 +45,8 @@ class KtCompilingExecutor(file: ScratchFile) : ScratchExecutor(file) {
     }
 
     override fun stop() {
+        if (session == null) return
+
         try {
             session?.stop()
         } finally {

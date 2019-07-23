@@ -17,13 +17,11 @@
 package org.jetbrains.kotlin.synthetic
 
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.descriptors.synthetic.SyntheticMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.tower.NewResolvedCallImpl
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
@@ -63,13 +61,12 @@ fun syntheticVisibility(originalDescriptor: DeclarationDescriptorWithVisibility,
 }
 
 fun <D : CallableDescriptor> ResolvedCall<D>.isResolvedWithSamConversions(): Boolean {
-    return if (this is NewResolvedCallImpl<D>) {
-        // New inference
-        this.resolvedCallAtom.argumentsWithConversion.isNotEmpty()
-    } else {
-        // Old Inference
-        this.resultingDescriptor is SamAdapterDescriptor<*> ||
-                this.resultingDescriptor is SamConstructorDescriptor ||
-                this.resultingDescriptor is SamAdapterExtensionFunctionDescriptor
+    if (this is NewResolvedCallImpl<D> && resolvedCallAtom.argumentsWithConversion.isNotEmpty()) {
+        return true
     }
+
+    // Feature SamConversionPerArgument is disabled
+    return this.resultingDescriptor is SamAdapterDescriptor<*> ||
+            this.resultingDescriptor is SamConstructorDescriptor ||
+            this.resultingDescriptor is SamAdapterExtensionFunctionDescriptor
 }

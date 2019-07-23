@@ -32,7 +32,6 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import com.intellij.util.Alarm
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.script.dependencies.AsyncScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.FromFileAttributeScriptDependenciesLoader
 import org.jetbrains.kotlin.idea.core.script.dependencies.OutsiderFileDependenciesLoader
@@ -43,6 +42,7 @@ import org.jetbrains.kotlin.psi.NotNullableUserDataProperty
 import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
+import org.jetbrains.kotlin.scripting.definitions.isNonScript
 import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
@@ -101,7 +101,8 @@ class ScriptsCompilationConfigurationUpdater(
         if (!ScriptDefinitionsManager.getInstance(project).isReady()) return
         if (!cache.shouldRunDependenciesUpdate(file)) return
 
-        loaders.filter { it.isApplicable(file) }.forEach { it.loadDependencies(file) }
+        val scriptDefinition = file.findScriptDefinition(project) ?: return
+        loaders.filter { it.isApplicable(file, scriptDefinition) }.forEach { it.loadDependencies(file, scriptDefinition) }
     }
 
     private fun makeRootsChangeIfNeeded() {
@@ -161,7 +162,7 @@ class ScriptsCompilationConfigurationUpdater(
     }
 
     private fun shouldStartUpdate(file: VirtualFile): Boolean {
-        if (project.isDisposed || !file.isValid || file.fileType != KotlinFileType.INSTANCE) {
+        if (project.isDisposed || !file.isValid || file.isNonScript()) {
             return false
         }
 

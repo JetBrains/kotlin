@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -20,13 +19,12 @@ class IrFunctionToJsTransformer : BaseIrElementToJsNodeTransformer<JsFunction, J
         } else {
             context.getNameForMemberFunction(declaration)
         }
-        return translateFunction(declaration, funcName, false, context)
+        return translateFunction(declaration, funcName, context)
     }
 
     override fun visitConstructor(declaration: IrConstructor, context: JsGenerationContext): JsFunction {
         assert(declaration.isPrimary)
         val funcName = context.getNameForConstructor(declaration)
-        val constructedClass = declaration.parent as IrClass
-        return translateFunction(declaration, funcName, constructedClass.isObject, context)
+        return translateFunction(declaration, funcName, context)
     }
 }

@@ -8,10 +8,9 @@ class B : A() {
     override fun f(x: Int) = "B.f($x)"
 }
 
-fun test() = js("""
-var module = JS_TESTS;
-return new (module.A)().js_f(23) + ";" + new (module.B)().js_f(42);
-""")
+fun test(): dynamic {
+    return A().asDynamic().js_f(23) + ";" + B().asDynamic().js_f(42)
+}
 
 fun box(): String {
     val result = test()

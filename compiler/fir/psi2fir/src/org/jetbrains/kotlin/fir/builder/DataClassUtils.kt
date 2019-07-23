@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.name.FqName
@@ -35,7 +35,7 @@ internal fun KtClassOrObject.generateComponentFunctions(
         if (!ktParameter.hasValOrVar()) continue
         val name = Name.identifier("component$componentIndex")
         componentIndex++
-        val symbol = FirFunctionSymbol(CallableId(packageFqName, classFqName, name))
+        val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
         firClass.addDeclaration(
             FirMemberFunctionImpl(
                 session, ktParameter, symbol, name,
@@ -76,7 +76,7 @@ internal fun KtClassOrObject.generateCopyFunction(
     firPrimaryConstructor: FirConstructor,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
 ) {
-    val symbol = FirFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
+    val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
     firClass.addDeclaration(
         FirMemberFunctionImpl(
             session, this, symbol, copyName,

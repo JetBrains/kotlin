@@ -1,0 +1,48 @@
+package
+
+public val cache: Cache<kotlin.String, Signal<out AttributeDefinition>>
+public fun findByName_java(/*0*/ name: kotlin.String): Mono<AttributeDefinition>
+public fun findByName_kotlin(/*0*/ name: kotlin.String): Mono<AttributeDefinition>
+
+public interface AttributeDefinition {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Cache</*0*/ K, /*1*/ V> {
+    public abstract fun asMap(): kotlin.collections.MutableMap<K, V>
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public open class CacheMonoJava {
+    public constructor CacheMonoJava()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public open fun </*0*/ K : kotlin.Any!, /*1*/ V : kotlin.Any!> lookup(/*0*/ map: kotlin.collections.MutableMap<K!, in Signal<out V!>!>!, /*1*/ key: K!): Mono<V!>!
+}
+
+public object CacheMonoKotlin {
+    private constructor CacheMonoKotlin()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun </*0*/ K, /*1*/ V> lookup(/*0*/ map: kotlin.collections.MutableMap<K, in Signal<out V>>, /*1*/ key: K): Mono<V>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Mono</*0*/ E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public interface Signal</*0*/ E> : Mono<E> {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

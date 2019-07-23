@@ -130,9 +130,8 @@ class TypeTranslator(
 
     }
 
-
     private fun translateTypeAnnotations(annotations: Annotations): List<IrConstructorCall> =
-        annotations.map(constantValueGenerator::generateAnnotationConstructorCall)
+        annotations.mapNotNull(constantValueGenerator::generateAnnotationConstructorCall)
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
         arguments.map {

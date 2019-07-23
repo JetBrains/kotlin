@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
 
 val formatCodeProcessing =
     postProcessing { file, rangeMarker, _ ->
-        file.commitAndUnblockDocument()
         val codeStyleManager = CodeStyleManager.getInstance(file.project)
         if (rangeMarker != null) {
             if (rangeMarker.isValid) {

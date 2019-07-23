@@ -32,7 +32,13 @@ public class LightParameter extends LightVariableBuilder implements PsiParameter
         this(name, type, declarationScope, language, type instanceof PsiEllipsisType);
     }
 
-    public LightParameter(@NotNull String name, @NotNull PsiType type, @NotNull KtLightMethod declarationScope, Language language, boolean isVarArgs) {
+    public LightParameter(
+            @NotNull String name,
+            @NotNull PsiType type,
+            @NotNull KtLightMethod declarationScope,
+            Language language,
+            boolean isVarArgs
+    ) {
         super(declarationScope.getManager(), name, type, language);
         myName = name;
         myDeclarationScope = declarationScope;
@@ -52,7 +58,7 @@ public class LightParameter extends LightVariableBuilder implements PsiParameter
     @Override
     public void accept(@NotNull PsiElementVisitor visitor) {
         if (visitor instanceof JavaElementVisitor) {
-            ((JavaElementVisitor)visitor).visitParameter(this);
+            ((JavaElementVisitor) visitor).visitParameter(this);
         }
     }
 

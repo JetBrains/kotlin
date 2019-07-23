@@ -403,7 +403,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val firConstructor = FirPrimaryConstructorImpl(
                 session,
                 this ?: owner,
-                FirFunctionSymbol(callableIdForClassConstructor()),
+                FirConstructorSymbol(callableIdForClassConstructor()),
                 this?.visibility ?: defaultVisibility(),
                 this?.hasExpectModifier() ?: false,
                 this?.hasActualModifier() ?: false,
@@ -625,7 +625,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 FirMemberFunctionImpl(
                     session,
                     function,
-                    FirFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal)),
+                    FirNamedFunctionSymbol(callableIdForName(function.nameAsSafeName, function.isLocal)),
                     function.nameAsSafeName,
                     if (function.isLocal) Visibilities.LOCAL else function.visibility,
                     function.modality,
@@ -713,7 +713,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val firConstructor = FirConstructorImpl(
                 session,
                 this,
-                FirFunctionSymbol(callableIdForClassConstructor()),
+                FirConstructorSymbol(callableIdForClassConstructor()),
                 visibility,
                 hasExpectModifier(),
                 hasActualModifier(),

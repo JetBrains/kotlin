@@ -52,11 +52,12 @@ UFile (package = )
                                 USimpleNameReferenceExpression (identifier = map, resolvesTo = null)
                                 ULambdaExpression
                                     UBlockExpression
-                                        UQualifiedReferenceExpression
-                                            USimpleNameReferenceExpression (identifier = it)
-                                            UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
-                                                UIdentifier (Identifier (toString))
-                                                USimpleNameReferenceExpression (identifier = toString, resolvesTo = null)
+                                        UReturnExpression
+                                            UQualifiedReferenceExpression
+                                                USimpleNameReferenceExpression (identifier = it)
+                                                UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                                    UIdentifier (Identifier (toString))
+                                                    USimpleNameReferenceExpression (identifier = toString, resolvesTo = null)
                 UDeclarationsExpression
                     ULocalVariable (name = lls)
                 UDeclarationsExpression

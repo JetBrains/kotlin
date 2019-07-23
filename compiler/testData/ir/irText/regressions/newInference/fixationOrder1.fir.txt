@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/fixationOrder1.kt
           <R>: <none>
           x: CONST String type=kotlin.String value=""
           y: CONST Int type=kotlin.Int value=1
-          f: CALL 'public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>' type=kotlin.Function1<kotlin.Any?, kotlin.Any?> origin=null
+          f: CALL 'public final fun foo <X, Y> (): kotlin.Function1<X of <root>.foo, Y of <root>.foo> declared in <root>' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
             <X>: <none>
             <Y>: <none>
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String 

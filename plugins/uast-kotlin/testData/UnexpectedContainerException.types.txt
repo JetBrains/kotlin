@@ -23,17 +23,18 @@ UFile (package = ) [public abstract interface Callback {...]
                         UQualifiedReferenceExpression [Callback.java] : PsiType:Class<Callback>
                             UClassLiteralExpression [Callback] : PsiType:KClass<Callback>
                             USimpleNameReferenceExpression (identifier = java) [java] : PsiType:Class<Callback>
-                        ULambdaExpression [{ ...}] : PsiType:<ErrorType>
+                        ULambdaExpression [{ ...}] : PsiType:Function0<? extends Callback>
                             UBlockExpression [{...}]
-                                UObjectLiteralExpression [anonymous object : Callback {...            }] : PsiType:Callback
-                                    UClass (name = null) [final class null : Callback {...}]
-                                        UAnnotationMethod (name = onError) [public fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void {...}]
-                                            UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
-                                                UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
-                                            UBlockExpression [{...}] : PsiType:Void
-                                                UThrowExpression [throw <init>("")] : PsiType:Void
-                                                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>("")] : PsiType:UnsupportedOperationException
-                                                        UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
-                                                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
-                                                        ULiteralExpression (value = "") [""] : PsiType:String
-                                        UAnnotationMethod (name = Model$1$1) [fun Model$1$1() = UastEmptyExpression]
+                                UReturnExpression [return anonymous object : Callback {...            }]
+                                    UObjectLiteralExpression [anonymous object : Callback {...            }] : PsiType:Callback
+                                        UClass (name = null) [final class null : Callback {...}]
+                                            UAnnotationMethod (name = onError) [public fun onError(@org.jetbrains.annotations.NotNull throwable: java.lang.Throwable) : void {...}]
+                                                UParameter (name = throwable) [@org.jetbrains.annotations.NotNull var throwable: java.lang.Throwable]
+                                                    UAnnotation (fqName = org.jetbrains.annotations.NotNull) [@org.jetbrains.annotations.NotNull]
+                                                UBlockExpression [{...}] : PsiType:Void
+                                                    UThrowExpression [throw <init>("")] : PsiType:Void
+                                                        UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 1)) [<init>("")] : PsiType:UnsupportedOperationException
+                                                            UIdentifier (Identifier (UnsupportedOperationException)) [UIdentifier (Identifier (UnsupportedOperationException))]
+                                                            USimpleNameReferenceExpression (identifier = <init>, resolvesTo = UnsupportedOperationException) [<init>] : PsiType:UnsupportedOperationException
+                                                            ULiteralExpression (value = "") [""] : PsiType:String
+                                            UAnnotationMethod (name = Model$1$1) [fun Model$1$1() = UastEmptyExpression]

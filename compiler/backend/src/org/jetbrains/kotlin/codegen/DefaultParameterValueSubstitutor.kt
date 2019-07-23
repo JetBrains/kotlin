@@ -205,8 +205,7 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
             frameMap.enter(parameter, typeMapper.mapType(parameter))
         }
 
-        var mask = 0
-        val masks = arrayListOf<Int>()
+        val args = DefaultCallArgs(functionDescriptor.valueParameters.size)
         for (parameterDescriptor in functionDescriptor.valueParameters) {
             val paramKotlinType = parameterDescriptor.type
             val paramType = typeMapper.mapType(paramKotlinType)
@@ -215,18 +214,12 @@ class DefaultParameterValueSubstitutor(val state: GenerationState) {
                 StackValue.local(index, paramType, paramKotlinType).put(paramType, paramKotlinType, v)
             } else {
                 AsmUtil.pushDefaultValueOnStack(paramType, v)
-                val i = parameterDescriptor.index
-                if (i != 0 && i % Integer.SIZE == 0) {
-                    masks.add(mask)
-                    mask = 0
-                }
-                mask = mask or (1 shl (i % Integer.SIZE))
+                args.mark(parameterDescriptor.index)
             }
         }
-        masks.add(mask)
 
-        for (m in masks) {
-            v.iconst(m)
+        for (mask in args.toInts()) {
+            v.iconst(mask)
         }
 
         // for default constructors: just marks default constructor (see DEFAULT_CONSTRUCTOR_MARKER)

@@ -11,7 +11,7 @@ import java.io.File
 import java.net.URI
 
 open class NodeJsSetupTask : DefaultTask() {
-    private val settings = project.nodeJs.root
+    private val settings get() = NodeJsRootPlugin.apply(project.rootProject)
     private val env by lazy { settings.environment }
 
     val ivyDependency: String
@@ -21,6 +21,7 @@ open class NodeJsSetupTask : DefaultTask() {
         @OutputDirectory get() = env.nodeDir
 
     init {
+        @Suppress("LeakingThis")
         onlyIf {
             settings.download && !env.nodeBinDir.isDirectory
         }

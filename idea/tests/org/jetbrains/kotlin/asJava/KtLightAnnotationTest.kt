@@ -467,6 +467,26 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
 
     }
 
+    fun testKtVarargAnnotation() {
+
+        myFixture.configureByText("Anno.kt", """
+            annotation class Anno(vararg val vars: String)
+        """)
+        myFixture.configureByText("AnnotatedClass.kt", """
+            @Anno("hello", "world")
+            class MyAnnotated
+        """.trimIndent())
+
+        val annotations = myFixture.findClass("MyAnnotated").expectAnnotations(1)
+        val annotationAttributeVal = annotations.first().findAttributeValue("vars")
+        annotationAttributeVal as PsiArrayInitializerMemberValue
+        assertTextAndRange("(\"hello\", \"world\")", annotationAttributeVal)
+        UsefulTestCase.assertInstanceOf(annotationAttributeVal.parent, PsiNameValuePair::class.java)
+        UsefulTestCase.assertEquals(annotationAttributeVal.initializers.size, 2)
+        assertTextAndRange("\"hello\"", annotationAttributeVal.initializers[0])
+        assertTextAndRange("\"world\"", annotationAttributeVal.initializers[1])
+    }
+
     private fun doVarargTest(type: String, parameters: List<String>) {
         val paramsJoined = parameters.joinToString(", ")
 
@@ -574,7 +594,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         """.trimIndent())
 
         myFixture.configureByText("AnnotatedClass.kt", """
-            @Annotation(value = "a")
+            @Annotation("a")
             open class AnnotatedClass
         """.trimIndent())
         myFixture.testHighlighting("Annotation.java", "AnnotatedClass.kt")
@@ -762,7 +782,7 @@ class KtLightAnnotationTest : KotlinLightCodeInsightFixtureTestCase() {
         WriteAction.run<Throwable> {
             val modelsProvider = IdeModifiableModelsProviderImpl(project)
             val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider)
+            facet.configureFacet(version, LanguageFeature.State.DISABLED, null, modelsProvider, false, emptyList())
             modelsProvider.commit()
         }
     }

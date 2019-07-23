@@ -17,13 +17,11 @@ import org.jetbrains.kotlin.idea.caches.resolve.allowResolveInWriteAction
 import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.imports.canBeReferencedViaImport
 import org.jetbrains.kotlin.idea.imports.getImportableTargets
+import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
-import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
-import org.jetbrains.kotlin.psi.psiUtil.getQualifiedExpressionForReceiver
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -60,19 +58,19 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         val RETAIN_COMPANION = ShortenReferences { Options(removeExplicitCompanion = false) }
 
         fun canBePossibleToDropReceiver(element: KtDotQualifiedExpression, bindingContext: BindingContext): Boolean {
-            val receiver = element.receiverExpression
-            val nameRef = when (receiver) {
+            val nameRef = when (val receiver = element.receiverExpression) {
                 is KtThisExpression -> return true
                 is KtNameReferenceExpression -> receiver
                 is KtDotQualifiedExpression -> receiver.selectorExpression as? KtNameReferenceExpression ?: return false
                 else -> return false
             }
-            val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]
-            when (targetDescriptor) {
+            when (val targetDescriptor = bindingContext[BindingContext.REFERENCE_TARGET, nameRef]) {
                 is ClassDescriptor -> {
                     if (targetDescriptor.kind != ClassKind.OBJECT) return true
                     // for object receiver we should additionally check that it's dispatch receiver (that is the member is inside the object) or not a receiver at all
-                    val resolvedCall = element.getResolvedCall(bindingContext) ?: return false
+                    val resolvedCall = element.getResolvedCall(bindingContext)
+                        ?: return element.getQualifiedElementSelector()?.mainReference?.resolveToDescriptors(bindingContext) != null
+
                     val receiverKind = resolvedCall.explicitReceiverKind
                     return receiverKind == ExplicitReceiverKind.DISPATCH_RECEIVER || receiverKind == ExplicitReceiverKind.NO_EXPLICIT_RECEIVER
                 }

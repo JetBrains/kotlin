@@ -66,7 +66,10 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
+import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils.*
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -349,26 +352,9 @@ class KotlinTypeMapper @JvmOverloads constructor(
         parameters: List<TypeParameterDescriptor>,
         mode: TypeMappingMode
     ) {
-        for ((parameter, argument) in parameters.zip(arguments)) {
-            if (argument.isStarProjection ||
-                // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
-                KotlinBuiltIns.isNothing(argument.type) && parameter.variance === Variance.IN_VARIANCE
-            ) {
-                signatureVisitor.writeUnboundedWildcard()
-            } else {
-                val argumentMode = mode.updateArgumentModeFromAnnotations(argument.type)
-                val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
-
-                signatureVisitor.writeTypeArgument(projectionKind)
-
-                mapType(
-                    argument.type, signatureVisitor,
-                    argumentMode.toGenericArgumentMode(
-                        getEffectiveVariance(parameter.variance, argument.projectionKind)
-                    )
-                )
-
-                signatureVisitor.writeTypeArgumentEnd()
+        with(SimpleClassicTypeSystemContext) {
+            writeGenericArguments(signatureVisitor, arguments, parameters, mode) { type, sw, mode ->
+                mapType(type as KotlinType, sw, mode)
             }
         }
     }
@@ -1444,27 +1430,34 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 ?: SpecialNames.safeIdentifier(klass.name).identifier
         }
 
-        private fun hasNothingInNonContravariantPosition(kotlinType: KotlinType): Boolean {
-            val parameters = kotlinType.constructor.parameters
-            val arguments = kotlinType.arguments
+        private fun hasNothingInNonContravariantPosition(kotlinType: KotlinType): Boolean =
+            SimpleClassicTypeSystemContext.hasNothingInNonContravariantPosition(kotlinType)
 
-            for (i in arguments.indices) {
-                val projection = arguments[i]
+        fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
+            val typeConstructor = type.typeConstructor()
 
-                if (projection.isStarProjection) continue
+            for (i in 0 until type.argumentsCount()) {
+                val projection = type.getArgument(i)
+                if (projection.isStarProjection()) continue
 
-                val type = projection.type
+                val argument = projection.getType()
 
-                if (KotlinBuiltIns.isNullableNothing(type) || KotlinBuiltIns.isNothing(type) && parameters[i].variance !== Variance.IN_VARIANCE)
-                    return true
+                if (argument.isNullableNothing() ||
+                    argument.isNothing() && typeConstructor.getParameter(i).getVariance() != TypeVariance.IN
+                ) return true
             }
 
             return false
         }
 
-        fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance {
-            val projectionKind = projection.projectionKind
-            val parameterVariance = parameter.variance
+        fun getVarianceForWildcard(parameter: TypeParameterDescriptor, projection: TypeProjection, mode: TypeMappingMode): Variance =
+            SimpleClassicTypeSystemContext.getVarianceForWildcard(parameter, projection, mode)
+
+        private fun TypeSystemCommonBackendContext.getVarianceForWildcard(
+            parameter: TypeParameterMarker, projection: TypeArgumentMarker, mode: TypeMappingMode
+        ): Variance {
+            val projectionKind = projection.getVariance().convertVariance()
+            val parameterVariance = parameter.getVariance().convertVariance()
 
             if (parameterVariance == Variance.INVARIANT) {
                 return projectionKind
@@ -1475,12 +1468,12 @@ class KotlinTypeMapper @JvmOverloads constructor(
             }
 
             if (projectionKind == Variance.INVARIANT || projectionKind == parameterVariance) {
-                if (mode.skipDeclarationSiteWildcardsIfPossible && !projection.isStarProjection) {
-                    if (parameterVariance == Variance.OUT_VARIANCE && projection.type.isMostPreciseCovariantArgument()) {
+                if (mode.skipDeclarationSiteWildcardsIfPossible && !projection.isStarProjection()) {
+                    if (parameterVariance == Variance.OUT_VARIANCE && isMostPreciseCovariantArgument(projection.getType())) {
                         return Variance.INVARIANT
                     }
 
-                    if (parameterVariance == Variance.IN_VARIANCE && projection.type.isMostPreciseContravariantArgument(parameter)) {
+                    if (parameterVariance == Variance.IN_VARIANCE && isMostPreciseContravariantArgument(projection.getType(), parameter)) {
                         return Variance.INVARIANT
                     }
                 }
@@ -1490,6 +1483,37 @@ class KotlinTypeMapper @JvmOverloads constructor(
             // In<out X> = In<*>
             // Out<in X> = Out<*>
             return Variance.OUT_VARIANCE
+        }
+
+        fun TypeSystemCommonBackendContext.writeGenericArguments(
+            signatureVisitor: JvmSignatureWriter,
+            arguments: List<TypeArgumentMarker>,
+            parameters: List<TypeParameterMarker>,
+            mode: TypeMappingMode,
+            mapType: (KotlinTypeMarker, JvmSignatureWriter, TypeMappingMode) -> Type
+        ) {
+            for ((parameter, argument) in parameters.zip(arguments)) {
+                if (argument.isStarProjection() ||
+                    // In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
+                    argument.getType().isNothing() && parameter.getVariance() == TypeVariance.IN
+                ) {
+                    signatureVisitor.writeUnboundedWildcard()
+                } else {
+                    val argumentMode = mode.updateArgumentModeFromAnnotations(argument.getType(), this)
+                    val projectionKind = getVarianceForWildcard(parameter, argument, argumentMode)
+
+                    signatureVisitor.writeTypeArgument(projectionKind)
+
+                    mapType(
+                        argument.getType(), signatureVisitor,
+                        argumentMode.toGenericArgumentMode(
+                            getEffectiveVariance(parameter.getVariance().convertVariance(), argument.getVariance().convertVariance())
+                        )
+                    )
+
+                    signatureVisitor.writeTypeArgumentEnd()
+                }
+            }
         }
 
         //NB: similar platform agnostic code in DescriptorUtils.unwrapFakeOverride

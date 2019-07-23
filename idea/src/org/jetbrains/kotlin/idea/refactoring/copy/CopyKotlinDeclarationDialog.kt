@@ -1,23 +1,11 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.idea.refactoring.copy
 
 import com.intellij.ide.util.DirectoryChooser
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
@@ -41,6 +29,7 @@ import org.jetbrains.kotlin.idea.core.getPackage
 import org.jetbrains.kotlin.idea.refactoring.Pass
 import org.jetbrains.kotlin.idea.refactoring.hasIdentifiersOnly
 import org.jetbrains.kotlin.idea.refactoring.ui.KotlinDestinationFolderComboBox
+import org.jetbrains.kotlin.idea.roots.getSuitableDestinationSourceRoots
 import org.jetbrains.kotlin.idea.util.sourceRoot
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -53,9 +42,9 @@ import kotlin.math.max
 
 // Based on com.intellij.refactoring.copy.CopyClassDialog
 class CopyKotlinDeclarationDialog(
-        declaration: KtNamedDeclaration,
-        private val defaultTargetDirectory: PsiDirectory?,
-        private val project: Project
+    declaration: KtNamedDeclaration,
+    private val defaultTargetDirectory: PsiDirectory?,
+    private val project: Project
 ) : DialogWrapper(project, true) {
     private val informationLabel = JLabel()
     private val classNameField = EditorTextField("")
@@ -76,18 +65,19 @@ class CopyKotlinDeclarationDialog(
         get() = ((destinationComboBox.comboBox.selectedItem as? DirectoryChooser.ItemWrapper)?.directory ?: originalFile).sourceRoot
 
     init {
-        informationLabel.text = RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(declaration), UsageViewUtil.getLongName(declaration))
+        informationLabel.text =
+            RefactoringBundle.message("copy.class.copy.0.1", UsageViewUtil.getType(declaration), UsageViewUtil.getLongName(declaration))
         informationLabel.font = informationLabel.font.deriveFont(Font.BOLD)
 
         init()
 
         destinationComboBox.setData(
-                project,
-                defaultTargetDirectory,
-                Pass { setErrorText(it, destinationComboBox) },
-                packageNameField.childComponent
+            project,
+            defaultTargetDirectory,
+            Pass { setErrorText(it, destinationComboBox) },
+            packageNameField.childComponent
         )
-        classNameField.setText(UsageViewUtil.getShortName(declaration))
+        classNameField.text = UsageViewUtil.getShortName(declaration)
         classNameField.selectAll()
     }
 
@@ -97,13 +87,14 @@ class CopyKotlinDeclarationDialog(
 
     override fun createNorthPanel(): JComponent? {
         val qualifiedName = qualifiedName
-        packageNameField = PackageNameReferenceEditorCombo(qualifiedName, project, RECENTS_KEY, RefactoringBundle.message("choose.destination.package"))
+        packageNameField =
+            PackageNameReferenceEditorCombo(qualifiedName, project, RECENTS_KEY, RefactoringBundle.message("choose.destination.package"))
         packageNameField.setTextFieldPreferredWidth(max(qualifiedName.length + 5, 40))
         packageLabel.text = RefactoringBundle.message("destination.package")
         packageLabel.labelFor = packageNameField
 
         val label = JLabel(RefactoringBundle.message("target.destination.folder"))
-        val isMultipleSourceRoots = JavaProjectRootsUtil.getSuitableDestinationSourceRoots(project).size > 1
+        val isMultipleSourceRoots = getSuitableDestinationSourceRoots(project).size > 1
         destinationComboBox.isVisible = isMultipleSourceRoots
         label.isVisible = isMultipleSourceRoots
         label.labelFor = destinationComboBox
@@ -111,12 +102,12 @@ class CopyKotlinDeclarationDialog(
         val panel = JPanel(BorderLayout())
         panel.add(openInEditorCheckBox, BorderLayout.EAST)
         return FormBuilder.createFormBuilder()
-                .addComponent(informationLabel)
-                .addLabeledComponent(RefactoringBundle.message("copy.files.new.name.label"), classNameField, UIUtil.LARGE_VGAP)
-                .addLabeledComponent(packageLabel, packageNameField)
-                .addLabeledComponent(label, destinationComboBox)
-                .addComponent(panel)
-                .panel
+            .addComponent(informationLabel)
+            .addLabeledComponent(RefactoringBundle.message("copy.files.new.name.label"), classNameField, UIUtil.LARGE_VGAP)
+            .addLabeledComponent(packageLabel, packageNameField)
+            .addLabeledComponent(label, destinationComboBox)
+            .addComponent(panel)
+            .panel
     }
 
     private val qualifiedName: String
@@ -144,8 +135,7 @@ class CopyKotlinDeclarationDialog(
 
         try {
             targetDirectory = destinationComboBox.selectDirectory(PackageWrapper(manager, packageName), false)
-        }
-        catch (e: IncorrectOperationException) {
+        } catch (e: IncorrectOperationException) {
             return e.message
         }
 
@@ -180,6 +170,7 @@ class CopyKotlinDeclarationDialog(
     override fun getHelpId() = HelpID.COPY_CLASS
 
     companion object {
-        @NonNls private val RECENTS_KEY = "CopyKotlinDeclarationDialog.RECENTS_KEY"
+        @NonNls
+        private val RECENTS_KEY = "CopyKotlinDeclarationDialog.RECENTS_KEY"
     }
 }

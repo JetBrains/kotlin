@@ -288,7 +288,14 @@ fun configureFacetByGradleModule(
     )
 
     val kotlinFacet = ideModule.getOrCreateFacet(modelsProvider, false, GradleConstants.SYSTEM_ID.id)
-    kotlinFacet.configureFacet(compilerVersion, coroutinesProperty, platform, modelsProvider)
+    kotlinFacet.configureFacet(
+        compilerVersion,
+        coroutinesProperty,
+        platform,
+        modelsProvider,
+        moduleNode.isHmpp,
+        moduleNode.pureKotlinSourceFolders
+    )
 
     if (sourceSetNode == null) {
         ideModule.compilerArgumentsBySourceSet = moduleNode.compilerArgumentsBySourceSet

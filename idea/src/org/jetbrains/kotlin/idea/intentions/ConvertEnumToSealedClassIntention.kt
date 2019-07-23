@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.intentions
@@ -31,6 +20,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(KtClass::class.java, "Convert to sealed class") {
     override fun applicabilityRange(element: KtClass): TextRange? {
+        if (element.getClassKeyword() == null) return null
         val nameIdentifier = element.nameIdentifier ?: return null
         val enumKeyword = element.modifierList?.getModifier(KtTokens.ENUM_KEYWORD) ?: return null
         return TextRange(enumKeyword.startOffset, nameIdentifier.endOffset)
@@ -60,9 +50,11 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
                 val initializers = member.initializerList?.initializers ?: emptyList()
                 if (initializers.isNotEmpty()) {
                     initializers.forEach { obj.addSuperTypeListEntry(psiFactory.createSuperTypeCallEntry("${klass.name}${it.text}")) }
-                }
-                else {
-                    val defaultEntry = if (isExpect) psiFactory.createSuperTypeEntry(name) else psiFactory.createSuperTypeCallEntry("$name()")
+                } else {
+                    val defaultEntry = if (isExpect)
+                        psiFactory.createSuperTypeEntry(name)
+                    else
+                        psiFactory.createSuperTypeCallEntry("$name()")
                     obj.addSuperTypeListEntry(defaultEntry)
                 }
 
@@ -70,24 +62,23 @@ class ConvertEnumToSealedClassIntention : SelfTargetingRangeIntention<KtClass>(K
                     obj.addModifier(KtTokens.ACTUAL_KEYWORD)
                 }
 
-                member.getBody()?.let { body -> obj.add(body) }
+                member.body?.let { body -> obj.add(body) }
 
                 member.delete()
                 klass.addDeclaration(obj)
             }
 
-            klass.getBody()?.let { body ->
-                val semicolon = body
-                        .allChildren
-                        .takeWhile { it !is KtDeclaration }
-                        .firstOrNull { it.node.elementType == KtTokens.SEMICOLON }
-                if (semicolon != null) {
-                    val nonWhiteSibling = semicolon.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
-                    body.deleteChildRange(semicolon, nonWhiteSibling?.prevSibling ?: semicolon)
-                    if (nonWhiteSibling != null) {
-                        CodeStyleManager.getInstance(klass.project).reformat(nonWhiteSibling.firstChild ?: nonWhiteSibling)
+            klass.body?.let { body ->
+                body.allChildren
+                    .takeWhile { it !is KtDeclaration }
+                    .firstOrNull { it.node.elementType == KtTokens.SEMICOLON }
+                    ?.let { semicolon ->
+                        val nonWhiteSibling = semicolon.siblings(forward = true, withItself = false).firstOrNull { it !is PsiWhiteSpace }
+                        body.deleteChildRange(semicolon, nonWhiteSibling?.prevSibling ?: semicolon)
+                        if (nonWhiteSibling != null) {
+                            CodeStyleManager.getInstance(klass.project).reformat(nonWhiteSibling.firstChild ?: nonWhiteSibling)
+                        }
                     }
-                }
             }
         }
     }

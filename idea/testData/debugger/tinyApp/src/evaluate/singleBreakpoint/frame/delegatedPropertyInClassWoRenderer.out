@@ -6,8 +6,9 @@ Compile bytecode for args.size
  frame    = main:9, DelegatedPropertyInClassWoRendererKt {delegatedPropertyInClassWoRenderer}
    local    = args: java.lang.String[] = {java.lang.String[0]@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 6)
    local    = a: delegatedPropertyInClassWoRenderer.A = {delegatedPropertyInClassWoRenderer.A@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 7)
-     field    = prop: int = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 13)
+     field    = prop$delegate: delegatedPropertyInClassWoRenderer.MyDelegate = {delegatedPropertyInClassWoRenderer.MyDelegate@uniqueID} (sp = delegatedPropertyInClassWoRenderer.kt, 13)
                 - Class has no fields
+     field    = prop: int = 1 (sp = delegatedPropertyInClassWoRenderer.kt, 13)
 Disconnected from the target VM
 
 Process finished with exit code 0

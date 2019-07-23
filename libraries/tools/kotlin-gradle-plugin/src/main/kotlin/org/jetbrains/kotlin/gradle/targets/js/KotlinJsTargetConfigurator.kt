@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetProcessor
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
@@ -20,10 +20,6 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
         target as KotlinJsTarget
 
         super.configureTarget(target)
-
-        target.compilations.forEach {
-            it.compileKotlinTask.dependsOn(target.project.nodeJs.root.npmResolveTask)
-        }
     }
 
     override fun configureTest(target: KotlinOnlyTarget<KotlinJsCompilation>) {

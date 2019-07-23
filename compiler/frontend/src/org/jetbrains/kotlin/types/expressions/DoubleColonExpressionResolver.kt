@@ -11,8 +11,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
-import org.jetbrains.kotlin.container.PlatformExtensionsClashResolver
-import org.jetbrains.kotlin.container.PlatformSpecificExtension
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -47,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
+import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
@@ -88,7 +87,8 @@ class DoubleColonExpressionResolver(
     val languageVersionSettings: LanguageVersionSettings,
     val additionalCheckers: Iterable<ClassLiteralChecker>,
     val dataFlowValueFactory: DataFlowValueFactory,
-    val bigAritySupport: FunctionWithBigAritySupport
+    val bigAritySupport: FunctionWithBigAritySupport,
+    val genericArrayClassLiteralSupport: GenericArrayClassLiteralSupport
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -141,7 +141,9 @@ class DoubleColonExpressionResolver(
         result as DoubleColonLHS.Type
         val descriptor = type.constructor.declarationDescriptor
         if (result.possiblyBareType.isBare) {
-            if (descriptor is ClassDescriptor && KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
+            if (descriptor is ClassDescriptor && KotlinBuiltIns.isNonPrimitiveArray(descriptor) &&
+                !languageVersionSettings.supportsFeature(LanguageFeature.BareArrayClassLiteral)
+            ) {
                 c.trace.report(ARRAY_CLASS_LITERAL_REQUIRES_ARGUMENT.on(expression))
             }
         }
@@ -481,14 +483,15 @@ class DoubleColonExpressionResolver(
     }
 
     private fun isAllowedInClassLiteral(type: KotlinType): Boolean {
-        val typeConstructor = type.constructor
-        val descriptor = typeConstructor.declarationDescriptor
-
-        when (descriptor) {
+        when (val descriptor = type.constructor.declarationDescriptor) {
             is ClassDescriptor -> {
-                if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
-                    return type.arguments.none { typeArgument ->
-                        typeArgument.isStarProjection || !isAllowedInClassLiteral(typeArgument.type)
+                if (genericArrayClassLiteralSupport.isEnabled ||
+                    !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitGenericArrayClassLiteral)
+                ) {
+                    if (KotlinBuiltIns.isNonPrimitiveArray(descriptor)) {
+                        return type.arguments.none { typeArgument ->
+                            typeArgument.isStarProjection || !isAllowedInClassLiteral(typeArgument.type)
+                        }
                     }
                 }
 
@@ -823,7 +826,7 @@ class DoubleColonExpressionResolver(
 }
 
 /**
- * By default, function types with big arity are supported. On platforms where they are not supported by default (e.g. JVM),
+ * By default, function types with big arity are enabled. On platforms where they are not supported by default (e.g. JVM),
  * [LanguageVersionDependent] should be used which makes the code check if the corresponding language feature is enabled.
  */
 @DefaultImplementation(FunctionWithBigAritySupport.Enabled::class)
@@ -836,5 +839,21 @@ interface FunctionWithBigAritySupport {
 
     object LanguageVersionDependent : FunctionWithBigAritySupport {
         override val shouldCheckLanguageVersionSettings: Boolean = true
+    }
+}
+
+/**
+ * Generic array class literals (`Array<String>::class.java`) are enabled on all platforms until 1.4, and only on JVM since 1.4.
+ */
+@DefaultImplementation(GenericArrayClassLiteralSupport.Disabled::class)
+interface GenericArrayClassLiteralSupport {
+    val isEnabled: Boolean
+
+    object Enabled : GenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = true
+    }
+
+    object Disabled : GenericArrayClassLiteralSupport {
+        override val isEnabled: Boolean = false
     }
 }

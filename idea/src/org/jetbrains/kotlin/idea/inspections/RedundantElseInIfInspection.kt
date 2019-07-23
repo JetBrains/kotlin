@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 class RedundantElseInIfInspection : AbstractKotlinInspection() {
@@ -87,7 +88,7 @@ private fun KtIfExpression.lastSingleElseKeyword(): PsiElement? {
 
 private fun KtIfExpression.hasRedundantElse(): Boolean {
     val context = analyze()
-    if (context[BindingContext.USED_AS_EXPRESSION, this] == true) return false
+    if (isUsedAsExpression(context)) return false
     var ifExpression = this
     while (true) {
         if ((ifExpression.then)?.isReturnOrNothing(context) != true) return false

@@ -163,7 +163,7 @@ private fun JavaClassifierType.enhanceInflexibleType(
             arg.toConeProjection(
                 session,
                 javaTypeParameterStack,
-                ((originalTag as? FirBasedSymbol<*>)?.fir as? FirCallableMemberDeclaration)?.typeParameters?.getOrNull(localArgIndex)
+                ((originalTag as? FirBasedSymbol<*>)?.fir as? FirCallableMemberDeclaration<*>)?.typeParameters?.getOrNull(localArgIndex)
             )
         } else {
             val argEnhancedTypeRef = arg.enhancePossiblyFlexible(session, javaTypeParameterStack, annotations, qualifiers, globalArgIndex)

@@ -102,6 +102,9 @@ enum class LanguageFeature(
     ProhibitUseSiteTargetAnnotationsOnSuperTypes(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitTypeParametersInClassLiteralsInAnnotationArguments(KOTLIN_1_4, kind = BUG_FIX),
     ProhibitComparisonOfIncompatibleEnums(KOTLIN_1_4, kind = BUG_FIX),
+    BareArrayClassLiteral(KOTLIN_1_4),
+    ProhibitGenericArrayClassLiteral(KOTLIN_1_4),
+    NonParenthesizedAnnotationsOnFunctionalTypes(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379
@@ -124,6 +127,8 @@ enum class LanguageFeature(
     BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+
+    SamConversionPerArgument(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
 
     // can be used only with NewInference feature
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),

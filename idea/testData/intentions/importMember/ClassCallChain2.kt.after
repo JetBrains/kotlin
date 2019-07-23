@@ -1,0 +1,20 @@
+// INTENTION_TEXT: "Add import for 'pack.name.Fixtures.Register'"
+
+package pack.name
+
+import pack.name.Fixtures.Register
+
+class Fixtures {
+    class Register {
+        class Domain {
+            object UserRepository {
+                val authSuccess = true
+                val authError = false
+            }
+        }
+    }
+}
+
+fun test() {
+    Register.Domain.UserRepository.authSuccess
+}

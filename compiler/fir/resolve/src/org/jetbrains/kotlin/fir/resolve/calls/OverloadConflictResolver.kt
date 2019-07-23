@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
-import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.arrayElementType
 import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
 import org.jetbrains.kotlin.resolve.OverloadabilitySpecificityCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
@@ -51,8 +52,7 @@ class ConeOverloadConflictResolver(
     }
 
     private fun createFlatSignature(call: Candidate): FlatSignature<Candidate> {
-        val declaration = call.symbol.firUnsafe<FirCallableDeclaration>()
-        return when (declaration) {
+        return when (val declaration = call.symbol.fir) {
             is FirNamedFunction -> createFlatSignature(call, declaration)
             is FirConstructor -> createFlatSignature(call, declaration)
             else -> error("Not supported: $declaration")
@@ -63,7 +63,7 @@ class ConeOverloadConflictResolver(
         return FlatSignature(
             call,
             constructor.typeParameters.map { it.symbol },
-            call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
+            call.argumentMapping!!.map {  it.value.argumentType() },
             //constructor.receiverTypeRef != null,
             false,
             constructor.valueParameters.any { it.isVararg },
@@ -73,12 +73,18 @@ class ConeOverloadConflictResolver(
         )
     }
 
+    private fun FirValueParameter.argumentType(): ConeKotlinType {
+        val type = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+        if (isVararg) return type.arrayElementType(inferenceComponents.session)!!
+        return type
+    }
+
     private fun createFlatSignature(call: Candidate, function: FirNamedFunction): FlatSignature<Candidate> {
         return FlatSignature(
             call,
             function.typeParameters.map { it.symbol },
             listOfNotNull<ConeKotlinType>(function.receiverTypeRef?.coneTypeUnsafe()) +
-                    call.argumentMapping!!.map { it.value.returnTypeRef.coneTypeUnsafe() },
+                    call.argumentMapping!!.map { it.value.argumentType() },
             function.receiverTypeRef != null,
             function.valueParameters.any { it.isVararg },
             function.valueParameters.count { it.defaultValue != null },
@@ -214,7 +220,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl) : Simp
 
             it to variable.defaultType
         }
-        val substitutor = ConeSubstitutorByMap(substitutionMap.cast())
+        val substitutor = substitutorByMap(substitutionMap.cast())
         for (typeParameter in typeParameters) {
             require(typeParameter is FirTypeParameterSymbol)
             for (upperBound in typeParameter.fir.bounds) {

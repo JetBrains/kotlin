@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -28,7 +28,7 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
         }.toList()
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
             dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
         } ?: emptyList()
@@ -37,7 +37,7 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
     override fun getClassDeclaredMemberScope(classId: ClassId) =
         dependencyProviders.firstNotNullResult { it.getClassDeclaredMemberScope(classId) }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return classCache.lookupCacheOrCalculate(classId) {
             for (provider in dependencyProviders) {
                 provider.getClassLikeSymbolByFqName(classId)?.let {

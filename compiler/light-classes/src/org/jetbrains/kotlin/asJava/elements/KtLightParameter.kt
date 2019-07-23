@@ -28,7 +28,7 @@ class KtLightParameter(
     private val index: Int,
     method: KtLightMethod
 ) : LightParameter(dummyDelegate.name ?: "p$index", dummyDelegate.type, method, KotlinLanguage.INSTANCE),
-        KtLightDeclaration<KtParameter, PsiParameter> {
+    KtLightDeclaration<KtParameter, PsiParameter> {
 
     private val lazyDelegate by lazyPub { clsDelegateProvider() ?: dummyDelegate }
 
@@ -100,20 +100,20 @@ class KtLightParameter(
     override fun getParent(): PsiElement = method.parameterList
 
     override fun isEquivalentTo(another: PsiElement?): Boolean {
-        val result = ApplicationManager.getApplication().runReadAction(Computable {
-            val kotlinOrigin = kotlinOrigin
-            if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
+        if (this === another) return true
 
-            if (another is KtLightParameter && kotlinOrigin != null) {
-                kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
+        return ApplicationManager.getApplication().runReadAction(Computable<Boolean> {
+            if (another is KtParameter) {
+                val kotlinOrigin = kotlinOrigin
+                if (kotlinOrigin?.isEquivalentTo(another) == true) return@Computable true
             }
-            else {
-                null
+
+            if (another is KtLightParameter) {
+                return@Computable kotlinOrigin != null && kotlinOrigin == another.kotlinOrigin && clsDelegate == another.clsDelegate
             }
+
+            false
         })
-        result?.let { return it }
-
-        return super.isEquivalentTo(another)
     }
 
     override fun equals(other: Any?): Boolean {

@@ -49,15 +49,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration;
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.psi.KtScript;
+import org.jetbrains.kotlin.scripting.compiler.plugin.ConfigurationKt;
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCompilerConfigurationComponentRegistrar;
-import org.jetbrains.kotlin.scripting.configuration.ConfigurationKt;
 import org.jetbrains.kotlin.utils.ParametersMapKt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 

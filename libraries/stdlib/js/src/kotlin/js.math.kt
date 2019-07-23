@@ -87,6 +87,9 @@ public external object Math {
     internal fun log2(value: Double): Double
     @PublishedApi
     internal fun log1p(value: Double): Double
+
+    @PublishedApi
+    internal fun clz32(value: Int): Int
 }
 
 /**

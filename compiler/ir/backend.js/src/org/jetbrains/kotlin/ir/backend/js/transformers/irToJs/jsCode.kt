@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import com.google.gwt.dev.js.ThrowExceptionOnErrorReporter
+import com.google.gwt.dev.js.rhino.CodePosition
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
@@ -15,17 +15,21 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.parser.parse
+import org.jetbrains.kotlin.js.backend.ast.JsFunctionScope
+import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.JsRootScope
+import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.parser.parseExpressionOrStatement
 
-
-fun translateJsCode(call: IrCall, scope: JsScope): JsNode {
-    //TODO check non simple compile time constants (expressions)
+fun translateJsCodeIntoStatementList(code: IrExpression): List<JsStatement> {
+    // TODO: check non simple compile time constants (expressions)
+    // TODO: support proper symbol linkage and label clash resolution
 
     fun foldString(expression: IrExpression): String {
         val builder = StringBuilder()
         expression.acceptVoid(object : IrElementVisitorVoid {
-            override fun visitElement(element: IrElement) = error("Parameter of js function must be compile time String constant, not ${element.render()}")
+            override fun visitElement(element: IrElement) =
+                error("Parameter of js function must be compile time String constant, not ${element.render()}")
 
             override fun <T> visitConst(expression: IrConst<T>) {
                 builder.append(expression.kind.valueOf(expression))
@@ -37,26 +41,18 @@ fun translateJsCode(call: IrCall, scope: JsScope): JsNode {
         return builder.toString()
     }
 
-    val code = call.getValueArgument(0)!!
-    val statements = parseJsCode(code.run(::foldString), JsFunctionScope(scope, "<js-code>")).orEmpty()
-    val size = statements.size
-
-    return when (size) {
-        0 -> JsEmpty
-        1 -> statements[0].let { (it as? JsExpressionStatement)?.expression ?: it }
-        else -> JsBlock(statements)
-    }
+    return parseJsCode(foldString(code)) ?: emptyList()
 }
 
-private fun parseJsCode(jsCode: String, currentScope: JsScope): List<JsStatement>? {
+private fun parseJsCode(jsCode: String): List<JsStatement>? {
     // Parser can change local or global scope.
     // In case of js we want to keep new local names,
     // but no new global ones.
-    assert(currentScope is JsFunctionScope) { "Usage of js outside of function is unexpected" }
+
     val temporaryRootScope = JsRootScope(JsProgram())
-    val scope = DelegatingJsFunctionScopeWithTemporaryParent(currentScope as JsFunctionScope, temporaryRootScope)
+    val currentScope = JsFunctionScope(temporaryRootScope, "js")
 
-    // TODO write debug info, see how it's done in CallExpressionTranslator.parseJsCode
+    // TODO: write debug info, see how it's done in CallExpressionTranslator.parseJsCode
 
-    return parse(jsCode, ThrowExceptionOnErrorReporter, scope, "<js-code>")
+    return parseExpressionOrStatement(jsCode, ThrowExceptionOnErrorReporter, currentScope, CodePosition(0, 0), "<js-code>")
 }

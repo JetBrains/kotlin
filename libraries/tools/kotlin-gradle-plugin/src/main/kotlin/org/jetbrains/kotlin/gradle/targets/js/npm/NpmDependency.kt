@@ -15,26 +15,52 @@ import org.gradle.api.internal.artifacts.ResolvableDependency
 import org.gradle.api.internal.artifacts.dependencies.SelfResolvingDependencyInternal
 import org.gradle.api.tasks.TaskDependency
 import org.gradle.internal.component.local.model.DefaultLibraryBinaryIdentifier
-import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver.ResolutionCallResult.*
+import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import java.io.File
 
 data class NpmDependency(
     internal val project: Project,
     private val org: String?,
     private val name: String,
-    private val version: String
+    private val version: String,
+    val scope: Scope = Scope.NORMAL
 ) : SelfResolvingDependency,
     SelfResolvingDependencyInternal,
     ResolvableDependency,
     FileCollectionDependency {
 
+    enum class Scope {
+        NORMAL,
+        DEV,
+        OPTIONAL,
+        PEER
+    }
+
     override fun getGroup(): String? = org
 
     internal var parent: NpmDependency? = null
     internal val dependencies = mutableSetOf<NpmDependency>()
+    internal var resolvedVersion: String? = null
+    internal var integrity: String? = null
 
-    override fun resolve(transitive: Boolean): MutableSet<File> {
+    fun getDependenciesRecursively(): Set<NpmDependency> {
+        val visited = mutableSetOf<NpmDependency>()
+
+        fun visit(it: NpmDependency) {
+            if (!visited.add(it)) return
+
+            it.dependencies.forEach { child ->
+                visit(child)
+            }
+        }
+
+        visit(this)
+
+        return visited
+    }
+
+    override fun resolve(transitive: Boolean): Set<File> {
         val npmPackage = resolveProject() ?: return mutableSetOf()
         val npmProject = npmPackage.npmProject
 
@@ -46,9 +72,17 @@ data class NpmDependency(
             visited.add(item)
 
             npmProject.resolve(item.key)?.let {
-                all.add(it)
+                if (it.isFile) all.add(it)
                 if (it.path.endsWith(".js")) {
-                    all.add(File(it.path.removeSuffix(".js") + ".meta.js"))
+                    val baseName = it.path.removeSuffix(".js")
+                    val metaJs = File(baseName + ".meta.js")
+                    if (metaJs.isFile) all.add(metaJs)
+                    val kjsmDir = File(baseName)
+                    if (kjsmDir.isDirectory) {
+                        kjsmDir.walkTopDown()
+                            .filter { it.extension == "kjsm" }
+                            .forEach { all.add(it) }
+                    }
                 }
             }
 
@@ -81,22 +115,13 @@ data class NpmDependency(
         }
     }
 
-    private fun resolveProject(): NpmProjectPackage? {
-        val result =
-            if (isInIdeaSync) NpmResolver.resolveIfNeeded(project)
-            else NpmResolver.getAlreadyResolvedOrNull(project)
-
-        return when (result) {
-            null -> null
-            is AlreadyInProgress -> null
-            is AlreadyResolved -> findIn(result.resolution)
-                ?: error("Project hierarchy is already resolved in NPM without $this")
-            is ResolvedNow -> findIn(result.resolution) ?: error("Cannot find $this after NPM project resolve")
-        }
+    // may return null only during npm resolution
+    // (it can be called since NpmDependency added to configuration that
+    // requires resolve to build package.json, in this case we should just skip this call)
+    private fun resolveProject(): KotlinCompilationNpmResolution? {
+        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+        return nodeJs.npmResolutionManager.getNpmDependencyResolvedCompilation(this)
     }
-
-    private fun findIn(npmProjects: NpmProjects) =
-        npmProjects.npmProjectsByNpmDependency[this]
 
     val key: String = if (org == null) name else "@$org/$name"
 

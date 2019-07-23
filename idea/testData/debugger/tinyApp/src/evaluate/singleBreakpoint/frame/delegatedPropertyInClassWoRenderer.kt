@@ -17,5 +17,5 @@ class MyDelegate {
     operator fun getValue(t: Any?, p: KProperty<*>): Int = 1
 }
 
-// RENDER_DELEGATED_PROPERTIES: false
+// RENDER_DELEGATED_PROPERTIES
 // PRINT_FRAME

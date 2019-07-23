@@ -10,27 +10,28 @@ import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
-import kotlin.script.experimental.dependencies.ScriptReport
+import kotlin.script.experimental.api.ScriptDiagnostic
+import kotlin.script.experimental.api.SourceCode
 
 internal class CliScriptReportSink(private val messageCollector: MessageCollector) :
     ScriptReportSink {
-    override fun attachReports(scriptFile: VirtualFile, reports: List<ScriptReport>) {
+    override fun attachReports(scriptFile: VirtualFile, reports: List<ScriptDiagnostic>) {
         reports.forEach {
-            messageCollector.report(it.severity.convertSeverity(), it.message, location(scriptFile, it.position))
+            messageCollector.report(it.severity.convertSeverity(), it.message, location(scriptFile, it.location))
         }
     }
 
-    private fun location(scriptFile: VirtualFile, position: ScriptReport.Position?): CompilerMessageLocation? {
-        if (position == null) return CompilerMessageLocation.create(scriptFile.path)
+    private fun location(scriptFile: VirtualFile, location: SourceCode.Location?): CompilerMessageLocation? {
+        if (location == null) return CompilerMessageLocation.create(scriptFile.path)
 
-        return CompilerMessageLocation.create(scriptFile.path, position.startLine, position.startColumn, null)
+        return CompilerMessageLocation.create(scriptFile.path, location.start.line, location.start.col, null)
     }
 
-    private fun ScriptReport.Severity.convertSeverity(): CompilerMessageSeverity = when (this) {
-        ScriptReport.Severity.FATAL -> CompilerMessageSeverity.ERROR
-        ScriptReport.Severity.ERROR -> CompilerMessageSeverity.ERROR
-        ScriptReport.Severity.WARNING -> CompilerMessageSeverity.WARNING
-        ScriptReport.Severity.INFO -> CompilerMessageSeverity.INFO
-        ScriptReport.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
+    private fun ScriptDiagnostic.Severity.convertSeverity(): CompilerMessageSeverity = when (this) {
+        ScriptDiagnostic.Severity.FATAL -> CompilerMessageSeverity.ERROR
+        ScriptDiagnostic.Severity.ERROR -> CompilerMessageSeverity.ERROR
+        ScriptDiagnostic.Severity.WARNING -> CompilerMessageSeverity.WARNING
+        ScriptDiagnostic.Severity.INFO -> CompilerMessageSeverity.INFO
+        ScriptDiagnostic.Severity.DEBUG -> CompilerMessageSeverity.LOGGING
     }
 }

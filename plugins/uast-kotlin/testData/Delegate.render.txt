@@ -10,8 +10,8 @@ public final class MyColor {
 
 public final class Some {
     @org.jetbrains.annotations.NotNull private final var delegate$delegate: kotlin.Lazy
-    @org.jetbrains.annotations.NotNull private final var lambda: kotlin.Lazy<MyColor> = lazy({ 
-        <init>(1, 2, 3)
+    @org.jetbrains.annotations.NotNull private final var lambda: kotlin.Lazy<MyColor> = lazy({
+        return <init>(1, 2, 3)
     })
     @org.jetbrains.annotations.NotNull private final var nonLazy: MyColor = <init>(1, 2, 3)
     public final fun getDelegate() : MyColor = UastEmptyExpression

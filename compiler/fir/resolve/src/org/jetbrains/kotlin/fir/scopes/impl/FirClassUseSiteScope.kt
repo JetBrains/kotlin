@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.NEXT
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction.STOP
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
 
 class FirClassUseSiteScope(
@@ -20,7 +22,7 @@ class FirClassUseSiteScope(
     private val declaredMemberScope: FirScope
 ) : AbstractFirOverrideScope(session) {
 
-    override fun processFunctionsByName(name: Name, processor: (ConeFunctionSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processFunctionsByName(name: Name, processor: (FirFunctionSymbol<*>) -> ProcessorAction): ProcessorAction {
         val seen = mutableSetOf<ConeCallableSymbol>()
         if (!declaredMemberScope.processFunctionsByName(name) {
                 seen += it
@@ -39,7 +41,7 @@ class FirClassUseSiteScope(
         }
     }
 
-    override fun processPropertiesByName(name: Name, processor: (ConeVariableSymbol) -> ProcessorAction): ProcessorAction {
+    override fun processPropertiesByName(name: Name, processor: (FirCallableSymbol<*>) -> ProcessorAction): ProcessorAction {
         val seen = mutableSetOf<ConeCallableSymbol>()
         if (!declaredMemberScope.processPropertiesByName(name) {
                 seen += it

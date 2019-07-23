@@ -115,3 +115,5 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
     )
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
+
+fun IrClass.typeWith(vararg arguments: IrType) = this.symbol.typeWith(arguments.toList())

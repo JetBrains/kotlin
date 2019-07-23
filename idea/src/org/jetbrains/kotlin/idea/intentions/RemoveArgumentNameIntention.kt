@@ -19,16 +19,12 @@ package org.jetbrains.kotlin.idea.intentions
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.KtValueArgument
-import org.jetbrains.kotlin.psi.KtValueArgumentList
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
+import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 
-class RemoveArgumentNameIntention
-  : SelfTargetingRangeIntention<KtValueArgument>(KtValueArgument::class.java, "Remove argument name") {
-
+class RemoveArgumentNameIntention : SelfTargetingRangeIntention<KtValueArgument>(KtValueArgument::class.java, "Remove argument name") {
     override fun applicabilityRange(element: KtValueArgument): TextRange? {
         if (!element.isNamed()) return null
 
@@ -37,8 +33,7 @@ class RemoveArgumentNameIntention
         if (arguments.asSequence().takeWhile { it != element }.any { it.isNamed() }) return null
 
         val callExpr = argumentList.parent as? KtCallElement ?: return null
-        val resolvedCall = callExpr.resolveToCall() ?: return null
-        val argumentMatch = resolvedCall.getArgumentMapping(element) as? ArgumentMatch ?: return null
+        val argumentMatch = callExpr.resolveToArgumentMatch(element) ?: return null
         if (argumentMatch.valueParameter.index != arguments.indexOf(element)) return null
 
         val expression = element.getArgumentExpression() ?: return null
@@ -46,7 +41,23 @@ class RemoveArgumentNameIntention
     }
 
     override fun applyTo(element: KtValueArgument, editor: Editor?) {
-        val newArgument = KtPsiFactory(element).createArgument(element.getArgumentExpression()!!, null, element.getSpreadElement() != null)
-        element.replace(newArgument)
+        val argumentExpr = element.getArgumentExpression() ?: return
+        val argumentList = element.parent as? KtValueArgumentList ?: return
+        val callExpr = argumentList.parent as? KtCallElement ?: return
+        val psiFactory = KtPsiFactory(element)
+        if (argumentExpr is KtCollectionLiteralExpression && callExpr.resolveToArgumentMatch(element)?.valueParameter?.isVararg == true) {
+            argumentExpr.getInnerExpressions()
+                .map { psiFactory.createArgument(it) }
+                .reversed()
+                .forEach { argumentList.addArgumentAfter(it, element) }
+            argumentList.removeArgument(element)
+        } else {
+            val newArgument = psiFactory.createArgument(argumentExpr, null, element.getSpreadElement() != null)
+            element.replace(newArgument)
+        }
+    }
+
+    private fun KtCallElement.resolveToArgumentMatch(element: KtValueArgument): ArgumentMatch? {
+        return resolveToCall()?.getArgumentMapping(element) as? ArgumentMatch ?: return null
     }
 }

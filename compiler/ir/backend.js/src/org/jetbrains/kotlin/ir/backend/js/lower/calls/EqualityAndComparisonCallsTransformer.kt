@@ -53,7 +53,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             comparator.owner.returnType,
             comparator
         ).apply {
-            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, firstArgumentAsDispatchReceiver = true))
+            putValueArgument(0, irCall(call, intrinsics.longCompareToLong, argumentsAsReceivers = true))
             putValueArgument(1, JsIrBuilder.buildInt(irBuiltIns.intType, 0))
         }
     }
@@ -95,7 +95,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
             !isLhsPrimitive && !lhs.type.isNullable() && equalsMethod != null ->
-                irCall(call, equalsMethod.symbol, firstArgumentAsDispatchReceiver = true)
+                irCall(call, equalsMethod.symbol, argumentsAsReceivers = true)
 
             else ->
                 irCall(call, intrinsics.jsEquals)
@@ -127,7 +127,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `compareTo` method,
             // or has a potential to be primitive type (being fake overridden from `Comparable`)
             function.isMethodOfPrimitiveJSType() || function.isFakeOverriddenFromComparable() ->
-                irCall(call, intrinsics.jsCompareTo, dispatchReceiverAsFirstArgument = true)
+                irCall(call, intrinsics.jsCompareTo, receiversAsArguments = true)
 
             // Valid `compareTo` method must be present at this point
             else ->
@@ -144,12 +144,12 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
 
             // `Any.equals` works as identity operator
             call.isSuperToAny() ->
-                irCall(call, intrinsics.jsEqeqeq, dispatchReceiverAsFirstArgument = true)
+                irCall(call, intrinsics.jsEqeqeq, receiversAsArguments = true)
 
             // Use runtime function call in case when receiverType is a primitive JS type that doesn't have `equals` method,
             // or has a potential to be primitive type (being fake overridden from `Any`)
             function.isMethodOfPotentiallyPrimitiveJSType() ->
-                irCall(call, intrinsics.jsEquals, dispatchReceiverAsFirstArgument = true)
+                irCall(call, intrinsics.jsEquals, receiversAsArguments = true)
 
             // Valid `equals` method must be present at this point
             else -> call

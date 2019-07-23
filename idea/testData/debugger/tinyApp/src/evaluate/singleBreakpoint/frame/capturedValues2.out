@@ -1,0 +1,9 @@
+LineBreakpoint created at capturedValues2.kt:16
+Run Java
+Connected to the target VM
+capturedValues2.kt:16
+ frame    = main:16, CapturedValues2Kt {capturedValues2}
+   local    = a: int = 3 (sp = capturedValues2.kt, 13)
+Disconnected from the target VM
+
+Process finished with exit code 0

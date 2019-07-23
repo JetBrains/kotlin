@@ -1,6 +1,5 @@
 // !LANGUAGE: +NewInference
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 
 // FILE: example/Hello.java
 

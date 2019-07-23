@@ -81,6 +81,7 @@ class CodeInliner<TCallElement : KtElement>(
             && elementToBeReplaced is KtExpression
             && !elementToBeReplaced.isUsedAsExpression(bindingContext)
             && !codeToInline.mainExpression.shouldKeepValue(usageCount = 0)
+            && elementToBeReplaced.getStrictParentOfType<KtAnnotationEntry>() == null
         ) {
             codeToInline.mainExpression = null
         }
@@ -99,7 +100,7 @@ class CodeInliner<TCallElement : KtElement>(
 
         receiver?.mark(RECEIVER_VALUE_KEY)
 
-        for (thisExpression in codeToInline.collectDescendantsOfType<KtThisExpression>()) {
+        codeToInline.collectDescendantsOfType<KtThisExpression> { !it[CodeToInline.SIDE_RECEIVER_USAGE_KEY] }.forEach { thisExpression ->
             // for this@ClassName we have only option to keep it as is (although it's sometimes incorrect but we have no other options)
             if (thisExpression.labelQualifier == null && receiver != null) {
                 codeToInline.replaceExpression(thisExpression, receiver)
@@ -333,6 +334,8 @@ class CodeInliner<TCallElement : KtElement>(
                 usageCount
             ) else true
             is KtBinaryExpressionWithTypeRHS -> true
+            is KtClassLiteralExpression -> false
+            is KtCallableReferenceExpression -> false
             null -> false
             else -> true
         }

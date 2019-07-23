@@ -1,1 +1,1 @@
-val d3: Array<Array<IntArray>> = Array(5) { arrayOfNulls(5) }
+val d3 = Array<Array<IntArray>>(5) { arrayOfNulls(5) }

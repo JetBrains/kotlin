@@ -104,6 +104,11 @@ public class IrCheckLocalVariablesTableTestGenerated extends AbstractIrCheckLoca
         runTest("compiler/testData/checkLocalVariablesTable/localFun.kt");
     }
 
+    @TestMetadata("receiverParameter.kt")
+    public void testReceiverParameter() throws Exception {
+        runTest("compiler/testData/checkLocalVariablesTable/receiverParameter.kt");
+    }
+
     @TestMetadata("underscoreNames.kt")
     public void testUnderscoreNames() throws Exception {
         runTest("compiler/testData/checkLocalVariablesTable/underscoreNames.kt");

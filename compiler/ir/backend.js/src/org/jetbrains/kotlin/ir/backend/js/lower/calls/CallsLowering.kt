@@ -26,6 +26,7 @@ class CallsLowering(val context: JsIrBackendContext) : FileLoweringPass {
         ReflectionCallsTransformer(context),
         EnumIntrinsicsTransformer(context),
         ExceptionHelperCallsTransformer(context),
+        BuiltInConstructorCalls(context),
         JsonIntrinsics(context)
     )
 

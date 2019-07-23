@@ -18,12 +18,11 @@ package org.jetbrains.kotlin.idea.stubindex
 
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
-import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.util.*
@@ -34,7 +33,7 @@ class SubpackagesIndexService(private val project: Project) {
             {
                 CachedValueProvider.Result(
                         SubpackagesIndex(KotlinExactPackagesIndex.getInstance().getAllKeys(project)),
-                        PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT)
+                        KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker)
             },
             false
     )
@@ -43,7 +42,7 @@ class SubpackagesIndexService(private val project: Project) {
         // a map from any existing package (in kotlin) to a set of subpackages (not necessarily direct) containing files
         private val allPackageFqNames = hashSetOf<FqName>()
         private val fqNameByPrefix = MultiMap.createSet<FqName, FqName>()
-        private val oocbCount = PsiManager.getInstance(project).modificationTracker.outOfCodeBlockModificationCount
+        private val oocbCount = KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker.modificationCount
 
         init {
             for (fqNameAsString in allPackageFqNames) {

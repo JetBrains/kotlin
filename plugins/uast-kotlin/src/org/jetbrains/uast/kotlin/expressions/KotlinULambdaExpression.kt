@@ -17,12 +17,12 @@
 package org.jetbrains.uast.kotlin
 
 import com.intellij.psi.PsiType
+import org.jetbrains.kotlin.psi.KtBlockExpression
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtLambdaExpression
-import org.jetbrains.uast.UBlockExpression
-import org.jetbrains.uast.UElement
-import org.jetbrains.uast.ULambdaExpression
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
+import org.jetbrains.uast.*
 import org.jetbrains.uast.kotlin.psi.UastKotlinPsiParameter
-import org.jetbrains.uast.withMargin
 
 class KotlinULambdaExpression(
         override val sourcePsi: KtLambdaExpression,
@@ -31,8 +31,32 @@ class KotlinULambdaExpression(
     override val functionalInterfaceType: PsiType?
         get() = getFunctionalInterfaceType()
 
-    override val body by lz { KotlinConverter.convertOrEmpty(sourcePsi.bodyExpression, this) }
-    
+    override val body by lz {
+        sourcePsi.bodyExpression?.let { Body(it, this) } ?: UastEmptyExpression(this)
+    }
+
+    class Body(bodyExpression: KtBlockExpression, parent: KotlinULambdaExpression) : KotlinUBlockExpression(bodyExpression, parent) {
+
+        override val expressions: List<UExpression> by lz expressions@{
+            val statements = sourcePsi.statements
+            if (statements.isEmpty()) return@expressions emptyList<UExpression>()
+            ArrayList<UExpression>(statements.size).also { result ->
+                statements.subList(0, statements.size - 1).mapTo(result) { KotlinConverter.convertOrEmpty(it, this) }
+                result.add(implicitReturn ?: KotlinConverter.convertOrEmpty(statements.last(), this))
+            }
+        }
+
+        val implicitReturn: KotlinUImplicitReturnExpression? by lz {
+            val lastExpression = sourcePsi.statements.lastOrNull() ?: return@lz null
+            if (!lastExpression.isUsedAsResultOfLambda(lastExpression.analyze())) return@lz null
+
+            KotlinUImplicitReturnExpression(this).apply {
+                returnExpression = KotlinConverter.convertOrEmpty(lastExpression, this)
+            }
+        }
+
+    }
+
     override val valueParameters by lz {
         sourcePsi.valueParameters.mapIndexed { i, p ->
             KotlinUParameter(UastKotlinPsiParameter.create(p, sourcePsi, this, i), sourcePsi, this)

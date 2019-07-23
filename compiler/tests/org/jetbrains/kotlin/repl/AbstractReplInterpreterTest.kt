@@ -19,8 +19,8 @@ package org.jetbrains.kotlin.repl
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.cli.common.repl.ReplEvalResult
 import org.jetbrains.kotlin.script.loadScriptingPlugin
-import org.jetbrains.kotlin.scripting.repl.ReplInterpreter
-import org.jetbrains.kotlin.scripting.repl.configuration.ConsoleReplConfiguration
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.ReplInterpreter
+import org.jetbrains.kotlin.scripting.compiler.plugin.repl.configuration.ConsoleReplConfiguration
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind

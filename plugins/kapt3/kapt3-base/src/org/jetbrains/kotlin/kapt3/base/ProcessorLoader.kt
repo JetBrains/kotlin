@@ -65,7 +65,6 @@ open class ProcessorLoader(private val options: KaptOptions, private val logger:
 
         val nonIncremental = processorNames.filter { !processorsInfo.containsKey(it) }
         return if (nonIncremental.isNotEmpty()) {
-            logger.info("Incremental KAPT support is disabled. Processors that are not incremental: ${nonIncremental.joinToString()}.")
             processors.map { IncrementalProcessor(it, DeclaredProcType.NON_INCREMENTAL) }
         } else {
             processors.map { IncrementalProcessor(it, processorsInfo.getValue(it.javaClass.name)) }

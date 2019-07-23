@@ -9,7 +9,8 @@ import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-interface FirCallableMemberDeclaration : @VisitedSupertype FirDeclaration, FirMemberDeclaration, FirCallableDeclaration {
+interface FirCallableMemberDeclaration<F : FirCallableMemberDeclaration<F>> :
+    @VisitedSupertype FirDeclaration, FirMemberDeclaration, FirCallableDeclaration<F> {
 
     val isOverride: Boolean get() = status.isOverride
 

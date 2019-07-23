@@ -9,7 +9,7 @@ import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
@@ -40,11 +40,12 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
 
     override fun configureRun(compilation: KotlinJsCompilation) {
         val project = compilation.target.project
+        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("webpack")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
-                target.project.nodeJs.root.npmResolveTask,
+                nodeJs.npmInstallTask,
                 compileKotlinTask
             )
 
@@ -57,9 +58,9 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
         val run = project.createOrRegisterTask<KotlinWebpack>(disambiguateCamelCased("run")) {
             val compileKotlinTask = compilation.compileKotlinTask
             it.dependsOn(
-                target.project.nodeJs.root.npmResolveTask,
+                nodeJs.npmInstallTask,
                 compileKotlinTask,
-                compilation.processResourcesTaskName
+                target.project.tasks.getByName(compilation.processResourcesTaskName)
             )
 
             it.bin = "webpack-dev-server/bin/webpack-dev-server.js"

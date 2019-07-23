@@ -200,7 +200,8 @@ public abstract class ExternalSystemImportingTestCase extends ExternalSystemTest
 
         final Ref<Couple<String>> error = Ref.create();
         ExternalSystemUtil.refreshProjects(
-                new ImportSpecBuilder(myProject, getExternalSystemId())
+                new TestImportSpecBuilder(myProject, getExternalSystemId())
+                        .setCreateEmptyContentRoots(projectSettings.isCreateEmptyContentRootDirectories())
                         .use(ProgressExecutionMode.MODAL_SYNC)
                         .callback(new ExternalProjectRefreshCallback() {
                             @Override

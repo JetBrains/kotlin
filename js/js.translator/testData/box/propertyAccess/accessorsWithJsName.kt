@@ -11,6 +11,7 @@ class A {
         }
 }
 
+@JsExport
 val A.z: Int
     @JsName("getZ_") get() = 42
 

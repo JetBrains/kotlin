@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.platform.toTargetPlatform
 
 abstract class KonanPlatform : SimplePlatform("Native") {
     override val oldFashionedDescription: String
-        get() = "Kotlin/Native "
+        get() = "Native "
 }
 
 @Suppress("DEPRECATION_ERROR")

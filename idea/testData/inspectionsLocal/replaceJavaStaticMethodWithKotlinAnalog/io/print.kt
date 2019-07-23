@@ -1,4 +1,4 @@
 // WITH_RUNTIME
 fun test() {
-    <caret>System.out.print("foo")
+    System.out.print<caret>("foo")
 }

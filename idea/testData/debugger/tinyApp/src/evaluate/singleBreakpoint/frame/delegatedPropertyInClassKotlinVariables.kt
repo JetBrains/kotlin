@@ -24,5 +24,7 @@ class MyDelegateThrowsException {
 
 // SHOW_KOTLIN_VARIABLES
 // PRINT_FRAME
+// RENDER_DELEGATED_PROPERTIES
+
 // SKIP: suppressedExceptions
 // SKIP: stackTrace

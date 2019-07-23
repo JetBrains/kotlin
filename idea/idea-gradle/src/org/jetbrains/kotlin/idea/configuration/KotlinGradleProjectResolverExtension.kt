@@ -19,10 +19,7 @@ package org.jetbrains.kotlin.idea.configuration
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
-import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType
-import com.intellij.openapi.externalSystem.model.project.ModuleData
-import com.intellij.openapi.externalSystem.model.project.ModuleDependencyData
-import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.model.project.*
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.util.Key
@@ -43,6 +40,7 @@ import org.jetbrains.plugins.gradle.model.FileCollectionDependency
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolver
+import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil
 import java.io.File
 import java.util.*
 import kotlin.collections.HashMap
@@ -55,8 +53,12 @@ var DataNode<ModuleData>.compilerArgumentsBySourceSet
         by CopyableDataNodeUserDataProperty(Key.create<CompilerArgumentsBySourceSet>("CURRENT_COMPILER_ARGUMENTS"))
 var DataNode<ModuleData>.coroutines
         by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_COROUTINES"))
+var DataNode<out ModuleData>.isHmpp
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<Boolean>("IS_HMPP_MODULE"), false)
 var DataNode<ModuleData>.platformPluginId
         by CopyableDataNodeUserDataProperty(Key.create<String>("PLATFORM_PLUGIN_ID"))
+var DataNode<ModuleData>.kotlinNativeHome
+        by CopyableDataNodeUserDataProperty(Key.create<String>("KOTLIN_NATIVE_HOME"))
 var DataNode<out ModuleData>.implementedModuleNames
         by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("IMPLEMENTED_MODULE_NAME"), emptyList())
 // Project is usually the same during all import, thus keeping Map Project->Dependencies makes model a bit more complicated but allows to avoid future problems
@@ -64,6 +66,8 @@ var DataNode<out ModuleData>.dependenciesCache
         by DataNodeUserDataProperty(
             Key.create<MutableMap<DataNode<ProjectData>, Collection<DataNode<out ModuleData>>>>("MODULE_DEPENDENCIES_CACHE")
         )
+var DataNode<out ModuleData>.pureKotlinSourceFolders
+        by NotNullableCopyableDataNodeUserDataProperty(Key.create<List<String>>("PURE_KOTLIN_SOURCE_FOLDER"), emptyList())
 
 
 class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() {
@@ -279,5 +283,40 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
 
         @Suppress("UNCHECKED_CAST")
         return ideProject.children.find { (it.data as? ModuleData)?.id == fullModuleId } as DataNode<ModuleData>?
+    }
+
+    override fun populateModuleContentRoots(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>) {
+        nextResolver.populateModuleContentRoots(gradleModule, ideModule)
+        val moduleNamePrefix = GradleProjectResolverUtil.getModuleId(resolverCtx, gradleModule)
+        resolverCtx.getExtraProject(gradleModule, KotlinGradleModel::class.java)?.let { gradleModel ->
+            ideModule.pureKotlinSourceFolders =
+                gradleModel.kotlinTaskProperties.flatMap { it.value.pureKotlinSourceFolders ?: emptyList() }.map { it.absolutePath }
+            val gradleSourceSets = ideModule.children.filter { it.data is GradleSourceSetData } as Collection<DataNode<GradleSourceSetData>>
+            for (gradleSourceSetNode in gradleSourceSets) {
+                val propertiesForSourceSet =
+                    gradleModel.kotlinTaskProperties.filter { (k, v) -> gradleSourceSetNode.data.externalName == "$moduleNamePrefix:$k" }
+                        .toList().singleOrNull()
+                gradleSourceSetNode.children.forEach { dataNode ->
+                    val data = dataNode.data as?  ContentRootData
+                    if (data != null) {
+                        /*
+                        Code snippet for setting in content root properties
+                        if (propertiesForSourceSet?.second?.pureKotlinSourceFolders?.contains(File(data.rootPath)) == true) {
+                            @Suppress("UNCHECKED_CAST")
+                            (dataNode as DataNode<ContentRootData>).isPureKotlinSourceFolder = true
+                        }*/
+                        val packagePrefix = propertiesForSourceSet?.second?.packagePrefix
+                        if (packagePrefix != null) {
+                            ExternalSystemSourceType.values().filter { !(it.isResource || it.isGenerated) }.forEach { type ->
+                                val paths = data.getPaths(type)
+                                val newPaths = paths.map { ContentRootData.SourceRoot(it.path, packagePrefix) }
+                                paths.clear()
+                                paths.addAll(newPaths)
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

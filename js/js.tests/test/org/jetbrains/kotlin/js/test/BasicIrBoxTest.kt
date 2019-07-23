@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
@@ -108,7 +109,8 @@ abstract class BasicIrBoxTest(
                 phaseConfig = phaseConfig,
                 allDependencies = allDependencies,
                 friendDependencies = emptyList(),
-                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null }
+                mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
+                exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
             )
 
             val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)

@@ -8,9 +8,11 @@ UFile (package = )
                 UDeclarationsExpression
                     UVariable (name = bar)
                         ULambdaExpression
-                            UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
-                                UIdentifier (Identifier (Local))
-                                USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)
+                            UBlockExpression
+                                UReturnExpression
+                                    UCallExpression (kind = UastCallKind(name='constructor_call'), argCount = 0))
+                                        UIdentifier (Identifier (Local))
+                                        USimpleNameReferenceExpression (identifier = <init>, resolvesTo = Local)
                 UDeclarationsExpression
                     ULocalVariable (name = baz)
                         ULambdaExpression
@@ -23,7 +25,9 @@ UFile (package = )
                         ULambdaExpression
                             UParameter (name = text)
                                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)
-                            ULiteralExpression (value = 42)
+                            UBlockExpression
+                                UReturnExpression
+                                    ULiteralExpression (value = 42)
                 UDeclarationsExpression
                     UClass (name = LocalObject)
                         UField (name = INSTANCE)

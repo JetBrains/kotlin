@@ -410,6 +410,21 @@ public class PerformanceBasicCompletionHandlerTestGenerated extends AbstractPerf
             runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/ReplaceByLambdaTemplateNoClosingParenth.kt");
         }
 
+        @TestMetadata("SameTypeParameters.kt")
+        public void testSameTypeParameters() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters.kt");
+        }
+
+        @TestMetadata("SameTypeParameters2.kt")
+        public void testSameTypeParameters2() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters2.kt");
+        }
+
+        @TestMetadata("SameTypeParameters3.kt")
+        public void testSameTypeParameters3() throws Exception {
+            runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/SameTypeParameters3.kt");
+        }
+
         @TestMetadata("WithArgsEmptyLambdaAfter.kt")
         public void testWithArgsEmptyLambdaAfter() throws Exception {
             runTest("idea/idea-completion/testData/handlers/basic/highOrderFunctions/WithArgsEmptyLambdaAfter.kt");

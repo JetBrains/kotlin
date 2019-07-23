@@ -60,6 +60,9 @@
 
         <extensionPoint qualifiedName="org.jetbrains.kotlin.j2kConverterExtension"
                         interface="org.jetbrains.kotlin.j2k.J2kConverterExtension"/>
+
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDiagnosticFixProvider"
+                        interface="org.jetbrains.kotlin.idea.script.ScriptDiagnosticFixProvider"/>
     </extensionPoints>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
@@ -99,7 +102,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <registryKey key="kotlin.use.new.j2k"
                      description="Use new Java to Kotlin Converter (experimental)"
-                     defaultValue="false"
+                     defaultValue="true"
                      restartRequired="false"/>
     </extensions>
 </idea-plugin>

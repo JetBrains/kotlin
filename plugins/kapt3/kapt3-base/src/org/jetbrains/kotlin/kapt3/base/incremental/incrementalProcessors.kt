@@ -23,6 +23,8 @@ class IncrementalProcessor(private val processor: Processor, val kind: DeclaredP
 
     private var dependencyCollector = lazy { createDependencyCollector() }
 
+    val processorName: String = processor.javaClass.name
+
     override fun init(processingEnv: ProcessingEnvironment) {
         if (kind == DeclaredProcType.NON_INCREMENTAL) {
             processor.init(processingEnv)

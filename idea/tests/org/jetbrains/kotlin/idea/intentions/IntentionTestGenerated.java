@@ -4275,6 +4275,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             runTest("idea/testData/intentions/convertEnumToSealedClass/membersOnly.kt");
         }
 
+        @TestMetadata("noClassKeyword.kt")
+        public void testNoClassKeyword() throws Exception {
+            runTest("idea/testData/intentions/convertEnumToSealedClass/noClassKeyword.kt");
+        }
+
         @TestMetadata("notEnum.kt")
         public void testNotEnum() throws Exception {
             runTest("idea/testData/intentions/convertEnumToSealedClass/notEnum.kt");
@@ -8663,6 +8668,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/importMember"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("ClassCallChain.kt")
+        public void testClassCallChain() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain.kt");
+        }
+
+        @TestMetadata("ClassCallChain2.kt")
+        public void testClassCallChain2() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain2.kt");
+        }
+
+        @TestMetadata("ClassCallChain3.kt")
+        public void testClassCallChain3() throws Exception {
+            runTest("idea/testData/intentions/importMember/ClassCallChain3.kt");
+        }
+
         @TestMetadata("EnumMember.kt")
         public void testEnumMember() throws Exception {
             runTest("idea/testData/intentions/importMember/EnumMember.kt");
@@ -12601,6 +12621,16 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
 
         public void testAllFilesPresentInRemoveArgumentName() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/intentions/removeArgumentName"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("arrayLiteral.kt")
+        public void testArrayLiteral() throws Exception {
+            runTest("idea/testData/intentions/removeArgumentName/arrayLiteral.kt");
+        }
+
+        @TestMetadata("arrayLiteralForVararg.kt")
+        public void testArrayLiteralForVararg() throws Exception {
+            runTest("idea/testData/intentions/removeArgumentName/arrayLiteralForVararg.kt");
         }
 
         @TestMetadata("namedArgumentBefore.kt")

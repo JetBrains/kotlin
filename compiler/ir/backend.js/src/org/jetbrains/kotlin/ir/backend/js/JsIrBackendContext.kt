@@ -48,6 +48,7 @@ class JsIrBackendContext(
     override val irBuiltIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     irModuleFragment: IrModuleFragment,
+    val additionalExportedDeclarations: Set<FqName>,
     override val configuration: CompilerConfiguration
 ) : CommonBackendContext {
 
@@ -133,6 +134,7 @@ class JsIrBackendContext(
     private val coroutineIntrinsicsPackage = module.getPackage(COROUTINE_INTRINSICS_PACKAGE_FQNAME)
 
     val enumEntryToGetInstanceFunction = mutableMapOf<IrEnumEntrySymbol, IrSimpleFunction>()
+    val objectToGetInstanceFunction = mutableMapOf<IrClassSymbol, IrSimpleFunction>()
     val enumEntryExternalToInstanceField = mutableMapOf<IrEnumEntrySymbol, IrField>()
     val callableReferencesCache = mutableMapOf<CallableReferenceKey, IrSimpleFunction>()
     val secondaryConstructorToFactoryCache = mutableMapOf<IrConstructor, ConstructorPair>()
@@ -245,8 +247,8 @@ class JsIrBackendContext(
             return vars.single()
         }
 
-    val captureStackSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("captureStack"))
     val newThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("newThrowable"))
+    val extendThrowableSymbol = symbolTable.referenceSimpleFunction(getJsInternalFunction("extendThrowable"))
 
     val throwISEymbol = symbolTable.referenceSimpleFunction(getFunctions(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))).single())
 
@@ -273,7 +275,7 @@ class JsIrBackendContext(
     }
 
     val throwableConstructors by lazy { throwableClass.owner.declarations.filterIsInstance<IrConstructor>().map { it.symbol } }
-    val defaultThrowableCtor by lazy { throwableConstructors.single { it.owner.valueParameters.size == 0 } }
+    val defaultThrowableCtor by lazy { throwableConstructors.single { !it.owner.isPrimary && it.owner.valueParameters.size == 0 } }
 
     private fun referenceOperators(): Map<Name, MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>> {
         val primitiveIrSymbols = irBuiltIns.primitiveIrTypes.map { it.classifierOrFail as IrClassSymbol }

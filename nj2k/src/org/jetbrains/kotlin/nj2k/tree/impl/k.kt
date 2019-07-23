@@ -30,7 +30,7 @@ class JKKtPropertyImpl(
     getter: JKKtGetterOrSetter,
     setter: JKKtGetterOrSetter,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement,
     mutabilityElement: JKMutabilityModifierElement
@@ -44,7 +44,7 @@ class JKKtPropertyImpl(
     override var getter: JKKtGetterOrSetter by child(getter)
     override var setter: JKKtGetterOrSetter by child(setter)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
     override var mutabilityElement by child(mutabilityElement)
@@ -59,7 +59,7 @@ class JKKtFunctionImpl(
     block: JKBlock,
     typeParameterList: JKTypeParameterList,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtFunction(), PsiOwner by PsiOwnerImpl() {
@@ -73,7 +73,7 @@ class JKKtFunctionImpl(
     override var annotationList: JKAnnotationList by child(annotationList)
 
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 }
@@ -178,7 +178,7 @@ class JKKtConstructorImpl(
     block: JKBlock,
     delegationCall: JKExpression,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtConstructor() {
@@ -191,7 +191,7 @@ class JKKtConstructorImpl(
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(annotationList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 
@@ -203,7 +203,7 @@ class JKKtPrimaryConstructorImpl(
     parameters: List<JKParameter>,
     delegationCall: JKExpression,
     annotationList: JKAnnotationList,
-    extraModifierElements: List<JKExtraModifierElement>,
+    otherModifierElements: List<JKOtherModifierElement>,
     visibilityElement: JKVisibilityModifierElement,
     modalityElement: JKModalityModifierElement
 ) : JKKtPrimaryConstructor() {
@@ -216,7 +216,7 @@ class JKKtPrimaryConstructorImpl(
     override var typeParameterList: JKTypeParameterList by child(JKTypeParameterListImpl())
     override var annotationList: JKAnnotationList by child(annotationList)
 
-    override var extraModifierElements by children(extraModifierElements)
+    override var otherModifierElements by children(otherModifierElements)
     override var visibilityElement by child(visibilityElement)
     override var modalityElement by child(modalityElement)
 

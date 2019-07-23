@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.getCapturedFieldName
 import org.jetbrains.kotlin.codegen.AsmUtil.getLabeledThisName
 import org.jetbrains.kotlin.codegen.coroutines.CONTINUATION_VARIABLE_NAME
-import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_CONTINUATION_PARAMETER
+import org.jetbrains.kotlin.codegen.coroutines.SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME
 import org.jetbrains.kotlin.codegen.inline.INLINE_FUN_VAR_SUFFIX
 import org.jetbrains.kotlin.codegen.inline.INLINE_TRANSFORMATION_SUFFIX
 import org.jetbrains.kotlin.idea.core.util.mergeAttachments
@@ -123,14 +123,24 @@ class VariableFinder(val context: ExecutionContext) {
 
     class Result(val value: Value?)
 
-    private class NamedEntity(val name: String, val type: JdiType?, val value: () -> Value?) {
+    private class NamedEntity(val name: String, val lazyType: Lazy<JdiType?>, val lazyValue: Lazy<Value?>) {
+        val type: JdiType?
+            get() = lazyType.value
+
+        val value: Value?
+            get() = lazyValue.value
+
         companion object {
             fun of(field: Field, owner: ObjectReference): NamedEntity {
-                return NamedEntity(field.name(), field.safeType()) { owner.getValue(field) }
+                val type = lazy(LazyThreadSafetyMode.PUBLICATION) { field.safeType() }
+                val value = lazy(LazyThreadSafetyMode.PUBLICATION) { owner.getValue(field) }
+                return NamedEntity(field.name(), type, value)
             }
 
             fun of(variable: LocalVariableProxyImpl, frameProxy: StackFrameProxyImpl): NamedEntity {
-                return NamedEntity(variable.name(), variable.safeType()) { frameProxy.getValue(variable) }
+                val type = lazy(LazyThreadSafetyMode.PUBLICATION) { variable.safeType() }
+                val value = lazy(LazyThreadSafetyMode.PUBLICATION) { frameProxy.getValue(variable) }
+                return NamedEntity(variable.name(), type, value)
             }
         }
     }
@@ -326,7 +336,7 @@ class VariableFinder(val context: ExecutionContext) {
                 continue
             }
 
-            val rawValue = item.value()
+            val rawValue = item.value
             val result = evaluatorValueConverter.coerce(getUnwrapDelegate(kind, rawValue), kind.asmType) ?: continue
 
             if (!rawValue.isRefType && result.value.isRefType) {
@@ -372,7 +382,7 @@ class VariableFinder(val context: ExecutionContext) {
         }
 
         val continuationVariable = frameProxy.safeVisibleVariableByName(CONTINUATION_VARIABLE_NAME)
-            ?: frameProxy.safeVisibleVariableByName(SUSPEND_FUNCTION_CONTINUATION_PARAMETER)
+            ?: frameProxy.safeVisibleVariableByName(SUSPEND_FUNCTION_COMPLETION_PARAMETER_NAME)
             ?: return null
 
         val continuation = frameProxy.getValue(continuationVariable) as? ObjectReference ?: return null
@@ -478,8 +488,8 @@ class VariableFinder(val context: ExecutionContext) {
         return evaluatorValueConverter.typeMatches(asmType, actualType)
     }
 
-    private fun NamedEntity.unwrapAndCheck(kind: VariableKind, value: () -> Value? = this.value): Result? {
-        return evaluatorValueConverter.coerce(getUnwrapDelegate(kind, value()), kind.asmType)
+    private fun NamedEntity.unwrapAndCheck(kind: VariableKind): Result? {
+        return evaluatorValueConverter.coerce(getUnwrapDelegate(kind, value), kind.asmType)
     }
 
     private fun List<Field>.namedEntitySequence(owner: ObjectReference): Sequence<NamedEntity> {

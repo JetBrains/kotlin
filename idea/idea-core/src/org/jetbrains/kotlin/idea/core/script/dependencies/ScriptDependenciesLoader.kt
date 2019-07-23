@@ -15,18 +15,18 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrNull
-import kotlin.script.experimental.jvm.compat.mapToLegacyReports
 
 // TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
-    abstract fun isApplicable(file: VirtualFile): Boolean
-    abstract fun loadDependencies(file: VirtualFile)
+    abstract fun isApplicable(file: VirtualFile, scriptDefinition: ScriptDefinition): Boolean
+    abstract fun loadDependencies(file: VirtualFile, scriptDefinition: ScriptDefinition)
 
     protected abstract fun shouldShowNotification(): Boolean
 
@@ -77,9 +77,7 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
     }
 
     private fun attachReportsIfChanged(result: ResultWithDiagnostics<*>, file: VirtualFile) {
-        if (file.getUserData(IdeScriptReportSink.Reports) != result.reports.takeIf { it.isNotEmpty() }) {
-            reporter.attachReports(file, result.reports.mapToLegacyReports())
-        }
+        reporter.attachReports(file, result.reports)
     }
 
     private fun save(compilationConfigurationResult: ScriptCompilationConfigurationResult?, file: VirtualFile) {

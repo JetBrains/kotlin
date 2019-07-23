@@ -8,24 +8,14 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
-import org.gradle.api.internal.file.FileResolver
-import org.gradle.api.plugins.JavaPlugin
-import org.gradle.internal.reflect.Instantiator
-import org.jetbrains.kotlin.compilerRunner.KotlinNativeProjectProperty
-import org.jetbrains.kotlin.compilerRunner.hasProperty
 import org.jetbrains.kotlin.compilerRunner.konanHome
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToKotlinTask
-import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
-import java.io.File
-import java.util.*
 
 class KotlinNativeTargetPreset(
     private val name: String,
@@ -46,8 +36,11 @@ class KotlinNativeTargetPreset(
             extensions.extraProperties.set(KOTLIN_NATIVE_HOME_PRIVATE_PROPERTY, konanHome)
     }
 
+    private val isKonanHomeOverridden: Boolean
+        get() = PropertiesProvider(project).nativeHome != null
+
     private fun setupNativeCompiler() = with(project) {
-        if (!hasProperty(KotlinNativeProjectProperty.KONAN_HOME_OVERRIDE)) {
+        if (!isKonanHomeOverridden) {
             NativeCompilerDownloader(this).downloadIfNeeded()
             logger.info("Kotlin/Native distribution: $konanHome")
         } else {
@@ -96,14 +89,7 @@ class KotlinNativeTargetPreset(
         if (!konanTarget.enabledOnCurrentHost) {
             with(HostManager()) {
                 val supportedHosts = enabledByHost.filterValues { konanTarget in it }.keys
-                val supportedHostsString =
-                    if (supportedHosts.size == 1)
-                        "a ${supportedHosts.single()} host" else
-                        "one of the host platforms: ${supportedHosts.joinToString(", ")}"
-                project.logger.warn(
-                    "Target '$name' for platform ${konanTarget} is ignored during build on this ${HostManager.host} machine. " +
-                            "You can build it with $supportedHostsString."
-                )
+                DisabledNativeTargetsReporter.reportDisabledTarget(project, result, supportedHosts)
             }
         }
 

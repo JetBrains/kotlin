@@ -205,7 +205,7 @@ private class InterfaceSuperCallsLowering(val context: JvmBackendContext) : IrEl
         if (superCallee.isDefinitelyNotDefaultImplsMethod()) return super.visitCall(expression)
 
         val redirectTarget = context.declarationFactory.getDefaultImplsFunction(superCallee)
-        val newCall = irCall(expression, redirectTarget, dispatchReceiverAsFirstArgument = true)
+        val newCall = irCall(expression, redirectTarget, receiversAsArguments = true)
 
         return super.visitCall(newCall)
     }

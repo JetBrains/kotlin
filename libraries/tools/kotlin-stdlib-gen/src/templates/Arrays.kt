@@ -1016,8 +1016,12 @@ object ArrayOps : TemplateGroupBase() {
         typeParam("T : Comparable<T>")
         doc { "Sorts the array in-place according to the natural order of its elements." }
         appendStableSortNote()
+        specialFor(ArraysOfObjects) {
+            sample("samples.collections.Arrays.Sorting.sortArrayOfComparable")
+        }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) {
             doc { "Sorts the array in-place." }
+            sample("samples.collections.Arrays.Sorting.sortArray")
         }
 
         returns("Unit")
@@ -1142,6 +1146,10 @@ object ArrayOps : TemplateGroupBase() {
         doc { "Sorts a range in the array in-place." }
         specialFor(ArraysOfObjects) {
             appendStableSortNote()
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArrayOfComparable")
+        }
+        specialFor(ArraysOfPrimitives) {
+            sample("samples.collections.Arrays.Sorting.sortRangeOfArray")
         }
         returns("Unit")
         body {

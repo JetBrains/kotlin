@@ -9,7 +9,6 @@ import com.intellij.debugger.engine.evaluation.EvaluateExceptionUtil
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.CodeFragmentCodegenInfo
 import org.jetbrains.kotlin.codegen.getCallLabelForLambdaArgument
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -205,7 +204,9 @@ class CodeFragmentParameterAnalyzer(
 
         val type = descriptor.defaultType
         return parameters.getOrPut(descriptor) {
-            Smart(Dumb(Kind.DISPATCH_RECEIVER, "", AsmUtil.THIS + "@" + descriptor.name.asString()), type, descriptor)
+            val name = descriptor.name
+            val debugLabel = if (name.isSpecial) "" else "@" + name.asString()
+            Smart(Dumb(Kind.DISPATCH_RECEIVER, "", AsmUtil.THIS + debugLabel), type, descriptor)
         }
     }
 

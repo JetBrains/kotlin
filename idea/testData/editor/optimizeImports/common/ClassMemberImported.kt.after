@@ -1,3 +1,4 @@
+// WITH_MESSAGE: "Removed 5 imports, added 2 imports"
 package test
 
 import dependency.A

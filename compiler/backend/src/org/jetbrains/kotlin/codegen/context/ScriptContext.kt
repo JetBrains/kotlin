@@ -42,15 +42,15 @@ class ScriptContext(
 ) : ScriptLikeContext(typeMapper, contextDescriptor, parentContext) {
     val lastStatement: KtExpression?
 
-    val resultFieldInfo: FieldInfo
+    val resultFieldInfo: FieldInfo?
         get() {
-            assert(state.replSpecific.shouldGenerateScriptResultValue) { "Should not be called unless 'resultFieldName' is set" }
-            val scriptResultFieldName = state.replSpecific.scriptResultFieldName!!
-            val fieldType = state.replSpecific.resultType?.let { state.typeMapper.mapType(it) } ?: AsmTypes.OBJECT_TYPE
+            val resultValue = scriptDescriptor.resultValue ?: return null
+            val scriptResultFieldName = resultValue.name.identifier
+            val fieldType = resultValue.returnType?.let { state.typeMapper.mapType(it) } ?: AsmTypes.OBJECT_TYPE
             return FieldInfo.createForHiddenField(
                 state.typeMapper.mapClass(scriptDescriptor),
                 fieldType,
-                state.replSpecific.resultType,
+                resultValue.returnType,
                 scriptResultFieldName
             )
         }
@@ -67,10 +67,8 @@ class ScriptContext(
         }
     }
 
-    val ctorValueParametersStart = if (earlierScripts.isNotEmpty()) 1 else 0
-
     private val ctorImplicitReceiversParametersStart =
-        ctorValueParametersStart + (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
+        (scriptDescriptor.getSuperClassNotAny()?.unsubstitutedPrimaryConstructor?.valueParameters?.size ?: 0)
 
     private val ctorProvidedPropertiesParametersStart =
         ctorImplicitReceiversParametersStart + scriptDescriptor.implicitReceivers.size

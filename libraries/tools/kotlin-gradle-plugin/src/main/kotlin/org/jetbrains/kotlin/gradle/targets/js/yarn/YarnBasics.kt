@@ -7,10 +7,9 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApi
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import java.io.File
 
 abstract class YarnBasics : NpmApi {
@@ -24,7 +23,8 @@ abstract class YarnBasics : NpmApi {
         description: String,
         vararg args: String
     ) {
-        val nodeJsEnv = NodeJsPlugin.apply(project).root.environment
+        val nodeJs = NodeJsRootPlugin.apply(project)
+        val nodeJsEnv = nodeJs.environment
         val yarnEnv = YarnPlugin.apply(project).environment
 
         project.execWithProgress(description) { exec ->
@@ -32,7 +32,6 @@ abstract class YarnBasics : NpmApi {
             exec.args = listOf(yarnEnv.home.resolve("bin/yarn.js").absolutePath) + args
             exec.workingDir = dir
         }
-
     }
 
     protected fun yarnLockReadTransitiveDependencies(
@@ -47,6 +46,8 @@ abstract class YarnBasics : NpmApi {
             fun resolveRecursively(src: NpmDependency): NpmDependency {
                 val copy = visited[src]
                 if (copy != null) {
+                    src.resolvedVersion = copy.resolvedVersion
+                    src.integrity = copy.integrity
                     src.dependencies.addAll(copy.dependencies)
                     return src
                 }
@@ -55,6 +56,8 @@ abstract class YarnBasics : NpmApi {
                 val key = YarnLock.key(src.key, src.version)
                 val deps = byKey[key]
                 if (deps != null) {
+                    src.resolvedVersion = deps.version
+                    src.integrity = deps.integrity
                     src.dependencies.addAll(deps.dependencies.map { dep ->
                         val scopedName = dep.scopedName
                         val child = NpmDependency(

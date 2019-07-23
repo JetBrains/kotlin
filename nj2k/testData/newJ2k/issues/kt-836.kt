@@ -16,7 +16,7 @@ internal open class Base {
 }
 
 internal class Child : Base() {
-    override fun test() {}
+    public override fun test() {}
     override fun toString(): String {
         return "Child"
     }

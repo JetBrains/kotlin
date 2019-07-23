@@ -28,9 +28,6 @@ public fun java.util.Random.asKotlinRandom(): Random =
 internal actual inline fun defaultPlatformRandom(): Random =
     IMPLEMENTATIONS.defaultPlatformRandom()
 
-internal actual fun fastLog2(value: Int): Int =
-    31 - Integer.numberOfLeadingZeros(value)
-
 internal actual fun doubleFromParts(hi26: Int, low27: Int): Double =
     (hi26.toLong().shl(27) + low27) / (1L shl 53).toDouble()
 

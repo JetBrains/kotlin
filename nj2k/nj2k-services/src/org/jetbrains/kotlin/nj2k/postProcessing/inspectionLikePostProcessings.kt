@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.utils.mapToIndex
@@ -32,11 +34,19 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
 
-class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<InspectionLikeProcessing>) : ProcessingGroup {
+class InspectionLikeProcessingGroup(
+    private val runSingleTime: Boolean = false,
+    private val acceptNonKtElements: Boolean = false,
+    private val processings: List<InspectionLikeProcessing>
+) : ProcessingGroup {
 
-    constructor(vararg inspectionLikeProcessings: InspectionLikeProcessing) : this(inspectionLikeProcessings.toList())
+    constructor(vararg processings: InspectionLikeProcessing) : this(
+        runSingleTime = false,
+        acceptNonKtElements = false,
+        processings = processings.toList()
+    )
 
-    private val processingsToPriorityMap = inspectionLikeProcessings.mapToIndex()
+    private val processingsToPriorityMap = processings.mapToIndex()
     fun priority(processing: InspectionLikeProcessing): Int = processingsToPriorityMap.getValue(processing)
 
     override suspend fun runProcessing(file: KtFile, rangeMarker: RangeMarker?, converterContext: NewJ2kConverterContext) {
@@ -62,6 +72,7 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
                     }
                 }
             }
+            if (runSingleTime) break
         } while (modificationStamp != file.modificationStamp && elementToActions.isNotEmpty())
     }
 
@@ -84,22 +95,24 @@ class InspectionLikeProcessingGroup(val inspectionLikeProcessings: List<Inspecti
 
         file.accept(object : PsiRecursiveElementVisitor() {
             override fun visitElement(element: PsiElement) {
-                val rangeResult = rangeFilter(element, rangeMarker)
-                if (rangeResult == RangeFilterResult.SKIP) return
+                if (element is KtElement || acceptNonKtElements) {
+                    val rangeResult = rangeFilter(element, rangeMarker)
+                    if (rangeResult == RangeFilterResult.SKIP) return
 
-                super.visitElement(element)
+                    super.visitElement(element)
 
-                if (rangeResult == RangeFilterResult.PROCESS) {
-                    inspectionLikeProcessings.forEach { processing ->
-                        val action = processing.createAction(element, context.converter.settings)
-                        if (action != null) {
-                            availableActions.add(
-                                ActionData(
-                                    element, action,
-                                    priority(processing),
-                                    processing.writeActionNeeded
+                    if (rangeResult == RangeFilterResult.PROCESS) {
+                        processings.forEach { processing ->
+                            val action = processing.createAction(element, context.converter.settings)
+                            if (action != null) {
+                                availableActions.add(
+                                    ActionData(
+                                        element, action,
+                                        priority(processing),
+                                        processing.writeActionNeeded
+                                    )
                                 )
-                            )
+                            }
                         }
                     }
                 }

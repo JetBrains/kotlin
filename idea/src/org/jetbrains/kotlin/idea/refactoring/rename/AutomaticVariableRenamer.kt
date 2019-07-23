@@ -24,7 +24,7 @@ import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.PsiVariable
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.refactoring.JavaRefactoringSettings
+import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings
 import com.intellij.refactoring.RefactoringBundle
 import com.intellij.refactoring.rename.naming.AutomaticRenamer
 import com.intellij.refactoring.rename.naming.AutomaticRenamerFactory
@@ -145,8 +145,10 @@ open class AutomaticVariableRenamerFactory: AutomaticRenamerFactory {
     override fun createRenamer(element: PsiElement, newName: String, usages: Collection<UsageInfo>) =
             AutomaticVariableRenamer(element as PsiNamedElement, newName, usages)
 
-    override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables
-    override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
+    override fun isEnabled() = KotlinRefactoringSettings.instance.renameVariables
+    override fun setEnabled(enabled: Boolean) {
+        KotlinRefactoringSettings.instance.renameVariables = enabled
+    }
 
     override fun getOptionName() = RefactoringBundle.message("rename.variables")
 }
@@ -164,8 +166,10 @@ class AutomaticVariableInJavaRenamerFactory: AutomaticRenamerFactory {
             // Using java variable renamer for java usages
             com.intellij.refactoring.rename.naming.AutomaticVariableRenamer((element as KtClass).toLightClass()!!, newName, usages)
 
-    override fun isEnabled() = JavaRefactoringSettings.getInstance().isToRenameVariables
-    override fun setEnabled(enabled: Boolean) = JavaRefactoringSettings.getInstance().setRenameVariables(enabled)
+    override fun isEnabled() = KotlinRefactoringSettings.instance.renameVariables
+    override fun setEnabled(enabled: Boolean) {
+        KotlinRefactoringSettings.instance.renameVariables = enabled
+    }
 
     override fun getOptionName() = null
 }

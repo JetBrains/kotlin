@@ -10,7 +10,27 @@ import org.jetbrains.plugins.gradle.model.ModelFactory
 import java.io.File
 import java.io.Serializable
 
+typealias KotlinDependencyId = Long
 typealias KotlinDependency = ExternalDependency
+
+class KotlinDependencyMapper {
+    private var currentIndex: KotlinDependencyId = 0
+    private val idToDependency = HashMap<KotlinDependencyId, KotlinDependency>()
+    private val dependencyToId = HashMap<KotlinDependency, KotlinDependencyId>()
+
+    fun getDependency(id: KotlinDependencyId) = idToDependency[id]
+
+    fun getId(dependency: KotlinDependency): KotlinDependencyId {
+        return dependencyToId[dependency] ?: let {
+            currentIndex++
+            dependencyToId[dependency] = currentIndex
+            idToDependency[currentIndex] = dependency
+            return currentIndex
+        }
+    }
+
+    fun toDependencyMap(): Map<KotlinDependencyId, KotlinDependency> = idToDependency
+}
 
 fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
     val cachedValue = cache[this] as? KotlinDependency
@@ -25,7 +45,7 @@ fun KotlinDependency.deepCopy(cache: MutableMap<Any, Any>): KotlinDependency {
 
 interface KotlinModule : Serializable {
     val name: String
-    val dependencies: Set<KotlinDependency>
+    val dependencies: Array<KotlinDependencyId>
     val isTestModule: Boolean
 }
 
@@ -56,7 +76,7 @@ interface KotlinLanguageSettings : Serializable {
     val isProgressiveMode: Boolean
     val enabledLanguageFeatures: Set<String>
     val experimentalAnnotationsInUse: Set<String>
-    val compilerPluginArguments: List<String>
+    val compilerPluginArguments: Array<String>
     val compilerPluginClasspath: Set<File>
 }
 
@@ -67,17 +87,18 @@ interface KotlinCompilationOutput : Serializable {
 }
 
 interface KotlinCompilationArguments : Serializable {
-    val defaultArguments: List<String>
-    val currentArguments: List<String>
+    val defaultArguments: Array<String>
+    val currentArguments: Array<String>
 }
 
 interface KotlinCompilation : KotlinModule {
     val sourceSets: Collection<KotlinSourceSet>
     val output: KotlinCompilationOutput
     val arguments: KotlinCompilationArguments
-    val dependencyClasspath: List<String>
+    val dependencyClasspath: Array<String>
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
+    val kotlinTaskProperties: KotlinTaskProperties
 
 
     companion object {
@@ -98,7 +119,7 @@ enum class KotlinPlatform(val id: String) {
     }
 }
 
-interface KotlinPlatformContainer: Serializable {
+interface KotlinPlatformContainer : Serializable {
     val platforms: Collection<KotlinPlatform>
 
     fun supports(simplePlatform: KotlinPlatform): Boolean
@@ -119,18 +140,26 @@ interface KotlinTarget : Serializable {
     val disambiguationClassifier: String?
     val platform: KotlinPlatform
     val compilations: Collection<KotlinCompilation>
+    val testTasks: Collection<KotlinTestTask>
     val jar: KotlinTargetJar?
+    val konanArtifacts: List<KonanArtifactModel>
 
     companion object {
         const val METADATA_TARGET_NAME = "metadata"
     }
 }
 
+interface KotlinTestTask : Serializable {
+    val taskName: String
+}
+
 interface ExtraFeatures : Serializable {
     val coroutinesState: String?
+    val isHMPPEnabled: Boolean
 }
 
 interface KotlinMPPGradleModel : Serializable {
+    val dependencyMap: Map<KotlinDependencyId, KotlinDependency>
     val sourceSets: Map<String, KotlinSourceSet>
     val targets: Collection<KotlinTarget>
     val extraFeatures: ExtraFeatures
@@ -138,5 +167,30 @@ interface KotlinMPPGradleModel : Serializable {
 
     companion object {
         const val NO_KOTLIN_NATIVE_HOME = ""
+    }
+}
+
+interface KonanArtifactModel : Serializable {
+    val targetName: String
+    val executableName: String
+    val type: String // represents org.jetbrains.kotlin.konan.target.CompilerOutputKind
+    val targetPlatform: String
+    val file: File
+    val buildTaskPath: String
+    val runConfiguration: KonanRunConfigurationModel
+    val isTests: Boolean
+}
+
+interface KonanRunConfigurationModel : Serializable {
+    val workingDirectory: String
+    val programParameters: List<String>
+    val environmentVariables: Map<String, String>
+
+    fun isNotEmpty() = workingDirectory.isNotEmpty() || programParameters.isNotEmpty() || environmentVariables.isNotEmpty()
+
+    companion object {
+        const val NO_WORKING_DIRECTORY = ""
+        val NO_PROGRAM_PARAMETERS = emptyList<String>()
+        val NO_ENVIRONMENT_VARIABLES = emptyMap<String, String>()
     }
 }

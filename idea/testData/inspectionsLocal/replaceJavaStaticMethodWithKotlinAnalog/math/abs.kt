@@ -1,4 +1,4 @@
 // WITH_RUNTIME
 fun test(x: Double) {
-    <caret>Math.abs(x)
+    Math.abs<caret>(x)
 }

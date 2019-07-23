@@ -179,12 +179,14 @@ fun classpathFromClasspathProperty(): List<File>? =
 fun classpathFromClass(classLoader: ClassLoader, klass: KClass<out Any>): List<File>? =
     classpathFromFQN(classLoader, klass.qualifiedName!!)
 
+fun classpathFromClass(klass: KClass<out Any>): List<File>? =
+    classpathFromClass(klass.java.classLoader, klass)
+
+inline fun <reified T: Any> classpathFromClass(): List<File>? = classpathFromClass(T::class)
+
 fun classpathFromFQN(classLoader: ClassLoader, fqn: String): List<File>? {
     val clp = "${fqn.replace('.', '/')}.class"
-    val url = classLoader.getResource(clp)
-    return url?.toURI()?.path?.removeSuffix(clp)?.let {
-        listOf(File(it))
-    }
+    return classLoader.rawClassPathFromKeyResourcePath(clp).filter { it.isValidClasspathFile() }.toList().takeIf { it.isNotEmpty() }
 }
 
 fun File.matchMaybeVersionedFile(baseName: String) =
@@ -407,5 +409,12 @@ object KotlinJars {
         get() = listOf(
             stdlibOrNull,
             scriptRuntimeOrNull
+        ).filterNotNull()
+
+    val kotlinScriptStandardJarsWithReflect
+        get() = listOf(
+            stdlibOrNull,
+            scriptRuntimeOrNull,
+            reflectOrNull
         ).filterNotNull()
 }

@@ -188,7 +188,13 @@ class KotlinCreateTestIntention : SelfTargetingRangeIntention<KtNamedDeclaration
                                     getDocument(generatedFile)?.let { doPostponedOperationsAndUnblockDocument(it) }
                                 }
 
-                                JavaToKotlinAction.convertFiles(listOf(generatedFile), project, srcModule, false).singleOrNull()
+                                JavaToKotlinAction.convertFiles(
+                                    listOf(generatedFile),
+                                    project,
+                                    srcModule,
+                                    false,
+                                    forceUsingOldJ2k = true
+                                ).singleOrNull()
                             }
                         }
                     }

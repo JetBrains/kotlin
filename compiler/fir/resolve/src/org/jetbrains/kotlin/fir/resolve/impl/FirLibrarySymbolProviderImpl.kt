@@ -15,20 +15,20 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
 import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
@@ -38,6 +38,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
 
@@ -74,7 +76,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
 
         val lookup = mutableMapOf<ClassId, FirClassSymbol>()
 
-        fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? =
+        fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? =
             findAndDeserializeClass(classId)
 
         private fun findAndDeserializeClass(
@@ -107,7 +109,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             }
         }
 
-        fun getTopLevelCallableSymbols(name: Name): List<ConeCallableSymbol> {
+        fun getTopLevelCallableSymbols(name: Name): List<FirCallableSymbol<*>> {
             return packageProto.`package`.functionList.filter { nameResolver.getName(it.name) == name }.map {
                 memberDeserializer.loadFunction(it).symbol
             }
@@ -128,7 +130,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
         scopeSession: ScopeSession
     ): FirScope? {
         val symbol = this.getClassLikeSymbolByFqName(classId) ?: return null
-        return symbol.firUnsafe<FirRegularClass>().buildDefaultUseSiteScope(useSiteSession, scopeSession)
+        return symbol.fir.buildDefaultUseSiteScope(useSiteSession, scopeSession)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -150,9 +152,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
 
-    private val fictitiousFunctionSymbols = mutableMapOf<Int, ConeClassSymbol>()
+    private val fictitiousFunctionSymbols = mutableMapOf<Int, FirClassSymbol>()
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
             it.getClassLikeSymbolByFqName(classId)
         } ?: with(classId) {
@@ -168,21 +170,88 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                         this,
                         relativeClassName.shortName(),
                         Visibilities.PUBLIC,
-                        Modality.OPEN,
+                        Modality.ABSTRACT,
                         isExpect = false,
                         isActual = false,
-                        classKind = ClassKind.CLASS,
+                        classKind = ClassKind.INTERFACE,
                         isInner = false,
                         isCompanion = false,
                         isData = false,
                         isInline = false
-                    )
+                    ).apply klass@{
+                        typeParameters.addAll((1..arity).map {
+                            FirTypeParameterImpl(
+                                session,
+                                null,
+                                FirTypeParameterSymbol(),
+                                Name.identifier("P$it"),
+                                Variance.IN_VARIANCE,
+                                false
+                            )
+                        })
+                        typeParameters.add(
+                            FirTypeParameterImpl(
+                                session,
+                                null,
+                                FirTypeParameterSymbol(),
+                                Name.identifier("R"),
+                                Variance.OUT_VARIANCE,
+                                false
+                            )
+                        )
+                        val name = OperatorNameConventions.INVOKE
+                        addDeclaration(
+                            FirMemberFunctionImpl(
+                                session,
+                                null,
+                                FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name)),
+                                name,
+                                Visibilities.PUBLIC,
+                                Modality.ABSTRACT,
+                                isExpect = false,
+                                isActual = false,
+                                isOverride = false,
+                                isOperator = true,
+                                isInfix = false,
+                                isInline = false,
+                                isTailRec = false,
+                                isExternal = false,
+                                isSuspend = false,
+                                receiverTypeRef = null,
+                                returnTypeRef = FirResolvedTypeRefImpl(
+                                    session,
+                                    null,
+                                    ConeTypeParameterTypeImpl(
+                                        typeParameters.last().symbol.toLookupTag(),
+                                        false
+                                    )
+                                )
+                            ).apply {
+                                valueParameters += this@klass.typeParameters.dropLast(1).map { typeParameter ->
+                                    FirValueParameterImpl(
+                                        session,
+                                        null,
+                                        Name.identifier(typeParameter.name.asString().toLowerCase()),
+                                        FirResolvedTypeRefImpl(
+                                            session,
+                                            null,
+                                            ConeTypeParameterTypeImpl(typeParameter.symbol.toLookupTag(), false)
+                                        ),
+                                        defaultValue = null,
+                                        isCrossinline = false,
+                                        isNoinline = false,
+                                        isVararg = false
+                                    )
+                                }
+                            }
+                        )
+                    }
                 }
             }
         }
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return allPackageFragments[packageFqName]?.flatMap {
             it.getTopLevelCallableSymbols(name)
         } ?: emptyList()
@@ -204,7 +273,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
     }
 
     override fun getAllCallableNamesInClass(classId: ClassId): Set<Name> {
-        return getClassDeclarations(classId).filterIsInstance<FirCallableMemberDeclaration>().mapTo(mutableSetOf()) { it.name }
+        return getClassDeclarations(classId).filterIsInstance<FirCallableMemberDeclaration<*>>().mapTo(mutableSetOf()) { it.name }
     }
 
     private fun getClassDeclarations(classId: ClassId): List<FirDeclaration> {

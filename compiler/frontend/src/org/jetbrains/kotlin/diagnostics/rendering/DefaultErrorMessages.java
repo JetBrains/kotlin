@@ -159,6 +159,8 @@ public class DefaultErrorMessages {
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS, "Unsigned literals are experimental and their usages should be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
         MAP.put(EXPERIMENTAL_UNSIGNED_LITERALS_ERROR, "Unsigned literals are experimental and their usages must be marked with ''@{0}'' or ''@UseExperimental({0}::class)''", TO_STRING);
 
+        MAP.put(NON_PARENTHESIZED_ANNOTATIONS_ON_FUNCTIONAL_TYPES, "Non-parenthesized annotations on function types without receiver aren't yet supported (see KT-31734 for details)");
+
         MAP.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING);
         MAP.put(REDUNDANT_OPEN_IN_INTERFACE, "Modifier 'open' is redundant for abstract interface members");
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");

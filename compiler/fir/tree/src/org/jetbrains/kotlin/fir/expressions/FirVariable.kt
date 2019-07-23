@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirCallableDeclaration, FirNamedDeclaration, FirStatement {
+interface FirVariable<F : FirVariable<F>> :
+    @VisitedSupertype FirDeclaration, FirTypedDeclaration, FirCallableDeclaration<F>, FirNamedDeclaration, FirStatement {
     val isVar: Boolean
 
     val isVal: Boolean
@@ -20,7 +21,7 @@ interface FirVariable : @VisitedSupertype FirDeclaration, FirTypedDeclaration, F
 
     val delegate: FirExpression?
 
-    override val symbol: FirVariableSymbol
+    override val symbol: FirVariableSymbol<F>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitVariable(this, data)

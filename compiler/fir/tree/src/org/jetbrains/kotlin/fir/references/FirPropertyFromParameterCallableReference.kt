@@ -16,5 +16,5 @@ class FirPropertyFromParameterCallableReference(
     session: FirSession,
     psi: PsiElement?,
     override val name: Name,
-    override val coneSymbol: FirVariableSymbol
+    override val coneSymbol: FirVariableSymbol<*>
 ) : FirAbstractElement(session, psi), FirResolvedCallableReference

@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.VisitedSupertype
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 @BaseTransformedType
-interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMemberDeclaration, FirMemberDeclaration {
+interface FirNamedFunction : @VisitedSupertype FirMemberFunction<FirNamedFunction>, FirMemberDeclaration {
     val isOperator: Boolean get() = status.isOperator
 
     val isInfix: Boolean get() = status.isInfix
@@ -29,12 +27,4 @@ interface FirNamedFunction : @VisitedSupertype FirFunction, FirCallableMemberDec
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitNamedFunction(this, data)
-
-    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        body?.accept(visitor, data)
-    }
 }

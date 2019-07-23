@@ -14,3 +14,4 @@ fun main(args: Array<String>) {
 }
 
 // PRINT_FRAME
+// RENDER_DELEGATED_PROPERTIES

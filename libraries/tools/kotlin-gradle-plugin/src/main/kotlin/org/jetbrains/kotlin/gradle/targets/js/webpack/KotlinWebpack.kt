@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.file.FileResolver
+import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.tasks.*
 import org.gradle.deployment.internal.Deployment
 import org.gradle.deployment.internal.DeploymentHandle
@@ -15,9 +16,8 @@ import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.internal.ExecHandle
 import org.gradle.process.internal.ExecHandleFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.nodeJs
 import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolver
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
@@ -26,7 +26,8 @@ import java.io.File
 import javax.inject.Inject
 
 open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
-    private val versions by lazy { project.nodeJs.versions }
+    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val versions = nodeJs.versions
 
     @get:Inject
     open val fileResolver: FileResolver
@@ -46,8 +47,10 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             target.project.path + "@" + target.name + ":" + it.compilationName
         }
 
+    @get:PathSensitive(PathSensitivity.ABSOLUTE)
+    @get:InputFile
     val entry: File
-        @Input get() = compilation.compileKotlinTask.outputFile
+        get() = compilation.compileKotlinTask.outputFile
 
     @Suppress("unused")
     val runtimeClasspath: FileCollection
@@ -59,8 +62,25 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
     @Input
     var saveEvaluatedConfigFile: Boolean = true
 
-    open val outputPath: File
-        @OutputDirectory get() = project.buildDir.resolve("libs")
+    @get:Internal
+    @Deprecated("use destinationDirectory instead", ReplaceWith("destinationDirectory"))
+    val outputPath: File
+        get() = destinationDirectory!!
+
+    private val baseConventions: BasePluginConvention?
+        get() = project.convention.plugins["base"] as BasePluginConvention?
+
+    @get:Internal
+    var destinationDirectory: File? = null
+        get() = field ?: project.buildDir.resolve(baseConventions!!.distsDirName)
+
+    @get:Internal
+    var outputFileName: String? = null
+        get() = field ?: (baseConventions?.archivesBaseName + ".js")
+
+    @get:OutputFile
+    open val outputFile: File
+        get() = destinationDirectory!!.resolve(outputFileName!!)
 
     open val configDirectory: File?
         @Optional @InputDirectory get() = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory }
@@ -92,7 +112,8 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         KotlinWebpackConfigWriter(
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
-            outputPath = outputPath,
+            outputPath = destinationDirectory,
+            outputFileName = outputFileName,
             configDirectory = configDirectory,
             bundleAnalyzerReportDir = if (report) reportDir else null,
             devServer = devServer,
@@ -125,7 +146,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @TaskAction
     fun doExecute() {
-        NpmResolver.checkRequiredDependencies(project, this)
+        nodeJs.npmResolutionManager.checkRequiredDependencies(this)
 
         val runner = createRunner()
 
@@ -141,7 +162,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             runner.copy(
                 configWriter = runner.configWriter.copy(
                     progressReporter = true,
-                    progressReporterPathFilter = project.nodeJs.root.rootPackageDir.absolutePath
+                    progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )
             ).execute()
         }

@@ -39,7 +39,7 @@ class CliScriptDependenciesProvider(private val project: Project) : ScriptDepend
             if (scriptDef != null) {
                 val result = refineScriptCompilationConfiguration(VirtualFileScriptSource(file), scriptDef, project)
 
-                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports.mapToLegacyReports())
+                ServiceManager.getService(project, ScriptReportSink::class.java)?.attachReports(file, result.reports)
 
                 if (result is ResultWithDiagnostics.Success) {
                     log.info("[kts] new cached deps for $path: ${result.value.dependenciesClassPath.joinToString(File.pathSeparator)}")

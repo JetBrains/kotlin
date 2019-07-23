@@ -38,6 +38,10 @@ fun toString(o: dynamic): String = when {
 
 fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
+private fun hasOwnPrototypeProperty(o: Any, name: String): Boolean {
+    return JsObject.getPrototypeOf(o).hasOwnProperty(name).unsafeCast<Boolean>()
+}
+
 fun hashCode(obj: dynamic): Int {
     if (obj == null)
         return 0
@@ -77,7 +81,6 @@ fun getStringHashCode(str: String): Int {
 
 fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
-@JsName("captureStack")
 internal fun captureStack(instance: Throwable) {
     if (js("Error").captureStackTrace != null) {
         js("Error").captureStackTrace(instance, instance::class.js)
@@ -86,17 +89,31 @@ internal fun captureStack(instance: Throwable) {
     }
 }
 
-@JsName("newThrowable")
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
-    throwable.message = if (message == null) {
-        if (cause != null) (cause.asDynamic().toString)() else null
-    } else {
-        message
-    }
+    throwable.message = message ?: cause?.toString() ?: undefined
     throwable.cause = cause
     throwable.name = "Throwable"
-    return throwable
+    return throwable.unsafeCast<Throwable>()
+}
+
+internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?) {
+    js("Error").call(this_)
+    if (!hasOwnPrototypeProperty(this_, "message")) {
+        this_.message = message ?: cause?.toString() ?: undefined
+    }
+    if (!hasOwnPrototypeProperty(this_, "cause")) {
+        this_.cause = cause
+    }
+    this_.name = JsObject.getPrototypeOf(this_).constructor.name
+    captureStack(this_)
+}
+
+@JsName("Object")
+internal external class JsObject {
+    companion object {
+        fun getPrototypeOf(obj: Any?): dynamic
+    }
 }
 
 internal fun <T, R> boxIntrinsic(x: T): R = error("Should be lowered")

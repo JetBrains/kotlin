@@ -2,7 +2,7 @@
 <module type="JAVA_MODULE" version="4">
   <component name="FacetManager">
     <facet type="kotlin-language" name="Kotlin">
-      <configuration version="2" allPlatforms="JVM [1.8]" useProjectSettings="false">
+      <configuration version="2" platform="JVM 1.8" allPlatforms="JVM [1.8]" useProjectSettings="false">
         <compilerSettings>
           <option name="additionalArguments" value="-version -Xallow-kotlin-package -Xskip-metadata-version-check" />
         </compilerSettings>

@@ -38,10 +38,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
     override fun createLibraryInfo(project: Project, library: Library): List<LibraryInfo> {
-        return library.getFiles(OrderRootType.CLASSES)
-            .mapNotNull { file -> PathUtil.getLocalPath(file) }
-            .map { path -> File(path) }
-            .map { file -> NativeLibraryInfo(project, library, file) }
+        return library.getFiles(OrderRootType.CLASSES).mapNotNull { file ->
+            if (!isLibraryFileForPlatform(file)) return@createLibraryInfo emptyList()
+            val path = PathUtil.getLocalPath(file) ?: return@createLibraryInfo emptyList()
+            NativeLibraryInfo(project, library, File(path))
+        }
     }
 
     override fun isLibraryFileForPlatform(virtualFile: VirtualFile): Boolean {

@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
+import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.isInlined
 
-object JsMangler: KotlinManglerImpl() {
-    // TODO: think about this
-    override val String.hashMangle: Long get() = this.hashCode().toLong()
+object JsMangler : KotlinManglerImpl() {
+    private const val MOD_VALUE = PUBLIC_LOCAL_UNIQ_ID_EDGE
+
+    override val String.hashMangle: Long get() = cityHash64() % MOD_VALUE
 
     override val IrType.isInlined: Boolean
         get() = this.isInlined()

@@ -1,3 +1,4 @@
+// WITH_MESSAGE: "Removed 1 import"
 package ppp
 
 import ppp.*

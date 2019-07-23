@@ -15,8 +15,10 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.idea.facet.KotlinFacet
+import org.jetbrains.kotlin.idea.project.isHMPPEnabled
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.project.platform
+import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.presentableDescription
 
@@ -103,6 +105,32 @@ class ModuleInfo(
         }
     }
 
+    fun isHMPP(value: Boolean) {
+        val actualValue = module.isHMPPEnabled
+        if (actualValue != value) {
+            projectInfo.messageCollector.report("Module '${module.name}': expected isHMPP '$value' but found '$actualValue'")
+        }
+    }
+
+    fun targetPlatform(vararg platforms: TargetPlatform) {
+        val expected = platforms.flatMap { it.componentPlatforms }.toSet()
+        val actual = module.platform?.componentPlatforms
+
+        if (actual == null) {
+            projectInfo.messageCollector.report("Module '${module.name}': actual target platform is null")
+            return
+        }
+
+        val notFound = expected.subtract(actual)
+        if (notFound.isNotEmpty()) {
+            projectInfo.messageCollector.report("Module '${module.name}': not found target platforms: " + notFound.joinToString(","))
+        }
+        val notExpected = actual.subtract(expected)
+        if (notExpected.isNotEmpty()) {
+            projectInfo.messageCollector.report("Module '${module.name}': found unexpected target platforms: " + notExpected.joinToString(","))
+        }
+    }
+
     fun apiVersion(version: String) {
         val actualVersion = module.languageVersionSettings.apiVersion.versionString
         if (actualVersion != version) {
@@ -129,15 +157,30 @@ class ModuleInfo(
     }
 
     fun libraryDependency(libraryName: String, scope: DependencyScope) {
-        val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { it.libraryName == libraryName }
-        checkLibrary(libraryEntry, libraryName, scope)
+        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { it.libraryName == libraryName }
+        if (libraryEntries.size > 1) {
+            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $libraryName")
+        }
+        if (libraryEntries.isEmpty()) {
+            val mostProbableCandidate =
+                rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().sortedWith(Comparator<LibraryOrderEntry> { o1, o2 ->
+                    val o1len = o1?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
+                    val o2len = o2?.libraryName?.commonPrefixWith(libraryName)?.length ?: 0
+                    o2len - o1len
+                }).first()
+            projectInfo.messageCollector.report("Module '${module.name}': expected library dependency [$libraryName] but the most probable candidate [${mostProbableCandidate.libraryName}]")
+        }
+        checkLibrary(libraryEntries.singleOrNull(), libraryName, scope)
     }
 
     fun libraryDependencyByUrl(classesUrl: String, scope: DependencyScope) {
-        val libraryEntry = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().singleOrNull { entry ->
+        val libraryEntries = rootModel.orderEntries.filterIsInstance<LibraryOrderEntry>().filter { entry ->
             entry.library?.getUrls(OrderRootType.CLASSES)?.any { it == classesUrl } ?: false
         }
-        checkLibrary(libraryEntry, classesUrl, scope)
+        if (libraryEntries.size > 1) {
+            projectInfo.messageCollector.report("Module '${module.name}': multiple entries for library $classesUrl")
+        }
+        checkLibrary(libraryEntries.singleOrNull(), classesUrl, scope)
     }
 
     private fun checkLibrary(libraryEntry: LibraryOrderEntry?, id: String, scope: DependencyScope) {

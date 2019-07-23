@@ -28,14 +28,11 @@ import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 import kotlin.script.experimental.dependencies.DependenciesResolver
 import kotlin.script.experimental.dependencies.ScriptDependencies
 import kotlin.script.experimental.host.*
-import kotlin.script.experimental.jvm.JvmGetScriptingClass
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.compat.mapToDiagnostics
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.refineWith
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.jvm.impl.toDependencies
-import kotlin.script.experimental.jvm.jdkHome
-import kotlin.script.experimental.jvm.jvm
 
 internal fun VirtualFile.loadAnnotations(
     acceptedAnnotations: List<KClass<out Annotation>>,
@@ -147,6 +144,7 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             get() = configuration?.get(ScriptCompilationConfiguration.importScripts)
                 ?.mapNotNull { (it as? FileBasedScriptSource)?.file }.orEmpty()
 
+        @Suppress("OverridingDeprecatedMember")
         override val legacyDependencies: ScriptDependencies?
             get() = configuration?.toDependencies(dependenciesClassPath)
 
@@ -154,11 +152,17 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             super.equals(other) && other is FromCompilationConfiguration && configuration == other.configuration
 
         override fun hashCode(): Int = super.hashCode() + 23 * (configuration?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromCompilationConfiguration($configuration)"
+        }
     }
 
+    @Suppress("OverridingDeprecatedMember", "DEPRECATION")
     class FromLegacy(
         script: SourceCode,
-        override val legacyDependencies: ScriptDependencies?
+        override val legacyDependencies: ScriptDependencies?,
+        val definition: ScriptDefinition?
     ) : ScriptCompilationConfigurationWrapper(script) {
 
         override val dependenciesClassPath: List<File>
@@ -177,24 +181,45 @@ abstract class ScriptCompilationConfigurationWrapper(val script: SourceCode) {
             get() = legacyDependencies?.scripts.orEmpty()
 
         override val configuration: ScriptCompilationConfiguration?
-            get() = legacyDependencies?.let {
-                TODO("drop or implement")
+            get() {
+                val legacy = legacyDependencies ?: return null
+                return definition?.compilationConfiguration?.let {
+                    ScriptCompilationConfiguration(it) {
+                        updateClasspath(legacy.classpath)
+                        defaultImports.append(legacy.imports)
+                        importScripts.append(legacy.scripts.map { FileScriptSource(it) })
+                        jvm {
+                            jdkHome.putIfNotNull(legacy.javaHome) // TODO: check if it is correct to supply javaHome as jdkHome
+                        }
+                        if (legacy.sources.isNotEmpty()) {
+                            ide {
+                                dependenciesSources.append(JvmDependency(legacy.sources))
+                            }
+                        }
+                    }
+                }
             }
 
         override fun equals(other: Any?): Boolean =
             super.equals(other) && other is FromLegacy && legacyDependencies == other.legacyDependencies
 
         override fun hashCode(): Int = super.hashCode() + 31 * (legacyDependencies?.hashCode() ?: 1)
+
+        override fun toString(): String {
+            return "FromLegacy($legacyDependencies)"
+        }
     }
 }
 
 typealias ScriptCompilationConfigurationResult = ResultWithDiagnostics<ScriptCompilationConfigurationWrapper>
 
+@Suppress("DEPRECATION")
 fun refineScriptCompilationConfiguration(
     script: SourceCode,
     definition: ScriptDefinition,
     project: Project
 ): ScriptCompilationConfigurationResult {
+    // TODO: add location information on refinement errors
     val ktFileSource = script.toKtFileSource(definition, project)
     val legacyDefinition = definition.asLegacyOrNull<KotlinScriptDefinition>()
     if (legacyDefinition == null) {
@@ -240,7 +265,8 @@ fun refineScriptCompilationConfiguration(
         else
             ScriptCompilationConfigurationWrapper.FromLegacy(
                 ktFileSource,
-                result.dependencies?.adjustByDefinition(definition.legacyDefinition)
+                result.dependencies?.adjustByDefinition(definition.legacyDefinition),
+                definition
             ).asSuccess(result.reports.mapToDiagnostics())
     }
 }

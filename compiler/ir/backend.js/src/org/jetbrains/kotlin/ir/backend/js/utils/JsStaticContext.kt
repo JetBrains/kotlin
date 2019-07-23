@@ -7,22 +7,19 @@ package org.jetbrains.kotlin.ir.backend.js.utils
 
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIntrinsicTransformers
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrClassModel
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.js.backend.ast.JsClassModel
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.js.backend.ast.JsGlobalBlock
-import org.jetbrains.kotlin.js.backend.ast.JsName
-import org.jetbrains.kotlin.js.backend.ast.JsRootScope
 
 
 class JsStaticContext(
-    val rootScope: JsRootScope,
     val backendContext: JsIrBackendContext,
     private val irNamer: IrNamer
 ) : IrNamer by irNamer {
 
     val intrinsics = JsIntrinsicTransformers(backendContext)
-    // TODO: use IrSymbol instead of JsName
-    val classModels = mutableMapOf<JsName, JsClassModel>()
+    val classModels = mutableMapOf<IrClassSymbol, JsIrClassModel>()
     val coroutineImplDeclaration = backendContext.ir.symbols.coroutineImpl.owner
     val doResumeFunctionSymbol = coroutineImplDeclaration.declarations
         .filterIsInstance<IrSimpleFunction>().single { it.name.asString() == "doResume" }.symbol

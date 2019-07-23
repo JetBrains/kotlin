@@ -11,6 +11,7 @@ import com.intellij.psi.impl.PsiSuperMethodImplUtil
 import com.intellij.psi.impl.light.LightMethodBuilder
 import com.intellij.psi.impl.light.LightTypeParameterListBuilder
 import com.intellij.psi.util.MethodSignatureBackedByPsiMethod
+import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
 import org.jetbrains.kotlin.asJava.builder.LightMemberOriginForDeclaration
 import org.jetbrains.kotlin.asJava.builder.MemberIndex
 import org.jetbrains.kotlin.asJava.elements.KtLightAbstractAnnotation
@@ -26,15 +27,13 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
 import org.jetbrains.kotlin.types.KotlinType
 
 internal abstract class KtUltraLightMethod(
-    internal val delegate: LightMethodBuilder,
-    closestDeclarationForOrigin: KtDeclaration?,
+    internal val delegate: PsiMethod,
+    lightMemberOrigin: LightMemberOrigin?,
     protected val support: KtUltraLightSupport,
     containingClass: KtLightClass
 ) : KtLightMethodImpl(
     { delegate },
-    closestDeclarationForOrigin?.let {
-        LightMemberOriginForDeclaration(it, JvmDeclarationOriginKind.OTHER)
-    },
+    lightMemberOrigin,
     containingClass
 ), KtUltraLightElementWithNullabilityAnnotation<KtDeclaration, PsiMethod> {
 
@@ -102,18 +101,26 @@ internal abstract class KtUltraLightMethod(
 }
 
 internal class KtUltraLightMethodForSourceDeclaration(
-    delegate: LightMethodBuilder,
-    declaration: KtDeclaration,
+    delegate: PsiMethod,
+    lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
-    containingClass: KtLightClass
+    containingClass: KtLightClass,
+    private val forceToSkipNullabilityAnnotation: Boolean = false
 ) : KtUltraLightMethod(
     delegate,
-    declaration,
+    lightMemberOrigin,
     support,
     containingClass
 ) {
+    constructor(
+        delegate: PsiMethod,
+        declaration: KtDeclaration,
+        support: KtUltraLightSupport,
+        containingClass: KtLightClass
+    ) : this(delegate, LightMemberOriginForDeclaration(declaration, JvmDeclarationOriginKind.OTHER), support, containingClass)
+
     override val kotlinTypeForNullabilityAnnotation: KotlinType?
-        get() = kotlinOrigin?.getKotlinType()
+        get() = if (forceToSkipNullabilityAnnotation) null else kotlinOrigin?.getKotlinType()
 
     override fun buildTypeParameterList(): PsiTypeParameterList {
         val origin = kotlinOrigin
@@ -128,12 +135,12 @@ internal class KtUltraLightMethodForSourceDeclaration(
 internal class KtUltraLightMethodForDescriptor(
     private val descriptor: FunctionDescriptor,
     delegate: LightMethodBuilder,
-    closestDeclarationForOrigin: KtDeclaration?,
+    lightMemberOrigin: LightMemberOrigin?,
     support: KtUltraLightSupport,
     containingClass: KtUltraLightClass
 ) : KtUltraLightMethod(
     delegate,
-    closestDeclarationForOrigin,
+    lightMemberOrigin,
     support,
     containingClass
 ) {

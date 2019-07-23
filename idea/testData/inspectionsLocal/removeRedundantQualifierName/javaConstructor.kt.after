@@ -1,0 +1,7 @@
+// WITH_RUNTIME
+
+import java.util.ArrayList
+
+fun test() {
+    val a = ArrayList<Int>()
+}

@@ -19,7 +19,7 @@ class JsIrLinker(
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable
-) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null, 0x1_0000_0000L),
+) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null, PUBLIC_LOCAL_UNIQ_ID_EDGE),
     DescriptorUniqIdAware by JsDescriptorUniqIdAware {
 
     private val FUNCTION_INDEX_START: Long = indexAfterKnownBuiltins

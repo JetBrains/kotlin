@@ -24,11 +24,11 @@ abstract class FirVisitor<out R, in D> {
         return visitElement(declaration, data)
     }
 
-    open fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration, data: D): R {
+    open fun <F : FirCallableDeclaration<F>> visitCallableDeclaration(callableDeclaration: FirCallableDeclaration<F>, data: D): R {
         return visitDeclaration(callableDeclaration, data)
     }
 
-    open fun visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration, data: D): R {
+    open fun <F : FirCallableMemberDeclaration<F>> visitCallableMemberDeclaration(callableMemberDeclaration: FirCallableMemberDeclaration<F>, data: D): R {
         return visitDeclaration(callableMemberDeclaration, data)
     }
 
@@ -48,16 +48,20 @@ abstract class FirVisitor<out R, in D> {
         return visitFunction(anonymousFunction, data)
     }
 
+    open fun <F : FirMemberFunction<F>> visitMemberFunction(memberFunction: FirMemberFunction<F>, data: D): R {
+        return visitFunction(memberFunction, data)
+    }
+
     open fun visitConstructor(constructor: FirConstructor, data: D): R {
-        return visitFunction(constructor, data)
+        return visitMemberFunction(constructor, data)
+    }
+
+    open fun visitNamedFunction(namedFunction: FirNamedFunction, data: D): R {
+        return visitMemberFunction(namedFunction, data)
     }
 
     open fun visitModifiableFunction(modifiableFunction: FirModifiableFunction, data: D): R {
         return visitFunction(modifiableFunction, data)
-    }
-
-    open fun visitNamedFunction(namedFunction: FirNamedFunction, data: D): R {
-        return visitFunction(namedFunction, data)
     }
 
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R {
@@ -84,7 +88,7 @@ abstract class FirVisitor<out R, in D> {
         return visitNamedDeclaration(memberDeclaration, data)
     }
 
-    open fun visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration, data: D): R {
+    open fun <F : FirClassLikeDeclaration<F>> visitClassLikeDeclaration(classLikeDeclaration: FirClassLikeDeclaration<F>, data: D): R {
         return visitMemberDeclaration(classLikeDeclaration, data)
     }
 
@@ -116,7 +120,7 @@ abstract class FirVisitor<out R, in D> {
         return visitDeclaration(valueParameter, data)
     }
 
-    open fun visitVariable(variable: FirVariable, data: D): R {
+    open fun <F : FirVariable<F>> visitVariable(variable: FirVariable<F>, data: D): R {
         return visitDeclaration(variable, data)
     }
 

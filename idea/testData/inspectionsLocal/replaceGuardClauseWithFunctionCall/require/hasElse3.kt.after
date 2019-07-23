@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+fun test(flag: Boolean, i: Int) {
+    <caret>require(flag)
+    if (i == 0) {
+        println(0)
+    } else {
+        println(1)
+        println(2)
+    }
+}

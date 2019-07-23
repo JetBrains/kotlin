@@ -98,14 +98,6 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
             super.appendMirrorText(indentLevel, buffer)
         }
 
-
-        override fun setMirror(element: TreeElement) {
-            if (files.size == 1) {
-                LOG.error("Mirror element should never be set for light classes generated from a single file")
-            }
-            super.setMirror(element)
-        }
-
         override fun getMirror(): PsiElement {
             if (files.size == 1) {
                 LOG.error("Mirror element should never be calculated for light classes generated from a single file")

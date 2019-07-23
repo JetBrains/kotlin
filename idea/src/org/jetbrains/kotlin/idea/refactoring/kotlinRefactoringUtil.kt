@@ -25,14 +25,12 @@ import com.intellij.openapi.editor.markup.RangeHighlighter
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.openapi.options.ConfigurationException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.JavaProjectRootsUtil
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.*
 import com.intellij.openapi.util.Pass
 import com.intellij.openapi.util.TextRange
 import com.intellij.openapi.util.text.StringUtil
-import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageBase
@@ -71,19 +69,17 @@ import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaMemberDescriptor
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
 import org.jetbrains.kotlin.idea.core.*
 import org.jetbrains.kotlin.idea.core.util.showYesNoCancelDialog
-import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.project.languageVersionSettings
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.KotlinValVar
 import org.jetbrains.kotlin.idea.refactoring.changeSignature.toValVar
 import org.jetbrains.kotlin.idea.refactoring.memberInfo.KtPsiClassWrapper
 import org.jetbrains.kotlin.idea.refactoring.rename.canonicalRender
+import org.jetbrains.kotlin.idea.roots.isOutsideKotlinAwareSourceRoot
 import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
 import org.jetbrains.kotlin.idea.util.actualsForExpected
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.string.collapseSpaces
-import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -95,11 +91,14 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.getCallWithAssert
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.resolve.source.getPsi
-import java.io.File
 import java.lang.annotation.Retention
 import java.util.*
 import javax.swing.Icon
 import kotlin.math.min
+
+import org.jetbrains.kotlin.idea.core.util.getLineCount as newGetLineCount
+import org.jetbrains.kotlin.idea.core.util.toPsiDirectory as newToPsiDirectory
+import org.jetbrains.kotlin.idea.core.util.toPsiFile as newToPsiFile
 
 const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG"
 
@@ -107,14 +106,14 @@ const val CHECK_SUPER_METHODS_YES_NO_DIALOG = "CHECK_SUPER_METHODS_YES_NO_DIALOG
 fun getOrCreateKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile? =
     (targetDir.findFile(fileName) ?: createKotlinFile(fileName, targetDir, packageName)) as? KtFile
 
 fun createKotlinFile(
     fileName: String,
     targetDir: PsiDirectory,
-    packageName: String? = targetDir.getPackage()?.qualifiedName
+    packageName: String? = targetDir.getFqNameWithImplicitPrefix()?.asString()
 ): KtFile {
     targetDir.checkCreateFile(fileName)
     val packageFqName = packageName?.let(::FqName) ?: FqName.ROOT
@@ -139,8 +138,8 @@ fun PsiElement.getUsageContext(): PsiElement {
     }
 }
 
-fun PsiElement.isInJavaSourceRoot(): Boolean =
-    !JavaProjectRootsUtil.isOutsideJavaSourceRoot(containingFile)
+fun PsiElement.isInKotlinAwareSourceRoot(): Boolean =
+    !isOutsideKotlinAwareSourceRoot(containingFile)
 
 fun KtFile.createTempCopy(text: String? = null): KtFile {
     val tmpFile = KtPsiFactory(this).createAnalyzableFile(name, text ?: this.text ?: "", this)
@@ -983,4 +982,31 @@ fun <T : KtExpression> T.replaceWithCopyWithResolveCheck(
     val newDescriptor = resolveStrategy(elementCopy, newContext) ?: return null
 
     return if (originDescriptor.canonicalRender() == newDescriptor.canonicalRender()) elementCopy.postHook() else null
+}
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.getLineCount() instead",
+    ReplaceWith("this.getLineCount()", "org.jetbrains.kotlin.idea.core.util.getLineCount"),
+    DeprecationLevel.ERROR
+)
+fun PsiElement.getLineCount(): Int {
+    return newGetLineCount()
+}
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.toPsiDirectory() instead",
+    ReplaceWith("this.toPsiDirectory()", "org.jetbrains.kotlin.idea.core.util.toPsiDirectory"),
+    DeprecationLevel.ERROR
+)
+fun VirtualFile.toPsiDirectory(project: Project): PsiDirectory? {
+    return newToPsiDirectory(project)
+}
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.toPsiFile() instead",
+    ReplaceWith("this.toPsiFile()", "org.jetbrains.kotlin.idea.core.util.toPsiFile"),
+    DeprecationLevel.ERROR
+)
+fun VirtualFile.toPsiFile(project: Project): PsiFile? {
+    return newToPsiFile(project)
 }

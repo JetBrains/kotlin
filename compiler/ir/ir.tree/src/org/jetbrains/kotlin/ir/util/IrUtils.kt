@@ -304,6 +304,17 @@ val IrDeclarationWithName.fqNameWhenAvailable: FqName?
 
 val IrDeclaration.parentAsClass get() = parent as IrClass
 
+fun IrClass.isLocalClass(): Boolean {
+    var current: IrDeclarationParent? = this
+    while (current != null && current !is IrPackageFragment) {
+        if (current is IrDeclarationWithVisibility && current.visibility == Visibilities.LOCAL)
+            return true
+        current = (current as? IrDeclaration)?.parent
+    }
+
+    return false
+}
+
 tailrec fun IrElement.getPackageFragment(): IrPackageFragment? {
     if (this is IrPackageFragment) return this
     val vParent = (this as? IrDeclaration)?.parent
@@ -349,6 +360,7 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
             is IrSimpleFunction -> correspondingProperty ?: parent as? IrDeclaration
             else -> parent as? IrDeclaration
         }
+
     val parent = parent
     return when (this) {
         is IrFunction -> isExternal || (effectiveParentDeclaration()?.isEffectivelyExternal() ?: false)
@@ -357,6 +369,13 @@ fun IrDeclaration.isEffectivelyExternal(): Boolean {
         is IrClass -> isExternal || parent is IrDeclaration && parent.isEffectivelyExternal()
         else -> false
     }
+}
+
+fun IrFunction.isExternalOrInheritedFromExternal(): Boolean {
+    fun isExternalOrInheritedFromExternalImpl(f: IrSimpleFunction): Boolean =
+        f.isEffectivelyExternal() || f.overriddenSymbols.any { isExternalOrInheritedFromExternalImpl(it.owner) }
+
+    return isEffectivelyExternal() || (this is IrSimpleFunction && isExternalOrInheritedFromExternalImpl(this))
 }
 
 inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(predicate: (T) -> Boolean): T? =
@@ -413,23 +432,23 @@ fun ReferenceSymbolTable.referenceFunction(callable: CallableDescriptor): IrFunc
 
 /**
  * Create new call based on given [call] and [newFunction]
- * [dispatchReceiverAsFirstArgument]: optionally convert call with dispatch receiver to static call
- * [firstArgumentAsDispatchReceiver]: optionally convert static call to call with dispatch receiver
+ * [receiversAsArguments]: optionally convert call with dispatch receiver to static call
+ * [argumentsAsReceivers]: optionally convert static call to call with dispatch receiver
  */
 
 fun irConstructorCall(
-    call: IrMemberAccessExpression,
+    call: IrFunctionAccessExpression,
     newFunction: IrConstructor,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrConstructorCall =
-    irConstructorCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+    irConstructorCall(call, newFunction.symbol, receiversAsArguments, argumentsAsReceivers)
 
 fun irConstructorCall(
-    call: IrMemberAccessExpression,
+    call: IrFunctionAccessExpression,
     newSymbol: IrConstructorSymbol,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsDispatchers: Boolean = false
 ): IrConstructorCall =
     call.run {
         IrConstructorCallImpl(
@@ -445,25 +464,30 @@ fun irConstructorCall(
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
-                dispatchReceiverAsFirstArgument,
-                firstArgumentAsDispatchReceiver
+                receiversAsArguments,
+                argumentsAsDispatchers
             )
         }
     }
 
 fun irCall(
-    call: IrMemberAccessExpression,
+    call: IrFunctionAccessExpression,
     newFunction: IrFunction,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrCall =
-    irCall(call, newFunction.symbol, dispatchReceiverAsFirstArgument, firstArgumentAsDispatchReceiver)
+    irCall(
+        call,
+        newFunction.symbol,
+        receiversAsArguments,
+        argumentsAsReceivers
+    )
 
 fun irCall(
-    call: IrMemberAccessExpression,
+    call: IrFunctionAccessExpression,
     newSymbol: IrFunctionSymbol,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
 ): IrCall =
     call.run {
         IrCallImpl(
@@ -477,46 +501,83 @@ fun irCall(
         ).apply {
             copyTypeAndValueArgumentsFrom(
                 call,
-                dispatchReceiverAsFirstArgument,
-                firstArgumentAsDispatchReceiver
+                receiversAsArguments,
+                argumentsAsReceivers
             )
         }
     }
 
-private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
-    call: IrMemberAccessExpression,
-    dispatchReceiverAsFirstArgument: Boolean = false,
-    firstArgumentAsDispatchReceiver: Boolean = false
-) {
-    copyTypeArgumentsFrom(call)
+fun IrFunctionAccessExpression.copyTypeAndValueArgumentsFrom(
+    src: IrFunctionAccessExpression,
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
+) = copyTypeAndValueArgumentsFrom(
+    src,
+    src.symbol.owner,
+    symbol.owner,
+    receiversAsArguments,
+    argumentsAsReceivers
+)
 
-    var toValueArgumentIndex = 0
-    var fromValueArgumentIndex = 0
+fun IrFunctionReference.copyTypeAndValueArgumentsFrom(
+    src: IrFunctionReference,
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
+) = copyTypeAndValueArgumentsFrom(
+    src,
+    src.symbol.owner,
+    symbol.owner,
+    receiversAsArguments,
+    argumentsAsReceivers
+)
+
+private fun IrMemberAccessExpression.copyTypeAndValueArgumentsFrom(
+    src: IrMemberAccessExpression,
+    srcFunction: IrFunction,
+    destFunction: IrFunction,
+    receiversAsArguments: Boolean = false,
+    argumentsAsReceivers: Boolean = false
+) {
+    copyTypeArgumentsFrom(src)
+
+    var destValueArgumentIndex = 0
+    var srcValueArgumentIndex = 0
 
     when {
-        dispatchReceiverAsFirstArgument -> {
-            putValueArgument(toValueArgumentIndex++, call.dispatchReceiver)
+        receiversAsArguments && srcFunction.dispatchReceiverParameter != null -> {
+            putValueArgument(destValueArgumentIndex++, src.dispatchReceiver)
         }
-        firstArgumentAsDispatchReceiver -> {
-            dispatchReceiver = call.getValueArgument(fromValueArgumentIndex++)
+        argumentsAsReceivers && destFunction.dispatchReceiverParameter != null -> {
+            dispatchReceiver = src.getValueArgument(srcValueArgumentIndex++)
         }
         else -> {
-            dispatchReceiver = call.dispatchReceiver
+            dispatchReceiver = src.dispatchReceiver
         }
     }
 
-    extensionReceiver = call.extensionReceiver
+    when {
+        receiversAsArguments && srcFunction.extensionReceiverParameter != null -> {
+            putValueArgument(destValueArgumentIndex++, src.extensionReceiver)
+        }
+        argumentsAsReceivers && destFunction.extensionReceiverParameter != null -> {
+            extensionReceiver = src.getValueArgument(srcValueArgumentIndex++)
+        }
+        else -> {
+            extensionReceiver = src.extensionReceiver
+        }
+    }
 
-    while (fromValueArgumentIndex < call.valueArgumentsCount) {
-        putValueArgument(toValueArgumentIndex++, call.getValueArgument(fromValueArgumentIndex++))
+    while (srcValueArgumentIndex < src.valueArgumentsCount) {
+        putValueArgument(destValueArgumentIndex++, src.getValueArgument(srcValueArgumentIndex++))
     }
 }
 
-val IrDeclaration.file: IrFile get() = parent.let {
-    when (it) {
-        is IrFile -> it
-        is IrPackageFragment -> TODO("Unknown file")
-        is IrDeclaration -> it.file
-        else -> TODO("Unexpected declaration parent")
+val IrDeclaration.file: IrFile
+    get() = parent.let {
+        when (it) {
+            is IrFile -> it
+            is IrPackageFragment -> TODO("Unknown file")
+            is IrDeclaration -> it.file
+            else -> TODO("Unexpected declaration parent")
+        }
     }
-}

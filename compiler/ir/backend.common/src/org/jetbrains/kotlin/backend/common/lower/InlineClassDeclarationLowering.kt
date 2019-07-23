@@ -8,18 +8,13 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BackendContext
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
-import org.jetbrains.kotlin.backend.common.ir.copyTo
-import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
-import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.backend.common.ir.createStaticFunctionWithReceivers
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -142,10 +137,12 @@ class InlineClassLowering(val context: BackendContext) {
                                 staticMethod.valueParameters[0]
 
                             function.extensionReceiverParameter ->
-                                staticMethod.extensionReceiverParameter!!
+                                staticMethod.valueParameters[1]
 
-                            in function.valueParameters ->
-                                staticMethod.valueParameters[valueDeclaration.index + 1]
+                            in function.valueParameters -> {
+                                val offset = if (function.extensionReceiverParameter != null) 2 else 1
+                                staticMethod.valueParameters[valueDeclaration.index + offset]
+                            }
 
                             else -> return expression
                         }
@@ -163,13 +160,14 @@ class InlineClassLowering(val context: BackendContext) {
                 +irReturn(
                     irCall(staticMethod).apply {
                         val parameters =
-                            listOf(function.dispatchReceiverParameter!!) + function.valueParameters
+                            listOfNotNull(
+                                function.dispatchReceiverParameter!!,
+                                function.extensionReceiverParameter
+                            ) + function.valueParameters
 
                         for ((index, valueParameter) in parameters.withIndex()) {
                             putValueArgument(index, irGet(valueParameter))
                         }
-
-                        extensionReceiver = function.extensionReceiverParameter?.let { irGet(it) }
                     }
                 )
             }
@@ -190,7 +188,7 @@ class InlineClassLowering(val context: BackendContext) {
                         return expression
                     }
 
-                    return irCall(expression, getOrCreateStaticMethod(function), dispatchReceiverAsFirstArgument = false)
+                    return irCall(expression, getOrCreateStaticMethod(function))
                 }
 
                 override fun visitCall(expression: IrCall): IrExpression {
@@ -208,7 +206,7 @@ class InlineClassLowering(val context: BackendContext) {
                     return irCall(
                         expression,
                         getOrCreateStaticMethod(function),
-                        dispatchReceiverAsFirstArgument = (function is IrSimpleFunction)
+                        receiversAsArguments = (function is IrSimpleFunction)
                     )
                 }
 
@@ -219,11 +217,7 @@ class InlineClassLowering(val context: BackendContext) {
                     return when {
                         !klass.isInline -> expression
                         function.isPrimary -> irConstructorCall(expression, function)
-                        else -> irCall(expression, getOrCreateStaticMethod(function)).apply {
-                            (0 until expression.valueArgumentsCount).forEach {
-                                putValueArgument(it, expression.getValueArgument(it)!!)
-                            }
-                        }
+                        else -> irCall(expression, getOrCreateStaticMethod(function))
                     }
                 }
 
@@ -242,36 +236,6 @@ class InlineClassLowering(val context: BackendContext) {
         else -> Name.identifier(asString() + INLINE_CLASS_IMPL_SUFFIX)
     }
 
-    private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction {
-        val descriptor = WrappedSimpleFunctionDescriptor()
-
-        return IrFunctionImpl(
-            function.startOffset,
-            function.endOffset,
-            function.origin,
-            IrSimpleFunctionSymbolImpl(descriptor),
-            function.name.toInlineClassImplementationName(),
-            function.visibility,
-            Modality.FINAL,
-            function.returnType,
-            function.isInline,
-            function.isExternal,
-            (function is IrSimpleFunction && function.isTailrec),
-            (function is IrSimpleFunction && function.isSuspend)
-        ).apply {
-            descriptor.bind(this)
-            copyTypeParametersFrom(function)
-            annotations += function.annotations
-            dispatchReceiverParameter = null
-            extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(this)
-            if (function is IrSimpleFunction) {
-                valueParameters.add(function.dispatchReceiverParameter!!.let { p -> p.copyTo(this, index = p.index + 1) })
-                valueParameters += function.valueParameters.map { p -> p.copyTo(this, index = p.index + 1) }
-            } else {
-                valueParameters += function.valueParameters.map { p -> p.copyTo(this) }
-            }
-            parent = function.parent
-            assert(isStaticMethodOfClass)
-        }
-    }
+    private fun createStaticBodilessMethod(function: IrFunction): IrSimpleFunction =
+        createStaticFunctionWithReceivers(function.parent, function.name.toInlineClassImplementationName(), function, copyBody = false)
 }

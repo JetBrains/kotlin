@@ -8,9 +8,8 @@ package org.jetbrains.kotlin.idea.perf
 import org.jetbrains.kotlin.idea.completion.test.handlers.CompletionHandlerTestBase
 import com.intellij.application.options.CodeStyle
 import com.intellij.codeInsight.completion.CompletionType
-import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
@@ -23,7 +22,7 @@ import org.junit.AfterClass
 import java.io.File
 
 /**
- * inspired by @see AbstractCompletionHandlerTest
+ * inspired by @see AbstractCompletionHandlerTests
  */
 abstract class AbstractPerformanceCompletionHandlerTests(
     private val defaultCompletionType: CompletionType,
@@ -35,6 +34,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
     private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
     private val COMPLETION_CHAR_PREFIX = "CHAR:"
+    private val COMPLETION_CHARS_PREFIX = "CHARS:"
     private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     companion object {
@@ -75,12 +75,10 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
             val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
 
-            val completionCharString = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX)
-            val completionChar = when(completionCharString) {
-                "\\n", null -> '\n'
-                "\\t" -> '\t'
-                else -> completionCharString.singleOrNull() ?: error("Incorrect completion char: \"$completionCharString\"")
-            }
+            val completionChars = completionChars(
+                char = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX),
+                chars = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHARS_PREFIX)
+            )
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
@@ -103,7 +101,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             }
 
             doPerfTestWithTextLoaded(
-                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChar
+                testPath, completionType, invocationCount, lookupString, itemText, tailText, completionChars
             )
         } finally {
             if (configured) {
@@ -121,34 +119,49 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         lookupString: String?,
         itemText: String?,
         tailText: String?,
-        completionChar: Char
+        completionChars: String
     ) {
 
         val testName = getTestName(false)
 
         val stats = stats()
-        stats.perfTest(
+        stats.perfTest<Unit, Unit>(
             testName = testName,
             setUp = {
                 setUpFixture(testPath)
             },
             test = {
-                fixture.complete(completionType, time)
-
-                if (lookupString != null || itemText != null || tailText != null) {
-                    val item = getExistentLookupElement(lookupString, itemText, tailText)
-                    if (item != null) {
-                        selectItem(item, completionChar)
-                    }
-                }
+                perfTestCore(completionType, time, lookupString, itemText, tailText, completionChars)
             },
             tearDown = {
-                assertNotNull(it)
-
-                FileDocumentManager.getInstance().reloadFromDisk(editor.document)
-                fixture.configureByText(KotlinFileType.INSTANCE, "")
-                commitAllDocuments()
+                runWriteAction {
+                    myFixture.file.delete()
+                }
             })
+    }
+
+    private fun perfTestCore(
+        completionType: CompletionType,
+        time: Int,
+        lookupString: String?,
+        itemText: String?,
+        tailText: String?,
+        completionChars: String
+    ) {
+        completionChars?.let {
+            for (idx in 0 until it.length - 1) {
+                fixture.type(it[idx])
+            }
+        }
+
+        fixture.complete(completionType, time)
+
+        if (lookupString != null || itemText != null || tailText != null) {
+            val item = getExistentLookupElement(lookupString, itemText, tailText)
+            if (item != null) {
+                selectItem(item, completionChars.last())
+            }
+        }
     }
 
     protected open fun setUpFixture(testPath: String) {

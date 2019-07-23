@@ -1,12 +1,13 @@
 pluginManagement {
     repositories {
         if (cacheRedirectorEnabled == 'true') {
+            logger.info("Using cache redirector for settings.gradle pluginManagement")
             maven {
                 url "https://cache-redirector.jetbrains.com/plugins.gradle.org/m2"
             }
+        } else {
+            gradlePluginPortal()
         }
-
-        gradlePluginPortal()
     }
 }
 
@@ -21,6 +22,17 @@ if (flags.includeCidrPlugins) {
 } else {
     logger.info("NOT including CIDR plugins in buildSrc/settings.gradle")
 }
+
+if (flags.hasKotlinUltimate) {
+    logger.info("Including extension for IJ Ultimate in buildSrc/settings.gradle")
+    include ":prepare-deps:lldb-frontend"
+    include ":prepare-deps:native-debug-plugin"
+    project(":prepare-deps:lldb-frontend").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/lldb-frontend")
+    project(":prepare-deps:native-debug-plugin").projectDir = file("${flags.propertiesProvider.rootProjectDir}/kotlin-ultimate/buildSrc/prepare-deps/native-debug-plugin")
+} else {
+    logger.info("Not including extension for IJ Ultimate in buildSrc/settings.gradle")
+}
+
 
 class LocalBuildPropertiesProvider {
     private Settings settings
@@ -56,8 +68,11 @@ class LocalBuildProperties {
     
     boolean includeCidrPlugins
 
+    boolean hasKotlinUltimate
+
     LocalBuildProperties(Settings settings) {
         propertiesProvider = new LocalBuildPropertiesProvider(settings)
-        includeCidrPlugins = propertiesProvider.getBoolean('cidrPluginsEnabled') && new File(propertiesProvider.rootProjectDir, 'kotlin-ultimate').exists()
+        hasKotlinUltimate = new File(propertiesProvider.rootProjectDir, 'kotlin-ultimate').exists()
+        includeCidrPlugins = propertiesProvider.getBoolean('cidrPluginsEnabled') && hasKotlinUltimate
     }
 }

@@ -10,10 +10,10 @@ object A {
     @JsName("js_q") val q: String get() = "q"
 }
 
-fun test() = js("""
-var a = JS_TESTS.A;
-return a.js_f(23) + ";" + a.js_g(42) + ";" + a.js_p + ";" + a.js_q;
-""")
+fun test(): dynamic {
+    var a = A.asDynamic()
+    return a.js_f(23) + ";" + a.js_g(42) + ";" + a.js_p + ";" + a.js_q
+}
 
 fun box(): String {
     val result = test()

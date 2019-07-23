@@ -1,0 +1,34 @@
+package
+
+public suspend fun </*0*/ T> threadSafeSuspendCallback(/*0*/ startAsync: (CompletionLambda<T> /* = (result: kotlin.Result<T>) -> kotlin.Unit */) -> CancellationLambda /* = () -> kotlin.Unit */): T
+
+public interface CoroutineScope {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class CoroutineWorker {
+    public constructor CoroutineWorker()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Scope {
+    public constructor Scope()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final suspend fun </*0*/ T> performAndWait(/*0*/ block: suspend CoroutineScope.() -> T): T
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public final class WorkItem {
+        public constructor WorkItem(/*0*/ block: suspend CoroutineScope.() -> kotlin.Unit)
+        public final val block: suspend CoroutineScope.() -> kotlin.Unit
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
+public typealias CancellationLambda = () -> kotlin.Unit
+public typealias CompletionLambda</*0*/ T> = (result: kotlin.Result<T>) -> kotlin.Unit

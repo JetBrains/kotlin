@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.ir.expressions
 
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
-interface IrExpression : IrStatement, IrVarargElement {
+interface IrExpression : IrStatement, IrVarargElement, IrAttributeContainer {
     val type: IrType
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrExpression =

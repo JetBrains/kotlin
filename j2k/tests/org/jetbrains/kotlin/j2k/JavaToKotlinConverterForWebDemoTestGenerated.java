@@ -3779,6 +3779,11 @@ public class JavaToKotlinConverterForWebDemoTestGenerated extends AbstractJavaTo
             runTest("j2k/testData/fileOrElement/postProcessing/GetOperator.java");
         }
 
+        @TestMetadata("GuardClause.java")
+        public void testGuardClause() throws Exception {
+            runTest("j2k/testData/fileOrElement/postProcessing/GuardClause.java");
+        }
+
         @TestMetadata("IfNullReturnToElvis.java")
         public void testIfNullReturnToElvis() throws Exception {
             runTest("j2k/testData/fileOrElement/postProcessing/IfNullReturnToElvis.java");

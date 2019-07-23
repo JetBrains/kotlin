@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.impl.IrClassImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -28,12 +27,22 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
-import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.proto.Annotations as ProtoAnnotations
+import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrFile as ProtoFile
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrModule as ProtoModule
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol as ProtoSymbol
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolData as ProtoSymbolData
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolKind as ProtoSymbolKind
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex as ProtoTypeIndex
+import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
 
 abstract class KotlinIrLinker(
     val logger: LoggingContext,
@@ -53,95 +62,95 @@ abstract class KotlinIrLinker(
     val resolvedForwardDeclarations = mutableMapOf<UniqIdKey, UniqIdKey>()
 
     protected val deserializersForModules = mutableMapOf<ModuleDescriptor, IrDeserializerForModule>()
-    val fileAnnotations = mutableMapOf<IrFile, KotlinIr.Annotations>()
+    val fileAnnotations = mutableMapOf<IrFile, ProtoAnnotations>()
 
     inner class IrDeserializerForModule(
         private val moduleDescriptor: ModuleDescriptor,
-        private val moduleProto: KotlinIr.IrModule,
+        private val moduleProto: ProtoModule,
         private val deserializationStrategy: DeserializationStrategy
     ) : IrModuleDeserializer(logger, builtIns, symbolTable) {
 
         private var moduleLoops = mutableMapOf<Int, IrLoopBase>()
 
-        private val symbolProtosCache = mutableMapOf<Int, KotlinIr.IrSymbolData>()
-        private val typeProtosCache = mutableMapOf<Int, KotlinIr.IrType>()
+        private val symbolProtosCache = mutableMapOf<Int, ProtoSymbolData>()
+        private val typeProtosCache = mutableMapOf<Int, ProtoType>()
         private val stringsCache = mutableMapOf<Int, String>()
 
         // This is a heavy initializer
         val module = deserializeIrModuleHeader(moduleProto)
 
         private fun referenceDeserializedSymbol(
-            proto: KotlinIr.IrSymbolData,
+            proto: ProtoSymbolData,
             descriptor: DeclarationDescriptor?
         ): IrSymbol = when (proto.kind) {
-            KotlinIr.IrSymbolKind.ANONYMOUS_INIT_SYMBOL ->
+            ProtoSymbolKind.ANONYMOUS_INIT_SYMBOL ->
                 IrAnonymousInitializerSymbolImpl(
                     descriptor as ClassDescriptor?
                         ?: WrappedClassDescriptor()
                 )
-            KotlinIr.IrSymbolKind.CLASS_SYMBOL ->
+            ProtoSymbolKind.CLASS_SYMBOL ->
                 symbolTable.referenceClass(
                     descriptor as ClassDescriptor?
                         ?: WrappedClassDescriptor()
                 )
-            KotlinIr.IrSymbolKind.CONSTRUCTOR_SYMBOL ->
+            ProtoSymbolKind.CONSTRUCTOR_SYMBOL ->
                 symbolTable.referenceConstructor(
                     descriptor as ClassConstructorDescriptor?
                         ?: WrappedClassConstructorDescriptor()
                 )
-            KotlinIr.IrSymbolKind.TYPE_PARAMETER_SYMBOL ->
+            ProtoSymbolKind.TYPE_PARAMETER_SYMBOL ->
                 symbolTable.referenceTypeParameter(
                     descriptor as TypeParameterDescriptor?
                         ?: WrappedTypeParameterDescriptor()
                 )
-            KotlinIr.IrSymbolKind.ENUM_ENTRY_SYMBOL ->
+            ProtoSymbolKind.ENUM_ENTRY_SYMBOL ->
                 symbolTable.referenceEnumEntry(
                     descriptor as ClassDescriptor?
                         ?: WrappedEnumEntryDescriptor()
                 )
-            KotlinIr.IrSymbolKind.STANDALONE_FIELD_SYMBOL ->
+            ProtoSymbolKind.STANDALONE_FIELD_SYMBOL ->
                 symbolTable.referenceField(WrappedFieldDescriptor())
 
-            KotlinIr.IrSymbolKind.FIELD_SYMBOL ->
+            ProtoSymbolKind.FIELD_SYMBOL ->
                 symbolTable.referenceField(
                     descriptor as PropertyDescriptor?
                         ?: WrappedPropertyDescriptor()
                 )
-            KotlinIr.IrSymbolKind.FUNCTION_SYMBOL ->
+            ProtoSymbolKind.FUNCTION_SYMBOL ->
                 symbolTable.referenceSimpleFunction(
                     descriptor as FunctionDescriptor?
                         ?: WrappedSimpleFunctionDescriptor()
                 )
-            KotlinIr.IrSymbolKind.VARIABLE_SYMBOL ->
+            ProtoSymbolKind.VARIABLE_SYMBOL ->
                 IrVariableSymbolImpl(
                     descriptor as VariableDescriptor?
                         ?: WrappedVariableDescriptor()
                 )
-            KotlinIr.IrSymbolKind.VALUE_PARAMETER_SYMBOL ->
+            ProtoSymbolKind.VALUE_PARAMETER_SYMBOL ->
                 IrValueParameterSymbolImpl(
                     descriptor as ParameterDescriptor?
                         ?: WrappedValueParameterDescriptor()
                 )
-            KotlinIr.IrSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
+            ProtoSymbolKind.RECEIVER_PARAMETER_SYMBOL ->
                 IrValueParameterSymbolImpl(
                     descriptor as ParameterDescriptor? ?: WrappedReceiverParameterDescriptor()
                 )
-            KotlinIr.IrSymbolKind.PROPERTY_SYMBOL ->
+            ProtoSymbolKind.PROPERTY_SYMBOL ->
                 symbolTable.referenceProperty(
                     descriptor as PropertyDescriptor? ?: WrappedPropertyDescriptor()
                 )
-            KotlinIr.IrSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
+            ProtoSymbolKind.LOCAL_DELEGATED_PROPERTY_SYMBOL ->
                 IrLocalDelegatedPropertySymbolImpl(descriptor as? VariableDescriptorWithAccessors ?: WrappedVariableDescriptorWithAccessor())
             else -> TODO("Unexpected classifier symbol kind: ${proto.kind}")
         }
 
-        private fun loadSymbolProto(index: Int): KotlinIr.IrSymbolData {
+        private fun loadSymbolProto(index: Int): ProtoSymbolData {
             return symbolProtosCache.getOrPut(index) {
                 loadSymbolProto(moduleDescriptor, index)
             }
         }
 
-        private fun loadTypeProto(index: Int): KotlinIr.IrType {
+        private fun loadTypeProto(index: Int): ProtoType {
             return typeProtosCache.getOrPut(index) {
                 loadTypeProto(moduleDescriptor, index)
             }
@@ -153,23 +162,23 @@ abstract class KotlinIrLinker(
             }
         }
 
-        override fun deserializeIrSymbol(proto: KotlinIr.IrSymbol): IrSymbol {
+        override fun deserializeIrSymbol(proto: ProtoSymbol): IrSymbol {
             val symbolData = loadSymbolProto(proto.index)
             return deserializeIrSymbolData(symbolData)
         }
 
-        override fun deserializeIrType(proto: KotlinIr.IrTypeIndex): IrType {
+        override fun deserializeIrType(proto: ProtoTypeIndex): IrType {
             val typeData = loadTypeProto(proto.index)
             return deserializeIrTypeData(typeData)
         }
 
-        override fun deserializeString(proto: KotlinIr.String): String =
+        override fun deserializeString(proto: ProtoString): String =
             loadString(proto.index)
 
         override fun deserializeLoopHeader(loopIndex: Int, loopBuilder: () -> IrLoopBase) =
             moduleLoops.getOrPut(loopIndex, loopBuilder)
 
-        private fun deserializeIrSymbolData(proto: KotlinIr.IrSymbolData): IrSymbol {
+        private fun deserializeIrSymbolData(proto: ProtoSymbolData): IrSymbol {
             val key = proto.uniqId.uniqIdKey(moduleDescriptor)
             val topLevelKey = proto.topLevelUniqId.uniqIdKey(moduleDescriptor)
 
@@ -204,7 +213,7 @@ abstract class KotlinIrLinker(
             return symbol
         }
 
-        override fun deserializeDescriptorReference(proto: KotlinIr.DescriptorReference) =
+        override fun deserializeDescriptorReference(proto: ProtoDescriptorReference) =
             descriptorReferenceDeserializer.deserializeDescriptorReference(
                 deserializeString(proto.packageFqName),
                 deserializeString(proto.classFqName),
@@ -218,11 +227,12 @@ abstract class KotlinIrLinker(
                 isSetter = proto.isSetter,
                 isTypeParameter = proto.isTypeParameter
             )
+
         // TODO: this is JS specific. Eliminate me.
         override fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean) =
             this@KotlinIrLinker.getPrimitiveTypeOrNull(symbol, hasQuestionMark)
 
-        fun deserializeIrFile(fileProto: KotlinIr.IrFile): IrFile {
+        fun deserializeIrFile(fileProto: ProtoFile): IrFile {
 
             val fileEntry = NaiveSourceBasedFileEntryImpl(
                 this.deserializeString(fileProto.fileEntry.name),
@@ -266,7 +276,7 @@ abstract class KotlinIrLinker(
         }
 
         fun deserializeIrModuleHeader(
-            proto: KotlinIr.IrModule
+            proto: ProtoModule
         ): IrModuleFragment {
             val files = proto.fileList.map {
                 deserializeIrFile(it)
@@ -324,19 +334,19 @@ abstract class KotlinIrLinker(
                       "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.name.asString() }}]")
     }
 
-    private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): KotlinIr.IrDeclaration {
+    private fun loadTopLevelDeclarationProto(uniqIdKey: UniqIdKey): ProtoDeclaration {
         val stream = reader(uniqIdKey.moduleOfOrigin!!, uniqIdKey.uniqId).codedInputStream
-        return KotlinIr.IrDeclaration.parseFrom(stream, newInstance())
+        return ProtoDeclaration.parseFrom(stream, newInstance())
     }
 
-    private fun loadSymbolProto(moduleDescriptor: ModuleDescriptor, index: Int): KotlinIr.IrSymbolData {
+    private fun loadSymbolProto(moduleDescriptor: ModuleDescriptor, index: Int): ProtoSymbolData {
         val stream = readSymbol(moduleDescriptor, index).codedInputStream
-        return KotlinIr.IrSymbolData.parseFrom(stream, newInstance())
+        return ProtoSymbolData.parseFrom(stream, newInstance())
     }
 
-    private fun loadTypeProto(moduleDescriptor: ModuleDescriptor, index: Int): KotlinIr.IrType {
+    private fun loadTypeProto(moduleDescriptor: ModuleDescriptor, index: Int): ProtoType {
         val stream = readType(moduleDescriptor, index).codedInputStream
-        return KotlinIr.IrType.parseFrom(stream, newInstance())
+        return ProtoType.parseFrom(stream, newInstance())
     }
 
     private fun loadString(moduleDescriptor: ModuleDescriptor, index: Int): String {
@@ -453,7 +463,7 @@ abstract class KotlinIrLinker(
         deserializationStrategy: DeserializationStrategy = DeserializationStrategy.ONLY_REFERENCED
     ): IrModuleFragment {
         val deserializerForModule = deserializersForModules.getOrPut(moduleDescriptor) {
-            val proto = KotlinIr.IrModule.parseFrom(byteArray.codedInputStream, newInstance())
+            val proto = ProtoModule.parseFrom(byteArray.codedInputStream, newInstance())
             IrDeserializerForModule(moduleDescriptor, proto, deserializationStrategy)
         }
         // The IrModule and its IrFiles have been created during module initialization.

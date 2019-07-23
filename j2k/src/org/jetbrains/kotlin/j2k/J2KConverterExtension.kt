@@ -30,7 +30,7 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
     ): WithProgressProcessor
 
     companion object {
-        private fun useNewJ2k() = Registry.`is`("kotlin.use.new.j2k", false)
+        private fun useNewJ2k() = Registry.`is`("kotlin.use.new.j2k", true)
 
         val EP_NAME = ExtensionPointName.create<J2kConverterExtension>("org.jetbrains.kotlin.j2kConverterExtension")
 

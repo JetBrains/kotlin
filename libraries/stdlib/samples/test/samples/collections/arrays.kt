@@ -131,4 +131,79 @@ class Arrays {
         }
     }
 
+    class Sorting {
+
+        @Sample
+        fun sortArray() {
+            val intArray = intArrayOf(4, 3, 2, 1)
+
+            // before sorting
+            assertPrints(intArray.joinToString(), "4, 3, 2, 1")
+
+            intArray.sort()
+
+            // after sorting
+            assertPrints(intArray.joinToString(), "1, 2, 3, 4")
+        }
+
+        @Sample
+        fun sortArrayOfComparable() {
+            class Person(val firstName: String, val lastName: String) : Comparable<Person> {
+                override fun compareTo(other: Person): Int = this.lastName.compareTo(other.lastName)
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val people = arrayOf(
+                Person("Ragnar", "Lodbrok"),
+                Person("Bjorn", "Ironside"),
+                Person("Sweyn", "Forkbeard")
+            )
+
+            // before sorting
+            assertPrints(people.joinToString(), "Ragnar Lodbrok, Bjorn Ironside, Sweyn Forkbeard")
+
+            people.sort()
+
+            // after sorting
+            assertPrints(people.joinToString(), "Sweyn Forkbeard, Bjorn Ironside, Ragnar Lodbrok")
+
+        }
+
+        @Sample
+        fun sortRangeOfArray() {
+            val intArray = intArrayOf(4, 3, 2, 1)
+
+            // before sorting
+            assertPrints(intArray.joinToString(), "4, 3, 2, 1")
+
+            intArray.sort(0, 3)
+
+            // after sorting
+            assertPrints(intArray.joinToString(), "2, 3, 4, 1")
+        }
+
+        @Sample
+        fun sortRangeOfArrayOfComparable() {
+            class Person(val firstName: String, val lastName: String) : Comparable<Person> {
+                override fun compareTo(other: Person): Int = this.lastName.compareTo(other.lastName)
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val people = arrayOf(
+                Person("Ragnar", "Lodbrok"),
+                Person("Bjorn", "Ironside"),
+                Person("Sweyn", "Forkbeard")
+            )
+
+            // before sorting
+            assertPrints(people.joinToString(), "Ragnar Lodbrok, Bjorn Ironside, Sweyn Forkbeard")
+
+            people.sort(0, 2)
+
+            // after sorting
+            assertPrints(people.joinToString(), "Bjorn Ironside, Ragnar Lodbrok, Sweyn Forkbeard")
+        }
+
+    }
+
 }

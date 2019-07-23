@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.*
+import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
+import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.backend.jvm.codegen.coerce
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
 /**
@@ -19,10 +22,14 @@ object UnsafeCoerce : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         val from = expression.getTypeArgument(0)!!
         val to = expression.getTypeArgument(1)!!
-        require(with(codegen) { typeMapper.mapType(from) == typeMapper.mapType(to) })
+        val fromType = codegen.typeMapper.mapType(from)
+        val toType = codegen.typeMapper.mapType(to)
+        require(fromType == toType) {
+            "Inline class types should have the same representation: $fromType != $toType"
+        }
         val arg = expression.getValueArgument(0)!!
         val result = arg.accept(codegen, data)
-        return object : PromisedValue(codegen, codegen.typeMapper.mapType(to), to) {
+        return object : PromisedValue(codegen, toType, to) {
             override fun materialize() = result.coerce(from).materialize()
         }
     }

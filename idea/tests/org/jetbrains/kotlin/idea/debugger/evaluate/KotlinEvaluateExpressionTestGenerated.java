@@ -256,6 +256,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt12206BasePropertyWithoutBackingField.kt");
         }
 
+        @TestMetadata("kt15259.kt")
+        public void testKt15259() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt15259.kt");
+        }
+
         @TestMetadata("kt17514.kt")
         public void testKt17514() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt17514.kt");
@@ -284,6 +289,11 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
         @TestMetadata("kt29179.kt")
         public void testKt29179() throws Exception {
             runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt29179.kt");
+        }
+
+        @TestMetadata("kt31709.kt")
+        public void testKt31709() throws Exception {
+            runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/kt31709.kt");
         }
 
         @TestMetadata("kt5554OnlyIntsShouldBeCoerced.kt")
@@ -685,6 +695,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("capturedValues1.kt")
+            public void testCapturedValues1() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/capturedValues1.kt");
+            }
+
+            @TestMetadata("capturedValues2.kt")
+            public void testCapturedValues2() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/capturedValues2.kt");
+            }
+
             @TestMetadata("catchVariable.kt")
             public void testCatchVariable() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/catchVariable.kt");
@@ -888,6 +908,16 @@ public class KotlinEvaluateExpressionTestGenerated extends AbstractKotlinEvaluat
             @TestMetadata("localFunctionMangling.kt")
             public void testLocalFunctionMangling() throws Exception {
                 runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/localFunctionMangling.kt");
+            }
+
+            @TestMetadata("nestedInlineFun.kt")
+            public void testNestedInlineFun() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/nestedInlineFun.kt");
+            }
+
+            @TestMetadata("nestedInlineFun2.kt")
+            public void testNestedInlineFun2() throws Exception {
+                runTest("idea/testData/debugger/tinyApp/src/evaluate/singleBreakpoint/frame/nestedInlineFun2.kt");
             }
 
             @TestMetadata("remapThis.kt")

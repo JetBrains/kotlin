@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.nj2k.postProcessing
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.command.CommandProcessor
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.RangeMarker
+import com.intellij.openapi.progress.ProcessCanceledException
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -35,6 +37,9 @@ import org.jetbrains.kotlin.nj2k.postProcessing.processings.*
 import org.jetbrains.kotlin.psi.*
 
 class NewJ2kPostProcessor : PostProcessor {
+    @Suppress("PrivatePropertyName")
+    private val LOG = Logger.getInstance("@org.jetbrains.kotlin.nj2k.postProcessing.NewJ2kPostProcessor")
+
     override fun insertImport(file: KtFile, fqName: FqName) {
         ApplicationManager.getApplication().invokeAndWait {
             runWriteAction {
@@ -56,8 +61,15 @@ class NewJ2kPostProcessor : PostProcessor {
             for ((i, group) in processings.withIndex()) {
                 onPhaseChanged?.invoke(i + 1, group.description)
                 for (processing in group.processings) {
-                    processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
-                    commitFile(file)
+                    try {
+                        processing.runProcessing(file, rangeMarker, converterContext as NewJ2kConverterContext)
+                    } catch (e: ProcessCanceledException) {
+                        throw e
+                    } catch (t: Throwable) {
+                        LOG.error(t)
+                    } finally {
+                        commitFile(file)
+                    }
                 }
             }
         }
@@ -133,17 +145,44 @@ private val errorsFixingDiagnosticBasedPostProcessingGroup =
     )
 
 
+private val addOrRemoveModifiersProcessingGroup =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        processings = listOf(
+            RemoveRedundantVisibilityModifierProcessing(),
+            RemoveRedundantModalityModifierProcessing(),
+            inspectionBasedProcessing(AddOperatorModifierInspection()),
+            generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection())
+        )
+    )
+
+private val removeRedundantElementsProcessingGroup =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        processings = listOf(
+            RemoveExplicitTypeArgumentsProcessing(),
+            generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
+            generalInspectionBasedProcessing(ExplicitThisInspection()),
+            intentionBasedProcessing(RemoveEmptyClassBodyIntention())
+        )
+    )
+
+private val removeRedundantSemicolonProcessing =
+    InspectionLikeProcessingGroup(
+        runSingleTime = true,
+        acceptNonKtElements = true,
+        processings = listOf(
+            generalInspectionBasedProcessing(RedundantSemicolonInspection())
+        )
+    )
+
+
 private val inspectionLikePostProcessingGroup =
     InspectionLikeProcessingGroup(
-        RemoveRedundantVisibilityModifierProcessing(),
-        RemoveRedundantModalityModifierProcessing(),
         RemoveRedundantConstructorKeywordProcessing(),
         RemoveExplicitOpenInInterfaceProcessing(),
-        generalInspectionBasedProcessing(ExplicitThisInspection()),
-        RemoveExplicitTypeArgumentsProcessing(),
         RemoveRedundantOverrideVisibilityProcessing(),
         inspectionBasedProcessing(MoveLambdaOutsideParenthesesInspection()),
-        generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
         ConvertToStringTemplateProcessing(),
         UsePropertyAccessSyntaxProcessing(),
         UninitializedVariableReferenceFromInitializerToThisReferenceProcessing(),
@@ -154,14 +193,11 @@ private val inspectionLikePostProcessingGroup =
         UseExpressionBodyProcessing(),
         inspectionBasedProcessing(UnnecessaryVariableInspection()),
         RemoveExplicitPropertyTypeWithInspectionProcessing(),
-        generalInspectionBasedProcessing(RedundantUnitReturnTypeInspection()),
         JavaObjectEqualsToEqOperatorProcessing(),
         RemoveExplicitPropertyTypeProcessing(),
         RemoveRedundantNullabilityProcessing(),
         generalInspectionBasedProcessing(CanBeValInspection(ignoreNotUsedVals = false)),
         inspectionBasedProcessing(FoldInitializerAndIfToElvisInspection()),
-        generalInspectionBasedProcessing(RedundantSemicolonInspection()),
-        intentionBasedProcessing(RemoveEmptyClassBodyIntention()),
         intentionBasedProcessing(RemoveRedundantCallsOfConversionMethodsIntention()),
         inspectionBasedProcessing(JavaMapForEachInspection()),
         intentionBasedProcessing(FoldIfToReturnIntention()) { it.then.isTrivialStatementBody() && it.`else`.isTrivialStatementBody() },
@@ -174,7 +210,6 @@ private val inspectionLikePostProcessingGroup =
         inspectionBasedProcessing(IfThenToElvisInspection(highlightStatement = true)),
         inspectionBasedProcessing(SimplifyNegatedBinaryExpressionInspection()),
         inspectionBasedProcessing(ReplaceGetOrSetInspection()),
-        inspectionBasedProcessing(AddOperatorModifierInspection()),
         intentionBasedProcessing(ObjectLiteralToLambdaIntention()),
         intentionBasedProcessing(AnonymousFunctionToLambdaIntention()),
         intentionBasedProcessing(RemoveUnnecessaryParenthesesIntention()),
@@ -226,7 +261,10 @@ private val processings: List<NamedPostProcessingGroup> = listOf(
         "Cleaning up Kotlin code",
         listOf(
             errorsFixingDiagnosticBasedPostProcessingGroup,
+            addOrRemoveModifiersProcessingGroup,
             inspectionLikePostProcessingGroup,
+            removeRedundantSemicolonProcessing,
+            removeRedundantElementsProcessingGroup,
             cleaningUpDiagnosticBasedPostProcessingGroup
         )
     ),

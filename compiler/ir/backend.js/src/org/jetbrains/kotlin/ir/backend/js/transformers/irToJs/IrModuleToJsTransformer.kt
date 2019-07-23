@@ -6,11 +6,12 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
@@ -32,15 +33,6 @@ class IrModuleToJsTransformer(
             JsStringLiteral("use strict").makeStmt()
         )
 
-        // TODO: fix it up with new name generator
-        val anyName = context.getNameForClass(backendContext.irBuiltIns.anyClass.owner)
-        val throwableName = context.getNameForClass(backendContext.irBuiltIns.throwableClass.owner)
-        val stringName = context.getNameForClass(backendContext.irBuiltIns.stringClass.owner)
-
-        statements += JsVars(JsVars.JsVar(anyName, Namer.JS_OBJECT))
-        statements += JsVars(JsVars.JsVar(throwableName, Namer.JS_ERROR))
-        statements += JsVars(JsVars.JsVar(stringName, JsNameRef("String")))
-
         val preDeclarationBlock = JsBlock()
         val postDeclarationBlock = JsBlock()
 
@@ -48,7 +40,7 @@ class IrModuleToJsTransformer(
 
         module.files.forEach {
             statements.add(JsDocComment(mapOf("file" to it.path)).makeStmt())
-            statements.add(it.accept(IrFileToJsTransformer(), context))
+            statements.addAll(it.accept(IrFileToJsTransformer(), context).statements)
         }
 
         // sort member forwarding code
@@ -93,6 +85,9 @@ class IrModuleToJsTransformer(
             return null
         }
 
+        if (!declaration.isExported())
+            return null
+
         if (declaration.isEffectivelyExternal())
             return null
 
@@ -112,15 +107,15 @@ class IrModuleToJsTransformer(
         val expression =
             if (declaration is IrClass && declaration.isObject) {
                 // TODO: Use export names for properties
-                defineProperty(internalModuleName.makeRef(), name.ident, getter = JsNameRef("${name.ident}_getInstance"))
+                val instanceGetter = backendContext.objectToGetInstanceFunction[declaration.symbol]!!
+                val instanceGetterName: JsName = context.getNameForStaticFunction(instanceGetter)
+                defineProperty(internalModuleName.makeRef(), name.ident, getter = JsNameRef(instanceGetterName))
             } else {
                 jsAssignment(JsNameRef(exportName, internalModuleName.makeRef()), name.makeRef())
             }
 
         return JsExpressionStatement(expression)
     }
-
-
 
     private fun generateModule(module: IrModuleFragment): JsProgram {
         val additionalPackages = with(backendContext) {
@@ -135,29 +130,24 @@ class IrModuleToJsTransformer(
         val program = JsProgram()
 
         val nameGenerator = IrNamerImpl(
-            newNameTables = namer,
-            rootScope = program.rootScope
+            newNameTables = namer
         )
         val staticContext = JsStaticContext(
             backendContext = backendContext,
-            irNamer = nameGenerator,
-            rootScope = program.rootScope
+            irNamer = nameGenerator
         )
         val rootContext = JsGenerationContext(
-            parent = null,
-            currentBlock = program.globalBlock,
             currentFunction = null,
-            currentScope = program.rootScope,
             staticContext = staticContext
         )
 
         val rootFunction = JsFunction(program.rootScope, JsBlock(), "root function")
-        val internalModuleName = rootFunction.scope.declareName("_")
+        val internalModuleName = JsName("_")
 
         val (importStatements, importedJsModules) =
             generateImportStatements(
                 getNameForExternalDeclaration = { rootContext.getNameForStaticDeclaration(it) },
-                declareFreshGlobal = { rootFunction.scope.declareFreshName(sanitizeName(it)) }
+                declareFreshGlobal = { JsName(sanitizeName(it)) } // TODO: Declare fresh name
             )
 
         val moduleBody = generateModuleBody(module, rootContext)
@@ -261,13 +251,13 @@ class IrModuleToJsTransformer(
         generateModule(declaration)
 
     private fun processClassModels(
-        classModelMap: Map<JsName, JsClassModel>,
+        classModelMap: Map<IrClassSymbol, JsIrClassModel>,
         preDeclarationBlock: JsBlock,
         postDeclarationBlock: JsBlock
     ) {
-        val declarationHandler = object : DFS.AbstractNodeHandler<JsName, Unit>() {
+        val declarationHandler = object : DFS.AbstractNodeHandler<IrClassSymbol, Unit>() {
             override fun result() {}
-            override fun afterChildren(current: JsName) {
+            override fun afterChildren(current: IrClassSymbol) {
                 classModelMap[current]?.let {
                     preDeclarationBlock.statements += it.preDeclarationBlock.statements
                     postDeclarationBlock.statements += it.postDeclarationBlock.statements
@@ -275,13 +265,34 @@ class IrModuleToJsTransformer(
             }
         }
 
-        DFS.dfs(classModelMap.keys, {
-            val neighbors = mutableListOf<JsName>()
-            classModelMap[it]?.run {
-                if (superName != null) neighbors += superName!!
-                neighbors += interfaces
-            }
-            neighbors
-        }, declarationHandler)
+        DFS.dfs(
+            classModelMap.keys,
+            { klass -> classModelMap[klass]?.superClasses ?: emptyList() },
+            declarationHandler
+        )
+    }
+
+    fun IrDeclarationWithName.isExported(): Boolean {
+        if (fqNameWhenAvailable in backendContext.additionalExportedDeclarations)
+            return true
+
+        // Hack to support properties
+        val correspondingProperty = when {
+            this is IrField -> correspondingPropertySymbol
+            this is IrSimpleFunction -> correspondingPropertySymbol
+            else -> null
+        }
+        correspondingProperty?.let {
+            return it.owner.isExported()
+        }
+
+        if (isJsExport())
+            return true
+
+        return when (val parent = parent) {
+            is IrDeclarationWithName -> parent.isExported()
+            is IrAnnotationContainer -> parent.isJsExport()
+            else -> false
+        }
     }
 }

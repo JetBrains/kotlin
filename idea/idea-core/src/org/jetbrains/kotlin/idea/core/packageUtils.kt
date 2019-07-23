@@ -13,10 +13,12 @@ import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModulePackageIndex
 import com.intellij.openapi.roots.ModuleRootManager
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.Query
+import com.intellij.util.io.parentSystemIndependentPath
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes
 import org.jetbrains.jps.model.java.JavaSourceRootProperties
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
@@ -31,6 +33,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
+import java.net.URI
+import java.nio.file.Paths
 
 fun PsiDirectory.getPackage(): PsiPackage? = JavaDirectoryService.getInstance()!!.getPackage(this)
 
@@ -39,14 +43,16 @@ fun PsiFile.getFqNameByDirectory(): FqName {
     return qualifiedNameByDirectory?.let(::FqName) ?: FqName.ROOT
 }
 
-fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName {
-    val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: FqName.ROOT
+fun PsiDirectory.getFqNameWithImplicitPrefix(): FqName? {
+    val packageFqName = getPackage()?.qualifiedName?.let(::FqName) ?: return null
     sourceRoot?.takeIf { !it.hasExplicitPackagePrefix(project) }?.let { sourceRoot ->
         val implicitPrefix = PerModulePackageCacheService.getInstance(project).getImplicitPackagePrefix(sourceRoot)
         return FqName.fromSegments((implicitPrefix.pathSegments() + packageFqName.pathSegments()).map { it.asString() })
     }
     return packageFqName
 }
+
+fun PsiDirectory.getFqNameWithImplicitPrefixOrRoot(): FqName = getFqNameWithImplicitPrefix() ?: FqName.ROOT
 
 private fun VirtualFile.hasExplicitPackagePrefix(project: Project): Boolean =
     toPsiDirectory(project)?.getPackage()?.qualifiedName?.isNotEmpty() == true
@@ -108,11 +114,19 @@ private fun Module.getOrConfigureKotlinSourceRoots(): List<VirtualFile> {
         return sourceRoots
     }
     return runWriteAction {
-        val rootDir = rootManager.contentRoots.firstOrNull()
-        rootDir?.createChildDirectory(project, "kotlin")
+        getOrCreateRootDirectory()?.createChildDirectory(project, "kotlin")
         project.invalidateProjectRoots()
         getNonGeneratedKotlinSourceRoots()
     }
+}
+
+private fun Module.getOrCreateRootDirectory(): VirtualFile? {
+    val contentEntry = rootManager.contentEntries.firstOrNull() ?: return null
+    contentEntry.file?.let { return it }
+
+    val path = Paths.get(URI.create(contentEntry.url))
+    val rootParent = LocalFileSystem.getInstance().findFileByPath(path.parentSystemIndependentPath)
+    return rootParent?.createChildDirectory(project, name.takeLastWhile { it != '.' })
 }
 
 private fun getPackageDirectoriesInModule(rootPackage: PsiPackage, module: Module): Array<PsiDirectory> =

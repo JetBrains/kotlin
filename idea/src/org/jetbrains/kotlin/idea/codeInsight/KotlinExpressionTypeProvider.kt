@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.RenderingFormat
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.calls.callUtil.getParameterForArgument
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getType
@@ -90,7 +91,7 @@ class KotlinExpressionTypeProvider : ExpressionTypeProvider<KtExpression>() {
     private fun KtExpression.shouldShowStatementType(): Boolean {
         if (parent !is KtBlockExpression) return true
         if (parent.children.lastOrNull() == this) {
-            return analyze(BodyResolveMode.PARTIAL_WITH_CFA)[BindingContext.USED_AS_EXPRESSION, this] ?: false
+            return isUsedAsExpression(analyze(BodyResolveMode.PARTIAL_WITH_CFA))
         }
         return false
     }

@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirSymbolProvider {
 
-    abstract fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol?
+    abstract fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 
     fun getSymbolByLookupTag(lookupTag: ConeClassifierLookupTag): ConeClassifierSymbol? {
         return when (lookupTag) {
@@ -35,7 +37,7 @@ abstract class FirSymbolProvider {
         }
     }
 
-    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol>
+    abstract fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>>
 
     abstract fun getClassDeclaredMemberScope(classId: ClassId): FirScope?
     abstract fun getClassUseSiteMemberScope(

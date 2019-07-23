@@ -18,10 +18,10 @@ dependencies {
     allTestsRuntime(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "log4j") }
     testCompile(project(":kotlin-scripting-jvm-host"))
     testCompile(projectTests(":compiler:tests-common"))
+    testCompile(project(":kotlin-scripting-compiler"))
     testCompile(project(":daemon-common")) // TODO: fix import (workaround for jps build)
 
     testRuntimeOnly(project(":kotlin-compiler"))
-    testRuntimeOnly(project(":kotlin-scripting-compiler"))
     testRuntimeOnly(project(":kotlin-reflect"))
     testRuntimeOnly(commonDep("org.jetbrains.intellij.deps", "trove4j"))
     

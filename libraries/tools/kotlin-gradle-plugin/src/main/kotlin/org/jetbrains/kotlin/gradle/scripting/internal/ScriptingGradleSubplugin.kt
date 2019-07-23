@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.gradle.scripting.ScriptingExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.useLazyTaskConfiguration
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.reporter
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionsFromClasspathDiscoverySource
-import org.jetbrains.kotlin.scripting.definitions.reporter
 import java.io.File
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 

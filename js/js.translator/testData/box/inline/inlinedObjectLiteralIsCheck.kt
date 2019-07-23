@@ -11,6 +11,7 @@ inline fun ok(): I {
 }
 
 @JsName("convolutedOk")
+@JsExport
 inline fun convolutedOk(): I {
     val fail = object : I {
         override fun ok() = "fail"

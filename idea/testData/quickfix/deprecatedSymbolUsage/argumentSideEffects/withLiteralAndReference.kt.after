@@ -1,0 +1,9 @@
+// "Replace with 'bar(y)'" "true"
+
+@Deprecated("", replaceWith = ReplaceWith("bar(y)"))
+fun foo(x: Any, y: Any, z: Any) {
+}
+fun bar(y: Any) {}
+fun main() {
+    bar(42::dec)
+}

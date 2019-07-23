@@ -2871,6 +2871,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-31818.java");
         }
 
+        @TestMetadata("kt-32436.java")
+        public void testKt_32436() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-32436.java");
+        }
+
         @TestMetadata("kt-5294.java")
         public void testKt_5294() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-5294.java");

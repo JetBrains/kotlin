@@ -18,6 +18,8 @@ package org.jetbrains.kotlin.gradle.dsl
 
 import groovy.lang.Closure
 import org.gradle.api.Task
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 
 interface KotlinJsCompile : KotlinCompile<KotlinJsOptions>
 
@@ -26,8 +28,10 @@ interface KotlinJvmCompile : KotlinCompile<KotlinJvmOptions>
 interface KotlinCommonCompile : KotlinCompile<KotlinMultiplatformCommonOptions>
 
 interface KotlinJsDce : Task {
+    @get:Internal
     val dceOptions: KotlinJsDceOptions
 
+    @get:Input
     val keep: MutableList<String>
 
     fun dceOptions(fn: KotlinJsDceOptions.() -> Unit) {

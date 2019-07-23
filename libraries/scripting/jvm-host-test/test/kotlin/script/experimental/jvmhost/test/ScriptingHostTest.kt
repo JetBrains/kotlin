@@ -7,12 +7,15 @@ package kotlin.script.experimental.jvmhost.test
 
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemory
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import org.junit.Test
 import java.io.*
+import java.lang.RuntimeException
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.security.MessageDigest
@@ -26,9 +29,10 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.updateClasspath
+import kotlin.script.experimental.jvm.util.KotlinJars
+import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.*
-import kotlin.script.experimental.jvmhost.impl.CompiledScriptClassLoader
-import kotlin.script.experimental.jvmhost.impl.KJvmCompiledModuleInMemory
 import kotlin.script.templates.standard.SimpleScriptTemplate
 
 class ScriptingHostTest : TestCase() {
@@ -49,6 +53,41 @@ class ScriptingHostTest : TestCase() {
             BasicJvmScriptingHost().evalWithTemplate<SimpleScriptTemplate>("println(\"$greeting\")".toScriptSource()).throwOnFailure()
         }
         Assert.assertEquals(greeting, output2)
+    }
+
+    @Test
+    fun testValueResult() {
+        val resVal = evalScriptWithResult("42") as ResultValue.Value
+        Assert.assertEquals(42, resVal.value)
+        Assert.assertEquals("\$\$result", resVal.name)
+        Assert.assertEquals("kotlin.Int", resVal.type)
+        val resField = resVal.scriptInstance!!::class.java.getDeclaredField("\$\$result")
+        Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
+    }
+
+    @Test
+    fun testUnitResult() {
+        val resVal = evalScriptWithResult("val x = 42")
+        Assert.assertTrue(resVal is ResultValue.Unit)
+    }
+
+    @Test
+    fun testErrorResult() {
+        val resVal = evalScriptWithResult("throw RuntimeException(\"abc\")")
+        Assert.assertTrue(resVal is ResultValue.Error)
+        val resValError = (resVal as ResultValue.Error).error
+        Assert.assertTrue(resValError is RuntimeException)
+        Assert.assertEquals("abc", resValError.message)
+    }
+
+    @Test
+    fun testCustomResultField() {
+        val resVal = evalScriptWithResult("42") {
+            resultField("outcome")
+        } as ResultValue.Value
+        Assert.assertEquals("outcome", resVal.name)
+        val resField = resVal.scriptInstance!!::class.java.getDeclaredField("outcome")
+        Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
     }
 
     @Test
@@ -73,6 +112,7 @@ class ScriptingHostTest : TestCase() {
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
         val host = BasicJvmScriptingHost(evaluator = BasicJvmScriptJarGenerator(outJar))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
+        Thread.sleep(100)
         val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
         val scriptClass = classloader.loadClass("SavedScript")
         val output = captureOut {
@@ -85,7 +125,10 @@ class ScriptingHostTest : TestCase() {
     fun testSaveToRunnableJar() {
         val greeting = "Hello from script jar!"
         val outJar = Files.createTempFile("saveToRunnableJar", ".jar").toFile()
-        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>()
+        val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>() {
+            updateClasspath(classpathFromClass<SimpleScriptTemplate>())
+            updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
+        }
         val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration)
         val scriptName = "SavedRunnableScript"
         val compiledScript = runBlocking {
@@ -96,6 +139,8 @@ class ScriptingHostTest : TestCase() {
         runBlocking {
             saver(compiledScript, ScriptEvaluationConfiguration.Default).throwOnFailure()
         }
+
+        Thread.sleep(100)
 
         val classpathFromJar = run {
             val manifest = JarFile(outJar).manifest
@@ -366,7 +411,8 @@ class ScriptingHostTest : TestCase() {
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 
-        val scriptCompilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = configurationBuilder)
+        val scriptCompilationConfiguration =
+            createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = configurationBuilder)
 
         Assert.assertEquals(0, cache.storedScripts)
         var compiledScript: CompiledScript<*>? = null
@@ -452,6 +498,13 @@ fun <T> ResultWithDiagnostics<T>.throwOnFailure(): ResultWithDiagnostics<T> = ap
 
 private fun evalScript(script: String, host: BasicScriptingHost = BasicJvmScriptingHost()): ResultWithDiagnostics<*> =
     evalScriptWithConfiguration(script, host)
+
+private fun evalScriptWithResult(
+    script: String,
+    host: BasicScriptingHost = BasicJvmScriptingHost(),
+    body: ScriptCompilationConfiguration.Builder.() -> Unit = {}
+): ResultValue =
+    evalScriptWithConfiguration(script, host, body).throwOnFailure().valueOrNull()!!.returnValue
 
 private fun evalScriptWithConfiguration(
     script: String,

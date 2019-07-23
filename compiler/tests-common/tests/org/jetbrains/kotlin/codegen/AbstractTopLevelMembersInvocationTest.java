@@ -23,10 +23,7 @@ import kotlin.sequences.SequencesKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles;
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment;
-import org.jetbrains.kotlin.test.CompilerTestUtil;
-import org.jetbrains.kotlin.test.ConfigurationKind;
-import org.jetbrains.kotlin.test.KotlinTestUtils;
-import org.jetbrains.kotlin.test.TestJdkKind;
+import org.jetbrains.kotlin.test.*;
 
 import java.io.File;
 import java.util.Collections;
@@ -62,6 +59,6 @@ public abstract class AbstractTopLevelMembersInvocationTest extends AbstractByte
 
         List<OccurrenceInfo> expected = readExpectedOccurrences(KotlinTestUtils.getTestDataPathBase() + "/codegen/" + sourceFiles.get(0));
         String actual = generateToText();
-        Companion.checkGeneratedTextAgainstExpectedOccurrences(actual, expected);
+        Companion.checkGeneratedTextAgainstExpectedOccurrences(actual, expected, TargetBackend.ANY);
     }
 }

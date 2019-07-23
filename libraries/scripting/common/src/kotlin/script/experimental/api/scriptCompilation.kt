@@ -1,9 +1,9 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("unused")
+@file:Suppress("unused", "RemoveExplicitTypeArguments")
 
 package kotlin.script.experimental.api
 
@@ -35,26 +35,44 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
 
     object Default : ScriptCompilationConfiguration()
 
-    /**
-     * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
-     * to the original one, otherwise returns original
-     */
-    fun withUpdates(body: Builder.() -> Unit = {}): ScriptCompilationConfiguration {
-        val newConfiguration = ScriptCompilationConfiguration(this, body = body)
-        return if (newConfiguration == this) this
-        else newConfiguration
+    override fun toString(): String {
+        return "ScriptCompilationConfiguration($providedProperties)"
     }
+}
+
+
+/**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptCompilationConfiguration?.with(body: ScriptCompilationConfiguration.Builder.() -> Unit): ScriptCompilationConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptCompilationConfiguration(body = body)
+        else ScriptCompilationConfiguration(this, body = body)
+    return if (newConfiguration == this) this else newConfiguration
 }
 
 /**
  * The script type display name
  */
-val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>("Kotlin script")
+val ScriptCompilationConfigurationKeys.displayName by PropertiesCollection.key<String>()
 
 /**
  * The script filename extension
+ * Used for the primary script definition selection as well as to assign a kotlin-specific file type to the files with the extension in Intellij IDEA
+ * For Intellij IDEA support, it is important to have this extension set to a non-ambiguous name.
+ * See also {@link ScriptCompilationConfigurationKeys#filePathPattern} parameter for more fine-grained script definition selection
  */
 val ScriptCompilationConfigurationKeys.fileExtension by PropertiesCollection.key<String>("kts")
+
+/**
+ * Additional (to the filename extension) RegEx pattern with that the script file path is checked
+ * It is used in the hosts that may have several script definitions registered and need to distinguish script file types not only by extension
+ * The argument passed to the RegEx matcher is equivalent to the File.path, taken relatively from a base path defined by the host
+ * (usually should be the project root or the current directory)
+ * See also {@link ScriptCompilationConfigurationKeys#fileExtension} parameter for the primary script definition selection
+ */
+val ScriptCompilationConfigurationKeys.filePathPattern by PropertiesCollection.key<String>()
 
 /**
  * The superclass for target script class
@@ -92,6 +110,12 @@ val ScriptCompilationConfigurationKeys.defaultImports by PropertiesCollection.ke
  * The list of script sources that should be compiled along with the script and imported into it
  */
 val ScriptCompilationConfigurationKeys.importScripts by PropertiesCollection.key<List<SourceCode>>()
+
+/**
+ * The name of the generated script class field to assign the script results to, empty means disabled
+ * see also ReplScriptCompilationConfigurationKeys.resultFieldPrefix
+ */
+val ScriptCompilationConfigurationKeys.resultField by PropertiesCollection.key<String>("\$\$result")
 
 /**
  * The list of script dependencies - platform specific

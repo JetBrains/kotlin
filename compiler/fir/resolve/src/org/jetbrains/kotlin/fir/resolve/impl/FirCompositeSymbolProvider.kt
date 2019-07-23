@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -25,7 +25,7 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
         return providers.firstNotNullResult { it.getClassUseSiteMemberScope(classId, useSiteSession, scopeSession) }
     }
 
-    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<ConeCallableSymbol> {
+    override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
         return providers.flatMap { it.getTopLevelCallableSymbols(packageFqName, name) }
     }
 
@@ -35,7 +35,7 @@ class FirCompositeSymbolProvider(val providers: List<FirSymbolProvider>) : FirSy
         return providers.firstNotNullResult { it.getPackage(fqName) }
     }
 
-    override fun getClassLikeSymbolByFqName(classId: ClassId): ConeClassLikeSymbol? {
+    override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
         return providers.firstNotNullResult { it.getClassLikeSymbolByFqName(classId) }
     }
 

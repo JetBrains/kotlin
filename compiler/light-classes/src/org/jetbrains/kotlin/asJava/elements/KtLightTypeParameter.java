@@ -39,7 +39,8 @@ public class KtLightTypeParameter
     public KtLightTypeParameter(
             @NotNull PsiTypeParameterListOwner owner,
             int index,
-            @NotNull String name) {
+            @NotNull String name
+    ) {
         super(owner.getManager(), KotlinLanguage.INSTANCE);
         this.owner = owner;
         this.index = index;

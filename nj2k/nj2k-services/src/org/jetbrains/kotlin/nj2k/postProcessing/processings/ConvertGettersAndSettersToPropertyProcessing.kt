@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.idea.references.KtSimpleNameReference
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.idea.references.readWriteAccess
 import org.jetbrains.kotlin.idea.util.CommentSaver
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asGetterName
@@ -170,11 +171,14 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
                 factory.createExpression(KtTokens.FIELD_KEYWORD.value),
                 true
             )
+        val modifiers = setter.modifiersText?.takeIf { it.isNotEmpty() }
+            ?: setter.safeAs<RealSetter>()?.function?.visibilityModifierTypeOrDefault()?.value
+            ?: property.visibilityModifierTypeOrDefault().value
 
         val ktSetter = factory.createSetter(
             body,
             setter.parameterName,
-            setter.modifiersText?.takeIf { it.isNotEmpty() } ?: property.visibilityModifierTypeOrDefault().value
+            modifiers
         )
         ktSetter.filterModifiers()
         if (setter is RealSetter) {

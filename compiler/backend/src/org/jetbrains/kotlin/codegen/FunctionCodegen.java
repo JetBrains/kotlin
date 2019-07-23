@@ -985,16 +985,14 @@ public class FunctionCodegen {
         catch (ProcessCanceledException e) {
             throw e;
         }
-        catch (Throwable t) {
+        catch (Throwable e) {
             String bytecode = renderByteCodeIfAvailable(mv);
             throw new CompilationException(
-                    "wrong code generated\n" +
-                    (description != null ? " for " + description : "") +
-                    t.getClass().getName() +
-                    " " +
-                    t.getMessage() +
-                    (bytecode != null ? "\nbytecode:\n" + bytecode : ""),
-                    t, method);
+                    "wrong bytecode generated" +
+                    (description != null ? " for " + description : "") + "\n" +
+                    (bytecode != null ? bytecode : "<no bytecode>"),
+                    e, method
+            );
         }
     }
 

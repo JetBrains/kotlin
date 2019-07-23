@@ -14,11 +14,12 @@ UFile (package = )
                         USimpleNameReferenceExpression (identifier = filter, resolvesTo = null)
                         ULambdaExpression
                             UBlockExpression
-                                UQualifiedReferenceExpression
-                                    USimpleNameReferenceExpression (identifier = it)
-                                    UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
-                                        UIdentifier (Identifier (isEmpty))
-                                        USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
+                                UReturnExpression
+                                    UQualifiedReferenceExpression
+                                        USimpleNameReferenceExpression (identifier = it)
+                                        UCallExpression (kind = UastCallKind(name='method_call'), argCount = 0))
+                                            UIdentifier (Identifier (isEmpty))
+                                            USimpleNameReferenceExpression (identifier = isEmpty, resolvesTo = null)
         UAnnotationMethod (name = doSelectItem)
             UParameter (name = selectItemFunction)
                 UAnnotation (fqName = org.jetbrains.annotations.NotNull)

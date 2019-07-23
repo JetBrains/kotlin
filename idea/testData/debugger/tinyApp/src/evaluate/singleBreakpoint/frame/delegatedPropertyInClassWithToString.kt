@@ -19,3 +19,4 @@ class MyDelegate {
 }
 
 // PRINT_FRAME
+// RENDER_DELEGATED_PROPERTIES

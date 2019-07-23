@@ -6736,36 +6736,50 @@ public expect fun <T> Array<T>.plusElement(element: T): Array<T>
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun IntArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun LongArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun ByteArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun ShortArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun DoubleArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun FloatArray.sort(): Unit
 
 /**
  * Sorts the array in-place.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArray
  */
 public expect fun CharArray.sort(): Unit
 
@@ -6773,6 +6787,8 @@ public expect fun CharArray.sort(): Unit
  * Sorts the array in-place according to the natural order of its elements.
  * 
  * The sort is _stable_. It means that equal elements preserve their order relative to each other after sorting.
+ * 
+ * @sample samples.collections.Arrays.Sorting.sortArrayOfComparable
  */
 public expect fun <T : Comparable<T>> Array<out T>.sort(): Unit
 

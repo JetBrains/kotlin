@@ -17,7 +17,7 @@ abstract class FirWhenExpression(
     abstract val subject: FirExpression?
 
     // when (val subjectVariable = subject()) { ... }
-    abstract val subjectVariable: FirVariable?
+    abstract val subjectVariable: FirVariable<*>?
 
     abstract val branches: List<FirWhenBranch>
 

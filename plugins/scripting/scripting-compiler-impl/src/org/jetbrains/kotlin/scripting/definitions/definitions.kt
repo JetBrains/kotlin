@@ -14,7 +14,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.psi.KtFile
+import java.io.File
 
 inline fun <T> runReadAction(crossinline runnable: () -> T): T {
     return ApplicationManager.getApplication().runReadAction(Computable { runnable() })
@@ -26,7 +28,7 @@ fun PsiFile.findScriptDefinition(): ScriptDefinition? {
     val file = virtualFile ?: originalFile.virtualFile ?: return null
     if (file.isNonScript()) return null
 
-    return findScriptDefinitionByFileName(project, file.name)
+    return findScriptDefinitionByFilePath(project, File(file.path))
 }
 
 fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
@@ -37,23 +39,25 @@ fun VirtualFile.findScriptDefinition(project: Project): ScriptDefinition? {
 
     if (runReadAction { PsiManager.getInstance(project).findFile(this) as? KtFile }/*?.script*/ == null) return null
 
-    return findScriptDefinitionByFileName(project, name)
+    return findScriptDefinitionByFilePath(project, File(path))
 }
 
-fun findScriptDefinitionByFileName(project: Project, fileName: String): ScriptDefinition {
+private fun findScriptDefinitionByFilePath(project: Project, file: File): ScriptDefinition {
     val scriptDefinitionProvider = ScriptDefinitionProvider.getInstance(project) ?: return null
         ?: throw IllegalStateException("Unable to get script definition: ScriptDefinitionProvider is not configured.")
 
-    return scriptDefinitionProvider.findDefinition(fileName) ?: scriptDefinitionProvider.getDefaultDefinition()
+    return scriptDefinitionProvider.findDefinition(file) ?: scriptDefinitionProvider.getDefaultDefinition()
 }
 
-private fun VirtualFile.isNonScript(): Boolean =
+fun VirtualFile.isNonScript(): Boolean =
     isDirectory ||
             extension == KotlinFileType.EXTENSION ||
             extension == JavaClassFileType.INSTANCE.defaultExtension ||
             !this.isKotlinFileType()
 
 private fun VirtualFile.isKotlinFileType(): Boolean {
+    if (extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) return true
+
     val typeRegistry = FileTypeRegistry.getInstance()
     return typeRegistry.getFileTypeByFile(this) == KotlinFileType.INSTANCE ||
             typeRegistry.getFileTypeByFileName(name) == KotlinFileType.INSTANCE

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
 import org.jetbrains.kotlin.idea.debugger.getClassDescriptor
 import org.jetbrains.kotlin.idea.debugger.getContextElement
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
+import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.j2k.convertToKotlin
 import org.jetbrains.kotlin.idea.j2k.j2k
 import org.jetbrains.kotlin.idea.j2k.j2kText
@@ -259,7 +259,7 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                                 kotlinCodeFragment.context
                             )
 
-                            AfterConversionPass(project, JavaToKotlinConverterFactory.createPostProcessor(formatCode = false))
+                            AfterConversionPass(project, J2kPostProcessor(formatCode = false))
                                 .run(
                                     convertedFragment!!,
                                     conversionContext,

@@ -39,5 +39,11 @@ object CommonPlatforms {
 
             // TODO(dsavvinov): extensions points?
         }.toList()
+
+    val allDefaultTargetPlatforms: List<TargetPlatform>
+        get() = sequence {
+            yieldAll(allSimplePlatforms)
+            yieldAll(listOf(defaultCommonPlatform))
+        }.toList()
 }
 

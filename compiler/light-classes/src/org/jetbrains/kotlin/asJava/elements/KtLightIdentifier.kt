@@ -35,8 +35,8 @@ open class KtLightIdentifier(
         get() = when (ktDeclaration) {
             is KtSecondaryConstructor -> ktDeclaration.getConstructorKeyword()
             is KtPrimaryConstructor -> ktDeclaration.getConstructorKeyword()
-                                       ?: ktDeclaration.valueParameterList
-                                       ?: ktDeclaration.containingClassOrObject?.nameIdentifier
+                ?: ktDeclaration.valueParameterList
+                ?: ktDeclaration.containingClassOrObject?.nameIdentifier
             else -> ktDeclaration?.nameIdentifier
         }
 
@@ -46,4 +46,5 @@ open class KtLightIdentifier(
     override fun getParent() = lightOwner
     override fun getContainingFile() = lightOwner.containingFile
     override fun getTextRange() = origin?.textRange ?: TextRange.EMPTY_RANGE
+    override fun getTextOffset(): Int = origin?.textOffset ?: -1
 }

@@ -7,6 +7,7 @@
 // MODULE: if
 // FILE: lib.kt
 @JsName("foo")
+@JsExport
 public fun foo(k: String): String = "O$k"
 
 // FILE: test.js

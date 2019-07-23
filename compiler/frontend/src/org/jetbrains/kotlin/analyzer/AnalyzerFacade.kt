@@ -20,7 +20,6 @@ import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.search.GlobalSearchScope
-import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -39,7 +38,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.CompilerEnvironment
+import org.jetbrains.kotlin.resolve.TargetEnvironment
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 import java.util.*
@@ -94,12 +94,12 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
     private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
+    private val invalidateOnOOCB: Boolean,
     private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
     override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
     private val firstDependency: M? = null,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
-    private val invalidateOnOOCB: Boolean = true,
     private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
 
@@ -262,8 +262,11 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         )
         moduleInfoByDescriptor[moduleDescriptor] = module
         setupModuleDescriptor(module, moduleDescriptor)
-        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker()
-                ?: (PsiModificationTracker.SERVICE.getInstance(projectContext.project).outOfCodeBlockModificationTracker.takeIf { invalidateOnOOCB })
+        val modificationTracker = (module as? TrackableModuleInfo)?.createModificationTracker() ?: if (invalidateOnOOCB) {
+            KotlinModificationTrackerService.getInstance(projectContext.project).outOfBlockModificationTracker
+        } else {
+            null
+        }
         return ModuleData(moduleDescriptor, modificationTracker)
     }
 }

@@ -129,13 +129,13 @@ fun parse(project: Project, libraries: List<PLibrary>, context: ParserContext): 
     ('idea' module has 'intellij-core' as transitive dependency, and we really need to get rid of it.)
  */
 private val CONFIGURATION_MAPPING = mapOf(
-    listOf("runtime") to Scope.RUNTIME,
+    listOf("runtimeClasspath") to Scope.RUNTIME,
     listOf("compile", "embedded") to Scope.COMPILE,
     listOf("compileOnly") to Scope.PROVIDED
 )
 
 private val TEST_CONFIGURATION_MAPPING = mapOf(
-    listOf("runtime", "testRuntime") to Scope.RUNTIME,
+    listOf("runtimeClasspath", "testRuntimeClasspath") to Scope.RUNTIME,
     listOf("compile", "testCompile") to Scope.COMPILE,
     listOf("compileOnly", "testCompileOnly") to Scope.PROVIDED,
     listOf("jpsTest") to Scope.TEST

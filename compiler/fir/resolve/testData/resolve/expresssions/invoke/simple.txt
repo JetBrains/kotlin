@@ -1,0 +1,14 @@
+FILE: simple.kt
+    public final class Simple : R|kotlin/Any| {
+        public constructor(): R|Simple| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun invoke(): R|kotlin/String| {
+            ^invoke String(invoke)
+        }
+
+    }
+    public final fun test(s: R|Simple|): R|kotlin/Unit| {
+        lval result: R|kotlin/String| = R|<local>/s|.R|/Simple.invoke|()
+    }

@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.path
-import org.jetbrains.kotlin.js.backend.ast.JsDeclarationScope
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.backend.ast.JsBlock
 
-class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
-    override fun visitFile(declaration: IrFile, data: JsGenerationContext): JsStatement {
-        val fileContext = data.newDeclaration(JsDeclarationScope(data.currentScope, "scope for file ${declaration.path}"))
-        val block = fileContext.currentBlock
+class IrFileToJsTransformer : BaseIrElementToJsNodeTransformer<JsBlock, JsGenerationContext> {
+    override fun visitFile(declaration: IrFile, data: JsGenerationContext): JsBlock {
+        val fileContext = data.newDeclaration()
+        val block = JsBlock()
 
         declaration.declarations.forEach {
             block.statements.add(it.accept(IrDeclarationToJsTransformer(), fileContext))

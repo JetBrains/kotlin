@@ -17,11 +17,21 @@ import org.junit.runner.RunWith
 class CustomScratchRunActionTest : AbstractScratchRunActionTest() {
 
     fun testLongCommandLineWithRepl() {
-        assertEquals("RESULT: res0: kotlin.Int = 1", getOutput(true))
+        assertEquals(
+            """|// REPL_MODE: true
+               |// INTERACTIVE_MODE: false
+               |1    // RESULT: res0: kotlin.Int = 1""".trimMargin(),
+            getOutput(true)
+        )
     }
 
     fun testLongCommandLine() {
-        assertEquals("RESULT: 1", getOutput(false))
+        assertEquals(
+            """|// REPL_MODE: false
+               |// INTERACTIVE_MODE: false
+               |1    // RESULT: 1""".trimMargin(),
+            getOutput(false)
+        )
     }
 
     private fun getOutput(isRepl: Boolean): String {
@@ -31,7 +41,7 @@ class CustomScratchRunActionTest : AbstractScratchRunActionTest() {
         launchScratch()
         waitUntilScratchFinishes()
 
-        return getInlays().joinToString().trim()
+        return getFileTextWithInlays()
     }
 
     private val library: Library by lazy {

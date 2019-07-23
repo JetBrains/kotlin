@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.util.isFakeOverriddenFromAny
-import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.isSuperToAny
 import org.jetbrains.kotlin.name.Name
 
@@ -30,9 +29,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(Name.identifier("toString")) { call ->
                 if (shouldReplaceToStringWithRuntimeCall(call)) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsAnyToString, dispatchReceiverAsFirstArgument = true)
+                        irCall(call, intrinsics.jsAnyToString, receiversAsArguments = true)
                     } else {
-                        irCall(call, intrinsics.jsToString, dispatchReceiverAsFirstArgument = true)
+                        irCall(call, intrinsics.jsToString, receiversAsArguments = true)
                     }
                 } else {
                     call
@@ -42,9 +41,9 @@ class MethodsOfAnyCallsTransformer(context: JsIrBackendContext) : CallsTransform
             put(Name.identifier("hashCode")) { call ->
                 if (call.symbol.owner.isFakeOverriddenFromAny()) {
                     if ((call as IrCall).isSuperToAny()) {
-                        irCall(call, intrinsics.jsGetObjectHashCode, dispatchReceiverAsFirstArgument = true)
+                        irCall(call, intrinsics.jsGetObjectHashCode, receiversAsArguments = true)
                     } else {
-                        irCall(call, intrinsics.jsHashCode, dispatchReceiverAsFirstArgument = true)
+                        irCall(call, intrinsics.jsHashCode, receiversAsArguments = true)
                     }
                 } else {
                     call

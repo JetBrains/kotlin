@@ -111,6 +111,11 @@ public class CodeFragmentHighlightingTestGenerated extends AbstractCodeFragmentH
             runTest("idea/testData/checker/codeFragments/privateMember.kt");
         }
 
+        @TestMetadata("privateMembers.kt")
+        public void testPrivateMembers() throws Exception {
+            runTest("idea/testData/checker/codeFragments/privateMembers.kt");
+        }
+
         @TestMetadata("protectedMember.kt")
         public void testProtectedMember() throws Exception {
             runTest("idea/testData/checker/codeFragments/protectedMember.kt");

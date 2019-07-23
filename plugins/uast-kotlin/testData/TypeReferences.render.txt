@@ -13,7 +13,7 @@ public final class TypeReferencesKt {
         }
         var tl: java.util.List<? extends T> = listOf(at)
         var tsl: java.util.List<? extends java.lang.String> = tl.map({
-            it.toString()
+            return it.toString()
         })
         var lls: java.util.List<? extends java.util.List<? extends java.lang.String>>
         var llsAliased: java.util.List<? extends java.util.List<? extends java.lang.String>>

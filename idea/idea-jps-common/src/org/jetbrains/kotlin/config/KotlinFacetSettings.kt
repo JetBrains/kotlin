@@ -192,15 +192,15 @@ class KotlinFacetSettings {
 
     var targetPlatform: TargetPlatform? = null
         get() {
-            // This work-around is required in order to fix importing of the proper JVM target version.
+            // This work-around is required in order to fix importing of the proper JVM target version and works only
+            // for fully actualized JVM target platform
             //TODO(auskov): this hack should be removed after fixing equals in SimplePlatform
             val args = compilerArguments
-            val mappedPlatforms = field?.componentPlatforms?.flatMap {
-                if (JvmPlatforms.defaultJvmPlatform.first() == it && args != null) (IdePlatformKind.platformByCompilerArguments(args)
-                    ?: return null) else listOf(it)
-            }?.toSet() ?: return null
-
-            return TargetPlatform(mappedPlatforms)
+            val singleSimplePlatform = field?.componentPlatforms?.singleOrNull()
+            if (singleSimplePlatform == JvmPlatforms.defaultJvmPlatform.singleOrNull() && args != null) {
+                return IdePlatformKind.platformByCompilerArguments(args)
+            }
+            return field
         }
 
 
@@ -239,6 +239,9 @@ class KotlinFacetSettings {
     var isTestModule: Boolean = false
 
     var externalProjectId: String = ""
+    var isHmppEnabled: Boolean = false
+
+    var pureKotlinSourceFolders: List<String> = emptyList()
 }
 
 interface KotlinFacetSettingsProvider {

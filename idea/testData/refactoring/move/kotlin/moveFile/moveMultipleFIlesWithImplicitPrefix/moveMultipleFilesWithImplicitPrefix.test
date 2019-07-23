@@ -1,0 +1,5 @@
+{
+  "filesToMove": ["source/foo.kt", "source/bar.kt"],
+  "type": "MOVE_FILES_WITH_DECLARATIONS",
+  "targetDirectory": "target"
+}

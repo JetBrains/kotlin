@@ -7,22 +7,28 @@ package org.jetbrains.kotlin.types.checker
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasExactAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.hasNoInferAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExactAnnotation
+import org.jetbrains.kotlin.resolve.substitutedUnderlyingType
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
-interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
+interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
@@ -145,15 +151,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this.projectionKind.convertVariance()
     }
 
-
-    private fun TypeVariance.convertVariance(): Variance {
-        return when (this) {
-            TypeVariance.INV -> Variance.INVARIANT
-            TypeVariance.IN -> Variance.IN_VARIANCE
-            TypeVariance.OUT -> Variance.OUT_VARIANCE
-        }
-    }
-
     override fun TypeArgumentMarker.getType(): KotlinTypeMarker {
         require(this is TypeProjection, this::errorMessage)
         return this.type.unwrap()
@@ -212,6 +209,12 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return classDescriptor.isFinalClass &&
                 classDescriptor.kind != ClassKind.ENUM_ENTRY &&
                 classDescriptor.kind != ClassKind.ANNOTATION_CLASS
+    }
+
+    override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        val classDescriptor = declarationDescriptor
+        return classDescriptor is ClassDescriptor && classDescriptor.isFinalClass
     }
 
     override fun SimpleTypeMarker.asArgumentList(): TypeArgumentListMarker {
@@ -488,6 +491,63 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext {
         return this is NewCapturedTypeConstructor
     }
 
+    override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
+        require(this is KotlinType, this::errorMessage)
+        return annotations.hasAnnotation(fqName)
+    }
+
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
+        require(this is KotlinType, this::errorMessage)
+        return annotations.findAnnotation(fqName)?.allValueArguments?.values?.firstOrNull()?.value
+    }
+
+    override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor as? TypeParameterDescriptor
+    }
+
+    override fun TypeConstructorMarker.isInlineClass(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return (declarationDescriptor as? ClassDescriptor)?.isInline == true
+    }
+
+    override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
+        require(this is TypeParameterDescriptor, this::errorMessage)
+        return representativeUpperBound
+    }
+
+    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
+        require(this is KotlinType, this::errorMessage)
+        return substitutedUnderlyingType()
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveType(): PrimitiveType? {
+        require(this is TypeConstructor, this::errorMessage)
+        return KotlinBuiltIns.getPrimitiveType(declarationDescriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType(): PrimitiveType? {
+        require(this is TypeConstructor, this::errorMessage)
+        return KotlinBuiltIns.getPrimitiveArrayType(declarationDescriptor as ClassDescriptor)
+    }
+
+    override fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean {
+        require(this is TypeConstructor, this::errorMessage)
+        return declarationDescriptor?.let(KotlinBuiltIns::isUnderKotlinPackage) == true
+    }
+
+    override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe {
+        require(this is TypeConstructor, this::errorMessage)
+        return (declarationDescriptor as ClassDescriptor).fqNameUnsafe
+    }
+}
+
+fun TypeVariance.convertVariance(): Variance {
+    return when (this) {
+        TypeVariance.INV -> Variance.INVARIANT
+        TypeVariance.IN -> Variance.IN_VARIANCE
+        TypeVariance.OUT -> Variance.OUT_VARIANCE
+    }
 }
 
 private fun captureFromExpressionInternal(type: UnwrappedType) = captureFromExpression(type)

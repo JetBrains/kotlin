@@ -561,4 +561,40 @@ class Collections {
             assertPrints(emptyList.elementAtOrElse(0) { "no int" }, "no int")
         }
     }
+
+    class Sorting {
+
+        @Sample
+        fun sortMutableList() {
+            val mutableList = mutableListOf(4, 3, 2, 1)
+
+            // before sorting
+            assertPrints(mutableList.joinToString(), "4, 3, 2, 1")
+
+            mutableList.sort()
+
+            // after sorting
+            assertPrints(mutableList.joinToString(), "1, 2, 3, 4")
+        }
+
+        @Sample
+        fun sortMutableListWith() {
+            // non-comparable class
+            class Person(val firstName: String, val lastName: String) {
+                override fun toString(): String = "$firstName $lastName"
+            }
+
+            val people = mutableListOf(
+                Person("Ragnar", "Lodbrok"),
+                Person("Bjorn", "Ironside"),
+                Person("Sweyn", "Forkbeard")
+            )
+
+            people.sortWith(compareByDescending { it.firstName })
+
+            // after sorting
+            assertPrints(people.joinToString(), "Sweyn Forkbeard, Ragnar Lodbrok, Bjorn Ironside")
+        }
+
+    }
 }

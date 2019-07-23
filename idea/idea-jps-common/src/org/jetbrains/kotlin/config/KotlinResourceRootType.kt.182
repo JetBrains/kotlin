@@ -24,3 +24,5 @@ sealed class KotlinResourceRootType(val isTest: Boolean) : JpsElementTypeBase<Ja
 
 object ResourceKotlinRootType : KotlinResourceRootType(false)
 object TestResourceKotlinRootType : KotlinResourceRootType(true)
+
+val ALL_KOTLIN_RESOURCE_ROOT_TYPES = setOf(ResourceKotlinRootType, TestResourceKotlinRootType)

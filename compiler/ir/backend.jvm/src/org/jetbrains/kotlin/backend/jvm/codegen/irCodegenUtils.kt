@@ -40,8 +40,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.MethodVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
-import java.util.ArrayList
-import java.util.LinkedHashSet
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol,Type>()
@@ -390,7 +388,7 @@ internal fun getSignature(
                 if (typeMapper.classBuilderMode === ClassBuilderMode.LIGHT_CLASSES) {
                     sw.writeInterface()
                     val kotlinCollectionType =
-                        typeMapper.mapType(superClass.defaultType, sw, TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS)
+                        typeMapper.mapType(superClass.defaultType, TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS, sw)
                     sw.writeInterfaceEnd()
                     superInterfaces.add(kotlinCollectionType.internalName)
                 }

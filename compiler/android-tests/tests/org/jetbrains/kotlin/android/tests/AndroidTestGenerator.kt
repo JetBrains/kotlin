@@ -32,7 +32,7 @@ private val importPattern = Pattern.compile("import[ |\t]([\\w|]*\\.)")
 
 private data class OldPackageAndNew(val oldFqName: FqName, val newFqName: FqName)
 
-internal fun patchFiles(
+internal fun patchFilesAndAddTest(
     testFile: File,
     testFiles: List<CodegenTestCase.TestFile>,
     filesHolder: CodegenTestsOnAndroidGenerator.FilesWriter
@@ -103,16 +103,16 @@ internal fun patchFiles(
         file.content = file.content.patchSelfImports(file.newPackage)
     }
 
-    resultFiles.forEach { resultFile ->
-        if (resultFile.name.endsWith(".kt") || resultFile.name.endsWith(".kts")) {
-            filesHolder.addFile(resultFile.name, resultFile.content)
-        }
-    }
-
     val boxFiles = resultFiles.filter { hasBoxMethod(it.content) }
     if (boxFiles.size != 1) {
         println("Several box methods in $testFile")
     }
+
+    filesHolder.addTest(
+        resultFiles.filter { resultFile -> resultFile.name.endsWith(".kt") || resultFile.name.endsWith(".kts") },
+        TestInfo("", boxFiles.last().newClassId, testFile)
+    )
+
     return boxFiles.last().newClassId
 }
 

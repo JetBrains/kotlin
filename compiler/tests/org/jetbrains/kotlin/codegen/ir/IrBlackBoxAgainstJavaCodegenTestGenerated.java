@@ -442,9 +442,24 @@ public class IrBlackBoxAgainstJavaCodegenTestGenerated extends AbstractIrBlackBo
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/boxAgainstJava/notNullAssertions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM_IR, true);
         }
 
+        @TestMetadata("callAssertions.kt")
+        public void testCallAssertions() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/callAssertions.kt");
+        }
+
         @TestMetadata("delegation.kt")
         public void testDelegation() throws Exception {
             runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/delegation.kt");
+        }
+
+        @TestMetadata("doGenerateParamAssertions.kt")
+        public void testDoGenerateParamAssertions() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/doGenerateParamAssertions.kt");
+        }
+
+        @TestMetadata("noCallAssertions.kt")
+        public void testNoCallAssertions() throws Exception {
+            runTest("compiler/testData/codegen/boxAgainstJava/notNullAssertions/noCallAssertions.kt");
         }
 
         @TestMetadata("rightElvisOperand.kt")

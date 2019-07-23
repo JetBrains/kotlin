@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
+import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
+
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
 
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
-    val serializeString: (String) -> KotlinIr.String,
+    val serializeString: (String) -> ProtoString,
     mangler: KotlinMangler): KotlinMangler by mangler {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
@@ -46,7 +47,7 @@ open class DescriptorReferenceSerializer(
     // Those created descriptors can't carry the uniqIdIndex, since it is available only for deserialized descriptors.
     // So we record the uniq id of some other "discoverable" descriptor for which we know for sure that it will be
     // available as deserialized descriptor, plus the path to find the needed descriptor from that one.
-    fun serializeDescriptorReference(declaration: IrDeclaration): KotlinIr.DescriptorReference? {
+    fun serializeDescriptorReference(declaration: IrDeclaration): ProtoDescriptorReference? {
 
         val descriptor = declaration.descriptor
 
@@ -109,7 +110,7 @@ open class DescriptorReferenceSerializer(
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
         uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
-        val proto = KotlinIr.DescriptorReference.newBuilder()
+        val proto = ProtoDescriptorReference.newBuilder()
             .setPackageFqName(serializeString(packageFqName))
             .setClassFqName(serializeString(classFqName))
             .setName(serializeString(nameString))

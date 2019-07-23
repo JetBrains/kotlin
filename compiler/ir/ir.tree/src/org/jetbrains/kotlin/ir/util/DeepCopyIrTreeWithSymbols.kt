@@ -138,6 +138,7 @@ open class DeepCopyIrTreeWithSymbols(
             }
             thisReceiver = declaration.thisReceiver?.transform()
             declaration.transformDeclarationsTo(this)
+            copyAttributes(declaration)
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
@@ -586,6 +587,14 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRemapper.getReferencedSimpleFunction(expression.getter),
             expression.setter?.let { symbolRemapper.getReferencedSimpleFunction(it) },
             mapStatementOrigin(expression.origin)
+        )
+
+    override fun visitFunctionExpression(expression: IrFunctionExpression): IrFunctionExpression =
+        IrFunctionExpressionImpl(
+            expression.startOffset, expression.endOffset,
+            expression.type.remapType(),
+            expression.function.transform(),
+            mapStatementOrigin(expression.origin)!!
         )
 
     override fun visitClassReference(expression: IrClassReference): IrClassReference =

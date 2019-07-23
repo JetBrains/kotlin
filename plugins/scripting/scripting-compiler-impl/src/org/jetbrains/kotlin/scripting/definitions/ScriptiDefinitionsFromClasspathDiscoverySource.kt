@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.scripting.resolve.KotlinScriptDefinitionFromAnnotatedTemplate
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
@@ -14,21 +12,14 @@ import java.io.IOException
 import java.net.URLClassLoader
 import java.util.jar.JarFile
 import kotlin.script.experimental.annotations.KotlinScript
-import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.host.ScriptingHostConfiguration
-import kotlin.script.experimental.host.createCompilationConfigurationFromTemplate
-import kotlin.script.experimental.host.createEvaluationConfigurationFromTemplate
 import kotlin.script.templates.ScriptTemplateDefinition
 
 const val SCRIPT_DEFINITION_MARKERS_PATH = "META-INF/kotlin/script/templates/"
 const val SCRIPT_DEFINITION_MARKERS_EXTENSION_WITH_DOT = ".classname"
 
-typealias MessageReporter = (CompilerMessageSeverity, String) -> Unit
-
-val MessageCollector.reporter: MessageReporter
-    get() = { severity, message ->
-        this.report(severity, message)
-    }
+typealias MessageReporter = (ScriptDiagnostic.Severity, String) -> Unit
 
 class ScriptDefinitionsFromClasspathDiscoverySource(
     private val classpath: List<File>,
@@ -107,7 +98,7 @@ private fun scriptTemplatesDiscoverySequence(
                                     )
                                 if (notFoundClasses.isNotEmpty()) {
                                     messageReporter(
-                                        CompilerMessageSeverity.STRONG_WARNING,
+                                        ScriptDiagnostic.Severity.WARNING,
                                         "Configure scripting: unable to find script definitions [${notFoundClasses.joinToString(", ")}]"
                                     )
                                 }
@@ -131,12 +122,12 @@ private fun scriptTemplatesDiscoverySequence(
                     }
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
-                        messageReporter(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
+                        messageReporter(ScriptDiagnostic.Severity.DEBUG, "Configure scripting: Unknown classpath entry $dep")
                     }
                 }
             } catch (e: IOException) {
                 messageReporter(
-                    CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
         }
@@ -152,13 +143,13 @@ private fun scriptTemplatesDiscoverySequence(
                 remainingDefinitionCandidates = notFoundDefinitions
             } catch (e: IOException) {
                 messageReporter(
-                    CompilerMessageSeverity.STRONG_WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
+                    ScriptDiagnostic.Severity.WARNING, "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
         }
         if (remainingDefinitionCandidates.isNotEmpty()) {
             messageReporter(
-                CompilerMessageSeverity.STRONG_WARNING,
+                ScriptDiagnostic.Severity.WARNING,
                 "The following script definitions are not found in the classpath: [${remainingDefinitionCandidates.joinToString()}]"
             )
         }
@@ -207,7 +198,7 @@ fun loadScriptTemplatesFromClasspath(
                     }
                     else -> {
                         // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
-                        messageReporter(CompilerMessageSeverity.LOGGING, "Configure scripting: Unknown classpath entry $dep")
+                        messageReporter(ScriptDiagnostic.Severity.DEBUG, "Configure scripting: Unknown classpath entry $dep")
                         DefinitionsLoadPartitionResult(
                             listOf(),
                             remainingTemplates
@@ -222,7 +213,7 @@ fun loadScriptTemplatesFromClasspath(
                 }
             } catch (e: IOException) {
                 messageReporter(
-                    CompilerMessageSeverity.STRONG_WARNING,
+                    ScriptDiagnostic.Severity.WARNING,
                     "Configure scripting: unable to process classpath entry $dep: $e"
                 )
             }
@@ -230,7 +221,7 @@ fun loadScriptTemplatesFromClasspath(
 
         if (remainingTemplates.isNotEmpty()) {
             messageReporter(
-                CompilerMessageSeverity.STRONG_WARNING,
+                ScriptDiagnostic.Severity.WARNING,
                 "Configure scripting: unable to find script definition classes: ${remainingTemplates.joinToString(", ")}"
             )
         }
@@ -319,14 +310,14 @@ private fun loadScriptDefinition(
         }
         if (def != null) {
             messageReporter(
-                CompilerMessageSeverity.LOGGING,
+                ScriptDiagnostic.Severity.DEBUG,
                 "Configure scripting: Added template $templateClassName from ${classpathWithLoader.classpath}"
             )
             return def
         }
     }
     messageReporter(
-        CompilerMessageSeverity.STRONG_WARNING,
+        ScriptDiagnostic.Severity.WARNING,
         "Configure scripting: $templateClassName is not marked with any known kotlin script annotation"
     )
     return null
@@ -347,7 +338,7 @@ private fun loadScriptDefinition(
                 ScriptDefinition.FromLegacyTemplate(hostConfiguration, cls.kotlin)
             }
         messageReporter(
-            CompilerMessageSeverity.INFO,
+            ScriptDiagnostic.Severity.INFO,
             "Added script definition $template to configuration: name = ${def.name}"
         )
         return def
@@ -356,7 +347,7 @@ private fun loadScriptDefinition(
     } catch (ex: Exception) {
         // other exceptions - might be an error
         messageReporter(
-            CompilerMessageSeverity.STRONG_WARNING,
+            ScriptDiagnostic.Severity.WARNING,
             "Error on loading script definition $template: ${ex.message}"
         )
     }

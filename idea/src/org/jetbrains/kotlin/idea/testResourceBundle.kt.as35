@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.idea
 import com.intellij.featureStatistics.FeatureStatisticsBundleProvider
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.extensions.Extensions
-import java.lang.IllegalStateException
 
 private const val CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME = "com.jetbrains.cidr.lang.OCFeatureStatisticsBundleProvider"
 
@@ -24,7 +23,7 @@ fun registerAdditionalResourceBundleInTests() {
         provider.javaClass.name == CIDR_FEATURE_STATISTICS_PROVIDER_FQNAME
     }
     if (isAlreadyRegistered) {
-        throw IllegalStateException("Remove this registration for the current platform: bundle is already registered.")
+        return
     }
 
     val cidrFSBundleProviderClass = try {

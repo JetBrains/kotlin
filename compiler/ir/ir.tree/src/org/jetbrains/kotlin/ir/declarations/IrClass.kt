@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 
 interface IrClass :
     IrSymbolDeclaration<IrClassSymbol>, IrDeclarationWithName, IrDeclarationWithVisibility,
-    IrDeclarationContainer, IrTypeParametersContainer {
+    IrDeclarationContainer, IrTypeParametersContainer, IrAttributeContainer {
 
     override val descriptor: ClassDescriptor
 
@@ -61,4 +61,3 @@ fun IrClass.getInstanceInitializerMembers() =
             else -> false
         }
     }
-

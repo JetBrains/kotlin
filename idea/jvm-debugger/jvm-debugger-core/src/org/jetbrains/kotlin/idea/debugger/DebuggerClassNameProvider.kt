@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
+import org.jetbrains.kotlin.psi.psiUtil.isTopLevelInFileOrScript
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import org.jetbrains.org.objectweb.asm.Type
@@ -53,6 +54,7 @@ class DebuggerClassNameProvider(
 ) {
     companion object {
         private val CLASS_ELEMENT_TYPES = arrayOf<Class<out PsiElement>>(
+            KtScript::class.java,
             KtFile::class.java,
             KtClassOrObject::class.java,
             KtProperty::class.java,
@@ -154,7 +156,7 @@ class DebuggerClassNameProvider(
                 }
             }
             is KtProperty -> {
-                val nonInlineClasses = if (runReadAction { element.isTopLevel }) {
+                val nonInlineClasses = if (runReadAction { isTopLevelInFileOrScript(element) }) {
                     // Top level property
                     getOuterClassNamesForElement(element.relevantParentInReadAction)
                 } else {

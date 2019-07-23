@@ -43,18 +43,19 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.project.*
 import org.jetbrains.kotlin.idea.caches.project.IdeaModuleInfo
 import org.jetbrains.kotlin.idea.caches.resolve.util.contextWithNewLockAndCompositeExceptionTracker
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener
+import org.jetbrains.kotlin.idea.caches.trackers.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesModificationTracker
 import org.jetbrains.kotlin.idea.core.script.dependencies.ScriptAdditionalIdeaDependenciesProvider
 import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
-import org.jetbrains.kotlin.idea.project.outOfBlockModificationCount
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.diagnostics.KotlinSuppressCache
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -74,11 +75,22 @@ data class PlatformAnalysisSettings(
 
 class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     override fun getResolutionFacade(elements: List<KtElement>): ResolutionFacade {
-        return getFacadeToAnalyzeFiles(elements.map {
+        val files = getFilesForElements(elements)
+        val platform = TargetPlatformDetector.getPlatform(files.first())
+        return getFacadeToAnalyzeFiles(files, platform)
+    }
+
+    override fun getResolutionFacade(elements: List<KtElement>, platform: TargetPlatform): ResolutionFacade {
+        val files = getFilesForElements(elements)
+        return getFacadeToAnalyzeFiles(files, platform)
+    }
+
+    private fun getFilesForElements(elements: List<KtElement>): List<KtFile> {
+        return elements.map {
             // in theory `containingKtFile` is `@NotNull` but in practice EA-114080
             @Suppress("USELESS_ELVIS")
             it.containingKtFile ?: throw IllegalStateException("containingKtFile was null for $it of ${it.javaClass}")
-        })
+        }
     }
 
     override fun getSuppressionCache(): KotlinSuppressCache = kotlinSuppressCache.value
@@ -97,8 +109,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         syntheticFiles: Collection<KtFile> = listOf()
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
-        val platform = /* Fallback to Common platform in CIDR (Java is not supported there) */
-            DefaultIdeTargetPlatformKindProvider.defaultPlatform // TODO: Js scripts?
+        val platform = JvmPlatforms.defaultJvmPlatform // TODO: Js scripts?
         val settings = PlatformAnalysisSettings(
             platform, sdk, true,
             LanguageFeature.ReleaseCoroutines.defaultState == LanguageFeature.State.ENABLED
@@ -226,7 +237,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
 
         val dependenciesForSyntheticFileCache =
             listOf(
-                PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
                 filesModificationTracker
             )
 
@@ -415,7 +426,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         }
     }
 
-    private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>): ResolutionFacade {
+    private fun getFacadeToAnalyzeFiles(files: Collection<KtFile>, platform: TargetPlatform): ResolutionFacade {
         val file = files.first()
         val moduleInfo = file.getModuleInfo()
         val specialFiles = files.filterNotInProjectSource(moduleInfo)
@@ -430,7 +441,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             return ModuleResolutionFacadeImpl(projectFacade, moduleInfo).createdFor(specialFiles, moduleInfo)
         }
 
-        val platform = TargetPlatformDetector.getPlatform(file)
         return getResolutionFacadeByModuleInfo(moduleInfo, platform).createdFor(emptyList(), moduleInfo, platform)
     }
 
