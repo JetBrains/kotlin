@@ -36,10 +36,9 @@ import java.awt.BorderLayout
 import javax.swing.*
 import javax.swing.border.EmptyBorder
 import kotlin.reflect.full.findAnnotation
-import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.awt.Component
-import java.awt.GridLayout
+import kotlin.math.min
 
 class KotlinFacetEditorGeneralTab(
     private val configuration: KotlinFacetConfiguration,
@@ -106,7 +105,16 @@ class KotlinFacetEditorGeneralTab(
         // JVM 9 -> JVM 1.9
         // JVM 11.. -> unchanged
         // As result JVM 1.8 < JVM 1.9 < JVM 11 in UI representation
-        fun unifyJvmVersion(version: String) = if (version.equals("JVM 9")) "JVM 1.9" else version
+        private fun unifyJvmVersion(version: String) = if (version.equals("JVM 9")) "JVM 1.9" else version
+
+        // Returns maxRowsCount for combobox.
+        // Try to show whole the list at one, but do not show more than 15 elements at once. 10 elements returned otherwise
+        private fun targetPlatformsComboboxRowsCount(targetPlatforms: Int) =
+            if (targetPlatforms <= 15) {
+                targetPlatforms
+            } else {
+                10
+            }
 
         fun initialize() {
             if (isMultiEditor) {
@@ -157,6 +165,8 @@ class KotlinFacetEditorGeneralTab(
                         }
                     })
                 }
+            targetPlatformSelectSingleCombobox.maximumRowCount =
+                targetPlatformsComboboxRowsCount(targetPlatformWrappers.size)
             projectSettingsLink = HoverHyperlinkLabel("Edit project settings").apply {
                 addHyperlinkListener {
                     ShowSettingsUtilImpl.showSettingsDialog(project, compilerConfigurable.id, "")
