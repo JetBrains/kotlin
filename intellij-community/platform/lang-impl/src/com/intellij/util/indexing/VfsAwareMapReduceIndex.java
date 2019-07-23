@@ -77,7 +77,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
                                 @Nullable ForwardIndexAccessor<Key, Value> forwardIndexAccessor,
                                 @Nullable SnapshotInputMappingIndex<Key, Value, Input> snapshotInputMappings,
                                 @Nullable ReadWriteLock lock) {
-    super(extension, storage, forwardIndexMap, forwardIndexAccessor, null, lock);
+    super(extension, storage, forwardIndexMap, forwardIndexAccessor, lock);
     SharedIndicesData.registerIndex((ID<Key, Value>)myIndexId, extension);
     mySnapshotInputMappings = IndexImporterMappingIndex.wrap(snapshotInputMappings, extension);
     myUpdateMappings = snapshotInputMappings instanceof UpdatableSnapshotInputMappingIndex;
@@ -250,7 +250,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
       if (map != null) return map;
     }
     if (getForwardIndexAccessor() instanceof AbstractMapForwardIndexAccessor) {
-      ByteArraySequence serializedInputData = getForwardIndexMap().get(fileId);
+      ByteArraySequence serializedInputData = getForwardIndex().get(fileId);
       AbstractMapForwardIndexAccessor<Key, Value, ?> forwardIndexAccessor = (AbstractMapForwardIndexAccessor<Key, Value, ?>)getForwardIndexAccessor();
       return forwardIndexAccessor.convertToInputDataMap(serializedInputData);
     }
