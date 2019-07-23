@@ -1,5 +1,3 @@
-// FIR_IDENTICAL
-
 typealias Test1 = String
 
 fun foo() {
