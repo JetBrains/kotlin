@@ -106,9 +106,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     defaultExternalProject.sourceSets = getSourceSets(project, isPreview, resolveSourceSetDependencies, sourceSetFinder)
     defaultExternalProject.tasks = getTasks(project, tasksFactory)
 
-    defaultExternalProject.plugins = getPlugins(project)
-    //defaultExternalProject.setProperties(project.getProperties())
-
     addArtifactsData(project, defaultExternalProject)
 
     final Map<String, DefaultExternalProject> childProjects = new TreeMap<String, DefaultExternalProject>()
@@ -152,17 +149,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
       artifactsByConfiguration.put(configurationEntry.getKey(), new LinkedHashSet<>(files))
     }
     externalProject.setArtifactsByConfiguration(artifactsByConfiguration)
-  }
-
-  static Map<String, DefaultExternalPlugin> getPlugins(Project project) {
-    def result = [:] as Map<String, DefaultExternalPlugin>
-    project.convention.plugins.each { key, value ->
-      DefaultExternalPlugin externalPlugin = new DefaultExternalPlugin()
-      externalPlugin.id = key
-      result.put(key, externalPlugin)
-    }
-
-    result
   }
 
   static Map<String, DefaultExternalTask> getTasks(Project project, TasksFactory tasksFactory) {

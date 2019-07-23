@@ -125,13 +125,6 @@ public class ExternalProjectSerializer {
       }
     });
 
-    myKryo.register(DefaultExternalPlugin.class, new FieldSerializer<DefaultExternalPlugin>(myKryo, DefaultExternalPlugin.class) {
-      @Override
-      protected DefaultExternalPlugin create(Kryo kryo, Input input, Class<DefaultExternalPlugin> type) {
-        return new DefaultExternalPlugin();
-      }
-    });
-
     myKryo.register(DefaultExternalSourceSet.class, new FieldSerializer<DefaultExternalSourceSet>(myKryo, DefaultExternalSourceSet.class) {
       @Override
       protected DefaultExternalSourceSet create(Kryo kryo, Input input, Class<DefaultExternalSourceSet> type) {

@@ -34,13 +34,9 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   @NotNull
   private Map<String, DefaultExternalTask> tasks;
   @NotNull
-  private Map<String, ?> properties = new HashMap<String, Object>();
-  @NotNull
   private Map<String, DefaultExternalSourceSet> sourceSets;
   @NotNull
   private String externalSystemId;
-  @NotNull
-  private Map<String, DefaultExternalPlugin> plugins;
   @NotNull
   private List<File> artifacts;
   @NotNull
@@ -50,7 +46,6 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
     childProjects = new HashMap<String, DefaultExternalProject>(0);
     tasks = new HashMap<String, DefaultExternalTask>(0);
     sourceSets = new HashMap<String, DefaultExternalSourceSet>(0);
-    plugins = new HashMap<String, DefaultExternalPlugin>(0);
     artifacts = new ArrayList<File>(0);
     artifactsByConfiguration = new HashMap<String, Set<File>>(0);
   }
@@ -83,12 +78,6 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
     sourceSets = new HashMap<String, DefaultExternalSourceSet>(externalProjectSourceSets.size());
     for (Map.Entry<String, ? extends ExternalSourceSet> entry : externalProjectSourceSets.entrySet()) {
       sourceSets.put(entry.getKey(), new DefaultExternalSourceSet(entry.getValue()));
-    }
-
-    Map<String, ? extends ExternalPlugin> externalProjectPlugins = externalProject.getPlugins();
-    plugins = new HashMap<String, DefaultExternalPlugin>(externalProjectPlugins.size());
-    for (Map.Entry<String, ? extends ExternalPlugin> entry : externalProjectPlugins.entrySet()) {
-      this.plugins.put(entry.getKey(), new DefaultExternalPlugin(entry.getValue()));
     }
 
     artifacts = new ArrayList<File>(externalProject.getArtifacts());
@@ -213,32 +202,6 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
 
   public void setTasks(@NotNull Map<String, DefaultExternalTask> tasks) {
     this.tasks = tasks;
-  }
-
-  @NotNull
-  @Override
-  public Map<String, ? extends ExternalPlugin> getPlugins() {
-    return plugins;
-  }
-
-  public void setPlugins(@NotNull Map<String, DefaultExternalPlugin> plugins) {
-    this.plugins = plugins;
-  }
-
-  @NotNull
-  @Override
-  public Map<String, ?> getProperties() {
-    return properties;
-  }
-
-  public void setProperties(@NotNull Map<String, ?> properties) {
-    this.properties = properties;
-  }
-
-  @Nullable
-  @Override
-  public Object getProperty(String name) {
-    return properties.get(name);
   }
 
   @NotNull
