@@ -31,16 +31,22 @@ interface CompiledJvmScriptsCache {
 }
 
 open class JvmScriptCompiler(
-    hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
-    val compilerProxy: ScriptJvmCompilerProxy = ScriptJvmCompilerIsolated(hostConfiguration.withDefaults()),
+    baseHostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
+    compilerProxy: ScriptJvmCompilerProxy? = null,
     val cache: CompiledJvmScriptsCache = CompiledJvmScriptsCache.NoCache
 ) : ScriptCompiler {
+
+    val hostConfiguration = baseHostConfiguration.withDefaults()
+
+    val compilerProxy: ScriptJvmCompilerProxy = compilerProxy ?: ScriptJvmCompilerIsolated(hostConfiguration)
 
     override suspend operator fun invoke(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ): ResultWithDiagnostics<CompiledScript<*>> =
-        scriptCompilationConfiguration.refineBeforeParsing(script).onSuccess { refinedConfiguration ->
+        scriptCompilationConfiguration.with {
+            hostConfiguration(this@JvmScriptCompiler.hostConfiguration)
+        }.refineBeforeParsing(script).onSuccess { refinedConfiguration ->
             val cached = cache.get(script, refinedConfiguration)
 
             if (cached != null) return cached.asSuccess()
