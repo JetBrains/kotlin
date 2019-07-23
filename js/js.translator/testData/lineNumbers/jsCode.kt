@@ -5,4 +5,4 @@ fun foo() {
     println("after: $x")
 }
 
-// LINES: 6 2 2 3 3 4 4 5 5
+// LINES: 1 6 2 2 3 3 4 4 5 5

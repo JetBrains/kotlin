@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableAccessorDescriptor
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
@@ -261,14 +262,17 @@ private class PropertyTranslator(
     private fun translateCustomAccessor(expression: KtPropertyAccessor): JsPropertyInitializer {
         val descriptor = BindingUtils.getFunctionDescriptor(bindingContext(), expression)
         val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), descriptor.toString())
-        function.source = expression.finalElement
+        function.source = expression
+        function.body.source = expression.finalElement as? LeafPsiElement
         context().translateAndAliasParameters(descriptor, function.parameters).translateFunction(expression, function)
         return translateFunctionAsEcma5PropertyDescriptor(function, descriptor, context())
     }
 
     private fun createFunction(descriptor: VariableAccessorDescriptor): JsFunction {
         val function = JsFunction(context().getScopeForDescriptor(descriptor), JsBlock(), accessorDescription(descriptor))
-        function.source = descriptor.source.getPsi()?.finalElement
+        val psi = descriptor.source.getPsi()
+        function.source = psi
+        function.body.source = psi?.finalElement as? LeafPsiElement
         return function
     }
 

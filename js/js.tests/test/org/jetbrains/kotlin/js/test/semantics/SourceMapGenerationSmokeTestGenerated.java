@@ -39,6 +39,11 @@ public class SourceMapGenerationSmokeTestGenerated extends AbstractSourceMapGene
         runTest("js/js.translator/testData/sourcemap/emptyIfInsideInlineLambda.kt");
     }
 
+    @TestMetadata("expressionBody.kt")
+    public void testExpressionBody() throws Exception {
+        runTest("js/js.translator/testData/sourcemap/expressionBody.kt");
+    }
+
     @TestMetadata("methodCallInMethod.kt")
     public void testMethodCallInMethod() throws Exception {
         runTest("js/js.translator/testData/sourcemap/methodCallInMethod.kt");

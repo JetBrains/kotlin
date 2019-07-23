@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.js.translate.declaration
 
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -106,7 +107,8 @@ abstract class AbstractDeclarationVisitor : TranslatorVisitor<Unit>()  {
             context: TranslationContext
     ): Pair<JsExpression, TranslationContext> {
         val function = context.getFunctionObject(descriptor)
-        function.source = expression.finalElement
+        function.source = expression
+        function.body.source = expression.finalElement as? LeafPsiElement
         val innerContext = context.newDeclaration(descriptor).translateAndAliasParameters(descriptor, function.parameters)
 
         if (descriptor.isSuspend) {

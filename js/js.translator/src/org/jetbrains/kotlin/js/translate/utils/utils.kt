@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.translate.utils
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.PsiElement
+import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.util.SmartList
 import org.jetbrains.kotlin.backend.common.COROUTINE_SUSPENDED_NAME
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -90,7 +91,8 @@ fun generateDelegateCall(
     invocation.source = source
 
     val functionObject = simpleReturnFunction(context.scope(), invocation)
-    functionObject.source = source?.finalElement
+    functionObject.source = source
+    functionObject.body.source = source?.finalElement as? LeafPsiElement
     functionObject.parameters.addAll(parameters)
     if (functionObject.isSuspend) {
         functionObject.fillCoroutineMetadata(context, fromDescriptor, false)
