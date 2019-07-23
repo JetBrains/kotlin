@@ -31,10 +31,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.IrErrorType
-import org.jetbrains.kotlin.ir.types.IrSimpleType
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.render
@@ -100,6 +97,8 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrSyntheticBodyKi
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrThrow as ProtoThrow
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTry as ProtoTry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrType as ProtoType
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation as ProtoTypeAbbreviation
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAlias as ProtoTypeAlias
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument as ProtoTypeArgument
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex as ProtoTypeIndex
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeOp as ProtoTypeOp
@@ -191,13 +190,25 @@ abstract class IrModuleDeserializer(
                 symbol,
                 proto.hasQuestionMark,
                 arguments,
-                annotations
+                annotations,
+                if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
             )
         }
         logger.log { "ir_type = $result; render = ${result.render()}" }
         return result
 
     }
+
+    fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
+        IrTypeAbbreviationImpl(
+            deserializeIrSymbol(proto.typeAlias).let {
+                it as? IrTypeAliasSymbol
+                    ?: error("IrTypeAliasSymbol expected: $it")
+            },
+            proto.hasQuestionMark,
+            proto.argumentList.map { deserializeIrTypeArgument(it) },
+            deserializeAnnotations(proto.annotations)
+        )
 
     fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
         val annotations = deserializeAnnotations(proto.annotations)
@@ -981,6 +992,27 @@ abstract class IrModuleDeserializer(
             }
         }
 
+    private fun deserializeIrTypeAlias(proto: ProtoTypeAlias) =
+        withDeserializedIrDeclarationBase(proto.base) { symbol, startOffset, endOffset, origin ->
+            symbolTable.declareTypeAlias((symbol as IrTypeAliasSymbol).descriptor) {
+                IrTypeAliasImpl(
+                    startOffset, endOffset,
+                    it,
+                    deserializeName(proto.name),
+                    deserializeVisibility(proto.visibility),
+                    deserializeIrType(proto.expandedType),
+                    proto.isActual,
+                    origin
+                )
+            }.usingParent {
+                proto.typeParameters.typeParameterList.mapTo(typeParameters) {
+                    deserializeIrTypeParameter(it)
+                }
+
+                (descriptor as? WrappedTypeAliasDescriptor)?.bind(this)
+            }
+        }
+
     private inline fun <T : IrFunction> withDeserializedIrFunctionBase(
         proto: ProtoFunctionBase,
         block: (IrFunctionSymbol, Int, Int, IrDeclarationOrigin) -> T
@@ -1232,30 +1264,19 @@ abstract class IrModuleDeserializer(
 
     private fun deserializeDeclaration(proto: ProtoDeclaration): IrDeclaration {
         val declaration: IrDeclaration = when (proto.declaratorCase!!) {
-            IR_ANONYMOUS_INIT
-            -> deserializeIrAnonymousInit(proto.irAnonymousInit)
-            IR_CONSTRUCTOR
-            -> deserializeIrConstructor(proto.irConstructor)
-            IR_FIELD
-            -> deserializeIrField(proto.irField)
-            IR_CLASS
-            -> deserializeIrClass(proto.irClass)
-            IR_FUNCTION
-            -> deserializeIrFunction(proto.irFunction)
-            IR_PROPERTY
-            -> deserializeIrProperty(proto.irProperty)
-            IR_TYPE_PARAMETER
-            -> deserializeIrTypeParameter(proto.irTypeParameter)
-            IR_VARIABLE
-            -> deserializeIrVariable(proto.irVariable)
-            IR_VALUE_PARAMETER
-            -> deserializeIrValueParameter(proto.irValueParameter)
-            IR_ENUM_ENTRY
-            -> deserializeIrEnumEntry(proto.irEnumEntry)
-            IR_LOCAL_DELEGATED_PROPERTY
-            -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
-            DECLARATOR_NOT_SET
-            -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
+            IR_ANONYMOUS_INIT -> deserializeIrAnonymousInit(proto.irAnonymousInit)
+            IR_CONSTRUCTOR -> deserializeIrConstructor(proto.irConstructor)
+            IR_FIELD -> deserializeIrField(proto.irField)
+            IR_CLASS -> deserializeIrClass(proto.irClass)
+            IR_FUNCTION -> deserializeIrFunction(proto.irFunction)
+            IR_PROPERTY -> deserializeIrProperty(proto.irProperty)
+            IR_TYPE_PARAMETER -> deserializeIrTypeParameter(proto.irTypeParameter)
+            IR_VARIABLE -> deserializeIrVariable(proto.irVariable)
+            IR_VALUE_PARAMETER -> deserializeIrValueParameter(proto.irValueParameter)
+            IR_ENUM_ENTRY -> deserializeIrEnumEntry(proto.irEnumEntry)
+            IR_LOCAL_DELEGATED_PROPERTY -> deserializeIrLocalDelegatedProperty(proto.irLocalDelegatedProperty)
+            IR_TYPE_ALIAS -> deserializeIrTypeAlias(proto.irTypeAlias)
+            DECLARATOR_NOT_SET -> error("Declaration deserialization not implemented: ${proto.declaratorCase}")
         }
 
         logger.log { "### Deserialized declaration: ${declaration.descriptor} -> ${ir2string(declaration)}" }

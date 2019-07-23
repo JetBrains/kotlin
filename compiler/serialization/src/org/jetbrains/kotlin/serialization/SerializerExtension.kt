@@ -83,6 +83,9 @@ abstract class SerializerExtension {
     open fun serializeTypeParameter(typeParameter: TypeParameterDescriptor, proto: ProtoBuf.TypeParameter.Builder) {
     }
 
+    open fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
+    }
+
     open fun serializeErrorType(type: KotlinType, builder: ProtoBuf.Type.Builder) {
         throw IllegalStateException("Cannot serialize error type: $type")
     }

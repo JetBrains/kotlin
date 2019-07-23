@@ -24,7 +24,7 @@ interface KotlinMangler {
     val IrType.isInlined: Boolean
 }
 
-abstract class KotlinManglerImpl: KotlinMangler {
+abstract class KotlinManglerImpl : KotlinMangler {
     override val String.hashMangle get() = this.cityHash64()
 
     override val IrDeclaration.hashedMangle: Long
@@ -75,6 +75,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
             is IrFunction -> this.visibility
             is IrProperty -> this.visibility
             is IrField -> this.visibility
+            is IrTypeAlias -> this.visibility
             else -> null
         }
 
@@ -144,9 +145,10 @@ abstract class KotlinManglerImpl: KotlinMangler {
     val IrValueParameter.extensionReceiverNamePart: String
         get() = "@${typeToHashString(this.type)}."
 
-    open val IrFunction.argsPart get() = this.valueParameters.map {
-        "${typeToHashString(it.type)}${if (it.isVararg) "_VarArg" else ""}"
-    }.joinToString(";")
+    open val IrFunction.argsPart
+        get() = this.valueParameters.map {
+            "${typeToHashString(it.type)}${if (it.isVararg) "_VarArg" else ""}"
+        }.joinToString(";")
 
     open val IrFunction.signature: String
         get() {
@@ -170,7 +172,7 @@ abstract class KotlinManglerImpl: KotlinMangler {
     override val IrFunction.functionName: String
         get() {
             // TODO: Again. We can't call super in children, so provide a hook for now.
-            this.platformSpecificFunctionName ?. let { return it }
+            this.platformSpecificFunctionName?.let { return it }
             val name = this.name.mangleIfInternal(this.module, this.visibility)
             return "$name$signature"
         }
@@ -211,22 +213,25 @@ abstract class KotlinManglerImpl: KotlinMangler {
             return "ktypeparam:$containingDeclarationPart$name@$index"
         }
 
+    val IrTypeAlias.symbolName: String
+        get() {
+            val containingDeclarationPart = parent.fqNameForIrSerialization.let {
+                if (it.isRoot) "" else "$it."
+            }
+            return "ktypealias:$containingDeclarationPart$name"
+        }
+
 // This is a little extension over what's used in real mangling
 // since some declarations never appear in the bitcode symbols.
 
     internal fun IrDeclaration.uniqSymbolName(): String = when (this) {
-        is IrFunction
-        -> this.uniqFunctionName
-        is IrProperty
-        -> this.symbolName
-        is IrClass
-        -> this.typeInfoSymbolName
-        is IrField
-        -> this.symbolName
-        is IrEnumEntry
-        -> this.symbolName
-        is IrTypeParameter
-        -> this.symbolName
+        is IrFunction -> this.uniqFunctionName
+        is IrProperty -> this.symbolName
+        is IrClass -> this.typeInfoSymbolName
+        is IrField -> this.symbolName
+        is IrEnumEntry -> this.symbolName
+        is IrTypeParameter -> this.symbolName
+        is IrTypeAlias -> this.symbolName
         else -> error("Unexpected exported declaration: $this")
     }
 

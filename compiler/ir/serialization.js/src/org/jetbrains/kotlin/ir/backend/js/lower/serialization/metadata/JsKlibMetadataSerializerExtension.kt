@@ -41,6 +41,11 @@ class JsKlibMetadataSerializerExtension(
         super.serializeTypeParameter(typeParameter, proto)
     }
 
+    override fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
+        uniqId(typeAlias)?.let { proto.setExtension(JsKlibMetadataProtoBuf.typeAliasUniqId, it) }
+        super.serializeTypeAlias(typeAlias, proto)
+    }
+
     override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
         uniqId(descriptor)?.let { proto.setExtension(JsKlibMetadataProtoBuf.valueParamUniqId, it) }
         super.serializeValueParameter(descriptor, proto)

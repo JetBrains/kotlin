@@ -3,8 +3,8 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
-public interface IrSimpleTypeOrBuilder extends
-    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleType)
+public interface IrTypeAbbreviationOrBuilder extends
+    // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation)
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
@@ -17,13 +17,13 @@ public interface IrSimpleTypeOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
    */
-  boolean hasClassifier();
+  boolean hasTypeAlias();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol classifier = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getClassifier();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getTypeAlias();
 
   /**
    * <code>required bool has_question_mark = 3;</code>
@@ -47,13 +47,4 @@ public interface IrSimpleTypeOrBuilder extends
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeArgument argument = 4;</code>
    */
   int getArgumentCount();
-
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  boolean hasAbbreviation();
-  /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation abbreviation = 5;</code>
-   */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeAbbreviation getAbbreviation();
 }

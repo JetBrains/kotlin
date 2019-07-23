@@ -348,12 +348,20 @@ public final class DescriptorReference extends
   private boolean isTypeParameter_;
   /**
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
+   *
+   * <pre>
+   * TODO optional bool is_type_alias = 13 [default = false];
+   * </pre>
    */
   public boolean hasIsTypeParameter() {
     return ((bitField0_ & 0x00000800) == 0x00000800);
   }
   /**
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
+   *
+   * <pre>
+   * TODO optional bool is_type_alias = 13 [default = false];
+   * </pre>
    */
   public boolean getIsTypeParameter() {
     return isTypeParameter_;
@@ -1265,18 +1273,30 @@ public final class DescriptorReference extends
     private boolean isTypeParameter_ ;
     /**
      * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     *
+     * <pre>
+     * TODO optional bool is_type_alias = 13 [default = false];
+     * </pre>
      */
     public boolean hasIsTypeParameter() {
       return ((bitField0_ & 0x00000800) == 0x00000800);
     }
     /**
      * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     *
+     * <pre>
+     * TODO optional bool is_type_alias = 13 [default = false];
+     * </pre>
      */
     public boolean getIsTypeParameter() {
       return isTypeParameter_;
     }
     /**
      * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     *
+     * <pre>
+     * TODO optional bool is_type_alias = 13 [default = false];
+     * </pre>
      */
     public Builder setIsTypeParameter(boolean value) {
       bitField0_ |= 0x00000800;
@@ -1286,6 +1306,10 @@ public final class DescriptorReference extends
     }
     /**
      * <code>optional bool is_type_parameter = 12 [default = false];</code>
+     *
+     * <pre>
+     * TODO optional bool is_type_alias = 13 [default = false];
+     * </pre>
      */
     public Builder clearIsTypeParameter() {
       bitField0_ = (bitField0_ & ~0x00000800);

@@ -121,6 +121,11 @@ abstract class KotlinIrLinker(
                     descriptor as FunctionDescriptor?
                         ?: WrappedSimpleFunctionDescriptor()
                 )
+            ProtoSymbolKind.TYPEALIAS_SYMBOL ->
+                symbolTable.referenceTypeAlias(
+                    descriptor as TypeAliasDescriptor?
+                        ?: WrappedTypeAliasDescriptor()
+                )
             ProtoSymbolKind.VARIABLE_SYMBOL ->
                 IrVariableSymbolImpl(
                     descriptor as VariableDescriptor?
