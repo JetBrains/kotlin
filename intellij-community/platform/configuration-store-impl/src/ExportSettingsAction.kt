@@ -276,7 +276,7 @@ private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDe
   }
 
   var resourceBundleName: String?
-  if (pluginDescriptor is IdeaPluginDescriptor && "com.intellij" != pluginDescriptor.pluginId.idString) {
+  if (pluginDescriptor is IdeaPluginDescriptor && PluginManagerCore.CORE_PLUGIN_ID != pluginDescriptor.pluginId.idString) {
     resourceBundleName = pluginDescriptor.resourceBundleBaseName
     if (resourceBundleName == null) {
       if (pluginDescriptor.vendor == "JetBrains") {
