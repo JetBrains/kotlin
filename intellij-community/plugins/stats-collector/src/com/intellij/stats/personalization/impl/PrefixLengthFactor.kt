@@ -51,7 +51,7 @@ class MostFrequentPrefixLength : UserFactorBase<PrefixLengthReader>("mostFrequen
     }
 }
 
-class AveragePrefixLength : UserFactorBase<PrefixLengthReader>("", UserFactorDescriptions.PREFIX_LENGTH_ON_COMPLETION) {
+class AveragePrefixLength : UserFactorBase<PrefixLengthReader>("averagePrefixLength", UserFactorDescriptions.PREFIX_LENGTH_ON_COMPLETION) {
     override fun compute(reader: PrefixLengthReader): String? {
         return reader.getAveragePrefixLength()?.toString()
     }
