@@ -20,12 +20,13 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.ActionPlan;
 import com.intellij.openapi.editor.actionSystem.EditorActionManager;
+import com.intellij.openapi.editor.actionSystem.TypedAction;
 import com.intellij.openapi.editor.actionSystem.TypedActionHandler;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.editor.highlighter.EditorHighlighter;
 import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.editor.impl.DefaultRawTypedHandler;
-import com.intellij.openapi.editor.impl.EditorActionManagerImpl;
+import com.intellij.openapi.editor.impl.TypedActionImpl;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.fileTypes.LanguageFileType;
@@ -633,7 +634,7 @@ public class TypedHandler extends TypedActionHandlerBase {
         );
       }
       if (element.getNode() != null && isBrace) {
-        DefaultRawTypedHandler handler = ((EditorActionManagerImpl) EditorActionManager.getInstance()).getDefaultRawTypedHandler();
+        DefaultRawTypedHandler handler = ((TypedActionImpl)TypedAction.getInstance()).getDefaultRawTypedHandler();
         handler.beginUndoablePostProcessing();
 
         final int finalLBraceOffset = lBraceOffset;

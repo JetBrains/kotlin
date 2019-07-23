@@ -225,7 +225,8 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
 
   private static synchronized void initTypedHandler() {
     if (ourTypedHandlerInitialized) return;
-    TypedAction typedAction = EditorActionManager.getInstance().getTypedAction();
+    EditorActionManager.getInstance();
+    TypedAction typedAction = TypedAction.getInstance();
     typedAction.setupHandler(new MyTypedHandler(typedAction.getHandler()));
     ourTypedHandlerInitialized = true;
   }

@@ -80,7 +80,7 @@ public class IncrementalSearchHandler {
     if (!ourActionsRegistered) {
       EditorActionManager actionManager = EditorActionManager.getInstance();
 
-      TypedAction typedAction = actionManager.getTypedAction();
+      TypedAction typedAction = TypedAction.getInstance();
       typedAction.setupRawHandler(new MyTypedHandler(typedAction.getRawHandler()));
 
       actionManager.setActionHandler(IdeActions.ACTION_EDITOR_BACKSPACE, new BackSpaceHandler(actionManager.getActionHandler(IdeActions.ACTION_EDITOR_BACKSPACE)));
