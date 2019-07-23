@@ -70,7 +70,7 @@ class IdeaKonanProjectDataService : AbstractProjectDataService<KotlinTargetData,
                 runConfigurations[executableBase]?.let {
                     workingDirectory = it.workingDirectory
                     programParameters = ParametersListUtil.join(it.programParameters)
-                    envs = LinkedHashMap<String, String>().apply { putAll(it.environmentVariables) }
+                    envs = filterOutSystemEnvs(it.environmentVariables)
                 }
             }
 

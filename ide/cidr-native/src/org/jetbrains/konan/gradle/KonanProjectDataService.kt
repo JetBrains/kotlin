@@ -20,6 +20,7 @@ import com.intellij.util.PlatformUtils
 import com.intellij.util.execution.ParametersListUtil
 import com.jetbrains.konan.KONAN_MODEL_KEY
 import com.jetbrains.konan.KonanModel
+import com.jetbrains.konan.filterOutSystemEnvs
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType
 import org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer
@@ -101,7 +102,7 @@ class KonanProjectDataService : AbstractProjectDataService<KonanModel, Module>()
                     ?.let {
                         configuration.workingDirectory = it.workingDirectory
                         configuration.programParameters = ParametersListUtil.join(it.programParameters)
-                        configuration.envs = it.environmentVariables
+                        configuration.envs = filterOutSystemEnvs(it.environmentVariables)
                     }
 
             runManager.addConfiguration(runConfiguration)

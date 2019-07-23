@@ -6,6 +6,7 @@
 package com.jetbrains.konan
 
 import com.intellij.build.BuildViewManager
+import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.externalSystem.model.DataNode
 import com.intellij.openapi.externalSystem.model.ProjectKeys
@@ -96,4 +97,17 @@ fun forEachKonanProject(
 // Returns Kotlin/Native internal version (not the same as Big Kotlin version).
 fun getKotlinNativeVersion(kotlinNativeHome: String): KonanVersion? {
     return LiteKonanDistributionProvider.getDistribution(File(kotlinNativeHome))?.konanVersion
+}
+
+fun filterOutSystemEnvs(user: Map<String, String>): MutableMap<String, String> {
+    val result = LinkedHashMap<String, String>()
+    val parental = GeneralCommandLine().parentEnvironment
+
+    for ((key, value) in user) {
+        if (!parental.containsKey(key)) {
+            result[key] = value
+        }
+    }
+
+    return result
 }
