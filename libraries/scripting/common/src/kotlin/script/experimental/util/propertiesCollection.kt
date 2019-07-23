@@ -89,11 +89,25 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
             }
         }
 
+        fun <T> PropertiesCollection.Key<T>.replaceOnlyDefault(v: T?) {
+            if (!data.containsKey(this) || data[this] == this.getDefaultValue(PropertiesCollection(data))) {
+                data[this] = v
+            }
+        }
+
+        // generic for lists
+
         fun <T> PropertiesCollection.Key<in List<T>>.putIfAny(vals: Iterable<T>?) {
             if (vals?.any() == true) {
                 data[this] = if (vals is List) vals else vals.toList()
             }
         }
+
+        operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
+            append(vals.asIterable())
+        }
+
+        // generic for maps:
 
         @JvmName("putIfAny_map")
         fun <K, V> PropertiesCollection.Key<in Map<K, V>>.putIfAny(vals: Iterable<Pair<K, V>>?) {
@@ -107,14 +121,6 @@ open class PropertiesCollection(private val properties: Map<Key<*>, Any?> = empt
                 data[this] = vals
             }
         }
-
-        // generic for lists
-
-        operator fun <T> PropertiesCollection.Key<in List<T>>.invoke(vararg vals: T) {
-            append(vals.asIterable())
-        }
-
-        // generic for maps:
 
         operator fun <K, V> PropertiesCollection.Key<Map<K, V>>.invoke(vararg vs: Pair<K, V>) {
             append(vs.asIterable())
