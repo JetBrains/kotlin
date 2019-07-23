@@ -3,11 +3,17 @@
 fun testIf(xs: List<Any>) {
     loop@ for (x in xs) {
         when (x) {
-            is String -> for (c in x) {
-                continue // do not change
+            is String -> {
+                for (c in x) {
+                    continue // do not change
+                }
             }
-            is Int -> break@loop
-            else -> println(x)
+            is Int -> {
+                break@loop
+            }
+            else -> {
+                println(x)
+            }
         }
     }
 }

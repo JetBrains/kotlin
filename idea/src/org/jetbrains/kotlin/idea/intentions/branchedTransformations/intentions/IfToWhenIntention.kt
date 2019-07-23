@@ -115,9 +115,9 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
         }
     }
 
-    private fun BuilderByPattern<*>.appendElseBlock(block: KtExpression?) {
+    private fun BuilderByPattern<*>.appendElseBlock(block: KtExpression?, unwrapBlockOrParenthesis: Boolean = false) {
         appendFixedText("else->")
-        appendExpression(block?.unwrapBlockOrParenthesis())
+        appendExpression(if (unwrapBlockOrParenthesis) block?.unwrapBlockOrParenthesis() else block)
         appendFixedText("\n")
     }
 
@@ -160,7 +160,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                 appendFixedText("->")
 
                 val currentThenBranch = currentIfExpression.then
-                appendExpression(currentThenBranch?.unwrapBlockOrParenthesis())
+                appendExpression(currentThenBranch)
                 appendFixedText("\n")
 
                 canPassThrough = canPassThrough || canPassThrough(currentThenBranch)
@@ -175,7 +175,7 @@ class IfToWhenIntention : SelfTargetingRangeIntention<KtIfExpression>(KtIfExpres
                         currentIfExpression = syntheticElseBranch
                         toDelete.add(syntheticElseBranch)
                     } else {
-                        appendElseBlock(syntheticElseBranch)
+                        appendElseBlock(syntheticElseBranch, unwrapBlockOrParenthesis = true)
                         break
                     }
                 } else if (currentElseBranch is KtIfExpression) {

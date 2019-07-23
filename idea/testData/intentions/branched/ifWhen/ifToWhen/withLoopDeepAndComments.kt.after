@@ -20,10 +20,14 @@ fun test() {
                         // Comment 7
                         break@loop1
                     }
-                    i > 5 -> // Comment 8
+                    i > 5 -> {
+                        // Comment 8
                         i.hashCode()
-                    else -> // Comment 9
+                    }
+                    else -> {
+                        // Comment 9
                         continue@loop1
+                    }
                 }
             }
         }

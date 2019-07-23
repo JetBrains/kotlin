@@ -1,6 +1,8 @@
 fun bar(arg: Int): Int {
     when {
-        arg < 0 -> if (arg == -3) return 0
+        arg < 0 -> {
+            if (arg == -3) return 0
+        }
     }
     if (arg > 0) {
         return 1
