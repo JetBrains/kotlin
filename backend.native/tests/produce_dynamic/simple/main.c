@@ -21,6 +21,10 @@ int main(void) {
     T_(Enum) enum1 = __ kotlin.root.Enum.HUNDRED.get();
     T_(Codeable) object1 = __ kotlin.root.get_an_object();
     T_(Data) data = __ kotlin.root.getMutable();
+    T_(kotlin_Int) nullableInt = __ createNullableInt(77);
+    T_(kotlin_Unit) nullableUnit = __ createNullableUnit();
+    T_(kotlin_Int) nullableIntNull = { .pinned = 0 };
+    T_(kotlin_Unit) nullableUnitNull = { .pinned = 0 };
 
     const char* string1 = __ kotlin.root.getString();
     const char* string2 = __ kotlin.root.Singleton.toString(singleton);
@@ -51,11 +55,13 @@ int main(void) {
 
     printf("mutable = %s\n",  string3);
 
-    topLevelFunctionVoidFromC(42, 0);
-    __ kotlin.root.topLevelFunctionVoid(42, 0);
+    topLevelFunctionVoidFromC(42, nullableInt, nullableUnit, 0);
+    __ kotlin.root.topLevelFunctionVoid(42, nullableInt, nullableUnit, 0);
     printf("topLevel = %d %d\n", topLevelFunctionFromC(780, 3), __ kotlin.root.topLevelFunctionFromCShort(5, 2));
 
     __ kotlin.root.useInlineClasses(42, "bar", base);
+
+    __ kotlin.root.testNullableWithNulls(nullableIntNull, nullableUnitNull);
 
     __ DisposeStablePointer(singleton.pinned);
     __ DisposeString(string1);
@@ -69,6 +75,7 @@ int main(void) {
     __ DisposeStablePointer(impl2.pinned);
     __ DisposeStablePointer(enum1.pinned);
     __ DisposeStablePointer(object1.pinned);
+    __ DisposeStablePointer(nullableInt.pinned);
 
     __ kotlin.root.setCErrorHandler(&errorHandler);
     __ kotlin.root.throwException();

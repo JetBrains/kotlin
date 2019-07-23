@@ -71,3 +71,6 @@ fun boxFloat(value: Float): Float? = value
 
 @ExportForCppRuntime("Kotlin_boxDouble")
 fun boxDouble(value: Double): Double? = value
+
+@ExportForCppRuntime("Kotlin_boxUnit")
+internal fun Kotlin_boxUnit(): Unit? = Unit

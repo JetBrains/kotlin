@@ -35,8 +35,10 @@ open class Base {
 fun topLevelFunction(x1: Int, x2: Int) = x1 - x2
 
 @CName("topLevelFunctionVoidFromC")
-fun topLevelFunctionVoid(x1: Int, pointer: COpaquePointer?) {
+fun topLevelFunctionVoid(x1: Int, x2: Int?, x3: Unit?, pointer: COpaquePointer?) {
     assert(x1 == 42)
+    assert(x2 == 77)
+    assert(x3 != null)
     assert(pointer == null)
 }
 
@@ -99,6 +101,12 @@ fun useInlineClasses(ic1: IC1, ic2: IC2, ic3: IC3) {
     assert(ic2.value == "bar")
     assert(ic3.value is Base)
 }
+
+fun testNullableWithNulls(arg1: Int?, arg2: Unit?) {
+    assert(arg1 == null)
+    assert(arg2 == null)
+}
+
 fun setCErrorHandler(callback: CPointer<CFunction<(CPointer<ByteVar>) -> Unit>>?) {
     setUnhandledExceptionHook({
         throwable: Throwable ->
