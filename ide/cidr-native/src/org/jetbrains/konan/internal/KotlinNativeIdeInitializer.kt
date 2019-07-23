@@ -15,7 +15,6 @@ import com.intellij.task.impl.JpsProjectTaskRunner
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
 import java.util.function.BiPredicate
 import java.util.function.Predicate
-import kotlin.reflect.KClass
 
 /**
  * @author Vladislav.Soroka
@@ -47,9 +46,9 @@ class KotlinNativeIdeInitializer {
         it.pluginId?.idString in PLUGINS_TO_UNREGISTER_TIP_AND_TRICKS
     }
 
-    private fun disableJps() = unregisterExtensionClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class)
+    private fun disableJps() = unregisterExtensionClass(ProjectTaskRunner.EP_NAME, JpsProjectTaskRunner::class.java)
 
-    private fun <T : Any> unregisterExtensionClass(extensionPointName: ExtensionPointName<T>, extensionClass: KClass<out T>) {
+    private fun <T : Any> unregisterExtensionClass(extensionPointName: ExtensionPointName<T>, extensionClass: Class<out T>) {
         val extensionPoint = Extensions.getRootArea().getExtensionPoint(extensionPointName)
         val extensionClassesToUnregister: Set<String> = extensionPoint.extensions.filter { extensionClass.isInstance(it) }.map { it::class.java.name }.toSet()
 
