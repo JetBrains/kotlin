@@ -43,10 +43,10 @@ public class TextOccurrencesUtil {
                                         @NotNull GlobalSearchScope searchScope,
                                         @NotNull Collection<? super UsageInfo> results,
                                         @NotNull UsageInfoFactory factory) {
-    PsiSearchHelperImpl.processTextOccurrences(element, stringToSearch, searchScope, t -> {
+    PsiSearchHelperImpl.processTextOccurrences(element, stringToSearch, searchScope, factory, t -> {
       results.add(t);
       return true;
-    }, factory);
+    });
   }
 
   private static boolean processStringLiteralsContainingIdentifier(@NotNull String identifier,
