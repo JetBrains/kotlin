@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.FirRenderer
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
+import org.jetbrains.kotlin.fir.lightTree.walkTopDownWithTestData
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.junit.runner.RunWith
@@ -22,24 +23,30 @@ import java.io.File
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    private fun compareBase(compareFir: (File) -> Boolean) {
-        val path = System.getProperty("user.dir")
+    private fun compareBase(path: String, withTestData: Boolean, compareFir: (File) -> Boolean) {
         var counter = 0
         var errorCounter = 0
 
         println("BASE PATH: $path")
-        path.walkTopDown { file ->
-            if (!compareFir(file)) errorCounter++
-            counter++
+        if (!withTestData) {
+            path.walkTopDown { file ->
+                if (!compareFir(file)) errorCounter++
+                counter++
+            }
+        } else {
+            path.walkTopDownWithTestData { file ->
+                if (!compareFir(file)) errorCounter++
+                counter++
+            }
         }
         println("All scanned files: $counter")
         println("Files that aren't equal to FIR: $errorCounter")
         TestCase.assertEquals(0, errorCounter)
     }
 
-    private fun compareAll(stubMode: Boolean) {
+    private fun compareAll(stubMode: Boolean, path: String = System.getProperty("user.dir"), withTestData: Boolean = false) {
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
-        compareBase { file ->
+        compareBase(path, withTestData) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree
@@ -57,6 +64,8 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
 
     private fun compare(
         stubMode: Boolean,
+        path: String = System.getProperty("user.dir"),
+        withTestData: Boolean = false,
         visitAnonymousFunction: Boolean = false,
         visitLambdaExpression: Boolean = false,
         visitLocalMembers: Boolean = false,
@@ -101,7 +110,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitAnonymousObject = visitAnonymousObject
         )
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
-        compareBase { file ->
+        compareBase(path, withTestData) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
             //light tree
@@ -356,5 +365,9 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitWhenExpression = true,
             visitAnonymousObject = true
         )
+    }
+
+    fun testDiagnostics() {
+        compareAll(false, "compiler/testData/diagnostics/tests", withTestData = true)
     }
 }
