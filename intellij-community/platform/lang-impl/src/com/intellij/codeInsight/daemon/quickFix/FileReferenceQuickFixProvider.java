@@ -14,8 +14,6 @@ import com.intellij.openapi.fileTypes.UnknownFileType;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectFileIndex;
-import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
@@ -81,7 +79,8 @@ public class FileReferenceQuickFixProvider {
       List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, false);
       if (targetDirectories.isEmpty()) return emptyList();
 
-      return singletonList(new MyCreateFileFix(element, targetDirectories, getPathToReferencePart(reference), newFileName));
+      return singletonList(new MyCreateFileFix(element, targetDirectories, getPathToReferencePart(reference), newFileName,
+                                               reference.getNewFileTemplateName()));
     }
     else {
       List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, true);
@@ -249,8 +248,9 @@ public class FileReferenceQuickFixProvider {
     private MyCreateFileFix(@NotNull PsiElement psiElement,
                             @NotNull List<TargetDirectory> directories,
                             @NotNull String[] subPath,
-                            @NotNull String newFileTemplateName) {
-      super(psiElement, directories, subPath, newFileTemplateName);
+                            @NotNull String newFileName,
+                            @Nullable String newFileTemplateName) {
+      super(psiElement, directories, subPath, newFileName);
 
       myNewFileTemplateName = newFileTemplateName;
     }
