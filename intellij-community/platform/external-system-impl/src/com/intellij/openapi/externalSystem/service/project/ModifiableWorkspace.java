@@ -122,7 +122,7 @@ public class ModifiableWorkspace {
   }
 
   public boolean isSubstituted(String libraryName) {
-    return myNamesMap.values().contains(libraryName);
+    return myNamesMap.containsValue(libraryName);
   }
 
   public String getSubstitutedLibrary(String moduleName) {

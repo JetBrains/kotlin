@@ -57,7 +57,7 @@ public final class ConstantNode extends Expression {
     return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
   }
 
-  public ConstantNode withLookupStrings(@NotNull Collection<? extends String> lookupElements) {
+  public ConstantNode withLookupStrings(@NotNull Collection<String> lookupElements) {
     return new ConstantNode(myValue, ContainerUtil.map2Array(lookupElements, LookupElement.class, LookupElementBuilder::create));
   }
 

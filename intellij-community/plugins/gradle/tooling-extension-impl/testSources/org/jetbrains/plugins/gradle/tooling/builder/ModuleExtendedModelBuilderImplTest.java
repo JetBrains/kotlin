@@ -11,7 +11,6 @@ import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.model.ExtIdeaContentRoot;
 import org.jetbrains.plugins.gradle.model.ModuleExtendedModel;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -163,22 +162,22 @@ public class ModuleExtendedModelBuilderImplTest extends AbstractModelBuilderTest
     }
   }
 
-  private Collection<? extends String> getAllPaths(Collection<? extends File> directories, final String moduleName) {
+  private Collection<String> getAllPaths(Collection<? extends File> directories, final String moduleName) {
     List<String> list = ContainerUtil.map2List(directories, (Function<File, String>)sourceDirectory -> {
       String path =
         FileUtil.toCanonicalPath(FileUtil.getRelativePath(new File(testDir, moduleName), sourceDirectory));
-      Assert.assertNotNull(path);
+      assertNotNull(path);
       return path.substring(path.indexOf("/") + 1);
     });
     Collections.sort(list);
     return list;
   }
 
-  private Collection<? extends String> getAllPaths(DomainObjectSet<? extends IdeaSourceDirectory> directories, final String moduleName) {
+  private Collection<String> getAllPaths(DomainObjectSet<? extends IdeaSourceDirectory> directories, final String moduleName) {
     List<String> list = ContainerUtil.map2List(directories, (Function<IdeaSourceDirectory, String>)sourceDirectory -> {
       String path =
         FileUtil.toCanonicalPath(FileUtil.getRelativePath(new File(testDir, moduleName), sourceDirectory.getDirectory()));
-      Assert.assertNotNull(path);
+      assertNotNull(path);
       return path;
     });
     Collections.sort(list);
