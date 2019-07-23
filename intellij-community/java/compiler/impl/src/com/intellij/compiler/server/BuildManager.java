@@ -136,10 +136,10 @@ public class BuildManager implements Disposable {
   private final Map<String, RequestFuture> myBuildsInProgress = Collections.synchronizedMap(new HashMap<>());
   private final Map<String, Future<Pair<RequestFuture<PreloadedProcessMessageHandler>, OSProcessHandler>>> myPreloadedBuilds = Collections.synchronizedMap(new HashMap<>());
   private final BuildProcessClasspathManager myClasspathManager = new BuildProcessClasspathManager();
-  private final ExecutorService myRequestsProcessor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
+  private final Executor myRequestsProcessor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
     "BuildManager RequestProcessor Pool");
   private final List<VFileEvent> myUnprocessedEvents = new ArrayList<>();
-  private final ExecutorService myAutomakeTrigger = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
+  private final Executor myAutomakeTrigger = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
     "BuildManager Auto-Make Trigger");
   private final Map<String, ProjectData> myProjectDataMap = Collections.synchronizedMap(new HashMap<>());
   private volatile int myFileChangeCounter;
@@ -238,7 +238,7 @@ public class BuildManager implements Disposable {
           synchronized (myUnprocessedEvents) {
             myUnprocessedEvents.addAll(events);
           }
-          myAutomakeTrigger.submit(() -> {
+          myAutomakeTrigger.execute(() -> {
             if (!application.isDisposed()) {
               ReadAction.run(()->{
                 final List<VFileEvent> snapshot;
@@ -383,7 +383,7 @@ public class BuildManager implements Disposable {
   }
 
   public void runCommand(@NotNull Runnable command) {
-    myRequestsProcessor.submit(command);
+    myRequestsProcessor.execute(command);
   }
 
   private void doNotify(final Collection<? extends File> paths, final boolean notifyDeletion) {
@@ -655,7 +655,7 @@ public class BuildManager implements Disposable {
         myMessageDispatcher.cancelSession(future.getRequestID());
         // waiting for preloaded process from project's task queue guarantees no build is started for this project
         // until this one gracefully exits and closes all its storages
-        getProjectData(projectPath).taskQueue.submit(() -> {
+        getProjectData(projectPath).taskQueue.execute(() -> {
           Throwable error = null;
           try {
             while (!processHandler.waitFor()) {

@@ -258,7 +258,7 @@ public class CodeCompletionHandlerBase {
     }
     CompletionServiceImpl.setCompletionPhase(phase);
 
-    AppUIExecutor.onUiThread().withDocumentsCommitted(initContext.getProject()).expireWith(phase).submit(() -> {
+    AppUIExecutor.onUiThread().withDocumentsCommitted(initContext.getProject()).expireWith(phase).execute(() -> {
       if (phase instanceof CompletionPhase.CommittingDocuments) {
         ((CompletionPhase.CommittingDocuments)phase).replaced = true;
       }

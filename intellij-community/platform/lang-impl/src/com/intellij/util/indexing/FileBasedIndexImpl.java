@@ -1889,7 +1889,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
     };
 
-    private final ExecutorService myVfsEventsExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("FileBasedIndex Vfs Event Processor");
+    private final Executor myVfsEventsExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("FileBasedIndex Vfs Event Processor");
     private final AtomicInteger myScheduledVfsEventsWorkers = new AtomicInteger();
 
     @Override
@@ -2008,7 +2008,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
     void ensureUpToDateAsync() {
       if (getEventMerger().getApproximateChangesCount() >= 20 && myScheduledVfsEventsWorkers.compareAndSet(0,1)) {
-        myVfsEventsExecutor.submit(this::scheduledEventProcessingInReadActionWithYieldingToWriteAction);
+        myVfsEventsExecutor.execute(this::scheduledEventProcessingInReadActionWithYieldingToWriteAction);
 
         if (Registry.is("try.starting.dumb.mode.where.many.files.changed")) {
           Runnable startDumbMode = () -> {
