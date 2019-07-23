@@ -9,6 +9,8 @@ fun testIf(x: Any) {
                     break // do not change
             }
         }
-        else -> println(x)
+        else -> {
+            println(x)
+        }
     }
 }

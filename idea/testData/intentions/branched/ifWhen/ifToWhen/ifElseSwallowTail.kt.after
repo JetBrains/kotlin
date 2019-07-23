@@ -1,7 +1,11 @@
 fun toInt(s: Number): Int {
     when (s) {
-        is Int -> foo()
-        else -> return -1
+        is Int -> {
+            foo()
+        }
+        else -> {
+            return -1
+        }
     }
 
     // code below will be lost!
