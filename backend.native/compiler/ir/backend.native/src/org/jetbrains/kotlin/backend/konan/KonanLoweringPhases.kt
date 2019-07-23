@@ -113,6 +113,13 @@ internal val lateinitPhase = makeKonanFileLoweringPhase(
         prerequisite = setOf(inlinePhase)
 )
 
+// TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase (see kotlin: dd3f8ecaacd)
+internal val provisionalFunctionExpressionPhase = makeKonanModuleLoweringPhase(
+    { ProvisionalFunctionExpressionLowering() },
+    name = "FunctionExpression-before-inliner",
+    description = "Transform IrFunctionExpression to a local function reference"
+)
+
 internal val stringConcatenationPhase = makeKonanFileLoweringPhase(
         ::StringConcatenationLowering,
         name = "StringConcatenation",

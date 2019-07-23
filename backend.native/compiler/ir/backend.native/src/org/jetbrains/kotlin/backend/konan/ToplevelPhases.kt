@@ -239,6 +239,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
         description = "IR Lowering",
         lower = removeExpectDeclarationsPhase then
                 lowerBeforeInlinePhase then
+                provisionalFunctionExpressionPhase then
                 inlinePhase then
                 lowerAfterInlinePhase then
                 interopPart1Phase then
