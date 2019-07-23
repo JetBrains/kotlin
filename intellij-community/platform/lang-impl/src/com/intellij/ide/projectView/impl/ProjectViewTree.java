@@ -76,9 +76,10 @@ public class ProjectViewTree extends DnDAwareTree {
           AbstractTreeNode parentNode = node.getParent();
           Object content = node.getValue();
           VirtualFile file =
-            content instanceof PsiFileSystemItem || content instanceof VirtualFile ||
-            content instanceof PsiElement && parentNode != null && parentNode.getValue() instanceof PsiDirectory
-            ? node.getVirtualFile() : null;
+            content instanceof PsiFileSystemItem ||
+            !(content instanceof PsiElement) ||
+            parentNode != null && parentNode.getValue() instanceof PsiDirectory ?
+            node.getVirtualFile() : null;
           File ioFile = file == null || file.isDirectory() || !file.isInLocalFileSystem() ? null : VfsUtilCore.virtualToIoFile(file);
           BasicFileAttributes attr = null;
           try {
