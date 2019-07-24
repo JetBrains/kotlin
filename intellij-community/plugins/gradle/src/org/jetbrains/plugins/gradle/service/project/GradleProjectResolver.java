@@ -176,7 +176,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       isCompositeBuildsSupported = isGradleProjectDirSupported && gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
       resolverCtx.setBuildEnvironment(buildEnvironment);
     }
-    boolean useCustomSerialization = Registry.is("gradle.tooling.custom.serializer", false);
+    boolean useCustomSerialization = Registry.is("gradle.tooling.custom.serializer", true);
     final ProjectImportAction projectImportAction =
       new ProjectImportAction(resolverCtx.isPreviewMode(), isGradleProjectDirSupported, isCompositeBuildsSupported, useCustomSerialization);
 
