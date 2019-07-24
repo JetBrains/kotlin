@@ -11,9 +11,10 @@ import com.intellij.lang.ASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.ElementManipulators
 import com.intellij.psi.LiteralTextEscaper
+import com.intellij.psi.PsiElementVisitor
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.ide.konan.*
+import org.jetbrains.kotlin.ide.konan.NativeDefinitionsLanguage
 
 class NativeDefinitionsElementType(debugName: String) : IElementType(debugName, NativeDefinitionsLanguage.INSTANCE)
 
@@ -40,6 +41,16 @@ class NativeDefinitionsCodeImpl(node: ASTNode) : ASTWrapperPsiElement(node), Nat
 
     override fun createLiteralTextEscaper(): LiteralTextEscaper<out PsiLanguageInjectionHost> {
         return CodeEscaper(this)
+    }
+
+    fun accept(visitor: NativeDefinitionsVisitor) {
+        visitor.visitCode(this)
+    }
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is NativeDefinitionsVisitor) accept(visitor) else super.accept(
+            visitor
+        )
     }
 
     override fun isValidHost(): Boolean = true
