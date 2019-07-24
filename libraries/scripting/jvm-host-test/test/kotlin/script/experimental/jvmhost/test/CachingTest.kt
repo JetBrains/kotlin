@@ -18,12 +18,10 @@ import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
+import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
 import kotlin.script.experimental.jvm.util.KotlinJars
-import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
-import kotlin.script.experimental.jvmhost.CompiledJvmScriptsCache
-import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
-import kotlin.script.experimental.jvmhost.JvmScriptCompiler
+import kotlin.script.experimental.jvmhost.*
 
 class CachingTest : TestCase() {
 
@@ -104,9 +102,10 @@ class CachingTest : TestCase() {
         val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
             jvm {
                 baseClassLoader.replaceOnlyDefault(null)
+                compilationCache(cache)
             }
         }
-        val compiler = JvmScriptCompiler(hostConfiguration, cache = cache)
+        val compiler = JvmScriptCompiler(hostConfiguration)
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 
