@@ -1,6 +1,6 @@
 apply plugin: 'kotlin'
 
-
+evaluationDependsOn(":mppModule")
 dependencies {
-    testCompile project(':mppModule')
+    testCompile project(':mppModule').kotlin.targets.jvm.compilations.test.output.allOutputs
 }
