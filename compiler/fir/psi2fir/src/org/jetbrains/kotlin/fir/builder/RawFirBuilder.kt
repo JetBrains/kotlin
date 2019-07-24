@@ -444,6 +444,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
             val typeParameters = firClass.typeParameters.map {
                 FirTypeParameterImpl(session, it.psi, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
                     this.bounds += it.bounds
+                    addDefaultBoundIfNecessary()
                 }
             }
             return FirResolvedTypeRefImpl(
@@ -455,6 +456,12 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     false
                 )
             )
+        }
+
+        private fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
+            if (bounds.isEmpty()) {
+                bounds += FirImplicitNullableAnyTypeRef(session, null)
+            }
         }
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
@@ -917,6 +924,7 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                     firTypeParameter.bounds += typeConstraint.boundTypeReference.toFirOrErrorType()
                 }
             }
+            firTypeParameter.addDefaultBoundIfNecessary()
             return firTypeParameter
         }
 
