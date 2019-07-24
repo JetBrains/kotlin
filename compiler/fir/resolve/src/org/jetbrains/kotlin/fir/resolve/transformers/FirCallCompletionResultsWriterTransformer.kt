@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.types.Variance
 
-class FirCallCompleterTransformer(
+class FirCallCompletionResultsWriterTransformer(
     val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator
