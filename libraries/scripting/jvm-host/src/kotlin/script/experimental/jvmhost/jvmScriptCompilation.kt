@@ -43,19 +43,24 @@ open class JvmScriptCompiler(
     override suspend operator fun invoke(
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<CompiledScript<*>> =
-        scriptCompilationConfiguration.with {
+    ): ResultWithDiagnostics<CompiledScript<*>> {
+
+        // TODO: implement caching deeper in the compilation pipeline - the actual configuration should be calculated first, with dependencies and imported scripts
+        // Note that previous implementation wasn't a solution for that and added problems with cache usage. Now it is consistent although shallow.
+
+        val cached = cache.get(script, scriptCompilationConfiguration)
+        if (cached != null) return cached.asSuccess()
+
+        return scriptCompilationConfiguration.with {
             hostConfiguration(this@JvmScriptCompiler.hostConfiguration)
         }.refineBeforeParsing(script).onSuccess { refinedConfiguration ->
-            val cached = cache.get(script, refinedConfiguration)
-
-            if (cached != null) return cached.asSuccess()
 
             compilerProxy.compile(script, refinedConfiguration).also {
                 if (it is ResultWithDiagnostics.Success) {
-                    cache.store(it.value, script, refinedConfiguration)
+                    cache.store(it.value, script, scriptCompilationConfiguration)
                 }
             }
         }
+    }
 }
 

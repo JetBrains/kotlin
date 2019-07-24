@@ -16,11 +16,14 @@ import java.nio.file.Files
 import java.security.MessageDigest
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
-import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
-import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
+import kotlin.script.experimental.host.with
+import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvmhost.*
-import kotlin.script.templates.standard.SimpleScriptTemplate
+import kotlin.script.experimental.jvm.util.KotlinJars
+import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
+import kotlin.script.experimental.jvmhost.CompiledJvmScriptsCache
+import kotlin.script.experimental.jvmhost.CompiledScriptJarsCache
+import kotlin.script.experimental.jvmhost.JvmScriptCompiler
 
 class CachingTest : TestCase() {
 
@@ -63,16 +66,53 @@ class CachingTest : TestCase() {
         }
     }
 
+    @Test
+    fun testJarCache() {
+        withTempDir("scriptingTestJarCache") { cacheDir ->
+            val cache = TestCompiledScriptJarsCache(cacheDir)
+            Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+
+            checkWithCache(cache, simpleScript, simpleScriptExpectedOutput)
+
+            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+
+            Assert.assertEquals(simpleScriptExpectedOutput, scriptOut)
+        }
+    }
+
+    @Test
+    fun testSimpleImportWithJarCache() {
+        withTempDir("scriptingTestJarCache") { cacheDir ->
+            val cache = TestCompiledScriptJarsCache(cacheDir)
+            Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
+
+            checkWithCache(cache, scriptWithImport, scriptWithImportExpectedOutput) { makeSimpleConfigurationWithTestImport() }
+
+            // cannot make it work in this form - it requires a dependency on the current test classes, but classes directory seems
+            // not work when specified in the manifest
+            // TODO: find a way to make it work
+//            val scriptOut = runScriptFromJar(cache.baseDir.listFiles()!!.first { it.extension == "jar" })
+//
+//            Assert.assertEquals(scriptWithImportExpectedOutput, scriptOut)
+        }
+    }
+
     private fun checkWithCache(
         cache: ScriptingCacheWithCounters, script: String, expectedOutput: List<String>,
         configurationBuilder: ScriptCompilationConfiguration.Builder.() -> Unit = {}
     ) {
-        val compiler = JvmScriptCompiler(defaultJvmScriptingHostConfiguration, cache = cache)
+        val hostConfiguration = defaultJvmScriptingHostConfiguration.with {
+            jvm {
+                baseClassLoader.replaceOnlyDefault(null)
+            }
+        }
+        val compiler = JvmScriptCompiler(hostConfiguration, cache = cache)
         val evaluator = BasicJvmScriptEvaluator()
         val host = BasicJvmScriptingHost(compiler = compiler, evaluator = evaluator)
 
-        val scriptCompilationConfiguration =
-            createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate>(body = configurationBuilder)
+        val scriptCompilationConfiguration = ScriptCompilationConfiguration(body = configurationBuilder).with {
+            updateClasspath(KotlinJars.kotlinScriptStandardJarsWithReflect)
+        }
 
         Assert.assertEquals(0, cache.storedScripts)
         var compiledScript: CompiledScript<*>? = null
@@ -95,11 +135,11 @@ class CachingTest : TestCase() {
         val compiledScriptClassRes = runBlocking { compiledScript!!.getClass(null) }
         val cachedScriptClassRes = runBlocking { cachedScript!!.getClass(null) }
 
-        val compiledScriptClass = compiledScriptClassRes.valueOrNull()
-        val cachedScriptClass = cachedScriptClassRes.valueOrNull()
+        val compiledScriptClass = compiledScriptClassRes.valueOrThrow()
+        val cachedScriptClass = cachedScriptClassRes.valueOrThrow()
 
-        Assert.assertEquals(compiledScriptClass!!.qualifiedName, cachedScriptClass!!.qualifiedName)
-        Assert.assertEquals(compiledScriptClass!!.supertypes, cachedScriptClass!!.supertypes)
+        Assert.assertEquals(compiledScriptClass.qualifiedName, cachedScriptClass.qualifiedName)
+        Assert.assertEquals(compiledScriptClass.supertypes, cachedScriptClass.supertypes)
 
         val output2 = captureOut {
             runBlocking {
@@ -108,7 +148,9 @@ class CachingTest : TestCase() {
         }.lines()
         Assert.assertEquals(output, output2)
 
-        val output3 = captureOut { evalScriptWithConfiguration(script, host, configurationBuilder).throwOnFailure() }.lines()
+        val output3 = captureOut {
+            host.eval(script.toScriptSource(), scriptCompilationConfiguration, null).throwOnFailure()
+        }.lines()
         Assert.assertEquals(2, cache.retrievedScripts)
         Assert.assertEquals(output, output3)
     }
@@ -165,6 +207,29 @@ private class FileBasedScriptCache(val baseDir: File) : ScriptingCacheWithCounte
             }
         }
         storedScripts++
+    }
+
+    override var storedScripts: Int = 0
+        private set
+
+    override var retrievedScripts: Int = 0
+        private set
+}
+
+class TestCompiledScriptJarsCache(val baseDir: File) : CompiledScriptJarsCache(
+    { script, scriptCompilationConfiguration ->
+        File(baseDir, uniqueScriptHash(script, scriptCompilationConfiguration) + ".jar")
+    }), ScriptingCacheWithCounters
+{
+    override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>? =
+        super.get(script, scriptCompilationConfiguration)?.also { retrievedScripts++ }
+
+    override fun store(
+        compiledScript: CompiledScript<*>,
+        script: SourceCode,
+        scriptCompilationConfiguration: ScriptCompilationConfiguration
+    ) {
+        super.store(compiledScript, script, scriptCompilationConfiguration).also { storedScripts++ }
     }
 
     override var storedScripts: Int = 0

@@ -81,6 +81,8 @@ private fun ScriptCompilationConfiguration.Builder.propertiesFromTemplate(
 private val KClass<*>.kotlinScriptAnnotation: KotlinScript
     get() = findAnnotation()
         ?: when (this@kotlinScriptAnnotation.qualifiedName) {
+            // Any is the default template, so use a default annotation
+            Any::class.qualifiedName,
             // transitions to the new scripting API: substituting annotations for standard templates from script-runtime
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.SimpleScriptTemplate",
             "$SCRIPT_RUNTIME_TEMPLATES_PACKAGE.ScriptTemplateWithArgs",
