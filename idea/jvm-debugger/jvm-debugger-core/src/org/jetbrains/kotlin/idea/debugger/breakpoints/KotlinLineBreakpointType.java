@@ -17,25 +17,32 @@
 package org.jetbrains.kotlin.idea.debugger.breakpoints;
 
 import com.intellij.debugger.SourcePosition;
+import com.intellij.debugger.engine.PositionManagerImpl;
+import com.intellij.debugger.impl.DebuggerUtilsEx;
 import com.intellij.debugger.ui.breakpoints.Breakpoint;
 import com.intellij.debugger.ui.breakpoints.BreakpointManager;
 import com.intellij.debugger.ui.breakpoints.JavaLineBreakpointType;
 import com.intellij.debugger.ui.breakpoints.LineBreakpoint;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
+import com.intellij.psi.PsiManager;
 import com.intellij.psi.util.PsiTreeUtil;
 import com.intellij.xdebugger.XSourcePosition;
 import com.intellij.xdebugger.breakpoints.XBreakpoint;
 import com.intellij.xdebugger.breakpoints.XLineBreakpoint;
+import com.intellij.xdebugger.impl.breakpoints.XLineBreakpointImpl;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaBreakpointProperties;
 import org.jetbrains.java.debugger.breakpoints.properties.JavaLineBreakpointProperties;
 import org.jetbrains.kotlin.idea.debugger.KotlinPositionManager;
 import org.jetbrains.kotlin.psi.KtClassInitializer;
+import org.jetbrains.kotlin.psi.KtElement;
 import org.jetbrains.kotlin.psi.KtFunction;
 
 import java.util.List;
@@ -148,5 +155,44 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType {
             }
         }
         return null;
+    }
+
+    @Nullable
+    private static SourcePosition createLineSourcePosition(@NotNull XLineBreakpointImpl breakpoint) {
+        VirtualFile file = breakpoint.getFile();
+        if (file != null) {
+            PsiFile psiFile = PsiManager.getInstance(breakpoint.getProject()).findFile(file);
+            if (psiFile != null) {
+                return SourcePosition.createFromLine(psiFile, breakpoint.getLine());
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    @Override
+    public XSourcePosition getSourcePosition(@NotNull XBreakpoint<JavaLineBreakpointProperties> breakpoint) {
+        JavaBreakpointProperties javaBreakpointProperties = breakpoint.getProperties();
+        if (javaBreakpointProperties != null) {
+            Integer ordinal = ((JavaLineBreakpointProperties)javaBreakpointProperties).getLambdaOrdinal();
+            SourcePosition sourcePosition = createLineSourcePosition((XLineBreakpointImpl)breakpoint);
+            if (sourcePosition != null) {
+                KtFunction function = getLambdaByOrdinal(sourcePosition, ordinal);
+                if (function != null) {
+                    KtElement bodyElement = function.getBodyExpression();
+                    if (bodyElement != null) {
+                        SourcePosition linePosition = SourcePosition.createFromElement(bodyElement);
+                        return ReadAction.compute(() -> {
+                            if (linePosition != null) {
+                                return DebuggerUtilsEx.toXSourcePosition(new PositionManagerImpl.JavaSourcePosition(linePosition, ordinal));
+                            }
+                            return null;
+                        });
+                    }
+                }
+            }
+        }
+
+        return super.getSourcePosition(breakpoint);
     }
 }
