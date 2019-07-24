@@ -1,2 +1,3 @@
-include 'javaModule'
 include 'mppModule'
+include 'javaModule'
+
