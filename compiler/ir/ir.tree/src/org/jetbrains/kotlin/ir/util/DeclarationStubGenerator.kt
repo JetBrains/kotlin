@@ -251,7 +251,11 @@ class DeclarationStubGenerator(
         }
         val origin = computeOrigin(descriptor)
         return symbolTable.declareTypeAlias(descriptor) {
-            IrLazyTypeAlias(UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, it, this, typeTranslator)
+            IrLazyTypeAlias(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin,
+                it, it.descriptor.name, it.descriptor.visibility, it.descriptor.isActual,
+                this, typeTranslator
+            )
         }
     }
 }

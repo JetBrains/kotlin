@@ -26,6 +26,7 @@ class IrTypeAliasImpl(
     override val name: Name,
     override val visibility: Visibility,
     override val expandedType: IrType,
+    override val isActual: Boolean,
     origin: IrDeclarationOrigin
 ) :
     IrDeclarationBase(startOffset, endOffset, origin),
@@ -65,6 +66,7 @@ class IrTypeAliasImpl(
                 symbol.descriptor.name,
                 symbol.descriptor.visibility,
                 expandedType,
+                symbol.descriptor.isActual,
                 origin
             )
     }

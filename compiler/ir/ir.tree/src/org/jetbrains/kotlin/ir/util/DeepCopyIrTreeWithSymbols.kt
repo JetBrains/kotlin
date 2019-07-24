@@ -341,6 +341,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRenamer.getTypeAliasName(declaration.symbol),
             declaration.visibility,
             declaration.expandedType.remapType(),
+            declaration.isActual,
             mapDeclarationOrigin(declaration.origin)
         ).apply {
             transformAnnotations(declaration)

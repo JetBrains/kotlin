@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.declarations.lazy
 
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.TypeAliasDescriptor
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -25,6 +24,9 @@ class IrLazyTypeAlias(
     endOffset: Int,
     origin: IrDeclarationOrigin,
     override val symbol: IrTypeAliasSymbol,
+    override val name: Name,
+    override val visibility: Visibility,
+    override val isActual: Boolean,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
 ) :
@@ -37,12 +39,6 @@ class IrLazyTypeAlias(
 
     override val descriptor: TypeAliasDescriptor
         get() = symbol.descriptor
-
-    override val name: Name
-        get() = descriptor.name
-
-    override val visibility: Visibility
-        get() = descriptor.visibility
 
     override val typeParameters: MutableList<IrTypeParameter> by lazy {
         descriptor.declaredTypeParameters.mapTo(arrayListOf()) {

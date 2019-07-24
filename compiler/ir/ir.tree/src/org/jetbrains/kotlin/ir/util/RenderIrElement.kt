@@ -498,8 +498,14 @@ class RenderIrElementVisitor : IrElementVisitor<String, Nothing?> {
     override fun visitTypeAlias(declaration: IrTypeAlias, data: Nothing?): String =
         declaration.run {
             "TYPEALIAS ${declaration.renderOriginIfNonTrivial()}" +
-                    "name:$name visibility:$visibility expandedType:${expandedType.render()}"
+                    "name:$name visibility:$visibility expandedType:${expandedType.render()}" +
+                    renderTypeAliasFlags()
         }
+
+    private fun IrTypeAlias.renderTypeAliasFlags(): String =
+        renderFlagsList(
+            "actual".takeIf { isActual }
+        )
 
     private fun IrLocalDelegatedProperty.renderLocalDelegatedPropertyFlags() =
         if (isVar) "var" else "val"

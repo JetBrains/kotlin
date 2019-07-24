@@ -16,5 +16,6 @@ interface IrTypeAlias :
     IrTypeParametersContainer {
 
     override val descriptor: TypeAliasDescriptor
+    val isActual: Boolean
     val expandedType: IrType
 }
