@@ -58,7 +58,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
                                  final int cacheSize,
                                  final boolean readOnly
   ) throws IOException {
-    super(storageFile, keyDescriptor, valueExternalizer, cacheSize, false, true, readOnly);
+    super(storageFile, keyDescriptor, valueExternalizer, cacheSize, false, true, readOnly, null);
     myBuildKeyHashToVirtualFileMapping = false;
   }
 
@@ -68,7 +68,7 @@ public final class VfsAwareMapIndexStorage<Key, Value> extends MapIndexStorage<K
                                  final int cacheSize,
                                  boolean keyIsUniqueForIndexedFile,
                                  boolean buildKeyHashToVirtualFileMapping) throws IOException {
-    super(storageFile, keyDescriptor, valueExternalizer, cacheSize, keyIsUniqueForIndexedFile, false, false);
+    super(storageFile, keyDescriptor, valueExternalizer, cacheSize, keyIsUniqueForIndexedFile, false, false, null);
     myBuildKeyHashToVirtualFileMapping = buildKeyHashToVirtualFileMapping;
     initMapAndCache();
   }
