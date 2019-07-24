@@ -183,8 +183,8 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
 
                 val declaration = DescriptorToSourceUtilsIde.getAnyDeclaration(file.project, descriptor)
                 if (descriptor.isFromJava) {
-                    (declaration as? PsiMethod)?.let {
-                        result.add(MethodSmartStepTarget(it, null, declaration, false, lines))
+                    if (declaration is PsiMethod) {
+                        result.add(MethodSmartStepTarget(declaration, null, expression, false, lines))
                     }
                 } else {
                     if (declaration == null && !isInvokeInBuiltinFunction(descriptor)) {
