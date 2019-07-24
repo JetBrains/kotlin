@@ -54,7 +54,7 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
         JKKtLiteralExpressionImpl(literal.replace("((?:\\\\)*)\\\\([0-3]?[0-7]{1,2})".toRegex()) { matchResult ->
             val leadingBackslashes = matchResult.groupValues[1]
             if (leadingBackslashes.length % 2 == 0)
-                kotlin.String.format("%s\\u%04x", leadingBackslashes, java.lang.Integer.parseInt(matchResult.groupValues[2], 8))
+                String.format("%s\\u%04x", leadingBackslashes, Integer.parseInt(matchResult.groupValues[2], 8))
             else matchResult.value
         }.replace("\\$([A-Za-z]+|\\{)".toRegex(), "\\\\$0"), JKLiteralExpression.LiteralType.STRING)
 
@@ -71,7 +71,7 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
     private fun JKLiteralExpression.toIntLiteral(): JKKtLiteralExpression =
         JKKtLiteralExpressionImpl(
             literal
-                .replace("l", "", ignoreCase = true)
+                .cleanIntAndLongLiterals()
                 .convertHexLiteral(isLongLiteral = false)
                 .convertOctalLiteral(),
             JKLiteralExpression.LiteralType.INT
@@ -81,7 +81,7 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
     private fun JKLiteralExpression.toLongLiteral(): JKKtLiteralExpression =
         JKKtLiteralExpressionImpl(
             literal
-                .replace("l", "", ignoreCase = true)
+                .cleanIntAndLongLiterals()
                 .convertHexLiteral(isLongLiteral = true)
                 .convertOctalLiteral() + "L",
             JKLiteralExpression.LiteralType.LONG
@@ -113,4 +113,10 @@ class LiteralConversion : RecursiveApplicableConversionBase() {
             .replace(".e", "e", ignoreCase = true)
             .replace(".f", "", ignoreCase = true)
             .replace("f", "", ignoreCase = true)
+            .replace("_", "")
+
+    private fun String.cleanIntAndLongLiterals() =
+        replace("l", "", ignoreCase = true)
+            .replace("_", "")
+
 }

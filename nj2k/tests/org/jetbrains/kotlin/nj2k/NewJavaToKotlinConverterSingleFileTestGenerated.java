@@ -3375,6 +3375,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         public void testTrueOrFalse() throws Exception {
             runTest("nj2k/testData/newJ2k/literalExpression/trueOrFalse.java");
         }
+
+        @TestMetadata("underscores.java")
+        public void testUnderscores() throws Exception {
+            runTest("nj2k/testData/newJ2k/literalExpression/underscores.java");
+        }
     }
 
     @TestMetadata("nj2k/testData/newJ2k/localVariable")
