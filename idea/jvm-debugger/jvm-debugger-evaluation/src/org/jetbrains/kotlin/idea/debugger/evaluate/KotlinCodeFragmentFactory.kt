@@ -30,31 +30,25 @@ import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.*
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.PsiTypesUtil
 import com.intellij.util.IncorrectOperationException
 import com.intellij.util.concurrency.Semaphore
 import com.sun.jdi.*
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.eval4j.jdi.asValue
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
-import org.jetbrains.kotlin.idea.debugger.getClassDescriptor
 import org.jetbrains.kotlin.idea.debugger.getContextElement
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.j2k.convertToKotlin
-import org.jetbrains.kotlin.idea.j2k.j2k
 import org.jetbrains.kotlin.idea.j2k.j2kText
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.j2k.AfterConversionPass
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 import java.util.concurrent.atomic.AtomicReference
 
 class KotlinCodeFragmentFactory : CodeFragmentFactory() {
@@ -110,25 +104,32 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
                     return@putCopyableUserData emptyFile
                 }
 
-                val frameDescriptor = getFrameInfo(contextElement, debuggerContext)
-                if (frameDescriptor == null) {
-                    LOG.warn(
-                        "Couldn't get info about 'this' and local variables for " +
-                                "${debuggerContext.sourcePosition?.file?.name}:${debuggerContext.sourcePosition?.line}"
-                    )
+                val frameInfo = getFrameInfo(contextElement, debuggerContext) ?: run {
+                    val position = "${debuggerContext.sourcePosition?.file?.name}:${debuggerContext.sourcePosition?.line}"
+                    LOG.warn("Couldn't get info about 'this' and local variables for $position")
                     return@putCopyableUserData emptyFile
                 }
 
-                val receiverTypeReference =
-                    frameDescriptor.thisObject?.let { createKotlinProperty(project, FAKE_JAVA_THIS_NAME, it.type().name(), it) }
-                        ?.typeReference
-                val receiverTypeText = receiverTypeReference?.let { "${it.text}." } ?: ""
+                val fakeFunctionText = buildString {
+                    append("fun ")
 
-                val kotlinVariablesText =
-                    frameDescriptor.visibleVariables.entries.associate { it.key.name() to it.value }.kotlinVariablesAsText(project)
+                    val thisType = frameInfo.thisObject?.asProperty()?.typeReference?.typeElement?.unwrapNullableType()
+                    if (thisType != null) {
+                        append(thisType.text).append('.')
+                    }
 
-                @Suppress("RemoveCurlyBracesFromTemplate")
-                val fakeFunctionText = "fun ${receiverTypeText}$FAKE_JAVA_CONTEXT_FUNCTION_NAME() {\n$kotlinVariablesText\n}"
+                    append(FAKE_JAVA_CONTEXT_FUNCTION_NAME).append("() {\n")
+
+                    for (variable in frameInfo.variables) {
+                        val text = variable.asProperty()?.text ?: continue
+                        append("    ").append(text).append("\n")
+                    }
+
+                    // There should be at least one declaration inside the function (or 'fakeContext' below won't work).
+                    append("    val _debug_context_val = 1\n")
+
+                    append("}")
+                }
 
                 val fakeFile = createFakeFileWithJavaContextElement(fakeFunctionText, contextElement)
                 val fakeFunction = fakeFile.declarations.firstOrNull() as? KtFunction
@@ -139,6 +140,10 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         }
 
         return codeFragment
+    }
+
+    private fun KtTypeElement.unwrapNullableType(): KtTypeElement {
+        return if (this is KtNullableType) innerType ?: this else this
     }
 
     private fun supplyDebugInformation(item: TextWithImports, codeFragment: KtCodeFragment, context: PsiElement?) {
@@ -170,19 +175,13 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val worker = object : DebuggerCommandImpl() {
             override fun action() {
                 try {
-                    val frame = if (ApplicationManager.getApplication().isUnitTestMode)
+                    val frame = if (ApplicationManager.getApplication().isUnitTestMode) {
                         contextElement?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.frameProxy?.stackFrame
-                    else
-                        debuggerContext.frameProxy?.stackFrame
-
-                    val visibleVariables = if (frame != null) {
-                        val values = frame.getValues(frame.visibleVariables())
-                        values.filterValues { it != null }
                     } else {
-                        emptyMap()
+                        debuggerContext.frameProxy?.stackFrame
                     }
 
-                    frameInfo = FrameInfo(frame?.thisObject(), visibleVariables)
+                    frameInfo = FrameInfo.from(debuggerContext.project, frame)
                 } catch (ignored: AbsentInformationException) {
                     // Debug info unavailable
                 } catch (ignored: InvalidStackFrameException) {
@@ -201,8 +200,6 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
 
         return frameInfo
     }
-
-    private class FrameInfo(val thisObject: Value?, val visibleVariables: Map<LocalVariable, Value>)
 
     private fun initImports(imports: String?): String? {
         if (imports != null && imports.isNotEmpty()) {
@@ -306,49 +303,6 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val EVALUATION_TYPE: Key<KotlinDebuggerEvaluator.EvaluationType> = Key.create("DEBUG_EVALUATION_TYPE")
 
         const val FAKE_JAVA_CONTEXT_FUNCTION_NAME = "_java_locals_debug_fun_"
-        const val FAKE_JAVA_THIS_NAME = "\$this\$_java_locals_debug_fun_"
-
-        private fun Map<String, Value>.kotlinVariablesAsText(project: Project): String {
-            val sb = StringBuilder()
-
-            val psiNameHelper = PsiNameHelper.getInstance(project)
-            for ((variableName, variableValue) in entries) {
-                if (!psiNameHelper.isIdentifier(variableName)) continue
-
-                val variableTypeName = variableValue.type()?.name() ?: continue
-
-                val kotlinProperty = createKotlinProperty(project, variableName, variableTypeName, variableValue) ?: continue
-
-                sb.append("${kotlinProperty.text}\n")
-            }
-
-            sb.append("val _debug_context_val = 1\n")
-
-            return sb.toString()
-        }
-
-        private fun createKotlinProperty(project: Project, variableName: String, variableTypeName: String, value: Value): KtProperty? {
-            val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(GlobalSearchScope.allScope(project))
-            if (actualClassDescriptor != null && actualClassDescriptor.defaultType.arguments.isEmpty()) {
-                val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(actualClassDescriptor.defaultType.makeNullable())
-                return KtPsiFactory(project).createProperty(variableName.quoteIfNeeded(), renderedType, false)
-            }
-
-            fun String.addArraySuffix() = if (value is ArrayReference) "$this[]" else this
-
-            val className = variableTypeName.replace("$", ".").substringBefore("[]")
-            val classType = PsiType.getTypeByName(className, project, GlobalSearchScope.allScope(project))
-            val type = (if (value !is PrimitiveValue && classType.resolve() == null)
-                CommonClassNames.JAVA_LANG_OBJECT
-            else
-                className).addArraySuffix()
-
-            val field = PsiElementFactory.SERVICE.getInstance(project)
-                .createField(variableName, PsiType.getTypeByName(type, project, GlobalSearchScope.allScope(project)))
-            val ktField = field.j2k() as? KtProperty
-            ktField?.modifierList?.delete()
-            return ktField
-        }
     }
 
     private fun createFakeFileWithJavaContextElement(funWithLocalVariables: String, javaContext: PsiElement): KtFile {
