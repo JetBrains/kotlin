@@ -1,0 +1,5 @@
+rootProject.name = 'mpp-jardep'
+
+include "java-project"
+include "library1"
+include "library2"

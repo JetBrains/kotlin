@@ -578,6 +578,125 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    /**
+     * Test case for issue https://youtrack.jetbrains.com/issue/KT-29757
+     */
+    @Test
+    fun testJavaTransitiveOnMPP() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("project") {}
+            module("project.jvm") {}
+            module("project.jvm.main") {
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+            }
+            module("project.jvm.test") {
+                moduleDependency("project.jvm.main", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp") {}
+            module("project.mpp.commonMain") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp.commonTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
+            }
+            module("project.mpp.jvmMain") {
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp.jvmTest") {
+                moduleDependency("project.mpp.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.commonTest", DependencyScope.TEST, true)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp.jvmMain", DependencyScope.TEST)
+            }
+
+            module("project.mpp-base") {}
+            module("project.mpp-base.commonMain") {}
+            module("project.mpp-base.commonTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+            }
+            module("project.mpp-base.jvmMain") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
+            }
+            module("project.mpp-base.jvmTest") {
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.jvmMain", DependencyScope.TEST)
+                moduleDependency("project.mpp-base.commonTest", DependencyScope.TEST, true)
+            }
+        }
+    }
+
+    /**
+     * Test case for issue https://youtrack.jetbrains.com/issue/KT-28822
+     */
+    @Test
+    fun testImportBeforeBuild() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("mpp-jardep") {}
+            module("mpp-jardep.java-project") {}
+            module("mpp-jardep.java-project.main") {
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.java-project.test") {
+                moduleDependency("mpp-jardep.java-project.main", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
+
+            }
+
+            module("mpp-jardep.library1") {}
+            module("mpp-jardep.library1.commonMain") {}
+            module("mpp-jardep.library1.commonTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+
+            }
+            module("mpp-jardep.library1.jvmMain") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.library1.jvmTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+            }
+
+            module("mpp-jardep.library2") {}
+            module("mpp-jardep.library2.commonMain") {}
+            module("mpp-jardep.library2.commonTest") {
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
+
+            }
+            module("mpp-jardep.library2.jvmMain") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("mpp-jardep.library2.jvmTest") {
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.TEST)
+                moduleDependency("mpp-jardep.library2.commonTest", DependencyScope.TEST, true)
+                moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.TEST)
+            }
+        }
+    }
+
+
     @Test
     fun testProductionOnTestFlag() {
         configureByFiles()

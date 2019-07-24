@@ -159,12 +159,15 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                         }
                     }
                     // create 'fake' dependency artifact files and put them into dependency substitution map
-                    mppArtifacts.forEach { (k, v) ->
-                        artifactToDependency[k]?.forEach { externalDependency ->
-                            for ((index, module) in v.withIndex()) {
-                                val fakeArtifact = "$k-MPP-$index"
-                                configArtifacts[fakeArtifact] = module
-                                externalDependency.addDependencyArtifactInternal(File(fakeArtifact))
+                    mppArtifacts.forEach { (filePath, moduleIds) ->
+                        moduleIds.firstOrNull()?.also { configArtifacts[filePath] = it }
+                        artifactToDependency[filePath]?.forEach { externalDependency ->
+                            for ((index, module) in moduleIds.withIndex()) {
+                                if (index != 0) {
+                                    val fakeArtifact = "$filePath-MPP-$index"
+                                    configArtifacts[fakeArtifact] = module
+                                    externalDependency.addDependencyArtifactInternal(File(fakeArtifact))
+                                }
                             }
                         }
                     }
@@ -235,7 +238,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             mppModel.targets.filter { it.jar != null && it.jar!!.archiveFile != null }.forEach { target ->
                 val path = toCanonicalPath(target.jar!!.archiveFile!!.absolutePath)
                 val currentModules = userData[path] ?: ArrayList<String>().apply { userData[path] = this }
-                //TODO possibly add support of test modules
+                // Test modules should not be added. Otherwise we could get dependnecy of java.mail on jvmTest
                 val allSourceSets = target.compilations.filter { !it.isTestModule }.flatMap { it.sourceSets }.toSet()
                 val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.toSet()
                 allSourceSets.filter { !availableViaDependsOn.contains(it.name) }.forEach { sourceSet ->
