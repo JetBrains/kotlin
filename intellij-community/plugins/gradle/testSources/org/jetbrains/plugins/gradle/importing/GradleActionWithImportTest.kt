@@ -9,6 +9,7 @@ import org.gradle.tooling.BuildController
 import org.gradle.tooling.GradleConnectionException
 import org.gradle.tooling.model.idea.IdeaModule
 import org.gradle.tooling.model.idea.IdeaProject
+import org.jetbrains.plugins.gradle.GradleManager
 import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
@@ -22,9 +23,9 @@ import java.util.concurrent.TimeUnit
 
 class GradleActionWithImportTest: GradleImportingTestCase() {
 
-
   override fun setUp() {
     super.setUp()
+    GradleManager.clearPreloadedExtensions()
     val point = Extensions.getRootArea().getExtensionPoint(GradleProjectResolverExtension.EP_NAME)
     point.registerExtension(TestProjectResolverExtension(), testRootDisposable)
   }

@@ -42,8 +42,7 @@ import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.util.AtomicNotNullLazyValue;
-import com.intellij.openapi.util.NotNullLazyValue;
+import com.intellij.openapi.util.AtomicClearableLazyValue;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.text.StringUtil;
@@ -59,6 +58,7 @@ import com.intellij.util.messages.MessageBusConnection;
 import icons.GradleIcons;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter;
 import org.jetbrains.plugins.gradle.model.data.BuildParticipant;
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData;
@@ -94,8 +94,8 @@ public final class GradleManager
   @NotNull private final ExternalSystemAutoImportAware myAutoImportDelegate =
     new CachingExternalSystemAutoImportAware(new GradleAutoImportAware());
 
-  @NotNull private static final NotNullLazyValue<List<GradleProjectResolverExtension>> RESOLVER_EXTENSIONS =
-    new AtomicNotNullLazyValue<List<GradleProjectResolverExtension>>() {
+  @NotNull private static final AtomicClearableLazyValue<List<GradleProjectResolverExtension>> RESOLVER_EXTENSIONS =
+    new AtomicClearableLazyValue<List<GradleProjectResolverExtension>>() {
       @NotNull
       @Override
       protected List<GradleProjectResolverExtension> compute() {
@@ -518,5 +518,10 @@ public final class GradleManager
         s.setExternalProjectPath(newPath);
       }
     }
+  }
+
+  @TestOnly
+  public static void clearPreloadedExtensions() {
+    RESOLVER_EXTENSIONS.drop();
   }
 }
