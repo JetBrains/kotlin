@@ -22,6 +22,7 @@ import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -82,7 +83,8 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
                                                       @NotNull String keyPrefix,
                                                       @NotNull Map<String, Object> modelsById,
                                                       @NotNull ToolingSerializer serializer) {
-    for (Map.Entry<String, Object> entry : modelsById.entrySet()) {
+    for (Iterator<Map.Entry<String, Object>> iterator = modelsById.entrySet().iterator(); iterator.hasNext(); ) {
+      Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
       if (key.startsWith(keyPrefix)) {
         try {
@@ -91,17 +93,17 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
             modelsById.put(key, deserializedData);
           }
           else {
-            modelsById.remove(key);
+            iterator.remove();
           }
         }
         catch (IllegalArgumentException ignore) {
           // related serialization service was not found
-          modelsById.remove(key);
+          iterator.remove();
         }
         catch (IOException e) {
           //noinspection UseOfSystemOutOrSystemErr
           System.err.println(e.getMessage());
-          modelsById.remove(key);
+          iterator.remove();
         }
       }
     }
