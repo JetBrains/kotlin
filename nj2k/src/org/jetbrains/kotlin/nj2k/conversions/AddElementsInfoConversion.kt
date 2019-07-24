@@ -36,14 +36,14 @@ class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : R
         val psiMethod = function.psi<PsiMethod>() ?: return
         val descriptor = psiMethod.getJavaMethodDescriptor() ?: return
         val superDescriptorsInfo =
-            descriptor.overriddenDescriptors.map { superDescriptor ->
-                val psi = superDescriptor.findPsi() ?: return@map ExternalSuperFunctionInfo(descriptor)
-                when (val symbol = context.symbolProvider.symbolsByPsi[psi]) {
+            descriptor.overriddenDescriptors.mapNotNull { superDescriptor ->
+                val superPsi = superDescriptor.original.findPsi()
+                when (val symbol = context.symbolProvider.symbolsByPsi[superPsi]) {
                     is JKUniverseMethodSymbol ->
                         InternalSuperFunctionInfo(
                             context.elementsInfoStorage.getOrCreateInfoForElement(symbol.target)
                         )
-                    else -> ExternalSuperFunctionInfo(descriptor)
+                    else -> ExternalSuperFunctionInfo(superDescriptor)
                 }
             }
         context.elementsInfoStorage.addEntry(function, FunctionInfo(descriptor, superDescriptorsInfo))

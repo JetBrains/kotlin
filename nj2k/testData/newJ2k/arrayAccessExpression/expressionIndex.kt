@@ -1,1 +1,1 @@
-myArray[myLibrary.calculateIndex(100)]
+myArray.get(myLibrary.calculateIndex(100))

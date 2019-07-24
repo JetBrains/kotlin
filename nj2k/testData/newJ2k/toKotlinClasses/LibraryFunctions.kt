@@ -3,7 +3,7 @@ package demo
 import java.util.ArrayList
 
 class TestJava {
-    fun f(result: Function1<String, Unit?>) {
+    fun f(result: Function1<String, Unit>) {
         result.invoke("a")
     }
 
