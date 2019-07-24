@@ -5,10 +5,20 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
+import com.intellij.openapi.util.text.StringUtil.compareVersionNumbers
 import org.jetbrains.kotlin.config.LanguageFeature
 
 object CliArgumentStringBuilder {
-    private const val languagePrefix = "-XXLanguage:"
+    private const val LANGUAGE_FEATURE_FLAG_PREFIX = "-XXLanguage:"
+    private const val LANGUAGE_FEATURE_DEDICATED_FLAG_PREFIX = "-X"
+
+    private val versionRegex = Regex("""^(\d+)\.(\d+)\.(\d+)""")
+
+    private val LanguageFeature.dedicatedFlagInfo
+        get() = when (this) {
+            LanguageFeature.InlineClasses -> Pair("inline-classes", KotlinVersion(1, 3, 50))
+            else -> null
+        }
 
     private val LanguageFeature.State.sign: String
         get() = when (this) {
@@ -18,24 +28,50 @@ object CliArgumentStringBuilder {
             LanguageFeature.State.ENABLED_WITH_ERROR -> "-" // not supported normally
         }
 
-    fun LanguageFeature.buildArgumentString(state: LanguageFeature.State): String {
-        return "$languagePrefix${state.sign}$name"
+    private fun LanguageFeature.getFeatureMentionInCompilerArgsRegex(): Regex {
+        val basePattern = "$LANGUAGE_FEATURE_FLAG_PREFIX(?:-|\\+)$name"
+        val fullPattern =
+            if (dedicatedFlagInfo != null) "(?:$basePattern)|$LANGUAGE_FEATURE_DEDICATED_FLAG_PREFIX${dedicatedFlagInfo!!.first}" else basePattern
+
+        return Regex(fullPattern)
+    }
+
+    fun LanguageFeature.buildArgumentString(state: LanguageFeature.State, kotlinVersion: String?): String {
+        val shouldBeFeatureEnabled = state == LanguageFeature.State.ENABLED || state == LanguageFeature.State.ENABLED_WITH_WARNING
+        val dedicatedFlag = dedicatedFlagInfo?.run {
+            val (xFlag, xFlagSinceVersion) = this
+
+            // TODO: replace to returning xFlag in 1.4 (behaviour for fallback)
+            if (kotlinVersion == null) return@run null
+
+            val isAtLeastSpecifiedVersion = versionRegex.find(kotlinVersion)?.destructured?.let { (major, minor, patch) ->
+                KotlinVersion(major.toInt(), minor.toInt(), patch.toInt()) >= xFlagSinceVersion
+            } == true
+            if (isAtLeastSpecifiedVersion) xFlag else null
+        }
+
+        return if (shouldBeFeatureEnabled && dedicatedFlag != null) {
+            LANGUAGE_FEATURE_DEDICATED_FLAG_PREFIX + dedicatedFlag
+        } else {
+            "$LANGUAGE_FEATURE_FLAG_PREFIX${state.sign}$name"
+        }
     }
 
     fun String.replaceLanguageFeature(
         feature: LanguageFeature,
         state: LanguageFeature.State,
+        kotlinVersion: String?,
         prefix: String = "",
         postfix: String = "",
         separator: String = ", ",
         quoted: Boolean = true
     ): String {
-        val existingFeatureIndex = indexOf(feature.name)
-        val languagePrefixIndex = lastIndexOf(languagePrefix, existingFeatureIndex)
-        val featureArgumentString = feature.buildArgumentString(state)
         val quote = if (quoted) "\"" else ""
-        return if (languagePrefixIndex != -1) {
-            replaceRange(languagePrefixIndex, existingFeatureIndex + feature.name.length, featureArgumentString)
+        val featureArgumentString = feature.buildArgumentString(state, kotlinVersion)
+        val existingFeatureMatchResult = feature.getFeatureMentionInCompilerArgsRegex().find(this)
+
+        return if (existingFeatureMatchResult != null) {
+            replace(existingFeatureMatchResult.value, featureArgumentString)
         } else {
             val splitText = if (postfix.isNotEmpty()) split(postfix) else listOf(this, "")
             if (splitText.size != 2) {

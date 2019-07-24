@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.KotlinFacetSettingsProvider
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.idea.facet.getCleanRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.getRuntimeLibraryVersion
 import org.jetbrains.kotlin.idea.facet.toApiVersion
 import org.jetbrains.kotlin.idea.framework.ui.CreateLibraryDialogWithModules
@@ -368,7 +369,13 @@ abstract class KotlinWithLibraryConfigurator protected constructor() : KotlinPro
             facetSettings.apiLevel = feature.sinceVersion
             facetSettings.languageLevel = feature.sinceVersion
             facetSettings.compilerSettings?.apply {
-                additionalArguments = additionalArguments.replaceLanguageFeature(feature, state, separator = " ", quoted = false)
+                additionalArguments = additionalArguments.replaceLanguageFeature(
+                    feature,
+                    state,
+                    getCleanRuntimeLibraryVersion(module),
+                    separator = " ",
+                    quoted = false
+                )
             }
         }
     }
