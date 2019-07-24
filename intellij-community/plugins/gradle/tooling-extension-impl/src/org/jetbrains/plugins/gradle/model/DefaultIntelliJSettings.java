@@ -3,7 +3,7 @@ package org.jetbrains.plugins.gradle.model;
 
 import com.intellij.serialization.PropertyMapping;
 
-public final class DefaultIntelliJSettings implements IntelliJSettings {
+public final class DefaultIntelliJSettings implements IntelliJSettings, IntelliJProjectSettings {
   private static final long serialVersionUID = 1L;
 
   private final String settings;
