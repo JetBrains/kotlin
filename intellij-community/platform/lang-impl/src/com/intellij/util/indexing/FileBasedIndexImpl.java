@@ -1548,6 +1548,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     VirtualFile file = content.getVirtualFile();
     final int fileId = Math.abs(getIdMaskingNonIdBasedFile(file));
 
+    boolean setIndexedStatus = true;
     try {
       // if file was scheduled for update due to vfs events then it is present in myFilesToUpdate
       // in this case we consider that current indexing (out of roots backed CacheUpdater) will cover its content
@@ -1561,7 +1562,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         }
       }
       else {
-        doIndexFileContent(project, content);
+        setIndexedStatus = doIndexFileContent(project, content);
       }
     }
     finally {
@@ -1569,11 +1570,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     }
 
     myChangedFilesCollector.removeFileIdFromFilesScheduledForUpdate(fileId);
-    if (file instanceof VirtualFileSystemEntry) ((VirtualFileSystemEntry)file).setFileIndexed(true);
+    if (file instanceof VirtualFileSystemEntry && setIndexedStatus) ((VirtualFileSystemEntry)file).setFileIndexed(true);
   }
 
-  private void doIndexFileContent(@Nullable Project project, @NotNull final com.intellij.ide.caches.FileContent content) {
+  private boolean doIndexFileContent(@Nullable Project project, @NotNull final com.intellij.ide.caches.FileContent content) {
     final VirtualFile file = content.getVirtualFile();
+    Ref<Boolean> setIndexedStatus = Ref.create(Boolean.TRUE);
     myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
       final FileType fileType = file.getFileType();
       final Project finalProject = project == null ? ProjectUtil.guessProjectForFile(file) : project;
@@ -1615,7 +1617,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
           try {
             ProgressManager.checkCanceled();
-            updateSingleIndex(indexId, file, inputId, fc);
+            if (!updateSingleIndex(indexId, file, inputId, fc)) {
+              setIndexedStatus.set(Boolean.FALSE);
+            }
             currentIndexedStates.remove(indexId);
           }
           catch (ProcessCanceledException e) {
@@ -1632,10 +1636,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       for(ID<?, ?> indexId:currentIndexedStates) {
         if(!getIndex(indexId).isIndexedStateForFile(inputId, file)) {
           ProgressManager.checkCanceled();
-          updateSingleIndex(indexId, file, inputId, null);
+          if (!updateSingleIndex(indexId, file, inputId, null)) {
+            setIndexedStatus.set(Boolean.FALSE);
+          }
         }
       }
     });
+    return setIndexedStatus.get();
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
@@ -1667,10 +1674,10 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     fc.putUserData(IndexingDataKeys.PROJECT, project);
   }
 
-  private void updateSingleIndex(@NotNull ID<?, ?> indexId, VirtualFile file, final int inputId, @Nullable FileContent currentFC) {
+  private boolean updateSingleIndex(@NotNull ID<?, ?> indexId, VirtualFile file, final int inputId, @Nullable FileContent currentFC) {
     if (!myExtensionsRelatedDataWasLoaded) reportUnexpectedAsyncInitState();
     if (!RebuildStatus.isOk(indexId) && !myIsUnitTestMode) {
-      return; // the index is scheduled for rebuild, no need to update
+      return false; // the index is scheduled for rebuild, no need to update
     }
     myLocalModCount.incrementAndGet();
 
@@ -1694,13 +1701,14 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
       if (causeToRebuildIndex != null && (updateCalculated || causeToRebuildIndex instanceof IOException)) {
         requestRebuild(indexId, exception);
-        return;
+        return false;
       }
       throw exception;
     }
     finally {
       ourIndexedFile.remove();
     }
+    return true;
   }
 
   @Override
