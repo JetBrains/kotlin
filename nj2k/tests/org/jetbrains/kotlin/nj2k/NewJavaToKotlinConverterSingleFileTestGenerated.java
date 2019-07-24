@@ -3296,6 +3296,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/literalExpression"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("binary.java")
+        public void testBinary() throws Exception {
+            runTest("nj2k/testData/newJ2k/literalExpression/binary.java");
+        }
+
         @TestMetadata("char.java")
         public void testChar() throws Exception {
             runTest("nj2k/testData/newJ2k/literalExpression/char.java");
