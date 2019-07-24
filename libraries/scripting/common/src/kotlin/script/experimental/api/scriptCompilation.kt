@@ -130,17 +130,17 @@ val ScriptCompilationConfigurationKeys.compilerOptions by PropertiesCollection.k
 /**
  * The callback that will be called on the script compilation before parsing the script
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation after parsing script file annotations
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>()
+val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>()
+val ScriptCompilationConfigurationKeys.refineConfigurationBeforeCompiling by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The list of script fragments that should be compiled intead of the whole text
@@ -151,7 +151,7 @@ val ScriptCompilationConfigurationKeys.sourceFragments by PropertiesCollection.k
 /**
  * Scripting host configuration
  */
-val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
+val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
 
 /**
  * The sub-builder DSL for configuring refinement callbacks

@@ -32,9 +32,12 @@ open class Jsr223CompilationConfigurationBuilder : PropertiesCollection.Builder(
 
 val ScriptCompilationConfigurationKeys.jsr223 get() = Jsr223CompilationConfigurationBuilder()
 
-val Jsr223CompilationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?> {
-    get(ScriptCompilationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
-}
+val Jsr223CompilationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?>(
+    {
+        get(ScriptCompilationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
+    },
+    isTransient = true
+)
 
 val Jsr223CompilationConfigurationKeys.importAllBindings by PropertiesCollection.key<Boolean>(false)
 
@@ -47,8 +50,11 @@ open class Jsr223EvaluationConfigurationBuilder : PropertiesCollection.Builder()
 
 val ScriptEvaluationConfigurationKeys.jsr223 get() = Jsr223EvaluationConfigurationBuilder()
 
-val Jsr223EvaluationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?> {
-    get(ScriptEvaluationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
-}
+val Jsr223EvaluationConfigurationKeys.getScriptContext by PropertiesCollection.key<() -> ScriptContext?>(
+    {
+        get(ScriptEvaluationConfiguration.hostConfiguration)?.get(ScriptingHostConfiguration.jsr223.getScriptContext)
+    },
+    isTransient = true
+)
 
 

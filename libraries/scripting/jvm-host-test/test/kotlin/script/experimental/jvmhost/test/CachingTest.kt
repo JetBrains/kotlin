@@ -128,7 +128,7 @@ class CachingTest : TestCase() {
         Assert.assertEquals(1, cache.storedScripts)
         Assert.assertEquals(0, cache.retrievedScripts)
 
-        val cachedScript = cache.get(script.toScriptSource(), scriptCompilationConfiguration)
+        val cachedScript = cache.get(script.toScriptSource(), compiledScript!!.compilationConfiguration)
         Assert.assertNotNull(cachedScript)
         Assert.assertEquals(1, cache.retrievedScripts)
 
@@ -164,7 +164,7 @@ private interface ScriptingCacheWithCounters : CompiledJvmScriptsCache {
 
 private class SimpleMemoryScriptsCache : ScriptingCacheWithCounters {
 
-    internal val data = hashMapOf<Pair<SourceCode, ScriptCompilationConfiguration>, CompiledScript<*>>()
+    internal val data = hashMapOf<Pair<SourceCode, Map<*, *>>, CompiledScript<*>>()
 
     private var _storedScripts = 0
     private var _retrievedScripts = 0
@@ -176,14 +176,14 @@ private class SimpleMemoryScriptsCache : ScriptingCacheWithCounters {
         get() = _retrievedScripts
 
     override fun get(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): CompiledScript<*>? =
-        data[script to scriptCompilationConfiguration]?.also { _retrievedScripts++ }
+        data[script to scriptCompilationConfiguration.notTransientData]?.also { _retrievedScripts++ }
 
     override fun store(
         compiledScript: CompiledScript<*>,
         script: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration
     ) {
-        data[script to scriptCompilationConfiguration] = compiledScript
+        data[script to scriptCompilationConfiguration.notTransientData] = compiledScript
         _storedScripts++
     }
 }
@@ -242,10 +242,12 @@ class TestCompiledScriptJarsCache(val baseDir: File) : CompiledScriptJarsCache(
 internal fun uniqueScriptHash(script: SourceCode, scriptCompilationConfiguration: ScriptCompilationConfiguration): String {
     val digestWrapper = MessageDigest.getInstance("MD5")
     digestWrapper.update(script.text.toByteArray())
-    scriptCompilationConfiguration.entries().sortedBy { it.key.name }.forEach {
-        digestWrapper.update(it.key.name.toByteArray())
-        digestWrapper.update(it.value.toString().toByteArray())
-    }
+    scriptCompilationConfiguration.notTransientData.entries
+        .sortedBy { it.key.name }
+        .forEach {
+            digestWrapper.update(it.key.name.toByteArray())
+            digestWrapper.update(it.value.toString().toByteArray())
+        }
     return digestWrapper.digest().toHexString()
 }
 

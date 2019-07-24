@@ -50,7 +50,7 @@ val ScriptingHostConfigurationKeys.configurationDependencies by PropertiesCollec
 /**
  * The pointer to the generic "class loader" for the types used in the script configurations
  */
-val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key<GetScriptingClass>()
+val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key<GetScriptingClass>(isTransient = true)
 
 /**
  * The interface to the generic "class loader" for the types used in the script configurations

@@ -9,7 +9,8 @@ import java.io.File
 import java.io.Serializable
 import java.net.URLClassLoader
 import kotlin.reflect.KClass
-import kotlin.script.experimental.api.*
+import kotlin.script.experimental.api.KotlinType
+import kotlin.script.experimental.api.ScriptDependency
 import kotlin.script.experimental.host.*
 import kotlin.script.experimental.jvm.impl.toClassPathOrEmpty
 import kotlin.script.experimental.util.PropertiesCollection
@@ -26,11 +27,14 @@ val JvmScriptingHostConfigurationKeys.javaHome by PropertiesCollection.key<File>
 
 val JvmScriptingHostConfigurationKeys.jdkHome by PropertiesCollection.key<File>()
 
-val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader> {
-    get(ScriptingHostConfiguration.configurationDependencies)?.let {
-        URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray())
-    }
-}
+val JvmScriptingHostConfigurationKeys.baseClassLoader by PropertiesCollection.key<ClassLoader>(
+    {
+        get(ScriptingHostConfiguration.configurationDependencies)?.let {
+            URLClassLoader(it.toClassPathOrEmpty().map { f -> f.toURI().toURL() }.toTypedArray())
+        }
+    },
+    isTransient = true
+)
 
 @Suppress("unused")
 val ScriptingHostConfigurationKeys.jvm
