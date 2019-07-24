@@ -12,26 +12,22 @@ val jarBaseName = property("archivesBaseName") as String
 
 val proguardLibraryJars by configurations.creating
 
-val projectsDependencies = listOf(
-    ":kotlin-scripting-common",
-    ":kotlin-scripting-jvm",
-    ":kotlin-scripting-jvm-host",
-    ":kotlin-script-util",
-    ":kotlin-script-runtime"
-)
-
 dependencies {
-    projectsDependencies.forEach {
-        compileOnly(project(it))
-        embedded(project(it)) { isTransitive = false }
-        testCompile(project(it))
-    }
     compileOnly("org.apache.ivy:ivy:2.4.0")
     compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":kotlin-scripting-jvm-host"))
+    compileOnly(project(":kotlin-script-util"))
+    testCompile(project(":kotlin-scripting-jvm-host"))
+    testCompile(project(":kotlin-script-util"))
     runtime(project(":kotlin-compiler-embeddable"))
     runtime(project(":kotlin-scripting-compiler-embeddable"))
     runtime(project(":kotlin-scripting-jvm-host-embeddable"))
     runtime(project(":kotlin-reflect"))
+    embedded(project(":kotlin-scripting-common")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jvm")) { isTransitive = false }
+    embedded(project(":kotlin-scripting-jvm-host")) { isTransitive = false }
+    embedded(project(":kotlin-script-util")) { isTransitive = false }
+    embedded(project(":kotlin-script-runtime")) { isTransitive = false }
     embedded("org.apache.ivy:ivy:2.4.0")
     embedded(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     proguardLibraryJars(files(firstFromJavaHomeThatExists("jre/lib/rt.jar", "../Classes/classes.jar"),
