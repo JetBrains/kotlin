@@ -55,7 +55,7 @@ open class JBProtocolNavigateCommand : JBProtocolCommand(NAVIGATE_COMMAND) {
       return
     }
 
-    val recentProjectManager = RecentProjectsManagerBase.getInstanceEx()
+    val recentProjectManager = RecentProjectsManagerBase.instanceEx
     val recentProjectsActions = recentProjectManager.getRecentProjectsActions(false)
     for (recentProjectAction in recentProjectsActions) {
       if (recentProjectAction !is ReopenProjectAction || recentProjectAction.projectName != projectName) {
