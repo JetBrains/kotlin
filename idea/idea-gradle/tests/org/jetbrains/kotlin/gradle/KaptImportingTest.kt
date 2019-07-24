@@ -30,6 +30,11 @@ class KaptImportingTest : MultiplePluginVersionGradleImportingTestCase() {
 
     @Test
     fun testModulePerSourceSet() {
+        // Disable testing import module per source set test in Android Studio as this mode is not supported in Android Studio
+        if (isAndroidStudio()) {
+            return
+        }
+
         configureByFiles()
         importProject(true)
 

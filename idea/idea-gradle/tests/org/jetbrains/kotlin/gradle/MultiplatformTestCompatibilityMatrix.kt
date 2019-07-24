@@ -13,3 +13,5 @@ fun MultiplatformProjectImportingTest.shouldRunTest(kotlinPluginVersion: String,
 fun NewMultiplatformProjectImportingTest.shouldRunTest(kotlinPluginVersion: String, gradleVersion: String): Boolean {
     return !gradleVersion.startsWith("3.")
 }
+
+fun KaptImportingTest.isAndroidStudio() = false
