@@ -124,7 +124,7 @@ public class CodeFormatterFacade {
       }
 
       //final SmartPsiElementPointer pointer = SmartPointerManager.getInstance(psiElement.getProject()).createSmartPsiElementPointer(psiElement);
-      final FormattingModel model = CoreFormatterUtil.buildModel(builder, elementToFormat, mySettings, FormattingMode.REFORMAT);
+      final FormattingModel model = CoreFormatterUtil.buildModel(builder, elementToFormat, range, mySettings, FormattingMode.REFORMAT);
       if (file.getTextLength() > 0) {
         try {
           FormatterEx.getInstanceEx().format(
@@ -226,7 +226,9 @@ public class CodeFormatterFacade {
             return;
           }
 
-          final FormattingModel originalModel = CoreFormatterUtil.buildModel(builder, file, mySettings, FormattingMode.REFORMAT);
+          TextRange formattingModelRange = uniteFormatRanges(textRanges, file.getTextRange());
+
+          final FormattingModel originalModel = CoreFormatterUtil.buildModel(builder, file, formattingModelRange, mySettings, FormattingMode.REFORMAT);
           final FormattingModel model = new DocumentBasedFormattingModel(originalModel,
                                                                          document,
                                                                          project, mySettings, file.getFileType(), file);
@@ -250,6 +252,21 @@ public class CodeFormatterFacade {
         }
       }
     }
+  }
+
+  @NotNull
+  private static TextRange uniteFormatRanges(@NotNull Iterable<FormatTextRange> ranges, @NotNull TextRange defaultRange) {
+    TextRange resultRange = null;
+    for (FormatTextRange formatRange : ranges) {
+      TextRange textRange = formatRange.getTextRange();
+      if (resultRange == null) {
+        resultRange = textRange;
+      }
+      else {
+        resultRange = resultRange.union(textRange);
+      }
+    }
+    return resultRange != null ? resultRange : defaultRange;
   }
 
   private TextRange preprocess(@NotNull final ASTNode node, @NotNull TextRange range) {
