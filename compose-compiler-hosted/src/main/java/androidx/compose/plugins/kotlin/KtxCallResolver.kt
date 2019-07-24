@@ -78,6 +78,8 @@ import org.jetbrains.kotlin.psi.ValueArgumentName
 import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
 import androidx.compose.plugins.kotlin.analysis.ComposeErrors
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices.STABLE_TYPE
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -140,6 +142,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingFacade
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.isError
+import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.equalTypesOrNulls
 import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
@@ -147,9 +150,11 @@ import org.jetbrains.kotlin.types.typeUtil.isNothingOrNullableNothing
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.types.typeUtil.isUnit
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
+import java.util.Locale
 import java.util.concurrent.atomic.AtomicBoolean
 
 /**
@@ -773,8 +778,16 @@ class KtxCallResolver(
                     constantChecker
                 )
 
+                val stable = isStable(
+                    node.type,
+                    context
+                )
+
                 // update all of the nodes in the AST as "static"
-                attributeNodes[node.name]?.forEach { it.isStatic = static }
+                attributeNodes[node.name]?.forEach {
+                    it.isStatic = static
+                    it.isStable = stable
+                }
 
                 // return a node for the root of the AST that codegen can use
                 AttributeNode(
@@ -782,7 +795,8 @@ class KtxCallResolver(
                     descriptor = node.descriptor,
                     expression = node.expression,
                     type = node.type,
-                    isStatic = static
+                    isStatic = static,
+                    isStable = stable
                 )
             }
 
@@ -1097,23 +1111,26 @@ class KtxCallResolver(
             ExplicitReceiverKind.DISPATCH_RECEIVER -> {
                 val receiver = resolvedCall.dispatchReceiver as? ExpressionReceiver
                     ?: return emptyList()
+                val (validationCall, uncheckedValidationCall, _) = resolveValidationCall(
+                    kind = kind,
+                    validationType = ValidationType.CHANGED,
+                    attrType = receiver.type,
+                    expressionToReportErrorsOn = receiver.expression,
+                    receiverScope = receiverScope,
+                    assignmentReceiverScope = null,
+                    context = context
+                )
                 return listOf(
                     ValidatedAssignment(
                         validationType = ValidationType.CHANGED,
-                        validationCall = resolveValidationCall(
-                            kind = kind,
-                            validationType = ValidationType.CHANGED,
-                            attrType = receiver.type,
-                            expressionToReportErrorsOn = receiver.expression,
-                            receiverScope = receiverScope,
-                            assignmentReceiverScope = null,
-                            context = context
-                        ).first,
+                        validationCall = validationCall,
+                        uncheckedValidationCall = uncheckedValidationCall,
                         assignment = null,
                         assignmentLambda = null,
                         attribute = AttributeNode(
                             name = TAG_KEY,
                             isStatic = false,
+                            isStable = false,
                             type = receiver.type,
                             expression = receiver.expression,
                             descriptor = descriptor
@@ -1620,25 +1637,29 @@ class KtxCallResolver(
             } else emptyList()
 
             val allValidations = if (!shouldMemoizeCtor) {
-                (tagValidations + setterValidations).map {
-                    when (it.validationType) {
-                        ValidationType.CHANGED -> it
+                (tagValidations + setterValidations).map { validation ->
+                    when (validation.validationType) {
+                        ValidationType.CHANGED -> validation
                         ValidationType.UPDATE,
-                        ValidationType.SET -> ValidatedAssignment(
+                        ValidationType.SET -> resolveValidationCall(
+                            kind = ComposerCallKind.CALL,
                             validationType = ValidationType.CHANGED,
-                            validationCall = resolveValidationCall(
-                                kind = ComposerCallKind.CALL,
+                            attrType = validation.attribute.type,
+                            expressionToReportErrorsOn = expression,
+                            receiverScope = invalidReceiverScope,
+                            assignmentReceiverScope = null,
+                            context = context
+                        ).let {
+                            val (validationCall, uncheckedValidationCall, _) = it
+                            ValidatedAssignment(
                                 validationType = ValidationType.CHANGED,
-                                attrType = it.attribute.type,
-                                expressionToReportErrorsOn = expression,
-                                receiverScope = invalidReceiverScope,
-                                assignmentReceiverScope = null,
-                                context = context
-                            ).first,
-                            assignment = null,
-                            attribute = it.attribute,
-                            assignmentLambda = null
-                        )
+                                validationCall = validationCall,
+                                uncheckedValidationCall = uncheckedValidationCall,
+                                assignment = null,
+                                attribute = validation.attribute,
+                                assignmentLambda = null
+                            )
+                        }
                     }
                 }
             } else tagValidations + setterValidations
@@ -1798,7 +1819,8 @@ class KtxCallResolver(
                         descriptor = it.descriptor,
                         type = it.type,
                         expression = it.attribute.value,
-                        isStatic = false
+                        isStatic = false,
+                        isStable = false
                     )
                 }
         }
@@ -1815,7 +1837,8 @@ class KtxCallResolver(
                     descriptor = info.descriptor,
                     type = info.type,
                     expression = attribute.value,
-                    isStatic = false
+                    isStatic = false,
+                    isStable = false
                 )
             )
         }
@@ -1835,7 +1858,8 @@ class KtxCallResolver(
                         descriptor = descriptor,
                         type = attribute.type,
                         expression = attribute.expression,
-                        isStatic = false
+                        isStatic = false,
+                        isStable = false
                     )
                 )
                 continue
@@ -1848,7 +1872,8 @@ class KtxCallResolver(
                         descriptor = descriptor,
                         type = attribute.type,
                         expression = attribute.expression,
-                        isStatic = false
+                        isStatic = false,
+                        isStable = false
                     )
                 )
                 continue
@@ -1900,6 +1925,7 @@ class KtxCallResolver(
             AttributeNode(
                 name = attr.name,
                 isStatic = false,
+                isStable = false,
                 descriptor = param,
                 type = type,
                 expression = attr.value
@@ -1914,7 +1940,7 @@ class KtxCallResolver(
         receiverScope: KotlinType,
         context: ExpressionTypingContext
     ): ValidatedAssignment {
-        val validationCall = resolveValidationCall(
+        val (validationCall, uncheckedValidationCall, _) = resolveValidationCall(
             kind = kind,
             validationType = ValidationType.CHANGED,
             attrType = type,
@@ -1922,11 +1948,12 @@ class KtxCallResolver(
             receiverScope = receiverScope,
             assignmentReceiverScope = null,
             context = context
-        ).first
+        )
 
         return ValidatedAssignment(
             validationType = ValidationType.CHANGED,
             validationCall = validationCall,
+            uncheckedValidationCall = uncheckedValidationCall,
             attribute = this,
             assignment = null,
             assignmentLambda = null
@@ -2013,15 +2040,16 @@ class KtxCallResolver(
                     else -> null
                 } ?: continue
 
-                val (validationCall, lambdaDescriptor) = resolveValidationCall(
-                    kind = kind,
-                    expressionToReportErrorsOn = expressionToReportErrorsOn,
-                    receiverScope = receiverScope,
-                    assignmentReceiverScope = type,
-                    validationType = validationType,
-                    attrType = attrType,
-                    context = context.replaceTraceAndCache(tempForValidations)
-                )
+                val (validationCall, uncheckedValidationCall, lambdaDescriptor) =
+                    resolveValidationCall(
+                        kind = kind,
+                        expressionToReportErrorsOn = expressionToReportErrorsOn,
+                        receiverScope = receiverScope,
+                        assignmentReceiverScope = type,
+                        validationType = validationType,
+                        attrType = attrType,
+                        context = context.replaceTraceAndCache(tempForValidations)
+                    )
 
                 results.add(
                     ValidatedAssignment(
@@ -2033,9 +2061,11 @@ class KtxCallResolver(
                             expression = attribute.value,
                             type = attrType,
                             descriptor = resolvedCall.resultingDescriptor,
-                            isStatic = false
+                            isStatic = false,
+                            isStable = false
                         ),
-                        validationCall = validationCall
+                        validationCall = validationCall,
+                        uncheckedValidationCall = uncheckedValidationCall
                     )
                 )
                 consumedAttributes.add(name)
@@ -2114,15 +2144,16 @@ class KtxCallResolver(
                     else -> error("Unknown callable type encountered")
                 }
 
-                val (validationCall, lambdaDescriptor) = resolveValidationCall(
-                    kind = kind,
-                    expressionToReportErrorsOn = expressionToReportErrorsOn,
-                    receiverScope = receiverScope,
-                    assignmentReceiverScope = type,
-                    validationType = validationType,
-                    attrType = attrType,
-                    context = context.replaceTraceAndCache(tempForValidations)
-                )
+                val (validationCall, uncheckedValidationCall, lambdaDescriptor) =
+                    resolveValidationCall(
+                        kind = kind,
+                        expressionToReportErrorsOn = expressionToReportErrorsOn,
+                        receiverScope = receiverScope,
+                        assignmentReceiverScope = type,
+                        validationType = validationType,
+                        attrType = attrType,
+                        context = context.replaceTraceAndCache(tempForValidations)
+                    )
 
                 results.add(
                     ValidatedAssignment(
@@ -2137,9 +2168,11 @@ class KtxCallResolver(
                             expression = children.value,
                             type = attrType,
                             descriptor = resolvedCall.resultingDescriptor,
-                            isStatic = false
+                            isStatic = false,
+                            isStable = false
                         ),
-                        validationCall = validationCall
+                        validationCall = validationCall,
+                        uncheckedValidationCall = uncheckedValidationCall
                     )
                 )
                 consumedAttributes.add(CHILDREN_KEY)
@@ -2839,53 +2872,23 @@ class KtxCallResolver(
         )
     }
 
-    private fun resolveValidationCall(
-        kind: ComposerCallKind,
+    private fun resolveSingleValidationCall(
         expressionToReportErrorsOn: KtExpression,
         receiverScope: KotlinType,
-        assignmentReceiverScope: KotlinType?,
         validationType: ValidationType,
+        checked: Boolean,
         attrType: KotlinType,
+        lambdaArg: ValueArgument?,
         context: ExpressionTypingContext
-    ): Pair<ResolvedCall<*>?, FunctionDescriptor?> {
-
+    ): ResolvedCall<*>? {
         val temporaryForVariable = TemporaryTraceAndCache.create(
             context, "trace to resolve variable", expressionToReportErrorsOn
         )
         val contextToUse = context.replaceTraceAndCache(temporaryForVariable)
-
-        val name = validationType.name.toLowerCase()
-        val includeLambda = validationType != ValidationType.CHANGED
-
+        val name = validationType.name.toLowerCase(Locale.ROOT).let {
+            if (!checked) (it + "Unchecked") else it
+        }
         val calleeExpression = psiFactory.createSimpleName(name)
-
-        // for call:
-        // ValidatorType.set(AttrType, (AttrType) -> Unit): Boolean
-        // ValidatorType.update(AttrType, (AttrType) -> Unit): Boolean
-        // ValidatorType.changed(AttrType): Boolean
-
-        // for emit:
-        // ValidatorType.set(AttrType, ElementType.(AttrType) -> Unit): Unit
-        // ValidatorType.update(AttrType, ElementType.(AttrType) -> Unit): Unit
-        // ValidatorType.changed(AttrType): Unit
-
-        val lambdaType = when {
-            includeLambda && kind == ComposerCallKind.EMIT -> functionType(
-                parameterTypes = listOf(attrType),
-                receiverType = assignmentReceiverScope
-            )
-            includeLambda && kind == ComposerCallKind.CALL -> functionType(
-                parameterTypes = listOf(attrType)
-            )
-            else -> null
-        }
-        val lambdaArg = lambdaType?.let { makeValueArgument(it, contextToUse) }
-        val lambdaDescriptor = lambdaType?.let {
-            createFunctionDescriptor(
-                it,
-                contextToUse
-            )
-        }
         val call = makeCall(
             callElement = calleeExpression,
             calleeExpression = calleeExpression,
@@ -2895,7 +2898,6 @@ class KtxCallResolver(
             ),
             receiver = TransientReceiver(receiverScope)
         )
-
         val results = callResolver.resolveCallWithGivenName(
             BasicCallResolutionContext.create(
                 contextToUse,
@@ -2908,7 +2910,7 @@ class KtxCallResolver(
             Name.identifier(name)
         )
 
-        if (results.isSuccess) return results.resultingCall to lambdaDescriptor
+        if (results.isSuccess) return results.resultingCall
 
         if (results.resultCode == OverloadResolutionResults.Code.INCOMPLETE_TYPE_INFERENCE) {
 
@@ -2967,12 +2969,79 @@ class KtxCallResolver(
 
                 if (nextResults.isSuccess) {
                     nextTempTrace.commit()
-                    return nextResults.resultingCall to lambdaDescriptor
+                    return nextResults.resultingCall
                 }
             }
         }
 
-        return null to null
+        return null
+    }
+
+    private fun resolveValidationCall(
+        kind: ComposerCallKind,
+        expressionToReportErrorsOn: KtExpression,
+        receiverScope: KotlinType,
+        assignmentReceiverScope: KotlinType?,
+        validationType: ValidationType,
+        attrType: KotlinType,
+        context: ExpressionTypingContext
+    ): Triple<ResolvedCall<*>?, ResolvedCall<*>?, FunctionDescriptor?> {
+        val temporaryForVariable = TemporaryTraceAndCache.create(
+            context, "trace to resolve variable", expressionToReportErrorsOn
+        )
+        val contextToUse = context.replaceTraceAndCache(temporaryForVariable)
+
+        val includeLambda = validationType != ValidationType.CHANGED
+
+        // for call:
+        // ValidatorType.set(AttrType, (AttrType) -> Unit): Boolean
+        // ValidatorType.update(AttrType, (AttrType) -> Unit): Boolean
+        // ValidatorType.changed(AttrType): Boolean
+
+        // for emit:
+        // ValidatorType.set(AttrType, ElementType.(AttrType) -> Unit): Unit
+        // ValidatorType.update(AttrType, ElementType.(AttrType) -> Unit): Unit
+        // ValidatorType.changed(AttrType): Unit
+
+        val lambdaType = when {
+            includeLambda && kind == ComposerCallKind.EMIT -> functionType(
+                parameterTypes = listOf(attrType),
+                receiverType = assignmentReceiverScope
+            )
+            includeLambda && kind == ComposerCallKind.CALL -> functionType(
+                parameterTypes = listOf(attrType)
+            )
+            else -> null
+        }
+        val lambdaArg = lambdaType?.let { makeValueArgument(it, contextToUse) }
+        val lambdaDescriptor = lambdaType?.let {
+            createFunctionDescriptor(
+                it,
+                contextToUse
+            )
+        }
+
+        val validationCall = resolveSingleValidationCall(
+            expressionToReportErrorsOn = expressionToReportErrorsOn,
+            receiverScope = receiverScope,
+            validationType = validationType,
+            checked = true,
+            attrType = attrType,
+            lambdaArg = lambdaArg,
+            context = context
+        )
+
+        val uncheckedValidationCall = resolveSingleValidationCall(
+            expressionToReportErrorsOn = expressionToReportErrorsOn,
+            receiverScope = receiverScope,
+            validationType = validationType,
+            checked = false,
+            attrType = attrType,
+            lambdaArg = lambdaArg,
+            context = context
+        )
+
+        return Triple(validationCall, uncheckedValidationCall, lambdaDescriptor)
     }
 
     private fun resolveSubstitutableComposerMethod(
@@ -3717,6 +3786,22 @@ private fun isValidStaticQualifiedPart(target: DeclarationDescriptor): Boolean {
             false
         }
     }
+}
+
+private fun isStable(type: KotlinType?, context: ExpressionTypingContext): Boolean {
+    return type?.let {
+        val trace = context.trace
+        val calculated = trace.get(STABLE_TYPE, it)
+        if (calculated == null) {
+            val isStable = !it.isError && !it.isSpecialType && (
+                    KotlinBuiltIns.isPrimitiveType(it) ||
+                    it.isFunctionType ||
+                    it.isMarkedStable() ||
+                            (type.isNullable() && isStable(it.makeNotNullable(), context)))
+            trace.record(STABLE_TYPE, it, isStable)
+            isStable
+        } else calculated
+    } ?: false
 }
 
 private fun DeclarationDescriptor.isRoot() =
