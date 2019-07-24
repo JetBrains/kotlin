@@ -68,10 +68,10 @@ val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.ke
  * For the first snippet in a REPL an empty list should be passed explicitly
  * An array of the previous snippets will be passed to the current snippet constructor
  */
-val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any>>(isTransient = true)
 
 @Deprecated("use scriptsInstancesSharing flag instead", level = DeprecationLevel.ERROR)
-val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>(isTransient = true)
 
 /**
  * If enabled - the evaluator will try to get imported script from a shared container
@@ -83,12 +83,12 @@ val ScriptEvaluationConfigurationKeys.scriptsInstancesSharing by PropertiesColle
 /**
  * Scripting host configuration
  */
-val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
+val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>()
+val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>(isTransient = true)
 
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation
