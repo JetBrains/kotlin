@@ -47,7 +47,7 @@ public class MockFileManager implements FileManager {
 
   public MockFileManager(PsiManagerEx manager) {
     myManager = manager;
-    myViewProviders = ConcurrentFactoryMap.createMap(key->new SingleRootFileViewProvider(myManager, key), ContainerUtil::createConcurrentWeakKeyWeakValueMap);
+    myViewProviders = ConcurrentFactoryMap.create(key->new SingleRootFileViewProvider(myManager, key), ContainerUtil::createConcurrentWeakKeyWeakValueMap);
   }
 
   @Override

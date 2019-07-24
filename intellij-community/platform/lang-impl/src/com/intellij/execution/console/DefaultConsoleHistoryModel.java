@@ -20,7 +20,7 @@ import java.util.Map;
 public class DefaultConsoleHistoryModel extends SimpleModificationTracker implements ConsoleHistoryModel {
 
   private final static Map<String, DefaultConsoleHistoryModel> ourModels =
-    ConcurrentFactoryMap.createMap(key -> new DefaultConsoleHistoryModel(null),
+    ConcurrentFactoryMap.create(key -> new DefaultConsoleHistoryModel(null),
                                    ContainerUtil::createConcurrentWeakValueMap);
 
   public static DefaultConsoleHistoryModel createModel(String persistenceId) {
