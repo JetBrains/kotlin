@@ -635,7 +635,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 }
                 ?: representativeTarget
 
-        return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
+        return outputItemCollector.outputs
+            .sortedBy { it.outputFile }
+            .groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
     }
 
     private fun updateLookupStorage(
