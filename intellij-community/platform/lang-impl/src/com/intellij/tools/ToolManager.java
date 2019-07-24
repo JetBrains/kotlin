@@ -19,7 +19,6 @@ import com.intellij.openapi.actionSystem.ex.ActionManagerEx;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.options.SchemeManagerFactory;
 import com.intellij.openapi.options.SchemeProcessor;
-import org.jetbrains.annotations.NotNull;
 
 public class ToolManager extends BaseToolManager<Tool> {
   public ToolManager() {

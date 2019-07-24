@@ -16,7 +16,6 @@
 package com.intellij.openapi.externalSystem.action.task;
 
 import com.intellij.openapi.externalSystem.action.ExternalSystemViewGearAction;
-import com.intellij.openapi.externalSystem.view.ExternalProjectsView;
 import com.intellij.openapi.externalSystem.view.ExternalProjectsViewImpl;
 import org.jetbrains.annotations.NotNull;
 

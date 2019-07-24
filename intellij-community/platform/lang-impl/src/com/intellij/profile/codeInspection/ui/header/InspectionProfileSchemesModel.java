@@ -13,7 +13,6 @@ import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 public abstract class InspectionProfileSchemesModel implements SchemesModel<InspectionProfileModifiableModel> {
   private static final Logger LOG = Logger.getInstance(InspectionProfileSchemesModel.class);

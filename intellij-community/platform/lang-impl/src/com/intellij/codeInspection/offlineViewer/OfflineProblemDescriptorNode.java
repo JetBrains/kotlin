@@ -7,7 +7,6 @@ package com.intellij.codeInspection.offlineViewer;
 import com.intellij.codeInspection.ProblemDescriptorUtil;
 import com.intellij.codeInspection.offline.OfflineProblemDescriptor;
 import com.intellij.codeInspection.ui.InspectionToolPresentation;
-import com.intellij.codeInspection.ui.InspectionTreeModel;
 import com.intellij.codeInspection.ui.InspectionTreeNode;
 import com.intellij.codeInspection.ui.ProblemDescriptionNode;
 import com.intellij.openapi.util.text.StringUtil;

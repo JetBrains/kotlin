@@ -8,7 +8,6 @@ import com.intellij.analysis.AnalysisScope;
 import com.intellij.codeInspection.CommonProblemDescriptor;
 import com.intellij.codeInspection.reference.RefElement;
 import com.intellij.codeInspection.reference.RefEntity;
-import com.intellij.codeInspection.reference.RefUtil;
 import com.intellij.codeInspection.ui.*;
 import com.intellij.codeInspection.ui.util.SynchronizedBidiMultiMap;
 import com.intellij.openapi.util.TextRange;
@@ -20,7 +19,6 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.util.ArrayUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;

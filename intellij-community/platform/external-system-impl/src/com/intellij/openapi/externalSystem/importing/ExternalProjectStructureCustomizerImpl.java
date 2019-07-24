@@ -15,7 +15,6 @@
  */
 package com.intellij.openapi.externalSystem.importing;
 
-import com.intellij.icons.AllIcons;
 import com.intellij.openapi.externalSystem.ExternalSystemUiAware;
 import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.Key;

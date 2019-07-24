@@ -17,10 +17,7 @@ package com.intellij.psi.formatter;
 
 import com.intellij.formatting.Wrap;
 import com.intellij.formatting.WrapType;
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
-import com.intellij.psi.tree.IElementType;
 
 /**
  * Misc. code wrapping functions

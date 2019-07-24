@@ -22,7 +22,6 @@ import com.intellij.openapi.editor.colors.EditorColorPalette;
 import com.intellij.openapi.editor.colors.EditorColorPaletteFactory;
 import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.colors.TextAttributesKey;
-import com.intellij.openapi.options.colors.pages.DefaultLanguageColorsPage;
 import com.intellij.openapi.options.colors.pages.GeneralColorsPage;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;

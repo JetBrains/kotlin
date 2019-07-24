@@ -2,7 +2,6 @@
 package com.intellij.find.impl;
 
 import com.intellij.CommonBundle;
-import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.*;
 import com.intellij.find.actions.ShowUsagesAction;
 import com.intellij.find.replaceInProject.ReplaceInProjectManager;

@@ -27,8 +27,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.ProjectImportAction;
 import org.jetbrains.plugins.gradle.settings.GradleExecutionSettings;
 
-import java.util.Collection;
-
 /**
  * @author Vladislav.Soroka
  */

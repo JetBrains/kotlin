@@ -5,7 +5,6 @@ import com.intellij.openapi.util.UserDataHolder;
 import com.intellij.util.indexing.impl.InputData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Map;

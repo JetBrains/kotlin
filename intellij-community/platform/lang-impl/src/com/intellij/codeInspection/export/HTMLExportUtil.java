@@ -27,7 +27,6 @@ import com.intellij.util.ThrowableConsumer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.function.Consumer;
 
 public class HTMLExportUtil {
   public static void writeFile(@NotNull String folder,

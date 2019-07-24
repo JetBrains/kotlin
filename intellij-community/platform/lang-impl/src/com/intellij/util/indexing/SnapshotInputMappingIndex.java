@@ -8,7 +8,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.Map;
 
 @ApiStatus.Experimental
 public interface SnapshotInputMappingIndex<Key, Value, Input> extends Closeable {
