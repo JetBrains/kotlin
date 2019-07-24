@@ -25,8 +25,6 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     private companion object {
         const val DEBUG_METADATA_KT = "kotlin.coroutines.jvm.internal.DebugMetadataKt"
 
-        private val LOG = Logger.getInstance(this::class.java)
-
         tailrec fun findBaseContinuationSuperSupertype(type: ClassType): ClassType? {
             if (type.name() == "kotlin.coroutines.jvm.internal.BaseContinuationImpl") {
                 return type
@@ -37,25 +35,7 @@ class KotlinCoroutinesAsyncStackTraceProvider : KotlinCoroutinesAsyncStackTraceP
     }
 
     override fun getAsyncStackTrace(stackFrame: JavaStackFrame, suspendContext: SuspendContextImpl): List<StackFrameItem>? {
-        return try {
-            getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext)
-        } catch (e: Exception) {
-            handleException(e)
-            null
-        }
-    }
-
-    private fun handleException(e: Exception) {
-        when (if (e is EvaluateException) e.cause ?: e else e) {
-            is ObjectCollectedException, is IncompatibleThreadStateException, is VMDisconnectedException -> {}
-            else -> {
-                if (e is EvaluateException) {
-                    LOG.debug("Cannot evaluate async stack trace", e)
-                } else {
-                    throw e
-                }
-            }
-        }
+        return hopelessAware { getAsyncStackTraceSafe(stackFrame.stackFrameProxy, suspendContext) }
     }
 
     fun getAsyncStackTraceSafe(frameProxy: StackFrameProxyImpl, suspendContext: SuspendContextImpl): List<StackFrameItem>? {

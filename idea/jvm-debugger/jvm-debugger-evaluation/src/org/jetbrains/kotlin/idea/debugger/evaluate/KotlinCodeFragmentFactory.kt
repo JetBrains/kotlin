@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.core.util.getKotlinJvmRuntimeMarkerClass
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.DebugLabelPropertyDescriptorProvider
 import org.jetbrains.kotlin.idea.debugger.getContextElement
+import org.jetbrains.kotlin.idea.debugger.hopelessAware
 import org.jetbrains.kotlin.idea.j2k.J2kPostProcessor
 import org.jetbrains.kotlin.idea.j2k.convertToKotlin
 import org.jetbrains.kotlin.idea.j2k.j2kText
@@ -175,10 +176,12 @@ class KotlinCodeFragmentFactory : CodeFragmentFactory() {
         val worker = object : DebuggerCommandImpl() {
             override fun action() {
                 try {
-                    val frame = if (ApplicationManager.getApplication().isUnitTestMode) {
-                        contextElement?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.frameProxy?.stackFrame
-                    } else {
-                        debuggerContext.frameProxy?.stackFrame
+                    val frame = hopelessAware {
+                        if (ApplicationManager.getApplication().isUnitTestMode) {
+                            contextElement?.getCopyableUserData(DEBUG_CONTEXT_FOR_TESTS)?.frameProxy?.stackFrame
+                        } else {
+                            debuggerContext.frameProxy?.stackFrame
+                        }
                     }
 
                     frameInfo = FrameInfo.from(debuggerContext.project, frame)

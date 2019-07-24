@@ -284,7 +284,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
         val psiFile = sourcePosition.file
         if (psiFile is KtFile) {
             if (!ProjectRootsUtil.isInProjectOrLibSource(psiFile)) return emptyList()
-            return DebuggerClassNameProvider(myDebugProcess).getClassesForPosition(sourcePosition)
+            return hopelessAware { DebuggerClassNameProvider(myDebugProcess).getClassesForPosition(sourcePosition) } ?: emptyList()
         }
 
         if (psiFile is ClsFileImpl) {
