@@ -35,7 +35,6 @@ import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -347,17 +346,6 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         Object preparedObject = prepare(object);
         if (preparedObject != null) {
           return mySerializerWriteMethod.invoke(mySerializer, preparedObject, preparedObject.getClass());
-        }
-      }
-      catch (InvocationTargetException e) {
-        Throwable targetException = e.getTargetException();
-        if (targetException instanceof IllegalArgumentException) {
-          // related serialization service was not found
-          return object;
-        }
-        else {
-          //noinspection UseOfSystemOutOrSystemErr
-          System.err.println(e.getMessage());
         }
       }
       catch (Exception e) {
