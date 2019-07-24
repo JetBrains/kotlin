@@ -276,15 +276,16 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       super.addExtraProject(project, modelClazz, subPropject != null ? subPropject.getGradleProject() : null);
     }
 
-    public boolean hasModulesWithModel(@NotNull Class modelClazz) {
+    @NotNull
+    @Override
+    protected String getModelKeyPrefix(@NotNull Class modelClazz) {
       String key = extractMapKey(modelClazz, null);
-      String keyPrefix = key.substring(0, key.indexOf('/'));
-      return super.hasModelKeyStaringWith(keyPrefix);
+      return key.substring(0, key.indexOf('/'));
     }
 
     @NotNull
     @Override
-    protected String extractMapKey(Class modelClazz, @Nullable GradleProject gradleProject) {
+    protected String extractMapKey(@NotNull Class modelClazz, @Nullable GradleProject gradleProject) {
       if (gradleProject != null) {
         String id = isGradleProjectDirSupported ?
                     gradleProject.getProjectDirectory().getPath().hashCode() + ':' + gradleProject.getPath() :

@@ -15,3 +15,4 @@
 # limitations under the License.
 #
 org.jetbrains.plugins.gradle.tooling.serialization.ExternalProjectSerializationService
+org.jetbrains.plugins.gradle.tooling.serialization.BuildScriptClasspathModelSerializationService

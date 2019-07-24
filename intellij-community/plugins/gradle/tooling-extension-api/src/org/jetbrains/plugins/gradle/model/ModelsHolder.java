@@ -22,7 +22,7 @@ import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -31,7 +31,7 @@ import java.util.Map;
 public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
 
   @NotNull private final K myRootModel;
-  @NotNull private final Map<String, Object> myModelsById = new HashMap<String, Object>();
+  @NotNull private final Map<String, Object> myModelsById = new LinkedHashMap<String, Object>();
   @Nullable private ToolingSerializer mySerializer;
 
   public ModelsHolder(@NotNull K rootModel) {
@@ -62,35 +62,53 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
       return (T)project;
     }
     else {
-      T deserializedData = deserialize(project, modelClazz);
-      if (modelClazz.isInstance(deserializedData)) {
-        myModelsById.put(key, deserializedData);
-        return deserializedData;
-      }
+      return deserialize(project, key, modelClazz);
     }
-    myModelsById.remove(key);
-    return null;
   }
 
   @Nullable
-  private <T> T deserialize(Object data, Class<T> modelClazz) {
+  private <T> T deserialize(@NotNull Object data, @NotNull String key, @NotNull Class<T> modelClazz) {
     if (mySerializer == null || !(data instanceof byte[])) {
+      myModelsById.remove(key);
       return null;
     }
-    try {
-      return mySerializer.read((byte[])data, modelClazz);
-    }
-    catch (IllegalArgumentException ignore) {
-      // related serialization service was not found
-    }
-    catch (IOException e) {
-      //noinspection UseOfSystemOutOrSystemErr
-      System.err.println(e.getMessage());
-    }
-    return null;
+    String keyPrefix = getModelKeyPrefix(modelClazz);
+    deserializeAllDataOfTheType(modelClazz, keyPrefix, myModelsById, mySerializer);
+    //noinspection unchecked
+    return (T)myModelsById.get(key);
   }
 
-  public boolean hasModelKeyStaringWith(@NotNull String keyPrefix) {
+  private static <T> void deserializeAllDataOfTheType(@NotNull Class<T> modelClazz,
+                                                      @NotNull String keyPrefix,
+                                                      @NotNull Map<String, Object> modelsById,
+                                                      @NotNull ToolingSerializer serializer) {
+    for (Map.Entry<String, Object> entry : modelsById.entrySet()) {
+      String key = entry.getKey();
+      if (key.startsWith(keyPrefix)) {
+        try {
+          T deserializedData = serializer.read((byte[])entry.getValue(), modelClazz);
+          if (modelClazz.isInstance(deserializedData)) {
+            modelsById.put(key, deserializedData);
+          }
+          else {
+            modelsById.remove(key);
+          }
+        }
+        catch (IllegalArgumentException ignore) {
+          // related serialization service was not found
+          modelsById.remove(key);
+        }
+        catch (IOException e) {
+          //noinspection UseOfSystemOutOrSystemErr
+          System.err.println(e.getMessage());
+          modelsById.remove(key);
+        }
+      }
+    }
+  }
+
+  public boolean hasModulesWithModel(@NotNull Class modelClazz) {
+    String keyPrefix = getModelKeyPrefix(modelClazz);
     for (String key : myModelsById.keySet()) {
       if (key.startsWith(keyPrefix)) return true;
     }
@@ -106,7 +124,10 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
   }
 
   @NotNull
-  protected abstract String extractMapKey(Class modelClazz, @Nullable V module);
+  protected abstract String getModelKeyPrefix(@NotNull Class modelClazz);
+
+  @NotNull
+  protected abstract String extractMapKey(@NotNull Class modelClazz, @Nullable V module);
 
   @Override
   public String toString() {

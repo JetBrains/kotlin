@@ -26,20 +26,20 @@ public class ToolingStreamUtils {
   @Nullable
   public static String readString(@NotNull IonReader reader, @Nullable String fieldName) {
     IonType type = reader.next();
-    assert fieldName == null || fieldName.equals(reader.getFieldName());
+    assertFieldName(reader, fieldName);
     if (type == null) return null;
     return reader.stringValue();
   }
 
   public static int readInt(@NotNull IonReader reader, @NotNull String fieldName) {
     reader.next();
-    assert fieldName.equals(reader.getFieldName());
+    assertFieldName(reader, fieldName);
     return reader.intValue();
   }
 
   public static boolean readBoolean(@NotNull IonReader reader, @NotNull String fieldName) {
     reader.next();
-    assert fieldName.equals(reader.getFieldName());
+    assertFieldName(reader, fieldName);
     return reader.booleanValue();
   }
 
@@ -140,6 +140,16 @@ public class ToolingStreamUtils {
     writer.stepOut();
   }
 
+  public static void writeStrings(@NotNull IonWriter writer, @NotNull String fieldName, @NotNull Collection<String> strings)
+    throws IOException {
+    writer.setFieldName(fieldName);
+    writer.stepIn(IonType.LIST);
+    for (String str : strings) {
+      writer.writeString(str);
+    }
+    writer.stepOut();
+  }
+
   public static Set<String> readStringSet(@NotNull IonReader reader) {
     Set<String> set = new THashSet<String>();
     reader.next();
@@ -162,5 +172,17 @@ public class ToolingStreamUtils {
                                      @NotNull WriteContext context,
                                      @NotNull ExternalDependency dependency) throws IOException {
     ExternalProjectSerializationService.writeDependency(writer, context, dependency);
+  }
+
+  public static void assertFieldName(@NotNull IonReader reader, @Nullable String fieldName) {
+    String readerFieldName = reader.getFieldName();
+    assert fieldName == null || fieldName.equals(readerFieldName) :
+      "Expected field name '" + fieldName + "', got `" + readerFieldName + "' ";
+  }
+
+  @NotNull
+  public static <T> T assertNotNull(@Nullable T t) {
+    assert t != null;
+    return t;
   }
 }
