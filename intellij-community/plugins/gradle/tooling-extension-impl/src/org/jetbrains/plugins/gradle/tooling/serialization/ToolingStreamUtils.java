@@ -22,6 +22,7 @@ import java.util.*;
  * @author Vladislav.Soroka
  */
 public class ToolingStreamUtils {
+  public static final String OBJECT_ID_FIELD = "objectID";
 
   @Nullable
   public static String readString(@NotNull IonReader reader, @Nullable String fieldName) {
