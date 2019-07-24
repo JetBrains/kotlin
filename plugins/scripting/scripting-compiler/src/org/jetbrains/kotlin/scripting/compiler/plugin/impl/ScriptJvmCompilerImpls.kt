@@ -18,9 +18,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptJvmCompilerProxy
+import org.jetbrains.kotlin.scripting.compiler.plugin.dependencies.ScriptsCompilationDependencies
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.compilationCache
+import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
+import kotlin.script.experimental.jvm.jvm
 
 class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguration) : ScriptJvmCompilerProxy {
 
@@ -30,8 +34,12 @@ class ScriptJvmCompilerIsolated(val hostConfiguration: ScriptingHostConfiguratio
     ): ResultWithDiagnostics<CompiledScript<*>> =
         withMessageCollectorAndDisposable(script = script) { messageCollector, disposable ->
 
+            val initialConfiguration = scriptCompilationConfiguration.refineBeforeParsing(script).valueOr {
+                return it
+            }
+
             val context = createIsolatedCompilationContext(
-                scriptCompilationConfiguration, hostConfiguration, messageCollector, disposable
+                initialConfiguration, hostConfiguration, messageCollector, disposable
             )
 
             compileImpl(script, context, messageCollector)
@@ -47,7 +55,11 @@ class ScriptJvmCompilerFromEnvironment(val environment: KotlinCoreEnvironment) :
         val parentMessageCollector = environment.configuration[CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY]
         return withMessageCollector(script = script, parentMessageCollector = parentMessageCollector) { messageCollector ->
 
-            val context = createCompilationContextFromEnvironment(scriptCompilationConfiguration, environment, messageCollector)
+            val initialConfiguration = scriptCompilationConfiguration.refineBeforeParsing(script).valueOr {
+                return it
+            }
+
+            val context = createCompilationContextFromEnvironment(initialConfiguration, environment, messageCollector)
 
             try {
                 environment.configuration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, messageCollector)
@@ -83,6 +95,33 @@ private fun compileImpl(
     )
 
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
+    val getScriptConfiguration = { ktFile: KtFile ->
+        dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
+            ?: context.baseScriptCompilationConfiguration
+    }
+
+    val refinedConfiguration = getScriptConfiguration(mainKtFile)
+
+    val cache = refinedConfiguration[ScriptCompilationConfiguration.hostConfiguration]?.get(ScriptingHostConfiguration.jvm.compilationCache)
+
+    val cached = cache?.get(script, refinedConfiguration)
+
+    return cached?.asSuccess(messageCollector.diagnostics)
+        ?: doCompile(context, script, sourceFiles, sourceDependencies, messageCollector, getScriptConfiguration).also {
+            if (cache != null && it is ResultWithDiagnostics.Success) {
+                cache.store(it.value, script, refinedConfiguration)
+            }
+        }
+}
+
+private fun doCompile(
+    context: SharedScriptCompilationContext,
+    script: SourceCode,
+    sourceFiles: List<KtFile>,
+    sourceDependencies: List<ScriptsCompilationDependencies.SourceDependencies>,
+    messageCollector: ScriptDiagnosticsMessageCollector,
+    getScriptConfiguration: (KtFile) -> ScriptCompilationConfiguration
+): ResultWithDiagnostics<KJvmCompiledScript<Any>> {
     val analysisResult = analyze(sourceFiles, context.environment)
 
     if (!analysisResult.shouldGenerateCode) return failure(
@@ -102,11 +141,9 @@ private fun compileImpl(
             generationState,
             script,
             sourceFiles.first(),
-            sourceDependencies
-        ) { ktFile ->
-            dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
-                ?: context.baseScriptCompilationConfiguration
-        }
+            sourceDependencies,
+            getScriptConfiguration
+        )
 
     return ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
 }
