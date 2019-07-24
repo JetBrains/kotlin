@@ -24,7 +24,6 @@ import com.intellij.psi.util.PsiTreeUtil
 import com.sun.jdi.AbsentInformationException
 import com.sun.jdi.ObjectCollectedException
 import com.sun.jdi.ReferenceType
-import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClass
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding.asmTypeForAnonymousClassOrNull
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
@@ -222,15 +221,19 @@ class DebuggerClassNameProvider(
             is KtFunctionLiteral -> {
                 val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
 
-                val nonInlinedLambdaClassName = runReadAction {
-                    asmTypeForAnonymousClass(typeMapper.bindingContext, element).internalName.toJdiName()
+                val names = runReadAction {
+                    val name = asmTypeForAnonymousClassOrNull(typeMapper.bindingContext, element)?.internalName?.toJdiName()
+                    if (name != null) Cached(name) else EMPTY
                 }
 
-                if (!alwaysReturnLambdaParentClass && !InlineUtil.isInlinedArgument(element, typeMapper.bindingContext, true)) {
-                    return Cached(nonInlinedLambdaClassName)
+                if (!names.isEmpty()
+                    && !alwaysReturnLambdaParentClass
+                    && !InlineUtil.isInlinedArgument(element, typeMapper.bindingContext, true)
+                ) {
+                    return names
                 }
 
-                Cached(nonInlinedLambdaClassName) + getOuterClassNamesForElement(element.relevantParentInReadAction)
+                names + getOuterClassNamesForElement(element.relevantParentInReadAction)
             }
             else -> getOuterClassNamesForElement(element.relevantParentInReadAction)
         }

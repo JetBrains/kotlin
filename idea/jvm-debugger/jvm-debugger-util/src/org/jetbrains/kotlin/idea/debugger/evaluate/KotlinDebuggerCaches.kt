@@ -229,6 +229,8 @@ class KotlinDebuggerCaches(project: Project) {
             fun NonCached(classNames: List<String>) = ComputedClassNames(classNames, false)
         }
 
+        fun isEmpty() = classNames.isEmpty()
+
         fun distinct() = ComputedClassNames(classNames.distinct(), shouldBeCached)
 
         operator fun plus(other: ComputedClassNames) = ComputedClassNames(
