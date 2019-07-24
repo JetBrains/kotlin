@@ -20,12 +20,13 @@ sealed class FirImplicitBuiltinTypeRef(
     session: FirSession,
     psi: PsiElement?,
     val id: ClassId,
-    typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray()
+    typeArguments: Array<out ConeKotlinTypeProjection> = emptyArray(),
+    isNullable: Boolean = false
 ) : FirResolvedTypeRef, FirAbstractElement(session, psi) {
     override val annotations: List<FirAnnotationCall>
         get() = emptyList()
 
-    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, false)
+    override val type: ConeKotlinType = ConeClassTypeImpl(ConeClassLikeLookupTagImpl(id), typeArguments, isNullable)
 }
 
 class FirImplicitUnitTypeRef(
@@ -37,6 +38,11 @@ class FirImplicitAnyTypeRef(
     session: FirSession,
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.Any)
+
+class FirImplicitNullableAnyTypeRef(
+    session: FirSession,
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(session, psi, StandardClassIds.Any, isNullable = true)
 
 class FirImplicitEnumTypeRef(
     session: FirSession,
