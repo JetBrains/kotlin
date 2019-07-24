@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.core.util.start
 import org.jetbrains.kotlin.idea.editor.KotlinEditorOptions
 import org.jetbrains.kotlin.idea.j2k.IdeaJavaToKotlinServices
-import org.jetbrains.kotlin.idea.j2k.JavaToKotlinConverterFactory
 import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
@@ -83,6 +82,8 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
 
         val document = editor.document
         val targetFile = PsiDocumentManager.getInstance(project).getPsiFile(document) as? KtFile ?: return
+        val useNewJ2k = checkUseNewJ2k(targetFile)
+
         val targetModule = targetFile.module
 
         if (isNoConversionPosition(targetFile, bounds.startOffset)) return
@@ -97,7 +98,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
         val dataForConversion = DataForConversion.prepare(data, project)
 
         fun doConversion(): Result {
-            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project, targetModule)
+            val result = dataForConversion.elementsAndTexts.convertCodeToKotlin(project, targetModule, useNewJ2k)
             val referenceData = buildReferenceData(result.text, result.parseContext, dataForConversion.importsAndPackage, targetFile)
             val text = if (result.textChanged) result.text else null
             return Result(text, referenceData, result.importsToAdd, result.converterContext)
@@ -161,7 +162,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             val newBounds = insertImports(boundsAfterReplace, referenceData, explicitImports)
 
             PsiDocumentManager.getInstance(project).commitAllDocuments()
-            runPostProcessing(project, targetFile, newBounds, conversionResult?.converterContext)
+            runPostProcessing(project, targetFile, newBounds, conversionResult?.converterContext, useNewJ2k)
 
             conversionPerformed = true
         }
@@ -172,7 +173,7 @@ class ConvertJavaCopyPasteProcessor : CopyPastePostProcessor<TextBlockTransferab
             }
             logJ2kConversionStatistics(
                 ConversionType.PSI_EXPRESSION,
-                JavaToKotlinConverterFactory.isNewJ2k,
+                J2kConverterExtension.isNewJ2k,
                 conversionTime,
                 dataForConversion.elementsAndTexts.linesCount(),
                 filesCount = 1
@@ -227,9 +228,9 @@ internal class ConversionResult(
         val converterContext: ConverterContext?
 )
 
-internal fun ElementAndTextList.convertCodeToKotlin(project: Project, targetModule: Module?): ConversionResult {
+internal fun ElementAndTextList.convertCodeToKotlin(project: Project, targetModule: Module?, useNewJ2k: Boolean): ConversionResult {
     val converter =
-        JavaToKotlinConverterFactory.createJavaToKotlinConverter(
+        J2kConverterExtension.extension(useNewJ2k).createJavaToKotlinConverter(
             project,
             targetModule,
             ConverterSettings.defaultSettings,
@@ -319,13 +320,24 @@ fun ElementAndTextList.linesCount() =
         .filterIsInstance<PsiElement>()
         .sumBy { StringUtil.getLineBreakCount(it.text) }
 
-fun runPostProcessing(project: Project, file: KtFile, bounds: TextRange?, converterContext: ConverterContext?) {
-    val postProcessor = JavaToKotlinConverterFactory.createPostProcessor(formatCode = true)
-    if (JavaToKotlinConverterFactory.isNewJ2k) {
+fun checkUseNewJ2k(targetFile: KtFile): Boolean {
+    if (targetFile is KtCodeFragment) return false
+    return J2kConverterExtension.isNewJ2k
+}
+
+fun runPostProcessing(
+    project: Project,
+    file: KtFile,
+    bounds: TextRange?,
+    converterContext: ConverterContext?,
+    useNewJ2k: Boolean
+) {
+    val postProcessor = J2kConverterExtension.extension(useNewJ2k).createPostProcessor(formatCode = true)
+    if (useNewJ2k) {
         ProgressManager.getInstance().runProcessWithProgressSynchronously(
             {
                 val processor =
-                    JavaToKotlinConverterFactory.createWithProgressIndicator(
+                    J2kConverterExtension.extension(useNewJ2k).createWithProgressProcessor(
                         ProgressManager.getInstance().progressIndicator!!,
                         emptyList(),
                         postProcessor.phasesCount
