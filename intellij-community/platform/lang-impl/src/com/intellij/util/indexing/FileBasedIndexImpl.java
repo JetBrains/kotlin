@@ -1855,7 +1855,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         myChangedFilesCollector.removeScheduledFileFromUpdate(file);
       }
       else {
-        int finalFileId = fileId;
         myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
           final List<ID<?, ?>> candidates = getAffectedIndexCandidates(file);
 
@@ -1865,13 +1864,13 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           for (int i = 0, size = candidates.size(); i < size; ++i) {
             final ID<?, ?> indexId = candidates.get(i);
             if (needsFileContentLoading(indexId) && getInputFilter(indexId).acceptInput(file)) {
-              getIndex(indexId).resetIndexedStateForFile(finalFileId);
+              getIndex(indexId).resetIndexedStateForFile(fileId);
               scheduleForUpdate = true;
             }
           }
 
           if (scheduleForUpdate) {
-            IndexingStamp.flushCache(finalFileId);
+            IndexingStamp.flushCache(fileId);
             myChangedFilesCollector.scheduleForUpdate(file);
           }
         });
