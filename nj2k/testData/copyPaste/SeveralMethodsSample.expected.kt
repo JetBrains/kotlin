@@ -1,7 +1,7 @@
 class A {
     fun someOther() = false
 
-    private fun formatElement(element: PsiElement): String {
+    private fun formatElement(element: PsiElement): String? {
         var element: PsiElement = element
         element = JetPsiUtil.ascendIfPropertyAccessor(element)
         if (element is JetNamedFunction || element is JetProperty) {
@@ -28,9 +28,9 @@ class A {
     }
 
     fun getSelected(): ArrayList<UsageInfo> {
-        val result: ArrayList<UsageInfo> = ArrayList<UsageInfo>()
+        val result: ArrayList<UsageInfo> = ArrayList<UsageInfo?>()
         for (i in 0 until myChecked.length) {
-            if (myChecked[i]) {
+            if (myChecked.get(i)) {
                 result.add(myOverridingMethods.get(i))
             }
         }

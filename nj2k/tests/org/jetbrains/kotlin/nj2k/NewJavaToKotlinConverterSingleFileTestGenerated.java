@@ -2881,6 +2881,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/issues/kt-22848.java");
         }
 
+        @TestMetadata("kt-24677.java")
+        public void testKt_24677() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-24677.java");
+        }
+
         @TestMetadata("kt-28899.java")
         public void testKt_28899() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-28899.java");
@@ -2894,6 +2899,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("kt-32436.java")
         public void testKt_32436() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/kt-32436.java");
+        }
+
+        @TestMetadata("kt-32572.java")
+        public void testKt_32572() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-32572.java");
+        }
+
+        @TestMetadata("kt-32609.java")
+        public void testKt_32609() throws Exception {
+            runTest("nj2k/testData/newJ2k/issues/kt-32609.java");
         }
 
         @TestMetadata("kt-32702.java")
@@ -3074,6 +3089,49 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         @TestMetadata("spaceBeforeAssignment.java")
         public void testSpaceBeforeAssignment() throws Exception {
             runTest("nj2k/testData/newJ2k/issues/spaceBeforeAssignment.java");
+        }
+    }
+
+    @TestMetadata("nj2k/testData/newJ2k/javaStreamsApi")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class JavaStreamsApi extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJavaStreamsApi() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/javaStreamsApi"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("collectStream.java")
+        public void testCollectStream() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/collectStream.java");
+        }
+
+        @TestMetadata("createStream.java")
+        public void testCreateStream() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/createStream.java");
+        }
+
+        @TestMetadata("dontCollectOnExistingStreams.java")
+        public void testDontCollectOnExistingStreams() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/dontCollectOnExistingStreams.java");
+        }
+
+        @TestMetadata("formatting.java")
+        public void testFormatting() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/formatting.java");
+        }
+
+        @TestMetadata("kt-21467.java")
+        public void testKt_21467() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/kt-21467.java");
+        }
+
+        @TestMetadata("streamOperations.java")
+        public void testStreamOperations() throws Exception {
+            runTest("nj2k/testData/newJ2k/javaStreamsApi/streamOperations.java");
         }
     }
 

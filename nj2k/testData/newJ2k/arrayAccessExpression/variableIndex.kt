@@ -1,1 +1,1 @@
-myArray[i]
+myArray.get(i)

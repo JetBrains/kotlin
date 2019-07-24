@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.nj2k
@@ -725,7 +714,9 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
 
         override fun visitArrayAccessExpressionRaw(arrayAccessExpression: JKArrayAccessExpression) {
             arrayAccessExpression.expression.accept(this)
-            printer.par(ParenthesisKind.SQUARE) { arrayAccessExpression.indexExpression.accept(this) }
+            printer.print(".get(")
+            arrayAccessExpression.indexExpression.accept(this)
+            printer.print(")")
         }
 
         override fun visitPackageAccessExpressionRaw(packageAccessExpression: JKPackageAccessExpression) {
@@ -946,9 +937,7 @@ private class JKPrinter(
 
     fun renderType(type: JKType, owner: JKTreeElement?) {
         if (type is JKNoTypeImpl) return
-        elementInfoStorage.getOrCreateInfoForElement(type).let {
-            print(it.render())
-        }
+        print(elementInfoStorage.getOrCreateInfoForElement(type).render())
         when (type) {
             is JKClassType -> {
                 renderClassSymbol(type.classReference, owner)
@@ -973,6 +962,12 @@ private class JKPrinter(
             }
         }
         if (type.nullability == Nullability.Nullable) {
+            printWithNoIndent("?")
+        }
+        // we print undefined types as nullable because we need smartcast work in nullability inference in post-processing
+        if (type.nullability == Nullability.Default
+            && owner?.safeAs<JKLambdaExpression>()?.functionalType?.type != type
+        ) {
             printWithNoIndent("?")
         }
     }

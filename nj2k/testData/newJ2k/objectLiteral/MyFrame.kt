@@ -11,18 +11,19 @@ internal open class WindowAdapter : WindowListener {
 }
 
 internal open class Frame {
-    fun addWindowListener(listener: WindowListener) {}
+    fun addWindowListener(listener: WindowListener?) {}
 }
 
-internal class Client : Frame() {init {
-    val a: WindowAdapter = object : WindowAdapter() {
-        override fun windowClosing() {}
+internal class Client : Frame() {
+    init {
+        val a: WindowAdapter = object : WindowAdapter() {
+            override fun windowClosing() {}
+        }
+        addWindowListener(a)
+        addWindowListener(object : WindowAdapter() {
+            override fun windowClosing() {}
+        })
+        val b: EmptyWindowListener = object : EmptyWindowListener {}
+        val c: EmptyWindowAdapter = object : EmptyWindowAdapter() {}
     }
-    addWindowListener(a)
-    addWindowListener(object : WindowAdapter() {
-        override fun windowClosing() {}
-    })
-    val b: EmptyWindowListener = object : EmptyWindowListener {}
-    val c: EmptyWindowAdapter = object : EmptyWindowAdapter() {}
-}
 }
