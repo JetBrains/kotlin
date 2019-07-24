@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingFunctionDescriptor
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -916,8 +917,8 @@ class ControlFlowProcessor(
         private fun jumpDoesNotCrossFunctionBoundary(jumpExpression: KtExpressionWithLabel, jumpTarget: KtLoopExpression): Boolean {
             val bindingContext = trace.bindingContext
 
-            val labelExprEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
-            val labelTargetEnclosingFunc = BindingContextUtils.getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
+            val labelExprEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpExpression)
+            val labelTargetEnclosingFunc = getEnclosingFunctionDescriptor(bindingContext, jumpTarget)
             return if (labelExprEnclosingFunc !== labelTargetEnclosingFunc) {
                 // Check to report only once
                 if (builder.getLoopExitPoint(jumpTarget) != null ||

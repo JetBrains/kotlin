@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.resolve.*
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingDescriptor
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsExpression
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsResultOfLambda
 import org.jetbrains.kotlin.resolve.bindingContextUtil.isUsedAsStatement
@@ -471,7 +472,7 @@ class ControlFlowInformationProvider private constructor(
             trace.get(BACKING_FIELD_REQUIRED, it)
         } ?: true
         if (variableDescriptor is PropertyDescriptor && variableDescriptor.isVar) {
-            val descriptor = BindingContextUtils.getEnclosingDescriptor(trace.bindingContext, expression)
+            val descriptor = getEnclosingDescriptor(trace.bindingContext, expression)
             val setterDescriptor = variableDescriptor.setter
 
             val receiverValue = expression.getResolvedCall(trace.bindingContext)?.getDispatchReceiverWithSmartCast()

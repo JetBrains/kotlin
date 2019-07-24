@@ -17,6 +17,8 @@
 package org.jetbrains.kotlin.resolve.bindingContextUtil
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
@@ -113,5 +115,39 @@ fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType?
             if (this is KtNullableType) outerType else outerType?.makeNotNullable()
         }
         else -> null
+    }
+}
+
+fun <T : PsiElement> KtElement.getParentOfTypeCodeFragmentAware(vararg parentClasses: Class<out T>): T? {
+    PsiTreeUtil.getParentOfType(this, *parentClasses)?.let { return it }
+
+    val containingFile = this.containingFile
+    if (containingFile is KtCodeFragment) {
+        val context = containingFile.context
+        if (context != null) {
+            return PsiTreeUtil.getParentOfType(context, *parentClasses)
+        }
+    }
+
+    return null
+}
+
+fun getEnclosingDescriptor(context: BindingContext, element: KtElement): DeclarationDescriptor {
+    val declaration = element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
+    return if (declaration is KtFunctionLiteral) {
+        getEnclosingDescriptor(context, declaration)
+    } else {
+        context.get(DECLARATION_TO_DESCRIPTOR, declaration)
+            ?: error("No descriptor for named declaration: " + declaration?.text + "\n(of type " + declaration?.javaClass + ")")
+    }
+}
+
+fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement): FunctionDescriptor? {
+    val functionOrClass = element.getParentOfTypeCodeFragmentAware(KtFunction::class.java, KtClassOrObject::class.java)
+    val descriptor = context.get(DECLARATION_TO_DESCRIPTOR, functionOrClass)
+    return if (functionOrClass is KtFunction) {
+        if (descriptor is FunctionDescriptor) descriptor else null
+    } else {
+        if (descriptor is ClassDescriptor) descriptor.unsubstitutedPrimaryConstructor else null
     }
 }
