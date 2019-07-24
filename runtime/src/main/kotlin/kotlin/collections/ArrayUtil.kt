@@ -6,6 +6,7 @@
 package kotlin.collections
 
 import kotlin.native.internal.PointsTo
+import kotlin.native.internal.ExportForCppRuntime
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with _uninitialized_ values.
@@ -75,10 +76,41 @@ internal fun <E> Array<E>.resetAt(index: Int) {
 
 @SymbolName("Kotlin_Array_fillImpl")
 @PointsTo(0b01000, 0, 0, 0b00001) // <array> points to <value>, <value> points to <array>.
-external private fun fillImpl(array: Array<Any?>, fromIndex: Int, toIndex: Int, value: Any?)
+internal external fun <T> arrayFill(array: Array<T>, fromIndex: Int, toIndex: Int, value: T)
+
+@SymbolName("Kotlin_ByteArray_fillImpl")
+internal external fun arrayFill(array: ByteArray, fromIndex: Int, toIndex: Int, value: Byte)
+
+@SymbolName("Kotlin_ShortArray_fillImpl")
+internal external fun arrayFill(array: ShortArray, fromIndex: Int, toIndex: Int, value: Short)
+
+@SymbolName("Kotlin_CharArray_fillImpl")
+internal external fun arrayFill(array: CharArray, fromIndex: Int, toIndex: Int, value: Char)
 
 @SymbolName("Kotlin_IntArray_fillImpl")
-external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, value: Int)
+internal external fun arrayFill(array: IntArray, fromIndex: Int, toIndex: Int, value: Int)
+
+@SymbolName("Kotlin_LongArray_fillImpl")
+internal external fun arrayFill(array: LongArray, fromIndex: Int, toIndex: Int, value: Long)
+
+@SymbolName("Kotlin_DoubleArray_fillImpl")
+internal external fun arrayFill(array: DoubleArray, fromIndex: Int, toIndex: Int, value: Double)
+
+@SymbolName("Kotlin_FloatArray_fillImpl")
+internal external fun arrayFill(array: FloatArray, fromIndex: Int, toIndex: Int, value: Float)
+
+@SymbolName("Kotlin_BooleanArray_fillImpl")
+internal external fun arrayFill(array: BooleanArray, fromIndex: Int, toIndex: Int, value: Boolean)
+
+@ExportForCppRuntime
+internal fun checkRangeIndexes(fromIndex: Int, toIndex: Int, size: Int) {
+    if (fromIndex < 0 || toIndex > size) {
+        throw IndexOutOfBoundsException("fromIndex: $fromIndex, toIndex: $toIndex, size: $size")
+    }
+    if (fromIndex > toIndex) {
+        throw IllegalArgumentException("fromIndex: $fromIndex > toIndex: $toIndex")
+    }
+}
 
 /**
  * Resets a range of array elements at a specified [fromIndex] (inclusive) to [toIndex] (exclusive) range of indices
@@ -88,11 +120,7 @@ external private fun fillImpl(array: IntArray, fromIndex: Int, toIndex: Int, val
  * either throwing exception or returning some kind of implementation-specific default value.
  */
 internal fun <E> Array<E>.resetRange(fromIndex: Int, toIndex: Int) {
-    fillImpl(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex, toIndex, null)
-}
-
-internal fun IntArray.fill(fromIndex: Int, toIndex: Int, value: Int) {
-    fillImpl(this, fromIndex, toIndex, value)
+    arrayFill(@Suppress("UNCHECKED_CAST") (this as Array<Any?>), fromIndex, toIndex, null)
 }
 
 @SymbolName("Kotlin_Array_copyImpl")

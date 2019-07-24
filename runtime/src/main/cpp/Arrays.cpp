@@ -23,12 +23,25 @@
 #include "Natives.h"
 #include "Types.h"
 
+extern "C" void checkRangeIndexes(KInt from, KInt to, KInt size);
+
 namespace {
 
 ALWAYS_INLINE inline void mutabilityCheck(KConstRef thiz) {
   // TODO: optimize it!
   if (thiz->container()->frozen()) {
     ThrowInvalidMutabilityException(thiz);
+  }
+}
+
+template<typename T>
+inline void fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, T value) {
+  ArrayHeader* array = thiz->array();
+  checkRangeIndexes(fromIndex, toIndex, array->count_);
+  mutabilityCheck(thiz);
+  T* address = PrimitiveArrayAddressOfElementAt<T>(array, fromIndex);
+  for (KInt index = fromIndex; index < toIndex; ++index) {
+    *address++ = value;
   }
 }
 
@@ -102,9 +115,7 @@ KInt Kotlin_Array_getArrayLength(KConstRef thiz) {
 
 void Kotlin_Array_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KRef value) {
   ArrayHeader* array = thiz->array();
-  if (fromIndex < 0 || toIndex < fromIndex || toIndex > array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
+  checkRangeIndexes(fromIndex, toIndex, array->count_);
   mutabilityCheck(thiz);
   for (KInt index = fromIndex; index < toIndex; ++index) {
     UpdateHeapRef(ArrayAddressOfElementAt(array, index), value);
@@ -483,15 +494,36 @@ KInt Kotlin_IntArray_getArrayLength(KConstRef thiz) {
   return array->count_;
 }
 
+void Kotlin_ByteArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KByte value) {
+  fillImpl<KByte>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_ShortArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KShort value) {
+  fillImpl<KShort>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_CharArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KChar value) {
+  fillImpl<KChar>(thiz, fromIndex, toIndex, value);
+}
+
 void Kotlin_IntArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KInt value) {
-  ArrayHeader* array = thiz->array();
-  if (fromIndex < 0 || toIndex < fromIndex || toIndex >= array->count_) {
-    ThrowArrayIndexOutOfBoundsException();
-  }
-  mutabilityCheck(thiz);
-  for (KInt index = fromIndex; index < toIndex; ++index) {
-    *PrimitiveArrayAddressOfElementAt<KInt>(array, index) = value;
-  }
+  fillImpl<KInt>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_LongArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KLong value) {
+  fillImpl<KLong>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_FloatArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KFloat value) {
+  fillImpl<KFloat>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_DoubleArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KDouble value) {
+  fillImpl<KDouble>(thiz, fromIndex, toIndex, value);
+}
+
+void Kotlin_BooleanArray_fillImpl(KRef thiz, KInt fromIndex, KInt toIndex, KBoolean value) {
+  fillImpl<KBoolean>(thiz, fromIndex, toIndex, value);
 }
 
 void Kotlin_ByteArray_copyImpl(KConstRef thiz, KInt fromIndex,
