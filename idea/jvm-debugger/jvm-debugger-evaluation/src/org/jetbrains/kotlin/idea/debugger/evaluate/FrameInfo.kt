@@ -12,14 +12,8 @@ import com.intellij.psi.PsiNameHelper
 import com.intellij.psi.PsiType
 import com.intellij.psi.search.GlobalSearchScope
 import com.sun.jdi.*
-import org.jetbrains.eval4j.jdi.asValue
-import org.jetbrains.kotlin.idea.debugger.getClassDescriptor
 import org.jetbrains.kotlin.idea.j2k.j2k
-import org.jetbrains.kotlin.idea.util.IdeDescriptorRenderers
 import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
-import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class FrameInfo private constructor(val project: Project, thisObject: Value?, variables: Map<LocalVariable, Value?>) {
     val thisObject = run {
@@ -44,12 +38,6 @@ class FrameInfo private constructor(val project: Project, thisObject: Value?, va
         }
 
         private fun createKotlinProperty(project: Project, name: String, typeName: String, value: Value?): KtProperty? {
-            val actualClassDescriptor = value.asValue().asmType.getClassDescriptor(GlobalSearchScope.allScope(project))
-            if (actualClassDescriptor != null && actualClassDescriptor.defaultType.arguments.isEmpty()) {
-                val renderedType = IdeDescriptorRenderers.SOURCE_CODE.renderType(actualClassDescriptor.defaultType.makeNullable())
-                return KtPsiFactory(project).createProperty(name.quoteIfNeeded(), renderedType, false)
-            }
-
             val className = typeName.replace("$", ".").substringBefore("[]")
             val classType = PsiType.getTypeByName(className, project, GlobalSearchScope.allScope(project))
 
