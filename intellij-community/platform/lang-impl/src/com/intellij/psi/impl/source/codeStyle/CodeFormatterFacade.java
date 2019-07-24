@@ -226,19 +226,7 @@ public class CodeFormatterFacade {
             return;
           }
 
-          TextRange formattingModelRange = null;
-          for (FormatTextRange tr : textRanges) {
-            TextRange r = tr.getTextRange();
-            if (formattingModelRange == null) {
-              formattingModelRange = r;
-            }
-            else {
-              formattingModelRange = formattingModelRange.union(r);
-            }
-          }
-          if (formattingModelRange == null) {
-            formattingModelRange = file.getTextRange();
-          }
+          TextRange formattingModelRange = uniteFormatRanges(textRanges, file.getTextRange());
 
           final FormattingModel originalModel = CoreFormatterUtil.buildModel(builder, file, formattingModelRange, mySettings, FormattingMode.REFORMAT);
           final FormattingModel model = new DocumentBasedFormattingModel(originalModel,
@@ -264,6 +252,21 @@ public class CodeFormatterFacade {
         }
       }
     }
+  }
+
+  @NotNull
+  private static TextRange uniteFormatRanges(@NotNull Iterable<FormatTextRange> ranges, @NotNull TextRange defaultRange) {
+    TextRange resultRange = null;
+    for (FormatTextRange formatRange : ranges) {
+      TextRange textRange = formatRange.getTextRange();
+      if (resultRange == null) {
+        resultRange = textRange;
+      }
+      else {
+        resultRange = resultRange.union(textRange);
+      }
+    }
+    return resultRange != null ? resultRange : defaultRange;
   }
 
   private TextRange preprocess(@NotNull final ASTNode node, @NotNull TextRange range) {
