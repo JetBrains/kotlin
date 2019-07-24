@@ -96,10 +96,10 @@ class Kapt3CommandLineProcessor : CommandLineProcessor {
             STUBS_OUTPUT_DIR_OPTION -> stubsOutputDir = File(value)
             INCREMENTAL_DATA_OUTPUT_DIR_OPTION -> incrementalDataOutputDir = File(value)
 
-            CHANGED_FILES -> changedFiles.addAll(value.split(File.pathSeparator).map { File(it) })
+            CHANGED_FILES -> changedFiles.add(File(value))
             COMPILED_SOURCES_DIR -> compiledSources.addAll(value.split(File.pathSeparator).map { File(it) })
             INCREMENTAL_CACHE -> incrementalCache = File(value)
-            CLASSPATH_CHANGES -> classpathChanges.addAll(value.split(File.pathSeparator).map { it })
+            CLASSPATH_CHANGES -> classpathChanges.add(value)
             PROCESS_INCREMENTALLY -> setFlag(KaptFlag.INCREMENTAL_APT, value)
 
             ANNOTATION_PROCESSOR_CLASSPATH_OPTION -> processingClasspath += File(value)
