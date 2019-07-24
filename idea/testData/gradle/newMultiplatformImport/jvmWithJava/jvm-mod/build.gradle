@@ -1,0 +1,15 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+version 'unspecified'
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+}
+
+dependencies {
+    compile project(":mpp-mod-a")
+}
