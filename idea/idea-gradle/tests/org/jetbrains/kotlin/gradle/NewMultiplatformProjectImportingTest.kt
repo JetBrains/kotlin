@@ -591,6 +591,57 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         }
     }
 
+    @Test
+    fun testJvmWithJava() {
+        configureByFiles()
+        importProject(true)
+
+        checkProjectStructure(true, false, true) {
+            module("jvm-on-mpp") {}
+            module("jvm-on-mpp.jvm-mod") {}
+            module("jvm-on-mpp.jvm-mod.main") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.jvm-mod.test") {
+                moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
+            }
+
+            module("jvm-on-mpp.mpp-mod-a") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.commonMain") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.commonTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jsMain") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jsTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jsMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jvmMain") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
+            }
+            module("jvm-on-mpp.mpp-mod-a.jvmTest") {
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.TEST, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonTest", DependencyScope.TEST, true)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.TEST, false)
+            }
+
+            //At the moment this is 'fake' source roots and they have no explicit dependencies.
+            module("jvm-on-mpp.mpp-mod-a.main") {
+            }
+            module("jvm-on-mpp.mpp-mod-a.test") {
+            }
+        }
+
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
