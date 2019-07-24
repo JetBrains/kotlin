@@ -22,9 +22,11 @@ import org.jetbrains.kotlin.utils.sure
 import java.io.File
 
 open class GeneratedFile(
-    val sourceFiles: Collection<File>,
+    sourceFiles: Collection<File>,
     val outputFile: File
-)
+) {
+    val sourceFiles = sourceFiles.sortedBy { it.path }
+}
 
 class GeneratedJvmClass (
         sourceFiles: Collection<File>,
