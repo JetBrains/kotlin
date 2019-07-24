@@ -4,7 +4,6 @@ package com.intellij.codeInsight.daemon.quickFix;
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
-import com.intellij.ide.projectView.impl.ProjectRootsUtil;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
@@ -22,7 +21,6 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IconUtil;
 import com.intellij.util.IncorrectOperationException;
-import com.intellij.util.PlatformIcons;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -129,20 +127,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       new BaseListPopupStep<TargetDirectoryListItem>(CodeInsightBundle.message(myKey, filePath), items) {
         @Override
         public Icon getIconFor(TargetDirectoryListItem value) {
-          PsiDirectory directory = value.getTarget().getDirectory();
-          if (directory == null) {
-            return PlatformIcons.FOLDER_ICON;
-          }
-
-          VirtualFile file = directory.getVirtualFile();
-
-          ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
-          SourceFolder sourceFolder = projectFileIndex.getSourceFolder(file);
-          if (sourceFolder != null && sourceFolder.getFile() != null) {
-            return IconUtil.getIcon(sourceFolder.getFile(), 0, project);
-          }
-
-          return IconUtil.getIcon(file, 0, project);
+          return value.getIcon();
         }
 
         @NotNull
@@ -180,16 +165,33 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       PsiDirectory d = targetDirectory.getDirectory();
       assert d != null : "Invalid PsiDirectory instances found";
 
-      String presentablePath = getPresentableContentRootPath(d.getProject(), d.getVirtualFile(), targetDirectory.getPathToCreate());
+      String presentablePath = getPresentableContentRootPath(d, targetDirectory.getPathToCreate());
+      Icon icon = getContentRootIcon(d);
 
-      return new TargetDirectoryListItem(targetDirectory, presentablePath);
+      return new TargetDirectoryListItem(targetDirectory, icon, presentablePath);
     });
   }
 
   @NotNull
-  private static String getPresentableContentRootPath(@NotNull Project project,
-                                                      @NotNull VirtualFile f,
+  private static Icon getContentRootIcon(@NotNull PsiDirectory directory) {
+    VirtualFile file = directory.getVirtualFile();
+
+    Project project = directory.getProject();
+    ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
+    SourceFolder sourceFolder = projectFileIndex.getSourceFolder(file);
+    if (sourceFolder != null && sourceFolder.getFile() != null) {
+      return IconUtil.getIcon(sourceFolder.getFile(), 0, project);
+    }
+
+    return IconUtil.getIcon(file, 0, project);
+  }
+
+  @NotNull
+  private static String getPresentableContentRootPath(@NotNull PsiDirectory directory,
                                                       @NotNull String[] pathToCreate) {
+    VirtualFile f = directory.getVirtualFile();
+    Project project = directory.getProject();
+
     String toProjectPath = ProjectUtil.calcRelativeToProjectPath(f, project, true, false, true);
     if (pathToCreate.length > 0) {
       toProjectPath += VFS_SEPARATOR_CHAR + StringUtil.join(pathToCreate, VFS_SEPARATOR_CHAR + "");
@@ -200,12 +202,18 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
   protected static class TargetDirectoryListItem {
     private final TargetDirectory myTargetDirectory;
+    private final Icon myIcon;
     private final String myPresentablePath;
 
     public TargetDirectoryListItem(@NotNull TargetDirectory targetDirectory,
-                                   @NotNull String presentablePath) {
+                                   Icon icon, @NotNull String presentablePath) {
       myTargetDirectory = targetDirectory;
+      myIcon = icon;
       myPresentablePath = presentablePath;
+    }
+
+    public Icon getIcon() {
+      return myIcon;
     }
 
     private String getPresentablePath() {

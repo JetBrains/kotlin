@@ -177,7 +177,11 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
     return ContainerUtil.map(targetContexts, c -> {
       Project project = c.getFileSystemItem().getProject();
 
-      SourceFolder sourceFolder = getSourceFolder(project, c.getFileSystemItem().getVirtualFile());
+      SourceFolder sourceFolder = null;
+      VirtualFile file = c.getFileSystemItem().getVirtualFile();
+      if (file != null) {
+        sourceFolder = getSourceFolder(project, file);
+      }
 
       return new FileTargetContextWrapper(c, sourceFolder != null ? sourceFolder.getRootType() : null);
     });
@@ -418,7 +422,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
     private final FileTargetContext myTargetContext;
     private final JpsModuleSourceRootType myRootType;
 
-    private FileTargetContextWrapper(FileTargetContext context, JpsModuleSourceRootType type) {
+    private FileTargetContextWrapper(FileTargetContext context, @Nullable JpsModuleSourceRootType type) {
       myTargetContext = context;
       myRootType = type;
     }
@@ -427,6 +431,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       return myTargetContext;
     }
 
+    @Nullable
     private JpsModuleSourceRootType getSourceRootType() {
       return myRootType;
     }
