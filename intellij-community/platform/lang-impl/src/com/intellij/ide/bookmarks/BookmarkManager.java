@@ -28,10 +28,10 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.AppUIUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
 import com.intellij.util.messages.MessageBusConnection;
-import com.intellij.util.ui.UIUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -56,7 +56,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
 
   private boolean mySortedState;
 
-  public static BookmarkManager getInstance(Project project) {
+  public static BookmarkManager getInstance(@NotNull Project project) {
     return ServiceManager.getService(project, BookmarkManager.class);
   }
 
@@ -71,14 +71,16 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     PsiDocumentManager.getInstance(project).addListener(new PsiDocumentManager.Listener() {
       @Override
       public void documentCreated(@NotNull final Document document, PsiFile psiFile) {
-        final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-        if (file == null) return;
+        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+        if (file == null) {
+          return;
+        }
+
         Collection<Bookmark> fileBookmarks = myBookmarks.get(file);
         if (!fileBookmarks.isEmpty()) {
-          UIUtil.invokeLaterIfNeeded(() -> {
-            if (myProject.isDisposed()) return;
+          AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
             MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myProject, true);
-            for (final Bookmark bookmark : fileBookmarks) {
+            for (Bookmark bookmark : fileBookmarks) {
               bookmark.createHighlighter(markup);
             }
           });
@@ -89,7 +91,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     connection.subscribe(UISettingsListener.TOPIC, uiSettings -> {
       if (mySortedState != uiSettings.getSortBookmarks()) {
         mySortedState = uiSettings.getSortBookmarks();
-        EventQueue.invokeLater(() -> project.getMessageBus().syncPublisher(BookmarksListener.TOPIC).bookmarksOrderChanged());
+        ApplicationManager.getApplication().invokeLater(() -> project.getMessageBus().syncPublisher(BookmarksListener.TOPIC).bookmarksOrderChanged());
       }
     });
   }
