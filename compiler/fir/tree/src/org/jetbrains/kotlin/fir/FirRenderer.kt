@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirLoopJump
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -25,6 +27,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun FirElement.renderWithType(): String = buildString {
     append(this@renderWithType)
@@ -461,9 +464,17 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
         typeParameter.variance.renderVariance()
         print(typeParameter.name)
-        if (typeParameter.bounds.isNotEmpty()) {
+
+        val meaningfulBounds = typeParameter.bounds.filter {
+            if (it !is FirResolvedTypeRef) return@filter true
+            if (!it.type.isNullable) return@filter true
+            val type = it.type as? ConeLookupTagBasedType ?: return@filter true
+            type.lookupTag.safeAs<ConeClassLikeLookupTag>()?.classId != StandardClassIds.Any
+        }
+
+        if (meaningfulBounds.isNotEmpty()) {
             print(" : ")
-            typeParameter.bounds.renderSeparated()
+            meaningfulBounds.renderSeparated()
         }
     }
 
