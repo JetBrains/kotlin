@@ -55,4 +55,26 @@ public class ClasspathEntryModelImpl implements ClasspathEntryModel, Serializabl
   public Set<String> getJavadoc() {
     return javadoc;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    ClasspathEntryModelImpl model = (ClasspathEntryModelImpl)o;
+
+    if (!classes.equals(model.classes)) return false;
+    if (!sources.equals(model.sources)) return false;
+    if (!javadoc.equals(model.javadoc)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = classes.hashCode();
+    result = 31 * result + sources.hashCode();
+    result = 31 * result + javadoc.hashCode();
+    return result;
+  }
 }

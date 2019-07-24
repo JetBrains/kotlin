@@ -84,9 +84,7 @@ public class ExternalProjectSerializationService implements SerializationService
           writeString(writer, "version", project.getVersion());
           writeString(writer, "projectDir", project.getProjectDir().getPath());
           writeString(writer, "buildDir", project.getBuildDir().getPath());
-          writer.setFieldName("buildFile");
-          File buildFile = project.getBuildFile();
-          writer.writeString(buildFile == null ? null : buildFile.getPath());
+          writeFile(writer, "buildFile", project.getBuildFile());
           writeTasks(writer, project.getTasks());
           writeSourceSets(writer, context, project.getSourceSets());
           writeFiles(writer, "artifacts", project.getArtifacts());
@@ -646,12 +644,6 @@ public class ExternalProjectSerializationService implements SerializationService
     id.setPackaging(assertNotNull(readString(reader, "packaging")));
     id.setClassifier(readString(reader, "classifier"));
     reader.stepOut();
-  }
-
-  @NotNull
-  private static <T> T assertNotNull(@Nullable T t) {
-    assert t != null;
-    return t;
   }
 
   public static class ReadContext {
