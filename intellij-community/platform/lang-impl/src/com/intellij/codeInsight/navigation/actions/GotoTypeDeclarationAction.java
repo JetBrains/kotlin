@@ -94,6 +94,11 @@ public class GotoTypeDeclarationAction extends BaseCodeInsightAction implements 
     return false;
   }
 
+  @Override
+  public boolean startInTransaction() {
+    return true;
+  }
+
   @Nullable
   public static PsiElement findSymbolType(@NotNull Editor editor, int offset) {
     final PsiElement[] psiElements = findSymbolTypes(editor, offset);
