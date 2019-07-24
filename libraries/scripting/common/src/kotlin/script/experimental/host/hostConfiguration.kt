@@ -32,6 +32,17 @@ class ScriptingHostConfiguration(baseScriptingConfigurations: Iterable<Scripting
 }
 
 /**
+ * An alternative to the constructor with base configuration, which returns a new configuration only if [body] adds anything
+ * to the original one, otherwise returns original
+ */
+fun ScriptingHostConfiguration?.with(body: ScriptingHostConfiguration.Builder.() -> Unit): ScriptingHostConfiguration {
+    val newConfiguration =
+        if (this == null) ScriptingHostConfiguration(body = body)
+        else ScriptingHostConfiguration(this, body = body)
+    return if (newConfiguration != this) newConfiguration else this
+}
+
+/**
  * The list of all dependencies required for the script base class and refinement callbacks
  */
 val ScriptingHostConfigurationKeys.configurationDependencies by PropertiesCollection.key<List<ScriptDependency>>()

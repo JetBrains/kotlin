@@ -14,8 +14,9 @@ import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.Assert
 import org.junit.Test
-import java.io.*
-import java.lang.RuntimeException
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.PrintStream
 import java.net.URLClassLoader
 import java.nio.file.Files
 import java.util.concurrent.TimeUnit
@@ -161,7 +162,7 @@ class ScriptingHostTest : TestCase() {
         checkInvokeMain(Thread.currentThread().contextClassLoader)
 
         val outputFromProcess = runScriptFromJar(outJar)
-        Assert.assertEquals(greeting, outputFromProcess)
+        Assert.assertEquals(listOf(greeting), outputFromProcess)
     }
 
     @Test
@@ -373,12 +374,12 @@ class ScriptingHostTest : TestCase() {
     }
 }
 
-internal fun runScriptFromJar(jar: File): String {
+internal fun runScriptFromJar(jar: File): List<String> {
     val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
     val args = listOf(javaExecutable.absolutePath, "-jar", jar.path)
     val processBuilder = ProcessBuilder(args)
     processBuilder.redirectErrorStream(true)
-    return run {
+    val r = run {
         val process = processBuilder.start()
         process.waitFor(10, TimeUnit.SECONDS)
         val out = process.inputStream.reader().readText()
@@ -389,6 +390,7 @@ internal fun runScriptFromJar(jar: File): String {
             out
         }
     }.trim()
+    return r.lineSequence().map { it.trim() }.toList()
 }
 
 fun <T> ResultWithDiagnostics<T>.throwOnFailure(): ResultWithDiagnostics<T> = apply {
@@ -421,6 +423,7 @@ internal fun evalScriptWithConfiguration(
 }
 
 internal fun ScriptCompilationConfiguration.Builder.makeSimpleConfigurationWithTestImport() {
+    updateClasspath(classpathFromClass<ScriptingHostTest>()) // the lambda below should be in the classpath
     refineConfiguration {
         beforeCompiling { ctx ->
             val importedScript = File(ScriptingHostTest.TEST_DATA_DIR, "importTest/helloWithVal.kts")
