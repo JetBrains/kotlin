@@ -46,7 +46,7 @@ public interface FormattingModelBuilderEx extends FormattingModelBuilder {
    * the specified PSI element and its children.
    *
    * @param element  the top element for which formatting is requested.
-   * @param range    the range for which a model should be built; wider range requires longer time for model building.
+   * @param range    the range for which a model should be built.
    * @param settings the code style settings used for formatting.
    * @param mode     formatting mode.
    * @return the formatting model for the file.
