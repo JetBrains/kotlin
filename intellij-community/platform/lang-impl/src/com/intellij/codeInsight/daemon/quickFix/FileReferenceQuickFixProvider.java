@@ -87,7 +87,7 @@ public class FileReferenceQuickFixProvider {
       if (targetDirectories.isEmpty()) return emptyList();
 
       NewFileLocation location = new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
-      return singletonList(new CreateDirectoryFix(element, location));
+      return singletonList(new CreateDirectoryPathFix(element, location));
     }
   }
 
@@ -243,7 +243,7 @@ public class FileReferenceQuickFixProvider {
     return file != null ? ModuleUtilCore.findModuleForFile(file, context.getProject()) : null;
   }
 
-  private static class MyCreateFileFix extends CreateFileWithScopeFix {
+  private static class MyCreateFileFix extends CreateFilePathFix {
     private final String myNewFileTemplateName;
 
     private MyCreateFileFix(@NotNull PsiElement psiElement,

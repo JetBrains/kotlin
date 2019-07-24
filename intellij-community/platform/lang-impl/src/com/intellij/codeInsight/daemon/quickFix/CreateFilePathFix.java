@@ -33,17 +33,17 @@ import java.util.function.Supplier;
  * {@link TargetDirectory#getPathToCreate()} and {@link NewFileLocation#getSubPath()}. If there are multiple target directories it shows
  * a popup where users can select desired target directory.
  */
-public class CreateFileWithScopeFix extends AbstractCreateFileFix {
+public class CreateFilePathFix extends AbstractCreateFileFix {
   private final String myText;
   @Nullable
   private Supplier<String> myFileTextSupplier;
 
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
-  public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull NewFileLocation newFileLocation,
-                                @Nullable String fileText,
-                                @NotNull String fixLocaleKey) {
+  public CreateFilePathFix(@NotNull PsiElement psiElement,
+                           @NotNull NewFileLocation newFileLocation,
+                           @Nullable String fileText,
+                           @NotNull String fixLocaleKey) {
     super(psiElement, newFileLocation, fixLocaleKey);
 
     myText = fileText;
@@ -51,14 +51,14 @@ public class CreateFileWithScopeFix extends AbstractCreateFileFix {
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
-  public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull NewFileLocation newFileLocation) {
+  public CreateFilePathFix(@NotNull PsiElement psiElement,
+                           @NotNull NewFileLocation newFileLocation) {
     this(psiElement, newFileLocation, null, "create.file.text");
   }
 
-  public CreateFileWithScopeFix(@NotNull PsiElement psiElement,
-                                @NotNull NewFileLocation newFileLocation,
-                                @NotNull Supplier<String> fileTextSupplier) {
+  public CreateFilePathFix(@NotNull PsiElement psiElement,
+                           @NotNull NewFileLocation newFileLocation,
+                           @NotNull Supplier<String> fileTextSupplier) {
     this(psiElement, newFileLocation, null, "create.file.text");
 
     myFileTextSupplier = fileTextSupplier;

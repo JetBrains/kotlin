@@ -9,8 +9,8 @@ import java.util.List;
 /**
  * Describes possible locations for new file / directory that can be created by a quick fix.
  *
- * @see CreateFileWithScopeFix
- * @see CreateDirectoryFix
+ * @see CreateFilePathFix
+ * @see CreateDirectoryPathFix
  */
 public class NewFileLocation {
   private final List<TargetDirectory> myDirectories;

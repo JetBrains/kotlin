@@ -15,20 +15,20 @@ import org.jetbrains.annotations.Nullable;
  * {@link TargetDirectory#getPathToCreate()} and {@link NewFileLocation#getSubPath()}. If there are multiple target directories it shows
  * a popup where users can select desired target directory.
  */
-public class CreateDirectoryFix extends AbstractCreateFileFix {
+public class CreateDirectoryPathFix extends AbstractCreateFileFix {
   // invoked from other module
   @SuppressWarnings("WeakerAccess")
-  public CreateDirectoryFix(@NotNull PsiElement psiElement,
-                            @NotNull NewFileLocation newFileLocation,
-                            @NotNull String fixLocaleKey) {
+  public CreateDirectoryPathFix(@NotNull PsiElement psiElement,
+                                @NotNull NewFileLocation newFileLocation,
+                                @NotNull String fixLocaleKey) {
     super(psiElement, newFileLocation, fixLocaleKey);
 
     myIsAvailable = true;
     myIsAvailableTimeStamp = System.currentTimeMillis();
   }
 
-  public CreateDirectoryFix(@NotNull PsiElement psiElement,
-                            @NotNull NewFileLocation newFileLocation) {
+  public CreateDirectoryPathFix(@NotNull PsiElement psiElement,
+                                @NotNull NewFileLocation newFileLocation) {
     this(psiElement, newFileLocation, "create.directory.text");
   }
 

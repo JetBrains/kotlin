@@ -11,8 +11,8 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Describes target directory for quick fixes that create new files.
  *
- * @see CreateDirectoryFix
- * @see CreateFileWithScopeFix
+ * @see CreateDirectoryPathFix
+ * @see CreateFilePathFix
  */
 public class TargetDirectory {
   private final SmartPsiElementPointer<PsiDirectory> myDirectory;

@@ -30,7 +30,7 @@ import java.io.IOException;
 
 /**
  * @author peter
- * @deprecated Use {@link CreateDirectoryFix} or {@link CreateFileWithScopeFix} instead.
+ * @deprecated Use {@link CreateDirectoryPathFix} or {@link CreateFilePathFix} instead.
 */
 @Deprecated
 public class CreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
