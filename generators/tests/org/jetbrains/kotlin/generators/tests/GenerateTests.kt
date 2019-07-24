@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests
@@ -154,8 +143,9 @@ import org.jetbrains.kotlin.kapt3.test.AbstractClassFileToSourceStubConverterTes
 import org.jetbrains.kotlin.kapt3.test.AbstractKotlinKaptContextTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinConverterSingleFileTest
 import org.jetbrains.kotlin.nj2k.AbstractNewJavaToKotlinCopyPasteConversionTest
-import org.jetbrains.kotlin.nj2k.AbstractNullabilityAnalysisTest
 import org.jetbrains.kotlin.nj2k.AbstractTextNewJavaToKotlinCopyPasteConversionTest
+import org.jetbrains.kotlin.nj2k.inference.common.AbstractCommonConstraintCollectorTest
+import org.jetbrains.kotlin.nj2k.inference.nullability.AbstractNullabilityInferenceTest
 import org.jetbrains.kotlin.noarg.AbstractBlackBoxCodegenTestForNoArg
 import org.jetbrains.kotlin.noarg.AbstractBytecodeListingTestForNoArg
 import org.jetbrains.kotlin.psi.patternMatching.AbstractPsiUnifierTest
@@ -987,14 +977,17 @@ fun main(args: Array<String>) {
         testClass<AbstractNewJavaToKotlinConverterSingleFileTest> {
             model("newJ2k", pattern = """^([^\.]+)\.java$""")
         }
+        testClass<AbstractCommonConstraintCollectorTest> {
+            model("inference/common")
+        }
+        testClass<AbstractNullabilityInferenceTest> {
+            model("inference/nullability")
+        }
         testClass<AbstractNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPaste", pattern = """^([^\.]+)\.java$""")
         }
         testClass<AbstractTextNewJavaToKotlinCopyPasteConversionTest> {
             model("copyPastePlainText", pattern = """^([^\.]+)\.txt$""")
-        }
-        testClass<AbstractNullabilityAnalysisTest> {
-            model("nullabilityAnalysis")
         }
     }
 

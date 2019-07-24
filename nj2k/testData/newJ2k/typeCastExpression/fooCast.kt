@@ -1,1 +1,1 @@
-t as Foo?
+t as Foo

@@ -1,1 +1,1 @@
-list as List<in String>?
+list as List<in String?>

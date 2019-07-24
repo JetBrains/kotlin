@@ -14,7 +14,7 @@ internal class A {
         String(intArrayOf(32, 65, 127), 0, 3)
 
         val bytes = byteArrayOf(32, 65, 100, 81)
-        val charset = Charset.forName("utf-8")
+        val charset: Charset = Charset.forName("utf-8")
         String(bytes)
         String(bytes, charset)
         String(bytes, 0, 2)
@@ -60,7 +60,6 @@ internal class A {
         s.toLowerCase(Locale.FRENCH)
         s.toUpperCase()
         s.toUpperCase(Locale.FRENCH)
-
         s
         s.toCharArray()
     }
@@ -80,7 +79,8 @@ internal class A {
                 2
                 , ignoreCase = true)
         s.regionMatches(0, "st", 1, 2)
-        s.replace("\\w+".toRegex(), "---").replaceFirst("([s-t])".toRegex(), "A$1")
+        s.replace("\\w+".toRegex(), "---")
+                .replaceFirst("([s-t])".toRegex(), "A$1")
         /* TODO
         s.matches("\\w+");
         useSplit(s.split("\\s+"));
