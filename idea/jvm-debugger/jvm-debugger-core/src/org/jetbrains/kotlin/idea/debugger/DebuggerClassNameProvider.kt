@@ -104,12 +104,12 @@ class DebuggerClassNameProvider(
         }
 
         val result = getOrComputeClassNames(relevantElement) { element ->
-            getOuterClassNamesForElement(element)
+            getOuterClassNamesForElement(element, emptySet())
         }.toMutableSet()
 
         for (lambda in position.readAction(::getLambdasAtLineIfAny)) {
             result += getOrComputeClassNames(lambda) { element ->
-                getOuterClassNamesForElement(element)
+                getOuterClassNamesForElement(element, emptySet())
             }
         }
 
@@ -118,7 +118,10 @@ class DebuggerClassNameProvider(
 
     @PublishedApi
     @Suppress("NON_TAIL_RECURSIVE_CALL")
-    internal tailrec fun getOuterClassNamesForElement(element: PsiElement?): ComputedClassNames {
+    internal tailrec fun getOuterClassNamesForElement(element: PsiElement?, alreadyVisited: Set<PsiElement>): ComputedClassNames {
+        // 'alreadyVisited' is used in inline callable searcher to prevent infinite recursion.
+        // In normal cases we only go from leaves to topmost parents upwards.
+
         if (element == null) return EMPTY
 
         return when (element) {
@@ -135,9 +138,9 @@ class DebuggerClassNameProvider(
                 when {
                     enclosingElementForLocal != null ->
                         // A local class
-                        getOuterClassNamesForElement(enclosingElementForLocal)
+                        getOuterClassNamesForElement(enclosingElementForLocal, alreadyVisited)
                     runReadAction { element.isObjectLiteral() } ->
-                        getOuterClassNamesForElement(element.relevantParentInReadAction)
+                        getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
                     else ->
                         // Guaranteed to be non-local class or object
                         element.readAction { _ ->
@@ -157,12 +160,12 @@ class DebuggerClassNameProvider(
             is KtProperty -> {
                 val nonInlineClasses = if (runReadAction { isTopLevelInFileOrScript(element) }) {
                     // Top level property
-                    getOuterClassNamesForElement(element.relevantParentInReadAction)
+                    getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
                 } else {
                     val enclosingElementForLocal = runReadAction { KtPsiUtil.getEnclosingElementForLocalDeclaration(element) }
                     if (enclosingElementForLocal != null) {
                         // Local class
-                        getOuterClassNamesForElement(enclosingElementForLocal)
+                        getOuterClassNamesForElement(enclosingElementForLocal, alreadyVisited)
                     } else {
                         val containingClassOrFile = runReadAction {
                             PsiTreeUtil.getParentOfType(element, KtFile::class.java, KtClassOrObject::class.java)
@@ -170,12 +173,12 @@ class DebuggerClassNameProvider(
 
                         if (containingClassOrFile is KtObjectDeclaration && containingClassOrFile.isCompanionInReadAction) {
                             // Properties from the companion object can be placed in the companion object's containing class
-                            (getOuterClassNamesForElement(containingClassOrFile.relevantParentInReadAction) +
-                                    getOuterClassNamesForElement(containingClassOrFile)).distinct()
+                            (getOuterClassNamesForElement(containingClassOrFile.relevantParentInReadAction, alreadyVisited) +
+                                    getOuterClassNamesForElement(containingClassOrFile, alreadyVisited)).distinct()
                         } else if (containingClassOrFile != null) {
-                            getOuterClassNamesForElement(containingClassOrFile)
+                            getOuterClassNamesForElement(containingClassOrFile, alreadyVisited)
                         } else {
-                            getOuterClassNamesForElement(element.relevantParentInReadAction)
+                            getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
                         }
                     }
                 }
@@ -184,13 +187,16 @@ class DebuggerClassNameProvider(
                             element.isInlineInReadAction ||
                                     runReadAction { element.accessors.any { it.hasModifier(KtTokens.INLINE_KEYWORD) } })
                 ) {
-                    nonInlineClasses + inlineUsagesSearcher.findInlinedCalls(element) { this.getOuterClassNamesForElement(it) }
+                    val inlinedCalls = inlineUsagesSearcher.findInlinedCalls(element, alreadyVisited) { el, newAlreadyVisited ->
+                        this.getOuterClassNamesForElement(el, newAlreadyVisited)
+                    }
+                    nonInlineClasses + inlinedCalls
                 } else {
                     return NonCached(nonInlineClasses.classNames)
                 }
             }
             is KtNamedFunction -> {
-                val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction)
+                val classNamesOfContainingDeclaration = getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
 
                 var nonInlineClasses: ComputedClassNames = classNamesOfContainingDeclaration
 
@@ -205,7 +211,9 @@ class DebuggerClassNameProvider(
                     return NonCached(nonInlineClasses.classNames)
                 }
 
-                val inlineCallSiteClasses = inlineUsagesSearcher.findInlinedCalls(element) { this.getOuterClassNamesForElement(it) }
+                val inlineCallSiteClasses = inlineUsagesSearcher.findInlinedCalls(element, alreadyVisited) { el, newAlreadyVisited ->
+                    this.getOuterClassNamesForElement(el, newAlreadyVisited)
+                }
 
                 nonInlineClasses + inlineCallSiteClasses
             }
@@ -213,10 +221,11 @@ class DebuggerClassNameProvider(
                 val initializerOwner = runReadAction { element.containingDeclaration }
 
                 if (initializerOwner is KtObjectDeclaration && initializerOwner.isCompanionInReadAction) {
-                    return getOuterClassNamesForElement(runReadAction { initializerOwner.containingClassOrObject })
+                    val containingClass = runReadAction { initializerOwner.containingClassOrObject }
+                    return getOuterClassNamesForElement(containingClass, alreadyVisited)
                 }
 
-                getOuterClassNamesForElement(initializerOwner)
+                getOuterClassNamesForElement(initializerOwner, alreadyVisited)
             }
             is KtFunctionLiteral -> {
                 val typeMapper = KotlinDebuggerCaches.getOrCreateTypeMapper(element)
@@ -233,9 +242,9 @@ class DebuggerClassNameProvider(
                     return names
                 }
 
-                names + getOuterClassNamesForElement(element.relevantParentInReadAction)
+                names + getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
             }
-            else -> getOuterClassNamesForElement(element.relevantParentInReadAction)
+            else -> getOuterClassNamesForElement(element.relevantParentInReadAction, alreadyVisited)
         }
     }
 

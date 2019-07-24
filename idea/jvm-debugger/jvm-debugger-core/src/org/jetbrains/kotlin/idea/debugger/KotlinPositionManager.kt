@@ -237,7 +237,7 @@ class KotlinPositionManager(private val myDebugProcess: DebugProcess) : MultiReq
             }
 
             val internalClassNames = DebuggerClassNameProvider(myDebugProcess, alwaysReturnLambdaParentClass = false)
-                    .getOuterClassNamesForElement(literal.firstChild)
+                    .getOuterClassNamesForElement(literal.firstChild, emptySet())
                     .classNames
 
             if (internalClassNames.any { it == currentLocationClassName }) {
