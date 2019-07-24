@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.ir.createParameterDeclarations
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
+import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.CompilationErrorHandler
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
@@ -85,18 +86,26 @@ object JvmBackendFacade {
             errorHandler.reportException(e, null)
         }
 
-        for (irFile in irModuleFragment.files) {
-            try {
-                for (loweredClass in irFile.declarations) {
-                    if (loweredClass !is IrClass) {
-                        throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
-                    }
+        for (generateMultifileFacade in listOf(true, false)) {
+            for (irFile in irModuleFragment.files) {
+                // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
+                // when serializing metadata in the multifile parts.
+                // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
+                val isMultifileFacade = irFile.fileEntry is MultifileFacadeFileEntry
+                if (isMultifileFacade != generateMultifileFacade) continue
 
-                    ClassCodegen.generate(loweredClass, context)
+                try {
+                    for (loweredClass in irFile.declarations) {
+                        if (loweredClass !is IrClass) {
+                            throw AssertionError("File-level declaration should be IrClass after JvmLower, got: " + loweredClass.render())
+                        }
+
+                        ClassCodegen.generate(loweredClass, context)
+                    }
+                    state.afterIndependentPart()
+                } catch (e: Throwable) {
+                    errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
                 }
-                state.afterIndependentPart()
-            } catch (e: Throwable) {
-                errorHandler.reportException(e, null) // TODO ktFile.virtualFile.url
             }
         }
     }

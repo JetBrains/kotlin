@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.deepCopyWithWrappedDescriptors
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
+import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.InitializersLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
@@ -28,9 +30,17 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.transformFlat
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 
 internal val generateMultifileFacadesPhase = namedIrModulePhase(
@@ -44,7 +54,9 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             context: JvmBackendContext,
             input: IrModuleFragment
         ): IrModuleFragment {
-            input.files.addAll(generateMultifileFacades(input.descriptor, context))
+            val movedFields = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()
+            input.files.addAll(generateMultifileFacades(input.descriptor, context, movedFields))
+            UpdateFieldCallSites(movedFields).lower(input)
             context.multifileFacadesToAdd.clear()
             return input
         }
@@ -71,7 +83,11 @@ internal class MultifileFacadeFileEntry(
         error("Multifile facade doesn't support debug info: $className")
 }
 
-private fun generateMultifileFacades(module: ModuleDescriptor, context: JvmBackendContext): List<IrFile> =
+private fun generateMultifileFacades(
+    module: ModuleDescriptor,
+    context: JvmBackendContext,
+    movedFields: MutableMap<IrFieldSymbol, IrFieldSymbol>
+): List<IrFile> =
     context.multifileFacadesToAdd.map { (jvmClassName, partClasses) ->
         val fileEntry = MultifileFacadeFileEntry(jvmClassName, partClasses.map(IrClass::fileParent))
         val file = IrFileImpl(fileEntry, EmptyPackageFragmentDescriptor(module, jvmClassName.packageFqName))
@@ -87,6 +103,8 @@ private fun generateMultifileFacades(module: ModuleDescriptor, context: JvmBacke
         for (partClass in partClasses) {
             context.multifileFacadeForPart[partClass.attributeOwnerId as IrClass] = jvmClassName
 
+            moveFieldsOfConstProperties(partClass, facadeClass, movedFields)
+
             for (member in partClass.declarations) {
                 member.createMultifileDelegateIfNeeded(context, facadeClass)
             }
@@ -94,6 +112,28 @@ private fun generateMultifileFacades(module: ModuleDescriptor, context: JvmBacke
 
         file
     }
+
+private fun moveFieldsOfConstProperties(
+    partClass: IrClass,
+    facadeClass: IrClass,
+    movedFields: MutableMap<IrFieldSymbol, IrFieldSymbol>
+) {
+    partClass.declarations.transformFlat { member ->
+        if (member is IrField && member.shouldMoveToFacade()) {
+            val field = member.deepCopyWithSymbols(facadeClass).also {
+                (it as IrFieldImpl).metadata = member.metadata
+            }
+            facadeClass.declarations.add(field)
+            movedFields[member.symbol] = field.symbol
+            emptyList()
+        } else null
+    }
+}
+
+private fun IrField.shouldMoveToFacade(): Boolean {
+    val property = correspondingPropertySymbol?.owner
+    return property != null && property.isConst && !Visibilities.isPrivate(visibility)
+}
 
 private fun IrDeclaration.createMultifileDelegateIfNeeded(context: JvmBackendContext, facadeClass: IrClass) {
     if (this !is IrFunction ||
@@ -133,5 +173,20 @@ private fun IrFunction.computeFunctionForCall(): IrFunction {
         property.getter -> propertyCopy.getter!!
         property.setter -> propertyCopy.setter!!
         else -> error("Property accessor must be getter or setter: ${dump()}")
+    }
+}
+
+private class UpdateFieldCallSites(
+    private val movedFields: Map<IrFieldSymbol, IrFieldSymbol>
+) : FileLoweringPass, IrElementTransformerVoid() {
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitGetField(expression: IrGetField): IrExpression {
+        val newField = movedFields[expression.symbol] ?: return super.visitGetField(expression)
+        return expression.run {
+            IrGetFieldImpl(startOffset, endOffset, newField, type, receiver, origin, superQualifierSymbol)
+        }
     }
 }
