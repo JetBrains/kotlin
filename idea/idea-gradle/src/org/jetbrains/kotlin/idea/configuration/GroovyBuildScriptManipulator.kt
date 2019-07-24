@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.buildA
 import org.jetbrains.kotlin.cli.common.arguments.CliArgumentStringBuilder.replaceLanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.idea.configuration.KotlinWithGradleConfigurator.Companion.getBuildScriptSettingsPsiFile
+import org.jetbrains.kotlin.idea.inspections.gradle.DifferentKotlinGradleVersionInspection
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
@@ -164,7 +165,8 @@ class GroovyBuildScriptManipulator(
             return allBlock.statements.lastOrNull()
         }
 
-        val featureArgumentString = feature.buildArgumentString(state)
+        val kotlinVersion = DifferentKotlinGradleVersionInspection.getKotlinPluginVersion(scriptFile)
+        val featureArgumentString = feature.buildArgumentString(state, kotlinVersion)
         val parameterName = "freeCompilerArgs"
         return addOrReplaceKotlinTaskParameter(
             scriptFile,
@@ -173,7 +175,13 @@ class GroovyBuildScriptManipulator(
             forTests
         ) { insideKotlinOptions ->
             val prefix = if (insideKotlinOptions) "kotlinOptions." else ""
-            val newText = text.replaceLanguageFeature(feature, state, prefix = "$prefix$parameterName = [", postfix = "]")
+            val newText = text.replaceLanguageFeature(
+                feature,
+                state,
+                kotlinVersion,
+                prefix = "$prefix$parameterName = [",
+                postfix = "]"
+            )
             replaceWithStatementFromText(newText)
         }
     }

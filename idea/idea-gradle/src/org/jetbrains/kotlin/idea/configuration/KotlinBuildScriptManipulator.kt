@@ -229,6 +229,55 @@ class KotlinBuildScriptManipulator(
         }
     }
 
+    private fun KtBlockExpression.findClassPathDependencyVersion(pluginName: String): String? {
+        return PsiTreeUtil.getChildrenOfAnyType(this, KtCallExpression::class.java).mapNotNull {
+            if (it?.calleeExpression?.text == "classpath") {
+                val dependencyName = it.valueArguments.firstOrNull()?.text?.removeSurrounding("\"")
+                if (dependencyName?.startsWith(pluginName) == true) dependencyName.substringAfter("$pluginName:") else null
+            } else null
+        }.singleOrNull()
+    }
+
+    private fun getPluginInfoFromBuildScript(
+        operatorName: String?,
+        pluginVersion: KtExpression?,
+        receiverCalleeExpression: KtCallExpression?
+    ): Pair<String, String>? {
+        val receiverCalleeExpressionText = receiverCalleeExpression?.calleeExpression?.text?.trim()
+        val receivedPluginName = when {
+            receiverCalleeExpressionText == "id" ->
+                receiverCalleeExpression.valueArguments.firstOrNull()?.text?.trim()?.removeSurrounding("\"")
+            operatorName == "version" -> receiverCalleeExpressionText
+            else -> null
+        }
+        val pluginVersionText = pluginVersion?.text?.trim()?.removeSurrounding("\"") ?: return null
+
+        return receivedPluginName?.to(pluginVersionText)
+    }
+
+    private fun KtBlockExpression.findPluginVersionInPluginGroup(pluginName: String): String? {
+        val versionsToPluginNames =
+            PsiTreeUtil.getChildrenOfAnyType(this, KtBinaryExpression::class.java, KtDotQualifiedExpression::class.java).mapNotNull {
+                when (it) {
+                    is KtBinaryExpression -> getPluginInfoFromBuildScript(
+                        it.operationReference.text,
+                        it.right,
+                        it.left as? KtCallExpression
+                    )
+                    is KtDotQualifiedExpression ->
+                        (it.selectorExpression as? KtCallExpression)?.run {
+                            getPluginInfoFromBuildScript(
+                                calleeExpression?.text,
+                                valueArguments.firstOrNull()?.getArgumentExpression(),
+                                it.receiverExpression as? KtCallExpression
+                            )
+                        }
+                    else -> null
+                }
+            }.toMap()
+        return versionsToPluginNames.getOrDefault(pluginName, null)
+    }
+
     private fun KtBlockExpression.findPluginInPluginsGroup(pluginName: String): KtCallExpression? {
         return PsiTreeUtil.getChildrenOfAnyType(
             this,
@@ -354,14 +403,24 @@ class KotlinBuildScriptManipulator(
                 ?.addExpressionIfMissing("languageSettings.enableLanguageFeature(\"${feature.name}\")")
         }
 
-        val featureArgumentString = feature.buildArgumentString(state)
+        val pluginsBlock = findScriptInitializer("plugins")?.getBlock()
+        val kotlinVersion = pluginsBlock?.findPluginVersionInPluginGroup("kotlin")
+            ?: pluginsBlock?.findPluginVersionInPluginGroup("org.jetbrains.kotlin.jvm")
+            ?: findScriptInitializer("buildscript")?.getBlock()?.findBlock("dependencies")?.findClassPathDependencyVersion("org.jetbrains.kotlin:kotlin-gradle-plugin")
+        val featureArgumentString = feature.buildArgumentString(state, kotlinVersion)
         val parameterName = "freeCompilerArgs"
         return addOrReplaceKotlinTaskParameter(
             parameterName,
             "listOf(\"$featureArgumentString\")",
             forTests
         ) {
-            val newText = text.replaceLanguageFeature(feature, state, prefix = "$parameterName = listOf(", postfix = ")")
+            val newText = text.replaceLanguageFeature(
+                feature,
+                state,
+                kotlinVersion,
+                prefix = "$parameterName = listOf(",
+                postfix = ")"
+            )
             replace(psiFactory.createExpression(newText))
         }
     }
