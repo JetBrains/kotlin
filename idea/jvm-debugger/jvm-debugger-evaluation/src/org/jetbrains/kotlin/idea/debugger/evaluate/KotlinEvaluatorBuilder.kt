@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.core.util.attachmentByPsiFile
 import org.jetbrains.kotlin.idea.core.util.mergeAttachments
 import org.jetbrains.kotlin.idea.core.util.runInReadActionWithWriteActionPriorityWithPCE
-import org.jetbrains.kotlin.idea.debugger.DebuggerUtils
+import org.jetbrains.kotlin.idea.debugger.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.KotlinDebuggerCaches.Companion.compileCodeFragmentCacheAware
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.GENERATED_CLASS_NAME
 import org.jetbrains.kotlin.idea.debugger.evaluate.classLoading.GENERATED_FUNCTION_NAME
@@ -55,9 +55,6 @@ import org.jetbrains.kotlin.idea.debugger.evaluate.compilation.*
 import org.jetbrains.kotlin.idea.debugger.evaluate.compilingEvaluator.loadClassesSafely
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.EvaluatorValueConverter
 import org.jetbrains.kotlin.idea.debugger.evaluate.variables.VariableFinder
-import org.jetbrains.kotlin.idea.debugger.safeLocation
-import org.jetbrains.kotlin.idea.debugger.safeMethod
-import org.jetbrains.kotlin.idea.debugger.safeVisibleVariableByName
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
@@ -153,7 +150,13 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
             val executionContext = ExecutionContext(context, frameProxy)
             return evaluateSafe(executionContext, status)
         } catch (e: EvaluateException) {
-            status.error(EvaluationError.EvaluateException)
+            val error = if (e.exceptionFromTargetVM != null) {
+                EvaluationError.ExceptionFromEvaluatedCode
+            } else {
+                EvaluationError.EvaluateException
+            }
+
+            status.error(error)
             throw e
         } catch (e: ProcessCanceledException) {
             status.error(EvaluationError.ProcessCancelledException)
@@ -431,7 +434,7 @@ class KotlinEvaluator(val codeFragment: KtCodeFragment, private val sourcePositi
                 is ExceptionThrown -> {
                     when {
                         this.kind == ExceptionThrown.ExceptionKind.FROM_EVALUATED_CODE -> {
-                            status.error(EvaluationError.Eval4JExceptionFromEvaluatedCode)
+                            status.error(EvaluationError.ExceptionFromEvaluatedCode)
                             evaluationException(InvocationException(this.exception.value as ObjectReference))
                         }
                         this.kind == ExceptionThrown.ExceptionKind.BROKEN_CODE ->

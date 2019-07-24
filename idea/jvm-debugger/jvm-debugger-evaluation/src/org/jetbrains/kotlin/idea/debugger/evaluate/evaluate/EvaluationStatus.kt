@@ -71,10 +71,10 @@ enum class EvaluationError {
     SuspendCall,
     CrossInlineLambda,
 
-    Eval4JExceptionFromEvaluatedCode,
     Eval4JAbnormalTermination,
     Eval4JUnknownException,
 
+    ExceptionFromEvaluatedCode,
     ErrorElementOccurred,
     FrontendException,
     BackendException,
