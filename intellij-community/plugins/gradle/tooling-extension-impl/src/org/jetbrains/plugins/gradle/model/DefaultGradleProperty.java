@@ -5,8 +5,6 @@ import com.intellij.serialization.PropertyMapping;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.Serializable;
-
 /**
  * @author Vladislav.Soroka
  */
@@ -15,18 +13,15 @@ public class DefaultGradleProperty implements GradleProperty {
   private final String name;
   @NotNull
   private final String rootTypeFqn;
-  @Nullable
-  private final Serializable value;
 
-  @PropertyMapping({"name", "typeFqn", "value"})
-  public DefaultGradleProperty(@NotNull String name, @Nullable String typeFqn, @Nullable Serializable value) {
+  @PropertyMapping({"name", "typeFqn"})
+  public DefaultGradleProperty(@NotNull String name, @Nullable String typeFqn) {
     this.name = name;
     rootTypeFqn = typeFqn == null ? "Object" : typeFqn;
-    this.value = value;
   }
 
   public DefaultGradleProperty(GradleProperty property) {
-    this(property.getName(), property.getTypeFqn(), property.getValue());
+    this(property.getName(), property.getTypeFqn());
   }
 
   @NotNull
@@ -41,9 +36,23 @@ public class DefaultGradleProperty implements GradleProperty {
     return rootTypeFqn;
   }
 
-  @Nullable
   @Override
-  public Serializable getValue() {
-    return value;
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DefaultGradleProperty property = (DefaultGradleProperty)o;
+
+    if (!name.equals(property.name)) return false;
+    if (!rootTypeFqn.equals(property.rootTypeFqn)) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = name.hashCode();
+    result = 31 * result + rootTypeFqn.hashCode();
+    return result;
   }
 }

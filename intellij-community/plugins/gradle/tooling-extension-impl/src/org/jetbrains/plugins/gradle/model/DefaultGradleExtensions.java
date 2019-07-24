@@ -110,4 +110,32 @@ public class DefaultGradleExtensions implements GradleExtensions {
   public List<DefaultGradleConfiguration> getConfigurations() {
     return configurations == null ? Collections.<DefaultGradleConfiguration>emptyList() : configurations;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    DefaultGradleExtensions that = (DefaultGradleExtensions)o;
+
+    if (extensions != null ? !extensions.equals(that.extensions) : that.extensions != null) return false;
+    if (conventions != null ? !conventions.equals(that.conventions) : that.conventions != null) return false;
+    if (gradleProperties != null ? !gradleProperties.equals(that.gradleProperties) : that.gradleProperties != null) return false;
+    if (tasks != null ? !tasks.equals(that.tasks) : that.tasks != null) return false;
+    if (configurations != null ? !configurations.equals(that.configurations) : that.configurations != null) return false;
+    if (parentProjectPath != null ? !parentProjectPath.equals(that.parentProjectPath) : that.parentProjectPath != null) return false;
+
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = extensions != null ? extensions.hashCode() : 0;
+    result = 31 * result + (conventions != null ? conventions.hashCode() : 0);
+    result = 31 * result + (gradleProperties != null ? gradleProperties.hashCode() : 0);
+    result = 31 * result + (tasks != null ? tasks.hashCode() : 0);
+    result = 31 * result + (configurations != null ? configurations.hashCode() : 0);
+    result = 31 * result + (parentProjectPath != null ? parentProjectPath.hashCode() : 0);
+    return result;
+  }
 }

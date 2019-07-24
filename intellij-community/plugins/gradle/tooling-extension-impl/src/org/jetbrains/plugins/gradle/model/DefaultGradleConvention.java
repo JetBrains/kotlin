@@ -10,7 +10,7 @@ public final class DefaultGradleConvention extends DefaultGradleProperty impleme
 
   @PropertyMapping({"name", "typeFqn"})
   public DefaultGradleConvention(@NotNull String name, @Nullable String typeFqn) {
-    super(name, typeFqn, null);
+    super(name, typeFqn);
   }
 
   public DefaultGradleConvention(GradleConvention convention) {
