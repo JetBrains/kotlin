@@ -37,45 +37,6 @@ fun FirElement.renderWithType(): String = buildString {
 
 fun FirElement.render(): String = buildString { this@render.accept(FirRenderer(this)) }
 
-
-fun ConeKotlinType.render(): String {
-    return when (this) {
-        is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
-        is ConeDefinitelyNotNullType -> "${original.render()}!"
-        is ConeClassErrorType -> "class error: $reason"
-        is ConeCapturedType -> "captured type: lowerType = ${lowerType?.render()}"
-        is ConeClassLikeType -> {
-            val sb = StringBuilder()
-            sb.append(lookupTag.classId.asString())
-            if (typeArguments.isNotEmpty()) {
-                sb.append(typeArguments.joinToString(prefix = "<", postfix = ">") {
-                    when (it) {
-                        ConeStarProjection -> "*"
-                        is ConeKotlinTypeProjectionIn -> "in ${it.type.render()}"
-                        is ConeKotlinTypeProjectionOut -> "out ${it.type.render()}"
-                        is ConeKotlinType -> it.render()
-                    }
-                })
-            }
-            sb.toString()
-        }
-        is ConeTypeParameterType -> {
-            lookupTag.name.asString()
-        }
-        is ConeFlexibleType -> {
-            buildString {
-                append("ft<")
-                append(lowerBound.render())
-                append(lowerBound.nullability.suffix)
-                append(", ")
-                append(upperBound.render())
-                append(upperBound.nullability.suffix)
-                append(">")
-            }
-        }
-    }
-}
-
 class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     private val printer = Printer(builder)
 
