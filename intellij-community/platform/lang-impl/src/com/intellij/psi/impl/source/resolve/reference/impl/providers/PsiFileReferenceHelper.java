@@ -76,9 +76,16 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
 
   @NotNull
   @Override
-  public Collection<FileTargetContext> sortTargetContexts(Project project, @NotNull VirtualFile file,
-                                                          @NotNull Collection<FileTargetContext> targetContexts) {
-    return sortWithResourcePriority(project, file, targetContexts);
+  public Collection<PsiFileSystemItem> getRoots(@NotNull Module module, @NotNull VirtualFile file) {
+    Collection<PsiFileSystemItem> contextsForModule = getRoots(module);
+    if (contextsForModule.size() <= 1) {
+      return contextsForModule;
+    }
+
+    Collection<FileTargetContext> targetContexts = toTargetContexts(contextsForModule);
+    Collection<FileTargetContext> contexts = sortWithResourcePriority(module.getProject(), file, targetContexts);
+
+    return ContainerUtil.map(contexts, c -> c.getFileSystemItem());
   }
 
   @NotNull
@@ -112,7 +119,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
 
               List<SourceFolder> additionalContexts = getMissingTargetFolders(module, contextsForModule);
               if (additionalContexts.isEmpty()) {
-                return toTargetContexts(contextsForModule);
+                return sortWithResourcePriority(project, file, toTargetContexts(contextsForModule));
               }
 
               List<FileTargetContext> joinedContexts = new ArrayList<>(contextsForModule.size() + additionalContexts.size());
@@ -137,7 +144,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
                 }
               }
 
-              return joinedContexts;
+              return sortWithResourcePriority(project, file, joinedContexts);
             }
           }
         }
