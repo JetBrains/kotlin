@@ -30,7 +30,6 @@ import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamUt
  * @author Vladislav.Soroka
  */
 public class ExternalProjectSerializationService implements SerializationService<ExternalProject> {
-  private static final String OBJECT_ID_FIELD = "objectID";
   @SuppressWarnings("SSBasedInspection")
   private static final String[] EMPTY_STRING_ARRAY = new String[0];
 

@@ -27,7 +27,6 @@ import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamUt
  * @author Vladislav.Soroka
  */
 public class BuildScriptClasspathModelSerializationService implements SerializationService<BuildScriptClasspathModel> {
-  private static final String OBJECT_ID_FIELD = "objectID";
   private final WriteContext myWriteContext = new WriteContext();
   private final ReadContext myReadContext = new ReadContext();
 
@@ -100,7 +99,7 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
     if (reader.next() == null) return null;
     reader.stepIn();
 
-    BuildScriptClasspathModelImpl project =
+    BuildScriptClasspathModelImpl model =
       context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<BuildScriptClasspathModelImpl>() {
         @Override
         public BuildScriptClasspathModelImpl get() {
@@ -115,7 +114,7 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
         }
       });
     reader.stepOut();
-    return project;
+    return model;
   }
 
   private static List<ClasspathEntryModel> readClasspath(IonReader reader) {
