@@ -43,7 +43,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     extensions.extraProperties.properties.each { name, value ->
       if(name == 'extraModelBuilder' || name.contains('.')) return
       String typeFqn = getType(value)
-      result.gradleProperties.add(new DefaultGradleProperty(name, typeFqn, value.toString()))
+      result.gradleProperties.add(new DefaultGradleProperty(name, typeFqn))
     }
 
     for (it in extensions.findAll()) {
@@ -66,7 +66,7 @@ class ProjectExtensionsDataBuilderImpl implements ModelBuilderService {
     return result
   }
 
-  private List<String> extractKeysViaReflection(ExtensionContainer convention) {
+  private static List<String> extractKeysViaReflection(ExtensionContainer convention) {
     def m = convention.class.getMethod("getAsMap")
     return (m.invoke(convention) as Map<String, Object>).keySet().asList() as List<String>
   }

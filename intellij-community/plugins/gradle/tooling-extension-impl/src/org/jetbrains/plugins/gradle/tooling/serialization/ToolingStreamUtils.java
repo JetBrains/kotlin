@@ -109,6 +109,11 @@ public class ToolingStreamUtils {
     writer.writeString(value);
   }
 
+  public static void writeBoolean(@NotNull IonWriter writer, @NotNull String fieldName, boolean value) throws IOException {
+    writer.setFieldName(fieldName);
+    writer.writeBool(value);
+  }
+
   public static void writeFile(@NotNull IonWriter writer, @NotNull String fieldName, @Nullable File file) throws IOException {
     writeString(writer, fieldName, file == null ? null : file.getPath());
   }

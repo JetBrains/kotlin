@@ -17,3 +17,4 @@
 org.jetbrains.plugins.gradle.tooling.serialization.ExternalProjectSerializationService
 org.jetbrains.plugins.gradle.tooling.serialization.BuildScriptClasspathModelSerializationService
 org.jetbrains.plugins.gradle.tooling.serialization.RepositoriesModelSerializationService
+org.jetbrains.plugins.gradle.tooling.serialization.GradleExtensionsSerializationService

@@ -31,11 +31,11 @@ public class RepositoriesModelSerializationService implements SerializationServi
   private final ReadContext myReadContext = new ReadContext();
 
   @Override
-  public byte[] write(RepositoriesModel classpathModel, Class<? extends RepositoriesModel> modelClazz) throws IOException {
+  public byte[] write(RepositoriesModel repositoriesModel, Class<? extends RepositoriesModel> modelClazz) throws IOException {
     ByteArrayOutputStream out = new ByteArrayOutputStream();
     IonWriter writer = IonBinaryWriterBuilder.standard().build(out);
     try {
-      write(writer, myWriteContext, classpathModel);
+      write(writer, myWriteContext, repositoriesModel);
     }
     finally {
       writer.close();
@@ -109,7 +109,7 @@ public class RepositoriesModelSerializationService implements SerializationServi
     if (reader.next() == null) return null;
     reader.stepIn();
 
-    RepositoriesModel project =
+    RepositoriesModel model =
       context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<RepositoriesModelImpl>() {
         @Override
         public RepositoriesModelImpl get() {
@@ -122,7 +122,7 @@ public class RepositoriesModelSerializationService implements SerializationServi
         }
       });
     reader.stepOut();
-    return project;
+    return model;
   }
 
   private static List<MavenRepositoryModel> readRepositories(IonReader reader, ReadContext context) {
