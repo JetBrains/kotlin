@@ -51,16 +51,17 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
             return text + "\n".takeIf { needNewLine }.orEmpty()
         }
 
-        private fun JKNonCodeElementsListOwner.needPreserveSpacesAfterLastCommit() =
+        private fun JKNonCodeElementsListOwner.needPreserveSpacesAfterLastComment() =
             this is JKArgument
                     || this is JKParameter
                     || safeAs<JKTreeElement>()?.parent is JKArgument
                     || safeAs<JKTreeElement>()?.parent is JKBinaryExpression
+                    || safeAs<JKTreeElement>()?.parent is JKQualifiedExpression
 
         override fun printLeftNonCodeElements(element: JKNonCodeElementsListOwner) {
             val text = element.leftNonCodeElements
                 .let {
-                    if (element.needPreserveSpacesAfterLastCommit()) it
+                    if (element.needPreserveSpacesAfterLastComment()) it
                     else it.dropWhile { it is JKSpaceElement }
                 }.createText()
             printer.printWithNoIndent(text)
@@ -70,7 +71,7 @@ class NewCodeBuilder(context: NewJ2kConverterContext) {
         override fun printRightNonCodeElements(element: JKNonCodeElementsListOwner) {
             val text = element.rightNonCodeElements
                 .let {
-                    if (element.needPreserveSpacesAfterLastCommit()) it
+                    if (element.needPreserveSpacesAfterLastComment()) it
                     else it.dropLastWhile { it is JKSpaceElement }
                 }.createText()
             printer.printWithNoIndent(text)
