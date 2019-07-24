@@ -350,8 +350,11 @@ val IrFunction.isStatic: Boolean
     get() = parent is IrClass && dispatchReceiverParameter == null
 
 val IrDeclaration.isTopLevel: Boolean
-    get() = parent is IrPackageFragment
-
+    get() {
+        if (parent is IrPackageFragment) return true
+        val parentClass = parent as? IrClass
+        return parentClass?.origin == IrDeclarationOrigin.FILE_CLASS && parentClass.parent is IrPackageFragment
+    }
 
 fun Scope.createTemporaryVariableWithWrappedDescriptor(
     irExpression: IrExpression,
