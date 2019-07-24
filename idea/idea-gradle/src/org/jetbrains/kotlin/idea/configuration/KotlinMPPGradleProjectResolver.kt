@@ -144,23 +144,27 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 // processing case when one artifact could be produced by several (actualized!)source sets
                 if (mppArtifacts.isNotEmpty() && resolverCtx.isResolveModulePerSourceSet) {
                     val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)
-                    val artifactToDependency = HashMap<String, ExternalDependency>()
+
+                    //Note! Should not use MultiValuesMap as it contains Set of values, but we need comparision === instead of ==
+                    val artifactToDependency = HashMap<String, MutableCollection<ExternalDependency>>()
                     externalProject?.sourceSets?.values?.forEach { sourceSet ->
                         sourceSet.dependencies.forEach { dependency ->
                             dependency.getDependencyArtifacts().map { toCanonicalPath(it.absolutePath) }
-                                .filter { mppArtifacts.keys.contains(it) }.forEach {
-                                    artifactToDependency[it] = dependency
+                                .filter { mppArtifacts.keys.contains(it) }.forEach {filePath ->
+                                    (artifactToDependency[filePath] ?: ArrayList<ExternalDependency>().also { newCollection ->
+                                        artifactToDependency[filePath] = newCollection
+                                    }).add(dependency)
                                 }
 
                         }
                     }
                     // create 'fake' dependency artifact files and put them into dependency substitution map
                     mppArtifacts.forEach { (k, v) ->
-                        artifactToDependency[k]?.apply {
+                        artifactToDependency[k]?.forEach { externalDependency ->
                             for ((index, module) in v.withIndex()) {
                                 val fakeArtifact = "$k-MPP-$index"
                                 configArtifacts[fakeArtifact] = module
-                                this.addDependencyArtifactInternal(File(fakeArtifact))
+                                externalDependency.addDependencyArtifactInternal(File(fakeArtifact))
                             }
                         }
                     }

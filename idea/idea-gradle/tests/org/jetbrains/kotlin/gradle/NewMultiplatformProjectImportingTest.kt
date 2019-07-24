@@ -586,7 +586,7 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
         checkProjectStructure(false, false, false ) {
             module("project.javaModule.test") {
                 moduleDependency("project.mppModule.jvmTest", DependencyScope.TEST, true)
-                moduleDependency("project.mppModule.jvmMain", DependencyScope.TEST, false)
+                moduleDependency("project.mppModule.jvmMain", DependencyScope.COMPILE, false)
             }
         }
     }
