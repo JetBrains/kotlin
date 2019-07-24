@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
@@ -151,9 +152,14 @@ fun IrValueParameter.copyTo(
     varargElementType: IrType? = this.varargElementType,
     defaultValue: IrExpressionBody? = this.defaultValue,
     isCrossinline: Boolean = this.isCrossinline,
-    isNoinline: Boolean = this.isNoinline
+    isNoinline: Boolean = this.isNoinline,
+    receiverToValue: Boolean = false
 ): IrValueParameter {
-    val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
+    val descriptor = if (this.descriptor is ReceiverParameterDescriptor && !receiverToValue) {
+        WrappedReceiverParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    } else {
+        WrappedValueParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    }
     val symbol = IrValueParameterSymbolImpl(descriptor)
     val defaultValueCopy = defaultValue?.deepCopyWithVariables()
     defaultValueCopy?.patchDeclarationParents(irFunction)
@@ -256,7 +262,8 @@ fun IrFunction.copyValueParametersToStatic(
                 origin = originalDispatchReceiver.origin,
                 index = shift++,
                 type = type,
-                name = Name.identifier("\$this")
+                name = Name.identifier("\$this"),
+                receiverToValue = true
             )
         )
     }
@@ -266,7 +273,8 @@ fun IrFunction.copyValueParametersToStatic(
                 target,
                 origin = originalExtensionReceiver.origin,
                 index = shift++,
-                name = Name.identifier("\$receiver")
+                name = Name.identifier("\$receiver"),
+                receiverToValue = true
             )
         )
     }
@@ -533,12 +541,14 @@ fun createStaticFunctionWithReceivers(
             this,
             name = Name.identifier("this"),
             index = offset++,
-            type = dispatchReceiverType!!
+            type = dispatchReceiverType!!,
+            receiverToValue = true
         )
         val extensionReceiver = oldFunction.extensionReceiverParameter?.copyTo(
             this,
             name = Name.identifier("receiver"),
-            index = offset++
+            index = offset++,
+            receiverToValue = true
         )
         valueParameters.addAll(listOfNotNull(dispatchReceiver, extensionReceiver) +
                                        oldFunction.valueParameters.map { it.copyTo(this, index = it.index + offset) }

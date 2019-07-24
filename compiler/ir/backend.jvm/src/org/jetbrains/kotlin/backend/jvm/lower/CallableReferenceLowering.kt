@@ -240,7 +240,8 @@ internal class CallableReferenceLowering(val context: JvmBackendContext) : FileL
                     valueParameters += param.copyTo(
                         this,
                         index = valueParameters.size,
-                        type = param.type.substitute(typeArgumentsMap)
+                        type = param.type.substitute(typeArgumentsMap),
+                        receiverToValue = true
                     )
                 }
 

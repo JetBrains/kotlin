@@ -123,11 +123,14 @@ class MemoizedInlineClassReplacements {
 
             for ((index, parameter) in function.explicitParameters.withIndex()) {
                 val name = if (parameter == function.extensionReceiverParameter) Name.identifier("\$receiver") else parameter.name
-                val newParameter = parameter.copyTo(this, index = index - 1, name = name)
-                if (parameter == function.dispatchReceiverParameter)
+                val newParameter: IrValueParameter
+                if (parameter == function.dispatchReceiverParameter) {
+                    newParameter = parameter.copyTo(this, index = -1, name = name)
                     dispatchReceiverParameter = newParameter
-                else
+                } else {
+                    newParameter = parameter.copyTo(this, index = index - 1, name = name, receiverToValue = true)
                     valueParameters.add(newParameter)
+                }
                 parameterMap[parameter.symbol] = newParameter
             }
         }
@@ -147,7 +150,7 @@ class MemoizedInlineClassReplacements {
                     else -> parameter.name
                 }
 
-                val newParameter = parameter.copyTo(this, index = index, name = name)
+                val newParameter = parameter.copyTo(this, index = index, name = name, receiverToValue = true)
                 valueParameters.add(newParameter)
                 parameterMap[parameter.symbol] = newParameter
             }
