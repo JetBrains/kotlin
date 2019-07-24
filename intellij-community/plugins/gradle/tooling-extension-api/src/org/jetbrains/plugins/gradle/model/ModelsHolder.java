@@ -96,10 +96,6 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
             iterator.remove();
           }
         }
-        catch (IllegalArgumentException ignore) {
-          // related serialization service was not found
-          iterator.remove();
-        }
         catch (IOException e) {
           //noinspection UseOfSystemOutOrSystemErr
           System.err.println(e.getMessage());
