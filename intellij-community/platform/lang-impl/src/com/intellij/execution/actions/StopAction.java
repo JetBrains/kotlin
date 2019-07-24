@@ -264,7 +264,7 @@ public class StopAction extends DumbAwareAction implements AnAction.TransparentU
   }
 
   private static void _showStopRunningBar(@NotNull List<? extends RunContentDescriptor> stoppableDescriptors) {
-    if (!TouchBarsManager.isTouchBarAvailable())
+    if (!TouchBarsManager.isTouchBarEnabled())
       return;
 
     List<Pair<RunContentDescriptor, Runnable>> descriptors = new ArrayList<>(stoppableDescriptors.size());
