@@ -12,8 +12,8 @@ import java.util.HashMap;
 
 class PageSizes {
   private static final Logger LOG = Logger.getInstance("#com.intellij.codeEditor.printing.PageSizes");
-  private static ArrayList myPageSizes = null;
-  private static HashMap myNamesToPageSizes = null;
+  private static ArrayList<PageSize> myPageSizes = null;
+  private static HashMap<String, PageSize> myNamesToPageSizes = null;
   private static final double MM_TO_INCH = 1/25.4;
   @NonNls private static final String PAGE_SIZES_RESOURCE = "/PageSizes.xml";
   @NonNls private static final String ELEMENT_SIZE = "size";
@@ -27,7 +27,7 @@ class PageSizes {
     init();
     String[] ret = new String[myPageSizes.size()];
     for(int i = 0; i < myPageSizes.size(); i++) {
-      PageSize pageSize = (PageSize)myPageSizes.get(i);
+      PageSize pageSize = myPageSizes.get(i);
       ret[i] = pageSize.name;
     }
     return ret;
@@ -40,7 +40,7 @@ class PageSizes {
 
   public static double getWidth(String name) {
     init();
-    PageSize pageSize = (PageSize)myNamesToPageSizes.get(name);
+    PageSize pageSize = myNamesToPageSizes.get(name);
     if(pageSize == null) {
       return 0;
     }
@@ -49,7 +49,7 @@ class PageSizes {
 
   public static double getHeight(String name) {
     init();
-    PageSize pageSize = (PageSize)myNamesToPageSizes.get(name);
+    PageSize pageSize = myNamesToPageSizes.get(name);
     if(pageSize == null) {
       return 0;
     }
@@ -79,8 +79,8 @@ class PageSizes {
     if(myPageSizes != null) {
       return;
     }
-    myPageSizes = new ArrayList();
-    myNamesToPageSizes = new HashMap();
+    myPageSizes = new ArrayList<>();
+    myNamesToPageSizes = new HashMap<>();
 
     try {
       for (Element element : JDOMUtil.load(PageSizes.class.getResourceAsStream(PAGE_SIZES_RESOURCE)).getChildren(ELEMENT_SIZE)) {

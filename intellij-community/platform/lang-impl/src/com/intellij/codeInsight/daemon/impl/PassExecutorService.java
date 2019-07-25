@@ -188,7 +188,7 @@ class PassExecutorService implements Disposable {
     log(updateProgress, null, vFiles + " ----- starting " + threadsToStartCountdown.get(), freePasses);
 
     for (ScheduledPass dependentPass : dependentPasses) {
-      mySubmittedPasses.put(dependentPass, Job.NULL_JOB);
+      mySubmittedPasses.put(dependentPass, Job.nullJob());
     }
     for (ScheduledPass freePass : freePasses) {
       submit(freePass);

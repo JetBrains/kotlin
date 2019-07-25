@@ -42,7 +42,7 @@ public class LayoutProjectCodeDialog extends DialogWrapper implements ReformatFi
   private ScopeChooserCombo myScopeCombo;
 
   private JCheckBox myEnableFileNameFilterCb;
-  private ComboBox myFileFilter;
+  private ComboBox<String> myFileFilter;
 
   private JCheckBox myCbOptimizeImports;
   private JCheckBox myCbRearrangeEntries;

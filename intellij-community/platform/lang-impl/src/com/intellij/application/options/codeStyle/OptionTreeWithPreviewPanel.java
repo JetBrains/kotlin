@@ -377,11 +377,11 @@ public abstract class OptionTreeWithPreviewPanel extends CustomizableLanguageCod
     for (CustomBooleanOptionInfo option : myCustomOptions.get(groupName)) {
       try {
         Field field = option.settingClass.getField(option.fieldName);
-        myKeys.add(new CustomBooleanOptionKey(option.fieldName,
-                                              getRenamedTitle(groupName, groupName),
-                                              getRenamedTitle(option.fieldName, option.title),
-                                              option.anchor, option.anchorFieldName,
-                                              option.settingClass, field));
+        myKeys.add(new CustomBooleanOptionKey<>(option.fieldName,
+                                                getRenamedTitle(groupName, groupName),
+                                                getRenamedTitle(option.fieldName, option.title),
+                                                option.anchor, option.anchorFieldName,
+                                                option.settingClass, field));
       }
       catch (NoSuchFieldException | SecurityException e) {
         LOG.error(e);
