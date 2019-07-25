@@ -94,7 +94,8 @@ fun createFunctionConsumer(
                     callResolver,
                     invokeCallInfo = callInfo,
                     components = inferenceComponents,
-                    invokeConsumer = this
+                    invokeConsumer = this,
+                    resolutionStageRunner = resultCollector.resolutionStageRunner
                 )
             )
         }

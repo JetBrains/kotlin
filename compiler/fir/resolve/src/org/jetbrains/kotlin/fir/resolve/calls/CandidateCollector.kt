@@ -9,14 +9,11 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImp
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import kotlin.coroutines.Continuation
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.EmptyCoroutineContext
-import kotlin.coroutines.intrinsics.createCoroutineUnintercepted
-import kotlin.coroutines.resume
 
-open class CandidateCollector(val components: InferenceComponents) {
-
+open class CandidateCollector(
+    val components: InferenceComponents,
+    val resolutionStageRunner: ResolutionStageRunner
+) {
     val groupNumbers = mutableListOf<Int>()
     val candidates = mutableListOf<Candidate>()
 
@@ -28,37 +25,8 @@ open class CandidateCollector(val components: InferenceComponents) {
         currentApplicability = CandidateApplicability.HIDDEN
     }
 
-    private fun getApplicability(
-        group: Int,
-        candidate: Candidate
-    ): CandidateApplicability {
-        val sink = CheckerSinkImpl(components)
-        var finished = false
-        sink.continuation = suspend {
-            for (stage in candidate.callInfo.callKind.sequence()) {
-                stage.check(candidate, sink, candidate.callInfo)
-            }
-        }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
-            override val context: CoroutineContext
-                get() = EmptyCoroutineContext
-
-            override fun resumeWith(result: Result<Unit>) {
-                result.exceptionOrNull()?.let { throw it }
-                finished = true
-            }
-        })
-
-        while (!finished) {
-            sink.continuation!!.resume(Unit)
-            if (sink.current < CandidateApplicability.SYNTHETIC_RESOLVED) {
-                break
-            }
-        }
-        return sink.current
-    }
-
     open fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
-        val applicability = getApplicability(group, candidate)
+        val applicability = resolutionStageRunner.processCandidate(candidate)
 
         if (applicability > currentApplicability) {
             groupNumbers.clear()
@@ -103,8 +71,9 @@ class InvokeReceiverCandidateCollector(
     val callResolver: CallResolver,
     val invokeCallInfo: CallInfo,
     components: InferenceComponents,
-    val invokeConsumer: AccumulatingTowerDataConsumer
-) : CandidateCollector(components) {
+    val invokeConsumer: AccumulatingTowerDataConsumer,
+    resolutionStageRunner: ResolutionStageRunner
+) : CandidateCollector(components, resolutionStageRunner) {
     override fun consumeCandidate(group: Int, candidate: Candidate): CandidateApplicability {
         val applicability = super.consumeCandidate(group, candidate)
 

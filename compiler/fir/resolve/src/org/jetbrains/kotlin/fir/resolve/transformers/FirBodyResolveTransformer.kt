@@ -71,7 +71,16 @@ open class FirBodyResolveTransformer(
 
     private val callCompleter: FirCallCompleter = FirCallCompleter(this, inferenceComponents)
     private val qualifiedResolver: FirQualifiedNameResolver = FirQualifiedNameResolver(this)
-    private val callResolver: FirCallResolver = FirCallResolver(this, inferenceComponents, scopes, localScopes, implicitReceiverStack, qualifiedResolver)
+    private val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner(inferenceComponents)
+    private val callResolver: FirCallResolver = FirCallResolver(
+        this,
+        inferenceComponents,
+        scopes,
+        localScopes,
+        implicitReceiverStack,
+        qualifiedResolver,
+        resolutionStageRunner
+    )
 
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName

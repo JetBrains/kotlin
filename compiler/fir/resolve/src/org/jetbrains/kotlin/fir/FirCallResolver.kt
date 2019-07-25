@@ -41,7 +41,8 @@ class FirCallResolver(
     private val scopes: List<FirScope>,
     private val localScopes: List<FirScope>,
     private val implicitReceiverStack: List<ImplicitReceiverValue>,
-    private val qualifiedResolver: FirQualifiedNameResolver
+    private val qualifiedResolver: FirQualifiedNameResolver,
+    private val resolutionStageRunner: ResolutionStageRunner
 ) : BodyResolveComponents by transformer {
 
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?, file: FirFile): FirFunctionCall {
@@ -66,7 +67,7 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(returnTypeCalculator, inferenceComponents)
+        val resolver = CallResolver(returnTypeCalculator, inferenceComponents, resolutionStageRunner)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
 
@@ -156,7 +157,7 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(returnTypeCalculator, inferenceComponents)
+        val resolver = CallResolver(returnTypeCalculator, inferenceComponents, resolutionStageRunner)
         resolver.callInfo = info
         resolver.scopes = (scopes + localScopes).asReversed()
 

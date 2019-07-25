@@ -14,7 +14,11 @@ enum class TowerDataKind {
     TOWER_LEVEL
 }
 
-class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: InferenceComponents) {
+class CallResolver(
+    val typeCalculator: ReturnTypeCalculator,
+    val components: InferenceComponents,
+    val resolutionStageRunner: ResolutionStageRunner
+) {
     var callInfo: CallInfo? = null
     var scopes: List<FirScope>? = null
 
@@ -51,7 +55,7 @@ class CallResolver(val typeCalculator: ReturnTypeCalculator, val components: Inf
         return group
     }
 
-    val collector by lazy { CandidateCollector(components) }
+    val collector by lazy { CandidateCollector(components, resolutionStageRunner) }
     lateinit var towerDataConsumer: TowerDataConsumer
     private lateinit var implicitReceiverValues: List<ImplicitReceiverValue>
 
