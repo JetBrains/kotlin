@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.createKotlinLibrary
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
@@ -42,6 +44,7 @@ import org.openjdk.jmh.annotations.*
 import org.openjdk.jmh.infra.Blackhole
 import java.io.File
 import java.util.concurrent.TimeUnit
+import org.jetbrains.kotlin.konan.file.File as KonanFile
 
 @State(Scope.Benchmark)
 @Fork(1)
@@ -119,20 +122,22 @@ open class GenerateIrRuntime {
         private fun createPsiFileFromDir(path: String): List<KtFile> = File(path).listAllFiles().map { createPsiFile(it.path) }
 
         private val fullRuntimeSourceSet = createPsiFileFromDir("compiler/ir/serialization.js/build/fullRuntime/src")
+
+        private fun loadKlib(klibPath: String) = createKotlinLibrary(KonanFile("$klibPath.klib"))
     }
 
 
     private val sharedSourceSet = fullRuntimeSourceSet
     private var sharedAnalysisResult: AnalysisResult? = null
     private var sharedModuleFragment: IrModuleFragment? = null
-    private var sharedModuleRef: KlibModuleRef? = null
+    private var sharedModulePath: String = ""
 
     @Setup
     fun setupSharedData() {
         val files = sharedSourceSet
         val analysisResult = doFrontEnd(files).also { sharedAnalysisResult = it }
         val moduleFragment = doPsi2Ir(files, analysisResult).also { sharedModuleFragment = it }
-        sharedModuleRef = doSerializeModule(moduleFragment, analysisResult.bindingContext)
+        sharedModulePath = doSerializeModule(moduleFragment, analysisResult.bindingContext)
     }
 
 
@@ -185,9 +190,9 @@ open class GenerateIrRuntime {
     @Warmup(iterations = 50, batchSize = 1)
     @Measurement(iterations = 10, batchSize = 1)
     fun runDeserialization(bh: Blackhole) {
-        val moduleRef = sharedModuleRef!!
+        val modulePath = sharedModulePath
 
-        bh.consume(doDeserializeModule(moduleRef))
+        bh.consume(doDeserializeModule(modulePath))
     }
 
     @Benchmark
@@ -195,9 +200,9 @@ open class GenerateIrRuntime {
     @Warmup(iterations = 50, batchSize = 1)
     @Measurement(iterations = 10, batchSize = 1)
     fun runDeserializationAndBackend(bh: Blackhole) {
-        val moduleRef = sharedModuleRef!!
+        val modulePath = sharedModulePath
 
-        val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
+        val (module, symbolTable, irBuiltIns) = doDeserializeModule(modulePath)
         bh.consume(doBackEnd(module, symbolTable, irBuiltIns))
     }
 
@@ -231,7 +236,7 @@ open class GenerateIrRuntime {
         return Psi2IrTranslator(languageVersionSettings, psi2IrContext.configuration).generateModuleFragment(psi2IrContext, files)
     }
 
-    private fun doSerializeModule(moduleFragment: IrModuleFragment, bindingContext: BindingContext): KlibModuleRef {
+    private fun doSerializeModule(moduleFragment: IrModuleFragment, bindingContext: BindingContext): String {
         val tmpKlibDir = createTempDir().also { it.deleteOnExit() }
         serializeModuleIntoKlib(
             moduleName,
@@ -240,13 +245,16 @@ open class GenerateIrRuntime {
             bindingContext,
             tmpKlibDir.path,
             emptyList(),
-            moduleFragment
+            moduleFragment,
+            true
         )
 
-        return KlibModuleRef(moduleName, tmpKlibDir.path)
+        return tmpKlibDir.path
+//        return createKotlinLibrary(KonanFile(tmpKlibDir.toPath()), true)
+//        return KlibModuleRef(moduleName, tmpKlibDir.path)
     }
 
-    private fun doDeserializeModuleMetadata(moduleRef: KlibModuleRef): ModuleDescriptorImpl {
+    private fun doDeserializeModuleMetadata(moduleRef: KotlinLibrary): ModuleDescriptorImpl {
         val storageManager = LockBasedStorageManager("ModulesStructure")
 
         val parts = loadKlibMetadataParts(moduleRef)
@@ -264,7 +272,8 @@ open class GenerateIrRuntime {
         )
     }
 
-    private fun doDeserializeModule(moduleRef: KlibModuleRef): Triple<IrModuleFragment, SymbolTable, IrBuiltIns> {
+    private fun doDeserializeModule(modulePath: String): Triple<IrModuleFragment, SymbolTable, IrBuiltIns> {
+        val moduleRef = loadKlib(modulePath)
         val moduleDescriptor = doDeserializeModuleMetadata(moduleRef)
 
         val symbolTable = SymbolTable()
@@ -291,13 +300,13 @@ open class GenerateIrRuntime {
     }
 
     private fun doBackEnd(module: IrModuleFragment, symbolTable: SymbolTable, irBuiltIns: IrBuiltIns): JsProgram {
-        val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, configuration)
+        val context = JsIrBackendContext(module.descriptor, irBuiltIns, symbolTable, module, emptySet(), configuration)
 
         ExternalDependenciesGenerator(module.descriptor, symbolTable, irBuiltIns).generateUnboundSymbolsAsDependencies()
 
         jsPhases.invokeToplevel(phaseConfig, context, module)
 
-        return module.accept(IrModuleToJsTransformer(context), null) as JsProgram
+        return module.accept(IrModuleToJsTransformer(context, null, null), null) as JsProgram
     }
 
     private fun compile(files: List<KtFile>): String {
@@ -305,9 +314,9 @@ open class GenerateIrRuntime {
 
         val rawModuleFragment = doPsi2Ir(files, analysisResult)
 
-        val moduleRef = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
+        val modulePath = doSerializeModule(rawModuleFragment, analysisResult.bindingContext)
 
-        val (module, symbolTable, irBuiltIns) = doDeserializeModule(moduleRef)
+        val (module, symbolTable, irBuiltIns) = doDeserializeModule(modulePath)
 
         val jsProgram = doBackEnd(module, symbolTable, irBuiltIns)
 
