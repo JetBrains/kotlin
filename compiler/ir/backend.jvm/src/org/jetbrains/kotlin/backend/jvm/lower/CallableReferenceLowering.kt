@@ -11,17 +11,13 @@ import org.jetbrains.kotlin.backend.common.ir.copyTo
 import org.jetbrains.kotlin.backend.common.ir.createImplicitParameterDeclarationWithWrappedDescriptor
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlock
-import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
-import org.jetbrains.kotlin.backend.jvm.localDeclarationsPhase
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -32,7 +28,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -66,52 +61,26 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
     override fun lower(irFile: IrFile) = irFile.transformChildrenVoid(this)
 
-    // Change calls to big arity invoke functions to vararg calls.
+    // Mark function references appearing as inlined arguments to inline functions.
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
-        markInlineFunctionReferences(expression)
-        expression.transformChildrenVoid(this)
-
-        if (expression.valueArgumentsCount < FunctionInvokeDescriptor.BIG_ARITY ||
-            !expression.symbol.owner.parentAsClass.defaultType.isFunctionOrKFunction())
-            return expression
-
-        return IrCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type, functionNInvokeFun.symbol, functionNInvokeFun.descriptor,
-            1, expression.origin
-        ).apply {
-            putTypeArgument(0, expression.type)
-            dispatchReceiver = expression.dispatchReceiver
-            extensionReceiver = expression.extensionReceiver
-            val vararg = IrVarargImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                context.ir.symbols.array.typeWith(context.irBuiltIns.anyNType),
-                context.irBuiltIns.anyNType,
-                (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)!! }
-            )
-            putValueArgument(0, vararg)
-        }
-    }
-
-    private fun markInlineFunctionReferences(expression: IrFunctionAccessExpression) {
         val function = expression.symbol.owner
-        if (!function.isInlineFunctionCall(context))
-            return
+        if (function.isInlineFunctionCall(context)) {
+            for (parameter in function.valueParameters) {
+                if (!parameter.isInlineParameter())
+                    continue
 
-        for (parameter in function.valueParameters) {
-            if (!parameter.isInlineParameter())
-                continue
+                val valueArgument = expression.getValueArgument(parameter.index) ?: continue
+                if (!isInlineIrExpression(valueArgument))
+                    continue
 
-            val valueArgument = expression.getValueArgument(parameter.index) ?: continue
-            if (!isInlineIrExpression(valueArgument))
-                continue
-
-            if (valueArgument is IrFunctionReference) {
-                ignoredFunctionReferences.add(valueArgument)
-            } else if (valueArgument is IrBlock) {
-                ignoredFunctionReferences.addIfNotNull(valueArgument.statements.filterIsInstance<IrFunctionReference>().singleOrNull())
+                if (valueArgument is IrFunctionReference) {
+                    ignoredFunctionReferences.add(valueArgument)
+                } else if (valueArgument is IrBlock) {
+                    ignoredFunctionReferences.addIfNotNull(valueArgument.statements.filterIsInstance<IrFunctionReference>().singleOrNull())
+                }
             }
         }
+        return super.visitFunctionAccess(expression)
     }
 
     // Ignore function references handled in SAM conversion
@@ -161,10 +130,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         // The type of the reference is KFunction<in A1, ..., in An, out R>
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         private val argumentTypes = parameterTypes.dropLast(1)
-        private val returnType = parameterTypes.last()
-
-        private val useVararg
-            get() = argumentTypes.size >= FunctionInvokeDescriptor.BIG_ARITY
 
         private val typeParameters = if (callee is IrConstructor)
             callee.parentAsClass.typeParameters + callee.typeParameters
@@ -190,7 +155,10 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         fun build(): IrExpression {
             val constructor = createConstructor()
             val invokeMethod = createInvokeMethod()
-            createBridge(invokeMethod)
+
+            val functionClass = context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
+            functionReferenceClass.superTypes += functionClass.typeWith(parameterTypes)
+            invokeMethod.overriddenSymbols += functionClass.functions.single { it.owner.name.asString() == "invoke" }
 
             if (!isLambda) {
                 createGetSignatureMethod(functionGetSignature)
@@ -339,80 +307,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             }
         }
 
-        // Build a bridge to the monomorphic invoke method. This is more elaborate than the usual BridgeLowering,
-        // since we have special handling for functions with large arity (> 22 arguments). Large arity functions
-        // are translated to functions with a single vararg argument, which checks the number of arguments and types
-        // dynamically.
-        private fun createBridge(invoke: IrSimpleFunction) {
-            // Add supertypes
-            val actualFunctionClass = if (useVararg)
-                context.ir.symbols.functionN
-            else
-                context.ir.symbols.getJvmFunctionClass(argumentTypes.size)
-
-            functionReferenceClass.superTypes += actualFunctionClass.typeWith(if (useVararg) listOf(returnType) else parameterTypes)
-            val superFunction = actualFunctionClass.owner.functions.find { it.name.asString() == "invoke" }!!
-
-            // Only add a bridge method when necessary
-            if (context.state.typeMapper.mapAsmMethod(superFunction.descriptor) ==
-                context.state.typeMapper.mapAsmMethod(invoke.descriptor)
-            ) {
-                invoke.overriddenSymbols += superFunction.symbol
-                return
-            }
-
-            // Add the invoke bridge
-            functionReferenceClass.addFunction {
-                name = superFunction.name
-                returnType = context.irBuiltIns.anyNType
-                modality = Modality.FINAL
-                visibility = Visibilities.PUBLIC
-                origin = IrDeclarationOrigin.BRIDGE
-            }.apply {
-                overriddenSymbols += superFunction.symbol
-                dispatchReceiverParameter = parentAsClass.thisReceiver!!.copyTo(this)
-                if (useVararg)
-                    valueParameters += superFunction.valueParameters[0].copyTo(this)
-                else
-                    superFunction.valueParameters.forEach { valueParameters += it.copyTo(this, type = context.irBuiltIns.anyNType) }
-
-                body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
-                    // Check the number of arguments for large arity functions
-                    if (useVararg) {
-                        +irIfThen(
-                            irNotEquals(
-                                irCall(arraySizeProperty.getter!!).apply {
-                                    dispatchReceiver = irGet(valueParameters.single())
-                                },
-                                irInt(argumentTypes.size)
-                            ),
-                            irCall(context.irBuiltIns.illegalArgumentExceptionSymbol).apply {
-                                putValueArgument(0, irString("Expected ${argumentTypes.size} arguments"))
-                            }
-                        )
-                    }
-
-                    +irReturn(irCall(invoke).apply {
-                        dispatchReceiver = irGet(dispatchReceiverParameter!!)
-
-                        for (parameter in invoke.valueParameters) {
-                            val index = parameter.index
-
-                            val argument = if (useVararg) {
-                                val argArray = irGet(valueParameters.single())
-                                val argIndex = irInt(index)
-                                irCallOp(arrayGetFun.symbol, context.irBuiltIns.anyNType, argArray, argIndex)
-                            } else {
-                                irGet(valueParameters[index])
-                            }
-
-                            putValueArgument(index, irImplicitCast(argument, argumentTypes[index]))
-                        }
-                    })
-                }
-            }
-        }
-
         private fun buildOverride(superFunction: IrSimpleFunction, newReturnType: IrType = superFunction.returnType): IrSimpleFunction =
             functionReferenceClass.addFunction {
                 setSourceRange(irFunctionReference)
@@ -496,14 +390,6 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         get() = allScopes.any { scope -> (scope.irElement as? IrFunction)?.isInline ?: false }
 
     private fun IrClassSymbol.functionByName(name: String) = owner.functions.single { it.name.asString() == name }
-
-    private val arraySizeProperty by lazy {
-        context.irBuiltIns.arrayClass.owner.properties.single { it.name.toString() == "size" }
-    }
-
-    private val arrayGetFun by lazy {
-        context.irBuiltIns.arrayClass.functionByName("get")
-    }
 
     private val functionReferenceReceiverField =
         context.ir.symbols.functionReference.owner.declarations.single { it is IrField && it.name.toString() == "receiver" } as IrField

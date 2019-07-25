@@ -11345,6 +11345,11 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 runTest("compiler/testData/codegen/box/functions/bigArity/callFromJava.kt");
             }
 
+            @TestMetadata("callFunViaVararg.kt")
+            public void testCallFunViaVararg() throws Exception {
+                runTest("compiler/testData/codegen/box/functions/bigArity/callFunViaVararg.kt");
+            }
+
             @TestMetadata("callWithIncorrectNumberOfArguments.kt")
             public void testCallWithIncorrectNumberOfArguments() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/bigArity/callWithIncorrectNumberOfArguments.kt");
