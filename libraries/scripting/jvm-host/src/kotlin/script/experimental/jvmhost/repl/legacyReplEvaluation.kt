@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.repl.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
+import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.baseClassLoader
@@ -37,15 +38,15 @@ class JvmReplEvaluator(
         val compiledScript = (compileResult.data as? KJvmCompiledScript<*>)
             ?: return ReplEvalResult.Error.CompileTime("Unable to access compiled script: ${compileResult.data}")
 
-        val lastSnippetInstance = history.peek()?.item
-        val historyBeforeSnippet = history.previousItems(compileResult.lineId)
+        val lastSnippetClass = history.peek()?.item?.first
+        val historyBeforeSnippet = history.previousItems(compileResult.lineId).map { it.second }.toList()
         val currentConfiguration = ScriptEvaluationConfiguration(baseScriptEvaluationConfiguration) {
-            if (historyBeforeSnippet.any()) {
-                previousSnippets.put(historyBeforeSnippet.toList())
+            if (historyBeforeSnippet.isNotEmpty()) {
+                previousSnippets.put(historyBeforeSnippet)
             }
-            if (lastSnippetInstance != null) {
+            if (lastSnippetClass != null) {
                 jvm {
-                    baseClassLoader(lastSnippetInstance::class.java.classLoader)
+                    baseClassLoader(lastSnippetClass.java.classLoader)
                 }
             }
             if (scriptArgs != null) {
@@ -59,17 +60,18 @@ class JvmReplEvaluator(
             is ResultWithDiagnostics.Success -> {
                 when (val retVal = res.value.returnValue) {
                     is ResultValue.Error -> {
+                        history.replaceOrPush(compileResult.lineId, retVal.scriptClass to null)
                         ReplEvalResult.Error.Runtime(
                             retVal.error.message ?: "unknown error",
                             (retVal.error as? Exception) ?: (retVal.wrappingException as? Exception)
                         )
                     }
                     is ResultValue.Value -> {
-                        history.replaceOrPush(compileResult.lineId, retVal.scriptInstance!!)
+                        history.replaceOrPush(compileResult.lineId, retVal.scriptClass to retVal.scriptInstance)
                         ReplEvalResult.ValueResult(retVal.name, retVal.value, retVal.type)
                     }
                     is ResultValue.Unit -> {
-                        history.replaceOrPush(compileResult.lineId, retVal.scriptInstance!!)
+                        history.replaceOrPush(compileResult.lineId, retVal.scriptClass to retVal.scriptInstance)
                         ReplEvalResult.UnitResult()
                     }
                     else -> throw IllegalStateException("Unexpected snippet result value $retVal")
@@ -87,8 +89,8 @@ class JvmReplEvaluator(
 open class JvmReplEvaluatorState(
     scriptEvaluationConfiguration: ScriptEvaluationConfiguration,
     override val lock: ReentrantReadWriteLock = ReentrantReadWriteLock()
-) : IReplStageState<Any> {
-    override val history: IReplStageHistory<Any> = ReplStageHistoryWithReplace(lock)
+) : IReplStageState<Pair<KClass<*>?, Any?>> {
+    override val history: IReplStageHistory<Pair<KClass<*>?, Any?>> = ReplStageHistoryWithReplace(lock)
 
     override val currentGeneration: Int get() = (history as BasicReplStageHistory<*>).currentGeneration.get()
 }

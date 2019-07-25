@@ -7,7 +7,6 @@ package kotlin.script.experimental.jvmhost.jsr223
 
 import org.jetbrains.kotlin.cli.common.repl.*
 import java.util.concurrent.locks.ReentrantReadWriteLock
-import javax.script.Bindings
 import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
@@ -71,7 +70,7 @@ class KotlinJsr223ScriptEngineImpl(
         get() = null
 
     override val backwardInstancesHistory: Sequence<Any>
-        get() = getCurrentState(getContext()).asState(JvmReplEvaluatorState::class.java).history.asReversed().asSequence().map { it.item }
+        get() = getCurrentState(getContext()).asState(JvmReplEvaluatorState::class.java).history.asReversed().asSequence().map { it.item.second }.filterNotNull()
 
     override val baseClassLoader: ClassLoader
         get() = evaluationConfiguration[ScriptEvaluationConfiguration.jvm.baseClassLoader]!!
