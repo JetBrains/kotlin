@@ -228,19 +228,18 @@ internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? 
     }
 
 internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>? {
-    val res = hashMapOf<String, File>()
+    val foundKeys = mutableSetOf<String>()
+    val res = arrayListOf<File>()
     for (cpentry in this) {
         for (prefix in keyNames) {
-            if (!res.containsKey(prefix) &&
-                (cpentry.matchMaybeVersionedFile(prefix) || (cpentry.isDirectory && cpentry.hasParentNamed(prefix)))
-            ) {
-                res[prefix] = cpentry
+            if (cpentry.matchMaybeVersionedFile(prefix) || (cpentry.isDirectory && cpentry.hasParentNamed(prefix))) {
+                foundKeys.add(prefix)
+                res.add(cpentry)
                 break
             }
         }
     }
-    return if (keyNames.all { res.containsKey(it) }) res.values.toList()
-    else null
+    return res.takeIf { foundKeys.containsAll(keyNames.asList()) }
 }
 
 internal fun List<File>.takeIfContainsAny(vararg keyNames: String): List<File>? =
