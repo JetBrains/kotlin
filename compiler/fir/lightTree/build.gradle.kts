@@ -2,7 +2,6 @@ import org.ajoberstar.grgit.Grgit
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.intellij") version "0.4.5"
 
     //git plugin
     id("org.ajoberstar.grgit") version "3.1.1"
@@ -20,9 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile("com.jetbrains.intellij.java:java-psi-impl:183.5912.17")
-    compile("com.jetbrains.intellij.java:java-psi:183.5912.17")
-    
+    compileOnly(intellijCoreDep()) { includeJars("intellij-core", "guava", rootProject = rootProject) }
     compile(project(":compiler:psi"))
     
     compile("junit", "junit", "4.4")
@@ -95,7 +92,7 @@ val jmhExec by tasks.creating(JavaExec::class) {
     main = "org.openjdk.jmh.Main"
 
     workingDir = rootDir
-    systemProperty("idea.home.path", project.intellij.localPath)
+    systemProperty("idea.home.path", project.intellijRootDir().absolutePath)
     systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
     configurations.plusAssign(project.configurations["compile"])
 }
