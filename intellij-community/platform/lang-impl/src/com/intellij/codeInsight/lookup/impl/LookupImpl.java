@@ -111,7 +111,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
   private volatile boolean myCalculating;
   private final Advertiser myAdComponent;
   volatile int myLookupTextWidth = 50;
-  private boolean myChangeGuard;
+  private int myGuardedChanges;
   private volatile LookupArranger myArranger;
   private LookupArranger myPresentableArranger;
   private boolean myStartCompletionWhenNothingMatches;
@@ -694,17 +694,16 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
 
   public boolean performGuardedChange(Runnable change) {
     checkValid();
-    assert !myChangeGuard : "already in change";
 
     myEditor.getDocument().startGuardedBlockChecking();
-    myChangeGuard = true;
+    myGuardedChanges++;
     boolean result;
     try {
       result = myOffsets.performGuardedChange(change);
     }
     finally {
       myEditor.getDocument().stopGuardedBlockChecking();
-      myChangeGuard = false;
+      myGuardedChanges--;
     }
     if (!result || myDisposed) {
       hideLookup(false);
@@ -719,7 +718,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
 
   @Override
   public boolean vetoesHiding() {
-    return myChangeGuard;
+    return myGuardedChanges > 0;
   }
 
   public boolean isAvailableToUser() {
@@ -825,7 +824,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myEditor.getDocument().addDocumentListener(new DocumentListener() {
       @Override
       public void documentChanged(@NotNull DocumentEvent e) {
-        if (!myChangeGuard && !myFinishing) {
+        if (myGuardedChanges == 0 && !myFinishing) {
           hideLookup(false);
         }
       }
@@ -842,7 +841,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myEditor.getCaretModel().addCaretListener(new CaretListener() {
       @Override
       public void caretPositionChanged(@NotNull CaretEvent e) {
-        if (!myChangeGuard && !myFinishing) {
+        if (myGuardedChanges == 0 && !myFinishing) {
           hideLookup(false);
         }
       }
@@ -850,7 +849,7 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
     myEditor.getSelectionModel().addSelectionListener(new SelectionListener() {
       @Override
       public void selectionChanged(@NotNull final SelectionEvent e) {
-        if (!myChangeGuard && !myFinishing) {
+        if (myGuardedChanges == 0 && !myFinishing) {
           hideLookup(false);
         }
       }
