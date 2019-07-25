@@ -11,6 +11,7 @@ import com.intellij.testFramework.TestDataPath
 import com.intellij.util.PathUtil
 import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirRenderer
+import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.walkTopDown
@@ -43,7 +44,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     private fun compareAll(stubMode: Boolean) {
-        val lightTreeConverter = LightTree2Fir(stubMode, myProject)
+        val lightTreeConverter = LightTree2Fir(myProject, stubMode)
         compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
@@ -61,7 +62,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     }
 
     fun testCompareDiagnostics() {
-        val lightTreeConverter = LightTree2Fir(false, myProject)
+        val lightTreeConverter = LightTree2Fir(myProject, stubMode = false)
         compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
             val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
             val text = notEditedText.replace("(<!>)|(<!.*?!>)".toRegex(), "").replaceAfter(".java", "")
@@ -128,7 +129,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitLambdaArgumentExpression = visitLambdaArgumentExpression,
             visitAnonymousObject = visitAnonymousObject
         )
-        val lightTreeConverter = LightTree2Fir(stubMode, myProject)
+        val lightTreeConverter = LightTree2Fir(myProject, stubMode)
         compareBase(path, withTestData) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
 
