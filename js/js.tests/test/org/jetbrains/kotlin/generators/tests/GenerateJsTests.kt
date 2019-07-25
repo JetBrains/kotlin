@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.js.test.AbstractDceTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrBoxWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
 
 fun main(args: Array<String>) {
@@ -25,6 +26,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrBoxJsTest> {
             model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrBoxWasmTest> {
+            model("box/wasm", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM)
         }
 
         testClass<AbstractSourceMapGenerationSmokeTest> {

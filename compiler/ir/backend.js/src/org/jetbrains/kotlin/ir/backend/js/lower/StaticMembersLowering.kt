@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.ir.IrElement
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 // Move static member declarations from classes to top level
-class StaticMembersLowering(val context: JsIrBackendContext) : FileLoweringPass {
+class StaticMembersLowering(val context: CommonBackendContext) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
         val staticDeclarationsInClasses = mutableListOf<IrDeclaration>()
