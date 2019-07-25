@@ -17,7 +17,6 @@ package com.intellij.refactoring.ui;
 
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.ui.SimpleListCellRenderer;
-import com.intellij.util.IJSwingUtilities;
 import com.intellij.util.ui.DialogUtil;
 import com.intellij.util.ui.UpDownHandler;
 
@@ -44,7 +43,6 @@ public class ComboBoxVisibilityPanel<V> extends VisibilityPanelBase<V> {
     add(myLabel, BorderLayout.NORTH);
     myComboBox = new JComboBox(options);
     myComboBox.setRenderer(getRenderer());
-    IJSwingUtilities.adjustComponentsOnMac(myLabel, myComboBox);
     add(myComboBox, BorderLayout.SOUTH);
     for (int i = 0; i < options.length; i++) {
       myNamesMap.put(options[i], presentableNames[i]);

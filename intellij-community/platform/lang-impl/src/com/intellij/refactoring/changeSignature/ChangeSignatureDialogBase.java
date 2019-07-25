@@ -225,7 +225,6 @@ public abstract class ChangeSignatureDialogBase<ParamInfo extends ParameterInfo,
       myNameField.setPreferredWidth(200);
     }
     myNamePanel.add(nameLabel, BorderLayout.NORTH);
-    IJSwingUtilities.adjustComponentsOnMac(nameLabel, myNameField);
     myNamePanel.add(myNameField, BorderLayout.SOUTH);
 
     JPanel visibilityPanel = createVisibilityPanel();
@@ -258,7 +257,6 @@ public abstract class ChangeSignatureDialogBase<ParamInfo extends ParameterInfo,
       }
 
       typePanel.add(typeLabel, BorderLayout.NORTH);
-      IJSwingUtilities.adjustComponentsOnMac(typeLabel, myReturnTypeField);
       typePanel.add(myReturnTypeField, BorderLayout.SOUTH);
       if (placeReturnTypeBeforeName()) {
         panel.add(typePanel, gbc);
