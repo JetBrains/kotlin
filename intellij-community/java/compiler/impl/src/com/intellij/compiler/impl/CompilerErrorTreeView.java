@@ -92,7 +92,7 @@ public class CompilerErrorTreeView extends NewErrorTreeViewPanel {
         final NavigatableMessageElement messageElement = (NavigatableMessageElement)errorTreeElement;
         final String[] text = messageElement.getText();
         if (text.length > 0) {
-          if (text[0].startsWith("[") && text[0].indexOf("]") != -1) {
+          if (text[0].startsWith("[") && text[0].contains("]")) {
             final Navigatable navigatable = messageElement.getNavigatable();
             if (navigatable instanceof OpenFileDescriptor) {
               final OpenFileDescriptor fileDescriptor = (OpenFileDescriptor)navigatable;
