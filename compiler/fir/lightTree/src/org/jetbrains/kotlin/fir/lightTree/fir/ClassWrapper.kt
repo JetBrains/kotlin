@@ -30,12 +30,16 @@ class ClassWrapper(
     val delegatedSuperTypeRef: FirTypeRef,
     val superTypeCallEntry: MutableList<FirExpression>
 ) {
+    fun isObjectLiteral(): Boolean {
+        return className == SpecialNames.NO_NAME_PROVIDED && isObject()
+    }
+
     private fun isObject(): Boolean {
         return classKind == ClassKind.OBJECT
     }
 
     private fun isSealed(): Boolean {
-        return modifiers.getModality() == Modality.SEALED
+        return modifiers.hasModality(Modality.SEALED)
     }
 
     private fun isEnum(): Boolean {

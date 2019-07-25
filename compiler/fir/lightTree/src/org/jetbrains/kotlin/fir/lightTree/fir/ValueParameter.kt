@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.fir.lightTree.converter.ClassNameUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
+import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirErrorTypeRefImpl
 
 class ValueParameter(
     private val isVal: Boolean,
@@ -31,7 +34,10 @@ class ValueParameter(
 
     fun toFirProperty(): FirProperty {
         val name = this.firValueParameter.name
-        val type = this.firValueParameter.returnTypeRef
+        var type = this.firValueParameter.returnTypeRef
+        if (type is FirImplicitTypeRef) {
+            type = FirErrorTypeRefImpl(this.firValueParameter.session, null, "Incomplete code")
+        }
 
         return FirMemberPropertyImpl(
             this.firValueParameter.session,
