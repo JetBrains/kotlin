@@ -8,6 +8,7 @@ package kotlin.script.experimental.host
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.KotlinType
 import kotlin.script.experimental.api.ScriptDependency
+import kotlin.script.experimental.api.ScriptEvaluationContextData
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptingHostConfigurationKeys
@@ -53,11 +54,28 @@ val ScriptingHostConfigurationKeys.configurationDependencies by PropertiesCollec
 val ScriptingHostConfigurationKeys.getScriptingClass by PropertiesCollection.key<GetScriptingClass>(isTransient = true)
 
 /**
+ * Evaluation context getter, allows to provide data to the evaluation configuration refinement functions
+ */
+val ScriptingHostConfigurationKeys.getEvaluationContext by PropertiesCollection.key<GetEvaluationContext>(isTransient = true)
+
+/**
  * The interface to the generic "class loader" for the types used in the script configurations
  */
 interface GetScriptingClass {
     operator fun invoke(classType: KotlinType, contextClass: KClass<*>, hostConfiguration: ScriptingHostConfiguration): KClass<*>
 }
+
+/**
+ * A helper to enable passing lambda directly to the getEvaluationContext "keyword"
+ */
+fun ScriptingHostConfiguration.Builder.getEvaluationContext(handler: GetEvaluationContext) {
+    ScriptingHostConfiguration.getEvaluationContext.put(handler)
+}
+
+/**
+ * The interface to an evaluation context getter
+ */
+typealias GetEvaluationContext = (hostConfiguration: ScriptingHostConfiguration) -> ScriptEvaluationContextData
 
 // helper method
 fun ScriptingHostConfiguration.getScriptingClass(type: KotlinType, contextClass: KClass<*>): KClass<*> {

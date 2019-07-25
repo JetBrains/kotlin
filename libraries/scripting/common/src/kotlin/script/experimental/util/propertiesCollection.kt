@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KType
 import kotlin.script.experimental.api.KotlinType
 
-open class PropertiesCollection(private var properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
+open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = emptyMap()) : Serializable {
 
     open class Key<T>(
         val name: String,
@@ -63,6 +63,8 @@ open class PropertiesCollection(private var properties: Map<Key<*>, Any?> = empt
     fun entries(): Set<Map.Entry<Key<*>, Any?>> = properties.entries
 
     val notTransientData: Map<Key<*>, Any?> get() = properties.filterKeys { it !is TransientKey<*>}
+
+    fun isEmpty(): Boolean = properties.isEmpty()
 
     override fun equals(other: Any?): Boolean =
         (other as? PropertiesCollection)?.let { it.properties == properties } == true

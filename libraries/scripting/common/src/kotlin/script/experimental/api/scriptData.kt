@@ -106,10 +106,42 @@ interface ScriptEvaluationContextDataKeys
  * The container for script evaluation context data
  * Used for transferring data to the evaluation refinement callbacks
  */
-class ScriptEvaluationContextData(properties: Map<PropertiesCollection.Key<*>, Any>) : PropertiesCollection(properties) {
+class ScriptEvaluationContextData(baseConfigurations: Iterable<ScriptEvaluationContextData>, body: Builder.() -> Unit = {}) :
+    PropertiesCollection(Builder(baseConfigurations).apply(body).data) {
+
+    constructor(body: Builder.() -> Unit = {}) : this(emptyList(), body)
+    constructor(
+        vararg baseConfigurations: ScriptEvaluationContextData, body: Builder.() -> Unit = {}
+    ) : this(baseConfigurations.asIterable(), body)
+
+    class Builder internal constructor(baseConfigurations: Iterable<ScriptEvaluationContextData>) :
+        ScriptEvaluationContextDataKeys,
+        PropertiesCollection.Builder(baseConfigurations)
 
     companion object : ScriptEvaluationContextDataKeys
 }
+
+/**
+ * optimized alternative to the constructor with multiple base configurations
+ */
+fun merge(vararg contexts: ScriptEvaluationContextData?): ScriptEvaluationContextData? {
+    val nonEmpty = ArrayList<ScriptEvaluationContextData>()
+    for (data in contexts) {
+        if (data != null && !data.isEmpty()) {
+            nonEmpty.add(data)
+        }
+    }
+    return when {
+        nonEmpty.isEmpty() -> null
+        nonEmpty.size == 1 -> nonEmpty.first()
+        else -> ScriptEvaluationContextData(nonEmpty.asIterable())
+    }
+}
+
+/**
+ * Command line arguments of the current process, could be provided by an evaluation host
+ */
+val ScriptEvaluationContextDataKeys.commandLineArgs by PropertiesCollection.key<List<String>>()
 
 /**
  * The facade to the script data for evaluation configuration refinement callbacks
