@@ -27,13 +27,15 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     }
 
     // Array(size, init) -> Array(size)
-    private val arrayInlineToSizeCtor: Map<IrFunctionSymbol, IrFunctionSymbol> =
-        (context.irBuiltIns.primitiveArrays + context.irBuiltIns.arrayClass).associate { arrayClass ->
-            val fromInit = arrayClass.constructors.single { it.owner.valueParameters.size == 2 }
-            val fromSize = arrayClass.constructors.find { it.owner.valueParameters.size == 1 }
-                ?: context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
-            fromInit to fromSize
+    private fun arrayInlineToSizeConstructor(irConstructor: IrConstructor): IrFunctionSymbol? {
+        val clazz = irConstructor.constructedClass.symbol
+        return when {
+            irConstructor.valueParameters.size != 2 -> null
+            clazz == context.irBuiltIns.arrayClass -> context.ir.symbols.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
+            context.irBuiltIns.primitiveArrays.contains(clazz) -> clazz.constructors.single { it.owner.valueParameters.size == 1 }
+            else -> null
         }
+    }
 
     private fun IrExpression.asSingleArgumentLambda(): IrSimpleFunction? {
         // A lambda is represented as a block with a function declaration and a reference to it.
@@ -50,7 +52,7 @@ class ArrayConstructorLowering(val context: CommonBackendContext) : IrElementTra
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {
-        val sizeConstructor = arrayInlineToSizeCtor[expression.symbol]
+        val sizeConstructor = arrayInlineToSizeConstructor(expression.symbol.owner)
             ?: return super.visitConstructorCall(expression)
         // inline fun <reified T> Array(size: Int, invokable: (Int) -> T): Array<T> {
         //     val result = arrayOfNulls<T>(size)
