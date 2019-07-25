@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.compiler.impl.javaCompiler.javac.JavacConfigurable">
+  <grid id="280f7" binding="myPanel" layout-manager="GridLayoutManager" row-count="7" column-count="2" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
+    <margin top="0" left="0" bottom="0" right="0"/>
+    <constraints>
+      <xy x="79" y="160" width="692" height="204"/>
+    </constraints>
+    <properties/>
+    <clientProperties>
+      <BorderFactoryClass class="java.lang.String" value="com.intellij.ui.IdeBorderFactory$PlainSmallWithIndent"/>
+    </clientProperties>
+    <border type="etched" title-resource-bundle="messages/CompilerBundle" title-key="javac.options.group.title"/>
+    <children>
+      <component id="8538e" class="javax.swing.JCheckBox" binding="myCbDeprecation">
+        <constraints>
+          <grid row="2" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.report.deprecated"/>
+        </properties>
+      </component>
+      <component id="3d38f" class="javax.swing.JCheckBox" binding="myCbDebuggingInfo">
+        <constraints>
+          <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <selected value="true"/>
+          <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.generate.debugging.info"/>
+        </properties>
+      </component>
+      <component id="90803" class="javax.swing.JCheckBox" binding="myCbGenerateNoWarnings">
+        <constraints>
+          <grid row="3" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.generate.no.warnings"/>
+        </properties>
+      </component>
+      <component id="3752c" class="com.intellij.ui.components.JBCheckBox" binding="myCbPreferTargetJdkCompiler">
+        <constraints>
+          <grid row="0" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.prefer.target.jdk.compiler"/>
+        </properties>
+      </component>
+      <component id="e7c13" class="com.intellij.compiler.impl.javaCompiler.CompilerModuleOptionsComponent" binding="myOptionsOverride" custom-create="true" default-binding="true">
+        <constraints>
+          <grid row="6" column="0" row-span="1" col-span="2" vsize-policy="7" hsize-policy="7" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties/>
+      </component>
+      <component id="f8a80" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text resource-bundle="messages/CompilerBundle" key="java.compiler.option.additional.command.line.parameters"/>
+        </properties>
+      </component>
+      <component id="d321" class="javax.swing.JLabel">
+        <constraints>
+          <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+        </constraints>
+        <properties>
+          <text value="('/' recommended in paths for cross-platform configurations)"/>
+          <toolTipText value="'/' recommended in paths for cross-platform configurations"/>
+        </properties>
+      </component>
+      <component id="479c2" class="com.intellij.ui.RawCommandLineEditor" binding="myAdditionalOptionsField">
+        <constraints>
+          <grid row="5" column="0" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+            <preferred-size width="150" height="-1"/>
+          </grid>
+        </constraints>
+        <properties/>
+      </component>
+    </children>
+  </grid>
+</form>

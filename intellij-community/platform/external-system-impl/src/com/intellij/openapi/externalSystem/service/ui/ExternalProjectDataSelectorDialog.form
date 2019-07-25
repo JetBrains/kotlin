@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.intellij.openapi.externalSystem.service.ui.ExternalProjectDataSelectorDialog">
+  <grid id="cbd77" binding="mainPanel" layout-manager="BorderLayout" hgap="5" vgap="5">
+    <constraints>
+      <xy x="48" y="54" width="793" height="309"/>
+    </constraints>
+    <properties>
+      <enabled value="true"/>
+      <minimumSize width="300" height="100"/>
+      <opaque value="false"/>
+      <preferredSize width="400" height="300"/>
+    </properties>
+    <border type="none">
+      <font/>
+    </border>
+    <children>
+      <grid id="c6ac5" binding="contentPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
+        <constraints border-constraint="Center"/>
+        <properties>
+          <autoscrolls value="true"/>
+          <minimumSize width="0" height="0"/>
+          <preferredSize width="0" height="0"/>
+        </properties>
+        <border type="none"/>
+        <children>
+          <component id="977a3" class="com.intellij.ui.components.JBLabel" binding="mySelectionStatusLbl">
+            <constraints border-constraint="South"/>
+            <properties/>
+          </component>
+        </children>
+      </grid>
+      <component id="5dd5f" class="com.intellij.ui.components.JBLabel" binding="myDescriptionLbl">
+        <constraints border-constraint="North"/>
+        <properties>
+          <text value="Please select the modules/data to include in the project."/>
+        </properties>
+      </component>
+    </children>
+  </grid>
+</form>

@@ -1,0 +1,1 @@
+deprecated: taskGroup.png -> com.intellij.icons.AllIcons@/nodes/configFolder.svg; to be removed in IDEA 2020 - use AllIcons.Nodes.ConfigFolder

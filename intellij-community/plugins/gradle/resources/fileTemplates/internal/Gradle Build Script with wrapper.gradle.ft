@@ -1,0 +1,15 @@
+#if (${MODULE_GROUP} && ${MODULE_GROUP} != "")
+group '${MODULE_GROUP}'
+#end
+#if (${MODULE_VERSION} && ${MODULE_VERSION} != "")
+version '${MODULE_VERSION}'
+#end
+
+task wrapper(type: Wrapper) {
+#if (${GRADLE_VERSION} && ${GRADLE_VERSION} != "")
+  gradleVersion = '${GRADLE_VERSION}'
+#else
+  gradleVersion = '5.2.1'
+#end
+  distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}

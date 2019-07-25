@@ -1,0 +1,4 @@
+deprecated: gradleImport.png; to be removed in IDEA 2020
+deprecated: gradlePlugin.png -> /icons/gradle.svg; to be removed in IDEA 2020 - use GradleIcons.Gradle
+deprecated: gradleSync.png; to be removed in IDEA 2020
+deprecated: offlineMode.png -> com.intellij.icons.AllIcons@/actions/offlineMode.svg; to be removed in IDEA 2020 - use AllIcons.Actions.OfflineMode
