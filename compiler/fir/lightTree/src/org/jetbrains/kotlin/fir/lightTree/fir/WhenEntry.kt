@@ -64,9 +64,9 @@ data class WhenEntry(
         val condition = conditions.first()
         return when (condition) {
             is FirOperatorCallImpl -> condition.arguments.first()
-            is FirFunctionCall -> condition.explicitReceiver!!
-            is FirTypeOperatorCallImpl -> condition
-            else -> FirErrorExpressionImpl(session, null, "Unsupported when condition: ${condition.javaClass}")
+            //is FirFunctionCall -> condition.explicitReceiver!!
+            //is FirTypeOperatorCallImpl -> condition
+            else -> FirErrorExpressionImpl(session, null, "No expression in condition with expression")
         }
     }
 }

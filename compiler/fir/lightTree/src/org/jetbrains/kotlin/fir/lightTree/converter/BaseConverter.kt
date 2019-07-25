@@ -46,12 +46,12 @@ open class BaseConverter(
         return kidsRef.get()
     }
 
-    fun LighterASTNode.getExpressionInParentheses(): LighterASTNode {
+    fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? {
         this.forEachChildren {
             if (it.isExpression()) return it
         }
 
-        throw Exception()
+        return null
     }
 
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {

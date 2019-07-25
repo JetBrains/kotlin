@@ -17,19 +17,24 @@ class TypeParameterModifier(
     session: FirSession,
     psi: PsiElement? = null,
 
-    private var varianceModifier: VarianceModifier = VarianceModifier.INVARIANT,
+    private val varianceModifiers: MutableList<VarianceModifier> = mutableListOf(),
     private var reificationModifier: ReificationModifier? = null
 ) : FirAbstractAnnotatedElement(session, psi) {
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
         when {
-            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifier = VarianceModifier.valueOf(modifier.toString().toUpperCase())
-            REIFICATION_MODIFIER.contains(tokenType) -> this.reificationModifier = ReificationModifier.valueOf(modifier.toString().toUpperCase())
+            VARIANCE_MODIFIER.contains(tokenType) -> this.varianceModifiers += VarianceModifier.valueOf(modifier.toString().toUpperCase())
+            REIFICATION_MODIFIER.contains(tokenType) -> this.reificationModifier =
+                ReificationModifier.valueOf(modifier.toString().toUpperCase())
         }
     }
 
     fun getVariance(): Variance {
-        return varianceModifier.toVariance()
+        return when {
+            varianceModifiers.contains(VarianceModifier.OUT) -> Variance.OUT_VARIANCE
+            varianceModifiers.contains(VarianceModifier.IN) -> Variance.IN_VARIANCE
+            else -> Variance.INVARIANT
+        }
     }
 
     fun hasReified(): Boolean {
