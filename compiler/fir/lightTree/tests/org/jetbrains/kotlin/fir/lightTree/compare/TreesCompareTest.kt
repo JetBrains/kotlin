@@ -27,36 +27,55 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
         var counter = 0
         var errorCounter = 0
 
+        val onEachFile: (File) -> Unit = { file ->
+            if (!compareFir(file)) errorCounter++
+            counter++
+        }
         println("BASE PATH: $path")
         if (!withTestData) {
-            path.walkTopDown { file ->
-                if (!compareFir(file)) errorCounter++
-                counter++
-            }
+            path.walkTopDown(onEachFile)
         } else {
-            path.walkTopDownWithTestData { file ->
-                if (!compareFir(file)) errorCounter++
-                counter++
-            }
+            path.walkTopDownWithTestData(onEachFile)
         }
         println("All scanned files: $counter")
         println("Files that aren't equal to FIR: $errorCounter")
         TestCase.assertEquals(0, errorCounter)
     }
 
-    private fun compareAll(stubMode: Boolean, path: String = System.getProperty("user.dir"), withTestData: Boolean = false) {
+    private fun compareAll(stubMode: Boolean) {
         val lightTreeConverter = LightTree2Fir(stubMode, myProject)
-        compareBase(path, withTestData) { file ->
+        compareBase(System.getProperty("user.dir"), withTestData = false) { file ->
             val text = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
-
-            //light tree
-            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
-            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
 
             //psi
             val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
             val firFileFromPsi = ktFile.toFirFile(stubMode)
             val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
+
+            //light tree
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
+
+            return@compareBase treeFromLightTree == treeFromPsi
+        }
+    }
+
+    fun testCompareDiagnostics() {
+        val lightTreeConverter = LightTree2Fir(false, myProject)
+        compareBase("compiler/testData/diagnostics/tests", withTestData = true) { file ->
+            val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+            val text = notEditedText.replace("(<!>)|(<!.*?!>)".toRegex(), "").replaceAfter(".java", "")
+
+            //psi
+            val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(file.path)), text) as KtFile
+            val firFileFromPsi = ktFile.toFirFile(stubMode = false)
+            val treeFromPsi = StringBuilder().also { FirRenderer(it).visitFile(firFileFromPsi) }.toString()
+                .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
+
+            //light tree
+            val firFileFromLightTree = lightTreeConverter.buildFirFile(text, file.name)
+            val treeFromLightTree = StringBuilder().also { FirRenderer(it).visitFile(firFileFromLightTree) }.toString()
+                .replace("<Unsupported LValue.*?>".toRegex(), "<Unsupported LValue>")
 
             return@compareBase treeFromLightTree == treeFromPsi
         }
@@ -365,9 +384,5 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             visitWhenExpression = true,
             visitAnonymousObject = true
         )
-    }
-
-    fun testDiagnostics() {
-        compareAll(false, "compiler/testData/diagnostics/tests", withTestData = true)
     }
 }

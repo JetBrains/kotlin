@@ -22,4 +22,8 @@ class TypeModifier(
             KtTokens.SUSPEND_KEYWORD -> this.hasSuspend = true
         }
     }
+
+    fun hasNoAnnotations(): Boolean {
+        return annotations.isEmpty()
+    }
 }

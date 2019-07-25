@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir.modifier
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractAnnotatedElement
@@ -24,49 +25,49 @@ class Modifier(
     session: FirSession,
     psi: PsiElement? = null,
 
-    private var classModifier: ClassModifier? = null,
+    private val classModifiers: MutableList<ClassModifier> = mutableListOf(),
     private val memberModifiers: MutableList<MemberModifier> = mutableListOf(),
-    private var visibilityModifier: VisibilityModifier = VisibilityModifier.UNKNOWN,
+    private val visibilityModifiers: MutableList<VisibilityModifier> = mutableListOf(),
     private val functionModifiers: MutableList<FunctionModifier> = mutableListOf(),
     private var propertyModifier: PropertyModifier? = null,
-    private var inheritanceModifier: InheritanceModifier? = null,
-    private var parameterModifier: ParameterModifier? = null,
-    private var platformModifier: PlatformModifier? = null
+    private val inheritanceModifiers: MutableList<InheritanceModifier> = mutableListOf(),
+    private val parameterModifiers: MutableList<ParameterModifier> = mutableListOf(),
+    private val platformModifiers: MutableList<PlatformModifier> = mutableListOf()
 ) : FirAbstractAnnotatedElement(session, psi) {
     fun addModifier(modifier: LighterASTNode) {
         val tokenType = modifier.tokenType
         when {
-            CLASS_MODIFIER.contains(tokenType) -> this.classModifier = ClassModifier.valueOf(modifier.toString().toUpperCase())
+            CLASS_MODIFIER.contains(tokenType) -> this.classModifiers += ClassModifier.valueOf(modifier.toString().toUpperCase())
             MEMBER_MODIFIER.contains(tokenType) -> this.memberModifiers += MemberModifier.valueOf(modifier.toString().toUpperCase())
-            VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifier =
+            VISIBILITY_MODIFIER.contains(tokenType) -> this.visibilityModifiers +=
                 VisibilityModifier.valueOf(modifier.toString().toUpperCase())
             FUNCTION_MODIFIER.contains(tokenType) -> this.functionModifiers += FunctionModifier.valueOf(modifier.toString().toUpperCase())
             PROPERTY_MODIFIER.contains(tokenType) -> this.propertyModifier = PropertyModifier.valueOf(modifier.toString().toUpperCase())
-            INHERITANCE_MODIFIER.contains(tokenType) -> this.inheritanceModifier =
+            INHERITANCE_MODIFIER.contains(tokenType) -> this.inheritanceModifiers +=
                 InheritanceModifier.valueOf(modifier.toString().toUpperCase())
-            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifier = ParameterModifier.valueOf(modifier.toString().toUpperCase())
-            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifier = PlatformModifier.valueOf(modifier.toString().toUpperCase())
+            PARAMETER_MODIFIER.contains(tokenType) -> this.parameterModifiers += ParameterModifier.valueOf(modifier.toString().toUpperCase())
+            PLATFORM_MODIFIER.contains(tokenType) -> this.platformModifiers += PlatformModifier.valueOf(modifier.toString().toUpperCase())
         }
     }
 
     fun isEnum(): Boolean {
-        return classModifier == ClassModifier.ENUM
+        return classModifiers.contains(ClassModifier.ENUM)
     }
 
     fun isAnnotation(): Boolean {
-        return classModifier == ClassModifier.ANNOTATION
+        return classModifiers.contains(ClassModifier.ANNOTATION)
     }
 
     fun isDataClass(): Boolean {
-        return classModifier == ClassModifier.DATA
+        return classModifiers.contains(ClassModifier.DATA)
     }
 
     fun isInner(): Boolean {
-        return classModifier == ClassModifier.INNER
+        return classModifiers.contains(ClassModifier.INNER)
     }
 
     fun isCompanion(): Boolean {
-        return classModifier == ClassModifier.COMPANION
+        return classModifiers.contains(ClassModifier.COMPANION)
     }
 
     fun hasOverride(): Boolean {
@@ -78,7 +79,13 @@ class Modifier(
     }
 
     fun getVisibility(): Visibility {
-        return visibilityModifier.toVisibility()
+        return when {
+            visibilityModifiers.contains(VisibilityModifier.PRIVATE) -> Visibilities.PRIVATE
+            visibilityModifiers.contains(VisibilityModifier.PUBLIC) -> Visibilities.PUBLIC
+            visibilityModifiers.contains(VisibilityModifier.PROTECTED) -> Visibilities.PROTECTED
+            visibilityModifiers.contains(VisibilityModifier.INTERNAL) -> Visibilities.INTERNAL
+            else -> Visibilities.UNKNOWN
+        }
     }
 
     fun hasTailrec(): Boolean {
@@ -109,27 +116,43 @@ class Modifier(
         return propertyModifier == PropertyModifier.CONST
     }
 
+    fun hasModality(modality: Modality): Boolean {
+        return when {
+            modality == Modality.FINAL && inheritanceModifiers.contains(InheritanceModifier.FINAL) -> true
+            modality == Modality.SEALED && inheritanceModifiers.contains(InheritanceModifier.SEALED) -> true
+            modality == Modality.ABSTRACT && inheritanceModifiers.contains(InheritanceModifier.ABSTRACT) -> true
+            modality == Modality.OPEN && inheritanceModifiers.contains(InheritanceModifier.OPEN) -> true
+            else -> false
+        }
+    }
+
     fun getModality(): Modality? {
-        return inheritanceModifier?.toModality()
+        return when {
+            inheritanceModifiers.contains(InheritanceModifier.FINAL) -> Modality.FINAL
+            inheritanceModifiers.contains(InheritanceModifier.SEALED) -> Modality.SEALED
+            inheritanceModifiers.contains(InheritanceModifier.ABSTRACT) -> Modality.ABSTRACT
+            inheritanceModifiers.contains(InheritanceModifier.OPEN) -> Modality.OPEN
+            else -> null
+        }
     }
 
     fun hasVararg(): Boolean {
-        return parameterModifier == ParameterModifier.VARARG
+        return parameterModifiers.contains(ParameterModifier.VARARG)
     }
 
     fun hasNoinline(): Boolean {
-        return parameterModifier == ParameterModifier.NOINLINE
+        return parameterModifiers.contains(ParameterModifier.NOINLINE)
     }
 
     fun hasCrossinline(): Boolean {
-        return parameterModifier == ParameterModifier.CROSSINLINE
+        return parameterModifiers.contains(ParameterModifier.CROSSINLINE)
     }
 
     fun hasExpect(): Boolean {
-        return platformModifier == PlatformModifier.EXPECT
+        return platformModifiers.contains(PlatformModifier.EXPECT) || platformModifiers.contains(PlatformModifier.HEADER)
     }
 
     fun hasActual(): Boolean {
-        return platformModifier == PlatformModifier.ACTUAL
+        return platformModifiers.contains(PlatformModifier.ACTUAL) || platformModifiers.contains(PlatformModifier.IMPL)
     }
 }

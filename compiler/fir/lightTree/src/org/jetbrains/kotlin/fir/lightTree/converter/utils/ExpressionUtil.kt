@@ -16,16 +16,14 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsString
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
-import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.converter.ExpressionsConverter
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.pop
+import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
@@ -42,16 +40,17 @@ fun String.getOperationSymbol(): IElementType {
 }
 
 fun ExpressionsConverter.convertAssignment(
-    leftArgNode: LighterASTNode,
+    leftArgNode: LighterASTNode?,
     rightArgAsFir: FirExpression,
     operation: FirOperation
 ): FirStatement {
-    if (leftArgNode.tokenType == PARENTHESIZED) {
+    if (leftArgNode != null && leftArgNode.tokenType == PARENTHESIZED) {
         return convertAssignment(leftArgNode.getExpressionInParentheses(), rightArgAsFir, operation)
     }
-    if (leftArgNode.tokenType == ARRAY_ACCESS_EXPRESSION) {
+    if (leftArgNode != null && leftArgNode.tokenType == ARRAY_ACCESS_EXPRESSION) {
         val arrayAccessFunctionCall = getAsFirExpression(leftArgNode) as FirFunctionCall
-        val firArrayExpression = arrayAccessFunctionCall.explicitReceiver!!
+        val firArrayExpression = arrayAccessFunctionCall.explicitReceiver
+            ?: FirErrorExpressionImpl(session, null, "No array expression")
         val arraySet = if (operation != FirOperation.ASSIGN) {
             FirArraySetCallImpl(session, null, rightArgAsFir, operation).apply {
                 indexes += arrayAccessFunctionCall.arguments
@@ -76,12 +75,14 @@ fun ExpressionsConverter.convertAssignment(
         }
     }
     if (operation != FirOperation.ASSIGN &&
-        leftArgNode.tokenType != REFERENCE_EXPRESSION && leftArgNode.tokenType != THIS_EXPRESSION &&
-        (leftArgNode.tokenType !in qualifiedAccessTokens || getSelectorType(leftArgNode.getChildrenAsArray()) != REFERENCE_EXPRESSION)
+        leftArgNode?.tokenType != REFERENCE_EXPRESSION && leftArgNode?.tokenType != THIS_EXPRESSION &&
+        (leftArgNode?.tokenType !in qualifiedAccessTokens || getSelectorType(leftArgNode.getChildrenAsArray()) != REFERENCE_EXPRESSION)
     ) {
         return FirBlockImpl(session, null).apply {
             val name = Name.special("<complex-set>")
-            statements += generateTemporaryVariable(this@convertAssignment.session, null, name, getAsFirExpression(leftArgNode))
+            statements += generateTemporaryVariable(
+                this@convertAssignment.session, null, name, getAsFirExpression(leftArgNode, "No LValue in assignment")
+            )
             statements += FirVariableAssignmentImpl(this@convertAssignment.session, null, rightArgAsFir, operation).apply {
                 lValue = FirSimpleNamedReference(this@convertAssignment.session, null, name)
             }
@@ -104,7 +105,7 @@ fun ExpressionsConverter.generateIncrementOrDecrementBlock(
     return FirBlockImpl(session, null).apply {
         val tempName = Name.special("<unary>")
         val temporaryVariable = generateTemporaryVariable(
-            this@generateIncrementOrDecrementBlock.session, null, tempName, getAsFirExpression(argument)
+            this@generateIncrementOrDecrementBlock.session, null, tempName, getAsFirExpression(argument, "Incorrect expression inside inc/dec")
         )
         statements += temporaryVariable
         val resultName = Name.special("<unary-result>")

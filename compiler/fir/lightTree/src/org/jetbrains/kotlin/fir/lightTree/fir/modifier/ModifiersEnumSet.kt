@@ -24,33 +24,11 @@ enum class MemberModifier {
 }
 
 enum class VisibilityModifier {
-    PUBLIC {
-        override fun toVisibility(): Visibility {
-            return Visibilities.PUBLIC
-        }
-    },
-    PRIVATE {
-        override fun toVisibility(): Visibility {
-            return Visibilities.PRIVATE
-        }
-    },
-    INTERNAL {
-        override fun toVisibility(): Visibility {
-            return Visibilities.INTERNAL
-        }
-    },
-    PROTECTED {
-        override fun toVisibility(): Visibility {
-            return Visibilities.PROTECTED
-        }
-    },
-    UNKNOWN {
-        override fun toVisibility(): Visibility {
-            return Visibilities.UNKNOWN
-        }
-    };
-
-    abstract fun toVisibility(): Visibility
+    PUBLIC,
+    PRIVATE,
+    INTERNAL,
+    PROTECTED,
+    UNKNOWN
 }
 
 enum class FunctionModifier {
@@ -67,28 +45,10 @@ enum class PropertyModifier {
 }
 
 enum class InheritanceModifier {
-    ABSTRACT {
-        override fun toModality(): Modality {
-            return Modality.ABSTRACT
-        }
-    },
-    FINAL {
-        override fun toModality(): Modality {
-            return Modality.FINAL
-        }
-    },
-    OPEN {
-        override fun toModality(): Modality {
-            return Modality.OPEN
-        }
-    },
-    SEALED {
-        override fun toModality(): Modality {
-            return Modality.SEALED
-        }
-    };
-
-    abstract fun toModality(): Modality
+    ABSTRACT,
+    FINAL,
+    OPEN,
+    SEALED
 }
 
 enum class ParameterModifier {
@@ -99,27 +59,15 @@ enum class ParameterModifier {
 
 enum class PlatformModifier {
     EXPECT,
-    ACTUAL
+    ACTUAL,
+    HEADER,
+    IMPL
 }
 
 enum class VarianceModifier {
-    IN {
-        override fun toVariance(): Variance {
-            return Variance.IN_VARIANCE
-        }
-    },
-    OUT {
-        override fun toVariance(): Variance {
-            return Variance.OUT_VARIANCE
-        }
-    },
-    INVARIANT {
-        override fun toVariance(): Variance {
-            return Variance.INVARIANT
-        }
-    };
-
-    abstract fun toVariance(): Variance
+    IN,
+    OUT,
+    INVARIANT
 }
 
 enum class ReificationModifier {

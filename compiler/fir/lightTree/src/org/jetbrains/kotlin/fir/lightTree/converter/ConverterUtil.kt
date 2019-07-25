@@ -9,6 +9,7 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeType
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirFunctionTarget
@@ -43,10 +44,10 @@ import org.jetbrains.kotlin.types.Variance
 
 object ConverterUtil {
     private val expressionSet = listOf(
-        KtNodeTypes.REFERENCE_EXPRESSION,
-        KtNodeTypes.DOT_QUALIFIED_EXPRESSION,
-        KtNodeTypes.LAMBDA_EXPRESSION,
-        KtNodeTypes.FUN
+        REFERENCE_EXPRESSION,
+        DOT_QUALIFIED_EXPRESSION,
+        LAMBDA_EXPRESSION,
+        FUN
     )
 
     fun String?.nameAsSafeName(defaultName: String = ""): Name {
@@ -157,10 +158,20 @@ object ConverterUtil {
     inline fun isClassLocal(classNode: LighterASTNode, getParent: LighterASTNode.() -> LighterASTNode?): Boolean {
         var currentNode: LighterASTNode? = classNode
         while (currentNode != null) {
-            if (currentNode.tokenType == KtNodeTypes.BLOCK) {
+            val tokenType = currentNode.tokenType
+            val parent = currentNode.getParent()
+            if (tokenType == PROPERTY || tokenType == FUN) {
+                val grandParent = parent?.getParent()
+                when {
+                    parent?.tokenType == KT_FILE -> return true
+                    parent?.tokenType == CLASS_BODY && !(grandParent?.tokenType == OBJECT_DECLARATION && grandParent?.getParent()?.tokenType == OBJECT_LITERAL) -> return true
+                    parent?.tokenType == BLOCK && grandParent?.tokenType == SCRIPT -> return true
+                }
+            }
+            if (tokenType == BLOCK) {
                 return true
             }
-            currentNode = currentNode.getParent()
+            currentNode = parent
         }
         return false
     }
