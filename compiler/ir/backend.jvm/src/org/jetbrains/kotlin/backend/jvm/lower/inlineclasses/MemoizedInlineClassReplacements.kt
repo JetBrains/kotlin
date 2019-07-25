@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.ir.copyTypeParameters
 import org.jetbrains.kotlin.backend.common.ir.copyTypeParametersFrom
 import org.jetbrains.kotlin.backend.common.ir.createDispatchReceiverParameter
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.erasedUpperBound
 import org.jetbrains.kotlin.backend.jvm.lower.inlineclasses.InlineClassAbi.mangledNameFor
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -19,14 +18,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.explicitParameters
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 class IrReplacementFunction(
@@ -128,7 +124,7 @@ class MemoizedInlineClassReplacements {
                     newParameter = parameter.copyTo(this, index = -1, name = name)
                     dispatchReceiverParameter = newParameter
                 } else {
-                    newParameter = parameter.copyTo(this, index = index - 1, name = name, receiverToValue = true)
+                    newParameter = parameter.copyTo(this, index = index - 1, name = name)
                     valueParameters.add(newParameter)
                 }
                 parameterMap[parameter.symbol] = newParameter
@@ -150,7 +146,7 @@ class MemoizedInlineClassReplacements {
                     else -> parameter.name
                 }
 
-                val newParameter = parameter.copyTo(this, index = index, name = name, receiverToValue = true)
+                val newParameter = parameter.copyTo(this, index = index, name = name)
                 valueParameters.add(newParameter)
                 parameterMap[parameter.symbol] = newParameter
             }

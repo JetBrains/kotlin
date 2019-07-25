@@ -400,7 +400,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineConstructors += this
 
                 functionParameters.mapIndexedTo(valueParameters) { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, receiverToValue = true)
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
                 valueParameters += continuationParameter.copyTo(
@@ -445,7 +445,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineConstructors += this
 
                 boundParams.mapIndexedTo(valueParameters) { index, parameter ->
-                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, receiverToValue = true)
+                    parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 
                 val irBuilder = context.createIrBuilder(symbol, startOffset, endOffset)
@@ -497,7 +497,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
                 (unboundArgs + create1CompletionParameter)
                     .mapIndexedTo(valueParameters) { index, parameter ->
-                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index, receiverToValue = true)
+                        parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                     }
 
                 this.createDispatchReceiverParameter()
