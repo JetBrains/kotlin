@@ -6,37 +6,28 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 sealed class CallKind {
-    abstract fun sequence(): List<ResolutionStage>
+    abstract val resolutionSequence: List<ResolutionStage>
 
     object Function : CallKind() {
-        override fun sequence(): List<ResolutionStage> {
-            return functionCallResolutionSequence()
-        }
+        override val resolutionSequence: List<ResolutionStage> = listOf(
+            CheckVisibility,
+            MapArguments,
+            CheckExplicitReceiverConsistency,
+            CreateFreshTypeVariableSubstitutorStage,
+            CheckReceivers.Dispatch,
+            CheckReceivers.Extension,
+            CheckArguments
+        )
     }
 
     object VariableAccess : CallKind() {
-        override fun sequence(): List<ResolutionStage> {
-            return qualifiedAccessResolutionSequence()
-        }
+        override val resolutionSequence: List<ResolutionStage> = listOf(
+            CheckVisibility,
+            DiscriminateSynthetics,
+            CheckExplicitReceiverConsistency,
+            CreateFreshTypeVariableSubstitutorStage,
+            CheckReceivers.Dispatch,
+            CheckReceivers.Extension
+        )
     }
 }
-
-internal fun functionCallResolutionSequence() = listOf(
-    CheckVisibility,
-    MapArguments,
-    CheckExplicitReceiverConsistency,
-    CreateFreshTypeVariableSubstitutorStage,
-    CheckReceivers.Dispatch,
-    CheckReceivers.Extension,
-    CheckArguments
-)
-
-
-internal fun qualifiedAccessResolutionSequence() = listOf(
-    CheckVisibility,
-    DiscriminateSynthetics,
-    CheckExplicitReceiverConsistency,
-    CreateFreshTypeVariableSubstitutorStage,
-    CheckReceivers.Dispatch,
-    CheckReceivers.Extension
-)

@@ -16,7 +16,7 @@ class ResolutionStageRunner(val components: InferenceComponents) {
         val sink = CheckerSinkImpl(components)
         var finished = false
         sink.continuation = suspend {
-            for (stage in candidate.callInfo.callKind.sequence()) {
+            for (stage in candidate.callInfo.callKind.resolutionSequence) {
                 stage.check(candidate, sink, candidate.callInfo)
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {
