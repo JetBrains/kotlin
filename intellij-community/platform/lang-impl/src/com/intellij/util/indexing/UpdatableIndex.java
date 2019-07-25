@@ -45,4 +45,8 @@ public interface UpdatableIndex<Key, Value, Input> extends InvertedIndex<Key,Val
   void resetIndexedStateForFile(int fileId);
 
   boolean isIndexedStateForFile(int fileId, @NotNull VirtualFile file);
+
+  long getModificationStamp();
+
+  void removeTransientDataForFile(int inputId);
 }

@@ -53,7 +53,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubIndexImpl");
 
   private static class AsyncState {
-    private final Map<StubIndexKey<?, ?>, VfsAwareMapReduceIndex<?, StubIdList, Void>> myIndices = new THashMap<>();
+    private final Map<StubIndexKey<?, ?>, UpdatableIndex<?, StubIdList, Void>> myIndices = new THashMap<>();
     private final TObjectIntHashMap<ID<?, ?>> myIndexIdToVersionMap = new TObjectIntHashMap<>();
   }
 
@@ -132,7 +132,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
         );
 
         final MemoryIndexStorage<K, StubIdList> memStorage = new MemoryIndexStorage<>(storage, indexKey);
-        VfsAwareMapReduceIndex<K, StubIdList, Void> index = new VfsAwareMapReduceIndex<>(new IndexExtension<K, StubIdList, Void>() {
+        UpdatableIndex<K, StubIdList, Void> index = new VfsAwareMapReduceIndex<>(new IndexExtension<K, StubIdList, Void>() {
           @NotNull
           @Override
           public ID<K, StubIdList> getName() {
@@ -190,7 +190,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   public long getIndexModificationStamp(@NotNull StubIndexKey<?, ?> indexId, @NotNull Project project) {
-    VfsAwareMapReduceIndex<?, StubIdList, Void> index = getAsyncState().myIndices.get(indexId);
+    UpdatableIndex<?, StubIdList, Void> index = getAsyncState().myIndices.get(indexId);
     if (index != null) {
       FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, project, GlobalSearchScope.allScope(project));
       return index.getModificationStamp();
@@ -202,7 +202,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
     if (!myInitialized) {
       return;
     }
-    for (VfsAwareMapReduceIndex<?, StubIdList, Void> index : getAsyncState().myIndices.values()) {
+    for (UpdatableIndex<?, StubIdList, Void> index : getAsyncState().myIndices.values()) {
       index.flush();
     }
   }
@@ -247,9 +247,9 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   <K> void serializeIndexValue(@NotNull DataOutput out, @NotNull StubIndexKey<K, ?> stubIndexKey, @NotNull Map<K, StubIdList> map) throws IOException {
-    VfsAwareMapReduceIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
+    UpdatableIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
     if (index == null) return;
-    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
+    KeyDescriptor<K> keyDescriptor = ((VfsAwareMapReduceIndex)index).getExtension().getKeyDescriptor();
 
     DataInputOutputUtil.writeINT(out, map.size());
     for (K key : map.keySet()) {
@@ -260,8 +260,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
   @NotNull
   <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey) throws IOException {
-    VfsAwareMapReduceIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
-    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
+    UpdatableIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
+    KeyDescriptor<K> keyDescriptor = ((VfsAwareMapReduceIndex)index).getExtension().getKeyDescriptor();
     int mapSize = DataInputOutputUtil.readINT(in);
 
     Map<K, StubIdList> result = new THashMap<>(mapSize);
@@ -302,7 +302,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                                        @NotNull StubIdListContainerAction action) {
     final FileBasedIndexImpl fileBasedIndex = (FileBasedIndexImpl)FileBasedIndex.getInstance();
     ID<Integer, SerializedStubTree> stubUpdatingIndexId = StubUpdatingIndex.INDEX_ID;
-    final VfsAwareMapReduceIndex<Key, StubIdList, Void> index = getIndex(indexKey);   // wait for initialization to finish
+    final UpdatableIndex<Key, StubIdList, Void> index = getIndex(indexKey);   // wait for initialization to finish
     if (index == null) return true;
 
     fileBasedIndex.ensureUpToDate(stubUpdatingIndexId, project, scope);
@@ -339,8 +339,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   @SuppressWarnings("unchecked")
-  private <Key> VfsAwareMapReduceIndex<Key, StubIdList, Void> getIndex(@NotNull StubIndexKey<Key, ?> indexKey) {
-    return (VfsAwareMapReduceIndex<Key, StubIdList, Void>)getAsyncState().myIndices.get(indexKey);
+  private <Key> UpdatableIndex<Key, StubIdList, Void> getIndex(@NotNull StubIndexKey<Key, ?> indexKey) {
+    return (UpdatableIndex<Key, StubIdList, Void>)getAsyncState().myIndices.get(indexKey);
   }
 
   // Self repair for IDEA-181227, caused by (yet) unknown file event processing problem in indices
@@ -391,7 +391,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                                     @NotNull Processor<? super K> processor,
                                     @NotNull GlobalSearchScope scope,
                                     @Nullable IdFilter idFilter) {
-    final VfsAwareMapReduceIndex<K, StubIdList, Void> index = getIndex(indexKey); // wait for initialization to finish
+    final UpdatableIndex<K, StubIdList, Void> index = getIndex(indexKey); // wait for initialization to finish
     if (index == null) return true;
     FileBasedIndex.getInstance().ensureUpToDate(StubUpdatingIndex.INDEX_ID, scope.getProject(), scope);
 
@@ -510,8 +510,8 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   }
 
   <K> void removeTransientDataForFile(@NotNull StubIndexKey<K, ?> key, int inputId, @NotNull Collection<? extends K> keys) {
-    VfsAwareMapReduceIndex<K, StubIdList, Void> index = getIndex(key);
-    index.removeTransientDataForKeys(inputId, keys);
+    UpdatableIndex<K, StubIdList, Void> index = getIndex(key);
+    ((VfsAwareMapReduceIndex)index).removeTransientDataForKeys(inputId, keys);
   }
 
   private boolean dropUnregisteredIndices(@NotNull AsyncState state) {
@@ -551,11 +551,11 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
                               @NotNull final Map<K, StubIdList> oldValues,
                               @NotNull final Map<K, StubIdList> newValues) {
     try {
-      final VfsAwareMapReduceIndex<K, StubIdList, Void> index = getIndex((StubIndexKey<K, ?>)key);
+      final UpdatableIndex<K, StubIdList, Void> index = getIndex((StubIndexKey<K, ?>)key);
       if (index == null) return;
       final ThrowableComputable<InputDataDiffBuilder<K, StubIdList>, IOException>
         oldMapGetter = () -> new MapInputDataDiffBuilder<>(fileId, oldValues);
-      index.updateWithMap(new UpdateData<>(newValues, oldMapGetter, key, null));
+      ((MapReduceIndex)index).updateWithMap(new UpdateData<>(newValues, oldMapGetter, key, null));
     }
     catch (StorageException e) {
       LOG.info(e);

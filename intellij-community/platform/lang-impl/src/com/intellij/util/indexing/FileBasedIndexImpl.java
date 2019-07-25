@@ -568,7 +568,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private void removeTransientFileDataFromIndices(Collection<? extends ID<?, ?>> indices, int inputId, VirtualFile file) {
     for (ID<?, ?> indexId : indices) {
-      final MapReduceIndex index = (MapReduceIndex)myState.getIndex(indexId);
+      final UpdatableIndex index = myState.getIndex(indexId);
       assert index != null;
       index.removeTransientDataForFile(inputId);
     }
