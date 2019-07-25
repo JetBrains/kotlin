@@ -62,7 +62,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
 
   private final Alarm myAlarm;
-  private Point myPrevMouseLocation;
+  private final MouseMovementTracker myMouseMovementTracker = new MouseMovementTracker();
   private boolean myKeepPopupOnMouseMove;
   private WeakReference<Editor> myCurrentEditor;
   private WeakReference<AbstractPopup> myPopupReference;
@@ -196,13 +196,9 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
   }
 
   private boolean ignoreEvent(EditorMouseEvent e) {
-    Point currentMouseLocation = e.getMouseEvent().getLocationOnScreen();
     Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
-    boolean movesTowardsPopup = ScreenUtil.isMovementTowards(myPrevMouseLocation, currentMouseLocation, currentHintBounds);
-    myPrevMouseLocation = currentMouseLocation;
-    if (movesTowardsPopup || currentHintBounds != null && myKeepPopupOnMouseMove) return true;
-
-    return false;
+    return myMouseMovementTracker.isMovingTowards(e.getMouseEvent(), currentHintBounds) ||
+           currentHintBounds != null && myKeepPopupOnMouseMove;
   }
 
   private static boolean isPopupDisabled(Editor editor) {
@@ -226,6 +222,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
 
   private void showHintInEditor(AbstractPopup hint, Editor editor, Context context) {
     closeHint();
+    myMouseMovementTracker.reset();
     myKeepPopupOnMouseMove = false;
     editor.putUserData(PopupFactoryImpl.ANCHOR_POPUP_POSITION, context.getPopupPosition(editor));
     try {
