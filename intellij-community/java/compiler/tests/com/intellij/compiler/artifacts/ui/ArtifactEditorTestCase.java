@@ -10,9 +10,12 @@ import com.intellij.openapi.ui.TestDialog;
 import com.intellij.openapi.util.Ref;
 import com.intellij.packaging.artifacts.Artifact;
 import com.intellij.packaging.elements.PackagingElementFactory;
+import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.PathUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.Promise;
 
+import javax.swing.tree.TreePath;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -58,10 +61,11 @@ public abstract class ArtifactEditorTestCase extends PackagingElementsTestCase {
     disposeOnTearDown(myArtifactEditor);
   }
 
-  protected void selectNode(String path) {
+  protected void selectNode(String path){
     final LayoutTreeComponent layoutTreeComponent = myArtifactEditor.getLayoutTreeComponent();
     layoutTreeComponent.getLayoutTree().clearSelection();
-    layoutTreeComponent.selectNode(PathUtil.getParentPath(path), PathUtil.getFileName(path));
+    Promise<TreePath> selection = layoutTreeComponent.selectNode(PathUtil.getParentPath(path), PathUtil.getFileName(path));
+    PlatformTestUtil.assertPromiseSucceeds(selection);
     assertFalse("Node " + path + " not found", layoutTreeComponent.getSelection().getNodes().isEmpty());
   }
 
