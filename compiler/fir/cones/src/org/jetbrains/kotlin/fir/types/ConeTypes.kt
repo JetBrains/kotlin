@@ -109,8 +109,6 @@ abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
-
-
 data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
     FlexibleTypeMarker {
 
@@ -130,10 +128,10 @@ data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
 fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBound ?: this
 fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBound ?: this
 
-class ConeCapturedTypeConstructor(val projection: ConeKotlinTypeProjection, var supertypes: List<ConeKotlinType>? = null) :
-    TypeConstructorMarker {
-
-}
+class ConeCapturedTypeConstructor(
+    val projection: ConeKotlinTypeProjection,
+    var supertypes: List<ConeKotlinType>? = null
+) : TypeConstructorMarker
 
 class ConeCapturedType(
     val captureStatus: CaptureStatus,
