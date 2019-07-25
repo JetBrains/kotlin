@@ -1,4 +1,4 @@
-// ERROR: Type inference failed: Not enough information to infer parameter T in fun <T> emptyList(): List<T> Please specify it explicitly.
+// ERROR: Not enough information to infer type variable T
 package test
 
 import java.util.Collections
