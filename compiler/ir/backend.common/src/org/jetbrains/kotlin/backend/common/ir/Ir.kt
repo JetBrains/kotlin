@@ -98,11 +98,11 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
 
-    val charProgression = progression("CharProgression")
-    val intProgression = progression("IntProgression")
-    val longProgression = progression("LongProgression")
-    val progressionClasses = listOf(charProgression, intProgression, longProgression)
-    val progressionClassesTypes = progressionClasses.map { it.descriptor.defaultType }.toSet()
+    val charProgression by lazy { progression("CharProgression") }
+    val intProgression by lazy { progression("IntProgression") }
+    val longProgression by lazy { progression("LongProgression") }
+    val progressionClasses by lazy { listOf(charProgression, intProgression, longProgression) }
+    val progressionClassesTypes by lazy { progressionClasses.map { it.descriptor.defaultType }.toSet() }
 
     val any = symbolTable.referenceClass(builtIns.any)
     val unit = symbolTable.referenceClass(builtIns.unit)
@@ -117,23 +117,23 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     val integerClasses = listOf(byte, short, int, long)
     val integerClassesTypes = integerClasses.map { it.descriptor.defaultType }
 
-    val arrayOf = getSimpleFunction(Name.identifier("arrayOf")) {
+    val arrayOf by lazy { getSimpleFunction(Name.identifier("arrayOf")) {
         it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
                 it.valueParameters[0].isVararg
-    }
+    } }
 
-    val primitiveArrayOfByType = PrimitiveType.values().associate { type ->
+    val primitiveArrayOfByType by lazy { PrimitiveType.values().associate { type ->
         val function = getSimpleFunction(Name.identifier(type.name.toLowerCase() + "ArrayOf")) {
             it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
                     it.valueParameters[0].isVararg
         }
         type to function
-    }
+    } }
 
-    val arrayOfNulls = getSimpleFunction(Name.identifier("arrayOfNulls")) {
+    val arrayOfNulls by lazy { getSimpleFunction(Name.identifier("arrayOfNulls")) {
         it.extensionReceiverParameter == null && it.dispatchReceiverParameter == null && it.valueParameters.size == 1 &&
                 KotlinBuiltIns.isInt(it.valueParameters[0].type)
-    }
+    } }
 
     val array = symbolTable.referenceClass(builtIns.array)
 
@@ -224,16 +224,16 @@ abstract class Symbols<out T : CommonBackendContext>(val context: T, private val
     fun functionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getFunction(n))
     fun suspendFunctionN(n: Int): IrClassSymbol = symbolTable.referenceClass(builtIns.getSuspendFunction(n))
 
-    val extensionToString = getSimpleFunction(Name.identifier("toString")) {
+    val extensionToString by lazy { getSimpleFunction(Name.identifier("toString")) {
         it.dispatchReceiverParameter == null && it.extensionReceiverParameter != null &&
                 KotlinBuiltIns.isNullableAny(it.extensionReceiverParameter!!.type) && it.valueParameters.size == 0
-    }
+    } }
 
-    val stringPlus = getSimpleFunction(Name.identifier("plus")) {
+    val stringPlus by lazy { getSimpleFunction(Name.identifier("plus")) {
         it.dispatchReceiverParameter == null && it.extensionReceiverParameter != null &&
                 KotlinBuiltIns.isStringOrNullableString(it.extensionReceiverParameter!!.type) && it.valueParameters.size == 1 &&
                 KotlinBuiltIns.isNullableAny(it.valueParameters.first().type)
-    }
+    } }
 
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =

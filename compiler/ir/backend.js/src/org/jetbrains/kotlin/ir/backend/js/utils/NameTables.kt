@@ -138,6 +138,7 @@ class NameTables(packages: List<IrPackageFragment>) {
     private val localNames = mutableMapOf<IrDeclaration, NameTable<IrDeclaration>>()
     private val loopNames = mutableMapOf<IrLoop, String>()
 
+    var counter = 0
     init {
         val stableNamesCollector = StableNamesCollector()
         packages.forEach { it.acceptChildrenVoid(stableNamesCollector) }
@@ -255,7 +256,9 @@ class NameTables(packages: List<IrPackageFragment>) {
             parent = parent.parent
         }
 
-        error("Can't find name for declaration ${declaration.fqNameWhenAvailable}")
+        return sanitizeName("name_is_not_found_for_static__${declaration.fqNameWhenAvailable}_${counter++}")
+
+        // error("Can't find name for declaration ${declaration.fqNameWhenAvailable}")
     }
 
     fun getNameForMemberField(field: IrField): String {
@@ -275,9 +278,11 @@ class NameTables(packages: List<IrPackageFragment>) {
         //       of `invoke` functions in FunctionN interfaces
         if (name == null && signature is ParameterTypeBasedSignature && signature.suggestedName.startsWith("invoke"))
             return signature.suggestedName
-        require(name != null) {
-            "Can't find name for member function ${function.render()}"
+
+        if (name == null) {
+            return sanitizeName("name_is_not_found_for_member_fun__${function.fqNameWhenAvailable}_${counter++}")
         }
+
         return name
     }
 
