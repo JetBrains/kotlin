@@ -60,3 +60,25 @@ fun withLock(op: () -> Unit) {
 
     worker.requestTermination().result
 }
+
+class Node(var node: Node?, var outher: Node?)
+
+fun makeCyclic(): Node {
+    val inner = Node(null, null)
+    inner.node = inner
+    val outer = Node(null, null)
+    inner.outher = outer
+    return outer
+}
+
+@Test fun runTest4() {
+    val worker = Worker.start()
+
+    val future = worker.execute(TransferMode.SAFE, { }) {
+        makeCyclic().also {
+            kotlin.native.internal.GC.collect()
+        }
+    }
+    assert(future.result != null)
+    worker.requestTermination().result
+}

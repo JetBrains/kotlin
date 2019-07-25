@@ -76,6 +76,9 @@ public inline class Worker @PublishedApi internal constructor(val id: Int) {
      * explicitly stored in object produced by [producer]. Scheduled job is being executed by the worker,
      * and result of such a execution is being disconnected from worker's object graph. Whoever will consume
      * the future, can use result of worker's computations.
+     * Note, that some technically disjoint subgraphs may lead to `kotlin.IllegalStateException`
+     * so `kotlin.native.internal.GC.collect()` could be called in the end of `producer` and `job`
+     * if garbage cyclic structures or other uncollected objects refer to the value being transferred.
      *
      * @return the future with the computation result of [job]
      */
