@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(reason: String) : TypeConstructorMarker
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext {
     val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
@@ -459,5 +459,11 @@ class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, 
 
     override val KotlinTypeMarker.isAllowedTypeVariable: Boolean
         get() = this is ConeKotlinType && this is ConeTypeVariableType
+
+    override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext =
+        if (this.isErrorTypeEqualsToAnything == errorTypesEqualToAnything)
+            this
+        else
+            ConeTypeCheckerContext(errorTypesEqualToAnything, session)
 
 }

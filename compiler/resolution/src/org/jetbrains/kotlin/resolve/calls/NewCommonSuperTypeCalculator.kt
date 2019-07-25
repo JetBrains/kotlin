@@ -16,9 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.*
 import org.jetbrains.kotlin.types.AbstractNullabilityChecker.hasPathByNotMarkedNullableNodes
@@ -181,7 +178,7 @@ object NewCommonSuperTypeCalculator {
             nullable = false
         )
 
-        val typeCheckerContext = ClassicTypeCheckerContext(false)
+        val typeCheckerContext = newBaseTypeCheckerContext(false)
 
         /**
          * Sometimes one type can have several supertypes with given type constructor, suppose A <: List<Int> and A <: List<Double>.
