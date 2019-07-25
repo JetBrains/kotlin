@@ -1582,7 +1582,7 @@ void setHeapRef(ObjHeader** location, const ObjHeader* object) {
 void zeroHeapRef(ObjHeader** location) {
   MEMORY_LOG("ZeroHeapRef %p\n", location)
   auto* value = *location;
-  if (value != nullptr) {
+  if (reinterpret_cast<uintptr_t>(value) > 1) {
     UPDATE_REF_EVENT(memoryState, value, nullptr, location, 0);
     *location = nullptr;
     ReleaseHeapRef(value);
