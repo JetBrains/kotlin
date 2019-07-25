@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.js.resolve.diagnostics
 
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isTypeRefinementEnabled
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -24,14 +26,20 @@ import org.jetbrains.kotlin.js.naming.SuggestedName
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.DescriptorEquivalenceForOverrides
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
+import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtensionProperty
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
-class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : DeclarationChecker {
+class JsNameClashChecker(
+    private val nameSuggestion: NameSuggestion,
+    private val languageVersionSettings: LanguageVersionSettings
+) : DeclarationChecker {
     companion object {
         private val COMMON_DIAGNOSTICS = setOf(
                 Errors.REDECLARATION,
@@ -87,7 +95,12 @@ class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : Declarati
                 val scope = getScope(overrideFqn.scope)
                 val name = overrideFqn.names.last()
                 val existing = scope[name] as? CallableMemberDescriptor
-                if (existing != null && existing != overrideFqn.descriptor && !isFakeOverridingNative(existing)) {
+                val overrideDescriptor = overrideFqn.descriptor as? CallableMemberDescriptor
+                if (existing != null &&
+                    overrideDescriptor != null &&
+                    !areDescriptorsEquivalent(existing, overrideDescriptor) &&
+                    !isFakeOverridingNative(existing)
+                ) {
                     diagnosticHolder.report(ErrorsJs.JS_FAKE_NAME_CLASH.on(declaration, name, override, existing))
                     break
                 }
@@ -99,6 +112,20 @@ class JsNameClashChecker(private val nameSuggestion: NameSuggestion) : Declarati
                     break
                 }
             }
+        }
+    }
+
+    private fun areDescriptorsEquivalent(
+        existing: CallableMemberDescriptor,
+        overrideDescriptor: CallableMemberDescriptor
+    ): Boolean {
+        return if (!languageVersionSettings.isTypeRefinementEnabled) {
+            // Fast-path
+            existing == overrideDescriptor
+        } else {
+            // If refinement is enabled, we can get duplicate descriptors for one and the same members (as refinement re-creates
+            // descriptors), so, in this case, we have to compare descriptors structurally
+            DescriptorEquivalenceForOverrides.areCallableDescriptorsEquivalent(existing, overrideDescriptor)
         }
     }
 
