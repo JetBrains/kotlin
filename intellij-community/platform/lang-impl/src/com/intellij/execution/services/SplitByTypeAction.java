@@ -20,13 +20,13 @@ public class SplitByTypeAction extends DumbAwareAction {
     }
 
     ServiceView selectedView = getSelectedView(e);
-    if (selectedView == null || selectedView.getModel().getFilter() != null) {
+    if (selectedView == null || !ServiceViewManagerImpl.isMainView(selectedView)) {
       e.getPresentation().setEnabledAndVisible(false);
       return;
     }
 
     Presentation presentation = e.getPresentation();
-    boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled();
+    boolean enabled = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).isSplitByTypeEnabled(selectedView);
     presentation.setEnabled(enabled);
     presentation.setVisible(enabled || !ActionPlaces.isPopupPlace(e.getPlace()));
   }
@@ -36,6 +36,9 @@ public class SplitByTypeAction extends DumbAwareAction {
     Project project = e.getProject();
     if (project == null) return;
 
-    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).splitByType();
+    ServiceView selectedView = getSelectedView(e);
+    if (selectedView == null) return;
+
+    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).splitByType(selectedView);
   }
 }

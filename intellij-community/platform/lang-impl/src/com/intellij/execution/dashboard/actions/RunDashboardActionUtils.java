@@ -45,7 +45,7 @@ class RunDashboardActionUtils {
     JBIterable<Object> roots = JBIterable.of(e.getData(PlatformDataKeys.SELECTED_ITEMS));
     if (Registry.is("ide.service.view")) {
       Set<RunDashboardRunConfigurationNode> result = new LinkedHashSet<>();
-      if (!getLeaves(project, roots.toList(), result)) return JBIterable.empty();
+      if (!getLeaves(project, e, roots.toList(), result)) return JBIterable.empty();
 
       return JBIterable.from(result);
     }
@@ -67,11 +67,11 @@ class RunDashboardActionUtils {
     }
   }
 
-  private static boolean getLeaves(Project project, List<Object> items, Set<RunDashboardRunConfigurationNode> result) {
+  private static boolean getLeaves(Project project, AnActionEvent e, List<Object> items, Set<RunDashboardRunConfigurationNode> result) {
     for (Object item : items) {
       if (item instanceof RunConfigurationsServiceViewContributor || item instanceof RunDashboardGroup) {
-        List<Object> children = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).getChildrenSafe(item);
-        if (!getLeaves(project, children, result)) {
+        List<Object> children = ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).getChildrenSafe(e, item);
+        if (!getLeaves(project, e, children, result)) {
           return false;
         }
       }

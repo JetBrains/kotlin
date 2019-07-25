@@ -135,7 +135,7 @@ class ServiceViewDragHelper {
     private final List<ServiceViewItem> myItems;
     private final ServiceViewContributor myContributor;
 
-    ServiceViewDragBean(ServiceView serviceView, List<ServiceViewItem> items) {
+    ServiceViewDragBean(@NotNull ServiceView serviceView, @NotNull List<ServiceViewItem> items) {
       myServiceView = serviceView;
       myItems = ContainerUtil.filter(items, item -> {
         ServiceViewItem parent = item.getParent();
@@ -150,10 +150,12 @@ class ServiceViewDragHelper {
       myContributor = getTheOnlyRootContributor(myItems);
     }
 
+    @NotNull
     ServiceView getServiceView() {
       return myServiceView;
     }
 
+    @NotNull
     List<ServiceViewItem> getItems() {
       return myItems;
     }

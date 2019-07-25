@@ -28,10 +28,10 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   private volatile boolean myShowGroups;
   private volatile boolean myShowContributorRoots;
 
-  protected ServiceViewModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, ServiceViewFilter condition) {
+  protected ServiceViewModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter, @NotNull ServiceViewFilter filter) {
     myModel = model;
     myModelFilter = modelFilter;
-    myFilter = condition;
+    myFilter = filter;
   }
 
   @NotNull
@@ -64,6 +64,7 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
     notifyListeners();
   }
 
+  @NotNull
   ServiceViewFilter getFilter() {
     return myFilter;
   }
@@ -290,14 +291,20 @@ abstract class ServiceViewModel implements Disposable, InvokerSupplier {
   }
 
   static class AllServicesModel extends ServiceViewModel {
-    AllServicesModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter) {
-      super(model, modelFilter, null);
+    AllServicesModel(@NotNull ServiceModel model, @NotNull ServiceModelFilter modelFilter,
+                     @NotNull Collection<ServiceViewContributor> contributors) {
+      super(model, modelFilter, new ServiceViewFilter(null) {
+        @Override
+        public boolean value(ServiceViewItem item) {
+          return contributors.contains(item.getRootContributor());
+        }
+      });
     }
 
     @Override
     @NotNull
     protected List<? extends ServiceViewItem> doGetRoots() {
-      return myModelFilter.filter(myModel.getRoots(), null);
+      return myModelFilter.filter(ContainerUtil.filter(myModel.getRoots(), getFilter()), getFilter());
     }
 
     @Override

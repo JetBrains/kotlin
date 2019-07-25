@@ -14,8 +14,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 class ServiceModelFilter {
   private final List<ServiceViewFilter> myFilters = new CopyOnWriteArrayList<>();
 
-  List<ServiceViewFilter> getFilters() {
-    return myFilters;
+  void addFilter(@NotNull ServiceViewFilter filter) {
+    myFilters.add(filter);
   }
 
   void removeFilter(@NotNull ServiceViewFilter filter) {
@@ -29,10 +29,10 @@ class ServiceModelFilter {
   }
 
   @NotNull
-  List<? extends ServiceViewItem> filter(@NotNull List<? extends ServiceViewItem> items, @Nullable ServiceViewFilter targetFilter) {
+  List<? extends ServiceViewItem> filter(@NotNull List<? extends ServiceViewItem> items, @NotNull ServiceViewFilter targetFilter) {
     if (items.isEmpty()) return items;
 
-    List<ServiceViewFilter> filters = targetFilter == null ? myFilters : excludeTargetAndParents(targetFilter);
+    List<ServiceViewFilter> filters = excludeTargetAndParents(targetFilter);
     return ContainerUtil.filter(items, item -> filters.stream().noneMatch(filter -> filter.value(item)));
   }
 

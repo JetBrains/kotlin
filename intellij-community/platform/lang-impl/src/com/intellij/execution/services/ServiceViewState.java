@@ -22,6 +22,7 @@ final class ServiceViewState {
 
   public boolean groupByServiceGroups = true;
   public boolean groupByContributor;
+  public boolean isSelected;
 
   public String viewType = "";
   public List<ServiceState> roots = new ArrayList<>();

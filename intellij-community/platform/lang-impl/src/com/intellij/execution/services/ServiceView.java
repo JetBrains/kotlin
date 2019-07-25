@@ -27,7 +27,7 @@ abstract class ServiceView extends JPanel implements Disposable {
   protected final ServiceViewUi myUi;
   private AutoScrollToSourceHandler myAutoScrollToSourceHandler;
 
-  ServiceView(LayoutManager layout, @NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui) {
+  protected ServiceView(LayoutManager layout, @NotNull Project project, @NotNull ServiceViewModel model, @NotNull ServiceViewUi ui) {
     super(layout);
     myProject = project;
     myModel = model;
