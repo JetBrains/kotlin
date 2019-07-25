@@ -131,6 +131,10 @@ tasks {
         failOnWarning = true
     }
 
+    named<Upload>("install") {
+        dependsOn(named("validateTaskProperties"))
+    }
+
     named<DokkaTask>("dokka") {
         outputFormat = "markdown"
         includes = listOf("$projectDir/Module.md")
