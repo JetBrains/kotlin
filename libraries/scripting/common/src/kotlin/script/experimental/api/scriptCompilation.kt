@@ -36,7 +36,7 @@ open class ScriptCompilationConfiguration(baseConfigurations: Iterable<ScriptCom
     object Default : ScriptCompilationConfiguration()
 
     override fun toString(): String {
-        return "ScriptCompilationConfiguration($providedProperties)"
+        return "ScriptCompilationConfiguration($properties)"
     }
 }
 

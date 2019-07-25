@@ -10,6 +10,7 @@ package kotlin.script.experimental.api
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getEvaluationContext
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
@@ -121,10 +122,14 @@ data class RefineEvaluationConfigurationData(
 fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
     script: CompiledScript<*>,
     contextData: ScriptEvaluationContextData? = null
-): ResultWithDiagnostics<ScriptEvaluationConfiguration> =
-    simpleRefineImpl(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate) { config, refineData ->
-        refineData.handler.invoke(ScriptEvaluationConfigurationRefinementContext(script, config, contextData))
+): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
+    val hostConfiguration = get(ScriptEvaluationConfiguration.hostConfiguration)
+    val baseContextData = hostConfiguration?.get(ScriptingHostConfiguration.getEvaluationContext)?.invoke(hostConfiguration)
+    val actualContextData = merge(baseContextData, contextData)
+    return simpleRefineImpl(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate) { config, refineData ->
+        refineData.handler.invoke(ScriptEvaluationConfigurationRefinementContext(script, config, actualContextData))
     }
+}
 
 /**
  * The script evaluation result value
