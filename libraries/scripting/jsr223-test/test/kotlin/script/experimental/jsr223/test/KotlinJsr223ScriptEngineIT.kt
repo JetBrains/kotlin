@@ -86,6 +86,23 @@ class KotlinJsr223ScriptEngineIT {
     }
 
     @Test
+    fun testEvalWithException() {
+        val engine = ScriptEngineManager().getEngineByExtension("kts")!!
+        try {
+            engine.eval("throw Exception(\"!!\")")
+            Assert.fail("Expecting exception to propagate")
+        } catch (e: ScriptException) {
+            Assert.assertEquals("!!", e.cause?.message)
+        }
+        // engine should remain operational
+        val res1 = engine.eval("val x = 3")
+        Assert.assertNull(res1)
+        val res2 = engine.eval("x + 4")
+        Assert.assertEquals(7, res2)
+    }
+
+
+    @Test
     fun testEngineRepeatWithReset() {
         val code = "open class A {}\n" +
                     "class B : A() {}"

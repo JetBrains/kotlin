@@ -69,7 +69,7 @@ val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.ke
  * For the first snippet in a REPL an empty list should be passed explicitly
  * An array of the previous snippets will be passed to the current snippet constructor
  */
-val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any>>(isTransient = true)
+val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any?>>(isTransient = true)
 
 @Deprecated("use scriptsInstancesSharing flag instead", level = DeprecationLevel.ERROR)
 val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>(isTransient = true)
@@ -134,24 +134,28 @@ fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
 /**
  * The script evaluation result value
  */
-sealed class ResultValue(val scriptInstance: Any? = null) {
+sealed class ResultValue(val scriptClass: KClass<*>? = null, val scriptInstance: Any? = null) {
 
     /**
      * The result value representing a script return value - the value of the last expression in the script
      * @param name assigned name of the result field - used e.g. in REPL
      * @param value actual result value
      * @param type name of the result type
+     * @param scriptClass the loaded class of the script
      * @param scriptInstance instance of the script class
      */
-    class Value(val name: String, val value: Any?, val type: String, scriptInstance: Any) : ResultValue(scriptInstance) {
+    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>, scriptInstance: Any) :
+        ResultValue(scriptClass, scriptInstance) {
+
         override fun toString(): String = "$name: $type = $value"
     }
 
     /**
      * The result value representing unit result, e.g. when the script ends with a statement
+     * @param scriptClass the loaded class of the script
      * @param scriptInstance instance of the script class
      */
-    class Unit(scriptInstance: Any) : ResultValue(scriptInstance) {
+    class Unit(scriptClass: KClass<*>, scriptInstance: Any) : ResultValue(scriptClass, scriptInstance) {
         override fun toString(): String = "Unit"
     }
 
@@ -159,8 +163,9 @@ sealed class ResultValue(val scriptInstance: Any? = null) {
      * The result value representing an exception from script itself
      * @param error the actual exception thrown on script evaluation
      * @param wrappingException the wrapping exception e.g. InvocationTargetException, sometimes useful for calculating the relevant stacktrace
+     * @param scriptClass the loaded class of the script, if any
      */
-    class Error(val error: Throwable, val wrappingException: Throwable? = null) : ResultValue() {
+    class Error(val error: Throwable, val wrappingException: Throwable? = null, scriptClass: KClass<*>? = null) : ResultValue(scriptClass) {
         override fun toString(): String = error.toString()
     }
 
