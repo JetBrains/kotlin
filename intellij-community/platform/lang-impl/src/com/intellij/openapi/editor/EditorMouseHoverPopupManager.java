@@ -42,6 +42,7 @@ import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.util.Alarm;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -60,6 +61,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
   private static final Logger LOG = Logger.getInstance(EditorMouseHoverPopupManager.class);
   private static final Key<Boolean> DISABLE_BINDING = Key.create("EditorMouseHoverPopupManager.disable.binding");
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
+  private static final int MAX_POPUP_WIDTH = 650;
 
   private final Alarm myAlarm;
   private final MouseMovementTracker myMouseMovementTracker = new MouseMovementTracker();
@@ -689,7 +691,7 @@ public class EditorMouseHoverPopupManager implements EditorMouseListener, Editor
     public Dimension preferredLayoutSize(Container parent) {
       Dimension d1 = highlightInfoComponent == null ? new Dimension() : highlightInfoComponent.getPreferredSize();
       int w2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredWidth();
-      int preferredWidth = Math.max(d1.width, w2);
+      int preferredWidth = Math.min(JBUI.scale(MAX_POPUP_WIDTH), Math.max(d1.width, w2));
       int h2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredHeight(preferredWidth);
       return new Dimension(preferredWidth, d1.height + h2);
     }
