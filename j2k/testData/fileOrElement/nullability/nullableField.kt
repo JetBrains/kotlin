@@ -1,6 +1,3 @@
-// ERROR: Type mismatch: inferred type is Int? but Int was expected
-// ERROR: Type inference failed. Please try to specify type arguments explicitly.
-// ERROR: Using 'remove(Int): T' is an error. Use removeAt(index) instead.
 package test
 
 import java.util.ArrayList
