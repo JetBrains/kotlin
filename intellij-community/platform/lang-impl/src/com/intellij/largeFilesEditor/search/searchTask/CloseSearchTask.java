@@ -132,10 +132,7 @@ public class CloseSearchTask extends SearchTaskBase {
    * if such result exists; '-1' if doesn't.
    */
   private static int tryGetClosestResult(ArrayList<SearchResult> allMatchesAtFrame, SearchTaskOptions options) {
-    if (allMatchesAtFrame.isEmpty()) {
-      return -1;
-    }
-    else {
+    if (!allMatchesAtFrame.isEmpty()) {
       SearchResult searchResult;
       if (options.searchForwardDirection) {
 
@@ -169,7 +166,7 @@ public class CloseSearchTask extends SearchTaskBase {
           }
         }
       }
-      return -1;
     }
+    return -1;
   }
 }

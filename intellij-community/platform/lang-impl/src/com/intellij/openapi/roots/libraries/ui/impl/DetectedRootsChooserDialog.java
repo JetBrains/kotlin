@@ -128,7 +128,6 @@ public class DetectedRootsChooserDialog extends DialogWrapper {
         VirtualFile file = node.getFile();
         String text;
         SimpleTextAttributes attributes;
-        Icon icon;
         boolean isValid = true;
         if (leaf) {
           VirtualFile ancestor = ((VirtualFileCheckedTreeNode)node.getParent()).getFile();
@@ -146,15 +145,13 @@ public class DetectedRootsChooserDialog extends DialogWrapper {
             text = file.getPresentableUrl();
           }
           attributes = SimpleTextAttributes.REGULAR_ATTRIBUTES;
-          icon = PlatformIcons.FOLDER_ICON;
         }
         else {
           text = file.getPresentableUrl();
           attributes = SimpleTextAttributes.REGULAR_BOLD_ATTRIBUTES;
-          icon = PlatformIcons.FOLDER_ICON;
         }
         final ColoredTreeCellRenderer textRenderer = getTextRenderer();
-        textRenderer.setIcon(icon);
+        textRenderer.setIcon(PlatformIcons.FOLDER_ICON);
         if (!isValid) {
           textRenderer.append("[INVALID] ", SimpleTextAttributes.ERROR_ATTRIBUTES);
         }

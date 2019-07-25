@@ -379,13 +379,12 @@ public class EnterHandler extends BaseEnterHandler {
               if (isCommentComplete(comment, commentContext.commenter, myEditor)) {
                 if (myOffset >= commentEnd) {
                   commentContext.docAsterisk = false;
-                  commentContext.docStart = false;
                 }
                 else {
                   commentContext.docAsterisk =
                     CodeStyleManager.getInstance(getProject()).getDocCommentSettings(myFile).isLeadingAsteriskEnabled();
-                  commentContext.docStart = false;
                 }
+                commentContext.docStart = false;
               }
               else {
                 generateJavadoc(commentContext.commenter);

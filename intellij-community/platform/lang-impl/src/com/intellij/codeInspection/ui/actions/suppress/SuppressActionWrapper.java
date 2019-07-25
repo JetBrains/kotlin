@@ -113,11 +113,10 @@ public class SuppressActionWrapper extends ActionGroup implements CompactActionG
           text = mySuppressAction.getText();
         }
         e.getPresentation().setText(text);
-        return true;
       } else {
         e.getPresentation().setText(mySuppressAction.getFamilyName());
-        return true;
       }
+      return true;
     }
 
     public boolean isSuppressAll() {
