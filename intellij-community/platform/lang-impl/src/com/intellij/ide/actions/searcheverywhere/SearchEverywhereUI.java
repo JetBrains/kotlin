@@ -934,7 +934,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
   private class CompositeCellRenderer implements ListCellRenderer<Object> {
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Object> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       if (value == SearchListModel.MORE_ELEMENT) {
         Component component = myMoreRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         component.setPreferredSize(UIUtil.updateListRowHeight(component.getPreferredSize()));
