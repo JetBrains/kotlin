@@ -693,7 +693,11 @@ public class SingleInspectionProfilePanel extends JPanel {
     }
     Collection<InspectionConfigTreeNode.Tool> nodes = myTreeTable.getSelectedToolNodes();
     if (!nodes.isEmpty()) {
+      final Project project = myProjectProfileManager.getProject();
       final InspectionConfigTreeNode.Tool singleNode = myTreeTable.getStrictlySelectedToolNode();
+      final ScopeToolState toolState = singleNode != null ?
+                                       myProfile.getToolDefaultState(singleNode.getDefaultDescriptor().getKey().toString(), project) : null;
+      boolean showDefaultConfigurationOptions = toolState == null || toolState.getTool().getTool().showDefaultConfigurationOptions();
       if (singleNode != null) {
         final Descriptor descriptor = singleNode.getDefaultDescriptor();
         if (descriptor.loadDescription() != null) {
@@ -720,7 +724,6 @@ public class SingleInspectionProfilePanel extends JPanel {
       }
 
       myOptionsPanel.removeAll();
-      final Project project = myProjectProfileManager.getProject();
       final JPanel severityPanel = new JPanel(new GridBagLayout());
       final JPanel configPanelAnchor = new JPanel(new GridLayout());
 
@@ -772,7 +775,8 @@ public class SingleInspectionProfilePanel extends JPanel {
           }
         };
 
-        severityPanel.add(new JLabel(InspectionsBundle.message("inspection.severity")),
+        JLabel severityLabel = new JLabel(InspectionsBundle.message("inspection.severity"));
+        severityPanel.add(severityLabel,
                           new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                                                  JBInsets.create(10, 0), 0, 0));
         final JComponent severityLevelChooserComponent = severityLevelChooser.createCustomComponent(
@@ -792,9 +796,15 @@ public class SingleInspectionProfilePanel extends JPanel {
                                                  GridBagConstraints.BOTH,
                                                  JBInsets.create(2, 0), 0, 0));
         severityPanelWeightY = 0.0;
-        if (singleNode != null) {
-          setConfigPanel(configPanelAnchor, myProfile.getToolDefaultState(singleNode.getDefaultDescriptor().getKey().toString(),
-                                                                                  project));
+        if (toolState != null) {
+          if (!showDefaultConfigurationOptions) {
+            severityLabel.setVisible(false);
+            severityLevelChooserComponent.setVisible(false);
+            scopesChooserComponent.setVisible(false);
+            label.setVisible(false);
+          }
+
+          setConfigPanel(configPanelAnchor, toolState);
         }
         scopesAndScopesAndSeveritiesTable = null;
       }
@@ -853,8 +863,11 @@ public class SingleInspectionProfilePanel extends JPanel {
                                                                JBUI.insets(0, 2, 0, 0), 0, 0));
       GuiUtils.enableChildren(myOptionsPanel, isThoughOneNodeEnabled(nodes));
       if (configPanelAnchor.getComponentCount() != 0) {
-        myOptionsPanel.add(new ToolOptionsSeparator(configPanelAnchor, scopesAndScopesAndSeveritiesTable), new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
-                                                                                                        JBUI.emptyInsets(), 0, 0));
+        if (showDefaultConfigurationOptions) {
+          myOptionsPanel.add(new ToolOptionsSeparator(configPanelAnchor, scopesAndScopesAndSeveritiesTable),
+                             new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL,
+                                                    JBUI.emptyInsets(), 0, 0));
+        }
         myOptionsPanel.add(configPanelAnchor, new GridBagConstraints(0, 2, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH,
                                                                               JBUI.insets(0, 2, 0, 0), 0, 0));
       }
