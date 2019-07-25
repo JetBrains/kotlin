@@ -6,35 +6,27 @@
 package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.ParserDefinition
 import com.intellij.lang.impl.PsiBuilderFactoryImpl
-import com.intellij.lexer.Lexer
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.DummyHolderViewProvider
-import com.intellij.psi.PsiManager
-import com.intellij.psi.SingleRootFileViewProvider
-import com.intellij.psi.impl.PsiManagerEx
-import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KotlinLexer
-import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.parsing.MyKotlinParser
-import org.jetbrains.kotlin.psi.KtFile
 import java.io.File
 import java.nio.file.Path
 
 class LightTree2Fir(
+    private val project: Project,
     private val stubMode: Boolean,
-    private val project: Project
+    private val session: FirSession = object : FirSessionBase(null) {}
 ) {
-    private val ktDummyFile = KtFile(SingleRootFileViewProvider(PsiManager.getInstance(project), LightVirtualFile()), false)
+    //private val ktDummyFile = KtFile(SingleRootFileViewProvider(PsiManager.getInstance(project), LightVirtualFile()), false)
 
     companion object {
         private val parserDefinition = KotlinParserDefinition()
@@ -74,7 +66,7 @@ class LightTree2Fir(
     fun buildFirFile(code: String, fileName: String): FirFile {
         val lightTree = buildLightTree(code)
 
-        return DeclarationsConverter(object : FirSessionBase(null) {}, stubMode, lightTree)
+        return DeclarationsConverter(session, stubMode, lightTree)
             .convertFile(lightTree.root, fileName)
     }
 }
