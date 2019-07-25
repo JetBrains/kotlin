@@ -141,20 +141,26 @@ fun main(args: Array<String>) {
             val codesizeNormalize = codesizeNormalize?.let {
                 parseNormalizeResults(getFileContent(it))
             }
+
             results.apply {
                 add(benchsReport.failedBenchmarks.size.toString())
+                if (!execSamples.isEmpty()) {
+                    val filterExec = if (execSamples.first() == "all") null else execSamples
+                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
+                            exec == "geomean", filterExec, executionNormalize).joinToString(";"))
+                }
 
-                val filterExec = if (execSamples.first() == "all") null else execSamples
-                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.EXECUTION_TIME,
-                        exec == "geomean", filterExec, executionNormalize).joinToString(";"))
+                if (!compileSamples.isEmpty()) {
+                    val filterCompile = if (compileSamples.first() == "all") null else compileSamples
+                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
+                            compile == "geomean", filterCompile, compileNormalize).joinToString(";"))
+                }
 
-                val filterCompile = if (compileSamples.first() == "all") null else compileSamples
-                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.COMPILE_TIME,
-                        compile == "geomean", filterCompile, compileNormalize).joinToString(";"))
-
-                val filterCodesize = if (codesizeSamples.first() == "all") null else codesizeSamples
-                add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
-                        codesize == "geomean", filterCodesize, codesizeNormalize).joinToString(";"))
+                if (!codesizeSamples.isEmpty()) {
+                    val filterCodesize = if (codesizeSamples.first() == "all") null else codesizeSamples
+                    add(benchsReport.getResultsByMetric(BenchmarkResult.Metric.CODE_SIZE,
+                            codesize == "geomean", filterCodesize, codesizeNormalize).joinToString(";"))
+                }
 
             }
             println(results.joinToString())

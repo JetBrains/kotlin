@@ -68,7 +68,7 @@ compileBenchmark {
         step("runKonanProgram") {
             command = listOf(
                 "$dist/bin/konanc$toolSuffix",
-                "-ea", "-p", "program",
+                "-ea", "-p", "program", "-g",
                 "-o", "${buildDir.absolutePath}/program$binarySuffix",
                 "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-ffmpeg.klib",
                 "-l", "$dist/../samples/videoplayer/build/classes/kotlin/videoPlayer/main/videoplayer-cinterop-sdl.klib",

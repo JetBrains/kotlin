@@ -83,7 +83,13 @@ data class MeanVarianceBenchmark(val meanBenchmark: BenchmarkResult, val varianc
 }
 
 fun geometricMean(values: Collection<Double>, totalNumber: Int = values.size) =
-    values.asSequence().filter{ it != 0.0 }.map { it.pow(1.0 / totalNumber) }.reduce { a, b -> a * b }
+    with(values.asSequence().filter { it != 0.0 }) {
+        if (count() == 0) {
+            0.0
+        } else {
+            map { it.pow(1.0 / totalNumber) }.reduce { a, b -> a * b }
+        }
+    }
 
 fun computeMeanVariance(samples: List<Double>): MeanVariance {
     val zStar = 1.67    // Critical point for 90% confidence of normal distribution.
