@@ -11,12 +11,12 @@
     * Ensure produced Objective-C header does not have warnings (GH-3101)
     * Speed up interop stub generator (GH-3082, GH-3050)
     * getOriginalKotlinClass() to get KClass for Kotlin classes in Objective-C (GH-3036)
-    * Implement ObjCExportLazy (GH-2990)
   * Standard library
     * API for delayed job execution on worker (GH-2971)
     * API for running via worker's job queue (GH-3078)
     * MonoClock and Duration support (GH-3028)
     * Support typeOf (KT-29917, KT-28625)
+    * New zero-terminated utf8 to String conversion API (GH-3116)
 
 # v1.3.0 (Jun 2019)
   * CoreLocation platform library on macOS (GH-3041)
