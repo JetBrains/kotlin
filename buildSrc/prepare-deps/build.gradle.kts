@@ -65,6 +65,17 @@ repositories {
                 artifact()
             }
         }
+
+        ivy {
+            artifactPattern("https://dl.bintray.com/kotlin/as/[artifact]-[revision]-$androidStudioOs.zip")
+            credentials {
+                username = System.getenv("AS_BINTRAY_USER_NAME")
+                password = System.getenv("AS_BINTRAY_API_KEY")
+            }
+            metadataSources {
+                artifact()
+            }
+        }
     }
 
     maven("https://www.jetbrains.com/intellij-repository/$intellijReleaseType")
@@ -94,7 +105,8 @@ val repoDir = File(customDepsRepoDir, customDepsOrg)
 
 dependencies {
     if (androidStudioRelease != null) {
-        val extension = if (androidStudioOs == "linux" && androidStudioRelease.startsWith("3.5"))
+        val extension = if (androidStudioOs == "linux" &&
+            (androidStudioRelease.startsWith("3.5") || androidStudioRelease.startsWith("3.6")))
             "tar.gz"
         else
             "zip"
