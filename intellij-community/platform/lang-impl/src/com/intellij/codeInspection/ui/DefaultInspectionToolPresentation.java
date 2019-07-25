@@ -334,7 +334,7 @@ public class DefaultInspectionToolPresentation implements InspectionToolPresenta
     }
   }
 
-  private void exportResults(@NotNull final CommonProblemDescriptor[] descriptors,
+  protected void exportResults(@NotNull final CommonProblemDescriptor[] descriptors,
                              @NotNull RefEntity refEntity,
                              @NotNull Consumer<? super Element> problemSink,
                              @NotNull Predicate<? super CommonProblemDescriptor> isDescriptorExcluded) {
