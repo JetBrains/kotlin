@@ -1061,7 +1061,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   @Nullable
   public ProjectIndexableFilesFilter projectIndexableFiles(@Nullable Project project) {
-    if (project == null || myUpdatingFiles.get() > 0) return null;
+    if (project == null || project.isDefault() || myUpdatingFiles.get() > 0) return null;
     if (myProjectsBeingUpdated.contains(project)) return null;
 
     SoftReference<ProjectIndexableFilesFilter> reference = project.getUserData(ourProjectFilesSetKey);
