@@ -9,20 +9,21 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PerformanceTrace implements Serializable {
+public final class PerformanceTrace implements Serializable {
   public static final Key<PerformanceTrace> TRACE_NODE_KEY = Key.create(PerformanceTrace.class, ExternalSystemConstants.UNORDERED + 1);
 
-  private final Map<String, Long> myPerformanceData = new LinkedHashMap<>();
+  private final Map<String, Long> performanceData = new LinkedHashMap<>();
 
-  public void logPerformance(@NotNull final String key, long millis) {
-    myPerformanceData.put(key, millis);
+  public void logPerformance(@NotNull String key, long millis) {
+    performanceData.put(key, millis);
   }
 
+  @NotNull
   public Map<String, Long> getPerformanceTrace() {
-    return myPerformanceData;
+    return performanceData;
   }
 
-  public void addTrace(@NotNull final Map<String, Long> trace) {
-    myPerformanceData.putAll(trace);
+  public void addTrace(@NotNull Map<String, Long> trace) {
+    performanceData.putAll(trace);
   }
 }

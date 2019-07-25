@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.performance;
 
 import com.intellij.openapi.externalSystem.model.DataNode;
@@ -59,7 +59,6 @@ public class GradleImportPerformanceTest extends GradleImportPerformanceTestCase
     final DataNode<ProjectData> rootNode = data.iterator().next().getExternalProjectStructure();
     final DataNode<PerformanceTrace> traceDataNode = ExternalSystemApiUtil.find(rootNode, PerformanceTrace.TRACE_NODE_KEY);
     final Map<String, Long> trace = traceDataNode.getData().getPerformanceTrace();
-
 
     assertTracedTimePercentAtLeast(trace, consumedTime, 90);
 
