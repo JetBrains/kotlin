@@ -40,17 +40,12 @@ import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCommonCompilerArgu
 import org.jetbrains.kotlin.idea.compiler.configuration.KotlinCompilerSettings
 import org.jetbrains.kotlin.idea.facet.getLibraryLanguageLevel
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.DefaultIdeTargetPlatformKindProvider
-import org.jetbrains.kotlin.platform.IdePlatformKind
-import org.jetbrains.kotlin.platform.idePlatformKind
-import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.*
+import org.jetbrains.kotlin.platform.impl.isCommon
+import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.impl.isCommon
-import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.Jsr305State
 import java.io.File
 
@@ -151,6 +146,7 @@ fun Project.getLanguageVersionSettings(
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
         if (jsr305State != null) put(JvmAnalysisFlags.jsr305, jsr305State)
+        initIDESpecificAnalysisSettings(this@getLanguageVersionSettings)
     }
 
     return LanguageVersionSettingsImpl(
@@ -200,7 +196,11 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
         configureNewInferenceSupportInIDE(project)
     }.orEmpty()
 
-    val analysisFlags = facetSettings.mergedCompilerArguments?.configureAnalysisFlags(MessageCollector.NONE).orEmpty()
+    val analysisFlags = facetSettings
+        .mergedCompilerArguments
+        ?.configureAnalysisFlags(MessageCollector.NONE)
+        ?.apply { initIDESpecificAnalysisSettings(project) }
+        .orEmpty()
 
     return LanguageVersionSettingsImpl(
         languageVersion,
@@ -208,6 +208,12 @@ private fun Module.computeLanguageVersionSettings(): LanguageVersionSettings {
         analysisFlags,
         languageFeatures
     )
+}
+
+private fun MutableMap<AnalysisFlag<*>, Any>.initIDESpecificAnalysisSettings(project: Project) {
+    if (KotlinMultiplatformAnalysisModeComponent.getMode(project) == KotlinMultiplatformAnalysisModeComponent.Mode.COMPOSITE) {
+        put(AnalysisFlags.useTypeRefinement, true)
+    }
 }
 
 val Module.platform: TargetPlatform?
