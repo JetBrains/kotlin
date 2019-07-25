@@ -179,5 +179,5 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
                              @NotNull Consumer<String> initScriptConsumer,
                              boolean testExecutionExpected) {
     enhanceTaskProcessing(taskNames, jvmParametersSetup, initScriptConsumer);
-  };
+  }
 }
