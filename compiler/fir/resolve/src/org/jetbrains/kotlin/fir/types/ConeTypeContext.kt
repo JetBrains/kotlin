@@ -33,6 +33,7 @@ class ErrorTypeConstructor(reason: String) : TypeConstructorMarker
 
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     val session: FirSession
+    val correspondingSupertypesCache: FirCorrespondingSupertypesCache?
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
         // TODO()
@@ -45,7 +46,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
 
     override fun SimpleTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<SimpleTypeMarker>? {
         require(this is ConeKotlinType)
-        return session.correspondingSupertypesCache.getCorrespondingSupertypes(this, constructor)
+        return correspondingSupertypesCache?.getCorrespondingSupertypes(this, constructor)
     }
 
     override fun SimpleTypeMarker.isIntegerLiteralType(): Boolean {
@@ -419,7 +420,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext {
     }
 }
 
-class ConeTypeCheckerContext(override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession) :
+class ConeTypeCheckerContext(
+    override val isErrorTypeEqualsToAnything: Boolean, override val session: FirSession,
+    override val correspondingSupertypesCache: FirCorrespondingSupertypesCache?
+) :
     AbstractTypeCheckerContext(), ConeTypeContext {
     override fun substitutionSupertypePolicy(type: SimpleTypeMarker): SupertypesPolicy {
         if (type.argumentsCount() == 0) return SupertypesPolicy.LowerIfFlexible

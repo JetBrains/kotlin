@@ -82,7 +82,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
     }
 
     override fun newBaseTypeCheckerContext(errorTypesEqualToAnything: Boolean): AbstractTypeCheckerContext {
-        return ConeTypeCheckerContext(errorTypesEqualToAnything, session)
+        return ConeTypeCheckerContext(errorTypesEqualToAnything, session, correspondingSupertypesCache)
     }
 
     override fun KotlinTypeMarker.canHaveUndefinedNullability(): Boolean {

@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteScope
+import org.jetbrains.kotlin.fir.perf.ReadLockFreeOpenAddressingHashMap
+import org.jetbrains.kotlin.fir.perf.TransactionCache
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
@@ -53,12 +55,12 @@ class JavaSymbolProvider(
     private fun findClass(
         classId: ClassId,
         content: KotlinClassFinder.Result.ClassFileContent?
-    ): JavaClass? = findClassLock.withLock {
+    ): JavaClass? = //findClassLock.withLock {
         facade.findClass(
             JavaClassFinder.Request(classId, previouslyFoundClassFileContent = content?.content),
             searchScope
         )
-    }
+    //}
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> =
         emptyList()
@@ -144,19 +146,26 @@ class JavaSymbolProvider(
 
     val findClassLock = globalFindClassLock
 
+    val nClassCache = TransactionCache<ClassId, ClassCacheRec?>(ReadLockFreeOpenAddressingHashMap())
+
+    data class ClassCacheRec(val symbol: FirClassLikeSymbol<*>, var foundClass: JavaClass?)
+
     fun getFirJavaClass(classId: ClassId, content: KotlinClassFinder.Result.ClassFileContent? = null): FirClassLikeSymbol<*>? {
         if (!hasTopLevelClassOf(classId)) return null
-        findClassLock.withLock {
-            return classCache.lookupCacheOrCalculateWithPostCompute(classId, {
+        return nClassCache.lookup(
+            classId,
+            {
                 val foundClass = findClass(classId, content)
                 if (foundClass == null || foundClass.annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }) {
-                    null to null
+                    null
                 } else {
-                    FirClassSymbol(classId) to foundClass
+                    ClassCacheRec(FirClassSymbol(classId), foundClass)
                 }
-            }) { firSymbol, foundClass ->
-
-                foundClass?.let { javaClass ->
+            },
+            {
+                it?.let { (firSymbol, foundClass) ->
+                    val javaClass = foundClass!!
+                    it.foundClass = null
                     val javaTypeParameterStack = JavaTypeParameterStack()
                     val parentFqName = classId.relativeClassName.parent()
                     val isTopLevel = parentFqName.isRoot
@@ -266,15 +275,15 @@ class JavaSymbolProvider(
 
                     }
                 }
+
             }
-        }
+        )?.symbol
     }
 
-    private val packageCacheLock = findClassLock
 
 
     private fun findPackageUncached(fqName: FqName): PsiPackage? {
-        return packageCacheLock.withLock { facade.findPackage(fqName.asString(), searchScope) }
+        return facade.findPackage(fqName.asString(), searchScope)
     }
 
     override fun getPackage(fqName: FqName): FqName? {
@@ -295,7 +304,7 @@ class JavaSymbolProvider(
 
     private fun hasTopLevelClassOf(classId: ClassId): Boolean {
         val knownNames = knownClassNamesInPackage.getOrPut(classId.packageFqName) {
-            findClassLock.withLock { facade.knownClassNamesInPackage(classId.packageFqName) }
+            facade.knownClassNamesInPackage(classId.packageFqName)
         } ?: return true
         return classId.relativeClassName.topLevelName() in knownNames
     }

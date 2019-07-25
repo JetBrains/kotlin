@@ -19,12 +19,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.Name
+import java.util.concurrent.ConcurrentHashMap
 
 class FirClassDeclaredMemberScopeProvider {
 
-    val cache = mutableMapOf<FirRegularClass, FirClassDeclaredMemberScope>()
+    val cache = ConcurrentHashMap<FirRegularClass, FirClassDeclaredMemberScope>()
     fun declaredMemberScope(klass: FirRegularClass): FirClassDeclaredMemberScope {
-        return cache.getOrPut(klass) {
+        return cache.computeIfAbsent(klass) {
             FirClassDeclaredMemberScope(klass)
         }
     }

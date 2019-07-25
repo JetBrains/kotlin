@@ -1173,6 +1173,8 @@ private fun inferenceComponents(
             TODO("not implemented")
         }
 
+        override val correspondingSupertypesCache = FirCorrespondingSupertypesCache(session)
+
         override val session: FirSession
             get() = session
 

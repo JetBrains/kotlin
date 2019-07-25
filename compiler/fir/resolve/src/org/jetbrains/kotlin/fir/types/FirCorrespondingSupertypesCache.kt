@@ -19,7 +19,7 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 class FirCorrespondingSupertypesCache(private val session: FirSession) {
-    private val context = ConeTypeCheckerContext(false, session)
+    private val context = ConeTypeCheckerContext(false, session, null)
     private val cache = HashMap<ConeClassLikeSymbol, Map<ConeClassLikeSymbol, List<ConeClassLikeType>>?>(1000, 0.5f)
 
     private val lock = ReentrantLock()
@@ -27,7 +27,7 @@ class FirCorrespondingSupertypesCache(private val session: FirSession) {
     fun getCorrespondingSupertypes(
         type: ConeKotlinType,
         supertypeConstructor: TypeConstructorMarker
-    ): List<ConeClassLikeType>? = lock.withLock {
+    ): List<ConeClassLikeType>? {
 
         if (type !is ConeClassLikeType || supertypeConstructor !is ConeClassLikeSymbol) return null
 

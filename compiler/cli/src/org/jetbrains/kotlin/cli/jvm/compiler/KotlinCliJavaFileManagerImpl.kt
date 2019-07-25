@@ -41,6 +41,9 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
@@ -72,11 +75,13 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
-        return topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
-            index.findClass(classId) { dir, type ->
-                findVirtualFileGivenPackage(dir, relativeClassName, type)
-            } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
-        }?.takeIf { it in searchScope }
+        return findVirtualFileLock.withLock {
+            topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
+                index.findClass(classId) { dir, type ->
+                    findVirtualFileGivenPackage(dir, relativeClassName, type)
+                } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
+            }?.takeIf { it in searchScope }
+        }
     }
 
     private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
@@ -84,11 +89,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? = findClass(JavaClassFinder.Request(classId), searchScope)
 
+    private val findVirtualFileLock = ReentrantLock()
+    private val binaryCacheLock = ReentrantLock()
+
     override fun findClass(request: JavaClassFinder.Request, searchScope: GlobalSearchScope): JavaClass? {
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
-        if (useFastClassFilesReading && virtualFile.extension == "class") {
+        if (useFastClassFilesReading && virtualFile.extension == "class") binaryCacheLock.withLock {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
             return binaryCache.getOrPut(classId) {
                 // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it

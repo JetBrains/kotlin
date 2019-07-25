@@ -25,6 +25,8 @@ import gnu.trove.THashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
@@ -72,10 +74,11 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         packageFqName: FqName,
         acceptedRootTypes: Set<JavaRoot.RootType>,
         continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) {
+    ) = lock.withLock {
         search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
             if (continueSearch(dir, rootType)) null else Unit
         }
+        Unit
     }
 
     // findClassGivenDirectory MUST check whether the class with this classId exists in given package
@@ -83,7 +86,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         classId: ClassId,
         acceptedRootTypes: Set<JavaRoot.RootType>,
         findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? {
+    ): T? = lock.withLock {
         // make a decision based on information saved from last class search
         if (lastClassSearch?.first?.classId != classId) {
             return search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
@@ -214,6 +217,8 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
 
         return childDirectory
     }
+
+    val lock = ReentrantLock()
 
     private fun cachesPath(path: List<String>): List<Cache> {
         val caches = ArrayList<Cache>(path.size + 1)

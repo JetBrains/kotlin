@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
+import org.jetbrains.kotlin.fir.perf.tcReg
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
@@ -56,15 +57,10 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         val builder = RawFirBuilder(session, stubMode = false)
 
         val factory = FirStagesTransformerFactory(session)
-        val firFiles = ktFiles.toList().mapNotNull {
-            var firFile: FirFile? = null
-            val time = measureNanoTime {
-                firFile = builder.buildFirFile(it)
-                (session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
-            }
-            bench.countBuilder(builder, time)
-            firFile
-        }.toList()
+        val firFiles = bench.buildFiles(
+            builder,
+            ktFiles.toList()
+        )
 
 
         println("Raw FIR up, files: ${firFiles.size}")
@@ -128,6 +124,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         bench.report(System.out, errorTypeReports = false)
 
         saveReport()
+        tcReg.clear()
         if (FAIL_FAST) {
             bench.throwFailure()
         }

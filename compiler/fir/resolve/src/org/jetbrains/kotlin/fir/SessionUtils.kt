@@ -6,7 +6,11 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.fir.types.ConeTypeContext
+import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 
-private class SessionBasedTypeContext(override val session: FirSession) : ConeTypeContext
+private class SessionBasedTypeContext(
+    override val session: FirSession,
+    override val correspondingSupertypesCache: FirCorrespondingSupertypesCache?
+) : ConeTypeContext
 
-val FirSession.typeContext: ConeTypeContext get() = SessionBasedTypeContext(this)
+val FirSession.typeContext: ConeTypeContext get() = SessionBasedTypeContext(this, null)

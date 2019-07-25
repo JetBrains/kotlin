@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.perf.TransactionCache
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import java.io.InputStream
+import java.util.concurrent.ConcurrentHashMap
 
 class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider() {
     private class BuiltInsPackageFragment(stream: InputStream, val fqName: FqName, val session: FirSession) {
@@ -74,7 +76,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             ).memberDeserializer
         }
 
-        val lookup = mutableMapOf<ClassId, FirClassSymbol>()
+        val classCache = TransactionCache<ClassId, FirClassSymbol>()
 
         fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? =
             findAndDeserializeClass(classId)
@@ -93,7 +95,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                     return null
                 }
             }
-            return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
+            return classCache.lookup(classId, { FirClassSymbol(classId) }) { symbol ->
                 if (shouldBeEnumEntry) {
                     FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
                 } else {
@@ -152,7 +154,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
 
     private val allPackageFragments = loadBuiltIns().groupBy { it.fqName }
 
-    private val fictitiousFunctionSymbols = mutableMapOf<Int, FirClassSymbol>()
+    private val fictitiousFunctionSymbols = ConcurrentHashMap<Int, FirClassSymbol>()
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? {
         return allPackageFragments[classId.packageFqName]?.firstNotNullResult {
@@ -162,7 +164,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             val kind = FunctionClassDescriptor.Kind.byClassNamePrefix(packageFqName, className) ?: return@with null
             val prefix = kind.classNamePrefix
             val arity = className.substring(prefix.length).toIntOrNull() ?: return null
-            fictitiousFunctionSymbols.getOrPut(arity) {
+            fictitiousFunctionSymbols.computeIfAbsent(arity) {
                 FirClassSymbol(this).apply {
                     FirClassImpl(
                         session,

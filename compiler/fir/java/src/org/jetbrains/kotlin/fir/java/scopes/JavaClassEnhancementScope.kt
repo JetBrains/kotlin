@@ -244,14 +244,14 @@ class JavaClassEnhancementScope(
     private fun StringBuilder.appendErasedType(typeRef: FirTypeRef) {
         when (typeRef) {
             is FirResolvedTypeRef -> appendConeType(typeRef.type)
-            is FirJavaTypeRef -> symbolProvider.findClassLock.withLock {
+            is FirJavaTypeRef -> //symbolProvider.findClassLock.withLock {
                 appendConeType(
                     typeRef.toNotNullConeKotlinType(
                         session,
                         javaTypeParameterStack
                     )
                 )
-            }
+            //}
         }
     }
 

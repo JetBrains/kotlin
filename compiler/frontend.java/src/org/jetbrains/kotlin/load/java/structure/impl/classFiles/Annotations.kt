@@ -151,7 +151,7 @@ class BinaryJavaAnnotation private constructor(
         }
     }
 
-    private val classifierResolutionResult by lazy(LazyThreadSafetyMode.NONE) {
+    private val classifierResolutionResult by lazy(LazyThreadSafetyMode.PUBLICATION) {
         context.resolveByInternalName(Type.getType(desc).internalName)
     }
 

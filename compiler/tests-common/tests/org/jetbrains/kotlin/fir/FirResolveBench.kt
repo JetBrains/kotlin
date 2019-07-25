@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
+import org.jetbrains.kotlin.fir.perf.tcReg
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.io.PrintStream
 import java.util.concurrent.ArrayBlockingQueue
+import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.reflect.KClass
@@ -51,8 +53,9 @@ class FirResolveBench(val withProgress: Boolean) {
     var errorQualifiedAccessTypes = 0
     var implicitTypes = 0
     var fileCount = 0
+    var totalLines = 0
 
-    var parallelThreads = 6
+    var parallelThreads = 1
 
     val singleThreadPool = Executors.newSingleThreadExecutor()
     val pool by lazy { Executors.newFixedThreadPool(parallelThreads) }
@@ -66,6 +69,30 @@ class FirResolveBench(val withProgress: Boolean) {
     fun countBuilder(builder: RawFirBuilder, time: Long) {
         summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
         realTimePerStage.merge(builder::class, time) { a, b -> a + b }
+    }
+
+    fun buildFiles(
+        builder: RawFirBuilder,
+        ktFiles: List<KtFile>
+    ): List<FirFile> {
+        val (result, time) = measureNanoTimeWithResult {
+            ktFiles.map { file ->
+                pool.submit(Callable {
+                    var firFile: FirFile? = null
+                    val time = measureNanoTime {
+                        firFile = builder.buildFirFile(file)
+                        (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
+                    }
+                    summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
+                    builder.buildFirFile(file)
+                })
+            }.map { it.get() }
+        }
+        realTimePerStage.merge(builder::class, time) { a, b -> a + b }
+        ktFiles.forEach {
+            totalLines += it.text.lines().count()
+        }
+        return result
     }
 
     fun processFiles(
@@ -93,7 +120,7 @@ class FirResolveBench(val withProgress: Boolean) {
                     for (i in 0 until usedThreads) {
                         tQueue.add(stage.createTransformer())
                     }
-                    (firFileSequence).toList().map { firFile ->
+                    (firFileSequence).toList().shuffled().map { firFile ->
                         runPool.submit {
                             val transformer = tQueue.poll()
                             var fail = false
@@ -246,6 +273,9 @@ class FirResolveBench(val withProgress: Boolean) {
         stream.println("   - unresolved q.accesses: $errorQualifiedAccessTypes")
         stream.println("ERRONEOUSLY RESOLVED IMPLICIT TYPES: $implicitTypes (${implicitTypes percentOf resolvedTypes} of resolved)")
         stream.println("UNIQUE ERROR TYPES: ${errorTypesReports.size}")
+        for (c in tcReg) {
+            stream.println(c.stats())
+        }
 
 
         var totalTime = 0L
@@ -261,6 +291,7 @@ class FirResolveBench(val withProgress: Boolean) {
         }
 
         stream.println("Total, TIME: ${totalTime * 1e-6} ms, TIME PER FILE: ${(totalTime / fileCount) * 1e-6} ms, S-TIME/TIME: ${totalSummaryTime / (totalTime * 1.0)}, S-TIME: ${totalSummaryTime * 1e-6} ms, S-TIME/FILE: ${totalSummaryTime / fileCount * 1e-6} ms")
+        stream.println("  ${totalLines / (totalTime * 1e-9)} Line/s")
     }
 }
 
@@ -310,4 +341,12 @@ fun <T> Collection<T>.progress(step: Double = 0.1, computeLabel: (T) -> String):
         }
         progress++
     }
+}
+
+private inline fun <T> measureNanoTimeWithResult(crossinline block: () -> T): Pair<T, Long> {
+    var result: Any? = null
+    val time = measureNanoTime {
+        result = block()
+    }
+    return result as T to time
 }

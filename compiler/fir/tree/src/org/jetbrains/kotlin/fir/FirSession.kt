@@ -21,8 +21,12 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
 
     var _correspondingSupertypesCache: Any? = null
 
-    fun <T : Any> getService(kclass: KClass<T>): T =
-        components[kclass] as T
+    fun <T : Any> getService(kclass: KClass<T>): T {
+        val any = components[kclass] ?: error(
+            "Couldn't find $kclass in session: '${this}', available: $components"
+        )
+        return any as T
+    }
 
     protected fun <T : Any> registerComponent(tClass: KClass<T>, t: T) {
         assert(tClass !in components) { "Already registered component" }

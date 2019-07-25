@@ -50,7 +50,7 @@ internal class EnhancementSignatureParts(
         jsr305State: Jsr305State,
         lock: ReentrantLock,
         predefined: TypeEnhancementInfo? = null
-    ): PartEnhancementResult = lock.withLock {
+    ): PartEnhancementResult {
         val qualifiers = computeIndexedQualifiersForOverride(session, jsr305State)
 
         val qualifiersWithPredefined = predefined?.let {
