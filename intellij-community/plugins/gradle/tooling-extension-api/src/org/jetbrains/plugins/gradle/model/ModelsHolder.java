@@ -27,9 +27,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
-* @author Vladislav.Soroka
-*/
-public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
+ * @author Vladislav.Soroka
+ */
+public abstract class ModelsHolder<K extends Model, V> implements Serializable {
 
   @NotNull private final K myRootModel;
   @NotNull private final Map<String, Object> myModelsById = new LinkedHashMap<String, Object>();
@@ -63,38 +63,29 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
       return (T)project;
     }
     else {
-      return deserialize(project, key, modelClazz);
+      deserializeAllDataOfTheType(modelClazz);
+      //noinspection unchecked
+      return (T)myModelsById.get(key);
     }
   }
 
-  @Nullable
-  private <T> T deserialize(@NotNull Object data, @NotNull String key, @NotNull Class<T> modelClazz) {
-    if (mySerializer == null || !(data instanceof byte[])) {
-      myModelsById.remove(key);
-      return null;
-    }
+  /**
+   * Deserialize all data of the model type to ensure the same order which has been used when adding the data.
+   */
+  private <T> void deserializeAllDataOfTheType(@NotNull Class<T> modelClazz) {
     String keyPrefix = getModelKeyPrefix(modelClazz);
-    deserializeAllDataOfTheType(modelClazz, keyPrefix, myModelsById, mySerializer);
-    //noinspection unchecked
-    return (T)myModelsById.get(key);
-  }
-
-  private static <T> void deserializeAllDataOfTheType(@NotNull Class<T> modelClazz,
-                                                      @NotNull String keyPrefix,
-                                                      @NotNull Map<String, Object> modelsById,
-                                                      @NotNull ToolingSerializer serializer) {
-    for (Iterator<Map.Entry<String, Object>> iterator = modelsById.entrySet().iterator(); iterator.hasNext(); ) {
+    for (Iterator<Map.Entry<String, Object>> iterator = myModelsById.entrySet().iterator(); iterator.hasNext(); ) {
       Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
       if (key.startsWith(keyPrefix)) {
-        if (!(entry.getValue() instanceof byte[])) {
+        if (mySerializer == null || !(entry.getValue() instanceof byte[])) {
           iterator.remove();
           continue;
         }
         try {
-          T deserializedData = serializer.read((byte[])entry.getValue(), modelClazz);
+          T deserializedData = mySerializer.read((byte[])entry.getValue(), modelClazz);
           if (modelClazz.isInstance(deserializedData)) {
-            modelsById.put(key, deserializedData);
+            myModelsById.put(key, deserializedData);
           }
           else {
             iterator.remove();
