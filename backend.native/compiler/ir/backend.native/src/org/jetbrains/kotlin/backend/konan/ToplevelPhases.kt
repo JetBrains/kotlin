@@ -357,6 +357,9 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                 linkPhase
 )
 
+internal fun PhaseConfig.switchSoft(phase: AnyNamedPhase, onOff: Boolean) =
+        switch(phase, enabled.contains(phase) && onOff)
+
 internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
     with(config.configuration) {
         disable(compileTimeEvaluatePhase)
@@ -365,14 +368,14 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         disable(serializeDFGPhase)
 
         // Don't serialize anything to a final executable.
-        switch(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
-        switch(dependenciesLowerPhase, config.produce != CompilerOutputKind.LIBRARY)
-        switch(bitcodePhase, config.produce != CompilerOutputKind.LIBRARY)
-        switch(linkPhase, config.produce.isNativeBinary)
-        switch(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE)
-        switch(buildDFGPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
-        switch(devirtualizationPhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
-        switch(dcePhase, config.configuration.getBoolean(KonanConfigKeys.OPTIMIZATION))
-        switch(verifyBitcodePhase, config.needCompilerVerification || config.configuration.getBoolean(KonanConfigKeys.VERIFY_BITCODE))
+        switchSoft(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
+        switchSoft(dependenciesLowerPhase, config.produce != CompilerOutputKind.LIBRARY)
+        switchSoft(bitcodePhase, config.produce != CompilerOutputKind.LIBRARY)
+        switchSoft(linkPhase, config.produce.isNativeBinary)
+        switchSoft(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE)
+        switchSoft(buildDFGPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switchSoft(devirtualizationPhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switchSoft(dcePhase, getBoolean(KonanConfigKeys.OPTIMIZATION))
+        switchSoft(verifyBitcodePhase, config.needCompilerVerification || getBoolean(KonanConfigKeys.VERIFY_BITCODE))
     }
 }
