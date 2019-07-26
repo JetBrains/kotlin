@@ -33,10 +33,7 @@ import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isClassLocal
 import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateComponentFunctions
 import org.jetbrains.kotlin.fir.lightTree.converter.DataClassUtil.generateCopyFunction
 import org.jetbrains.kotlin.fir.lightTree.converter.FunctionUtil.removeLast
-import org.jetbrains.kotlin.fir.lightTree.fir.ClassWrapper
-import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
-import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
-import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
+import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifier
@@ -104,17 +101,15 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlockExpression
      */
     fun convertBlockExpression(block: LighterASTNode): FirBlock {
-        val firStatements = mutableListOf<FirStatement>()
-        block.forEachChildren {
-            when (it.tokenType) {
-                CLASS -> firStatements += convertClass(it) as FirStatement
-                FUN -> firStatements += convertFunctionDeclaration(it) as FirStatement
-                PROPERTY -> firStatements += convertPropertyDeclaration(it) as FirStatement
-                DESTRUCTURING_DECLARATION -> firStatements += convertDestructingDeclaration(it).toFirDestructingDeclaration(session)
-                TYPEALIAS -> firStatements += convertTypeAlias(it) as FirStatement
-                OBJECT_DECLARATION -> firStatements += convertClass(it) as FirStatement
-                CLASS_INITIALIZER -> firStatements += convertAnonymousInitializer(it) as FirStatement
-                else -> if (it.isExpression()) firStatements += expressionConverter.getAsFirExpression<FirStatement>(it)
+        val firStatements = block.forEachChildrenReturnList<FirStatement> { node, container ->
+            when (node.tokenType) {
+                CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
+                FUN -> container += convertFunctionDeclaration(node) as FirStatement
+                PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
+                DESTRUCTURING_DECLARATION -> container += convertDestructingDeclaration(node).toFirDestructingDeclaration(session)
+                TYPEALIAS -> container += convertTypeAlias(node) as FirStatement
+                CLASS_INITIALIZER -> container += convertAnonymousInitializer(node) as FirStatement
+                else -> if (node.isExpression()) container += expressionConverter.getAsFirExpression<FirStatement>(node)
             }
         }
         return FirBlockImpl(session, null).apply {
@@ -407,15 +402,14 @@ class DeclarationsConverter(
                 toDelegatedSelfType(firClass), delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry
             )
             //parse primary constructor
-            val firPrimaryConstructor = convertPrimaryConstructor(primaryConstructor, classWrapper)
+            val primaryConstructorWrapper = convertPrimaryConstructor(primaryConstructor, classWrapper)
+            val firPrimaryConstructor = primaryConstructorWrapper?.firConstructor
             firPrimaryConstructor?.let { firClass.declarations += it }
 
             val properties = mutableListOf<FirProperty>()
             if (primaryConstructor != null && firPrimaryConstructor != null) {
                 //parse properties
-                properties += primaryConstructor
-                    .getChildNodesByType(VALUE_PARAMETER_LIST)
-                    .flatMap { convertValueParameters(it) }
+                properties += primaryConstructorWrapper.valueParameters
                     .filter { it.hasValOrVar() }
                     .map { it.toFirProperty() }
                 firClass.addDeclarations(properties)
@@ -478,8 +472,7 @@ class DeclarationsConverter(
                 superTypeCallEntry = superTypeCallEntry
             )
             //parse primary constructor
-            val firPrimaryConstructor = convertPrimaryConstructor(primaryConstructor, classWrapper)
-            firPrimaryConstructor?.let { this.declarations += it }
+            convertPrimaryConstructor(primaryConstructor, classWrapper)?.let { this.declarations += it.firConstructor }
 
             //parse declarations
             classBody?.let {
@@ -535,8 +528,8 @@ class DeclarationsConverter(
                 superTypeCallEntry = enumSuperTypeCallEntry
             )
             firEnumEntry.superTypeRefs += enumClassWrapper.delegatedSuperTypeRef
-            convertPrimaryConstructor(null, enumClassWrapper)?.let { firEnumEntry.addDeclaration(it) }
-            classBodyNode?.also { firDeclarations += convertClassBody(it, /*classWrapper*/enumClassWrapper) }
+            convertPrimaryConstructor(null, enumClassWrapper)?.let { firEnumEntry.addDeclaration(it.firConstructor) }
+            classBodyNode?.also { firDeclarations += convertClassBody(it, enumClassWrapper) }
             firDeclarations.forEach { firEnumEntry.addDeclaration(it) }
 
             return@withChildClassName firEnumEntry
@@ -582,7 +575,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      * primaryConstructor branch
      */
-    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper): FirConstructorImpl? {
+    private fun convertPrimaryConstructor(primaryConstructor: LighterASTNode?, classWrapper: ClassWrapper): PrimaryConstructor? {
         if (primaryConstructor == null && classWrapper.hasSecondaryConstructor) return null
         if (classWrapper.isInterface()) return null
 
@@ -603,20 +596,22 @@ class DeclarationsConverter(
             isThis = false
         ).extractArgumentsFrom(classWrapper.superTypeCallEntry, stubMode)
 
-        return FirPrimaryConstructorImpl(
-            session,
-            null,
-            FirConstructorSymbol(ClassNameUtil.callableIdForClassConstructor()),
-            if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
-            modifiers.hasExpect(),
-            modifiers.hasActual(),
-            classWrapper.delegatedSelfTypeRef,
-            firDelegatedCall
-        ).apply {
-            annotations += modifiers.annotations
-            this.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
-            this.valueParameters += valueParameters.map { it.firValueParameter }
-        }
+        return PrimaryConstructor(
+            FirPrimaryConstructorImpl(
+                session,
+                null,
+                FirConstructorSymbol(ClassNameUtil.callableIdForClassConstructor()),
+                if (primaryConstructor != null) modifiers.getVisibility() else defaultVisibility,
+                modifiers.hasExpect(),
+                modifiers.hasActual(),
+                classWrapper.delegatedSelfTypeRef,
+                firDelegatedCall
+            ).apply {
+                annotations += modifiers.annotations
+                this.typeParameters += ConverterUtil.typeParametersFromSelfType(classWrapper.delegatedSelfTypeRef)
+                this.valueParameters += valueParameters.map { it.firValueParameter }
+            }, valueParameters
+        )
     }
 
     /**
