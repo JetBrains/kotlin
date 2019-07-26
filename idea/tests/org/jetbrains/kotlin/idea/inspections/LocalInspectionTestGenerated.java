@@ -7850,6 +7850,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets6.kt");
         }
 
+        @TestMetadata("necessaryBrackets7.kt")
+        public void testNecessaryBrackets7() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/necessaryBrackets7.kt");
+        }
+
         @TestMetadata("unnecessaryBrackets1.kt")
         public void testUnnecessaryBrackets1() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets1.kt");
@@ -7888,6 +7893,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
         @TestMetadata("unnecessaryBrackets8.kt")
         public void testUnnecessaryBrackets8() throws Exception {
             runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets8.kt");
+        }
+
+        @TestMetadata("unnecessaryBrackets9.kt")
+        public void testUnnecessaryBrackets9() throws Exception {
+            runTest("idea/testData/inspectionsLocal/removeCurlyBracesFromTemplate/unnecessaryBrackets9.kt");
         }
     }
 
