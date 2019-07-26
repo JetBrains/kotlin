@@ -74,11 +74,9 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
         val caretElementClass = (if (!isPropertiesFile) {
             val caretElementClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "// PSI_ELEMENT: ")
             Class.forName(caretElementClassNames.single())
-        }
-        else if (isFindFileUsages) {
+        } else if (isFindFileUsages) {
             PropertiesFile::class.java
-        }
-        else {
+        } else {
             Property::class.java
         }) as Class<T>
 
@@ -100,7 +98,7 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
                 val ext = FileUtilRt.getExtension(name)
                 ext in SUPPORTED_EXTENSIONS && !name.endsWith(".results.txt")
-            }
+            }.orEmpty()
 
             for (file in extraFiles) {
                 myFixture.configureByFile(file.name)
@@ -133,12 +131,10 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
                 if (navigationElement !== originalElement) {
                     findUsagesAndCheckResults(mainFileText, prefix, rootPath, navigationElement, options, project)
                 }
-            }
-            else {
+            } else {
                 findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project)
             }
-        }
-        finally {
+        } finally {
             fixtureClasses.forEach { TestFixtureExtension.unloadFixture(it) }
         }
     }
@@ -150,12 +146,12 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
         val USAGE_VIEW_PRESENTATION = UsageViewPresentation()
 
         internal fun getUsageAdapters(
-                filters: Collection<UsageFilteringRule>,
-                usageInfos: Collection<UsageInfo>
+            filters: Collection<UsageFilteringRule>,
+            usageInfos: Collection<UsageInfo>
         ): Collection<UsageInfo2UsageAdapter> {
             return usageInfos
-                    .map(::UsageInfo2UsageAdapter)
-                    .filter { usageAdapter -> filters.all { it.isVisible(usageAdapter) } }
+                .map(::UsageInfo2UsageAdapter)
+                .filter { usageAdapter -> filters.all { it.isVisible(usageAdapter) } }
         }
 
         internal fun getUsageType(element: PsiElement?): UsageType? {
@@ -167,30 +163,30 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
 
             val providers = Extensions.getExtensions(UsageTypeProvider.EP_NAME)
             return providers
-                           .mapNotNull { it.getUsageType(element) }
-                           .firstOrNull()
-                   ?: UsageType.UNCLASSIFIED
+                .mapNotNull { it.getUsageType(element) }
+                .firstOrNull()
+                ?: UsageType.UNCLASSIFIED
         }
 
         internal fun <T> instantiateClasses(mainFileText: String, directive: String): Collection<T> {
             val filteringRuleClassNames = InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, directive)
             return filteringRuleClassNames
-                    .map {
-                        @Suppress("UNCHECKED_CAST")
-                        (Class.forName(it).newInstance() as T)
-                    }
+                .map {
+                    @Suppress("UNCHECKED_CAST")
+                    (Class.forName(it).newInstance() as T)
+                }
         }
     }
 }
 
 internal fun <T : PsiElement> findUsagesAndCheckResults(
-        mainFileText: String,
-        prefix: String,
-        rootPath: String,
-        caretElement: T,
-        options: FindUsagesOptions?,
-        project: Project,
-        alwaysAppendFileName: Boolean = false
+    mainFileText: String,
+    prefix: String,
+    rootPath: String,
+    caretElement: T,
+    options: FindUsagesOptions?,
+    project: Project,
+    alwaysAppendFileName: Boolean = false
 ) {
     val highlightingMode = InTextDirectivesUtils.isDirectiveDefined(mainFileText, "// HIGHLIGHTING")
 
@@ -206,11 +202,10 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
         }
 
         val searchSuperDeclaration =
-                InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, CHECK_SUPER_METHODS_YES_NO_DIALOG + ":").firstOrNull() != "no"
+            InTextDirectivesUtils.findLinesWithPrefixesRemoved(mainFileText, "$CHECK_SUPER_METHODS_YES_NO_DIALOG:").firstOrNull() != "no"
 
         findUsages(caretElement, options, highlightingMode, project, searchSuperDeclaration)
-    }
-    finally {
+    } finally {
         ExpressionsOfTypeProcessor.testLog = null
         if (logList.size > 0) {
             log = logList.sorted().joinToString("\n")
@@ -228,10 +223,8 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
     val appendFileName = alwaysAppendFileName || usageFiles.size > 1
 
     val convertToString: (UsageInfo2UsageAdapter) -> String = { usageAdapter ->
-        var groupAsString = groupingRules
-                .map { it.groupUsage(usageAdapter)?.getText(null) ?: "" }
-                .joinToString(", ")
-        if (!groupAsString.isEmpty()) {
+        var groupAsString = groupingRules.joinToString(", ") { it.groupUsage(usageAdapter)?.getText(null) ?: "" }
+        if (groupAsString.isNotEmpty()) {
             groupAsString = "($groupAsString) "
         }
 
@@ -264,32 +257,30 @@ internal fun <T : PsiElement> findUsagesAndCheckResults(
             ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_PLAIN
 
             findUsagesAndCheckResults(mainFileText, prefix, rootPath, caretElement, options, project)
-        }
-        finally {
+        } finally {
             ExpressionsOfTypeProcessor.mode = ExpressionsOfTypeProcessor.Mode.ALWAYS_SMART
         }
     }
 }
 
 internal fun findUsages(
-        targetElement: PsiElement,
-        options: FindUsagesOptions?,
-        highlightingMode: Boolean,
-        project: Project,
-        searchSuperDeclaration: Boolean = true
+    targetElement: PsiElement,
+    options: FindUsagesOptions?,
+    highlightingMode: Boolean,
+    project: Project,
+    searchSuperDeclaration: Boolean = true
 ): Collection<UsageInfo> {
     try {
-        val handler: FindUsagesHandler = when {
-            targetElement is PsiMember ->
-                JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
-            else -> {
-                if (!searchSuperDeclaration) {
-                    setDialogsResult(CHECK_SUPER_METHODS_YES_NO_DIALOG, Messages.NO)
-                }
-
-                val findManagerImpl = FindManager.getInstance(project) as FindManagerImpl
-                findManagerImpl.findUsagesManager.getFindUsagesHandler(targetElement, false) ?: error("Cannot find handler for: $targetElement")
+        val handler: FindUsagesHandler = if (targetElement is PsiMember)
+            JavaFindUsagesHandler(targetElement, JavaFindUsagesHandlerFactory(project))
+        else {
+            if (!searchSuperDeclaration) {
+                setDialogsResult(CHECK_SUPER_METHODS_YES_NO_DIALOG, Messages.NO)
             }
+
+            val findManagerImpl = FindManager.getInstance(project) as FindManagerImpl
+            findManagerImpl.findUsagesManager.getFindUsagesHandler(targetElement, false)
+                ?: error("Cannot find handler for: $targetElement")
         }
 
         @Suppress("NAME_SHADOWING")
@@ -304,9 +295,8 @@ internal fun findUsages(
                 for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
                     processor.process(UsageInfo(reference))
                 }
-            }
-            else {
-                ProgressManager.getInstance().run(object : Task(project, "",false) {
+            } else {
+                ProgressManager.getInstance().run(object : Task(project, "", false) {
                     override fun isModal() = true
 
                     override fun run(indicator: ProgressIndicator) {
@@ -317,8 +307,7 @@ internal fun findUsages(
         }
 
         return processor.results
-    }
-    finally {
+    } finally {
         clearDialogsResults()
     }
 }
