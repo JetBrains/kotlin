@@ -21,7 +21,7 @@ private class DefaultProjectStorage(file: Path, fileSpec: String, pathMacroManag
   public override fun loadLocalData(): Element? {
     val element = super.loadLocalData() ?: return null
     try {
-      return element.getChild("component").getChild("defaultProject")
+      return element.getChild("component")?.getChild("defaultProject")
     }
     catch (e: NullPointerException) {
       LOG.warn("Cannot read default project")
@@ -101,10 +101,8 @@ class DefaultProjectStoreImpl(override val project: Project) : ChildlessComponen
 @State(name = "ProjectManager", storages = [(Storage(FILE_SPEC))])
 internal class DefaultProjectExportableAndSaveTrigger {
   suspend fun save(forceSavingAllSettings: Boolean): SaveResult {
-    val projectManager = ProjectManagerEx.getInstanceEx()
-    val project = if (projectManager.isDefaultProjectInitialized) projectManager.defaultProject else return SaveResult.EMPTY
     val result = SaveResult()
-    (project.stateStore as ComponentStoreImpl).doSave(result, forceSavingAllSettings)
+    (ProjectManagerEx.getInstanceEx().defaultProject.stateStore as ComponentStoreImpl).doSave(result, forceSavingAllSettings)
     return result
   }
 }

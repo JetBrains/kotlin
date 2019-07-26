@@ -8,6 +8,7 @@ import com.intellij.openapi.application.appSystemDir
 import com.intellij.openapi.components.*
 import com.intellij.openapi.components.impl.stores.FileStorageCoreUtil
 import com.intellij.openapi.diagnostic.runAndLogException
+import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.openapi.util.NamedJDOMExternalizable
 import com.intellij.util.io.systemIndependentPath
 import kotlinx.coroutines.coroutineScope
@@ -39,12 +40,15 @@ class ApplicationStoreImpl(private val application: Application, pathMacroManage
       launch {
         saveSessionManager.save().appendTo(result)
       }
-      launch {
-        // here, because no Project (and so, ProjectStoreImpl) on Welcome Screen
-        val r = serviceIfCreated<DefaultProjectExportableAndSaveTrigger>()?.save(forceSavingAllSettings) ?: return@launch
-        // ignore
-        r.isChanged = false
-        r.appendTo(result)
+
+      if (ProjectManagerEx.getInstanceEx().isDefaultProjectInitialized) {
+        launch {
+          // here, because no Project (and so, ProjectStoreImpl) on Welcome Screen
+          val r = service<DefaultProjectExportableAndSaveTrigger>().save(forceSavingAllSettings)
+          // ignore
+          r.isChanged = false
+          r.appendTo(result)
+        }
       }
     }
   }
