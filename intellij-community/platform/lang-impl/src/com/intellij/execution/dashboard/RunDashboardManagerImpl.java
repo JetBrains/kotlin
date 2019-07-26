@@ -11,6 +11,7 @@ import com.intellij.execution.process.ProcessHandler;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.services.ServiceEventListener;
 import com.intellij.execution.services.ServiceViewManager;
+import com.intellij.execution.services.ServiceViewManagerImpl;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.RunContentManagerImpl;
 import com.intellij.execution.ui.RunnerLayoutUi;
@@ -71,6 +72,7 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
   private volatile List<List<RunDashboardServiceImpl>> myServices = Collections.emptyList();
   private final ReentrantReadWriteLock myServiceLock = new ReentrantReadWriteLock();
   private final List<RunDashboardGrouper> myGroupers;
+  private String myToolWindowId;
   private final Condition<Content> myReuseCondition;
   private final AtomicBoolean myListenersInitialized = new AtomicBoolean();
   private boolean myShowConfigurations = true;
@@ -212,7 +214,18 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   @Override
   public String getToolWindowId() {
-    return Registry.is("ide.service.view") ? ToolWindowId.SERVICES : ToolWindowId.RUN_DASHBOARD;
+    if (myToolWindowId == null) {
+      if (Registry.is("ide.service.view")) {
+        String toolWindowId =
+          ((ServiceViewManagerImpl)ServiceViewManager.getInstance(myProject))
+            .getToolWindowId(RunConfigurationsServiceViewContributor.class);
+        myToolWindowId = toolWindowId != null ? toolWindowId : ToolWindowId.SERVICES;
+      }
+      else {
+        myToolWindowId = ToolWindowId.RUN_DASHBOARD;
+      }
+    }
+    return myToolWindowId;
   }
 
   @Override

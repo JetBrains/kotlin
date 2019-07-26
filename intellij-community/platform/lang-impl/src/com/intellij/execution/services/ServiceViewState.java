@@ -2,6 +2,7 @@
 package com.intellij.execution.services;
 
 import com.intellij.ide.util.treeView.TreeState;
+import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.util.xmlb.annotations.Attribute;
 import com.intellij.util.xmlb.annotations.Tag;
 import com.intellij.util.xmlb.annotations.Transient;
@@ -16,6 +17,8 @@ final class ServiceViewState {
 
   @Attribute("id")
   public String id = "";
+  @Attribute("groupId")
+  public String groupId = ToolWindowId.SERVICES;
   public float contentProportion = DEFAULT_CONTENT_PROPORTION;
   @Tag("treeState")
   public Element treeStateElement;

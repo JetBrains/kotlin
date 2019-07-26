@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowFactory;
+import com.intellij.openapi.wm.ToolWindowId;
 import org.jetbrains.annotations.NotNull;
 
 public class ServiceViewToolWindowFactory implements ToolWindowFactory, Condition<Project>, DumbAware {
@@ -23,6 +24,6 @@ public class ServiceViewToolWindowFactory implements ToolWindowFactory, Conditio
 
   @Override
   public void createToolWindowContent(@NotNull Project project, @NotNull ToolWindow toolWindow) {
-    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).createToolWindowContent(toolWindow);
+    ((ServiceViewManagerImpl)ServiceViewManager.getInstance(project)).createToolWindowContent(ToolWindowId.SERVICES, toolWindow);
   }
 }

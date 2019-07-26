@@ -23,8 +23,13 @@ class ServiceViewSourceScrollHelper {
   private static final String AUTO_SCROLL_TO_SOURCE_PROPERTY = "service.view.auto.scroll.to.source";
   private static final String AUTO_SCROLL_FROM_SOURCE_PROPERTY = "service.view.auto.scroll.from.source";
 
-  static AutoScrollToSourceHandler installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow) {
-    AutoScrollToSourceHandler toSourceHandler = new ServiceViewAutoScrollToSourceHandler(project);
+  @NotNull
+  static AutoScrollToSourceHandler createAutoScrollToSourceHandler(@NotNull Project project) {
+    return new ServiceViewAutoScrollToSourceHandler(project);
+  }
+
+  static AutoScrollToSourceHandler installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow,
+                                                            @NotNull AutoScrollToSourceHandler toSourceHandler) {
     ServiceViewAutoScrollFromSourceHandler fromSourceHandler = new ServiceViewAutoScrollFromSourceHandler(project, toolWindow);
     fromSourceHandler.install();
     DefaultActionGroup additionalGearActions = new DefaultActionGroup(toSourceHandler.createToggleAction(),
