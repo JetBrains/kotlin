@@ -490,6 +490,10 @@ fun main(args: Array<String>) {
             model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
 
+        testClass<AbstractFirReferenceResolveTest> {
+            model("resolve/references", pattern = KT_WITHOUT_DOTS_IN_NAME)
+        }
+
         testClass<AbstractReferenceResolveInJavaTest> {
             model("resolve/referenceInJava/binaryAndSource", extension = "java")
             model("resolve/referenceInJava/sourceOnly", extension = "java")
