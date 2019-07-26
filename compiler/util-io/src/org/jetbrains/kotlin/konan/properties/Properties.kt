@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.properties
 
 import org.jetbrains.kotlin.konan.file.*
-import org.jetbrains.kotlin.konan.util.parseSpaceSeparatedArgs
+import org.jetbrains.kotlin.util.parseSpaceSeparatedArgs
 import java.io.ByteArrayOutputStream
 
 typealias Properties = java.util.Properties

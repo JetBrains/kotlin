@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.js.test
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
-import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.ir.backend.js.compile
 import org.jetbrains.kotlin.ir.backend.js.generateKLib
 import org.jetbrains.kotlin.ir.backend.js.jsPhases
@@ -15,15 +14,20 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver
+import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
+import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 import java.lang.Boolean.getBoolean
 
-private val fullRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/fullRuntime/klib")
-private val defaultRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/reducedRuntime/klib")
-private val kotlinTestKLib = loadKlib("compiler/ir/serialization.js/build/kotlin.test/klib")
+private val fullRuntimeKlib = "compiler/ir/serialization.js/build/fullRuntime/klib"
+private val defaultRuntimeKlib = "compiler/ir/serialization.js/build/reducedRuntime/klib"
+private val kotlinTestKLib = "compiler/ir/serialization.js/build/kotlin.test/klib"
 
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
@@ -80,9 +84,27 @@ abstract class BasicIrBoxTest(
 
         val transitiveLibraries = config.configuration[JSConfigurationKeys.TRANSITIVE_LIBRARIES]!!.map { File(it).name }
 
-        val allDependencies = runtimeKlibs + transitiveLibraries.map {
-            loadKlib(compilationCache[it] ?: error("Can't find compiled module for dependency $it"))
-        }
+        val allKlibPaths = (runtimeKlibs + transitiveLibraries.map {
+            compilationCache[it] ?: error("Can't find compiled module for dependency $it")
+        }).map { File(it).absolutePath }
+        val unresolvedLibraries = allKlibPaths.toUnresolvedLibraries
+
+        // Configure the resolver to only work with absolute paths for now.
+        val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
+            repositories = emptyList(),
+            directLibs = allKlibPaths,
+            distributionKlib = null,
+            localKotlinDir = null,
+            skipCurrentDir = true
+            // TODO: pass logger attached to message collector here.
+        ).libraryResolver()
+        val resolvedLibraries =
+            libraryResolver.resolveWithDependencies(
+                unresolvedLibraries = unresolvedLibraries,
+                noStdLib = true,
+                noDefaultLibs = true,
+                noEndorsedLibs = true
+            )
 
         val actualOutputFile = outputFile.absolutePath.let {
             if (!isMainModule) it.replace("_v5.js", "/") else it
@@ -111,7 +133,7 @@ abstract class BasicIrBoxTest(
                 files = filesToCompile,
                 configuration = config.configuration,
                 phaseConfig = phaseConfig,
-                allDependencies = allDependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 mainArguments = mainCallParameters.run { if (shouldBeGenerated()) arguments() else null },
                 exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
@@ -130,7 +152,7 @@ abstract class BasicIrBoxTest(
                 project = config.project,
                 files = filesToCompile,
                 configuration = config.configuration,
-                allDependencies = allDependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = emptyList(),
                 outputKlibPath = actualOutputFile,
                 nopack = true

@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.file.file
 import org.jetbrains.kotlin.konan.file.withZipFileSystem
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.FileSystem
 
 open class KotlinLibraryLayoutImpl(val klib: File) : KotlinLibraryLayout {

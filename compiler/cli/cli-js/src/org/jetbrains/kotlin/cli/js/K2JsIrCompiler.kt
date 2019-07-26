@@ -33,7 +33,11 @@ import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver
+import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -138,20 +142,21 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         // TODO: Handle non-empty main call arguments
         val mainCallArguments = if (K2JsArgumentConstants.NO_CALL == arguments.main) null else emptyList<String>()
 
-        val loadedLibrariesNames = mutableSetOf<String>()
-        val dependencies = mutableListOf<KotlinLibrary>()
-        val friendDependencies = mutableListOf<KotlinLibrary>()
-
-        for (library in libraries) {
-            val irLib = loadKlib(library)
-            if (irLib.moduleName !in loadedLibrariesNames) {
-                dependencies.add(irLib)
-                loadedLibrariesNames.add(irLib.moduleName)
-                if (library in friendLibraries) {
-                    friendDependencies.add(irLib)
-                }
+        val unresolvedLibraries = libraries.toUnresolvedLibraries
+        // Configure resolver to only understands absolute path libraries.
+        val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
+            repositories = emptyList(),
+            directLibs = libraries,
+            distributionKlib = null,
+            localKotlinDir = null,
+            skipCurrentDir = true
+            // TODO: pass logger attached to message collector here.
+        ).libraryResolver()
+        val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
+        val friendDependencies = resolvedLibraries.getFullList()
+            .filter {
+                it.moduleName in friendLibraries
             }
-        }
 
         val produceKind = produceMap[arguments.irProduceOnly]
         if (produceKind == null) {
@@ -169,7 +174,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 project = config.project,
                 files = sourcesFiles,
                 configuration = config.configuration,
-                allDependencies = dependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 outputKlibPath = outputKlibPath,
                 nopack = arguments.irLegacyGradlePluginCompatibility
@@ -184,7 +189,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 sourcesFiles,
                 configuration,
                 phaseConfig,
-                allDependencies = dependencies,
+                allDependencies = resolvedLibraries,
                 friendDependencies = friendDependencies,
                 mainArguments = mainCallArguments
             )

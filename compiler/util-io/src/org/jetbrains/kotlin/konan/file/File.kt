@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.konan.file
 
-import org.jetbrains.kotlin.konan.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.io.RandomAccessFile
 import java.lang.Exception
-import java.net.URI
 import java.nio.MappedByteBuffer
 import java.nio.channels.FileChannel
 import java.nio.file.*

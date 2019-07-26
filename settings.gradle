@@ -25,6 +25,7 @@ include ":kotlin-build-common",
         ":compiler:util",
         ":kotlin-util-io",
         ":kotlin-util-klib",
+        ":kotlin-util-klib-metadata",
         ":daemon-common",
         ":daemon-common-new",
         ":kotlin-daemon",
@@ -336,6 +337,7 @@ project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
 project(':kotlin-util-io').projectDir = "$rootDir/compiler/util-io" as File
 project(':kotlin-util-klib').projectDir = "$rootDir/compiler/util-klib" as File
+project(':kotlin-util-klib-metadata').projectDir = "$rootDir/compiler/util-klib-metadata" as File
 project(':kotlin-native:kotlin-native-utils').projectDir = "$rootDir/konan/utils" as File
 project(':kotlin-native:kotlin-native-library-reader').projectDir = "$rootDir/konan/library-reader" as File
 project(':kotlin-native:commonizer').projectDir = "$rootDir/konan/commonizer" as File

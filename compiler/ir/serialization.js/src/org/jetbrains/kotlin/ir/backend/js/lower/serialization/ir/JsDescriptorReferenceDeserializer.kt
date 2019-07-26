@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
-import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorReferenceDeserializer
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorUniqIdAware
+import org.jetbrains.kotlin.backend.common.serialization.DeserializedDescriptorUniqIdAware
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.name.FqName
 
 class JsDescriptorReferenceDeserializer(
     currentModule: ModuleDescriptor,
     mangler: KotlinMangler,
     builtIns: IrBuiltIns
 ) : DescriptorReferenceDeserializer(currentModule, mangler, builtIns, mutableMapOf()),
-    DescriptorUniqIdAware by JsDescriptorUniqIdAware
+    DescriptorUniqIdAware by DeserializedDescriptorUniqIdAware
