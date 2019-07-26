@@ -23,6 +23,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
@@ -445,8 +446,15 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
   private static Map<String, Collection<ServiceViewContributor>> loadGroups() {
     Map<String, Collection<ServiceViewContributor>> result = new HashMap<>();
     Set<ServiceViewContributor> contributors = ContainerUtil.newHashSet(ServiceModel.getContributors());
-    if (!contributors.isEmpty()) {
-      result.put(getToolWindowId(), contributors);
+    if (Registry.is("ide.service.view.split")) {
+      for (ServiceViewContributor contributor : contributors) {
+        result.put(contributor.getViewDescriptor().getId(), ContainerUtil.newSmartList(contributor));
+      }
+    }
+    else {
+      if (!contributors.isEmpty()) {
+        result.put(getToolWindowId(), contributors);
+      }
     }
     return result;
   }
