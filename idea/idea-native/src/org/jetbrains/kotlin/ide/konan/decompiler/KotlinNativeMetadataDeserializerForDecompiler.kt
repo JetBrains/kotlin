@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.ide.konan.createLoggingErrorReporter
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.DeserializerForDecompilerBase
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.ResolveEverythingToKotlinAnyLocalClassifierResolver
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.*
@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 class KotlinNativeMetadataDeserializerForDecompiler(
     packageFqName: FqName,
-    private val proto: KonanProtoBuf.LinkDataPackageFragment,
+    private val proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
     serializerProtocol: SerializerExtensionProtocol,
     flexibleTypeDeserializer: FlexibleTypeDeserializer

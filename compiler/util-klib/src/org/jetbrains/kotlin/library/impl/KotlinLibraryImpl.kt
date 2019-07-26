@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.loadProperties
 
 open class BaseKotlinLibraryImpl(
-    private val access: BaseLibraryAccess<KotlinLibraryLayout>,
+    val access: BaseLibraryAccess<KotlinLibraryLayout>,
     override val isDefault: Boolean
 ) : BaseKotlinLibrary {
     override val libraryFile get() = access.klib
@@ -40,7 +40,7 @@ open class BaseKotlinLibraryImpl(
 }
 
 open class MetadataLibraryImpl(
-    private val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
+    val access: MetadataLibraryAccess<MetadataKotlinLibraryLayout>
 ) : MetadataLibrary {
 
     override val moduleHeaderData: ByteArray by lazy {
@@ -72,7 +72,7 @@ open class MetadataLibraryImpl(
 }
 
 abstract class IrLibraryImpl(
-    protected val access: IrLibraryAccess<IrKotlinLibraryLayout>
+    val access: IrLibraryAccess<IrKotlinLibraryLayout>
 ) : IrLibrary {
     override val dataFlowGraph by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->
@@ -211,9 +211,9 @@ class IrPerFileLibraryImpl(_access: IrLibraryAccess<IrKotlinLibraryLayout>) : Ir
 }
 
 open class KotlinLibraryImpl(
-    base: BaseKotlinLibraryImpl,
-    metadata: MetadataLibraryImpl,
-    ir: IrLibraryImpl
+    val base: BaseKotlinLibraryImpl,
+    val metadata: MetadataLibraryImpl,
+    val ir: IrLibraryImpl
 ) : KotlinLibrary,
     BaseKotlinLibrary by base,
     MetadataLibrary by metadata,

@@ -6,20 +6,20 @@
 package org.jetbrains.kotlin.ide.konan.decompiler
 
 import org.jetbrains.kotlin.descriptors.SourceElement
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.getClassId
 
 class KotlinNativeProtoBasedClassDataFinder(
-    proto: KonanProtoBuf.LinkDataPackageFragment,
+    proto: ProtoBuf.PackageFragment,
     private val nameResolver: NameResolver,
     private val classSource: (ClassId) -> SourceElement = { SourceElement.NO_SOURCE }
 ) : ClassDataFinder {
     private val classIdToProto =
-        proto.classes.classesList.associateBy { klass ->
+        proto.class_List.associateBy { klass ->
             nameResolver.getClassId(klass.fqName)
         }
 

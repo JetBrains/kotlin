@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.descriptors.*
-//import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.JsKlibMetadataProtoBuf
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
 import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.UniqId as ProtoUniqId
 
 // This is an abstract uniqIdIndex any serialized IR declarations gets.
@@ -35,4 +37,17 @@ interface DescriptorUniqIdAware {
     fun DeclarationDescriptor.getUniqId(): Long?
 }
 
-//val UniqId.declarationFileName: String get() = "$index${if (isLocal) "L" else "G"}.kjd"
+object DeserializedDescriptorUniqIdAware : DescriptorUniqIdAware {
+    override fun DeclarationDescriptor.getUniqId(): Long? = when (this) {
+        is DeserializedClassDescriptor -> this.classProto.tryGetExtension(KlibMetadataProtoBuf.classUniqId)
+        is DeserializedSimpleFunctionDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.functionUniqId)
+        is DeserializedPropertyDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.propertyUniqId)
+        is DeserializedClassConstructorDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.constructorUniqId)
+        is DeserializedTypeParameterDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.typeParamUniqId)
+        is DeserializedTypeAliasDescriptor -> this.proto.tryGetExtension(KlibMetadataProtoBuf.typeAliasUniqId)
+        else -> null
+    }?.index
+}
+
+fun newDescriptorUniqId(index: Long): KlibMetadataProtoBuf.DescriptorUniqId =
+    KlibMetadataProtoBuf.DescriptorUniqId.newBuilder().setIndex(index).build()

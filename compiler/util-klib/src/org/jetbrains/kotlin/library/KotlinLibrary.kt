@@ -11,6 +11,9 @@ const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
+const val KLIB_PROPERTY_INTEROP = "interop"
+const val KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS = "exportForwardDeclarations"
+
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
  */
@@ -51,3 +54,17 @@ val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
             }
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
+
+// TODO: should we move the below ones to Native?
+val KotlinLibrary.isInterop
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
+
+val KotlinLibrary.packageFqName: String?
+    get() = manifestProperties.getProperty(org.jetbrains.kotlin.library.KLIB_PROPERTY_PACKAGE)
+
+val KotlinLibrary.exportForwardDeclarations
+    get() = manifestProperties.propertyList(KLIB_PROPERTY_EXPORT_FORWARD_DECLARATIONS, escapeInQuotes = true)
+        .asSequence()
+        .map { it.trim() }
+        .filter { it.isNotEmpty() }
+        .toList()

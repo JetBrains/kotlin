@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.KotlinLibrarySearchPathResolver
+import org.jetbrains.kotlin.library.UnresolvedLibrary
+import org.jetbrains.kotlin.library.resolver.KotlinLibraryResolveResult
+import org.jetbrains.kotlin.library.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -59,7 +63,7 @@ fun buildKLib(
     moduleName: String,
     sources: List<String>,
     outputPath: String,
-    dependencies: List<KotlinLibrary>,
+    allDependencies: KotlinLibraryResolveResult,
     commonSources: List<String>
 ) {
     generateKLib(
@@ -72,7 +76,7 @@ fun buildKLib(
             file
         },
         configuration = buildConfiguration(environment, moduleName),
-        allDependencies = dependencies,
+        allDependencies = allDependencies,
         friendDependencies = emptyList(),
         outputKlibPath = outputPath,
         nopack = true
@@ -113,12 +117,18 @@ fun main(args: Array<String>) {
         error("Please set path to .klm file: `-o some/dir/module-name.klm`")
     }
 
-    val name = outputPath.takeLastWhile { it != '/' }
+    val dependencyAbsolutePaths = dependencies.map{ File(it).absolutePath }
+    val unresolvedLibraries = dependencies.map { UnresolvedLibrary(it, null) }
+    // Configure the resolver to only understand absolute path libraries.
+    val libraryResolver = KotlinLibrarySearchPathResolver<KotlinLibrary>(
+        repositories = emptyList(),
+        directLibs = dependencyAbsolutePaths,
+        distributionKlib = null,
+        localKotlinDir = null,
+        skipCurrentDir = true
+        // TODO: pass logger attached to message collector here.
+    ).libraryResolver()
+    val resolvedLibraries = libraryResolver.resolveWithDependencies(unresolvedLibraries, true, true, true)
 
-    val dependencyKLibs = dependencies.map {
-        val file = File(it)
-        loadKlib(file.path)
-    }
-
-    buildKLib(name.dropLast(4), listOfKtFilesFrom(inputFiles), outputPath, dependencyKLibs, listOfKtFilesFrom(commonSources))
+    buildKLib(File(outputPath).absolutePath, listOfKtFilesFrom(inputFiles), outputPath, resolvedLibraries, listOfKtFilesFrom(commonSources))
 }

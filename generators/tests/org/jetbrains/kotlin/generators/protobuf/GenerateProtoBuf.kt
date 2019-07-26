@@ -55,15 +55,10 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata/src/builtins.proto"),
     ProtoPath("js/js.serializer/src/js.proto"),
     ProtoPath("js/js.serializer/src/js-ast.proto", false),
-    ProtoPath("konan/library-reader/src/konan.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
-
-    // TODO drop this scheme, 'compiler/ir/serialization.js/src/js.proto' is the actual one
-    ProtoPath("compiler/ir/backend.js/src/js.proto", false),
-
-    ProtoPath("compiler/ir/serialization.js/src/js.proto", false),
+    ProtoPath("compiler/util-klib-metadata/src/KlibMetadataProtoBuf.proto", false),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false)
 )
 

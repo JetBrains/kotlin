@@ -14,28 +14,18 @@ import com.intellij.psi.SingleRootFileViewProvider
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.testFramework.LightVirtualFile
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.ide.konan.decompiler.KotlinNativeLoadingMetadataCache
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.decompiler.textBuilder.LoggingErrorReporter
-import org.jetbrains.kotlin.konan.file.File
-import org.jetbrains.kotlin.konan.util.KonanFactories.DefaultPackageFragmentsFactory
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
-import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryDir
-import org.jetbrains.kotlin.konan.library.KonanLibrarySource.KonanLibraryFile
-import org.jetbrains.kotlin.konan.library.MetadataReader
-import org.jetbrains.kotlin.konan.library.createKonanLibrary
-import org.jetbrains.kotlin.metadata.konan.KonanProtoBuf
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.BaseKotlinLibraryImpl
+import org.jetbrains.kotlin.library.impl.MetadataLibraryImpl
+import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
+import org.jetbrains.kotlin.library.metadata.PackageAccessHandler
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
-import org.jetbrains.kotlin.storage.StorageManager
-
-const val KOTLIN_NATIVE_CURRENT_ABI_VERSION = 1
+import org.jetbrains.kotlin.konan.file.File as KFile
 
 fun createFileStub(project: Project, text: String): PsiFileStub<*> {
     val virtualFile = LightVirtualFile("dummy.kt", KotlinFileType.INSTANCE, text)
@@ -49,62 +39,48 @@ fun createFileStub(project: Project, text: String): PsiFileStub<*> {
 
 fun createLoggingErrorReporter(log: Logger) = LoggingErrorReporter(log)
 
-fun KonanLibrary.createPackageFragmentProvider(
-    storageManager: StorageManager,
-    languageVersionSettings: LanguageVersionSettings,
-    moduleDescriptor: ModuleDescriptor
-): PackageFragmentProvider {
-
-    val library = this
-
-    val libraryProto = library.moduleHeaderData
-
-    //TODO: Is it required somehow?
-    //val moduleName = Name.special(libraryProto.moduleName)
-    //val moduleOrigin = DeserializedKonanModuleOrigin(library)
-
-    val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
-
-    return DefaultPackageFragmentsFactory.createPackageFragmentProvider(
-        library,
-        null,
-        libraryProto.packageFragmentNameList,
-        storageManager,
-        moduleDescriptor,
-        deserializationConfiguration
-    )
-}
-
-internal object CachingIdeMetadataReaderImpl : MetadataReader {
-
-    override fun loadSerializedModule(libraryLayout: KonanLibraryLayout): KonanProtoBuf.LinkDataLibrary =
-        cache.getCachedModuleHeader(libraryLayout.getVirtualFile(libraryLayout.moduleHeaderFile))
-
-    override fun loadSerializedPackageFragment(
-        libraryLayout: KonanLibraryLayout,
-        packageFqName: String,
-        partName: String
-    ): KonanProtoBuf.LinkDataPackageFragment =
-        cache.getCachedPackageFragment(libraryLayout.getVirtualFile(libraryLayout.packageFragmentFile(packageFqName, partName)))
-
-    private fun KonanLibraryLayout.getVirtualFile(file: File): VirtualFile {
-        val source = this.source
-        return when (source) {
-            is KonanLibraryFile -> asJarFileSystemFile(source.klibFile, file)
-            is KonanLibraryDir -> asLocalFile(file)
-        }
+internal object CachingIdeKonanLibraryMetadataLoader : PackageAccessHandler {
+    override fun loadModuleHeader(
+        library: KotlinLibrary
+    ): KlibMetadataProtoBuf.Header {
+        val virtualFile = getVirtualFile(library, library.moduleHeaderFile)
+        return cache.getCachedModuleHeader(virtualFile)
     }
 
-    private fun asJarFileSystemFile(jarFile: File, localFile: File): VirtualFile {
+    override fun loadPackageFragment(
+        library: KotlinLibrary,
+        packageFqName: String,
+        partName: String
+    ): ProtoBuf.PackageFragment {
+        val virtualFile = getVirtualFile(library, library.packageFragmentFile(packageFqName, partName))
+        return cache.getCachedPackageFragment(virtualFile)
+    }
+
+    private fun getVirtualFile(library: KotlinLibrary, file: KFile): VirtualFile =
+        if (library.isZipped) asJarFileSystemFile(library.libraryFile, file) else asLocalFile(file)
+
+    private fun asJarFileSystemFile(jarFile: KFile, localFile: KFile): VirtualFile {
         val fullPath = jarFile.absolutePath + "!" + localFile.absolutePath
         return StandardFileSystems.jar().findFileByPath(fullPath) ?: error("File not found: $fullPath")
     }
 
-    private fun asLocalFile(localFile: File): VirtualFile {
+    private fun asLocalFile(localFile: KFile): VirtualFile {
         val fullPath = localFile.absolutePath
         return StandardFileSystems.local().findFileByPath(fullPath) ?: error("File not found: $fullPath")
     }
 
     private val cache
         get() = KotlinNativeLoadingMetadataCache.getInstance()
+
+
+    private val KotlinLibrary.moduleHeaderFile get() =
+        (this as MetadataLibraryImpl).access.layout.moduleHeaderFile
+
+    private fun KotlinLibrary.packageFragmentFile(packageFqName: String, partName: String) =
+        (this as MetadataLibraryImpl).access.layout.packageFragmentFile(packageFqName, partName)
+
+    private val KotlinLibrary.isZipped get() =
+        (this as BaseKotlinLibraryImpl).access.layout.isZipped
+
 }
+

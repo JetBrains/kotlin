@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.context.ProjectContext
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
-import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.descriptors.konan.KlibModuleOrigin
 import org.jetbrains.kotlin.ide.konan.analyzer.NativeResolverForModuleFactory
 import org.jetbrains.kotlin.idea.caches.project.LibraryInfo
 import org.jetbrains.kotlin.idea.caches.project.lazyClosure
@@ -32,14 +33,46 @@ import org.jetbrains.kotlin.idea.caches.resolve.BuiltInsCacheKey
 import org.jetbrains.kotlin.idea.compiler.IDELanguageSettingsProvider
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.*
-import org.jetbrains.kotlin.konan.util.KonanFactories
+import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.metadata.parseModuleHeader
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.impl.NativeIdePlatformKind
 import org.jetbrains.kotlin.platform.konan.KonanPlatforms
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion
 import org.jetbrains.kotlin.resolve.TargetEnvironment
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.serialization.konan.impl.KlibMetadataModuleDescriptorFactoryImpl
 import org.jetbrains.kotlin.storage.StorageManager
+
+fun KotlinLibrary.createPackageFragmentProvider(
+        storageManager: StorageManager,
+        languageVersionSettings: LanguageVersionSettings,
+        moduleDescriptor: ModuleDescriptor
+    ): PackageFragmentProvider {
+
+    val library = this
+
+    val libraryProto = parseModuleHeader(library.moduleHeaderData)
+
+    //TODO: Is it required somehow?
+    //val moduleName = Name.special(libraryProto.moduleName)
+    //val moduleOrigin = DeserializedKonanModuleOrigin(library)
+
+    val deserializationConfiguration = CompilerDeserializationConfiguration(languageVersionSettings)
+
+    return KonanFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
+        library,
+        null,
+        libraryProto.packageFragmentNameList,
+        storageManager,
+        moduleDescriptor,
+        deserializationConfiguration,
+        null
+    )
+}
 
 class NativePlatformKindResolution : IdePlatformKindResolution {
 
@@ -116,32 +149,34 @@ private fun createKotlinNativeBuiltIns(moduleInfo: ModuleInfo, projectContext: P
     val builtInsModule = KonanFactories.DefaultDescriptorFactory.createDescriptorAndNewBuiltIns(
         KotlinBuiltIns.BUILTINS_MODULE_NAME,
         storageManager,
-        DeserializedKonanModuleOrigin(konanLibrary),
+        DeserializedKlibModuleOrigin(konanLibrary),
         stdlibInfo.capabilities
     )
 
     val languageSettings = IDELanguageSettingsProvider.getLanguageVersionSettings(stdlibInfo, project, isReleaseCoroutines = false)
     val deserializationConfiguration = CompilerDeserializationConfiguration(languageSettings)
 
-    val libraryProto = konanLibrary.moduleHeaderData
+    val libraryProto = parseModuleHeader(konanLibrary.moduleHeaderData)
 
-    val stdlibFragmentProvider = KonanFactories.DefaultPackageFragmentsFactory.createPackageFragmentProvider(
+    val stdlibFragmentProvider = KonanFactories.DefaultDeserializedDescriptorFactory.createPackageFragmentProvider(
         konanLibrary,
-        null,
+        CachingIdeKonanLibraryMetadataLoader,
         libraryProto.packageFragmentNameList,
         storageManager,
         builtInsModule,
-        deserializationConfiguration
+        deserializationConfiguration,
+        null
     )
 
     builtInsModule.initialize(
         CompositePackageFragmentProvider(
             listOf(
                 stdlibFragmentProvider,
-                KonanFactories.DefaultPackageFragmentsFactory.createForwardDeclarationHackPackagePartProvider(
-                    storageManager,
-                    builtInsModule
-                )
+                (KonanFactories.DefaultDeserializedDescriptorFactory as KlibMetadataModuleDescriptorFactoryImpl)
+                    .createForwardDeclarationHackPackagePartProvider(
+                        storageManager,
+                        builtInsModule
+                    )
             )
         )
     )
@@ -158,11 +193,7 @@ private fun ModuleInfo.findNativeStdlib(project: Project): NativeLibraryInfo? =
 
 class NativeLibraryInfo(project: Project, library: Library, root: File) : LibraryInfo(project, library) {
 
-    private val nativeLibrary = createKonanLibrary(
-        root,
-        KOTLIN_NATIVE_CURRENT_ABI_VERSION,
-        metadataReader = CachingIdeMetadataReaderImpl
-    )
+    private val nativeLibrary = createKotlinLibrary(root)
 
     private val roots = listOf(root.absolutePath)
 
@@ -173,8 +204,8 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
     override val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
         get() = super.capabilities +
                 mapOf(
-                    ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.isInterop,
-                    NATIVE_LIBRARY_CAPABILITY to nativeLibrary
+                    KlibModuleOrigin.CAPABILITY to this,
+                    ImplicitIntegerCoercion.MODULE_CAPABILITY to nativeLibrary.isInterop
                 )
 
     override val platform: TargetPlatform
@@ -183,6 +214,6 @@ class NativeLibraryInfo(project: Project, library: Library, root: File) : Librar
     override fun toString() = "Native" + super.toString()
 
     companion object {
-        val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KonanLibrary>("KonanLibrary")
+        val NATIVE_LIBRARY_CAPABILITY = ModuleDescriptor.Capability<KotlinLibrary>("KotlinLibrary")
     }
 }
