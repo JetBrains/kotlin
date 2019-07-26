@@ -167,7 +167,10 @@ class AsyncCompletion extends CompletionThreadingBase {
   }
 
   static void tryReadOrCancel(ProgressIndicator indicator, Runnable runnable) {
-    if (!ApplicationManagerEx.getApplicationEx().tryRunReadAction(runnable)) {
+    if (!ApplicationManagerEx.getApplicationEx().tryRunReadAction(() -> {
+      indicator.checkCanceled();
+      runnable.run();
+    })) {
       indicator.cancel();
       indicator.checkCanceled();
     }
