@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.backend.common.lower.ProvisionalFunctionExpressionLowering
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -52,7 +53,10 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
         if (callee.isTypeOfIntrinsic())
             return expression
 
-        val actualCallee = getFunctionDeclaration(callee.symbol)
+        /**
+         * HACK: it's temporary workaround over inliner's disability to work with IrFunctionExpression, should be removed.
+         */
+        val actualCallee = getFunctionDeclaration(callee.symbol).transform(ProvisionalFunctionExpressionLowering(), null) as IrFunction
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
 
