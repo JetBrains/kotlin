@@ -19,8 +19,8 @@ fun configureProvidedPropertiesFromJsr223Context(context: ScriptConfigurationRef
                 putAll(engineBindings)
         }
         for ((k, v) in allBindings) {
-            // only adding bindings that are not already defined
-            if (!updatedProperties.containsKey(k)) {
+            // only adding bindings that are not already defined and also skip local classes
+            if (!updatedProperties.containsKey(k) && v::class.qualifiedName != null) {
                 // TODO: add only valid names
                 // TODO: find out how it's implemented in other jsr223 engines for typed languages, since this approach prevent certain usage scenarios, e.g. assigning back value of a "sibling" type
                 updatedProperties[k] = KotlinType(v::class)
