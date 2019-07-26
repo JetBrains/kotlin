@@ -117,7 +117,9 @@ public abstract class ModelsHolder<K extends Model, V> implements Serializable {
   }
 
   @NotNull
-  protected abstract String getModelKeyPrefix(@NotNull Class modelClazz);
+  protected String getModelKeyPrefix(@NotNull Class modelClazz) {
+    return modelClazz.getSimpleName() + modelClazz.getName().hashCode();
+  }
 
   @NotNull
   protected abstract String extractMapKey(@NotNull Class modelClazz, @Nullable V module);
