@@ -12,7 +12,7 @@ import org.jetbrains.jps.util.JpsPathUtil
 import java.io.File
 import java.nio.file.Paths
 
-open class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
+abstract class KotlinJpsBuildTestBase : AbstractKotlinJpsBuildTestCase() {
     protected lateinit var originalProjectDir: File
     protected val expectedOutputFile: File
         get() = File(originalProjectDir, "expected-output.txt")
