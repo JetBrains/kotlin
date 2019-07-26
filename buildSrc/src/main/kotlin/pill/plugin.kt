@@ -98,6 +98,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private lateinit var platformVersion: String
     private lateinit var platformBaseNumber: String
     private lateinit var platformDir: File
+    private lateinit var intellijCoreDir: File
     private var isAndroidStudioPlatform: Boolean = false
 
     private fun initEnvironment(project: Project) {
@@ -107,6 +108,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
             ?: platformVersion.substringBefore("-", "").takeIf { it.isNotEmpty() }
             ?: error("Invalid platform version: $platformVersion")
         platformDir = IntellijRootUtils.getIntellijRootDir(project)
+        intellijCoreDir = File(platformDir.parentFile.parentFile.parentFile, "intellij-core")
         isAndroidStudioPlatform = project.extensions.extraProperties.has("versions.androidStudioRelease")
     }
 
@@ -300,7 +302,7 @@ class JpsCompatiblePlugin : Plugin<Project> {
     private fun attachPlatformSources(library: PLibrary): PLibrary {
         val platformSourcesJar = File(platformDir, "../../../sources/intellij-$platformVersion-sources.jar")
 
-        if (library.classes.any { it.startsWith(platformDir) }) {
+        if (library.classes.any { it.startsWith(platformDir) || it.startsWith(intellijCoreDir) }) {
             return library.attachSource(platformSourcesJar)
         }
 
