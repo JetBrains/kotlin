@@ -68,7 +68,8 @@ fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestL
         analysisFlag(JvmAnalysisFlags.sanitizeParentheses, if (SANITIZE_PARENTHESES in directives) true else null),
         analysisFlag(AnalysisFlags.constraintSystemForOverloadResolution, directives[CONSTRAINT_SYSTEM_FOR_OVERLOAD_RESOLUTION]?.let {
             ConstraintSystemForOverloadResolutionMode.valueOf(it)
-        })
+        }),
+        analysisFlag(AnalysisFlags.explicitApiVersion, if (apiVersionString != null) true else null)
     )
 
     if (apiVersionString == null && languageFeaturesString == null && analysisFlags.isEmpty()) {
