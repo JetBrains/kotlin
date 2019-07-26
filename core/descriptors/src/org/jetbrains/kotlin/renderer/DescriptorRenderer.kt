@@ -44,8 +44,8 @@ abstract class DescriptorRenderer {
 
     abstract fun renderValueParameters(parameters: Collection<ValueParameterDescriptor>, synthesizedParameterNames: Boolean): String
 
-    fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String
-            = renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
+    fun renderFunctionParameters(functionDescriptor: FunctionDescriptor): String =
+        renderValueParameters(functionDescriptor.valueParameters, functionDescriptor.hasSynthesizedParameterNames())
 
     abstract fun renderName(name: Name, rootRenderedElement: Boolean): String
 
@@ -55,7 +55,13 @@ abstract class DescriptorRenderer {
         fun appendBeforeValueParameters(parameterCount: Int, builder: StringBuilder)
         fun appendAfterValueParameters(parameterCount: Int, builder: StringBuilder)
 
-        fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
+        fun appendBeforeValueParameter(
+            parameter: ValueParameterDescriptor,
+            parameterIndex: Int,
+            parameterCount: Int,
+            builder: StringBuilder
+        )
+
         fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder)
 
         object DEFAULT : ValueParametersHandler {
@@ -67,10 +73,20 @@ abstract class DescriptorRenderer {
                 builder.append(")")
             }
 
-            override fun appendBeforeValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
+            override fun appendBeforeValueParameter(
+                parameter: ValueParameterDescriptor,
+                parameterIndex: Int,
+                parameterCount: Int,
+                builder: StringBuilder
+            ) {
             }
 
-            override fun appendAfterValueParameter(parameter: ValueParameterDescriptor, parameterIndex: Int, parameterCount: Int, builder: StringBuilder) {
+            override fun appendAfterValueParameter(
+                parameter: ValueParameterDescriptor,
+                parameterIndex: Int,
+                parameterCount: Int,
+                builder: StringBuilder
+            ) {
                 if (parameterIndex != parameterCount - 1) {
                     builder.append(", ")
                 }
@@ -86,28 +102,33 @@ abstract class DescriptorRenderer {
             return DescriptorRendererImpl(options)
         }
 
-        @JvmField val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
+        @JvmField
+        val COMPACT_WITH_MODIFIERS: DescriptorRenderer = withOptions {
             withDefinedIn = false
         }
 
-        @JvmField val COMPACT: DescriptorRenderer = withOptions {
+        @JvmField
+        val COMPACT: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
         }
 
-        @JvmField val COMPACT_WITHOUT_SUPERTYPES: DescriptorRenderer = withOptions {
+        @JvmField
+        val COMPACT_WITHOUT_SUPERTYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
             withoutSuperTypes = true
         }
 
-        @JvmField val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+        @JvmField
+        val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             modifiers = emptySet()
             classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
-        @JvmField val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
+        @JvmField
+        val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
             modifiers = emptySet()
             classifierNamePolicy = ClassifierNamePolicy.SHORT
@@ -119,55 +140,57 @@ abstract class DescriptorRenderer {
             startFromName = true
         }
 
-        @JvmField val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+        @JvmField
+        val FQ_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        @JvmField val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
+        @JvmField
+        val SHORT_NAMES_IN_TYPES: DescriptorRenderer = withOptions {
             classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
 
-        @JvmField val DEBUG_TEXT: DescriptorRenderer = withOptions {
+        @JvmField
+        val DEBUG_TEXT: DescriptorRenderer = withOptions {
             debugMode = true
             classifierNamePolicy = ClassifierNamePolicy.FULLY_QUALIFIED
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        @JvmField val HTML: DescriptorRenderer = withOptions {
+        @JvmField
+        val HTML: DescriptorRenderer = withOptions {
             textFormat = RenderingFormat.HTML
             modifiers = DescriptorRendererModifier.ALL
         }
 
-        fun getClassifierKindPrefix(classifier: ClassifierDescriptorWithTypeParameters): String =
-                when (classifier) {
-                    is TypeAliasDescriptor ->
-                        "typealias"
-                    is ClassDescriptor ->
-                        if (classifier.isCompanionObject) {
-                            "companion object"
-                        }
-                        else when (classifier.kind) {
-                            ClassKind.CLASS -> "class"
-                            ClassKind.INTERFACE -> "interface"
-                            ClassKind.ENUM_CLASS -> "enum class"
-                            ClassKind.OBJECT -> "object"
-                            ClassKind.ANNOTATION_CLASS -> "annotation class"
-                            ClassKind.ENUM_ENTRY -> "enum entry"
-                        }
-                    else ->
-                        throw AssertionError("Unexpected classifier: $classifier")
+        fun getClassifierKindPrefix(classifier: ClassifierDescriptorWithTypeParameters): String = when (classifier) {
+            is TypeAliasDescriptor ->
+                "typealias"
+            is ClassDescriptor ->
+                if (classifier.isCompanionObject) {
+                    "companion object"
+                } else when (classifier.kind) {
+                    ClassKind.CLASS -> "class"
+                    ClassKind.INTERFACE -> "interface"
+                    ClassKind.ENUM_CLASS -> "enum class"
+                    ClassKind.OBJECT -> "object"
+                    ClassKind.ANNOTATION_CLASS -> "annotation class"
+                    ClassKind.ENUM_ENTRY -> "enum entry"
                 }
+            else ->
+                throw AssertionError("Unexpected classifier: $classifier")
+        }
     }
 }
 
 enum class AnnotationArgumentsRenderingPolicy(
-        val includeAnnotationArguments: Boolean = false,
-        val includeEmptyAnnotationArguments: Boolean = false
+    val includeAnnotationArguments: Boolean = false,
+    val includeEmptyAnnotationArguments: Boolean = false
 ) {
-    NO_ARGUMENTS(),
+    NO_ARGUMENTS,
     UNLESS_EMPTY(true),
-    ALWAYS_PARENTHESIZED(true, true)
+    ALWAYS_PARENTHESIZED(includeAnnotationArguments = true, includeEmptyAnnotationArguments = true)
 }
 
 interface DescriptorRendererOptions {
@@ -227,8 +250,8 @@ interface DescriptorRendererOptions {
 
 object ExcludedTypeAnnotations {
     val internalAnnotationsForResolve = setOf(
-            FqName("kotlin.internal.NoInfer"),
-            FqName("kotlin.internal.Exact")
+        FqName("kotlin.internal.NoInfer"),
+        FqName("kotlin.internal.Exact")
     )
 }
 
@@ -278,9 +301,9 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
 
     companion object {
         @JvmField
-        val DEFAULTS = DescriptorRendererModifier.values().filter { it.includeByDefault }.toSet()
+        val DEFAULTS = values().filter { it.includeByDefault }.toSet()
 
         @JvmField
-        val ALL = DescriptorRendererModifier.values().toSet()
+        val ALL = values().toSet()
     }
 }
