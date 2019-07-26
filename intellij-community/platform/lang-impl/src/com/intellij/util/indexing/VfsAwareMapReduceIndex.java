@@ -213,6 +213,7 @@ public class VfsAwareMapReduceIndex<Key, Value, Input> extends MapReduceIndex<Ke
     removeTransientDataForKeys(inputId, map.keySet());
   }
 
+  @Override
   public void removeTransientDataForKeys(int inputId, @NotNull Collection<? extends Key> keys) {
     MemoryIndexStorage memoryIndexStorage = (MemoryIndexStorage)getStorage();
     for (Key key : keys) {

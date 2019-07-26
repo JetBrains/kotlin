@@ -249,7 +249,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   <K> void serializeIndexValue(@NotNull DataOutput out, @NotNull StubIndexKey<K, ?> stubIndexKey, @NotNull Map<K, StubIdList> map) throws IOException {
     UpdatableIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
     if (index == null) return;
-    KeyDescriptor<K> keyDescriptor = ((VfsAwareMapReduceIndex)index).getExtension().getKeyDescriptor();
+    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
 
     DataInputOutputUtil.writeINT(out, map.size());
     for (K key : map.keySet()) {
@@ -261,7 +261,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
   @NotNull
   <K> Map<K, StubIdList> deserializeIndexValue(@NotNull DataInput in, @NotNull StubIndexKey<K, ?> stubIndexKey) throws IOException {
     UpdatableIndex<K, StubIdList, Void> index = getIndex(stubIndexKey);
-    KeyDescriptor<K> keyDescriptor = ((VfsAwareMapReduceIndex)index).getExtension().getKeyDescriptor();
+    KeyDescriptor<K> keyDescriptor = index.getExtension().getKeyDescriptor();
     int mapSize = DataInputOutputUtil.readINT(in);
 
     Map<K, StubIdList> result = new THashMap<>(mapSize);
@@ -511,7 +511,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
 
   <K> void removeTransientDataForFile(@NotNull StubIndexKey<K, ?> key, int inputId, @NotNull Collection<? extends K> keys) {
     UpdatableIndex<K, StubIdList, Void> index = getIndex(key);
-    ((VfsAwareMapReduceIndex)index).removeTransientDataForKeys(inputId, keys);
+    index.removeTransientDataForKeys(inputId, keys);
   }
 
   private boolean dropUnregisteredIndices(@NotNull AsyncState state) {

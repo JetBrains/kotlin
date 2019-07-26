@@ -22,6 +22,7 @@ import com.intellij.util.Processor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
@@ -49,4 +50,9 @@ public interface UpdatableIndex<Key, Value, Input> extends InvertedIndex<Key,Val
   long getModificationStamp();
 
   void removeTransientDataForFile(int inputId);
+
+  void removeTransientDataForKeys(int inputId, @NotNull Collection<? extends Key> keys);
+
+  @NotNull
+  IndexExtension<Key, Value, Input> getExtension();
 }

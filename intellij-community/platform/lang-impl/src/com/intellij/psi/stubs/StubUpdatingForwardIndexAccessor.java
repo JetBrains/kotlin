@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.Map;
 
 class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, SerializedStubTree> {
-  private volatile VfsAwareMapReduceIndex<Integer, SerializedStubTree, FileContent> myIndex;
+  private volatile UpdatableIndex<Integer, SerializedStubTree, FileContent> myIndex;
 
   @NotNull
   @Override
@@ -48,7 +48,7 @@ class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, 
     return null;
   }
 
-  public void setIndex(@NotNull VfsAwareMapReduceIndex<Integer, SerializedStubTree, FileContent> index) {
+  public void setIndex(@NotNull UpdatableIndex<Integer, SerializedStubTree, FileContent> index) {
     myIndex = index;
   }
 }
