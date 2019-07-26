@@ -4,7 +4,7 @@ Some documentation
  * @param a Some int
  * @param b String
  */
-fun testMethod(a: Int, b: String) {
+fun testMethod(a: Int, b: String = "default") {
 
 }
 
@@ -14,5 +14,5 @@ fun test() {
 
 //INFO: <div class='definition'><pre><font color="808080"><i>OnMethodUsage.kt</i></font><br>public fun <b>testMethod</b>(
 //INFO:     a: Int,
-//INFO:     b: String
+//INFO:     b: String = "default"
 //INFO: ): Unit</pre></div><div class='content'><p>Some documentation</p></div><table class='sections'><tr><td valign='top' class='section'><p>Params:</td><td valign='top'><p><code>a</code> - Some int<p><code>b</code> - String</td></table>
