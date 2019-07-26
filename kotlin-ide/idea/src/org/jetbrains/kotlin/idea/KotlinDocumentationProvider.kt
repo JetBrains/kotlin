@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassNotAny
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode
+import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.utils.addToStdlib.constant
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -178,6 +179,7 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             eachAnnotationOnNewLine = true
             boldOnlyForNamesInHtml = true
             excludedTypeAnnotationClasses = NULLABILITY_ANNOTATIONS
+            defaultParameterValueRenderer = { (it.source.getPsi() as? KtParameter)?.defaultValue?.text ?: "..." }
         }
 
         fun StringBuilder.renderKDoc(contentTag: KDocTag, sections: List<KDocSection>) {
