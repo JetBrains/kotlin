@@ -6,6 +6,12 @@ import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 
 /**
+ * {@link ObjectCollector} provides convenient way to avoid expensive operations with the same object when it passed in multiple times.
+ * <p>
+ *   E.g. during the serialization the whole object can be written once
+ *   and other references to the object can be written using a single int "objectId" value
+ * </p>
+ *
  * @author Vladislav.Soroka
  */
 public class ObjectCollector<T, E extends Exception> {
