@@ -277,22 +277,15 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
 
     @NotNull
     @Override
-    protected String getModelKeyPrefix(@NotNull Class modelClazz) {
-      String key = extractMapKey(modelClazz, null);
-      return key.substring(0, key.indexOf('/'));
-    }
-
-    @NotNull
-    @Override
     protected String extractMapKey(@NotNull Class modelClazz, @Nullable GradleProject gradleProject) {
+      String prefix = getModelKeyPrefix(modelClazz);
       if (gradleProject != null) {
-        String id = isGradleProjectDirSupported ?
-                    gradleProject.getProjectDirectory().getPath().hashCode() + ':' + gradleProject.getPath() :
-                    gradleProject.getPath();
-        return modelClazz.getSimpleName() + modelClazz.getName().hashCode() + '/' + id;
+        return prefix + '/' + (isGradleProjectDirSupported ?
+                               gradleProject.getProjectDirectory().getPath().hashCode() + ':' + gradleProject.getPath() :
+                               gradleProject.getPath());
       }
       else {
-        return modelClazz.getSimpleName() + modelClazz.getName().hashCode() + '/' + ("root" + getRootModel().getName().hashCode());
+        return prefix + '/' + ("root" + getRootModel().getName().hashCode());
       }
     }
 
