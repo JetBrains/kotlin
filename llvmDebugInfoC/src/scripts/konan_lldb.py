@@ -262,7 +262,7 @@ class KonanObjectSyntheticProvider(KonanHelperProvider):
             return not any(f(x) for x in iterable)
         if __none(self._children, lambda x: x.name() == name):
             return -1
-        return (i for i,v in enumerate(self._children) if v.name() == name).next()
+        return next(i for i,v in enumerate(self._children) if v.name() == name)
 
     def get_child_at_index(self, index):
         return self._values[index]
