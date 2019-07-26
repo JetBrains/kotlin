@@ -221,6 +221,7 @@ class LocalDeclarationsLowering(
                     declaration.valueParameters.filter { it.defaultValue != null }.forEach { argument ->
                         oldParameterToNew[argument]!!.defaultValue = argument.defaultValue
                     }
+                    acceptChildren(SetDeclarationsParentVisitor, this)
                 } ?: super.visitConstructor(declaration)
             }
 
