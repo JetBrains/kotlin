@@ -94,7 +94,6 @@ import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
@@ -109,8 +108,6 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
   private static final Logger LOG = Logger.getInstance("#com.intellij.ide.projectView.impl.ProjectViewImpl");
   private static final Key<String> ID_KEY = Key.create("pane-id");
   private static final Key<String> SUB_ID_KEY = Key.create("pane-sub-id");
-  private static final ExecutorService ourParsingExecutor =
-    AppExecutorUtil.createBoundedApplicationPoolExecutor("Project View Autoscroll", 1);
   private final CopyPasteDelegator myCopyPasteDelegator;
   private boolean isInitialized;
   private final AtomicBoolean myExtensionsLoaded = new AtomicBoolean(false);
@@ -2081,8 +2078,9 @@ public class ProjectViewImpl extends ProjectView implements PersistentStateCompo
             runnable.run();
           }
         })
+        .coalesceBy(ProjectViewImpl.this)
         .expireWhen(editor::isDisposed)
-        .submit(ourParsingExecutor);
+        .submit(AppExecutorUtil.getAppExecutorService());
     }
 
     @Override
