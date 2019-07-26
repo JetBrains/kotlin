@@ -43,7 +43,6 @@ import java.io.IOException
 import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.TimeUnit
-import com.intellij.openapi.util.Pair as JBPair
 
 internal val LOG = logger<ComponentStoreImpl>()
 private val SAVE_MOD_LOG = Logger.getInstance("#configurationStore.save.skip")
@@ -369,7 +368,7 @@ abstract class ComponentStoreImpl : IComponentStore {
     @Suppress("UNCHECKED_CAST")
     val stateClass: Class<Any> = when (component) {
       is PersistenceStateAdapter -> component.component::class.java as Class<Any>
-      else -> ComponentSerializationUtil.getStateClass<Any>(component.javaClass)
+      else -> ComponentSerializationUtil.getStateClass(component.javaClass)
     }
     if (!stateSpec.defaultStateAsResource && LOG.isDebugEnabled && getDefaultState(component, name, stateClass) != null) {
       LOG.error("$name has default state, but not marked to load it")
@@ -601,7 +600,7 @@ private fun notifyUnknownMacros(store: IComponentStore, project: Project, compon
     val manager = NotificationsManager.getNotificationsManager()
     for (notification in manager.getNotificationsOfType(UnknownMacroNotification::class.java, project)) {
       if (notified == null) {
-        notified = SmartList<String>()
+        notified = SmartList()
       }
       notified.addAll(notification.macros)
     }
