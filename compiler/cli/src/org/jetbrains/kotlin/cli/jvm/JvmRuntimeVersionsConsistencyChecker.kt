@@ -136,17 +136,15 @@ object JvmRuntimeVersionsConsistencyChecker {
                 // we infer API = the version of that stdlib.
                 // Note that "no explicit -api-version" requirement is necessary because for example, in
                 // "kotlinc-1.2 -language-version 1.0 -cp kotlin-runtime-1.1.jar" we should still infer API = 1.0
-                val newSettings = object : LanguageVersionSettings by languageVersionSettings {
+                configuration.languageVersionSettings = object : LanguageVersionSettings by languageVersionSettings {
                     override val apiVersion: ApiVersion get() = actualApi
                 }
 
                 messageCollector.issue(
                     null, "Old runtime has been found in the classpath. " +
                             "Initial language version settings: $languageVersionSettings. " +
-                            "Updated language version settings: $newSettings", CompilerMessageSeverity.LOGGING
+                            "Updated API version: $actualApi", CompilerMessageSeverity.LOGGING
                 )
-
-                configuration.languageVersionSettings = newSettings
             }
         } else if (consistency != ClasspathConsistency.Consistent) {
             messageCollector.issue(
