@@ -67,11 +67,17 @@ repositories {
         }
 
         ivy {
-            artifactPattern("https://dl.bintray.com/kotlin/as/[artifact]-[revision]-$androidStudioOs.zip")
+            url = URI("https://dl.bintray.com/kotlin/as/")
+
+            patternLayout {
+                artifact("[artifact]-[revision]-$androidStudioOs.[ext]")
+            }
+
             credentials {
                 username = System.getenv("AS_BINTRAY_USER_NAME")
                 password = System.getenv("AS_BINTRAY_API_KEY")
             }
+
             metadataSources {
                 artifact()
             }
