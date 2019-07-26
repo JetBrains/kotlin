@@ -10,9 +10,8 @@ import kotlin.SinceKotlin;
 import kotlin.UninitializedPropertyAccessException;
 
 import java.util.Arrays;
-import java.util.List;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class Intrinsics {
     private Intrinsics() {
     }
@@ -23,13 +22,13 @@ public class Intrinsics {
 
     public static void checkNotNull(Object object) {
         if (object == null) {
-            throwNpe();
+            throwJavaNpe();
         }
     }
 
     public static void checkNotNull(Object object, String message) {
         if (object == null) {
-            throwNpe(message);
+            throwJavaNpe(message);
         }
     }
 
@@ -39,6 +38,16 @@ public class Intrinsics {
 
     public static void throwNpe(String message) {
         throw sanitizeStackTrace(new KotlinNullPointerException(message));
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static void throwJavaNpe() {
+        throw sanitizeStackTrace(new NullPointerException());
+    }
+
+    @SinceKotlin(version = "1.4")
+    public static void throwJavaNpe(String message) {
+        throw sanitizeStackTrace(new NullPointerException(message));
     }
 
     public static void throwUninitializedProperty(String message) {

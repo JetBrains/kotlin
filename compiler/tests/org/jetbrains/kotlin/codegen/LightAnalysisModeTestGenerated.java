@@ -16404,6 +16404,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/box/nullCheckOptimization"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.JVM, true);
         }
 
+        @TestMetadata("exclExclThrowsNpe_1_4.kt")
+        public void testExclExclThrowsNpe_1_4() throws Exception {
+            runTest("compiler/testData/codegen/box/nullCheckOptimization/exclExclThrowsNpe_1_4.kt");
+        }
+
         @TestMetadata("isNullable.kt")
         public void testIsNullable() throws Exception {
             runTest("compiler/testData/codegen/box/nullCheckOptimization/isNullable.kt");

@@ -3451,6 +3451,8 @@ public class kotlin/jvm/internal/Intrinsics {
 	public static fun throwIllegalArgument (Ljava/lang/String;)V
 	public static fun throwIllegalState ()V
 	public static fun throwIllegalState (Ljava/lang/String;)V
+	public static fun throwJavaNpe ()V
+	public static fun throwJavaNpe (Ljava/lang/String;)V
 	public static fun throwNpe ()V
 	public static fun throwNpe (Ljava/lang/String;)V
 	public static fun throwUndefinedForReified ()V

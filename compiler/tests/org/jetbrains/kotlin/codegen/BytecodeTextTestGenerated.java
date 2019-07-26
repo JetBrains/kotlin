@@ -3266,9 +3266,19 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/kt12839.kt");
         }
 
+        @TestMetadata("multipleExclExcl_1_4.kt")
+        public void testMultipleExclExcl_1_4() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/multipleExclExcl_1_4.kt");
+        }
+
         @TestMetadata("notNullAsNotNullable.kt")
         public void testNotNullAsNotNullable() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
+        }
+
+        @TestMetadata("nullCheckAfterExclExcl_1_4.kt")
+        public void testNullCheckAfterExclExcl_1_4() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/nullCheckAfterExclExcl_1_4.kt");
         }
 
         @TestMetadata("primitiveCheck.kt")

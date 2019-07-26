@@ -19,3 +19,4 @@ fun box(u: Int) {
 // 1 IFNONNULL
 // 1 throwNpe
 // 0 ATHROW
+// 0 checkNotNull
