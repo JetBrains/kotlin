@@ -16,6 +16,11 @@ public class DefaultSerializationService implements SerializationService {
     try {
       outputStream.writeObject(object);
     }
+    catch (NotSerializableException e) {
+      throw new IOException(String.format(
+        "Implement Serializable or provide related org.jetbrains.plugins.gradle.tooling.serialization.SerializationService for the tooling model: '%s'",
+        object.getClass().getName()), e);
+    }
     finally {
       outputStream.close();
     }
