@@ -68,9 +68,9 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     multicaster.addDocumentListener(new MyDocumentListener(), myProject);
     multicaster.addEditorMouseListener(new MyEditorMouseListener(), myProject);
 
-    PsiDocumentManager.getInstance(project).addListener(new PsiDocumentManager.Listener() {
+    connection.subscribe(PsiDocumentManager.Listener.TOPIC, new PsiDocumentManager.Listener() {
       @Override
-      public void documentCreated(@NotNull final Document document, PsiFile psiFile) {
+      public void documentCreated(@NotNull Document document, @Nullable PsiFile psiFile) {
         VirtualFile file = FileDocumentManager.getInstance().getFile(document);
         if (file == null) {
           return;
@@ -87,6 +87,7 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
         }
       }
     });
+
     mySortedState = UISettings.getInstance().getSortBookmarks();
     connection.subscribe(UISettingsListener.TOPIC, uiSettings -> {
       if (mySortedState != uiSettings.getSortBookmarks()) {
