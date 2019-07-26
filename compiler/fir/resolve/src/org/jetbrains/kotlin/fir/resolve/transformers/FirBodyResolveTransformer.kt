@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.addImportingScopes
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
-import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.invoke
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -82,6 +79,12 @@ open class FirBodyResolveTransformer(
         qualifiedResolver,
         resolutionStageRunner
     )
+
+    override val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
+        get() {
+            val requiredPhase = transformerPhase.prev
+            return phasedFir(session, requiredPhase)
+        }
 
     override fun transformFile(file: FirFile, data: Any?): CompositeTransformResult<FirFile> {
         packageFqName = file.packageFqName
@@ -778,9 +781,17 @@ private fun inferenceComponents(session: FirSession, returnTypeCalculator: Retur
     }, session, returnTypeCalculator, scopeSession)
 
 
-class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>, session: FirSession, scopeSession: ScopeSession) :
-    FirBodyResolveTransformer(session, phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true, scopeSession = scopeSession) {
-
+class FirDesignatedBodyResolveTransformer(
+    private val designation: Iterator<FirElement>,
+    session: FirSession,
+    scopeSession: ScopeSession = ScopeSession(),
+    implicitTypeOnly: Boolean = true
+) : FirBodyResolveTransformer(
+    session,
+    phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    implicitTypeOnly = implicitTypeOnly,
+    scopeSession = scopeSession
+) {
     override fun <E : FirElement> transformElement(element: E, data: Any?): CompositeTransformResult<E> {
         if (designation.hasNext()) {
             designation.next().visitNoTransform(this, data)

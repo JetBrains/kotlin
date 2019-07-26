@@ -1,0 +1,4 @@
+FILE: main.kt
+    public final fun foo(): R|kotlin/Int| {
+        ^foo R|root/myProperty|
+    }

@@ -169,7 +169,8 @@ class RawFirBuilder(val session: FirSession, val stubMode: Boolean) {
                 }
                 else -> {
                     val result = { bodyExpression }.toFirExpression("Function has no body (but should)")
-                    FirSingleExpressionBlock(result.toReturn())
+                    // basePsi is null, because 'return' is synthetic & should not be bound to some PSI
+                    FirSingleExpressionBlock(result.toReturn(basePsi = null))
                 }
             }
 

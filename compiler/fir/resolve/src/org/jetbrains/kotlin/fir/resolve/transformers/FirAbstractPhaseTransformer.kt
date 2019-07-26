@@ -30,31 +30,24 @@ abstract class FirAbstractPhaseTransformer<D>(
         }
     }
 
-    val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
+    open val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() {
-            val result = this.fir
             val requiredPhase = transformerPhase.prev
-            val availablePhase = result.resolvePhase
-            if (availablePhase < requiredPhase) {
-                var resolvePhase = availablePhase.next
-                val provider = FirProvider.getInstance(session)
-                val containingFile = when (this) {
-                    is ConeCallableSymbol -> provider.getFirCallableContainerFile(this)
-                    is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(this)
-                    else -> null
-                } ?: throw AssertionError("Cannot get container file by symbol: $this (${result.render()})")
-                do {
-                    val phaseTransformer = resolvePhase.createTransformerByPhase()
-                    containingFile.transform<FirFile, Nothing?>(phaseTransformer, null)
-                    resolvePhase = resolvePhase.next
-                } while (resolvePhase <= requiredPhase)
-            }
-            return result
+            return phasedFir(session, requiredPhase)
         }
 
     override fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
         declaration.resolvePhase = transformerPhase
 
         return super.transformDeclaration(declaration, data)
+    }
+}
+
+fun FirFile.runResolve(toPhase: FirResolvePhase, fromPhase: FirResolvePhase = FirResolvePhase.RAW_FIR) {
+    var currentPhase = fromPhase
+    while (currentPhase < toPhase) {
+        currentPhase = currentPhase.next
+        val phaseTransformer = currentPhase.createTransformerByPhase()
+        transform<FirFile, Nothing?>(phaseTransformer, null)
     }
 }

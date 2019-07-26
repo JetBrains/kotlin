@@ -72,6 +72,7 @@ import org.jetbrains.kotlin.idea.editor.AbstractMultiLineStringIndentTest
 import org.jetbrains.kotlin.idea.editor.backspaceHandler.AbstractBackspaceHandlerTest
 import org.jetbrains.kotlin.idea.editor.quickDoc.AbstractQuickDocProviderTest
 import org.jetbrains.kotlin.idea.filters.AbstractKotlinExceptionFilterTest
+import org.jetbrains.kotlin.idea.fir.AbstractFirLazyResolveTest
 import org.jetbrains.kotlin.idea.fir.AbstractFirMultiModuleResolveTest
 import org.jetbrains.kotlin.idea.folding.AbstractKotlinFoldingTest
 import org.jetbrains.kotlin.idea.hierarchy.AbstractHierarchyTest
@@ -816,6 +817,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFirMultiModuleResolveTest> {
             model("fir/multiModule", recursive = false, extension = null)
+        }
+
+        testClass<AbstractFirLazyResolveTest> {
+            model("fir/lazyResolve", extension = "test", singleClass = true, filenameStartsLowerCase = true)
         }
     }
 

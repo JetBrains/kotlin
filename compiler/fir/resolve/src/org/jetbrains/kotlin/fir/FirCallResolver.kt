@@ -18,9 +18,8 @@ import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
-import org.jetbrains.kotlin.fir.resolve.transformers.FirBodyResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.resolve.transformers.StoreNameReference
-import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
@@ -226,8 +225,10 @@ class FirCallResolver(
                 val coneSymbol = candidate.symbol
                 when {
                     coneSymbol is FirBackingFieldSymbol -> FirBackingFieldReferenceImpl(psi, coneSymbol)
-                    coneSymbol is FirVariableSymbol &&
-                            (coneSymbol !is FirPropertySymbol || coneSymbol.firUnsafe<FirMemberDeclaration>().typeParameters.isEmpty()) ->
+                    coneSymbol is FirVariableSymbol && (
+                            coneSymbol !is FirPropertySymbol ||
+                                    (coneSymbol.phasedFir(session) as FirMemberDeclaration).typeParameters.isEmpty()
+                            ) ->
                         FirResolvedCallableReferenceImpl(psi, name, coneSymbol)
                     else -> FirNamedReferenceWithCandidate(psi, name, candidate)
                 }

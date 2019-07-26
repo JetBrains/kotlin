@@ -1,0 +1,5 @@
+FILE: myProperty.kt
+    public final val myProperty: R|kotlin/Int|
+        public get(): R|kotlin/Int| {
+            ^ Int(42)
+        }

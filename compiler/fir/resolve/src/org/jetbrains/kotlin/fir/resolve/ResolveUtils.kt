@@ -178,7 +178,7 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
     val resultType = resolvedQualifier.resultType
     if (classId != null) {
         val classSymbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
-        val declaration = classSymbol.fir
+        val declaration = classSymbol.phasedFir
         if (declaration is FirClass) {
             if (declaration.classKind == ClassKind.OBJECT) {
                 return resultType.resolvedTypeFromPrototype(
@@ -235,7 +235,7 @@ fun <T : FirQualifiedAccess> BodyResolveComponents.typeFromCallee(access: T): Fi
 private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullable: Boolean): FirResolvedTypeRef {
     return when (symbol) {
         is FirCallableSymbol<*> -> {
-            val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.fir)
+            val returnType = returnTypeCalculator.tryCalculateReturnType(symbol.phasedFir)
             if (makeNullable) {
                 returnType.withReplacedConeType(
                     returnType.coneTypeUnsafe<ConeKotlinType>().withNullability(ConeNullability.NULLABLE)
@@ -245,7 +245,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
             }
         }
         is ConeClassifierSymbol -> {
-            val fir = (symbol as? AbstractFirBasedSymbol<*>)?.fir
+            val fir = (symbol as? AbstractFirBasedSymbol<*>)?.phasedFir
             // TODO: unhack
             if (fir is FirEnumEntry) {
                 (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(

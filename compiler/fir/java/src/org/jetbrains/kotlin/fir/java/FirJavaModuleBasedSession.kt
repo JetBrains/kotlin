@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirCompositeSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirDependenciesSymbolProviderImpl
 import org.jetbrains.kotlin.fir.resolve.impl.FirLibrarySymbolProviderImpl
+import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScopeProvider
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
@@ -33,6 +34,8 @@ class FirJavaModuleBasedSession(
 
     init {
         sessionProvider.sessionCache[moduleInfo] = this
+        val firProvider = FirProviderImpl(this)
+        registerComponent(FirProvider::class, firProvider)
 
         registerComponent(
             FirSymbolProvider::class,
