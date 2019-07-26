@@ -33,6 +33,7 @@ import org.jetbrains.plugins.gradle.tooling.util.SourceSetCachedFinder
 import org.jetbrains.plugins.gradle.tooling.util.resolve.DependencyResolverImpl
 
 import static org.jetbrains.plugins.gradle.tooling.ModelBuilderContext.DataProvider
+import static org.jetbrains.plugins.gradle.tooling.builder.ModelBuildersDataProviders.TASKS_PROVIDER
 
 /**
  * @author Vladislav.Soroka
@@ -47,14 +48,6 @@ class ExternalProjectBuilderImpl extends AbstractModelBuilderService {
     @Override
     Map<Project, ExternalProject> create(@NotNull Gradle gradle) {
       return new HashMap<Project, ExternalProject>()
-    }
-  }
-
-  static final DataProvider<TasksFactory> TASKS_PROVIDER = new DataProvider<TasksFactory>() {
-    @NotNull
-    @Override
-    TasksFactory create(@NotNull Gradle gradle) {
-      return new TasksFactory()
     }
   }
 
