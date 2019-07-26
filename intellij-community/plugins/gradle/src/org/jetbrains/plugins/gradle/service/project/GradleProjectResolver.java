@@ -275,7 +275,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
 
     resolverCtx.checkCancelled();
-    if(useCustomSerialization) {
+    if (useCustomSerialization) {
       allModels.initToolingSerializer();
     }
 
