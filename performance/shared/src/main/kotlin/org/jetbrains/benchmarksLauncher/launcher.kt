@@ -46,11 +46,28 @@ abstract class Launcher {
         }
     }
 
+    enum class LogLevel { DEBUG, OFF }
+
+    class Logger(val level: LogLevel = LogLevel.OFF) {
+         fun log(message: String, messageLevel: LogLevel = LogLevel.DEBUG, usePrefix: Boolean = true) {
+            if (messageLevel == level) {
+                if (usePrefix) {
+                    printStderr("[$level][${currentTime()}] $message")
+                } else {
+                    printStderr("$message")
+                }
+
+            }
+        }
+    }
+
     fun launch(numWarmIterations: Int,
                numberOfAttempts: Int,
                prefix: String = "",
                filters: Collection<String>? = null,
-               filterRegexes: Collection<String>? = null): List<BenchmarkResult> {
+               filterRegexes: Collection<String>? = null,
+               verbose: Boolean): List<BenchmarkResult> {
+        val logger = if (verbose) Logger(LogLevel.DEBUG) else Logger()
         val regexes = filterRegexes?.map { it.toRegex() } ?: listOf()
         val filterSet = filters?.toHashSet() ?: hashSetOf()
         // Filter benchmarks using given filters, or run all benchmarks if none were given.
@@ -63,6 +80,7 @@ abstract class Launcher {
         for ((name, benchmark) in runningBenchmarks) {
             val benchmarkInstance = (benchmark as? BenchmarkEntryWithInit)?.ctor?.invoke()
             var i = numWarmIterations
+            logger.log("Warm up iterations for benchmark $name\n")
             runBenchmark(benchmarkInstance, benchmark, i)
             var autoEvaluatedNumberOfMeasureIteration = 1
             while (true) {
@@ -72,8 +90,10 @@ abstract class Launcher {
                     break
                 autoEvaluatedNumberOfMeasureIteration *= 2
             }
+            logger.log("Running benchmark $name ")
             val samples = DoubleArray(numberOfAttempts)
             for (k in samples.indices) {
+                logger.log(".", usePrefix = false)
                 i = autoEvaluatedNumberOfMeasureIteration
                 val time = runBenchmark(benchmarkInstance, benchmark, i)
                 val scaledTime = time * 1.0 / autoEvaluatedNumberOfMeasureIteration
@@ -83,6 +103,7 @@ abstract class Launcher {
                         scaledTime / 1000, BenchmarkResult.Metric.EXECUTION_TIME, scaledTime / 1000,
                         k + 1, numWarmIterations))
             }
+            logger.log("\n", usePrefix = false)
         }
         return benchmarkResults
     }
@@ -107,6 +128,7 @@ class BaseBenchmarkArguments(argParser: ArgParser): BenchmarkArguments(argParser
     val filter by argParser.options(ArgType.String, shortName = "f", description = "Benchmark to run", multiple = true)
     val filterRegex by argParser.options(ArgType.String, shortName = "fr",
             description = "Benchmark to run, described by a regular expression", multiple = true)
+    val verbose by argParser.option(ArgType.Boolean, shortName = "v", description = "Verbose mode of running", defaultValue = false)
 }
 
 object BenchmarksRunner {

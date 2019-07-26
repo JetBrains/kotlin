@@ -74,6 +74,8 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var commonSrcDirs: Collection<Any> = emptyList()
     var jvmSrcDirs: Collection<Any> = emptyList()
     var nativeSrcDirs: Collection<Any> = emptyList()
+    var mingwSrcDirs: Collection<Any> = emptyList()
+    var posixSrcDirs: Collection<Any> = emptyList()
     var linkerOpts: Collection<String> = emptyList()
 }
 
@@ -107,7 +109,11 @@ open class BenchmarkingPlugin: Plugin<Project> {
             afterEvaluate {
                 benchmark.let {
                     commonMain.kotlin.srcDirs(*it.commonSrcDirs.toTypedArray())
-                    nativeMain.kotlin.srcDirs(*it.nativeSrcDirs.toTypedArray())
+                    if (HostManager.hostIsMingw) {
+                        nativeMain.kotlin.srcDirs(*(it.nativeSrcDirs + it.mingwSrcDirs).toTypedArray())
+                    } else {
+                       nativeMain.kotlin.srcDirs(*(it.nativeSrcDirs + it.posixSrcDirs).toTypedArray())
+                    }
                     jvmMain.kotlin.srcDirs(*it.jvmSrcDirs.toTypedArray())
                 }
             }
@@ -128,7 +134,7 @@ open class BenchmarkingPlugin: Plugin<Project> {
 
     private fun Project.configureNativeTarget(hostPreset: KotlinNativeTargetPreset) {
         kotlin.targetFromPreset(hostPreset, NATIVE_TARGET_NAME) {
-            compilations.getByName("main").kotlinOptions.freeCompilerArgs = project.compilerArgs + "-opt"
+            compilations.getByName("main").kotlinOptions.freeCompilerArgs = project.compilerArgs
             binaries.executable(NATIVE_EXECUTABLE_NAME, listOf(RELEASE)) {
                 if (HostManager.hostIsMingw) {
                     linkerOpts.add("-L${mingwPath}/lib")

@@ -24,6 +24,9 @@ open class RunBenchmarksExecutableTask @Inject constructor() : DefaultTask() {
     @Input
     @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
     var filterRegex: String = ""
+    @Input
+    @Option(option = "verbose", description = "Verbose mode of running benchmarks")
+    var verbose: Boolean = false
 
     private var curArgs: List<String> = emptyList()
     private val curEnvironment: MutableMap<String, Any> = mutableMapOf()
@@ -53,6 +56,9 @@ open class RunBenchmarksExecutableTask @Inject constructor() : DefaultTask() {
             it.args = curArgs + filterArgs + filterRegexArgs
             it.environment = curEnvironment
             it.workingDir(workingDir)
+            if (verbose) {
+                it.args("-v")
+            }
             if (output != null)
                 it.standardOutput = output
         }

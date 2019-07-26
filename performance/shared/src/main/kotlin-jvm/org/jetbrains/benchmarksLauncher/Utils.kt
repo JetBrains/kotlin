@@ -17,6 +17,8 @@
 package org.jetbrains.benchmarksLauncher
 
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 actual fun writeToFile(fileName: String, text: String) {
     File(fileName).printWriter().use { out ->
@@ -35,4 +37,11 @@ actual inline fun measureNanoTime(block: () -> Unit): Long {
 }
 
 actual fun cleanup() {}
+
+actual fun printStderr(message: String) {
+    System.err.print(message)
+}
+
+actual fun currentTime(): String =
+        SimpleDateFormat("HH:mm:ss").format(Date())
 

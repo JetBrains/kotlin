@@ -25,6 +25,9 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinN
     @Input
     @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
     var filterRegex: String = ""
+    @Input
+    @Option(option = "verbose", description = "Verbose mode of running benchmarks")
+    var verbose: Boolean = false
 
     private val argumentsList = mutableListOf<String>()
 
@@ -63,6 +66,9 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: KotlinN
                 it.executable = linkTask.binary.outputFile.absolutePath
                 it.args(argumentsList)
                 it.args("-f", benchmark)
+                if (verbose) {
+                    it.args("-v")
+                }
                 it.standardOutput = output
             }
             output.toString().removePrefix("[").removeSuffix("]")

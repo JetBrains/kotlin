@@ -43,7 +43,8 @@ runner.runBenchmarks(args: args, run: { (arguments: BenchmarkArguments) -> [Benc
         return swiftLauncher.launch(numWarmIterations: argumentsList.warmup,
             numberOfAttempts: argumentsList.repeat,
             prefix: argumentsList.prefix, filters: argumentsList.filter,
-            filterRegexes: argumentsList.filterRegex)
+            filterRegexes: argumentsList.filterRegex,
+            verbose: argumentsList.verbose)
     }
     return [BenchmarkResult]()
 }, parseArgs: { (args: KotlinArray,  benchmarksListAction: (() -> KotlinUnit)) -> BenchmarkArguments? in

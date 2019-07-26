@@ -44,7 +44,8 @@ kotlin {
         }
         macosMain {
             dependsOn commonMain
-            kotlin.srcDir "../shared/src/main/kotlin-native"
+            kotlin.srcDir "../shared/src/main/kotlin-native/common"
+            kotlin.srcDir "../shared/src/main/kotlin-native/posix"
             kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin-native"
         }
     }

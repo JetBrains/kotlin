@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o.
+ * Copyright 2010-2017 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +16,18 @@
 
 package org.jetbrains.benchmarksLauncher
 
-expect fun writeToFile(fileName: String, text: String)
+import platform.posix.*
+import kotlinx.cinterop.*
 
-expect fun assert(value: Boolean)
+actual fun currentTime() =
+        memScoped {
+            val timeVal = alloc<timeval>()
+            gettimeofday(timeVal.ptr, null)
+            val sec = alloc<LongVar>()
+            sec.value = timeVal.tv_sec
+            val nowtm = localtime(sec.ptr)
+            var timeBuffer = ByteArray(1024)
+            strftime(timeBuffer.refTo(0), timeBuffer.size.toULong(), "%H:%M:%S", nowtm)
 
-expect inline fun measureNanoTime(block: () -> Unit): Long
-
-expect fun cleanup()
-
-expect fun printStderr(message: String)
-
-expect fun currentTime(): String
+            timeBuffer.toKString()
+        }

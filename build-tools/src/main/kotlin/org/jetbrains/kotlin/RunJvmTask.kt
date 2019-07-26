@@ -23,6 +23,9 @@ open class RunJvmTask : JavaExec() {
     @Input
     @Option(option = "filterRegex", description = "Benchmarks to run, described by regular expressions (comma-separated)")
     var filterRegex: String = ""
+    @Input
+    @Option(option = "verbose", description = "Verbose mode of running benchmarks")
+    var verbose: Boolean = false
 
     override fun configure(configureClosure: Closure<Any>): Task {
         return super.configure(configureClosure)
@@ -33,6 +36,9 @@ open class RunJvmTask : JavaExec() {
         val filterRegexArgs = filterRegex.splitCommaSeparatedOption("-fr")
         args(filterArgs)
         args(filterRegexArgs)
+        if (verbose) {
+            args("-v")
+        }
         exec()
     }
 

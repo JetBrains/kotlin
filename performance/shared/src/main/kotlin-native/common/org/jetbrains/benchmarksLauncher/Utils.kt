@@ -18,6 +18,7 @@ package org.jetbrains.benchmarksLauncher
 
 import kotlin.native.internal.GC
 import platform.posix.*
+import kotlinx.cinterop.*
 
 actual fun writeToFile(fileName: String, text: String) {
     val file = fopen(fileName, "wt") ?: error("Cannot write file '$fileName'")
@@ -41,3 +42,10 @@ actual inline fun measureNanoTime(block: () -> Unit): Long {
 actual fun cleanup() {
     GC.collect()
 }
+
+actual fun printStderr(message: String) {
+    val STDERR = fdopen(2, "w")
+    fprintf(STDERR, message)
+    fflush(STDERR)
+}
+
