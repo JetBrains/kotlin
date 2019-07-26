@@ -180,7 +180,7 @@ public class FileBasedIndexProjectHandler implements IndexableFileSet, Disposabl
     long start = System.currentTimeMillis();
     return !index.processChangedFiles(project, new Processor<VirtualFile>() {
       int filesInProjectToBeIndexed;
-      int sizeOfFilesToBeIndexed;
+      long sizeOfFilesToBeIndexed;
 
       @Override
       public boolean process(VirtualFile file) {
