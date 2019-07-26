@@ -821,14 +821,13 @@ internal class DescriptorRendererImpl(
         renderModifier(builder, valueParameter.isCrossinline, "crossinline")
         renderModifier(builder, valueParameter.isNoinline, "noinline")
 
-        if (renderPrimaryConstructorParametersAsProperties &&
-            (valueParameter.containingDeclaration as? ClassConstructorDescriptor)?.isPrimary == true
-        ) {
+        val isPrimaryConstructor = renderPrimaryConstructorParametersAsProperties &&
+                (valueParameter.containingDeclaration as? ClassConstructorDescriptor)?.isPrimary == true
+        if (isPrimaryConstructor) {
             renderModifier(builder, actualPropertiesInPrimaryConstructor, "actual")
-            renderModifier(builder, true, "val")
         }
 
-        renderVariable(valueParameter, includeName, builder, topLevel)
+        renderVariable(valueParameter, includeName, builder, topLevel, isPrimaryConstructor)
 
         val withDefaultValue =
             defaultParameterValueRenderer != null &&
@@ -838,21 +837,27 @@ internal class DescriptorRendererImpl(
         }
     }
 
-    private fun renderValVarPrefix(variable: VariableDescriptor, builder: StringBuilder) {
-        if (variable !is ValueParameterDescriptor) {
+    private fun renderValVarPrefix(variable: VariableDescriptor, builder: StringBuilder, isInPrimaryConstructor: Boolean = false) {
+        if (isInPrimaryConstructor || variable !is ValueParameterDescriptor) {
             builder.append(renderKeyword(if (variable.isVar) "var" else "val")).append(" ")
         }
     }
 
-    private fun renderVariable(variable: VariableDescriptor, includeName: Boolean, builder: StringBuilder, topLevel: Boolean) {
+    private fun renderVariable(
+        variable: VariableDescriptor,
+        includeName: Boolean,
+        builder: StringBuilder,
+        topLevel: Boolean,
+        isInPrimaryConstructor: Boolean = false
+    ) {
         val realType = variable.type
 
         val varargElementType = (variable as? ValueParameterDescriptor)?.varargElementType
         val typeToRender = varargElementType ?: realType
-
         renderModifier(builder, varargElementType != null, "vararg")
-        if (topLevel && !startFromName) {
-            renderValVarPrefix(variable, builder)
+
+        if (isInPrimaryConstructor || topLevel && !startFromName) {
+            renderValVarPrefix(variable, builder, isInPrimaryConstructor)
         }
 
         if (includeName) {

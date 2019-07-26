@@ -364,6 +364,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         runTest("idea/testData/multiModuleQuickFix/expectClassWithSupertype/");
     }
 
+    @TestMetadata("expectClassWithVararg")
+    public void testExpectClassWithVararg() throws Exception {
+        runTest("idea/testData/multiModuleQuickFix/expectClassWithVararg/");
+    }
+
     @TestMetadata("expectCompanion")
     public void testExpectCompanion() throws Exception {
         runTest("idea/testData/multiModuleQuickFix/expectCompanion/");
