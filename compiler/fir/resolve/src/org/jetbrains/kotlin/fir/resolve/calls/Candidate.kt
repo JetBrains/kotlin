@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -44,7 +44,7 @@ enum class CandidateApplicability {
 }
 
 class Candidate(
-    val symbol: FirBasedSymbol<*>,
+    val symbol: AbstractFirBasedSymbol<*>,
     val dispatchReceiverValue: ClassDispatchReceiverValue?,
     val implicitExtensionReceiverValue: ImplicitReceiverValue?,
     val explicitReceiverKind: ExplicitReceiverKind,

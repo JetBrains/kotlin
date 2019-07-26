@@ -6,10 +6,14 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.impl.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 
-abstract class FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority: Boolean) : FirAbstractTreeTransformer() {
+abstract class FirAbstractTreeTransformerWithSuperTypes(
+    phase: FirResolvePhase,
+    reversedScopePriority: Boolean
+) : FirAbstractTreeTransformer(phase) {
     protected val towerScope = FirCompositeScope(mutableListOf(), reversedPriority = reversedScopePriority)
 
     protected inline fun <T> withScopeCleanup(crossinline l: () -> T): T {

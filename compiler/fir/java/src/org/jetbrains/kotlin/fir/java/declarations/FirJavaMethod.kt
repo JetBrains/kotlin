@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.java.declarations
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirMemberFunctionImpl
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -32,5 +33,6 @@ class FirJavaMethod(
 ) {
     init {
         status.isStatic = isStatic
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 }

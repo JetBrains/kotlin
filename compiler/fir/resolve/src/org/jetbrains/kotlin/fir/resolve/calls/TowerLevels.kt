@@ -23,9 +23,9 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirExplicitSimpleImportingScope
 import org.jetbrains.kotlin.fir.scopes.processClassifiersByNameWithAction
 import org.jetbrains.kotlin.fir.service
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -33,14 +33,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.cast
 
 interface TowerScopeLevel {
 
-    sealed class Token<out T : FirBasedSymbol<*>> {
+    sealed class Token<out T : AbstractFirBasedSymbol<*>> {
         object Properties : Token<FirPropertySymbol>()
 
         object Functions : Token<FirFunctionSymbol<*>>()
-        object Objects : Token<FirBasedSymbol<*>>()
+        object Objects : Token<AbstractFirBasedSymbol<*>>()
     }
 
-    fun <T : FirBasedSymbol<*>> processElementsByName(
+    fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -56,7 +56,7 @@ interface TowerScopeLevel {
     }
 
     object Empty : TowerScopeLevel {
-        override fun <T : FirBasedSymbol<*>> processElementsByName(
+        override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
             token: Token<T>,
             name: Name,
             explicitReceiver: ExpressionReceiverValue?,
@@ -66,7 +66,7 @@ interface TowerScopeLevel {
 }
 
 abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel {
-    protected fun FirBasedSymbol<*>.dispatchReceiverValue(): ClassDispatchReceiverValue? {
+    protected fun AbstractFirBasedSymbol<*>.dispatchReceiverValue(): ClassDispatchReceiverValue? {
         return when (this) {
             is FirNamedFunctionSymbol -> fir.dispatchReceiverValue(session)
             is FirClassSymbol -> ClassDispatchReceiverValue(fir.symbol)
@@ -92,7 +92,7 @@ class MemberScopeTowerLevel(
     val implicitExtensionReceiver: ImplicitReceiverValue? = null,
     val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
-    private fun <T : FirBasedSymbol<*>> processMembers(
+    private fun <T : AbstractFirBasedSymbol<*>> processMembers(
         output: TowerScopeLevel.TowerScopeLevelProcessor<T>,
         explicitExtensionReceiver: ExpressionReceiverValue?,
         processScopeMembers: FirScope.(processor: (T) -> ProcessorAction) -> ProcessorAction
@@ -118,7 +118,7 @@ class MemberScopeTowerLevel(
         }
     }
 
-    override fun <T : FirBasedSymbol<*>> processElementsByName(
+    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -151,7 +151,7 @@ class ScopeTowerLevel(
     val scope: FirScope,
     val implicitExtensionReceiver: ImplicitReceiverValue? = null
 ) : SessionBasedTowerLevel(session) {
-    override fun <T : FirBasedSymbol<*>> processElementsByName(
+    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,
@@ -197,7 +197,7 @@ class ScopeTowerLevel(
  *  Handles only statics and top-levels, DOES NOT handle objects/companions members
  */
 class QualifiedReceiverTowerLevel(session: FirSession) : SessionBasedTowerLevel(session) {
-    override fun <T : FirBasedSymbol<*>> processElementsByName(
+    override fun <T : AbstractFirBasedSymbol<*>> processElementsByName(
         token: TowerScopeLevel.Token<T>,
         name: Name,
         explicitReceiver: ExpressionReceiverValue?,

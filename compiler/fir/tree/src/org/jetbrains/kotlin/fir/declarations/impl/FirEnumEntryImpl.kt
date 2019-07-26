@@ -50,6 +50,8 @@ class FirEnumEntryImpl(
 
     override val arguments = mutableListOf<FirExpression>()
 
+    override var resolvePhase = FirResolvePhase.RAW_FIR
+
     override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
         superTypeRefs.clear()
         superTypeRefs.addAll(newSupertypes)

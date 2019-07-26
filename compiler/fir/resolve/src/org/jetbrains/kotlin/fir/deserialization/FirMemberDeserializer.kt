@@ -141,6 +141,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 emptyList() /* TODO */
             )
         ).apply {
+            resolvePhase = FirResolvePhase.DECLARATIONS
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
         }
     }
@@ -174,6 +175,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             initializer = null,
             delegate = null
         ).apply {
+            resolvePhase = FirResolvePhase.DECLARATIONS
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations += c.annotationDeserializer.loadPropertyAnnotations(proto, local.nameResolver)
             getter = FirDefaultPropertyGetter(c.session, null, returnTypeRef, ProtoEnumFlags.visibility(Flags.VISIBILITY.get(getterFlags)))
@@ -218,6 +220,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             receiverTypeRef = proto.receiverType(local.typeTable)?.toTypeRef(local),
             returnTypeRef = proto.returnType(local.typeTable).toTypeRef(local)
         ).apply {
+            resolvePhase = FirResolvePhase.DECLARATIONS
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += local.annotationDeserializer.loadFunctionAnnotations(proto, local.nameResolver)
@@ -269,6 +272,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 null
             )
         }.apply {
+            resolvePhase = FirResolvePhase.DECLARATIONS
             this.typeParameters += typeParameters
             valueParameters += local.memberDeserializer.valueParameters(proto.valueParameterList)
             annotations += local.annotationDeserializer.loadConstructorAnnotations(proto, local.nameResolver)

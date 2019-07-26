@@ -63,6 +63,7 @@ class FirSyntheticPropertiesScope(
             initializer = null,
             delegate = null
         ).apply {
+            resolvePhase = fir.resolvePhase
             getter = FirDefaultPropertyGetter(this@FirSyntheticPropertiesScope.session, null, returnTypeRef, fir.visibility)
             setter = FirDefaultPropertySetter(this@FirSyntheticPropertiesScope.session, null, returnTypeRef, fir.visibility)
         }

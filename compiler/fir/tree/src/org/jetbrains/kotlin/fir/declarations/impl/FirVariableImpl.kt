@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariable
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
@@ -40,6 +41,7 @@ class FirVariableImpl(
     init {
         symbol.bind(this)
         delegateFieldSymbol?.bind(this)
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 
     override val receiverTypeRef: FirTypeRef?

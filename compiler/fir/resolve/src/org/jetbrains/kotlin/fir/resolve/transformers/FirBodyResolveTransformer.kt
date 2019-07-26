@@ -43,9 +43,10 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 
 open class FirBodyResolveTransformer(
     final override val session: FirSession,
+    phase: FirResolvePhase,
     val implicitTypeOnly: Boolean,
     val scopeSession: ScopeSession = ScopeSession()
-) : FirTransformer<Any?>(), BodyResolveComponents {
+) : FirAbstractPhaseTransformer<Any?>(phase), BodyResolveComponents {
     final override val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession)
     override val labels: SetMultimap<Name, ConeKotlinType> = LinkedHashMultimap.create()
     override val noExpectedType = FirImplicitTypeRefImpl(null)
@@ -122,7 +123,10 @@ open class FirBodyResolveTransformer(
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Any?): CompositeTransformResult<FirDeclaration> {
         localScopes.lastOrNull()?.storeDeclaration(valueParameter)
-        if (valueParameter.returnTypeRef is FirImplicitTypeRef) return valueParameter.compose() // TODO
+        if (valueParameter.returnTypeRef is FirImplicitTypeRef) {
+            valueParameter.resolvePhase = transformerPhase
+            return valueParameter.compose() // TODO
+        }
         return super.transformValueParameter(valueParameter, valueParameter.returnTypeRef)
     }
 
@@ -204,7 +208,7 @@ open class FirBodyResolveTransformer(
                     qualifiedAccessExpression.resultType = callee.superTypeRef
                 } else {
                     val superTypeRef = implicitReceiverStack.filterIsInstance<ImplicitDispatchReceiverValue>().lastOrNull()
-                        ?.boundSymbol?.fir?.superTypeRefs?.firstOrNull()
+                        ?.boundSymbol?.phasedFir?.superTypeRefs?.firstOrNull()
                         ?: FirErrorTypeRefImpl(qualifiedAccessExpression.psi, "No super type")
                     qualifiedAccessExpression.resultType = superTypeRef
                     callee.replaceSuperTypeRef(superTypeRef)
@@ -641,6 +645,7 @@ open class FirBodyResolveTransformer(
         if (variable !is FirProperty) {
             localScopes.lastOrNull()?.storeDeclaration(variable)
         }
+        variable.resolvePhase = transformerPhase
         return variable.compose()
     }
 
@@ -664,6 +669,7 @@ open class FirBodyResolveTransformer(
                     property.transformAccessors()
                 }
             }
+            property.resolvePhase = transformerPhase
             property.compose()
         }
     }
@@ -687,7 +693,7 @@ open class FirBodyResolveTransformer(
                     val symbol = symbolProvider.getClassLikeSymbolByFqName(classId)!!
                     // TODO: Unify logic?
                     symbol.constructType(
-                        Array(symbol.fir.typeParameters.size) {
+                        Array(symbol.phasedFir.typeParameters.size) {
                             ConeStarProjection
                         },
                         isNullable = false
@@ -773,7 +779,7 @@ private fun inferenceComponents(session: FirSession, returnTypeCalculator: Retur
 
 
 class FirDesignatedBodyResolveTransformer(val designation: Iterator<FirElement>, session: FirSession, scopeSession: ScopeSession) :
-    FirBodyResolveTransformer(session, implicitTypeOnly = true, scopeSession = scopeSession) {
+    FirBodyResolveTransformer(session, phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true, scopeSession = scopeSession) {
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): CompositeTransformResult<E> {
         if (designation.hasNext()) {
@@ -792,7 +798,7 @@ class FirImplicitTypeBodyResolveTransformerAdapter : FirTransformer<Nothing?>() 
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(file.fileSession, implicitTypeOnly = true)
+        val transformer = FirBodyResolveTransformer(file.fileSession, phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = true)
         return file.transform(transformer, null)
     }
 }
@@ -805,7 +811,8 @@ class FirBodyResolveTransformerAdapter : FirTransformer<Nothing?>() {
     }
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
-        val transformer = FirBodyResolveTransformer(file.fileSession, implicitTypeOnly = false)
+        // Despite of real phase is EXPRESSIONS, we state IMPLICIT_TYPES here, because DECLARATIONS previous phase is OK for us
+        val transformer = FirBodyResolveTransformer(file.fileSession, phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE, implicitTypeOnly = false)
         return file.transform(transformer, null)
     }
 }

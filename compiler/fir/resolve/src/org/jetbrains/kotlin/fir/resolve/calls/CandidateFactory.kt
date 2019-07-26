@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
@@ -28,7 +29,7 @@ class CandidateFactory(
     }
 
     fun createCandidate(
-        symbol: FirBasedSymbol<*>,
+        symbol: AbstractFirBasedSymbol<*>,
         dispatchReceiverValue: ClassDispatchReceiverValue?,
         implicitExtensionReceiverValue: ImplicitReceiverValue?,
         explicitReceiverKind: ExplicitReceiverKind

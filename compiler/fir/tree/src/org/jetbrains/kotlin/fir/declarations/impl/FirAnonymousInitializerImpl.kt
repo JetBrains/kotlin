@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -19,6 +20,8 @@ class FirAnonymousInitializerImpl(
     psi: PsiElement?,
     override var body: FirBlock?
 ) : FirAnonymousInitializer, FirAbstractElement(psi) {
+    override var resolvePhase = FirResolvePhase.RAW_FIR
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         body = body?.transformSingle(transformer, data)
         return this

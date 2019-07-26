@@ -244,7 +244,7 @@ private fun BodyResolveComponents.typeFromSymbol(symbol: ConeSymbol, makeNullabl
             }
         }
         is ConeClassifierSymbol -> {
-            val fir = (symbol as? FirBasedSymbol<*>)?.fir
+            val fir = (symbol as? AbstractFirBasedSymbol<*>)?.fir
             // TODO: unhack
             if (fir is FirEnumEntry) {
                 (fir.superTypeRefs.firstOrNull() as? FirResolvedTypeRef) ?: FirErrorTypeRefImpl(

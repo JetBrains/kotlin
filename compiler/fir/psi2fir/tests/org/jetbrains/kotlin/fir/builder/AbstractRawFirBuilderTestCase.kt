@@ -16,6 +16,7 @@ import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirWrappedDelegateExpressionImpl
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -69,6 +70,9 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         RawFirBuilder(object : FirSessionBase(null) {}, stubMode).buildFirFile(this)
 
     private fun FirElement.traverseChildren(result: MutableSet<FirElement> = hashSetOf()): MutableSet<FirElement> {
+        if (this is FirResolvePhase) {
+            return result
+        }
         if (!result.add(this)) {
             return result
         }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -30,6 +31,8 @@ abstract class FirDefaultPropertyAccessor(
     visibility: Visibility
 ) : FirAbstractElement(psi), FirPropertyAccessor {
     override var status = FirDeclarationStatusImpl(visibility, Modality.FINAL)
+
+    override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 
     final override val body: FirBlock? =
         null

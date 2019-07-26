@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassType
@@ -36,7 +36,7 @@ abstract class TowerDataConsumer {
     }
 }
 
-class QualifiedReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
+class QualifiedReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
@@ -146,7 +146,7 @@ class AccumulatingTowerDataConsumer(
     }
 }
 
-class ExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
+class ExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,
@@ -249,7 +249,7 @@ class ExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
     }
 }
 
-class NoExplicitReceiverTowerDataConsumer<T : FirBasedSymbol<*>>(
+class NoExplicitReceiverTowerDataConsumer<T : AbstractFirBasedSymbol<*>>(
     val session: FirSession,
     val name: Name,
     val token: TowerScopeLevel.Token<T>,

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -28,10 +26,10 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.types.Variance
 
 class FirCallCompletionResultsWriterTransformer(
-    val session: FirSession,
+    override val session: FirSession,
     private val finalSubstitutor: ConeSubstitutor,
     private val typeCalculator: ReturnTypeCalculator
-) : FirAbstractTreeTransformer() {
+) : FirAbstractTreeTransformer(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
 
     override fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
@@ -41,7 +39,7 @@ class FirCallCompletionResultsWriterTransformer(
             qualifiedAccessExpression.calleeReference as? FirNamedReferenceWithCandidate ?: return qualifiedAccessExpression.compose()
         calleeReference.candidate.substitutor
 
-        val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.candidateSymbol.firUnsafe())
+        val typeRef = typeCalculator.tryCalculateReturnType(calleeReference.candidateSymbol.phasedFir as FirTypedDeclaration)
 
         val initialType = calleeReference.candidate.substitutor.substituteOrNull(typeRef.type)
         val finalType = finalSubstitutor.substituteOrNull(initialType)
@@ -80,7 +78,7 @@ class FirCallCompletionResultsWriterTransformer(
         val functionCall = functionCall.transformArguments(this, data) as FirFunctionCall
 
         val subCandidate = calleeReference.candidate
-        val declaration = subCandidate.symbol.firUnsafe<FirCallableMemberDeclaration<*>>()
+        val declaration = subCandidate.symbol.phasedFir as FirCallableMemberDeclaration<*>
         val newTypeParameters = declaration.typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }
             .map { subCandidate.substitutor.substituteOrSelf(it) }
             .map { finalSubstitutor.substituteOrSelf(it) }

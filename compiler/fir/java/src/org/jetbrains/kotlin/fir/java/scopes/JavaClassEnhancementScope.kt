@@ -175,6 +175,7 @@ class JavaClassEnhancementScope(
                     this.name, newTypeRef,
                     defaultValue ?: newDefaultValue, isCrossinline, isNoinline, isVararg
                 ).apply {
+                    resolvePhase = FirResolvePhase.DECLARATIONS
                     annotations += valueParameter.annotations
                 }
             }
@@ -197,6 +198,7 @@ class JavaClassEnhancementScope(
                         newReceiverTypeRef, newReturnTypeRef
                     )
                 }.apply {
+                    resolvePhase = FirResolvePhase.DECLARATIONS
                     this.valueParameters += newValueParameters
                     this.typeParameters += firMethod.typeParameters
                 }
@@ -207,6 +209,7 @@ class JavaClassEnhancementScope(
                 else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId),
                 name, newReceiverTypeRef, newReturnTypeRef
             ).apply {
+                resolvePhase = FirResolvePhase.DECLARATIONS
                 this.valueParameters += newValueParameters
                 this.typeParameters += firMethod.typeParameters
             }

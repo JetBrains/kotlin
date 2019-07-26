@@ -95,6 +95,7 @@ class FirClassSubstitutionScope(
                     baseFunction.receiverTypeRef?.withReplacedConeType(newReceiverType),
                     baseFunction.returnTypeRef.withReplacedConeType(newReturnType)
                 ).apply {
+                    resolvePhase = baseFunction.resolvePhase
                     status = baseFunction.status as FirDeclarationStatusImpl
                     valueParameters += baseFunction.valueParameters.zip(
                         newParameterTypes ?: List(baseFunction.valueParameters.size) { null }
