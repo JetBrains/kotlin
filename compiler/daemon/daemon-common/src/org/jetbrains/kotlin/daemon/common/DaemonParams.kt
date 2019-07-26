@@ -186,14 +186,12 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 
 data class DaemonJVMOptions(
         var maxMemory: String = "",
-        var maxPermSize: String = "",
         var maxMetaspaceSize: String = "",
         var reservedCodeCacheSize: String = "",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
-                       StringPropMapper(this, DaemonJVMOptions::maxPermSize, listOf("XX:MaxPermSize"), mergeDelimiter = "="),
                        StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
                        StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
                        restMapper)
@@ -368,7 +366,7 @@ private fun String.memToBytes(): Long? =
 
 
 private val daemonJVMOptionsMemoryProps =
-    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxPermSize, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize)
+    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize)
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
         daemonJVMOptionsMemoryProps
