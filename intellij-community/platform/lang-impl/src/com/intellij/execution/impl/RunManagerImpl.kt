@@ -67,7 +67,7 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
     internal val LOG = logger<RunManagerImpl>()
 
     @JvmStatic
-    fun getInstanceImpl(project: Project) = RunManager.getInstance(project) as RunManagerImpl
+    fun getInstanceImpl(project: Project) = getInstance(project) as RunManagerImpl
 
     @JvmStatic
     fun canRunConfiguration(environment: ExecutionEnvironment): Boolean {
@@ -1076,7 +1076,7 @@ open class RunManagerImpl @JvmOverloads constructor(val project: Project, shared
       return
     }
 
-    val otherRunManager = RunManagerImpl.getInstanceImpl(project)
+    val otherRunManager = getInstanceImpl(project)
     workspaceSchemeManagerProvider.copyIfNotExists(otherRunManager.workspaceSchemeManagerProvider)
     otherRunManager.lock.write {
       otherRunManager.templateIdToConfiguration.clear()
