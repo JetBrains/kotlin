@@ -19,7 +19,6 @@ import com.intellij.uiDesigner.UIFormXmlConstants;
 import org.jdom.Element;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 /**
  * @author yole

@@ -20,8 +20,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.search.GlobalSearchScope;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.tree.DefaultMutableTreeNode;
-
 public class DirtyScopeTestInfo {
   private final Module[] myDirtyModules;
   private final Module[] myDirtyUnsavedModules;

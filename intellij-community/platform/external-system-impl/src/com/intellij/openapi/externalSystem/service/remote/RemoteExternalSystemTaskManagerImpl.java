@@ -22,7 +22,6 @@ import com.intellij.openapi.externalSystem.task.ExternalSystemTaskManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.rmi.RemoteException;
 import java.util.List;
 
 /**

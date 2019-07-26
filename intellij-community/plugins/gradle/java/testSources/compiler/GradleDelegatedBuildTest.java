@@ -4,7 +4,6 @@ package org.jetbrains.plugins.gradle.compiler;
 import com.intellij.openapi.roots.OrderEnumerator;
 import com.intellij.openapi.vfs.VirtualFileManager;
 import com.intellij.testFramework.EdtTestUtil;
-import com.intellij.util.PathUtil;
 import com.intellij.util.PathsList;
 import org.junit.Test;
 

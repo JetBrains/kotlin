@@ -21,7 +21,6 @@ import com.intellij.openapi.compiler.make.ManifestBuilder;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.jar.Attributes;
 

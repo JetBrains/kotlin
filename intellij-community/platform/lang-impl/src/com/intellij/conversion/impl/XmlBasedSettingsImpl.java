@@ -17,7 +17,6 @@ package com.intellij.conversion.impl;
 
 import com.intellij.conversion.CannotConvertException;
 import com.intellij.conversion.XmlBasedSettings;
-import org.jdom.Document;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 

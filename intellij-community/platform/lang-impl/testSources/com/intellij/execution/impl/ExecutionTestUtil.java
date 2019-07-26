@@ -21,7 +21,6 @@ import com.intellij.execution.process.ScriptRunnerUtil;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.openapi.util.Conditions;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.util.Function;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;

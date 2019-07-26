@@ -23,7 +23,6 @@ import com.intellij.openapi.externalSystem.service.notification.ExternalSystemPr
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.rmi.RemoteException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;

@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiReference;
 import com.intellij.psi.filters.ElementFilter;
 import com.intellij.util.ReflectionUtil;
-import java.util.HashMap;
 import org.jetbrains.annotations.NonNls;
 
 import java.util.*;

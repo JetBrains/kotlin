@@ -21,8 +21,6 @@ import com.intellij.openapi.util.JDOMExternalizable;
 import org.jdom.Element;
 import org.jetbrains.annotations.NonNls;
 
-import java.util.Iterator;
-
 /**
  * @author dyoma
  */

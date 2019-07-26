@@ -17,10 +17,8 @@ package com.intellij.refactoring.changeSignature;
 
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiElement;
-import com.intellij.ui.ColoredTreeCellRenderer;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**

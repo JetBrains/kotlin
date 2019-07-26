@@ -16,9 +16,7 @@
 
 package com.intellij.application.options.colors;
 
-import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.psi.codeStyle.DisplayPrioritySortable;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * @author Rustam Vishnyakov

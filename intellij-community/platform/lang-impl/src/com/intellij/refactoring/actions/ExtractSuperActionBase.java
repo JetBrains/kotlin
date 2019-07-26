@@ -16,12 +16,6 @@
 
 package com.intellij.refactoring.actions;
 
-import com.intellij.lang.Language;
-import com.intellij.lang.LanguageRefactoringSupport;
-import com.intellij.psi.PsiElement;
-import com.intellij.refactoring.RefactoringActionHandler;
-import com.intellij.refactoring.lang.ElementsHandler;
-
 public abstract class ExtractSuperActionBase extends BasePlatformRefactoringAction {
 
   @Override

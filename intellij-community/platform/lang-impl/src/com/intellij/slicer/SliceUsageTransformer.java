@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 
 /**
  * This interface is used to convert SliceUsage from one language to another for the purpose of building multi-language dataflow graphs. <br/>

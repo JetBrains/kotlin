@@ -12,7 +12,6 @@ import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
 import com.intellij.ui.tabs.newImpl.TabLabel;
 import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
-import com.intellij.util.ui.JBUI;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
