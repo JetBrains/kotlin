@@ -129,6 +129,12 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
     var newInference: Boolean by FreezableVar(false)
 
     @Argument(
+        value = "-Xinline-classes",
+        description = "Enable experimental inline classes"
+    )
+    var inlineClasses: Boolean by FreezableVar(false)
+
+    @Argument(
         value = "-Xlegacy-smart-cast-after-try",
         description = "Allow var smart casts despite assignment in try block"
     )
@@ -324,6 +330,10 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             if (newInference) {
                 put(LanguageFeature.NewInference, LanguageFeature.State.ENABLED)
                 put(LanguageFeature.SamConversionPerArgument, LanguageFeature.State.ENABLED)
+            }
+
+            if (inlineClasses) {
+                put(LanguageFeature.InlineClasses, LanguageFeature.State.ENABLED)
             }
 
             if (legacySmartCastAfterTry) {
