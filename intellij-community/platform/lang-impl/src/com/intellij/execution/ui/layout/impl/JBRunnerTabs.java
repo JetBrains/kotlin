@@ -7,9 +7,14 @@ import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
 import com.intellij.ui.awt.RelativePoint;
-import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.newImpl.SingleHeightTabs;
+import com.intellij.ui.tabs.JBTabPainter;
+import com.intellij.ui.tabs.JBTabsBorder;
+import com.intellij.ui.tabs.JBTabsFactory;
+import com.intellij.ui.tabs.TabInfo;
+import com.intellij.ui.tabs.newImpl.DefaultTabPainterAdapter;
+import com.intellij.ui.tabs.newImpl.JBEditorTabs;
 import com.intellij.ui.tabs.newImpl.TabLabel;
+import com.intellij.ui.tabs.newImpl.TabPainterAdapter;
 import com.intellij.ui.tabs.newImpl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.newImpl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
@@ -22,7 +27,7 @@ import java.util.Map;
 /**
  * @author Dennis.Ushakov
  */
-public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
+public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
     IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
     return JBTabsFactory.getUseNewTabs()
@@ -31,8 +36,8 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
   }
 
   @Override
-  protected JBTabPainter createTabPainter() {
-    return JBTabPainter.getDEBUGGER();
+  protected TabPainterAdapter createTabPainterAdapter() {
+    return new DefaultTabPainterAdapter(JBTabPainter.getDEBUGGER());
   }
 
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
@@ -109,7 +114,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   @Override
   protected TabLabel createTabLabel(TabInfo info) {
-    return new SingleHeightLabel(this, info) {
+    return new TabLabel(this, info) {
       @Override
       public void setTabActions(ActionGroup group) {
         super.setTabActions(group);
