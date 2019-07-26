@@ -172,7 +172,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
         rootModel: ModifiableRootModel,
         testScope: Boolean
     ) {
-        val legacyMode = !Registry.get("kotlin.android.import.mpp.all.transitive").asBoolean()
+        val legacyMode = !Registry.`is`("kotlin.android.import.mpp.all.transitive", true)
         val dependeeModuleNodes = getDependeeModuleNodes(moduleNode, projectNode, modelsProvider, testScope)
         val relevantNodes = dependeeModuleNodes
             .flatMap { ExternalSystemApiUtil.getChildren(it, GradleSourceSetData.KEY) }
