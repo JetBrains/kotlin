@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.TestFixtureExtension
 import org.jetbrains.kotlin.idea.util.ProjectRootsUtil
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -291,9 +292,10 @@ internal fun findUsages(
         val processor = CommonProcessors.CollectProcessor<UsageInfo>()
         for (psiElement in handler.primaryElements + handler.secondaryElements) {
             if (highlightingMode) {
-                //TODO: should findReferencesToHighlight work outside read-action or it makes no sense?
-                for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
-                    processor.process(UsageInfo(reference))
+                project.runReadActionInSmartMode {
+                    for (reference in handler.findReferencesToHighlight(psiElement, options.searchScope)) {
+                        processor.process(UsageInfo(reference))
+                    }
                 }
             } else {
                 ProgressManager.getInstance().run(object : Task(project, "", false) {
