@@ -37,3 +37,8 @@ val List<String>.toUnresolvedLibraries
         val name = it.substringBeforeLast('@')
         UnresolvedLibrary(name, version)
     }
+
+// TODO: place me properly and figure out the policy for commonized metadata.
+interface PackageAccessedHandler {
+    fun markPackageAccessed(fqName: String)
+}

@@ -11,6 +11,7 @@ const val KLIB_PROPERTY_LIBRARY_VERSION = "library_version"
 const val KLIB_PROPERTY_UNIQUE_NAME = "unique_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
+const val KLIB_PROPERTY_INTEROP = "interop"
 /**
  * Abstractions for getting access to the information stored inside of Kotlin/Native library.
  */
@@ -51,3 +52,8 @@ val BaseKotlinLibrary.unresolvedDependencies: List<UnresolvedLibrary>
             }
 
 interface KotlinLibrary : BaseKotlinLibrary, MetadataLibrary, IrLibrary
+
+// TODO: should ve move it to Native?
+val KotlinLibrary.isInterop
+    get() = manifestProperties.getProperty(KLIB_PROPERTY_INTEROP) == "true"
+

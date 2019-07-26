@@ -23,7 +23,7 @@ class JsIrLinker(
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable
 ) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null, PUBLIC_LOCAL_UNIQ_ID_EDGE),
-    DescriptorUniqIdAware by JsDescriptorUniqIdAware {
+    DescriptorUniqIdAware by DeserializedDescriptorUniqIdAware {
 
     override val descriptorReferenceDeserializer =
         JsDescriptorReferenceDeserializer(currentModule, mangler, builtIns)

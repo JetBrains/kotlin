@@ -10,6 +10,10 @@ import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
+import org.jetbrains.kotlin.backend.common.serialization.metadata.JsKlibMetadataParts
+import org.jetbrains.kotlin.backend.common.serialization.metadata.KlibMetadataSerializationUtil
+import org.jetbrains.kotlin.backend.common.serialization.metadata.createJsKlibMetadataPackageFragmentProvider
+import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -231,11 +235,12 @@ private fun loadKlibMetadata(
         capabilities = mapOf(JS_KLIBRARY_CAPABILITY to moduleId)
     )
     if (isBuiltIn) builtIns.builtInsModule = md
-    val currentModuleFragmentProvider = createJsKlibMetadataPackageFragmentProvider(
-        storageManager, md, parts.header, parts.body, metadataVersion,
-        CompilerDeserializationConfiguration(languageVersionSettings),
-        lookupTracker
-    )
+    val currentModuleFragmentProvider =
+        createJsKlibMetadataPackageFragmentProvider(
+            storageManager, md, parts.header, parts.body, metadataVersion,
+            CompilerDeserializationConfiguration(languageVersionSettings),
+            lookupTracker
+        )
 
     val packageFragmentProvider = if (isBuiltIn) {
         val functionFragmentProvider = functionInterfacePackageFragmentProvider(storageManager, md)
@@ -262,8 +267,9 @@ private class ModulesStructure(
         allDependencies.find { it.moduleName == name } ?: error("Module is not found: $name")
 
     val moduleDependencies: Map<KotlinLibrary, List<KotlinLibrary>> =
-        deserializedModuleParts.mapValues { (_, parts) ->
-            parts.importedModules.map(::findModuleByName)
+        deserializedModuleParts.mapValues { (klib, _) ->
+            //parts.importedModules.map(::findModuleByName)
+            klib.unresolvedDependencies.map { findModuleByName(it.path) }
         }
 
     val builtInsDep = allDependencies.find { it.isBuiltIns }

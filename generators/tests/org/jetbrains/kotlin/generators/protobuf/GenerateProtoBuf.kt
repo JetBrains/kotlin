@@ -33,7 +33,7 @@ import kotlin.system.exitProcess
 // * You can also download source and build it yourself (https://code.google.com/p/protobuf/downloads/list)
 //
 // You may need to provide custom path to protoc executable, just modify this constant:
-private const val PROTOC_EXE = "protoc"
+private const val PROTOC_EXE = "/Users/jetbrains/.gradle/caches/modules-2/files-2.1/com.google.protobuf/protoc/2.6.1/3af259e4f585267a07f5ed6706b27437335b5b96/protoc-2.6.1-osx-x86_64.exe"
 
 class ProtoPath(val file: String, val generateDebug: Boolean = true) {
     val outPath: String = File(file).parent
@@ -59,11 +59,7 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("core/metadata.jvm/src/jvm_metadata.proto"),
     ProtoPath("core/metadata.jvm/src/jvm_module.proto"),
     ProtoPath("build-common/src/java_descriptors.proto"),
-
-    // TODO drop this scheme, 'compiler/ir/serialization.js/src/js.proto' is the actual one
-    ProtoPath("compiler/ir/backend.js/src/js.proto", false),
-
-    ProtoPath("compiler/ir/serialization.js/src/js.proto", false),
+    ProtoPath("compiler/ir/backend.common/src/KlibMetadataProtoBuf.proto", false),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false)
 )
 
