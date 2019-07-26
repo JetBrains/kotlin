@@ -87,6 +87,10 @@ public abstract class ModelsHolder<K extends Model,V>  implements Serializable {
       Map.Entry<String, Object> entry = iterator.next();
       String key = entry.getKey();
       if (key.startsWith(keyPrefix)) {
+        if (!(entry.getValue() instanceof byte[])) {
+          iterator.remove();
+          continue;
+        }
         try {
           T deserializedData = serializer.read((byte[])entry.getValue(), modelClazz);
           if (modelClazz.isInstance(deserializedData)) {
