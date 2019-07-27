@@ -1,4 +1,4 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: TRUE
 1<caret>
 
 // SKIP_ANALYZE_CHECK

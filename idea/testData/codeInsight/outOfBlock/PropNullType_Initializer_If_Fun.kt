@@ -1,6 +1,4 @@
-// TRUE
-
-// Problem with lazy initialization of nullable properties
+// OUT_OF_CODE_BLOCK: FALSE
 
 val test: Int? = if (true) {
     fun test() {
@@ -10,5 +8,3 @@ val test: Int? = if (true) {
 else {
 
 }
-
-// SKIP_ANALYZE_CHECK

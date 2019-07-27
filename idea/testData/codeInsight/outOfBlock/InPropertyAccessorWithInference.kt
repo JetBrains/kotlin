@@ -1,6 +1,6 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: TRUE
 val test : Int
     get() = <caret>12
 
-// TODO
+// TODO: Investigate
 // SKIP_ANALYZE_CHECK

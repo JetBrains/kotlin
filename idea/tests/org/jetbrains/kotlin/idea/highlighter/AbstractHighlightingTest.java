@@ -18,12 +18,17 @@ import java.util.List;
 
 public abstract class AbstractHighlightingTest extends KotlinLightCodeInsightFixtureTestCase {
 
+    public static final String NO_CHECK_INFOS_PREFIX = "// NO_CHECK_INFOS";
+    public static final String NO_CHECK_WEAK_WARNINGS_PREFIX = "// NO_CHECK_WEAK_WARNINGS";
+    public static final String NO_CHECK_WARNINGS_PREFIX = "// NO_CHECK_WARNINGS";
+    public static final String EXPECTED_DUPLICATED_HIGHLIGHTING_PREFIX = "// EXPECTED_DUPLICATED_HIGHLIGHTING";
+
     protected void doTest(String unused) throws Exception {
         String fileText = FileUtil.loadFile(new File(testPath()), true);
-        boolean checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_INFOS");
-        boolean checkWeakWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WEAK_WARNINGS");
-        boolean checkWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_CHECK_WARNINGS");
-        boolean expectedDuplicatedHighlighting = InTextDirectivesUtils.isDirectiveDefined(fileText, "// EXPECTED_DUPLICATED_HIGHLIGHTING");
+        boolean checkInfos = !InTextDirectivesUtils.isDirectiveDefined(fileText, NO_CHECK_INFOS_PREFIX);
+        boolean checkWeakWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, NO_CHECK_WEAK_WARNINGS_PREFIX);
+        boolean checkWarnings = !InTextDirectivesUtils.isDirectiveDefined(fileText, NO_CHECK_WARNINGS_PREFIX);
+        boolean expectedDuplicatedHighlighting = InTextDirectivesUtils.isDirectiveDefined(fileText, EXPECTED_DUPLICATED_HIGHLIGHTING_PREFIX);
 
         myFixture.configureByFile(fileName());
 

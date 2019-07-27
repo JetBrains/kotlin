@@ -31,7 +31,16 @@ class BasicCompletionHandlerTest : CompletionHandlerTestBase(){
 
     private fun doTest(time: Int, lookupString: String?, itemText: String?, tailText: String?, completionChar: Char) {
         fixture.configureByFile(fileName())
-        doTestWithTextLoaded(CompletionType.BASIC, time, lookupString, itemText, tailText, completionChar.toString(), fileName() + ".after")
+        doTestWithTextLoaded(
+            myFixture,
+            CompletionType.BASIC,
+            time,
+            lookupString,
+            itemText,
+            tailText,
+            completionChar.toString(),
+            fileName() + ".after"
+        )
     }
 
     fun testClassCompletionImport() = doTest(2, "SortedSet", null, '\n')

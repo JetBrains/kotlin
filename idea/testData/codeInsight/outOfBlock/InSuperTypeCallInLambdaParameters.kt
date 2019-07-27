@@ -1,4 +1,4 @@
-// FALSE
+// OUT_OF_CODE_BLOCK: FALSE
 
 open class A(a: () -> Unit) {
     constructor(f: (String) -> Unit) : this({ -> f("") })

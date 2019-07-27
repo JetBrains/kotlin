@@ -2,11 +2,10 @@
 
 class A {
     fun foo(): Int = 12
+
+    fun bar(): Int = foo() + <caret>
 }
 
-class B(val a: A) {
-    val prop1 get() = a.fo<caret>o()
-}
-
+// TYPE: 1
 // TODO
 // SKIP_ANALYZE_CHECK

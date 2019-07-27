@@ -34,12 +34,12 @@ open class DelegatingBindingTrace(
     allowSliceRewrite: Boolean = false
 ) : BindingTrace {
 
-    private val map = if (BindingTraceContext.TRACK_REWRITES && !allowSliceRewrite)
+    protected val map = if (BindingTraceContext.TRACK_REWRITES && !allowSliceRewrite)
         TrackingSlicedMap(BindingTraceContext.TRACK_WITH_STACK_TRACES)
     else
         SlicedMapImpl(allowSliceRewrite)
 
-    private val mutableDiagnostics: MutableDiagnosticsWithSuppression?
+    protected val mutableDiagnostics: MutableDiagnosticsWithSuppression?
 
     private inner class MyBindingContext : BindingContext {
         override fun getDiagnostics(): Diagnostics = mutableDiagnostics ?: Diagnostics.EMPTY
@@ -99,16 +99,15 @@ open class DelegatingBindingTrace(
         record(slice, key, true)
     }
 
-    override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? {
-        val value = map.get(slice, key)
-        if (slice is SetSlice<*>) {
-            assert(value != null)
-            if (value != SetSlice.DEFAULT) return value
-        } else if (value != null) {
-            return value
-        }
+    override fun <K, V> get(slice: ReadOnlySlice<K, V>, key: K): V? =
+        selfGet(slice, key) ?: parentContext.get(slice, key)
 
-        return parentContext.get(slice, key)
+    protected fun <K, V> selfGet(slice: ReadOnlySlice<K, V>, key: K): V? {
+        val value = map.get(slice, key)
+        return if (slice is SetSlice<*>) {
+            assert(value != null)
+            if (value != SetSlice.DEFAULT) value else null
+        } else value
     }
 
     override fun <K, V> getKeys(slice: WritableSlice<K, V>): Collection<K> {
@@ -145,7 +144,7 @@ open class DelegatingBindingTrace(
         BindingContextUtils.addOwnDataTo(trace, filter, commitDiagnostics, map, mutableDiagnostics)
     }
 
-    fun clear() {
+    open fun clear() {
         map.clear()
         mutableDiagnostics?.clear()
     }

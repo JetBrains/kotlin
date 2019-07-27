@@ -107,7 +107,7 @@ class CompletionBindingContextProvider(project: Project) {
         val inStatement = position.findStatementInBlock()
         val block = inStatement?.parent as KtBlockExpression?
         val prevStatement = inStatement?.siblings(forward = false, withItself = false)?.firstIsInstanceOrNull<KtExpression>()
-        val modificationScope = inStatement?.let { KotlinCodeBlockModificationListener.getInsideCodeBlockModificationScope(it) }
+        val modificationScope = inStatement?.let { KotlinCodeBlockModificationListener.getInsideCodeBlockModificationScope(it)?.element }
 
         val psiElementsBeforeAndAfter = modificationScope?.let { collectPsiElementsBeforeAndAfter(modificationScope, inStatement) }
 

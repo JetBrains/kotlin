@@ -1,4 +1,4 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: FALSE
 
 class A {
     init {
@@ -7,6 +7,3 @@ class A {
         }
     }
 }
-
-// TODO
-// SKIP_ANALYZE_CHECK

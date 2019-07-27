@@ -246,23 +246,14 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
         val specialModuleInfo = files.map(KtFile::getModuleInfo).toSet().single()
         val settings = specialModuleInfo.platformSettings(specialModuleInfo.platform ?: targetPlatform)
 
-        // File copies are created during completion and receive correct modification events through POM.
         // Dummy files created e.g. by J2K do not receive events.
-        val filesModificationTracker = if (files.all { it.originalFile != it }) {
-            ModificationTracker {
-                files.sumByLong { it.outOfBlockModificationCount }
-            }
+        val dependenciesForSyntheticFileCache = if (files.all { it.originalFile != it }) {
+            emptyList()
         } else {
-            ModificationTracker {
-                files.sumByLong { it.outOfBlockModificationCount + it.modificationStamp }
-            }
+            listOf(ModificationTracker {
+                files.sumByLong { it.modificationStamp }
+            })
         }
-
-        val dependenciesForSyntheticFileCache =
-            listOf(
-                KotlinCodeBlockModificationListener.getInstance(project).kotlinOutOfCodeBlockTracker,
-                filesModificationTracker
-            )
 
         val resolverDebugName =
             "$resolverForSpecialInfoName $specialModuleInfo for files ${files.joinToString { it.name }} for platform $targetPlatform"

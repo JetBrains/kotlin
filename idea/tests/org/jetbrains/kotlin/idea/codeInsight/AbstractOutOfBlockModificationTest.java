@@ -26,11 +26,15 @@ import java.io.IOException;
 
 public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCodeInsightFixtureTestCase {
 
+    public static final String OUT_OF_CODE_BLOCK_DIRECTIVE = "OUT_OF_CODE_BLOCK:";
+    public static final String SKIP_ANALYZE_CHECK_DIRECTIVE = "SKIP_ANALYZE_CHECK";
+    public static final String TYPE_DIRECTIVE = "TYPE:";
+
     protected void doTest(String unused) throws IOException {
         myFixture.configureByFile(fileName());
 
         boolean expectedOutOfBlock = getExpectedOutOfBlockResult();
-        boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), "SKIP_ANALYZE_CHECK");
+        boolean isSkipCheckDefined = InTextDirectivesUtils.isDirectiveDefined(myFixture.getFile().getText(), SKIP_ANALYZE_CHECK_DIRECTIVE);
 
         assertTrue("It's allowed to skip check with analyze only for tests where out-of-block is expected",
                    !isSkipCheckDefined || expectedOutOfBlock);
@@ -57,7 +61,7 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
 
         assertEquals("Result for out of block test is differs from expected on element in file:\n"
                  + FileUtil.loadFile(testDataFile()),
-                     expectedOutOfBlock, oobBeforeType != oobAfterCount);
+                 expectedOutOfBlock, oobBeforeType != oobAfterCount);
 
         if (!isSkipCheckDefined) {
             checkOOBWithDescriptorsResolve(expectedOutOfBlock);
@@ -65,13 +69,9 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
     }
 
     private void checkOOBWithDescriptorsResolve(boolean expectedOutOfBlock) {
-        ApplicationManager.getApplication().runReadAction(new Runnable() {
-            @Override
-            public void run() {
-                ((PsiModificationTrackerImpl) PsiManager.getInstance(myFixture.getProject()).getModificationTracker())
-                        .incOutOfCodeBlockModificationCounter();
-            }
-        });
+        ApplicationManager.getApplication().runReadAction(
+                () -> ((PsiModificationTrackerImpl) PsiManager.getInstance(myFixture.getProject()).getModificationTracker())
+                        .incOutOfCodeBlockModificationCounter());
 
         PsiElement updateElement = myFixture.getFile().findElementAt(myFixture.getCaretOffset() - 1);
         KtExpression ktExpression = PsiTreeUtil.getParentOfType(updateElement, KtExpression.class, false);
@@ -104,7 +104,7 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
 
     private String getStringToType() {
         String text = myFixture.getDocument(myFixture.getFile()).getText();
-        String typeDirectives = InTextDirectivesUtils.findStringWithPrefixes(text, "TYPE:");
+        String typeDirectives = InTextDirectivesUtils.findStringWithPrefixes(text, TYPE_DIRECTIVE);
 
         return typeDirectives != null ? StringUtil.unescapeStringCharacters(typeDirectives) : "a";
     }
@@ -112,17 +112,12 @@ public abstract class AbstractOutOfBlockModificationTest extends KotlinLightCode
     private boolean getExpectedOutOfBlockResult() {
         String text = myFixture.getDocument(myFixture.getFile()).getText();
 
-        boolean expectedOutOfBlock = false;
-        if (text.startsWith("// TRUE")) {
-            expectedOutOfBlock = true;
-        }
-        else if (text.startsWith("// FALSE")) {
-            expectedOutOfBlock = false;
-        }
-        else {
-            fail("Expectation of code block result test should be configured with " +
-                 "\"// TRUE\" or \"// FALSE\" directive in the beginning of the file");
-        }
-        return expectedOutOfBlock;
+        String outOfCodeBlockDirective = InTextDirectivesUtils.findStringWithPrefixes(text, OUT_OF_CODE_BLOCK_DIRECTIVE);
+        assertNotNull(fileName() +
+                      ": Expectation of code block result test should be configured with " +
+                      "\"// " + OUT_OF_CODE_BLOCK_DIRECTIVE + " TRUE\" or " +
+                      "\"// " + OUT_OF_CODE_BLOCK_DIRECTIVE + " FALSE\" directive in the file",
+                      outOfCodeBlockDirective);
+        return Boolean.parseBoolean(outOfCodeBlockDirective);
     }
 }

@@ -1,4 +1,4 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: TRUE
 // SKIP_ANALYZE_CHECK
 
 fun test() {<caret>

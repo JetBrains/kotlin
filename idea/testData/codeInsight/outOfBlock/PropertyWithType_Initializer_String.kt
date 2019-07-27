@@ -1,5 +1,3 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: FALSE
 
 val test: String = "<caret>"
-
-// SKIP_ANALYZE_CHECK

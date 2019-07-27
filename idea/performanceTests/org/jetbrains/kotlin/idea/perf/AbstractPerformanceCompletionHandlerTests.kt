@@ -12,6 +12,13 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.idea.completion.test.ExpectedCompletionUtils
 import org.jetbrains.kotlin.idea.completion.test.configureWithExtraFile
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.CODE_STYLE_SETTING_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.COMPLETION_CHARS_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.COMPLETION_CHAR_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.ELEMENT_TEXT_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.INVOCATION_COUNT_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.LOOKUP_STRING_PREFIX
+import org.jetbrains.kotlin.idea.completion.test.handlers.AbstractCompletionHandlerTest.Companion.TAIL_TEXT_PREFIX
 import org.jetbrains.kotlin.idea.core.formatter.KotlinCodeStyleSettings
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.configureCompilerOptions
@@ -28,14 +35,6 @@ abstract class AbstractPerformanceCompletionHandlerTests(
     private val defaultCompletionType: CompletionType,
     private val note: String = ""
 ) : CompletionHandlerTestBase() {
-
-    private val INVOCATION_COUNT_PREFIX = "INVOCATION_COUNT:"
-    private val LOOKUP_STRING_PREFIX = "ELEMENT:"
-    private val ELEMENT_TEXT_PREFIX = "ELEMENT_TEXT:"
-    private val TAIL_TEXT_PREFIX = "TAIL_TEXT:"
-    private val COMPLETION_CHAR_PREFIX = "CHAR:"
-    private val COMPLETION_CHARS_PREFIX = "CHARS:"
-    private val CODE_STYLE_SETTING_PREFIX = "CODE_STYLE_SETTING:"
 
     companion object {
         @JvmStatic
@@ -74,11 +73,7 @@ abstract class AbstractPerformanceCompletionHandlerTests(
             val lookupString = InTextDirectivesUtils.findStringWithPrefixes(fileText, LOOKUP_STRING_PREFIX)
             val itemText = InTextDirectivesUtils.findStringWithPrefixes(fileText, ELEMENT_TEXT_PREFIX)
             val tailText = InTextDirectivesUtils.findStringWithPrefixes(fileText, TAIL_TEXT_PREFIX)
-
-            val completionChars = completionChars(
-                char = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHAR_PREFIX),
-                chars = InTextDirectivesUtils.findStringWithPrefixes(fileText, COMPLETION_CHARS_PREFIX)
-            )
+            val completionChars = completionChars(fileText)
 
             val completionType = ExpectedCompletionUtils.getCompletionType(fileText) ?: defaultCompletionType
 
@@ -157,9 +152,9 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         fixture.complete(completionType, time)
 
         if (lookupString != null || itemText != null || tailText != null) {
-            val item = getExistentLookupElement(lookupString, itemText, tailText)
+            val item = getExistentLookupElement(project, lookupString, itemText, tailText)
             if (item != null) {
-                selectItem(item, completionChars.last())
+                selectItem(fixture, item, completionChars.last())
             }
         }
     }

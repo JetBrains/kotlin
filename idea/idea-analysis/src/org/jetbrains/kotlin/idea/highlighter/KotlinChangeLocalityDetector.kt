@@ -18,18 +18,13 @@ package org.jetbrains.kotlin.idea.highlighter
 
 import com.intellij.codeInsight.daemon.ChangeLocalityDetector
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.parents
+import org.jetbrains.kotlin.idea.caches.trackers.KotlinCodeBlockModificationListener.Companion.getInsideCodeBlockModificationScope
 
 class KotlinChangeLocalityDetector : ChangeLocalityDetector {
     override fun getChangeHighlightingDirtyScopeFor(element: PsiElement): PsiElement? {
-        val parent = element.parent
-        if (element is KtBlockExpression && parent is KtNamedFunction && parent.name != null) {
-            if (parent.parents.all { it is KtClassBody || it is KtClassOrObject || it is KtFile || it is KtScript }) {
-                return parent
-            }
-        }
+        val modificationScope =
+            getInsideCodeBlockModificationScope(element) ?: return null
 
-        return null
+        return modificationScope.blockDeclaration
     }
 }

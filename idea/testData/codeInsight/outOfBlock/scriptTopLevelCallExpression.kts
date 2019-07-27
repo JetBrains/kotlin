@@ -1,4 +1,4 @@
-// TRUE
+// OUT_OF_CODE_BLOCK: TRUE
 
 fun foo() = 1
 
