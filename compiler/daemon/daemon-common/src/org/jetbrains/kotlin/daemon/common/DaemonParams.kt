@@ -314,9 +314,14 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
         System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
         System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
     }
+
+    if (opts.jvmParams.none { it.matches(jvmAssertArgsRegex) }) {
+        opts.jvmParams.add("ea")
+    }
     return opts
 }
 
+private val jvmAssertArgsRegex = "(es?a|ds?a|(enable|disable)(system)?assertions)(${'$'}|:)".toRegex()
 
 fun configureDaemonJVMOptions(vararg additionalParams: String,
                               inheritMemoryLimits: Boolean,

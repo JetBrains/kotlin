@@ -153,14 +153,10 @@ internal open class GradleCompilerRunner(protected val task: Task) {
             sessionIsAliveFlagFile: File,
             compilerFullClasspath: List<File>,
             messageCollector: MessageCollector,
-            isDebugEnabled: Boolean,
-            enableAssertions: Boolean
+            isDebugEnabled: Boolean
         ): CompileServiceSession? {
             val compilerId = CompilerId.makeCompilerId(compilerFullClasspath)
             val additionalJvmParams = arrayListOf<String>()
-            if (enableAssertions) {
-                additionalJvmParams.add("ea")
-            }
             return KotlinCompilerRunnerUtils.newDaemonConnection(
                 compilerId, clientIsAliveFlagFile, sessionIsAliveFlagFile,
                 messageCollector = messageCollector,
