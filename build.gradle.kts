@@ -759,9 +759,10 @@ fun Project.configureShadowJarSubstitutionInCompileClasspath() {
     }
 
     sourceSets.all {
-        val compileClasspathConfig = configurations.getByName(compileClasspathConfigurationName)
-        compileClasspathConfig.resolutionStrategy.dependencySubstitution {
-            all(::configureSubstitution)
+        for (configName in listOf(compileOnlyConfigurationName, compileClasspathConfigurationName)) {
+            configurations.getByName(configName).resolutionStrategy.dependencySubstitution {
+                all(::configureSubstitution)
+            }
         }
     }
 }
