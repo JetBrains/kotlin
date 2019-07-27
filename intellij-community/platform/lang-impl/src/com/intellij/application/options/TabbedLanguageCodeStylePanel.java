@@ -23,7 +23,7 @@ import com.intellij.openapi.util.Ref;
 import com.intellij.psi.codeStyle.*;
 import com.intellij.ui.ScrollPaneFactory;
 import com.intellij.ui.TabbedPaneWrapper;
-import com.intellij.util.containers.hash.HashSet;
+import java.util.HashSet;
 import com.intellij.util.ui.GraphicsUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

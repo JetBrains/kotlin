@@ -28,7 +28,7 @@ import com.intellij.util.NullableFunction;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.MultiMap;
-import com.intellij.util.containers.hash.HashSet;
+import java.util.HashSet;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
