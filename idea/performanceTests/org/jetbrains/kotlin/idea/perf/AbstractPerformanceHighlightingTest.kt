@@ -10,7 +10,6 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
-import org.junit.AfterClass
 
 /**
  * inspired by @see AbstractHighlightingTest
@@ -24,10 +23,9 @@ abstract class AbstractPerformanceHighlightingTest : KotlinLightCodeInsightFixtu
         @JvmStatic
         val stats: Stats = Stats("highlight")
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.close()
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
     }
 

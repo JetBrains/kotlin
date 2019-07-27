@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.conversion.copy.AbstractJavaToKotlinCopyPasteCo
 import org.jetbrains.kotlin.idea.conversion.copy.ConvertJavaCopyPasteProcessor
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.junit.AfterClass
 import java.io.File
 
 abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private val newJ2K: Boolean = false) :
@@ -27,10 +26,9 @@ abstract class AbstractPerformanceJavaToKotlinCopyPasteConversionTest(private va
 
         val stats: Array<Stats> = arrayOf(Stats("old j2k"), Stats("new j2k"))
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.forEach { it.close() }
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.forEach { it.close() } }))
         }
     }
 

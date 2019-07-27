@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import org.junit.AfterClass
-import org.junit.BeforeClass
-
 class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
     companion object {
@@ -18,17 +15,11 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
         @JvmStatic
         val hwStats: Stats = Stats("helloWorld project")
 
-        @BeforeClass
-        @JvmStatic
-        fun setup() {
-            // things to execute once and keep around for the class
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { hwStats.close() }))
         }
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            hwStats.close()
-        }
     }
 
     override fun setUp() {

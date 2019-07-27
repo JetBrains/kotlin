@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.idea.test.configureCompilerOptions
 import org.jetbrains.kotlin.idea.test.rollbackCompilerOptions
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.utils.addToStdlib.indexOfOrNull
-import org.junit.AfterClass
 import java.io.File
 
 /**
@@ -41,10 +40,9 @@ abstract class AbstractPerformanceCompletionHandlerTests(
         @JvmStatic
         val statsMap: MutableMap<String, Stats> = mutableMapOf()
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            statsMap.values.forEach { it.close() }
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { statsMap.values.forEach { it.close() } }))
         }
     }
 
