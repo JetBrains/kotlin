@@ -24,17 +24,19 @@ import com.intellij.openapi.options.SchemeManagerFactory
 import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.showOkCancelDialog
-import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.util.io.FileUtil
+import com.intellij.util.ArrayUtil
 import com.intellij.util.PlatformUtils
 import com.intellij.util.ReflectionUtil
 import com.intellij.util.containers.putValue
 import com.intellij.util.io.*
-import com.intellij.util.io.ZipUtil.addFileToZip
 import gnu.trove.THashMap
 import gnu.trove.THashSet
+import org.jetbrains.annotations.ApiStatus
 import java.io.IOException
 import java.io.OutputStream
 import java.io.OutputStreamWriter
+import java.io.StringWriter
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.*
@@ -53,7 +55,9 @@ open class ExportSettingsAction : AnAction(), DumbAware {
 
   protected open fun exportSettings(saveFile: Path, markedComponents: Set<ExportableItem>) {
     val exportFiles = markedComponents.mapTo(THashSet()) { it.file }
-    exportSettings(exportFiles, saveFile.outputStream(), FileUtilRt.toSystemIndependentName(PathManager.getConfigPath()))
+    saveFile.outputStream().use {
+      exportSettings(exportFiles, it, FileUtil.toSystemIndependentName(PathManager.getConfigPath()))
+    }
   }
 
   override fun update(e: AnActionEvent) {
@@ -96,31 +100,41 @@ open class ExportSettingsAction : AnAction(), DumbAware {
 }
 
 fun exportSettings(exportFiles: Set<Path>, out: OutputStream, configPath: String) {
-  ZipOutputStream(out).use { zipOut ->
-    val writtenItemRelativePaths = THashSet<String>()
+  val filter = THashSet<String>()
+  Compressor.Zip(out).filter { path, isDir -> isDir || filter.add(path) }.use { zip ->
     for (file in exportFiles) {
       val fileInfo = file.basicAttributesIfExists() ?: continue
-      val relativePath = FileUtilRt.getRelativePath(configPath, file.toAbsolutePath().systemIndependentPath, '/')!!
+      val relativePath = FileUtil.getRelativePath(configPath, file.toAbsolutePath().systemIndependentPath, '/')!!
       if (fileInfo.isDirectory) {
-        ZipUtil.addDirToZipRecursively(zipOut, null, file.toFile(), relativePath, null, writtenItemRelativePaths)
+        zip.addDirectory(relativePath, file.toFile())
       }
       else {
-        addFileToZip(zipOut, file.toFile(), relativePath, writtenItemRelativePaths, null, ZipUtil.FileContentProcessor { file.inputStream() }, false)
+        zip.addFile(relativePath, file.inputStream())
       }
     }
 
-    exportInstalledPlugins(zipOut)
+    exportInstalledPlugins(zip)
 
-    zipOut.putNextEntry(ZipEntry(ImportSettingsFilenameFilter.SETTINGS_JAR_MARKER))
-    zipOut.closeEntry()
+    zip.addFile(ImportSettingsFilenameFilter.SETTINGS_JAR_MARKER, ArrayUtil.EMPTY_BYTE_ARRAY)
   }
 }
 
 data class ExportableItem(val file: Path, val presentableName: String, val roamingType: RoamingType = RoamingType.DEFAULT)
 
+fun exportInstalledPlugins(zip: Compressor) {
+  val plugins = PluginManagerCore.getPlugins().asSequence().filter { !it.isBundled && it.isEnabled }.map { it.pluginId.idString }.toList()
+  if (plugins.isNotEmpty()) {
+    val buffer = StringWriter()
+    PluginManagerCore.writePluginsList(plugins, buffer)
+    zip.addFile(PluginManager.INSTALLED_TXT, buffer.toString().toByteArray())
+  }
+}
+
+@Deprecated("Please use `#exportInstalledPlugins(Compressor)` instead.")
+@ApiStatus.ScheduledForRemoval(inVersion = "2020.1")
 fun exportInstalledPlugins(zipOut: ZipOutputStream) {
   val plugins = PluginManagerCore.getPlugins().mapNotNull { if (!it.isBundled && it.isEnabled) it.pluginId.idString else null }
-  if (!plugins.isEmpty()) {
+  if (plugins.isNotEmpty()) {
     zipOut.putNextEntry(ZipEntry(PluginManager.INSTALLED_TXT))
     try {
       PluginManagerCore.writePluginsList(plugins, OutputStreamWriter(zipOut, Charsets.UTF_8))
@@ -156,7 +170,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
 
   fun isSkipFile(file: Path): Boolean {
     if (onlyPaths != null) {
-      var relativePath = FileUtilRt.getRelativePath(configPath, file.systemIndependentPath, '/')!!
+      var relativePath = FileUtil.getRelativePath(configPath, file.systemIndependentPath, '/')!!
       if (!file.fileName.toString().contains('.') && !file.isFile()) {
         relativePath += '/'
       }
@@ -233,7 +247,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
 
 private inline fun getAdditionalExportFile(stateAnnotation: State, storageManager: StateStorageManager, isSkipFile: (file: Path) -> Boolean): Path? {
   val additionalExportPath = stateAnnotation.additionalExportFile
-  if (!additionalExportPath.isNotEmpty()) {
+  if (additionalExportPath.isEmpty()) {
     return null
   }
 
@@ -248,12 +262,8 @@ private inline fun getAdditionalExportFile(stateAnnotation: State, storageManage
   return if (isSkipFile(additionalExportFile)) null else additionalExportFile
 }
 
-private fun isStorageExportable(storage: Storage, isRoamable: Boolean): Boolean {
-  if (storage.exportable) {
-    return true
-  }
-  return isRoamable && storage.storageClass == StateStorage::class && !storage.path.isEmpty()
-}
+private fun isStorageExportable(storage: Storage, isRoamable: Boolean): Boolean =
+  storage.exportable || isRoamable && storage.storageClass == StateStorage::class && storage.path.isNotEmpty()
 
 private fun getComponentPresentableName(state: State, aClass: Class<*>, pluginDescriptor: PluginDescriptor?): String {
   val presentableName = state.presentableName.java
@@ -310,4 +320,3 @@ private fun messageOrDefault(classLoader: ClassLoader, bundleName: String, defau
   val bundle = AbstractBundle.getResourceBundle(bundleName, classLoader) ?: return defaultName
   return CommonBundle.messageOrDefault(bundle, "exportable.$defaultName.presentable.name", defaultName)
 }
-
