@@ -140,6 +140,18 @@ internal class PropertiesProvider(private val project: Project) {
     val nativeJvmArgs: String?
         get() = propertyWithDeprecatedVariant("kotlin.native.jvmArgs", "org.jetbrains.kotlin.native.jvmArgs")
 
+    /**
+     * Generate kotlin/js external declarations from all .d.ts files found in npm modules
+     */
+    val jsGenerateExternals: Boolean?
+        get() = booleanProperty("kotlin.js.experimental.generateKotlinExternals")
+
+    /**
+     * Automaticaly discover external .d.ts declarations
+     */
+    val jsDiscoverTypes: Boolean?
+        get() = booleanProperty("kotlin.js.experimental.discoverTypes")
+
     private fun propertyWithDeprecatedVariant(propName: String, deprecatedPropName: String): String? {
         val deprecatedProperty = property(deprecatedPropName)
         if (deprecatedProperty != null) {
