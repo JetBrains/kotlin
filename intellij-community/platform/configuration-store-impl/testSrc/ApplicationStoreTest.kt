@@ -81,8 +81,8 @@ internal class ApplicationStoreTest {
     val streamProvider = MyStreamProvider()
     val map = THashMap<String, String>()
     val fileSpec = "new.xml"
-    map.put(fileSpec, "<application>\n  <component name=\"A\" foo=\"newValue\" />\n</application>")
-    streamProvider.data.put(RoamingType.DEFAULT, map)
+    map[fileSpec] = "<application>\n  <component name=\"A\" foo=\"newValue\" />\n</application>"
+    streamProvider.data[RoamingType.DEFAULT] = map
 
     val storageManager = componentStore.storageManager
     storageManager.removeStreamProvider(MyStreamProvider::class.java)
@@ -136,7 +136,7 @@ internal class ApplicationStoreTest {
 
     fun test(item: ExportableItem) {
       val file = item.file
-      assertThat(map.get(file)).containsExactly(item)
+      assertThat(map[file]).containsExactly(item)
       assertThat(file).doesNotExist()
     }
 
@@ -389,21 +389,19 @@ internal class ApplicationStoreTest {
     val data: MutableMap<RoamingType, MutableMap<String, String>> = THashMap()
 
     override fun write(fileSpec: String, content: ByteArray, size: Int, roamingType: RoamingType) {
-      getMap(roamingType).put(fileSpec, String(content, 0, size, Charsets.UTF_8))
+      getMap(roamingType)[fileSpec] = String(content, 0, size, Charsets.UTF_8)
     }
 
-    private fun getMap(roamingType: RoamingType): MutableMap<String, String> {
-      return data.getOrPut(roamingType) { THashMap<String, String>() }
-    }
+    private fun getMap(roamingType: RoamingType): MutableMap<String, String> = data.getOrPut(roamingType) { THashMap() }
 
     override fun read(fileSpec: String, roamingType: RoamingType, consumer: (InputStream?) -> Unit): Boolean {
-      val data = getMap(roamingType).get(fileSpec)
+      val data = getMap(roamingType)[fileSpec]
       data?.let { ByteArrayInputStream(it.toByteArray()) }.let(consumer)
       return true
     }
 
     override fun delete(fileSpec: String, roamingType: RoamingType): Boolean {
-      data.get(roamingType)?.remove(fileSpec)
+      data[roamingType]?.remove(fileSpec)
       return true
     }
   }
