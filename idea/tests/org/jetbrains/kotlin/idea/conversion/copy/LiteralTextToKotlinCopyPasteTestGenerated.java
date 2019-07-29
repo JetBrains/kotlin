@@ -59,6 +59,16 @@ public class LiteralTextToKotlinCopyPasteTestGenerated extends AbstractLiteralTe
         runTest("idea/testData/copyPaste/plainTextLiteral/TrailingLines.txt");
     }
 
+    @TestMetadata("TrimIndent.txt")
+    public void testTrimIndent() throws Exception {
+        runTest("idea/testData/copyPaste/plainTextLiteral/TrimIndent.txt");
+    }
+
+    @TestMetadata("TrimIndent2.txt")
+    public void testTrimIndent2() throws Exception {
+        runTest("idea/testData/copyPaste/plainTextLiteral/TrimIndent2.txt");
+    }
+
     @TestMetadata("WithBackslashes.txt")
     public void testWithBackslashes() throws Exception {
         runTest("idea/testData/copyPaste/plainTextLiteral/WithBackslashes.txt");
