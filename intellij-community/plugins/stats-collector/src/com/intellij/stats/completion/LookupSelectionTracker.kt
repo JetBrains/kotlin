@@ -3,17 +3,18 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupEvent
 import com.intellij.codeInsight.lookup.LookupListener
-import com.intellij.stats.personalization.session.*
+import com.intellij.stats.personalization.session.ElementSessionFactorsStorage
+import com.intellij.stats.storage.factors.LookupStorage
 
-class LookupSelectionTracker(private val storage: MutableLookupFactorsStorage) : LookupListener {
-  private var currentElementStorage: MutableElementFactorsStorage? = null
+class LookupSelectionTracker(private val storage: LookupStorage) : LookupListener {
+  private var currentElementStorage: ElementSessionFactorsStorage? = null
   override fun lookupShown(event: LookupEvent) = selectionChanged(event)
   override fun currentItemChanged(event: LookupEvent) = selectionChanged(event)
 
   private fun selectionChanged(event: LookupEvent) {
     val lookupElement = event.item
     if (lookupElement != null) {
-      val elementStorage = storage.getItemStorage(lookupElement.idString())
+      val elementStorage = storage.getItemStorage(lookupElement.idString()).sessionFactors
 
       if (elementStorage == currentElementStorage) return
 

@@ -21,6 +21,7 @@ import com.intellij.stats.personalization.UserFactorStorage
 import com.intellij.stats.personalization.UserFactorsManager
 import com.intellij.stats.personalization.session.SessionFactorsUtils
 import com.intellij.stats.personalization.session.SessionPrefixTracker
+import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.beans.PropertyChangeListener
 import kotlin.random.Random
 
@@ -44,11 +45,11 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     }
     else if (lookup is LookupImpl) {
       if (isUnitTestMode() && !isEnabledInTests) return@PropertyChangeListener
-      val startedTimestamp = System.currentTimeMillis()
-      lookup.putUserData(CompletionUtil.COMPLETION_STARTING_TIME_KEY, startedTimestamp)
 
-      processUserFactors(lookup)
-      processSessionFactors(lookup, startedTimestamp)
+      val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, System.currentTimeMillis())
+
+      processUserFactors(lookup, lookupStorage)
+      processSessionFactors(lookup, lookupStorage)
 
       if (sessionShouldBeLogged(experimentHelper, lookup.language())) {
         val tracker = actionsTracker(lookup, experimentHelper)
@@ -90,7 +91,8 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     return Random.nextDouble() < logSessionChance
   }
 
-  private fun processUserFactors(lookup: LookupImpl) {
+  private fun processUserFactors(lookup: LookupImpl,
+                                 lookupStorage: MutableLookupStorage) {
     if (!shouldUseUserFactors()) return
 
     val userFactors = UserFactorsManager.getInstance().getAllFactors()
@@ -98,7 +100,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     userFactors.associateTo(userFactorValues) { "${it.id}:App" to it.compute(UserFactorStorage.getInstance()) }
     userFactors.associateTo(userFactorValues) { "${it.id}:Project" to it.compute(UserFactorStorage.getInstance(lookup.project)) }
 
-    lookup.putUserData(UserFactorsManager.USER_FACTORS_KEY, userFactorValues)
+    lookupStorage.userFactors = userFactorValues
 
     UserFactorStorage.applyOnBoth(lookup.project, UserFactorDescriptions.COMPLETION_USAGE) {
       it.fireCompletionUsed()
@@ -110,12 +112,11 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
     lookup.addLookupListener(LookupStartedTracker())
   }
 
-  private fun processSessionFactors(lookup: LookupImpl, completionStartedTimestamp: Long) {
+  private fun processSessionFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
     if (!shouldUseSessionFactors()) return
 
-    val storage = SessionFactorsUtils.initLookupSessionFactors(lookup, completionStartedTimestamp)
-    lookup.setPrefixChangeListener(SessionPrefixTracker(storage))
-    lookup.addLookupListener(LookupSelectionTracker(storage))
+    lookup.setPrefixChangeListener(SessionPrefixTracker(lookupStorage.sessionFactors))
+    lookup.addLookupListener(LookupSelectionTracker(lookupStorage))
 
     val shownTimesTracker = PositionTrackingListener(lookup)
     lookup.setPrefixChangeListener(shownTimesTracker)

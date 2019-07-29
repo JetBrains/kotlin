@@ -3,13 +3,12 @@ package com.intellij.stats.personalization.session
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
-import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.stats.completion.idString
+import com.intellij.stats.storage.factors.MutableLookupStorage
 
 object SessionFactorsUtils {
   const val SESSION_FACTOR_PREFIX = "session_"
-  private val LOOKUP_FACTORS_STORAGE = Key.create<MutableLookupFactorsStorage>("session.factors.storage.lookup")
 
   private val lookupFactors: List<SessionFactor.LookupBased> = listOf(
     lookupFactor("visible_size") { it.getVisibleSize() },
@@ -37,44 +36,37 @@ object SessionFactorsUtils {
 
   fun updateSessionFactors(lookup: LookupImpl, items: List<LookupElement>) {
     if (!shouldUseSessionFactors()) return
-    val lookupStorage = getLookupFactorsStorage(lookup) ?: return
-    lookupStorage.fireSortingPerforming(items.size)
-    val lookupFactors = calculateLookupFactors(lookupStorage)
+    val lookupStorage = MutableLookupStorage.get(lookup) ?: return
+    val sessionFactors = lookupStorage.sessionFactors
+    sessionFactors.fireSortingPerforming(items.size)
+    val lookupFactors = calculateLookupFactors(sessionFactors)
     items.forEachIndexed { i, item ->
       val storage = lookupStorage.getItemStorage(item.idString())
-      storage.updateUsedSessionFactors(i, lookupFactors, calculateElementFactors(storage))
+      storage.sessionFactors.updateUsedSessionFactors(i, lookupFactors, calculateElementFactors(storage.sessionFactors))
     }
   }
 
   fun saveSessionFactorsTo(map: MutableMap<String, Any>, lookup: LookupImpl, lookupElement: LookupElement) {
-    val factorsStorage = getLookupFactorsStorage(lookup)?.getItemStorage(lookupElement.idString()) ?: return
+    val factorsStorage = MutableLookupStorage.get(lookup)?.getItemStorage(lookupElement.idString())?.sessionFactors ?: return
     map.putAll(factorsStorage.lastUsedLookupFactors())
     map.putAll(factorsStorage.lastUsedElementFactors())
   }
 
-  fun initLookupSessionFactors(lookup: LookupImpl, startedTimestamp: Long): MutableLookupFactorsStorage {
-    val storage = MutableLookupFactorsStorage(startedTimestamp)
-    lookup.putUserData(LOOKUP_FACTORS_STORAGE, storage)
-    return storage
-  }
-
-  private fun getLookupFactorsStorage(lookup: LookupImpl): MutableLookupFactorsStorage? = lookup.getUserData(LOOKUP_FACTORS_STORAGE)
-
-  private val SessionFactor.name: String
+  private val SessionFactor<*>.name: String
     get() = "$SESSION_FACTOR_PREFIX${this.simpleName}"
 
-  private fun calculateLookupFactors(lookupStorage: LookupFactorsStorage): Map<String, Any> =
-    calculateFactors(lookupStorage, lookupFactors) { factor, storage -> factor.getValue(storage) }
+  private fun calculateLookupFactors(lookupStorage: LookupSessionFactorsStorage): Map<String, Any> =
+    calculateFactors(lookupStorage, lookupFactors)
 
-  private fun calculateElementFactors(elementStorage: LookupElementFactorsStorage): Map<String, Any> =
-    calculateFactors(elementStorage, elementFactors) { factor, storage -> factor.getValue(storage) }
+  private fun calculateElementFactors(elementStorage: ElementSessionFactorsStorage): Map<String, Any> =
+    calculateFactors(elementStorage, elementFactors)
 
-  private fun <S, F : SessionFactor> calculateFactors(storage: S, factors: Iterable<F>, valueExtractor: (F, S) -> Any?): Map<String, Any> {
+  private fun <S> calculateFactors(storage: S, factors: Iterable<SessionFactor<S>>): Map<String, Any> {
     val result = mutableMapOf<String, Any>()
     for (factor in factors) {
       val factorName = factor.name
       assert(factorName !in result)
-      val factorValue = valueExtractor(factor, storage)
+      val factorValue = factor.getValue(storage)
       if (factorValue != null) {
         result[factorName] = factorValue
       }
@@ -84,20 +76,30 @@ object SessionFactorsUtils {
   }
 
   private class SessionLookupFactor(override val simpleName: String,
-                                    private val valueExtractor: (LookupFactorsStorage) -> Any?) : SessionFactor.LookupBased {
-    override fun getValue(storage: LookupFactorsStorage): Any? = valueExtractor(storage)
+                                    private val valueExtractor: (LookupSessionFactorsStorage) -> Any?) : SessionFactor.LookupBased {
+    override fun getValue(storage: LookupSessionFactorsStorage): Any? = valueExtractor(storage)
   }
 
-  private fun lookupFactor(name: String, extractor: (LookupFactorsStorage) -> Any?): SessionFactor.LookupBased {
+  private fun lookupFactor(name: String, extractor: (LookupSessionFactorsStorage) -> Any?): SessionFactor.LookupBased {
     return SessionLookupFactor(name, extractor)
   }
 
   private class ElementFactor(override val simpleName: String,
-                              private val valueExtractor: (LookupElementFactorsStorage) -> Any?) : SessionFactor.LookupElementBased {
-    override fun getValue(storage: LookupElementFactorsStorage): Any? = valueExtractor(storage)
+                              private val valueExtractor: (ElementSessionFactorsStorage) -> Any?) : SessionFactor.LookupElementBased {
+    override fun getValue(storage: ElementSessionFactorsStorage): Any? = valueExtractor(storage)
   }
 
-  private fun elementFactor(name: String, extractor: (LookupElementFactorsStorage) -> Any?): SessionFactor.LookupElementBased {
+  private fun elementFactor(name: String, extractor: (ElementSessionFactorsStorage) -> Any?): SessionFactor.LookupElementBased {
     return ElementFactor(name, extractor)
   }
+
+  private interface SessionFactor<T> {
+    val simpleName: String
+
+    fun getValue(storage: T): Any?
+
+    interface LookupBased : SessionFactor<LookupSessionFactorsStorage>
+    interface LookupElementBased : SessionFactor<ElementSessionFactorsStorage>
+  }
+
 }

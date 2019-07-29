@@ -21,7 +21,7 @@ import com.intellij.completion.sorting.RankingSupport
 import com.intellij.completion.tracker.LookupElementPositionTracker
 import com.intellij.ide.plugins.PluginManager
 import com.intellij.stats.completion.events.*
-import com.intellij.stats.personalization.UserFactorsManager
+import com.intellij.stats.storage.factors.LookupStorage
 
 
 class CompletionFileLogger(private val installationUID: String,
@@ -40,7 +40,8 @@ class CompletionFileLogger(private val installationUID: String,
         val pluginVersion = calcPluginVersion() ?: "pluginVersion"
         val mlRankingVersion = RankingSupport.getRanker(language)?.version() ?: "NONE"
 
-        val userFactors = lookup.getUserData(UserFactorsManager.USER_FACTORS_KEY) ?: emptyMap()
+        val lookupStorage = LookupStorage.get(lookup)
+        val userFactors = lookupStorage?.userFactors ?: emptyMap()
 
         val event = CompletionStartedEvent(
                 ideVersion, pluginVersion, mlRankingVersion,
@@ -49,7 +50,7 @@ class CompletionFileLogger(private val installationUID: String,
                 isExperimentPerformed, experimentVersion,
                 state, userFactors,
                 queryLength = lookup.prefixLength(),
-                timestamp = lookup.getUserData(CompletionUtil.COMPLETION_STARTING_TIME_KEY) ?: timestamp)
+                timestamp = lookupStorage?.startedTimestamp ?: timestamp)
 
         val shownTimestamp = CompletionUtil.getShownTimestamp(lookup)
         if (shownTimestamp != null) {

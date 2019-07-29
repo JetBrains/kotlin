@@ -29,7 +29,6 @@ import com.intellij.util.ReflectionUtil
  * @author Vitaliy.Bibaev
  */
 object CompletionUtil {
-    val COMPLETION_STARTING_TIME_KEY = Key.create<Long>("com.intellij.stats.completion.starting.time")
     val ML_SORTING_CONTRIBUTION_KEY = Key.create<Long>("com.intellij.stats.completion.ml.contribution")
 
     fun getCurrentCompletionParameters(): CompletionParameters? = getCurrentCompletion()?.parameters

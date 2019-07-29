@@ -18,6 +18,7 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.stats.storage.factors.LookupStorage
 
 class LookupStateManager {
     private val elementToId = mutableMapOf<String, Int>()
@@ -71,14 +72,36 @@ class LookupStateManager {
     }
 
     private fun List<LookupElement>.toLookupInfos(lookup: LookupImpl, elementToId: Map<LookupElement, Int>): List<LookupEntryInfo> {
-        val relevanceObjects = lookup.getRelevanceObjects(this, false)
+        val item2relevance = calculateRelevance(lookup, this)
         return this.map { lookupElement ->
-            val relevanceMap = relevanceObjects[lookupElement]?.let { objects ->
-                RelevanceUtil.asRelevanceMap(lookup, lookupElement, objects, true).mapValues { entry -> entry.value.toString() }
-            }
-
-            val elementId = elementToId.getValue(lookupElement)
-            LookupEntryInfo(elementId, lookupElement.lookupString.length, relevanceMap)
+            LookupEntryInfo(elementToId.getValue(lookupElement), lookupElement.lookupString.length, item2relevance.getValue(lookupElement))
         }
+    }
+
+    private fun calculateRelevance(lookup: LookupImpl, items: List<LookupElement>): Map<LookupElement, Map<String, String>> {
+        val lookupStorage = LookupStorage.get(lookup)
+        val result = mutableMapOf<LookupElement, Map<String, String>>()
+        if (lookupStorage != null) {
+            for (item in items) {
+                val factors = lookupStorage.getItemStorage(item.idString()).getLastUsedFactors()?.mapValues(Any::toString)
+                if (factors != null) {
+                    result[item] = factors
+                }
+            }
+        }
+
+        // fallback (get factors from the relevance objects)
+        val rest = items.filter { it !in result }
+        if (rest.isNotEmpty()) {
+            val relevanceObjects = lookup.getRelevanceObjects(rest, false)
+            for (item in rest) {
+                val relevanceMap = relevanceObjects[item]?.let { objects ->
+                    RelevanceUtil.asRelevanceMap(objects).mapValues { entry -> entry.value.toString() }
+                } ?: emptyMap()
+                result[item] = relevanceMap
+            }
+        }
+
+        return result
     }
 }

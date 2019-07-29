@@ -3,7 +3,7 @@ package com.intellij.stats.personalization.session
 
 import com.intellij.codeInsight.lookup.impl.PrefixChangeListener
 
-class SessionPrefixTracker(private val storage: MutableLookupFactorsStorage) : PrefixChangeListener {
+class SessionPrefixTracker(private val storage: LookupSessionFactorsStorage) : PrefixChangeListener {
   override fun afterAppend(c: Char) {
     storage.queryTracker.afterAppend(c)
   }
