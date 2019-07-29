@@ -118,10 +118,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         resolver.resolveWithDependencies(
                 unresolvedLibraries,
                 noStdLib = configuration.getBoolean(KonanConfigKeys.NOSTDLIB),
-                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS)).also {
+                noDefaultLibs = configuration.getBoolean(KonanConfigKeys.NODEFAULTLIBS)
+        )
+    }
 
-            validateExportedLibraries(configuration, it)
-        }
+    internal val exportedLibraries by lazy {
+        getExportedLibraries(configuration, resolvedLibraries, resolver.searchPathResolver, report = true)
     }
 
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {

@@ -12,18 +12,14 @@ import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.SyntheticModulesOrigin
 import org.jetbrains.kotlin.descriptors.konan.konanModuleOrigin
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
+import org.jetbrains.kotlin.konan.library.SearchPathResolver
 import org.jetbrains.kotlin.konan.library.isInterop
 import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
-
-internal fun validateExportedLibraries(configuration: CompilerConfiguration, resolvedLibraries: KonanLibraryResolveResult) {
-    getExportedLibraries(configuration, resolvedLibraries, report = true)
-}
+import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
 internal fun Context.getExportedDependencies(): List<ModuleDescriptor> {
-    val exportedLibraries = getExportedLibraries(this.config.configuration, this.config.resolvedLibraries, report = false)
-            .toSet()
+    val exportedLibraries = this.config.exportedLibraries.toSet()
 
     val result = this.moduleDescriptor.allDependencyModules.filter {
         val origin = it.konanModuleOrigin
@@ -38,13 +34,28 @@ internal fun Context.getExportedDependencies(): List<ModuleDescriptor> {
     return result
 }
 
-private fun getExportedLibraries(
+internal fun getExportedLibraries(
         configuration: CompilerConfiguration,
         resolvedLibraries: KonanLibraryResolveResult,
+        resolver: SearchPathResolver,
         report: Boolean
-): List<KonanLibrary> {
-    val exportedLibraries = configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES).map { File(it) }.toSet()
-    val remainingExportedLibraries = exportedLibraries.toMutableSet()
+): List<KonanLibrary> = getFeaturedLibraries(
+    configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
+    configuration,
+    resolvedLibraries,
+    resolver,
+    report
+)
+
+private fun getFeaturedLibraries(
+    featuredLibraries: List<String>,
+    configuration: CompilerConfiguration,
+    resolvedLibraries: KonanLibraryResolveResult,
+    resolver: SearchPathResolver,
+    report: Boolean = false
+) : List<KonanLibrary> {
+    val featuredLibraryFiles = featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).libraryFile }.toSet()
+    val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
 
     val result = mutableListOf<KonanLibrary>()
 
@@ -52,14 +63,14 @@ private fun getExportedLibraries(
 
     for (library in libraries) {
         val libraryFile = library.libraryFile
-        if (libraryFile in exportedLibraries) {
-            remainingExportedLibraries -= libraryFile
+        if (libraryFile in featuredLibraryFiles) {
+            remainingFeaturedLibraries -= libraryFile
             if (library.isInterop || library.isDefault) {
                 if (report) {
                     val kind = if (library.isInterop) "Interop" else "Default"
                     configuration.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
-                            "$kind library ${library.libraryName} can't be exported with -Xexport-library"
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "$kind library ${library.libraryName} can't be exported with -Xexport-library"
                     )
                 }
             } else {
@@ -68,10 +79,10 @@ private fun getExportedLibraries(
         }
     }
 
-    if (report && remainingExportedLibraries.isNotEmpty()) {
+    if (report && remainingFeaturedLibraries.isNotEmpty()) {
         val message = buildString {
             appendln("Following libraries are specified to be exported with -Xexport-library, but not included to the build:")
-            remainingExportedLibraries.forEach { appendln(it) }
+            remainingFeaturedLibraries.forEach { appendln(it) }
             appendln()
             appendln("Included libraries:")
             libraries.forEach { appendln(it.libraryFile) }
