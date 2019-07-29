@@ -144,6 +144,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/typeAliasWithGeneric.kt");
     }
 
+    @TestMetadata("typeAliasWithTypeArguments.kt")
+    public void testTypeAliasWithTypeArguments() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/typeAliasWithTypeArguments.kt");
+    }
+
     @TestMetadata("typeFromGetter.kt")
     public void testTypeFromGetter() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/typeFromGetter.kt");

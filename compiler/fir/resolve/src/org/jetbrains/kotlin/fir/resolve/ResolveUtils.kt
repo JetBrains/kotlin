@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
@@ -46,10 +47,41 @@ fun ConeClassLikeLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierS
     return firSymbolProvider.getSymbolByLookupTag(this)
 }
 
-fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeClassLikeType? =
-    abbreviationLookupTag
+fun ConeAbbreviatedType.directExpansionType(useSiteSession: FirSession): ConeClassLikeType? {
+    val typeAlias = abbreviationLookupTag
         .toSymbol(useSiteSession)
-        ?.safeAs<FirTypeAliasSymbol>()?.fir?.expandedConeType
+        ?.safeAs<FirTypeAliasSymbol>()?.fir ?: return null
+
+    val resultType = typeAlias.expandedConeType ?: return null
+    if (resultType.typeArguments.isEmpty()) return resultType
+    return mapTypeAliasArguments(typeAlias, this, resultType) as? ConeClassLikeType
+}
+
+private fun mapTypeAliasArguments(typeAlias: FirTypeAlias, abbreviatedType: ConeAbbreviatedType, resultingType: ConeClassLikeType): ConeKotlinType {
+    val typeAliasMap = typeAlias.typeParameters.map { it.symbol }.zip(abbreviatedType.typeArguments).toMap()
+
+    val substitutor = object : AbstractConeSubstitutor() {
+        override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
+            return null
+        }
+
+        override fun substituteArgument(projection: ConeKotlinTypeProjection): ConeKotlinTypeProjection? {
+            val type = (projection as? ConeTypedProjection)?.type ?: return null
+            val symbol = (type as? ConeTypeParameterType)?.lookupTag?.toSymbol() ?: return super.substituteArgument(projection)
+            val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection)
+            val mappedType = (mappedProjection as? ConeTypedProjection)?.type ?: return mappedProjection
+            val resultingKind = mappedProjection.kind + projection.kind
+            return when (resultingKind) {
+                ProjectionKind.STAR -> ConeStarProjection
+                ProjectionKind.IN -> ConeKotlinTypeProjectionIn(mappedType)
+                ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(mappedType)
+                ProjectionKind.INVARIANT -> mappedType
+            }
+        }
+    }
+
+    return substitutor.substituteOrSelf(resultingType)
+}
 
 fun ConeClassifierLookupTag.toSymbol(useSiteSession: FirSession): ConeClassifierSymbol? =
     when (this) {
@@ -137,7 +169,7 @@ fun <T : ConeKotlinType> T.withNullability(nullability: ConeNullability): T {
 }
 
 
-fun <T : ConeKotlinType> T.withArguments(arguments: Array<ConeKotlinTypeProjection>): T {
+fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProjection>): T {
     if (this.typeArguments === arguments) {
         return this
     }

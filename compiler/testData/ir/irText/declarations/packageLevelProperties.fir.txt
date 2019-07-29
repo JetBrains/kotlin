@@ -86,14 +86,14 @@ FILE fqName:<root> fileName:/packageLevelProperties.kt
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>'
-          ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/collections/getValue]>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
             CONST Null type=kotlin.Nothing? value=null
             PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> (<set-?>:IrErrorType) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
       BLOCK_BODY
-        ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/collections/setValue]>#' type=IrErrorType
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
           CONST Null type=kotlin.Nothing? value=null
           PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final,static]' getter='public final fun <get-test8> (): IrErrorType declared in <root>' setter=null type=kotlin.reflect.KProperty<*> origin=null
           GET_VAR '<set-?>: IrErrorType declared in <root>.<set-test8>' type=IrErrorType origin=null

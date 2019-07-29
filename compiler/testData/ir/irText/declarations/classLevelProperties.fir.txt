@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>.C'
-            ERROR_CALL 'Unresolved reference: <Inapplicable(PARAMETER_MAPPING_ERROR): [kotlin/collections/getValue]>#' type=IrErrorType
+            ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
               ERROR_CALL 'Unresolved reference: this#' type=<root>.C
               PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [kotlin/collections/setValue]>#' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
             ERROR_CALL 'Unresolved reference: this#' type=<root>.C
             PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' getter='public final fun <get-test8> (): IrErrorType declared in <root>.C' setter=null type=kotlin.reflect.KProperty<*> origin=null
             GET_VAR '<set-?>: IrErrorType declared in <root>.C.<set-test8>' type=IrErrorType origin=null

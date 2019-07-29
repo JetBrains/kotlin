@@ -18,7 +18,17 @@ sealed class ConeKotlinTypeProjection : TypeArgumentMarker {
 }
 
 enum class ProjectionKind {
-    STAR, IN, OUT, INVARIANT
+    STAR, IN, OUT, INVARIANT;
+
+    operator fun plus(other: ProjectionKind): ProjectionKind {
+        return when {
+            this == other -> this
+            this == STAR || other == STAR -> STAR
+            this == INVARIANT -> other
+            other == INVARIANT -> this
+            else -> STAR
+        }
+    }
 }
 
 object ConeStarProjection : ConeKotlinTypeProjection() {
