@@ -724,9 +724,6 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         if (resolvedTypeRef !is FirImplicitBuiltinTypeRef) {
             print("|")
         }
-        if (coneType !is ConeKotlinErrorType && coneType !is ConeClassErrorType) {
-            print(coneType.nullability.suffix)
-        }
     }
 
     override fun visitUserTypeRef(userTypeRef: FirUserTypeRef) {

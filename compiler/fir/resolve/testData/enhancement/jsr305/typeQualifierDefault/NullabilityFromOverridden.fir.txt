@@ -5,9 +5,9 @@
 
     public open operator fun foo3(x: R|kotlin/String|): R|kotlin/String|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String|?): R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String|?): R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
     public open operator fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
@@ -21,9 +21,9 @@
 
     public abstract operator fun foo3(x: R|kotlin/String|): R|kotlin/CharSequence|
 
-    @R|javax/annotation/Nullable|() public abstract operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String|?): R|kotlin/CharSequence|?
+    @R|javax/annotation/Nullable|() public abstract operator fun bar1(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
-    @R|javax/annotation/Nullable|() public abstract operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String|?): R|kotlin/CharSequence|?
+    @R|javax/annotation/Nullable|() public abstract operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/CharSequence?|
 
     public abstract operator fun baz(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/CharSequence|
 
@@ -33,7 +33,7 @@
 
     @R|javax/annotation/Nonnull|() public open operator fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun bar1(x: R|kotlin/String|?): R|kotlin/String|?
+    public open operator fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
     public open operator fun baz(x: R|kotlin/String|): R|kotlin/String|
 
@@ -45,9 +45,9 @@
 
     public open operator fun foo2(@R|javax/annotation/Nonnull|() x: R|kotlin/String|): R|kotlin/String|
 
-    public open operator fun bar1(x: R|kotlin/String|?): R|kotlin/String|?
+    public open operator fun bar1(x: R|kotlin/String?|): R|kotlin/String?|
 
-    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String|?): R|kotlin/String|?
+    @R|javax/annotation/Nullable|() public open operator fun bar2(@R|javax/annotation/Nullable|() x: R|kotlin/String?|): R|kotlin/String?|
 
     public open operator fun baz(x: R|kotlin/String|): R|kotlin/String|
 

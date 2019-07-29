@@ -1,7 +1,7 @@
 public final enum class EnumMembers : R|kotlin/Enum<test/EnumMembers>| {
-    public final static field FIRST: R|ft<test/EnumMembers, test/EnumMembers?>|!
+    public final static field FIRST: R|ft<test/EnumMembers, test/EnumMembers?>!|
 
-    public final static field SECOND: R|ft<test/EnumMembers, test/EnumMembers?>|!
+    public final static field SECOND: R|ft<test/EnumMembers, test/EnumMembers?>!|
 
     public final field isFirst: R|kotlin/Boolean|
 

@@ -1,6 +1,6 @@
 public final enum class JavaEnum : R|kotlin/Enum<test/JavaEnum>| {
-    public final static field ENTRY: R|ft<test/JavaEnum, test/JavaEnum?>|!
+    public final static field ENTRY: R|ft<test/JavaEnum, test/JavaEnum?>!|
 
-    public final static field ANOTHER: R|ft<test/JavaEnum, test/JavaEnum?>|!
+    public final static field ANOTHER: R|ft<test/JavaEnum, test/JavaEnum?>!|
 
 }

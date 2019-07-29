@@ -4,7 +4,7 @@ FILE: simple.kt
     }
     public final val bar: R|kotlin/String| = String()
         public get(): R|kotlin/String|
-    public final val n: R|kotlin/Nothing|? = Null(null)
-        public get(): R|kotlin/Nothing|?
-    public final val g: R|kotlin/String|? = Null(null)
-        public get(): R|kotlin/String|?
+    public final val n: R|kotlin/Nothing?| = Null(null)
+        public get(): R|kotlin/Nothing?|
+    public final val g: R|kotlin/String?| = Null(null)
+        public get(): R|kotlin/String?|

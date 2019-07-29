@@ -1,5 +1,5 @@
 public open class MissingUpperBound : R|kotlin/Any| {
-    public open fun <A : R|java/lang/Runnable|?, R|kotlin/Cloneable|?> foo(): R|kotlin/String|?
+    public open fun <A : R|java/lang/Runnable?|, R|kotlin/Cloneable?|> foo(): R|kotlin/String?|
 
     public constructor(): R|test/MissingUpperBound|
 

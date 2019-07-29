@@ -1,5 +1,5 @@
 public open class DifferentGetterAndSetter : R|kotlin/Any| {
-    public open operator fun setSomething(color: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+    public open operator fun setSomething(color: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public open operator fun getSomething(): R|kotlin/Int|
 

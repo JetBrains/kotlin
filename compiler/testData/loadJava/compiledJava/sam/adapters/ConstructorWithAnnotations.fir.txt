@@ -1,4 +1,4 @@
 public open class ConstructorWithAnnotations : R|kotlin/Any| {
-    public constructor(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!, @R|org/jetbrains/annotations/NotNull|() s: R|kotlin/String|): R|test/ConstructorWithAnnotations|
+    public constructor(r: R|ft<java/lang/Runnable, java/lang/Runnable?>!|, @R|org/jetbrains/annotations/NotNull|() s: R|kotlin/String|): R|test/ConstructorWithAnnotations|
 
 }

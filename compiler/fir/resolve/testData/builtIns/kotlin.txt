@@ -24,15 +24,15 @@ public final fun longArrayOf(vararg elements: R|kotlin/LongArray|): R|kotlin/Lon
 
 public final fun shortArrayOf(vararg elements: R|kotlin/ShortArray|): R|kotlin/ShortArray|
 
-public final operator fun R|kotlin/String|?.plus(other: R|kotlin/Any|?): R|kotlin/String|
+public final operator fun R|kotlin/String?|.plus(other: R|kotlin/Any?|): R|kotlin/String|
 
-public final fun R|kotlin/Any|?.toString(): R|kotlin/String|
+public final fun R|kotlin/Any?|.toString(): R|kotlin/String|
 
 public abstract interface Annotation : R|kotlin/Any| {
 }
 
 public open class Any {
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -533,7 +533,7 @@ public abstract class Enum<E> : R|kotlin/Comparable<E>| {
 
     public final operator fun compareTo(other: R|E|): R|kotlin/Int|
 
-    public final operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public final operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public final fun hashCode(): R|kotlin/Int|
 
@@ -1254,7 +1254,7 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 
     public open operator fun get(index: R|kotlin/Int|): R|kotlin/Char|
 
-    public final operator fun plus(other: R|kotlin/Any|?): R|kotlin/String|
+    public final operator fun plus(other: R|kotlin/Any?|): R|kotlin/String|
 
     public open fun subSequence(startIndex: R|kotlin/Int|, endIndex: R|kotlin/Int|): R|kotlin/CharSequence|
 
@@ -1279,19 +1279,19 @@ public final class String : R|kotlin/Comparable<kotlin/String>|, R|kotlin/CharSe
 }
 
 public open class Throwable : R|kotlin/Any| {
-    public open val cause: R|kotlin/Throwable|?
-        public get(): R|kotlin/Throwable|?
+    public open val cause: R|kotlin/Throwable?|
+        public get(): R|kotlin/Throwable?|
 
-    public open val message: R|kotlin/String|?
-        public get(): R|kotlin/String|?
+    public open val message: R|kotlin/String?|
+        public get(): R|kotlin/String?|
 
-    public constructor(message: R|kotlin/String|?): R|kotlin/Throwable|
+    public constructor(message: R|kotlin/String?|): R|kotlin/Throwable|
 
-    public constructor(cause: R|kotlin/Throwable|?): R|kotlin/Throwable|
+    public constructor(cause: R|kotlin/Throwable?|): R|kotlin/Throwable|
 
     public constructor(): R|kotlin/Throwable|
 
-    public constructor(message: R|kotlin/String|?, cause: R|kotlin/Throwable|?): R|kotlin/Throwable|
+    public constructor(message: R|kotlin/String?|, cause: R|kotlin/Throwable?|): R|kotlin/Throwable|
 
 }
 

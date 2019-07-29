@@ -1,5 +1,5 @@
 public open class WildcardBounds : R|kotlin/Any| {
-    public/*package*/ open operator fun foo(x: R|ft<test/WildcardBounds.A<out kotlin/CharSequence>, test/WildcardBounds.A<out kotlin/CharSequence>?>|!, y: R|ft<test/WildcardBounds.A<in kotlin/String>, test/WildcardBounds.A<in kotlin/String>?>|!): R|kotlin/Unit|
+    public/*package*/ open operator fun foo(x: R|ft<test/WildcardBounds.A<out kotlin/CharSequence>, test/WildcardBounds.A<out kotlin/CharSequence>?>!|, y: R|ft<test/WildcardBounds.A<in kotlin/String>, test/WildcardBounds.A<in kotlin/String>?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/WildcardBounds|
 

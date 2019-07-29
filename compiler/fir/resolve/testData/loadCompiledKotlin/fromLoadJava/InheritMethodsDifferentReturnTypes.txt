@@ -5,16 +5,16 @@ public final class InheritMethodsDifferentReturnTypes : R|kotlin/Any| {
     }
 
     public abstract interface Super1 : R|kotlin/Any| {
-        public abstract fun bar(): R|kotlin/String|?
+        public abstract fun bar(): R|kotlin/String?|
 
-        public abstract fun foo(): R|kotlin/CharSequence|?
+        public abstract fun foo(): R|kotlin/CharSequence?|
 
     }
 
     public abstract interface Super2 : R|kotlin/Any| {
-        public abstract fun bar(): R|kotlin/CharSequence|?
+        public abstract fun bar(): R|kotlin/CharSequence?|
 
-        public abstract fun foo(): R|kotlin/String|?
+        public abstract fun foo(): R|kotlin/String?|
 
     }
 

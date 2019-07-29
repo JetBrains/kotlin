@@ -1,4 +1,4 @@
-public final class C : R|java/util/ArrayList<kotlin/String>| {
+public final class C : R|java/util/ArrayList<kotlin/String?>| {
     public constructor(): R|test/C|
 
 }

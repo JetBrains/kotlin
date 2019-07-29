@@ -1,5 +1,5 @@
 public open class A : R|kotlin/Any| {
-    public open operator fun same(@R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) first: R|ft<kotlin/String, kotlin/String?>|!, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+    public open operator fun same(@R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) first: R|ft<kotlin/String, kotlin/String?>!|, @R|kotlin/annotations/jvm/internal/ParameterName|(String(ok)) second: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public constructor(): R|A|
 

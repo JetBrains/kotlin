@@ -1,5 +1,5 @@
 public open class WrongValueParametersCount : R|kotlin/Any| {
-    public open fun foo(): R|kotlin/Int|?
+    public open fun foo(): R|kotlin/Int?|
 
     public constructor(): R|test/WrongValueParametersCount|
 

@@ -1,5 +1,5 @@
 public open class MethodWithGenerics : R|kotlin/Any| {
-    public open fun foo(a: R|kotlin/String|, b: R|kotlin/collections/List<kotlin/collections/Map.Entry<kotlin/String, kotlin/String>>|): R|kotlin/String|
+    public open fun foo(a: R|kotlin/String|, b: R|kotlin/collections/List<kotlin/collections/Map.Entry<kotlin/String?, kotlin/String>?>|): R|kotlin/String|
 
     public constructor(): R|test/MethodWithGenerics|
 

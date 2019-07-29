@@ -1,4 +1,4 @@
 public open class MyException : R|kotlin/Any| {
-    public constructor(message: R|ft<kotlin/String, kotlin/String?>|!, cause: R|ft<kotlin/Throwable, kotlin/Throwable?>|!): R|test/MyException|
+    public constructor(message: R|ft<kotlin/String, kotlin/String?>!|, cause: R|ft<kotlin/Throwable, kotlin/Throwable?>!|): R|test/MyException|
 
 }

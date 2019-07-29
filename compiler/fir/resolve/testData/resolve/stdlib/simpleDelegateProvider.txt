@@ -7,7 +7,7 @@ FILE: simpleDelegateProvider.kt
         public final val value: R|kotlin/String| = R|<local>/value|
             public get(): R|kotlin/String|
 
-        public final operator fun getValue(thisRef: R|kotlin/Any|?, property: R|kotlin/Any|?): R|kotlin/String| {
+        public final operator fun getValue(thisRef: R|kotlin/Any?|, property: R|kotlin/Any?|): R|kotlin/String| {
             ^getValue R|/Delegate.value|
         }
 
@@ -20,7 +20,7 @@ FILE: simpleDelegateProvider.kt
         public final val value: R|kotlin/String| = R|<local>/value|
             public get(): R|kotlin/String|
 
-        public final operator fun provideDelegate(thisRef: R|kotlin/Any|?, property: R|kotlin/Any|?): R|Delegate| {
+        public final operator fun provideDelegate(thisRef: R|kotlin/Any?|, property: R|kotlin/Any?|): R|Delegate| {
             ^provideDelegate R|/Delegate.Delegate|(R|/DelegateProvider.value|)
         }
 

@@ -3,7 +3,7 @@ public final data class My : R|kotlin/Any| {
 
     public final fun copy(x: R|kotlin/Int| = STUB): R|test/My|
 
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 

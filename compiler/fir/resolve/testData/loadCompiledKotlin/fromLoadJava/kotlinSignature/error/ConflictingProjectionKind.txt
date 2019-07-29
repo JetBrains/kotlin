@@ -1,5 +1,5 @@
 public open class ConflictingProjectionKind : R|kotlin/Any| {
-    public open fun foo(p0: R|kotlin/collections/List<kotlin/Number>|?): R|kotlin/Unit|
+    public open fun foo(p0: R|kotlin/collections/List<kotlin/Number>?|): R|kotlin/Unit|
 
     public constructor(): R|test/ConflictingProjectionKind|
 

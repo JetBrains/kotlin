@@ -1,5 +1,5 @@
 public open class CharProgression : R|kotlin/collections/Iterable<kotlin/Char>| {
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -55,7 +55,7 @@ internal final class CharProgressionIterator : R|kotlin/collections/CharIterator
 public final class CharRange : R|kotlin/ranges/CharProgression|, R|kotlin/ranges/ClosedRange<kotlin/Char>| {
     public open operator fun contains(value: R|kotlin/Char|): R|kotlin/Boolean|
 
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -95,7 +95,7 @@ public abstract interface ClosedRange<T> : R|kotlin/Any| {
 }
 
 public open class IntProgression : R|kotlin/collections/Iterable<kotlin/Int>| {
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -151,7 +151,7 @@ internal final class IntProgressionIterator : R|kotlin/collections/IntIterator| 
 public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/ClosedRange<kotlin/Int>| {
     public open operator fun contains(value: R|kotlin/Int|): R|kotlin/Boolean|
 
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -178,7 +178,7 @@ public final class IntRange : R|kotlin/ranges/IntProgression|, R|kotlin/ranges/C
 }
 
 public open class LongProgression : R|kotlin/collections/Iterable<kotlin/Long>| {
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 
@@ -234,7 +234,7 @@ internal final class LongProgressionIterator : R|kotlin/collections/LongIterator
 public final class LongRange : R|kotlin/ranges/LongProgression|, R|kotlin/ranges/ClosedRange<kotlin/Long>| {
     public open operator fun contains(value: R|kotlin/Long|): R|kotlin/Boolean|
 
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 

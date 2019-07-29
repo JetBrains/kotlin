@@ -1,24 +1,24 @@
 FILE: hashSet.kt
-    public final val a: R|kotlin/collections/MutableSet<kotlin/String>|? = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
-        public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
-    public final var b: R|kotlin/collections/MutableSet<kotlin/String>|? = Null(null)
-        public get(): R|kotlin/collections/MutableSet<kotlin/String>|?
-        public set(_: R|kotlin/collections/MutableSet<kotlin/String>|?): R|kotlin/Unit| {
+    public final val a: R|kotlin/collections/MutableSet<kotlin/String>?| = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
+        public get(): R|kotlin/collections/MutableSet<kotlin/String>?|
+    public final var b: R|kotlin/collections/MutableSet<kotlin/String>?| = Null(null)
+        public get(): R|kotlin/collections/MutableSet<kotlin/String>?|
+        public set(_: R|kotlin/collections/MutableSet<kotlin/String>?|): R|kotlin/Unit| {
             F|/b| = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
         }
-    public final var <T> R|kotlin/collections/MutableSet<T>|.d: R|T|?
-        public get(): R|T|? {
+    public final var <T> R|kotlin/collections/MutableSet<T>|.d: R|T?|
+        public get(): R|T?| {
             ^ Null(null)
         }
-        public set(_: R|T|?): R|kotlin/Unit| {
+        public set(_: R|T?|): R|kotlin/Unit| {
         }
     public final fun <T> produce(): R|T| {
         ^produce R|kotlin/TODO|()
     }
     public final fun foo(): R|kotlin/Unit| {
-        lvar c: R|kotlin/collections/MutableSet<kotlin/String>|? = Null(null)
+        lvar c: R|kotlin/collections/MutableSet<kotlin/String>?| = Null(null)
         R|<local>/c| = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
-        when (lval <bangbang>: R|kotlin/collections/MutableSet<kotlin/String>|? = R|<local>/c|) {
+        when (lval <bangbang>: R|kotlin/collections/MutableSet<kotlin/String>?| = R|<local>/c|) {
             ==($subj$, Null(null)) ->  {
                 throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
             }
@@ -26,5 +26,5 @@ FILE: hashSet.kt
                 R|<local>/<bangbang>|!
             }
         }
-        .R|/d| = R|/produce|<R|T|?>()
+        .R|/d| = R|/produce|<R|T?|>()
     }

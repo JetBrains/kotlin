@@ -1,5 +1,5 @@
 public open class TopLevel$Class : R|kotlin/Any| {
-    public open operator fun foo(other: R|ft<test/TopLevel$Class, test/TopLevel$Class?>|!): R|kotlin/Unit|
+    public open operator fun foo(other: R|ft<test/TopLevel$Class, test/TopLevel$Class?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/TopLevel$Class|
 

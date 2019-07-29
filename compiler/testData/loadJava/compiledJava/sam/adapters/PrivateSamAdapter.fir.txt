@@ -1,5 +1,5 @@
 public open class PrivateSamAdapter : R|kotlin/Any| {
-    private open operator fun samAdapter(r: R|ft<test/PrivateSamAdapter.SamInterface, test/PrivateSamAdapter.SamInterface?>|!): R|kotlin/Unit|
+    private open operator fun samAdapter(r: R|ft<test/PrivateSamAdapter.SamInterface, test/PrivateSamAdapter.SamInterface?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/PrivateSamAdapter|
 

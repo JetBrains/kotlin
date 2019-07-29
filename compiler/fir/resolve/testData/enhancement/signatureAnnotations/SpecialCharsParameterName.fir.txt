@@ -1,7 +1,7 @@
 public open class A : R|kotlin/Any| {
-    public open operator fun dollarName(@R|kotlin/annotations/jvm/internal/ParameterName|(String($)) host: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+    public open operator fun dollarName(@R|kotlin/annotations/jvm/internal/ParameterName|(String($)) host: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
-    public open operator fun numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(String(42)) field: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+    public open operator fun numberName(@R|kotlin/annotations/jvm/internal/ParameterName|(String(42)) field: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public constructor(): R|A|
 

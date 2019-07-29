@@ -1,7 +1,7 @@
 public open class PropertySimpleType : R|kotlin/Any| {
-    public open field fieldOne: R|ft<kotlin/String, kotlin/String?>|!
+    public open field fieldOne: R|ft<kotlin/String, kotlin/String?>!|
 
-    public open field fieldTwo: R|ft<kotlin/String, kotlin/String?>|!
+    public open field fieldTwo: R|ft<kotlin/String, kotlin/String?>!|
 
     public constructor(): R|test/PropertySimpleType|
 

@@ -6,8 +6,8 @@ FILE: factoryFunctionOverloads.kt
             public get(): R|B|
 
     }
-    public final fun A(b: R|B|?, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
-        ^A R|/A.A|(when (lval <bangbang>: R|B|? = R|<local>/b|) {
+    public final fun A(b: R|B?|, flag: R|kotlin/Boolean| = Boolean(true)): R|A| {
+        ^A R|/A.A|(when (lval <bangbang>: R|B?| = R|<local>/b|) {
             ==($subj$, Null(null)) ->  {
                 throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
             }
@@ -32,7 +32,7 @@ FILE: factoryFunctionOverloads.kt
             public get(): R|kotlin/Boolean|
 
     }
-    public final fun foo(c: R|C|, b: R|B|, bn: R|B|?): R|kotlin/Unit| {
+    public final fun foo(c: R|C|, b: R|B|, bn: R|B?|): R|kotlin/Unit| {
         lval x: R|A| = R|/A|(R|<local>/c|)
         lval y: R|A| = R|/A.A|(R|<local>/b|)
         lval z: R|A| = R|/A.A|(R|<local>/bn|)

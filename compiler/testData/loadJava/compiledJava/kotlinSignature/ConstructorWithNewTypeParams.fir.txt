@@ -1,4 +1,4 @@
 public open class ConstructorWithNewTypeParams<T> : R|kotlin/Any| {
-    public constructor<T, U>(first: R|ft<U, U?>|!): R|test/ConstructorWithNewTypeParams<T>|
+    public constructor<T, U>(first: R|ft<U, U?>!|): R|test/ConstructorWithNewTypeParams<T>|
 
 }

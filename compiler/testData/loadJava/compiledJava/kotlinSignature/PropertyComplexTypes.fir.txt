@@ -1,11 +1,11 @@
 public open class PropertyComplexTypes<T> : R|kotlin/Any| {
-    public open field genericType: R|ft<T, T?>|!
+    public open field genericType: R|ft<T, T?>!|
 
-    public open field listDefinedGeneric: R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>>?>|!
+    public open field listDefinedGeneric: R|ft<java/util/ArrayList<ft<kotlin/String, kotlin/String?>!>, java/util/ArrayList<ft<kotlin/String, kotlin/String?>!>?>!|
 
-    public open field listGeneric: R|ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>|!
+    public open field listGeneric: R|ft<java/util/ArrayList<ft<T, T?>!>, java/util/ArrayList<ft<T, T?>!>?>!|
 
-    public open field listOfGenericList: R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>, java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>>, java/util/ArrayList<ft<T, T?>>?>>?>|!
+    public open field listOfGenericList: R|ft<java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>!>, java/util/ArrayList<ft<T, T?>!>?>!>, java/util/ArrayList<ft<java/util/ArrayList<ft<T, T?>!>, java/util/ArrayList<ft<T, T?>!>?>!>?>!|
 
     public constructor<T>(): R|test/PropertyComplexTypes<T>|
 

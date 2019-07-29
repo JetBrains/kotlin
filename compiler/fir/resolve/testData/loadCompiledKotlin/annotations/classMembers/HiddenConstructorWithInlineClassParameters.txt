@@ -29,7 +29,7 @@ public final class Test : R|kotlin/Any| {
 }
 
 public final inline class Z : R|kotlin/Any| {
-    public open operator fun equals(other: R|kotlin/Any|?): R|kotlin/Boolean|
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
 
     public open fun hashCode(): R|kotlin/Int|
 

@@ -1,13 +1,13 @@
 public open class Frame : R|kotlin/Any| {
-    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
+    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>!|
 
     public constructor(): R|awt/Frame|
 
 }
 public open class JFrame : R|awt/Frame| {
-    protected/*protected and package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
+    protected/*protected and package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>!|
 
-    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>|!
+    public/*package*/ open field accessibleContext: R|ft<kotlin/String, kotlin/String?>!|
 
     public constructor(): R|test/JFrame|
 

@@ -1,13 +1,13 @@
 @R|NonNullApi|() public open class A : R|kotlin/Any| {
     public open field field: R|kotlin/String|
 
-    public open operator fun foo(x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence|?): R|kotlin/String|
+    public open operator fun foo(x: R|kotlin/String|, @R|javax/annotation/CheckForNull|() y: R|kotlin/CharSequence?|): R|kotlin/String|
 
-    @R|NullableApi|() public open operator fun foobar(x: R|kotlin/String|?, @R|NonNullApi|() y: R|kotlin/CharSequence|): R|kotlin/String|?
+    @R|NullableApi|() public open operator fun foobar(x: R|kotlin/String?|, @R|NonNullApi|() y: R|kotlin/CharSequence|): R|kotlin/String?|
 
     public open operator fun bar(): R|kotlin/String|
 
-    @R|javax/annotation/Nullable|() public open operator fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>>?>|?
+    @R|javax/annotation/Nullable|() public open operator fun baz(): R|ft<kotlin/collections/MutableList<ft<kotlin/String, kotlin/String?>!>?, kotlin/collections/List<ft<kotlin/String, kotlin/String?>!>?>?|
 
     public constructor(): R|A|
 

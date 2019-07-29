@@ -1,6 +1,6 @@
 public final class ExtValInClass : R|kotlin/Any| {
-    public final val R|kotlin/Int|.asas: R|java/util/List<kotlin/Int>|?
-        public get(): R|java/util/List<kotlin/Int>|?
+    public final val R|kotlin/Int|.asas: R|java/util/List<kotlin/Int>?|
+        public get(): R|java/util/List<kotlin/Int>?|
 
     public constructor(): R|test/ExtValInClass|
 

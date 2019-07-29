@@ -1,5 +1,5 @@
 public open class CustomProjectionKind : R|kotlin/Any| {
-    public open operator fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/Number, kotlin/Number?>>, kotlin/collections/List<ft<kotlin/Number, kotlin/Number?>>?>|!
+    public open operator fun foo(): R|ft<kotlin/collections/MutableList<ft<kotlin/Number, kotlin/Number?>!>, kotlin/collections/List<ft<kotlin/Number, kotlin/Number?>!>?>!|
 
     public constructor(): R|test/CustomProjectionKind|
 

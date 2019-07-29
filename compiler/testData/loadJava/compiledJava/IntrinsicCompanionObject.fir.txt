@@ -1,12 +1,12 @@
 public abstract interface IntrinsicCompanionObject : R|kotlin/Any| {
-    public abstract operator fun testInt(i: R|ft<kotlin/Int.Companion, kotlin/Int.Companion?>|!): R|kotlin/Unit|
+    public abstract operator fun testInt(i: R|ft<kotlin/Int.Companion, kotlin/Int.Companion?>!|): R|kotlin/Unit|
 
-    public abstract operator fun testChar(c: R|ft<kotlin/Char.Companion, kotlin/Char.Companion?>|!): R|kotlin/Unit|
+    public abstract operator fun testChar(c: R|ft<kotlin/Char.Companion, kotlin/Char.Companion?>!|): R|kotlin/Unit|
 
-    public abstract operator fun testString(s: R|ft<kotlin/String.Companion, kotlin/String.Companion?>|!): R|kotlin/Unit|
+    public abstract operator fun testString(s: R|ft<kotlin/String.Companion, kotlin/String.Companion?>!|): R|kotlin/Unit|
 
-    public abstract operator fun testBoolean(b: R|ft<kotlin/Boolean.Companion, kotlin/Boolean.Companion?>|!): R|kotlin/Unit|
+    public abstract operator fun testBoolean(b: R|ft<kotlin/Boolean.Companion, kotlin/Boolean.Companion?>!|): R|kotlin/Unit|
 
-    public abstract operator fun testEnum(e: R|ft<kotlin/Enum.Companion, kotlin/Enum.Companion?>|!): R|kotlin/Unit|
+    public abstract operator fun testEnum(e: R|ft<kotlin/Enum.Companion, kotlin/Enum.Companion?>!|): R|kotlin/Unit|
 
 }

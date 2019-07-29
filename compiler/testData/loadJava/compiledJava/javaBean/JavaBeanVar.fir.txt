@@ -1,7 +1,7 @@
 public open class JavaBeanVar : R|kotlin/Any| {
-    public open operator fun getColor(): R|ft<kotlin/String, kotlin/String?>|!
+    public open operator fun getColor(): R|ft<kotlin/String, kotlin/String?>!|
 
-    public open operator fun setColor(string: R|ft<kotlin/String, kotlin/String?>|!): R|kotlin/Unit|
+    public open operator fun setColor(string: R|ft<kotlin/String, kotlin/String?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/JavaBeanVar|
 

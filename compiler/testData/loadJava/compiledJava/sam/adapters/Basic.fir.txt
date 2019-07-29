@@ -1,7 +1,7 @@
 public open class Basic : R|kotlin/Any| {
-    public open operator fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|kotlin/Unit|
+    public open operator fun foo(r: R|ft<java/lang/Runnable, java/lang/Runnable?>!|): R|kotlin/Unit|
 
-    public open static operator fun bar(r: R|ft<java/lang/Runnable, java/lang/Runnable?>|!): R|kotlin/Unit|
+    public open static operator fun bar(r: R|ft<java/lang/Runnable, java/lang/Runnable?>!|): R|kotlin/Unit|
 
     public constructor(): R|test/Basic|
 

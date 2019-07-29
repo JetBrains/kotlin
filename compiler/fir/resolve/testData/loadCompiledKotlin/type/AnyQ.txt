@@ -1,1 +1,1 @@
-public final fun anyq(): R|kotlin/Any|?
+public final fun anyq(): R|kotlin/Any?|

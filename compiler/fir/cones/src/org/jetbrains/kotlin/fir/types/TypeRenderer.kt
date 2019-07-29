@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 fun ConeKotlinType.render(): String {
+    val nullabilitySuffix = if (this !is ConeKotlinErrorType && this !is ConeClassErrorType) nullability.suffix else ""
     return when (this) {
         is ConeTypeVariableType -> "TypeVariable(${this.lookupTag.name})"
         is ConeDefinitelyNotNullType -> "${original.render()}!"
@@ -33,12 +34,10 @@ fun ConeKotlinType.render(): String {
             buildString {
                 append("ft<")
                 append(lowerBound.render())
-                append(lowerBound.nullability.suffix)
                 append(", ")
                 append(upperBound.render())
-                append(upperBound.nullability.suffix)
                 append(">")
             }
         }
-    }
+    } + nullabilitySuffix
 }

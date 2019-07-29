@@ -1,5 +1,5 @@
 public open class TypeParameterOfClass<T> : R|kotlin/Any| {
-    public open operator fun foo(comparator: R|ft<java/util/Comparator<ft<T, T?>>, java/util/Comparator<ft<T, T?>>?>|!): R|kotlin/Unit|
+    public open operator fun foo(comparator: R|ft<java/util/Comparator<ft<T, T?>!>, java/util/Comparator<ft<T, T?>!>?>!|): R|kotlin/Unit|
 
     public constructor<T>(): R|test/TypeParameterOfClass<T>|
 
