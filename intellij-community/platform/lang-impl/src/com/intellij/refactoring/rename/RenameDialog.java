@@ -320,7 +320,7 @@ public class RenameDialog extends RefactoringDialog {
     performRename(newName);
   }
 
-  public void performRename(final String newName) {
+  public void performRename(@NotNull String newName) {
     final RenamePsiElementProcessor elementProcessor = RenamePsiElementProcessor.forElement(myPsiElement);
     elementProcessor.setToSearchInComments(myPsiElement, isSearchInComments());
     if (myCbSearchTextOccurrences.isEnabled()) {
@@ -342,7 +342,7 @@ public class RenameDialog extends RefactoringDialog {
     invokeRefactoring(processor);
   }
 
-  protected RenameProcessor createRenameProcessor(String newName) {
+  protected RenameProcessor createRenameProcessor(@NotNull String newName) {
     return new RenameProcessor(getProject(), myPsiElement, newName, getRefactoringScope(), isSearchInComments(), isSearchInNonJavaFiles());
   }
 

@@ -277,7 +277,7 @@ public abstract class BaseRefactoringAction extends AnAction implements UpdateIn
   }
 
   @NotNull
-  public static PsiElement[] getPsiElementArray(DataContext dataContext) {
+  public static PsiElement[] getPsiElementArray(@NotNull DataContext dataContext) {
     PsiElement[] psiElements = LangDataKeys.PSI_ELEMENT_ARRAY.getData(dataContext);
     if (psiElements == null || psiElements.length == 0) {
       PsiElement element = CommonDataKeys.PSI_ELEMENT.getData(dataContext);
