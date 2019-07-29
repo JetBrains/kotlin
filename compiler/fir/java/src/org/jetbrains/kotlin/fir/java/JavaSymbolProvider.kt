@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
+import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -157,7 +159,8 @@ class JavaSymbolProvider(
                     }
                 }
                 FirJavaClass(
-                    session, firSymbol as FirClassSymbol, javaClass.name,
+                    session, (javaClass as? JavaElementImpl<*>)?.psi,
+                    firSymbol as FirClassSymbol, javaClass.name,
                     javaClass.visibility, javaClass.modality,
                     javaClass.classKind, isTopLevel = isTopLevel,
                     isStatic = javaClass.isStatic,
@@ -176,7 +179,8 @@ class JavaSymbolProvider(
                         val fieldSymbol = FirFieldSymbol(fieldId)
                         val returnType = javaField.type
                         val firJavaField = FirJavaField(
-                            this@JavaSymbolProvider.session, fieldSymbol, fieldName,
+                            this@JavaSymbolProvider.session, (javaField as? JavaElementImpl<*>)?.psi,
+                            fieldSymbol, fieldName,
                             javaField.visibility, javaField.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack),
                             isVar = !javaField.isFinal,
@@ -192,7 +196,8 @@ class JavaSymbolProvider(
                         val methodSymbol = FirNamedFunctionSymbol(methodId)
                         val returnType = javaMethod.returnType
                         val firJavaMethod = FirJavaMethod(
-                            this@JavaSymbolProvider.session, methodSymbol, methodName,
+                            this@JavaSymbolProvider.session, (javaMethod as? JavaElementImpl<*>)?.psi,
+                            methodSymbol, methodName,
                             javaMethod.visibility, javaMethod.modality,
                             returnTypeRef = returnType.toFirJavaTypeRef(this@JavaSymbolProvider.session, javaTypeParameterStack),
                             isStatic = javaMethod.isStatic
@@ -212,12 +217,14 @@ class JavaSymbolProvider(
 
                     fun addJavaConstructor(
                         visibility: Visibility = this.visibility,
+                        psi: PsiElement? = null,
                         isPrimary: Boolean = false
                     ): FirJavaConstructor {
                         val constructorSymbol = FirConstructorSymbol(constructorId)
                         val classTypeParameters = javaClass.typeParameters.convertTypeParameters(javaTypeParameterStack)
                         val firJavaConstructor = FirJavaConstructor(
-                            this@JavaSymbolProvider.session, constructorSymbol, visibility, isPrimary,
+                            this@JavaSymbolProvider.session, psi,
+                            constructorSymbol, visibility, isPrimary,
                             FirResolvedTypeRefImpl(
                                 null,
                                 firSymbol.constructType(
@@ -236,7 +243,9 @@ class JavaSymbolProvider(
                         addJavaConstructor(isPrimary = true)
                     }
                     for (javaConstructor in javaClassDeclaredConstructors) {
-                        addJavaConstructor(javaConstructor.visibility).apply {
+                        addJavaConstructor(
+                            visibility = javaConstructor.visibility, psi = (javaConstructor as? JavaElementImpl<*>)?.psi
+                        ).apply {
                             this.typeParameters += javaConstructor.typeParameters.convertTypeParameters(javaTypeParameterStack)
                             addAnnotationsFrom(this@JavaSymbolProvider.session, javaConstructor, javaTypeParameterStack)
                             for (valueParameter in javaConstructor.valueParameters) {

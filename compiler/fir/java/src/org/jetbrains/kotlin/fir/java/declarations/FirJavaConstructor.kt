@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,13 +21,14 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 class FirJavaConstructor(
     session: FirSession,
+    psi: PsiElement?,
     override val symbol: FirConstructorSymbol,
     visibility: Visibility,
     override val isPrimary: Boolean,
     delegatedSelfTypeRef: FirTypeRef
 ) : FirAbstractCallableMember<FirConstructor>(
     session,
-    psi = null,
+    psi,
     name = NAME,
     visibility = visibility,
     modality = Modality.FINAL,

@@ -86,6 +86,7 @@ class JavaClassEnhancementScope(
                 with(firElement) {
                     FirJavaField(
                         this@JavaClassEnhancementScope.session,
+                        firElement.psi,
                         symbol,
                         name,
                         visibility,
@@ -185,7 +186,7 @@ class JavaClassEnhancementScope(
                 val symbol = FirConstructorSymbol(methodId)
                 if (firMethod.isPrimary) {
                     FirPrimaryConstructorImpl(
-                        this@JavaClassEnhancementScope.session, null, symbol,
+                        this@JavaClassEnhancementScope.session, firMethod.psi, symbol,
                         firMethod.visibility,
                         isExpect = false,
                         isActual = false,
@@ -194,7 +195,7 @@ class JavaClassEnhancementScope(
                     )
                 } else {
                     FirConstructorImpl(
-                        this@JavaClassEnhancementScope.session, null, symbol,
+                        this@JavaClassEnhancementScope.session, firMethod.psi, symbol,
                         newReceiverTypeRef, newReturnTypeRef
                     )
                 }.apply {
@@ -204,7 +205,7 @@ class JavaClassEnhancementScope(
                 }
             }
             else -> FirMemberFunctionImpl(
-                this@JavaClassEnhancementScope.session, null,
+                this@JavaClassEnhancementScope.session, firMethod.psi,
                 if (!isAccessor) FirNamedFunctionSymbol(methodId)
                 else FirAccessorSymbol(callableId = propertyId!!, accessorId = methodId),
                 name, newReceiverTypeRef, newReturnTypeRef

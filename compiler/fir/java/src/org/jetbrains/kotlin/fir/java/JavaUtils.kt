@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance.*
@@ -195,7 +196,7 @@ internal fun JavaValueParameter.toFirValueParameters(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack
 ): FirValueParameter {
     return FirJavaValueParameter(
-        session, name ?: Name.special("<anonymous Java parameter>"),
+        session, (this as? JavaElementImpl<*>)?.psi, name ?: Name.special("<anonymous Java parameter>"),
         returnTypeRef = type.toFirJavaTypeRef(session, javaTypeParameterStack),
         isVararg = isVararg
     ).apply {

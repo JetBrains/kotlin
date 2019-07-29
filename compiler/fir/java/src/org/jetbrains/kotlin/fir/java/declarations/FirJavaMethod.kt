@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirJavaMethod(
     session: FirSession,
+    psi: PsiElement?,
     symbol: FirNamedFunctionSymbol,
     name: Name,
     visibility: Visibility,
@@ -23,7 +25,7 @@ class FirJavaMethod(
     returnTypeRef: FirJavaTypeRef,
     isStatic: Boolean
 ) : FirMemberFunctionImpl(
-    session, null, symbol, name,
+    session, psi, symbol, name,
     visibility, modality,
     false, isActual = false,
     isOverride = false,

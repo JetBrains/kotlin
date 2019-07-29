@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java.declarations
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 
 class FirJavaField(
     session: FirSession,
+    psi: PsiElement?,
     override val symbol: FirFieldSymbol,
     name: Name,
     visibility: Visibility,
@@ -28,8 +30,8 @@ class FirJavaField(
     override val isVar: Boolean,
     isStatic: Boolean
 ) : FirAbstractCallableMember<FirField>(
-    session, psi = null, name = name,
-    visibility = visibility, modality = modality,
+    session, psi, name,
+    visibility, modality,
     isExpect = false, isActual = false, isOverride = false,
     receiverTypeRef = null, returnTypeRef = returnTypeRef
 ), FirField {

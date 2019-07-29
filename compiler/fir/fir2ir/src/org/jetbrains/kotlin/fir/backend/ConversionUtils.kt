@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.types.Variance
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
+    if (psi is PsiCompiledElement) return f(-1, -1)
     val startOffset = psi?.startOffsetSkippingComments ?: -1
     val endOffset = psi?.endOffset ?: -1
     return f(startOffset, endOffset)
