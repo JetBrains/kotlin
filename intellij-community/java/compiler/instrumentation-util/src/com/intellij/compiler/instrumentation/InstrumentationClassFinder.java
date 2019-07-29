@@ -527,8 +527,9 @@ public class InstrumentationClassFinder {
 
     private static Loader getLoader(final URL url, int index) throws IOException {
       String s;
+      final String protocol = url.getProtocol();
       try {
-        s = url.toURI().getSchemeSpecificPart();
+        s = Loader.JRT_PROTOCOL.equals(protocol)? url.getFile() : url.toURI().getSchemeSpecificPart();
       }
       catch (URISyntaxException thisShouldNotHappen) {
         thisShouldNotHappen.printStackTrace();
@@ -536,7 +537,6 @@ public class InstrumentationClassFinder {
       }
 
       if (s != null && s.length() > 0) {
-        final String protocol = url.getProtocol();
         if (Loader.JRT_PROTOCOL.equals(protocol)) {
           final Loader jrtLoader = JrtClassHolder.create(url, index);
           if (jrtLoader != null) {
