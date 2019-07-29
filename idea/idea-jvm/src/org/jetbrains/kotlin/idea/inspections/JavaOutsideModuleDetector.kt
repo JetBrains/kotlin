@@ -30,7 +30,7 @@ class JavaOutsideModuleDetector(private val project: Project, notifications: Edi
             override fun fileMoved(event: VirtualFileMoveEvent) {
                 if (event.file.fileType == JavaFileType.INSTANCE) notifications.updateNotifications(event.file)
             }
-        })
+        }, project)
     }
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {
