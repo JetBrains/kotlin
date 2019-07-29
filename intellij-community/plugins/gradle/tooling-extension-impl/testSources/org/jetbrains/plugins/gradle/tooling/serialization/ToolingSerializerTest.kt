@@ -45,10 +45,14 @@ class ToolingSerializerTest {
   @Throws(Exception::class)
   fun `external project serialization test`() {
     myRandomParameters
-      .randomize(named("externalSystemId").and(ofType(String::class.java)).and(inClass(DefaultExternalProject::class.java)),
-                 Randomizer { "GRADLE" })
-      .randomize(named("configurationName").and(ofType(String::class.java)).and(inClass(DefaultExternalProjectDependency::class.java)),
-                 Randomizer { Dependency.DEFAULT_CONFIGURATION })
+      .randomize(
+        named("externalSystemId").and(ofType(String::class.java)).and(inClass(DefaultExternalProject::class.java)),
+        Randomizer { "GRADLE" }
+      )
+      .randomize(
+        named("configurationName").and(ofType(String::class.java)).and(inClass(DefaultExternalProjectDependency::class.java)),
+        Randomizer { Dependency.DEFAULT_CONFIGURATION }
+      )
     doTest(DefaultExternalProject::class.java, Consumer { fixMapsKeys(it) })
   }
 
