@@ -101,6 +101,7 @@ RuntimeState* initRuntime() {
 }
 
 void deinitRuntime(RuntimeState* state) {
+  ResumeMemory(state->memoryState);
   bool lastRuntime = atomicAdd(&aliveRuntimesCount, -1) == 0;
   InitOrDeinitGlobalVariables(DEINIT_THREAD_LOCAL_GLOBALS);
   if (lastRuntime)

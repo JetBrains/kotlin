@@ -1552,7 +1552,6 @@ MemoryState* suspendMemory() {
 }
 
 void resumeMemory(MemoryState* state) {
-    RuntimeAssert(::memoryState == nullptr, "Cannot schedule on existing state");
     ::memoryState = state;
 }
 
@@ -2489,7 +2488,6 @@ MemoryState* InitMemory() {
 }
 
 void DeinitMemory(MemoryState* memoryState) {
-  ::memoryState = memoryState;
   deinitMemory(memoryState);
 }
 
