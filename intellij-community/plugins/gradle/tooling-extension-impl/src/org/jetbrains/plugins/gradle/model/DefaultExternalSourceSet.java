@@ -17,7 +17,7 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
 
   private String name;
   private Map<ExternalSystemSourceType, DefaultExternalSourceDirectorySet> sources;
-  private Collection<ExternalDependency> dependencies;
+  private final LinkedHashSet<ExternalDependency> dependencies;
   private Collection<File> artifacts;
   private String sourceCompatibility;
   private String targetCompatibility;
@@ -29,7 +29,6 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
   }
 
   public DefaultExternalSourceSet(ExternalSourceSet sourceSet) {
-
     name = sourceSet.getName();
     sourceCompatibility = sourceSet.getSourceCompatibility();
     targetCompatibility = sourceSet.getTargetCompatibility();
@@ -40,7 +39,7 @@ public final class DefaultExternalSourceSet implements ExternalSourceSet {
       sources.put(ExternalSystemSourceType.from(entry.getKey()), new DefaultExternalSourceDirectorySet(entry.getValue()));
     }
 
-    dependencies = new ArrayList<ExternalDependency>(sourceSet.getDependencies().size());
+    dependencies = new LinkedHashSet<ExternalDependency>(sourceSet.getDependencies().size());
     for (ExternalDependency dependency : sourceSet.getDependencies()) {
       dependencies.add(ModelFactory.createCopy(dependency));
     }

@@ -24,7 +24,7 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   @NotNull
   private String version;
   @NotNull
-  private Map<String, DefaultExternalProject> childProjects;
+  private TreeMap<String, DefaultExternalProject> childProjects;
   @NotNull
   private File projectDir;
   @NotNull
@@ -43,7 +43,7 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   private Map<String, Set<File>> artifactsByConfiguration;
 
   public DefaultExternalProject() {
-    childProjects = new HashMap<String, DefaultExternalProject>(0);
+    childProjects = new TreeMap<String, DefaultExternalProject>();
     tasks = new HashMap<String, DefaultExternalTask>(0);
     sourceSets = new HashMap<String, DefaultExternalSourceSet>(0);
     artifacts = new ArrayList<File>(0);
@@ -63,7 +63,7 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
     externalSystemId = externalProject.getExternalSystemId();
 
     Map<String, ? extends ExternalProject> externalProjectChildProjects = externalProject.getChildProjects();
-    childProjects = new HashMap<String, DefaultExternalProject>(externalProjectChildProjects.size());
+    childProjects = new TreeMap<String, DefaultExternalProject>();
     for (Map.Entry<String, ? extends ExternalProject> entry : externalProjectChildProjects.entrySet()) {
       childProjects.put(entry.getKey(), new DefaultExternalProject(entry.getValue()));
     }
@@ -161,7 +161,12 @@ public final class DefaultExternalProject implements ExternalProject, ExternalPr
   }
 
   public void setChildProjects(@NotNull Map<String, DefaultExternalProject> childProjects) {
-    this.childProjects = childProjects;
+    if (childProjects instanceof TreeMap) {
+      this.childProjects = (TreeMap<String, DefaultExternalProject>)childProjects;
+    }
+    else {
+      this.childProjects = new TreeMap<String, DefaultExternalProject>(childProjects);
+    }
   }
 
   @NotNull
