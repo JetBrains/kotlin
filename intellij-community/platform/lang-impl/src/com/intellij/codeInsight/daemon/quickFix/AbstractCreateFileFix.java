@@ -92,7 +92,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
           return;
         }
 
-        if (editor == null) {
+        if (editor == null || ApplicationManager.getApplication().isUnitTestMode()) {
           // run on first item of sorted list in batch mode
           apply(myStartElement.getProject(), directories.get(0));
         }

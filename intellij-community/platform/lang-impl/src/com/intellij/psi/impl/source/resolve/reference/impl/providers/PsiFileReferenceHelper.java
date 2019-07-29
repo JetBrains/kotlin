@@ -163,8 +163,11 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
 
     List<FileTargetContextWrapper> targetContextWrappers = findSourceRootTypes(targetContexts);
 
-    // sort only if we have resource roots
-    if (ContainerUtil.find(targetContextWrappers, PsiFileReferenceHelper::isResourceRoot) == null) {
+    // sort only if we different source root types
+    if (targetContextWrappers.stream()
+        .map(FileTargetContextWrapper::getSourceRootType)
+        .distinct()
+        .count() < 2) {
       return targetContexts;
     }
 
