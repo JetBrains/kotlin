@@ -19,9 +19,9 @@ FILE: intersectionTypes.kt
     public final fun test(): R|it(A & B)| {
         ^test R|/select|<R|it(A & B)|>(R|/Clazz1.Clazz1|(), R|/Clazz2.Clazz2|())
     }
-    public final fun <T> makeNull(x: R|T|): R|T|? {
+    public final fun <T> makeNull(x: R|T|): R|T?| {
         ^makeNull Null(null)
     }
-    public final fun testNull(): R|it(A & B)| {
+    public final fun testNull(): R|it(A? & B?)| {
         ^testNull R|/makeNull|<R|it(A & B)|>(R|/select|<R|it(A & B)|>(R|/Clazz1.Clazz1|(), R|/Clazz2.Clazz2|()))
     }

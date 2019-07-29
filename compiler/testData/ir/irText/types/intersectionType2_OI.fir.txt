@@ -75,24 +75,24 @@ FILE fqName:<root> fileName:/intersectionType2_OI.kt
       RETURN type=kotlin.Nothing from='public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>'
         CALL 'public abstract fun invoke (): T of <root>.run declared in kotlin.Function0' type=T of <root>.run origin=null
           $this: GET_VAR 'fn: kotlin.Function0<T of <root>.run> declared in <root>.run' type=kotlin.Function0<T of <root>.run> origin=null
-  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.B
+  FUN name:foo visibility:public modality:FINAL <> () returnType:<root>.Foo
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun foo (): <root>.B declared in <root>'
-        CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=<root>.B origin=null
+      RETURN type=kotlin.Nothing from='public final fun foo (): <root>.Foo declared in <root>'
+        CALL 'public final fun run <T> (fn: kotlin.Function0<T of <root>.run>): T of <root>.run declared in <root>' type=<root>.Foo origin=null
           <T>: <none>
-          fn: FUN_EXPR type=kotlin.Function0<<root>.B> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.B
+          fn: FUN_EXPR type=kotlin.Function0<<root>.Foo> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:<root>.Foo
               BLOCK_BODY
                 VAR name:mm type:<root>.B [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
                 VAR name:nn type:<root>.C [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
-                VAR name:c type:<root>.B [val]
-                  WHEN type=<root>.B origin=IF
+                VAR name:c type:<root>.Foo [val]
+                  WHEN type=<root>.Foo origin=IF
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'val mm: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: GET_VAR 'val nn: <root>.C [val] declared in <root>.foo.<anonymous>' type=<root>.C origin=null
-                GET_VAR 'val c: <root>.B [val] declared in <root>.foo.<anonymous>' type=<root>.B origin=null
+                GET_VAR 'val c: <root>.Foo [val] declared in <root>.foo.<anonymous>' type=<root>.Foo origin=null

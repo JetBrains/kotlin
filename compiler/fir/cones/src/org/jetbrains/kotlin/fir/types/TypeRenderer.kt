@@ -39,5 +39,12 @@ fun ConeKotlinType.render(): String {
                 append(">")
             }
         }
+        is ConeIntersectionType -> {
+            intersectedTypes.joinToString(
+                separator = " & ",
+                prefix = "it(",
+                postfix = ")"
+            )
+        }
     } + nullabilitySuffix
 }

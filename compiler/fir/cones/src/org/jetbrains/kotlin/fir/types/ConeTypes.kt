@@ -174,3 +174,52 @@ class ConeDefinitelyNotNullType(val original: ConeKotlinType): ConeKotlinType(),
     override val nullability: ConeNullability
         get() = ConeNullability.NOT_NULL
 }
+
+/*
+ * Contract of the intersection type: it is flat. It means that
+ *   intersection type can not contains another intersection types
+ *   inside it. To keep this contract construct new intersection types
+ *   only via ConeTypeIntersector
+ */
+class ConeIntersectionType(
+    val constructor: ConeIntersectionTypeConstructor
+) : ConeKotlinType(), SimpleTypeMarker {
+    override val typeArguments: Array<out ConeKotlinTypeProjection>
+        get() = emptyArray()
+
+    override val nullability: ConeNullability
+        get() = ConeNullability.NOT_NULL
+
+    val intersectedTypes: Collection<ConeKotlinType> get() = constructor.intersectedTypes
+    val statusMap: Map<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus> get() = constructor.statusMap
+}
+
+class ConeIntersectionTypeConstructor(
+    val intersectedTypes: Collection<ConeKotlinType>,
+    val statusMap: Map<ConeKotlinType, IntersectionStatus>
+) : TypeConstructorMarker {
+    val supertypes: Collection<ConeKotlinType> get() = intersectedTypes
+
+    /*
+     * IMPORTANT: use this method only for types from intersectedTypes
+     */
+    fun getStatus(type: ConeKotlinType): IntersectionStatus {
+        return statusMap[type] ?: error("")
+    }
+
+    enum class IntersectionStatus {
+        FROM_INFERENCE,
+        FROM_SMARTCAST
+    }
+}
+
+fun ConeIntersectionTypeConstructor.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionTypeConstructor {
+    val newStatusMap = mutableMapOf<ConeKotlinType, ConeIntersectionTypeConstructor.IntersectionStatus>()
+    val newTypes = intersectedTypes.map { type ->
+        val newType = func(type)
+        // TODO: what if some types squash? What status should we choose?
+        newStatusMap[newType] = getStatus(type)
+        newType
+    }
+    return ConeIntersectionTypeConstructor(newTypes, newStatusMap)
+}

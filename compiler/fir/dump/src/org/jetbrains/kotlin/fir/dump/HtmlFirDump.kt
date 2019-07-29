@@ -599,6 +599,12 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    private fun FlowContent.generate(intersectionType: ConeIntersectionType) {
+        +"("
+        generateList(intersectionType.intersectedTypes.toList(), " & ") { generate(it) }
+        +")"
+    }
+
     private fun FlowContent.generate(type: ConeClassType) {
         resolved {
             symbolRef(type.lookupTag.toSymbol(session)) {
@@ -704,6 +710,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
             is ConeFlexibleType -> resolved { generate(type) }
             is ConeCapturedType -> inlineUnsupported(type)
             is ConeDefinitelyNotNullType -> inlineUnsupported(type)
+            is ConeIntersectionType -> resolved { generate(type) }
         }
         if (type.typeArguments.isNotEmpty()) {
             +"<"
