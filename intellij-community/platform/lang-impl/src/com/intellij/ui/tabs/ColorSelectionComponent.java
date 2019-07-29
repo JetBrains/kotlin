@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ui.tabs;
 
 import com.intellij.ui.ColorChooser;
@@ -6,7 +6,7 @@ import com.intellij.ui.ColorUtil;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.JBColor;
 import com.intellij.util.ObjectUtils;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -144,7 +144,7 @@ public class ColorSelectionComponent extends JPanel {
         @Nullable
         @Override
         protected Color getUnfocusedBorderColor(@NotNull ColorButtonBase button) {
-          if (UIUtil.isUnderDarcula()) return JBColor.GRAY;
+          if (StartupUiUtil.isUnderDarcula()) return JBColor.GRAY;
           return super.getUnfocusedBorderColor(button);
         }
       };

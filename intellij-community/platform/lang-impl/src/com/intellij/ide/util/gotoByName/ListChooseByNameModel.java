@@ -88,7 +88,7 @@ public class ListChooseByNameModel<T extends ChooseByNameItem> extends SimpleCho
         panel.setOpaque(true);
         panel.setBorder(JBUI.Borders.emptyRight(5));
 
-        final Color bg = isSelected ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground();
+        final Color bg = isSelected ? UIUtil.getListSelectionBackground(true) : UIUtil.getListBackground();
         panel.setBackground(bg);
 
         if (value instanceof ChooseByNameItem) {

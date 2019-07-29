@@ -49,6 +49,7 @@ import com.intellij.ui.popup.PopupOwner;
 import com.intellij.util.Consumer;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.JBIterable;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.accessibility.AccessibleContextUtil;
 import com.intellij.util.ui.accessibility.ScreenReader;
@@ -104,7 +105,7 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
 
     installPopupHandler(this, -1);
     setOpaque(false);
-    if (!docked && UIUtil.isUnderDarcula()) {
+    if (!docked && StartupUiUtil.isUnderDarcula()) {
       setBorder(new LineBorder(Gray._120, 1));
     }
     myUpdateQueue.queueModelUpdateFromFocus();

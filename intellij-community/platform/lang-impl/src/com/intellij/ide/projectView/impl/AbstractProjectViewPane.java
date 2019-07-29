@@ -48,7 +48,7 @@ import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.JBIterable;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.ImageUtil;
 import com.intellij.util.ui.tree.TreeUtil;
 import one.util.streamex.StreamEx;
 import org.jdom.Element;
@@ -813,7 +813,7 @@ public abstract class AbstractProjectViewPane implements DataProvider, Disposabl
       label.setBackground(myTree.getBackground());
       label.setFont(myTree.getFont());
       label.setSize(label.getPreferredSize());
-      final BufferedImage image = UIUtil.createImage(label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_ARGB);
+      final BufferedImage image = ImageUtil.createImage(label.getWidth(), label.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
       Graphics2D g2 = (Graphics2D)image.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.7f));

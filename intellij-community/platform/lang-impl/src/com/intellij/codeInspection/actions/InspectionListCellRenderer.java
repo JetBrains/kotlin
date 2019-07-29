@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2014 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInspection.actions;
 
 import com.intellij.codeInspection.ex.InspectionToolWrapper;
@@ -46,7 +32,7 @@ public class InspectionListCellRenderer extends DefaultListCellRenderer {
   private final SimpleTextAttributes myHighlighted;
 
   public InspectionListCellRenderer() {
-    mySelected = new SimpleTextAttributes(UIUtil.getListSelectionBackground(),
+    mySelected = new SimpleTextAttributes(UIUtil.getListSelectionBackground(true),
                                           UIUtil.getListSelectionForeground(),
                                           JBColor.RED,
                                           SimpleTextAttributes.STYLE_PLAIN);
@@ -68,7 +54,7 @@ public class InspectionListCellRenderer extends DefaultListCellRenderer {
     final JPanel panel = new JPanel(layout);
     panel.setOpaque(true);
 
-    final Color bg = sel ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground();
+    final Color bg = sel ? UIUtil.getListSelectionBackground(true) : UIUtil.getListBackground();
     final Color fg = sel ? UIUtil.getListSelectionForeground() : UIUtil.getListForeground();
     panel.setBackground(bg);
     panel.setForeground(fg);

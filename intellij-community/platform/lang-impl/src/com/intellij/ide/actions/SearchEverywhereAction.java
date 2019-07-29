@@ -103,10 +103,7 @@ import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.Matcher;
 import com.intellij.util.text.MatcherHolder;
-import com.intellij.util.ui.EmptyIcon;
-import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.StatusText;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.*;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -988,7 +985,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
       }
 
       editor.putClientProperty("JTextField.Search.noBorderRing", Boolean.TRUE);
-      if (UIUtil.isUnderDarcula()) {
+      if (StartupUiUtil.isUnderDarcula()) {
         editor.setBackground(Gray._45);
         editor.setForeground(Gray._240);
       }
@@ -2004,7 +2001,7 @@ public class SearchEverywhereAction extends AnAction implements CustomComponentA
             ScrollingUtil.installActions(myList, getField().getTextEditor());
             JBScrollPane content = new JBScrollPane(myList) {
               {
-                if (UIUtil.isUnderDarcula()) {
+                if (StartupUiUtil.isUnderDarcula()) {
                   setBorder(null);
                 }
               }

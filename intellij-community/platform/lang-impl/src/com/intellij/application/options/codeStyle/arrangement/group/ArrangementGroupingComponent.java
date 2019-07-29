@@ -10,6 +10,7 @@ import com.intellij.psi.codeStyle.arrangement.ArrangementUtil;
 import com.intellij.psi.codeStyle.arrangement.std.*;
 import com.intellij.util.ui.GridBag;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -108,7 +109,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
 
     setBackground(UIUtil.getListBackground());
     setBorder(JBUI.Borders.empty(ArrangementConstants.VERTICAL_GAP));
-    setOpaque(!UIUtil.isUnderIntelliJLaF() && !UIUtil.isUnderNativeMacLookAndFeel() && !UIUtil.isUnderDarcula());
+    setOpaque(!UIUtil.isUnderIntelliJLaF() && !UIUtil.isUnderNativeMacLookAndFeel() && !StartupUiUtil.isUnderDarcula());
   }
 
   @Override
@@ -121,7 +122,7 @@ public class ArrangementGroupingComponent extends JPanel implements ArrangementR
         myRowIndexControl.setBaseLine(baseline);
       }
     }
-    if (UIUtil.isUnderIntelliJLaF() || UIUtil.isUnderDarcula() || UIUtil.isUnderNativeMacLookAndFeel()) {
+    if (UIUtil.isUnderIntelliJLaF() || StartupUiUtil.isUnderDarcula() || UIUtil.isUnderNativeMacLookAndFeel()) {
       g.setColor(getBackground());
       g.fillRect(1, 1, getWidth() - 2, getHeight() - 2);
     }

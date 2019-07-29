@@ -42,6 +42,7 @@ import com.intellij.util.concurrency.Semaphore;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.EmptyIcon;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.UIUtil;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NonNls;
@@ -788,7 +789,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
       }
       else if (value instanceof OptionDescription) {
         if (!isSelected && !(value instanceof BooleanOptionDescription)) {
-          Color descriptorBg = UIUtil.isUnderDarcula() ? ColorUtil.brighter(UIUtil.getListBackground(), 1) : LightColors.SLIGHTLY_GRAY;
+          Color descriptorBg = StartupUiUtil.isUnderDarcula() ? ColorUtil.brighter(UIUtil.getListBackground(), 1) : LightColors.SLIGHTLY_GRAY;
           panel.setBackground(descriptorBg);
           nameComponent.setBackground(descriptorBg);
         }

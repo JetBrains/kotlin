@@ -47,6 +47,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.JBUI;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.util.ui.StatusText;
 import com.intellij.util.ui.UIUtil;
 import one.util.streamex.StreamEx;
@@ -379,7 +380,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
   public JPanel createTopLeftPanel() {
     myTextFieldTitle = new JLabel(IdeBundle.message("run.anything.run.anything.title"));
     JPanel topPanel = new NonOpaquePanel(new BorderLayout());
-    Color foregroundColor = UIUtil.isUnderDarcula()
+    Color foregroundColor = StartupUiUtil.isUnderDarcula()
                             ? UIUtil.isUnderWin10LookAndFeel() ? JBColor.WHITE : new JBColor(Gray._240, Gray._200)
                             : UIUtil.getLabelForeground();
 

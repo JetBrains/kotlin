@@ -5,7 +5,7 @@ import com.intellij.notification.impl.ui.StickyButton;
 import com.intellij.notification.impl.ui.StickyButtonUI;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -79,7 +79,7 @@ public abstract class ColorButtonBase extends StickyButton {
 
     @Override
     protected Color getFocusColor(@NotNull ColorButtonBase button) {
-      return UIUtil.isUnderDarcula() ? button.getColor().brighter() : button.getColor().darker();
+      return StartupUiUtil.isUnderDarcula() ? button.getColor().brighter() : button.getColor().darker();
     }
 
     @Override

@@ -28,7 +28,7 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.TimerUtil;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -53,7 +53,7 @@ public class ShowRunningListAction extends AnAction {
     final Ref<Pair<? extends JComponent, String>> stateRef = new Ref<>();
     final Ref<Balloon> balloonRef = new Ref<>();
 
-    final Timer timer = UIUtil.createNamedTimer("runningLists", 250);
+    final Timer timer = TimerUtil.createNamedTimer("runningLists", 250);
     ActionListener actionListener = new ActionListener() {
       @Override
       public void actionPerformed(ActionEvent actionEvent) {

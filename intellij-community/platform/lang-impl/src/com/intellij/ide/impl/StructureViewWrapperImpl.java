@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.impl;
 
@@ -41,6 +41,7 @@ import com.intellij.psi.PsiElement;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.util.BitUtil;
+import com.intellij.util.ui.TimerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.update.MergingUpdateQueue;
 import com.intellij.util.ui.update.Update;
@@ -94,7 +95,8 @@ public class StructureViewWrapperImpl implements StructureViewWrapper, Disposabl
     myUpdateQueue = new MergingUpdateQueue("StructureView", REBUILD_TIME, false, component, this, component);
     myUpdateQueue.setRestartTimerOnAdd(true);
 
-    Timer timer = UIUtil.createNamedTimer("StructureView", REFRESH_TIME, event -> {
+    // to check on the next turn
+    Timer timer = TimerUtil.createNamedTimer("StructureView", REFRESH_TIME, event -> {
       if (!component.isShowing()) return;
 
       int count = ActivityTracker.getInstance().getCount();

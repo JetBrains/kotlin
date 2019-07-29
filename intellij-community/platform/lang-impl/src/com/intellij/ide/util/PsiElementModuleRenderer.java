@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.ide.util;
 
@@ -69,7 +69,7 @@ public class PsiElementModuleRenderer extends DefaultListCellRenderer{
     setBorder(BorderFactory.createEmptyBorder(0, 0, 0, UIUtil.getListCellHPadding()));
     setHorizontalTextPosition(SwingConstants.LEFT);
     setHorizontalAlignment(SwingConstants.RIGHT); // align icon to the right
-    setBackground(selected ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground());
+    setBackground(selected ? UIUtil.getListSelectionBackground(true) : UIUtil.getListBackground());
     setForeground(selected ? UIUtil.getListSelectionForeground() : UIUtil.getInactiveTextColor());
   }
 

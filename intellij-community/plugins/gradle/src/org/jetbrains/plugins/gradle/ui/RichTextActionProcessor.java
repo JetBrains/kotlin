@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.ui;
 
 import com.intellij.ide.DataManager;
@@ -8,7 +8,7 @@ import com.intellij.openapi.actionSystem.impl.ActionButton;
 import com.intellij.openapi.actionSystem.impl.PresentationFactory;
 import com.intellij.ui.ClickListener;
 import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
@@ -52,7 +52,7 @@ public class RichTextActionProcessor implements RichTextControlBuilder.RichTextP
         g.drawLine(0, y, width, y);
       }
     };
-    Color color = UIUtil.isUnderDarcula() ? Color.ORANGE : Color.BLUE;
+    Color color = StartupUiUtil.isUnderDarcula() ? Color.ORANGE : Color.BLUE;
     result.setForeground(color);
     result.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 

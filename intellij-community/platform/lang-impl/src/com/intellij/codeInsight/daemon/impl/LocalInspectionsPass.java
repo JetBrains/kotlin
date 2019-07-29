@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.daemon.impl;
 
 import com.intellij.codeHighlighting.HighlightDisplayLevel;
@@ -43,7 +43,7 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.Interner;
 import com.intellij.util.containers.SmartHashSet;
 import com.intellij.util.containers.WeakInterner;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import com.intellij.xml.util.XmlStringUtil;
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
@@ -238,7 +238,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
           PsiElement element = descriptor.getPsiElement();
           if (element != null) {
             Document thisDocument = documentManager.getDocument(getFile());
-            createHighlightsForDescriptor(myInfos, emptyActionRegistered, ilManager, getFile(), thisDocument, 
+            createHighlightsForDescriptor(myInfos, emptyActionRegistered, ilManager, getFile(), thisDocument,
                                           new LocalInspectionToolWrapper(localTool), severity, descriptor, element, false);
           }
         }
@@ -521,7 +521,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
     if (showToolDescription(toolWrapper)) {
       link = " <a "
              + "href=\"#inspection/" + tool.getShortName() + "\""
-             + (UIUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
+             + (StartupUiUtil.isUnderDarcula() ? " color=\"7AB4C9\" " : "")
              + ">" + DaemonBundle.message("inspection.extended.description")
              + "</a> " + myShortcutText;
     }
@@ -559,7 +559,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                                    @NotNull PsiFile file,
                                    @NotNull Document documentRange,
                                    @NotNull LocalInspectionToolWrapper toolWrapper,
-                                   @NotNull PsiElement element, 
+                                   @NotNull PsiElement element,
                                    @NotNull List<? extends IntentionAction> fixes,
                                    @NotNull HighlightInfo info) {
     // todo we got to separate our "internal" prefixes/suffixes from user-defined ones

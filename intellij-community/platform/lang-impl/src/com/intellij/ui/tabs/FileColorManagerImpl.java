@@ -11,7 +11,7 @@ import com.intellij.ui.ColorUtil;
 import com.intellij.ui.FileColorManager;
 import com.intellij.ui.JBColor;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -231,6 +231,6 @@ public class FileColorManagerImpl extends FileColorManager implements Persistent
   }
 
   static String getAlias(String text) {
-    return UIUtil.isUnderDarcula() && text.equals("Yellow") ? "Brown" : text;
+    return StartupUiUtil.isUnderDarcula() && text.equals("Yellow") ? "Brown" : text;
   }
 }

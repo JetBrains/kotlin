@@ -373,7 +373,7 @@ public abstract class ChooseByNameBase implements ChooseByNameViewModel {
 
     String checkBoxName = myModel.getCheckBoxName();
     Color fg = UIUtil.getLabelDisabledForeground();
-    Color color = UIUtil.isUnderDarcula() ? ColorUtil.shift(fg, 1.2) : ColorUtil.shift(fg, 0.7);
+    Color color = StartupUiUtil.isUnderDarcula() ? ColorUtil.shift(fg, 1.2) : ColorUtil.shift(fg, 0.7);
     String text = checkBoxName == null
                   ? ""
                   : "<html>" + checkBoxName +

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.util;
 
 import com.intellij.ide.ui.UISettings;
@@ -166,7 +152,7 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
         setIcon(IconUtil.getEmptyIcon(false));
         append(value == null ? "" : value.toString(), new SimpleTextAttributes(SimpleTextAttributes.STYLE_PLAIN, list.getForeground()));
       }
-      setBackground(selected ? UIUtil.getListSelectionBackground() : bgColor);
+      setBackground(selected ? UIUtil.getListSelectionBackground(true) : bgColor);
     }
 
     private void appendLocationText(boolean selected, Color bgColor, boolean isProblemFile, String containerText) {
@@ -229,7 +215,7 @@ public abstract class PsiElementListCellRenderer<T extends PsiElement> extends J
     ListCellRenderer leftRenderer = new LeftRenderer(null, value == null ? new ItemMatchers(null, null) : getItemMatchers(list, value));
     final Component leftCellRendererComponent = leftRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
     add(leftCellRendererComponent, LEFT);
-    final Color bg = isSelected ? UIUtil.getListSelectionBackground() : leftCellRendererComponent.getBackground();
+    final Color bg = isSelected ? UIUtil.getListSelectionBackground(true) : leftCellRendererComponent.getBackground();
     setBackground(bg);
     if (rightCellRendererComponent != null) {
       rightCellRendererComponent.setBackground(bg);

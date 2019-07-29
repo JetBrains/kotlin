@@ -28,10 +28,7 @@ import com.intellij.ui.components.JBTextArea;
 import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.scale.JBUIScale;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.ui.JBDimension;
-import com.intellij.util.ui.JBInsets;
-import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.*;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
 
@@ -155,10 +152,10 @@ public class SearchTextArea extends NonOpaquePanel implements PropertyChangeList
 
       @Override
       public Insets getBorderInsets(Component c) {
-        if (SystemInfo.isMac && !UIUtil.isUnderDarcula()) {
+        if (SystemInfo.isMac && !StartupUiUtil.isUnderDarcula()) {
           return new JBInsets(3, 0, 3, 0);
         } else {
-          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : UIUtil.isUnderDarcula() ? 2 : 1;
+          int bottom = (StringUtil.getLineBreakCount(myTextArea.getText()) > 0) ? 2 : StartupUiUtil.isUnderDarcula() ? 2 : 1;
           int top = myTextArea.getFontMetrics(myTextArea.getFont()).getHeight() <= 16 ? 2 : 1;
           if (JBUIScale.isUsrHiDPI()) {
             bottom = 2;

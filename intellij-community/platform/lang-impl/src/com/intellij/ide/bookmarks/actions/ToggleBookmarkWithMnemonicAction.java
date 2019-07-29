@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.bookmarks.actions;
 
 import com.intellij.ide.IdeBundle;
@@ -10,7 +10,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.JBPopupListener;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.StartupUiUtil;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -68,7 +68,7 @@ public class ToggleBookmarkWithMnemonicAction extends ToggleBookmarkAction {
         setRequestFocus(true).
         setMovable(false).
         setCancelKeyEnabled(false).
-        setAdText(bookmarks.hasBookmarksWithMnemonics() ? (UIUtil.isUnderDarcula() ? "Brown" : "Yellow") + " cells are in use" : null).
+        setAdText(bookmarks.hasBookmarksWithMnemonics() ? (StartupUiUtil.isUnderDarcula() ? "Brown" : "Yellow") + " cells are in use" : null).
         setResizable(false).
         createPopup();
       popup[0].addListener(new JBPopupListener() {

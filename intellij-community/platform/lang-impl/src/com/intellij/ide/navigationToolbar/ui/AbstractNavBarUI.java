@@ -9,9 +9,7 @@ import com.intellij.ui.ColorUtil;
 import com.intellij.ui.Gray;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.scale.JBUIScale;
-import com.intellij.util.ui.JBInsets;
-import com.intellij.util.ui.JBUI;
-import com.intellij.util.ui.UIUtil;
+import com.intellij.util.ui.*;
 import gnu.trove.THashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +53,7 @@ public abstract class AbstractNavBarUI implements NavBarUI {
 
   @Override
   public Color getBackground(boolean selected, boolean focused) {
-    return selected && focused ? UIUtil.getListSelectionBackground() : UIUtil.getListBackground();
+    return selected && focused ? UIUtil.getListSelectionBackground(true) : UIUtil.getListBackground();
   }
 
   @Nullable
@@ -109,11 +107,11 @@ public abstract class AbstractNavBarUI implements NavBarUI {
     int offset = (w - getDecorationOffset());
     int h2 = h / 2;
 
-    BufferedImage result = UIUtil.createImage(w, h, BufferedImage.TYPE_INT_ARGB);
+    BufferedImage result = ImageUtil.createImage(w, h, BufferedImage.TYPE_INT_ARGB);
 
-    Color defaultBg = UIUtil.isUnderDarcula() ? Gray._100 : JBColor.WHITE;
+    Color defaultBg = StartupUiUtil.isUnderDarcula() ? Gray._100 : JBColor.WHITE;
     final Paint bg = floating ? defaultBg : null;
-    final Color selection = UIUtil.getListSelectionBackground();
+    final Color selection = UIUtil.getListSelectionBackground(true);
 
     Graphics2D g2 = result.createGraphics();
     g2.setStroke(new BasicStroke(1f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
