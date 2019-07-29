@@ -6,13 +6,13 @@ import com.amazon.ion.IonType;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonBinaryWriterBuilder;
 import com.amazon.ion.system.IonReaderBuilder;
-import com.intellij.openapi.util.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.MavenRepositoryModel;
 import org.jetbrains.plugins.gradle.model.RepositoriesModel;
 import org.jetbrains.plugins.gradle.tooling.internal.MavenRepositoryModelImpl;
 import org.jetbrains.plugins.gradle.tooling.internal.RepositoriesModelImpl;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
+import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactory;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
@@ -110,9 +110,10 @@ public class RepositoriesModelSerializationService implements SerializationServi
     reader.stepIn();
 
     RepositoriesModel model =
-      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<RepositoriesModelImpl>() {
+      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<RepositoriesModelImpl>() {
+
         @Override
-        public RepositoriesModelImpl get() {
+        public RepositoriesModelImpl create() {
           RepositoriesModelImpl repositoriesModel = new RepositoriesModelImpl();
           List<MavenRepositoryModel> repositoryModels = readRepositories(reader, context);
           for (MavenRepositoryModel entry : repositoryModels) {
@@ -142,9 +143,9 @@ public class RepositoriesModelSerializationService implements SerializationServi
     if (reader.next() == null) return null;
     reader.stepIn();
     MavenRepositoryModel dependency =
-      context.repositoryMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<MavenRepositoryModel>() {
+      context.repositoryMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<MavenRepositoryModel>() {
         @Override
-        public MavenRepositoryModel get() {
+        public MavenRepositoryModel create() {
           return new MavenRepositoryModelImpl(readString(reader, "name"), readString(reader, "url"));
         }
       });
@@ -153,7 +154,7 @@ public class RepositoriesModelSerializationService implements SerializationServi
   }
 
   private static class ReadContext {
-    private final IntObjectMap<RepositoriesModel> objectMap = new IntObjectMap<RepositoriesModel>();
+    private final IntObjectMap<RepositoriesModelImpl> objectMap = new IntObjectMap<RepositoriesModelImpl>();
     private final IntObjectMap<MavenRepositoryModel> repositoryMap = new IntObjectMap<MavenRepositoryModel>();
   }
 

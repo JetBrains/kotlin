@@ -6,13 +6,13 @@ import com.amazon.ion.IonType;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonBinaryWriterBuilder;
 import com.amazon.ion.system.IonReaderBuilder;
-import com.intellij.openapi.util.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.BuildScriptClasspathModel;
 import org.jetbrains.plugins.gradle.model.ClasspathEntryModel;
 import org.jetbrains.plugins.gradle.tooling.internal.BuildScriptClasspathModelImpl;
 import org.jetbrains.plugins.gradle.tooling.internal.ClasspathEntryModelImpl;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
+import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactory;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
@@ -100,9 +100,9 @@ public class BuildScriptClasspathModelSerializationService implements Serializat
     reader.stepIn();
 
     BuildScriptClasspathModelImpl model =
-      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<BuildScriptClasspathModelImpl>() {
+      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<BuildScriptClasspathModelImpl>() {
         @Override
-        public BuildScriptClasspathModelImpl get() {
+        public BuildScriptClasspathModelImpl create() {
           BuildScriptClasspathModelImpl classpathModel = new BuildScriptClasspathModelImpl();
           classpathModel.setGradleVersion(assertNotNull(readString(reader, "gradleVersion")));
           classpathModel.setGradleHomeDir(readFile(reader, "gradleHomeDir"));

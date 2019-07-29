@@ -6,13 +6,13 @@ import com.amazon.ion.IonType;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonBinaryWriterBuilder;
 import com.amazon.ion.system.IonReaderBuilder;
-import com.intellij.openapi.util.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.tests.DefaultExternalTestSourceMapping;
 import org.jetbrains.plugins.gradle.model.tests.DefaultExternalTestsModel;
 import org.jetbrains.plugins.gradle.model.tests.ExternalTestSourceMapping;
 import org.jetbrains.plugins.gradle.model.tests.ExternalTestsModel;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
+import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactory;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
@@ -110,9 +110,10 @@ public class ExternalTestsSerializationService implements SerializationService<E
   private static ExternalTestsModel read(final IonReader reader, final ReadContext context) {
     if (reader.next() == null) return null;
     reader.stepIn();
-    ExternalTestsModel model = context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<ExternalTestsModel>() {
+    ExternalTestsModel model =
+      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<ExternalTestsModel>() {
       @Override
-      public ExternalTestsModel get() {
+      public ExternalTestsModel create() {
         DefaultExternalTestsModel testsModel = new DefaultExternalTestsModel();
         testsModel.setSourceTestMappings(readTestSourceMappings(reader, context));
         return testsModel;
@@ -139,9 +140,9 @@ public class ExternalTestsSerializationService implements SerializationService<E
     if (reader.next() == null) return null;
     reader.stepIn();
     ExternalTestSourceMapping dependency =
-      context.testSourceMapping.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<ExternalTestSourceMapping>() {
+      context.testSourceMapping.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<ExternalTestSourceMapping>() {
         @Override
-        public ExternalTestSourceMapping get() {
+        public ExternalTestSourceMapping create() {
           DefaultExternalTestSourceMapping mapping = new DefaultExternalTestSourceMapping();
           mapping.setTestName(readString(reader, "testName"));
           mapping.setTestTaskPath(assertNotNull(readString(reader, "testTaskPath")));

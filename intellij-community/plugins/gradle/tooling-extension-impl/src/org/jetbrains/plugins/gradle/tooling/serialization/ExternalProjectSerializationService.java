@@ -9,7 +9,6 @@ import com.amazon.ion.system.IonReaderBuilder;
 import com.amazon.ion.util.IonStreamUtils;
 import com.intellij.openapi.externalSystem.model.project.ExternalSystemSourceType;
 import com.intellij.openapi.externalSystem.model.project.IExternalSystemSourceType;
-import com.intellij.openapi.util.Getter;
 import com.intellij.util.ThrowableConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -17,6 +16,7 @@ import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
+import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.ObjectFactory;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
@@ -381,10 +381,14 @@ public class ExternalProjectSerializationService implements SerializationService
     reader.stepIn();
 
     DefaultExternalProject project =
-      context.getProjectsMap().computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultExternalProject>() {
+      context.getProjectsMap().computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new ObjectFactory<DefaultExternalProject>() {
         @Override
-        public DefaultExternalProject get() {
-          DefaultExternalProject externalProject = new DefaultExternalProject();
+        public DefaultExternalProject newInstance() {
+          return new DefaultExternalProject();
+        }
+
+        @Override
+        public void fill(DefaultExternalProject externalProject) {
           externalProject.setExternalSystemId("GRADLE");
           externalProject.setId(assertNotNull(readString(reader, "id")));
           externalProject.setName(assertNotNull(readString(reader, "name")));
@@ -409,7 +413,6 @@ public class ExternalProjectSerializationService implements SerializationService
           externalProject.setArtifacts(readFiles(reader));
           externalProject.setArtifactsByConfiguration(readStringToFileSetMap(reader));
           externalProject.setChildProjects(readProjects(reader, context));
-          return externalProject;
         }
       });
     reader.stepOut();
@@ -572,49 +575,63 @@ public class ExternalProjectSerializationService implements SerializationService
     reader.stepIn();
 
     ExternalDependency dependency =
-      context.getDependenciesMap().computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<ExternalDependency>() {
+      context.getDependenciesMap().computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new ObjectFactory<AbstractExternalDependency>() {
+
         @Override
-        public ExternalDependency get() {
+        public AbstractExternalDependency newInstance() {
           String type = readString(reader, "_type");
           if (ExternalLibraryDependency.class.getSimpleName().equals(type)) {
-            DefaultExternalLibraryDependency libraryDependency = new DefaultExternalLibraryDependency();
-            readDependencyCommonFields(reader, context, libraryDependency);
+            return new DefaultExternalLibraryDependency();
+          }
+          else if (ExternalMultiLibraryDependency.class.getSimpleName().equals(type)) {
+            return new DefaultExternalMultiLibraryDependency();
+          }
+          else if (ExternalProjectDependency.class.getSimpleName().equals(type)) {
+            return new DefaultExternalProjectDependency();
+          }
+          else if (FileCollectionDependency.class.getSimpleName().equals(type)) {
+            return new DefaultFileCollectionDependency();
+          }
+          else if (UnresolvedExternalDependency.class.getSimpleName().equals(type)) {
+            return new DefaultUnresolvedExternalDependency();
+          }
+          else {
+            throw new RuntimeException("Unsupported dependency");
+          }
+        }
+
+        @Override
+        public void fill(AbstractExternalDependency externalDependency) {
+          readDependencyCommonFields(reader, context, externalDependency);
+          if (externalDependency instanceof DefaultExternalLibraryDependency) {
+            DefaultExternalLibraryDependency libraryDependency = (DefaultExternalLibraryDependency)externalDependency;
             libraryDependency.setFile(readFile(reader, "file"));
             libraryDependency.setSource(readFile(reader, "source"));
             libraryDependency.setJavadoc(readFile(reader, "javadoc"));
-            return libraryDependency;
           }
-          else if (ExternalMultiLibraryDependency.class.getSimpleName().equals(type)) {
-            DefaultExternalMultiLibraryDependency multiLibraryDependency = new DefaultExternalMultiLibraryDependency();
-            readDependencyCommonFields(reader, context, multiLibraryDependency);
+          else if (externalDependency instanceof DefaultExternalMultiLibraryDependency) {
+            DefaultExternalMultiLibraryDependency multiLibraryDependency = (DefaultExternalMultiLibraryDependency)externalDependency;
             multiLibraryDependency.getFiles().addAll(readFiles(reader));
             multiLibraryDependency.getSources().addAll(readFiles(reader));
             multiLibraryDependency.getJavadoc().addAll(readFiles(reader));
-            return multiLibraryDependency;
           }
-          else if (ExternalProjectDependency.class.getSimpleName().equals(type)) {
-            DefaultExternalProjectDependency projectDependency = new DefaultExternalProjectDependency();
-            readDependencyCommonFields(reader, context, projectDependency);
+          else if (externalDependency instanceof DefaultExternalProjectDependency) {
+            DefaultExternalProjectDependency projectDependency = (DefaultExternalProjectDependency)externalDependency;
             projectDependency.setProjectPath(readString(reader, "projectPath"));
             projectDependency.setConfigurationName(readString(reader, "configurationName"));
             projectDependency.setProjectDependencyArtifacts(readFiles(reader));
             projectDependency.setProjectDependencyArtifactsSources(readFiles(reader));
-            return projectDependency;
           }
-          else if (FileCollectionDependency.class.getSimpleName().equals(type)) {
-            DefaultFileCollectionDependency fileCollectionDependency = new DefaultFileCollectionDependency();
-            readDependencyCommonFields(reader, context, fileCollectionDependency);
+          else if (externalDependency instanceof DefaultFileCollectionDependency) {
+            DefaultFileCollectionDependency fileCollectionDependency = (DefaultFileCollectionDependency)externalDependency;
             fileCollectionDependency.getFiles().addAll(readFiles(reader));
-            return fileCollectionDependency;
           }
-          else if (UnresolvedExternalDependency.class.getSimpleName().equals(type)) {
-            DefaultUnresolvedExternalDependency unresolvedExternalDependency = new DefaultUnresolvedExternalDependency();
-            readDependencyCommonFields(reader, context, unresolvedExternalDependency);
+          else if (externalDependency instanceof DefaultUnresolvedExternalDependency) {
+            DefaultUnresolvedExternalDependency unresolvedExternalDependency = (DefaultUnresolvedExternalDependency)externalDependency;
             unresolvedExternalDependency.setFailureMessage(readString(reader, "failureMessage"));
-            return unresolvedExternalDependency;
           }
           else {
-            throw new RuntimeException("Unsupported dependency");
+            throw new RuntimeException("Unsupported dependency type: " + externalDependency.getClass().getName());
           }
         }
       });
@@ -636,6 +653,7 @@ public class ExternalProjectSerializationService implements SerializationService
   private static void readDependencyId(IonReader reader, AbstractExternalDependency dependency) {
     DefaultExternalDependencyId id = (DefaultExternalDependencyId)dependency.getId();
     reader.next();
+    assertFieldName(reader, "id");
     reader.stepIn();
     id.setGroup(readString(reader, "group"));
     id.setName(readString(reader, "name"));
@@ -648,13 +666,13 @@ public class ExternalProjectSerializationService implements SerializationService
   public static class ReadContext {
     private final IntObjectMap<DefaultExternalProject> myProjectsMap = new IntObjectMap<DefaultExternalProject>();
 
-    private final IntObjectMap<ExternalDependency> myDependenciesMap = new IntObjectMap<ExternalDependency>();
+    private final IntObjectMap<AbstractExternalDependency> myDependenciesMap = new IntObjectMap<AbstractExternalDependency>();
 
     public IntObjectMap<DefaultExternalProject> getProjectsMap() {
       return myProjectsMap;
     }
 
-    public IntObjectMap<ExternalDependency> getDependenciesMap() {
+    public IntObjectMap<AbstractExternalDependency> getDependenciesMap() {
       return myDependenciesMap;
     }
   }

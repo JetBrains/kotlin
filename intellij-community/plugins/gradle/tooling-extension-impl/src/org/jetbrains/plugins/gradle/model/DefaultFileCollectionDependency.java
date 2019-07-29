@@ -9,11 +9,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import static com.intellij.util.containers.ContainerUtilRt.map2List;
+import static org.jetbrains.plugins.gradle.tooling.util.FunctionUtils.FILE_TO_PATH;
+
 public final class DefaultFileCollectionDependency extends AbstractExternalDependency implements FileCollectionDependency {
   private static final long serialVersionUID = 1L;
 
-  @NotNull
-  private final DefaultExternalDependencyId id;
   private final Collection<File> files;
 
   public DefaultFileCollectionDependency() {
@@ -21,14 +22,13 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
   }
 
   public DefaultFileCollectionDependency(Collection<File> files) {
+    super(new DefaultExternalDependencyId(null, files.toString(), null), null, null);
     this.files = new ArrayList<File>(files);
-    id = new DefaultExternalDependencyId(null, files.toString(), null);
   }
 
   public DefaultFileCollectionDependency(FileCollectionDependency dependency) {
     super(dependency);
     files = new ArrayList<File>(dependency.getFiles());
-    id = new DefaultExternalDependencyId(null, files.toString(), null);
   }
 
   @NotNull
@@ -37,24 +37,18 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
     return files;
   }
 
-  @NotNull
-  @Override
-  public DefaultExternalDependencyId getId() {
-    return id;
-  }
-
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (!(o instanceof DefaultFileCollectionDependency)) return false;
     if (!super.equals(o)) return false;
     DefaultFileCollectionDependency that = (DefaultFileCollectionDependency)o;
-    return Objects.equal(files, that.files);
+    return map2List(files, FILE_TO_PATH).equals(map2List(that.files, FILE_TO_PATH));
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), files);
+    return Objects.hashCode(super.hashCode(), map2List(files, FILE_TO_PATH));
   }
 
   @Override

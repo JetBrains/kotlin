@@ -55,12 +55,12 @@ public final class DefaultExternalLibraryDependency extends AbstractExternalDepe
     if (!(o instanceof DefaultExternalLibraryDependency)) return false;
     if (!super.equals(o)) return false;
     DefaultExternalLibraryDependency that = (DefaultExternalLibraryDependency)o;
-    return Objects.equal(file, that.file);
+    return Objects.equal(file.getPath(), that.file.getPath());
   }
 
   @Override
   public int hashCode() {
-    return Objects.hashCode(super.hashCode(), file);
+    return Objects.hashCode(super.hashCode(), file.getPath());
   }
 
   @Override

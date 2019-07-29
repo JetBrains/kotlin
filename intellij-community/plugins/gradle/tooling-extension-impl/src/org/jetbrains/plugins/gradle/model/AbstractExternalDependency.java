@@ -1,6 +1,9 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package org.jetbrains.plugins.gradle.model;
 
+import com.intellij.util.Consumer;
+import gnu.trove.THashSet;
+import gnu.trove.TObjectHashingStrategy;
 import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -9,6 +12,8 @@ import org.jetbrains.plugins.gradle.ExternalDependencyId;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
 
 /**
  * @author Vladislav.Soroka
@@ -150,14 +155,45 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
     AbstractExternalDependency that = (AbstractExternalDependency)o;
     return Objects.equal(myId, that.myId) &&
            Objects.equal(myScope, that.myScope) &&
-           Objects.equal(myDependencies, that.myDependencies) &&
-           Objects.equal(mySelectionReason, that.mySelectionReason) &&
-           myClasspathOrder == that.myClasspathOrder;
+           myClasspathOrder == that.myClasspathOrder &&
+           calcDependenciesHash(myDependencies) == calcDependenciesHash(that.myDependencies);
   }
 
   @Override
   public int hashCode() {
-    return 31 + Objects.hashCode(myId, myScope, myDependencies, mySelectionReason, myClasspathOrder);
+    return 31 + Objects.hashCode(myId, myScope, myClasspathOrder);
+  }
+
+  private static int calcDependenciesHash(Collection<ExternalDependency> dependencies) {
+    final int[] hashCode = {0};
+    new Visitor(new Consumer<AbstractExternalDependency>() {
+      @Override
+      public void consume(AbstractExternalDependency dependency) {
+        hashCode[0] += Objects.hashCode(dependency.myId, dependency.myScope);
+      }
+    }).visit(dependencies);
+    return hashCode[0];
+  }
+
+  private static class Visitor {
+    private final Consumer<AbstractExternalDependency> myConsumer;
+
+    private Visitor(Consumer<AbstractExternalDependency> consumer) {
+      myConsumer = consumer;
+    }
+
+    public void visit(@NotNull Collection<ExternalDependency> dependencies) {
+      //noinspection unchecked
+      Set<AbstractExternalDependency> seenDependencies = new THashSet<AbstractExternalDependency>(TObjectHashingStrategy.IDENTITY);
+      LinkedList<ExternalDependency> toProcess = new LinkedList<ExternalDependency>(dependencies);
+      ExternalDependency dependency;
+      while ((dependency = toProcess.pollFirst()) != null) {
+        if (seenDependencies.add((AbstractExternalDependency)dependency)) {
+          myConsumer.consume((AbstractExternalDependency)dependency);
+          toProcess.addAll(((AbstractExternalDependency)dependency).myDependencies);
+        }
+      }
+    }
   }
 }
 

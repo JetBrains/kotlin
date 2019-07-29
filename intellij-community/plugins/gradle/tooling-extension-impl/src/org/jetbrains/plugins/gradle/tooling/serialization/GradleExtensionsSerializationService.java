@@ -6,10 +6,10 @@ import com.amazon.ion.IonType;
 import com.amazon.ion.IonWriter;
 import com.amazon.ion.system.IonBinaryWriterBuilder;
 import com.amazon.ion.system.IonReaderBuilder;
-import com.intellij.openapi.util.Getter;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.*;
 import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap;
+import org.jetbrains.plugins.gradle.tooling.util.IntObjectMap.SimpleObjectFactory;
 import org.jetbrains.plugins.gradle.tooling.util.ObjectCollector;
 
 import java.io.ByteArrayOutputStream;
@@ -163,10 +163,10 @@ public class GradleExtensionsSerializationService implements SerializationServic
     if (reader.next() == null) return null;
     reader.stepIn();
 
-    GradleExtensions extensions =
-      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultGradleExtensions>() {
+    DefaultGradleExtensions extensions =
+      context.objectMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<DefaultGradleExtensions>() {
         @Override
-        public DefaultGradleExtensions get() {
+        public DefaultGradleExtensions create() {
           DefaultGradleExtensions gradleExtensions = new DefaultGradleExtensions();
           gradleExtensions.setParentProjectPath(readString(reader, "parentProjectPath"));
           gradleExtensions.getConfigurations().addAll(readConfigurations(reader, context));
@@ -198,9 +198,9 @@ public class GradleExtensionsSerializationService implements SerializationServic
     if (reader.next() == null) return null;
     reader.stepIn();
     DefaultGradleConfiguration configuration =
-      context.configurationsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultGradleConfiguration>() {
+      context.configurationsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<DefaultGradleConfiguration>() {
         @Override
-        public DefaultGradleConfiguration get() {
+        public DefaultGradleConfiguration create() {
           return new DefaultGradleConfiguration(
             assertNotNull(readString(reader, "name")),
             readString(reader, "description"),
@@ -229,9 +229,9 @@ public class GradleExtensionsSerializationService implements SerializationServic
     if (reader.next() == null) return null;
     reader.stepIn();
     DefaultGradleConvention convention =
-      context.conventionsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultGradleConvention>() {
+      context.conventionsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<DefaultGradleConvention>() {
         @Override
-        public DefaultGradleConvention get() {
+        public DefaultGradleConvention create() {
           return new DefaultGradleConvention(assertNotNull(readString(reader, "name")), readString(reader, "typeFqn"));
         }
       });
@@ -256,9 +256,9 @@ public class GradleExtensionsSerializationService implements SerializationServic
     if (reader.next() == null) return null;
     reader.stepIn();
     DefaultGradleExtension convention =
-      context.extensionsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultGradleExtension>() {
+      context.extensionsMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<DefaultGradleExtension>() {
         @Override
-        public DefaultGradleExtension get() {
+        public DefaultGradleExtension create() {
           return new DefaultGradleExtension(assertNotNull(readString(reader, "name")), readString(reader, "typeFqn"));
         }
       });
@@ -283,9 +283,9 @@ public class GradleExtensionsSerializationService implements SerializationServic
     if (reader.next() == null) return null;
     reader.stepIn();
     DefaultGradleProperty convention =
-      context.propertiesMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new Getter<DefaultGradleProperty>() {
+      context.propertiesMap.computeIfAbsent(readInt(reader, OBJECT_ID_FIELD), new SimpleObjectFactory<DefaultGradleProperty>() {
         @Override
-        public DefaultGradleProperty get() {
+        public DefaultGradleProperty create() {
           return new DefaultGradleProperty(assertNotNull(readString(reader, "name")), readString(reader, "typeFqn"));
         }
       });
@@ -294,7 +294,7 @@ public class GradleExtensionsSerializationService implements SerializationServic
   }
 
   private static class ReadContext {
-    private final IntObjectMap<GradleExtensions> objectMap = new IntObjectMap<GradleExtensions>();
+    private final IntObjectMap<DefaultGradleExtensions> objectMap = new IntObjectMap<DefaultGradleExtensions>();
     private final IntObjectMap<DefaultGradleConfiguration> configurationsMap = new IntObjectMap<DefaultGradleConfiguration>();
     private final IntObjectMap<DefaultGradleConvention> conventionsMap = new IntObjectMap<DefaultGradleConvention>();
     private final IntObjectMap<DefaultGradleExtension> extensionsMap = new IntObjectMap<DefaultGradleExtension>();
