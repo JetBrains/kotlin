@@ -6,13 +6,13 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public final class PerformanceTrace implements Serializable {
   public static final Key<PerformanceTrace> TRACE_NODE_KEY = Key.create(PerformanceTrace.class, ExternalSystemConstants.UNORDERED + 1);
 
-  private final Map<String, Long> performanceData = new LinkedHashMap<>();
+  private final Map<String, Long> performanceData = new ConcurrentSkipListMap<>();
 
   public void logPerformance(@NotNull String key, long millis) {
     performanceData.put(key, millis);
