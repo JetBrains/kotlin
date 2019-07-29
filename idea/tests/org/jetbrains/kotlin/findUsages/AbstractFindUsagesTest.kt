@@ -302,7 +302,9 @@ internal fun findUsages(
                     override fun isModal() = true
 
                     override fun run(indicator: ProgressIndicator) {
-                        handler.processElementUsages(psiElement, processor, options)
+                        project.runReadActionInSmartMode {
+                            handler.processElementUsages(psiElement, processor, options)
+                        }
                     }
                 })
             }
