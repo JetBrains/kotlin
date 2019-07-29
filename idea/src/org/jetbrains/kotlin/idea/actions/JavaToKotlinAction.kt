@@ -83,12 +83,17 @@ class JavaToKotlinAction : AnAction() {
             for ((psiFile, text) in javaFiles.zip(convertedTexts)) {
                 try {
                     val document = PsiDocumentManager.getInstance(psiFile.project).getDocument(psiFile)
-                    if (document == null) {
-                        MessagesEx.error(psiFile.project, "Failed to save conversion result: couldn't find document for " + psiFile.name)
+                    val errorMessage = when {
+                        document == null -> "couldn't find document for ${psiFile.name}"
+                        !document.isWritable -> "file `${psiFile.name}` is read-only"
+                        else -> null
+                    }
+                    if (errorMessage != null) {
+                        MessagesEx.error(psiFile.project, "Failed to save conversion result: $errorMessage")
                             .showLater()
                         continue
                     }
-                    document.replaceString(0, document.textLength, text)
+                    document!!.replaceString(0, document.textLength, text)
                     FileDocumentManager.getInstance().saveDocument(document)
 
                     val virtualFile = psiFile.virtualFile
