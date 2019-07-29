@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.konan.objcexport
 
+import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfigKeys
 import org.jetbrains.kotlin.backend.konan.descriptors.getPackageFragments
 import org.jetbrains.kotlin.backend.konan.descriptors.isInterface
 import org.jetbrains.kotlin.backend.konan.getExportedDependencies
-import org.jetbrains.kotlin.backend.konan.isNativeBinary
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -146,7 +145,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
         }
 
         val file = directory.child("Info.plist")
-        val pkg = context.moduleDescriptor.guessMainPackage() // TODO: consider showing warning if it is root.
+        val pkg = guessMainPackage() // TODO: consider showing warning if it is root.
         val bundleId = pkg.child(Name.identifier(name)).asString()
 
         val platform = when (target) {
@@ -274,17 +273,19 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
             // In this case resulting framework will likely be unusable due to compile errors when importing it.
         }
     }
-}
 
-internal fun ModuleDescriptor.guessMainPackage(): FqName {
-    val allPackages = this.getPackageFragments() // Includes also all parent packages, e.g. the root one.
+    private fun guessMainPackage(): FqName {
+        val allPackages = (context.getSourceLibraryDescriptors() + context.moduleDescriptor).flatMap {
+            it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
+        }
 
-    val nonEmptyPackages = allPackages
+        val nonEmptyPackages = allPackages
             .filter { it.getMemberScope().getContributedDescriptors().isNotEmpty() }
             .map { it.fqName }.distinct()
 
-    return allPackages.map { it.fqName }.distinct()
+        return allPackages.map { it.fqName }.distinct()
             .filter { candidate -> nonEmptyPackages.all { it.isSubpackageOf(candidate) } }
             // Now there are all common ancestors of non-empty packages. Longest of them is the least common accessor:
             .maxBy { it.asString().length }!!
+    }
 }

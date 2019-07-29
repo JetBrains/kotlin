@@ -19,21 +19,16 @@ import org.jetbrains.kotlin.konan.library.isInterop
 import org.jetbrains.kotlin.konan.library.resolver.KonanLibraryResolveResult
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 
-internal fun Context.getExportedDependencies(): List<ModuleDescriptor> {
-    val exportedLibraries = this.config.exportedLibraries.toSet()
+internal fun Context.getExportedDependencies(): List<ModuleDescriptor> = getDescriptorsFromFeaturedLibraries((config.exportedLibraries + config.sourceLibraries).toSet())
+internal fun Context.getSourceLibraryDescriptors(): List<ModuleDescriptor> = getDescriptorsFromFeaturedLibraries(config.sourceLibraries.toSet())
 
-    val result = this.moduleDescriptor.allDependencyModules.filter {
-        val origin = it.konanModuleOrigin
-        when (origin) {
+private fun Context.getDescriptorsFromFeaturedLibraries(featuredLibraries: Set<KonanLibrary>) =
+    moduleDescriptor.allDependencyModules.filter {
+        when (val origin = it.konanModuleOrigin) {
             CurrentKonanModuleOrigin, SyntheticModulesOrigin -> false
-            is DeserializedKonanModuleOrigin -> {
-                origin.library in exportedLibraries
-            }
+            is DeserializedKonanModuleOrigin -> origin.library in featuredLibraries
         }
     }
-
-    return result
-}
 
 internal fun getExportedLibraries(
         configuration: CompilerConfiguration,
