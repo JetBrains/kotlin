@@ -240,11 +240,9 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 val currentModules = userData[path] ?: ArrayList<String>().apply { userData[path] = this }
                 // Test modules should not be added. Otherwise we could get dependnecy of java.mail on jvmTest
                 val allSourceSets = target.compilations.filter { !it.isTestModule }.flatMap { it.sourceSets }.toSet()
-                val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.toSet()
-                allSourceSets.filter { !availableViaDependsOn.contains(it.name) }.forEach { sourceSet ->
-                    run {
-                        currentModules.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))
-                    }
+                val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { mppModel.sourceSets[it] }
+                allSourceSets.union(availableViaDependsOn).forEach { sourceSet ->
+                    currentModules.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))
                 }
             }
 

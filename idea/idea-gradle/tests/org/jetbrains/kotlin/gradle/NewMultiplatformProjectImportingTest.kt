@@ -591,12 +591,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("project.jvm") {}
             module("project.jvm.main") {
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
             }
             module("project.jvm.test") {
                 moduleDependency("project.jvm.main", DependencyScope.COMPILE)
                 moduleDependency("project.mpp-base.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp-base.commonMain", DependencyScope.COMPILE)
                 moduleDependency("project.mpp.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("project.mpp.commonMain", DependencyScope.COMPILE)
             }
             module("project.mpp") {}
             module("project.mpp.commonMain") {
@@ -649,13 +653,16 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("mpp-jardep.java-project.main") {
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
 
             }
             module("mpp-jardep.java-project.test") {
                 moduleDependency("mpp-jardep.java-project.main", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library1.jvmMain", DependencyScope.COMPILE)
                 moduleDependency("mpp-jardep.library2.jvmMain", DependencyScope.COMPILE)
-
+                moduleDependency("mpp-jardep.library1.commonMain", DependencyScope.COMPILE)
+                moduleDependency("mpp-jardep.library2.commonMain", DependencyScope.COMPILE)
             }
 
             module("mpp-jardep.library1") {}
@@ -719,11 +726,13 @@ class NewMultiplatformProjectImportingTest : MultiplePluginVersionGradleImportin
             module("jvm-on-mpp.jvm-mod") {}
             module("jvm-on-mpp.jvm-mod.main") {
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
             }
             module("jvm-on-mpp.jvm-mod.test") {
                 moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.jvmMain", DependencyScope.COMPILE, false)
+                moduleDependency("jvm-on-mpp.mpp-mod-a.commonMain", DependencyScope.COMPILE, false)
                 moduleDependency("jvm-on-mpp.mpp-mod-a.main", DependencyScope.COMPILE, false)
             }
 

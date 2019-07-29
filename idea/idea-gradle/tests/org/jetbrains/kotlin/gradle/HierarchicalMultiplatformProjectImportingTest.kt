@@ -227,6 +227,115 @@ class HierarchicalMultiplatformProjectImportingTest : MultiplePluginVersionGradl
         }
     }
 
+    @Test
+    fun testJvmWithJavaOnHMPP() {
+        configureByFiles()
+        importProject()
+
+        checkProjectStructure(true, false, true) {
+            module("jvm-on-mpp") {}
+            module("jvm-on-mpp.jvm-mod") {}
+
+
+            module("jvm-on-mpp.jvm-mod.main") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.main", DependencyScope.COMPILE)
+            }
+            module("jvm-on-mpp.jvm-mod.test") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.main", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.jvm-mod.main", DependencyScope.COMPILE)
+            }
+            module("jvm-on-mpp.hmpp-mod-a") {
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.commonMain") {
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.commonTest") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jsMain") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.COMPILE)
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jsTest") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jsMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest", DependencyScope.TEST)
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jvmAndJsTest") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.TEST)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jvmMain") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.COMPILE)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.jvmTest") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmAndJsTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.jvmMain", DependencyScope.TEST)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
+
+            }
+            module("jvm-on-mpp.hmpp-mod-a.linuxX64Main") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.COMPILE)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.COMPILE)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+            }
+            module("jvm-on-mpp.hmpp-mod-a.linuxX64Test") {
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.commonTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsMain", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxAndJsTest", DependencyScope.TEST)
+                moduleDependency("jvm-on-mpp.hmpp-mod-a.linuxX64Main", DependencyScope.TEST)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - builtin [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - iconv [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - linux [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - posix [linux_x64]", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - stdlib", DependencyScope.PROVIDED)
+                libraryDependency("Kotlin/Native 1.3.50-dev-1383 - zlib [linux_x64]", DependencyScope.PROVIDED)
+            }
+            module("jvm-on-mpp.hmpp-mod-a.main") {}
+            module("jvm-on-mpp.hmpp-mod-a.test") {}
+        }
+    }
+
     private fun checkProjectStructure(
         exhaustiveModuleList: Boolean = true,
         exhaustiveSourceSourceRootList: Boolean = true,
