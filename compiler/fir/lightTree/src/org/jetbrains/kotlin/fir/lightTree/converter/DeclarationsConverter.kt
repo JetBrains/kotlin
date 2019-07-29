@@ -157,14 +157,8 @@ class DeclarationsConverter(
         var aliasName: String? = null
         importDirective.forEachChildren {
             when (it.tokenType) {
-                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> {
-                    var importName = it.getAsString()
-                    if (importName.endsWith(".*")) {
-                        isAllUnder = true
-                        importName = importName.replace(".*", "")
-                    }
-                    importedFqName = FqName(importName)
-                }
+                DOT_QUALIFIED_EXPRESSION, REFERENCE_EXPRESSION -> importedFqName = FqName(it.getAsString())
+                MUL -> isAllUnder = true
                 IMPORT_ALIAS -> aliasName = convertImportAlias(it)
             }
         }
