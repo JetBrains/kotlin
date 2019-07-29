@@ -126,6 +126,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         getExportedLibraries(configuration, resolvedLibraries, resolver.searchPathResolver, report = true)
     }
 
+    internal val sourceLibraries by lazy {
+        getSourceLibraries(configuration, resolvedLibraries, resolver.searchPathResolver)
+    }
+
     fun librariesWithDependencies(moduleDescriptor: ModuleDescriptor?): List<KonanLibrary> {
         if (moduleDescriptor == null) error("purgeUnneeded() only works correctly after resolve is over, and we have successfully marked package files as needed or not needed.")
 
