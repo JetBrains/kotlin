@@ -28,6 +28,7 @@ dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
+    embedded("com.android.tools.ddms:ddmlib:22.0.2")
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(

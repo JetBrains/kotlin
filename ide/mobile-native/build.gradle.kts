@@ -19,6 +19,7 @@ if (!isStandaloneBuild) {
 dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
+    compile("com.android.tools.ddms:ddmlib:22.0.2")
 
     if (!isStandaloneBuild) {
         compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")
