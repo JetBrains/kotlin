@@ -186,8 +186,14 @@ private fun getBlacklistExplanationHTML(language: Language): String {
   return hintsProvider.blacklistExplanationHTML
 }
 
-private fun createBlacklistDependencyInfoLabel(language: Language): JBLabel? {
+private fun createBlacklistDependencyInfoLabel(language: Language): JPanel? {
+  val panel = JPanel()
+  panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
   val provider = InlayParameterHintsExtension.forLanguage(language)
   val dependencyLanguage = provider.blackListDependencyLanguage ?: return null
-  return JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.displayName), SwingConstants.RIGHT)
+  panel.add(Box.createRigidArea(Dimension(0, 5)))
+  val label = JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.displayName))
+  label.alignmentX = Component.RIGHT_ALIGNMENT
+  panel.add(label)
+  return panel
 }
