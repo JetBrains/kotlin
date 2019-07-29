@@ -33,7 +33,7 @@ public class FormatterStarter implements ApplicationStarter {
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(@NotNull String[] args) {
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     MessageOutput messageOutput = new MessageOutput(
       new PrintWriter(System.out),

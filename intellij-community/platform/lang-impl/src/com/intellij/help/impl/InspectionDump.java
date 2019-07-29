@@ -6,6 +6,7 @@ import com.intellij.codeInspection.ex.InspectionToolWrapper;
 import com.intellij.openapi.application.ApplicationStarter;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -29,7 +30,7 @@ public class InspectionDump implements ApplicationStarter {
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(@NotNull String[] args) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder builder = factory.newDocumentBuilder();

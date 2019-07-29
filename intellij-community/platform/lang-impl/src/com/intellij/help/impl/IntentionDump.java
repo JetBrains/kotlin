@@ -10,6 +10,7 @@ import com.intellij.openapi.application.ApplicationStarter;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.TimeoutUtil;
+import org.jetbrains.annotations.NotNull;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,7 +34,7 @@ public class IntentionDump implements ApplicationStarter {
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(@NotNull String[] args) {
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     try {
       DocumentBuilder builder = factory.newDocumentBuilder();

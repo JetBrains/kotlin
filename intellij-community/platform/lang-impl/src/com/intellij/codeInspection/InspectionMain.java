@@ -2,6 +2,7 @@
 package com.intellij.codeInspection;
 
 import com.intellij.openapi.application.ApplicationStarter;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -86,7 +87,7 @@ public class InspectionMain implements ApplicationStarter {
   }
 
   @Override
-  public void main(String[] args) {
+  public void main(@NotNull String[] args) {
     myApplication.startup();
   }
 
