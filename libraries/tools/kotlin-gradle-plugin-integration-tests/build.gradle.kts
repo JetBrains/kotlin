@@ -44,10 +44,13 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
 }
 
-// additional configuration in tasks.withType<Test> below
-projectTest("test") {}
+// Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
+val shortenTempRootName = System.getProperty("os.name")!!.contains("Windows")
 
-projectTest("testAdvanceGradleVersion") {
+// additional configuration in tasks.withType<Test> below
+projectTest("test", shortenTempRootName = shortenTempRootName) {}
+
+projectTest("testAdvanceGradleVersion", shortenTempRootName = shortenTempRootName) {
     val gradleVersionForTests = "5.3-rc-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
 }
