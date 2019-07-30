@@ -7,13 +7,13 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
-import com.intellij.psi.impl.source.tree.java.PsiForStatementImpl
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirAnonymousFunctionImpl
-import org.jetbrains.kotlin.fir.declarations.impl.FirErrorLoop
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
 import org.jetbrains.kotlin.fir.expressions.*
@@ -26,13 +26,13 @@ import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.psi.KtForExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -59,8 +59,12 @@ class ExpressionsConverter(
                         .convertLambdaExpression(lambdaTree.root)
                 }
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)
-                BINARY_WITH_TYPE -> convertBinaryWithType(expression)
-                IS_EXPRESSION -> convertIsExpression(expression)
+                BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
+                    this.getOperationSymbol().toFirOperation()
+                }
+                IS_EXPRESSION -> convertBinaryWithTypeRHSExpression(expression) {
+                    if (this == "is") FirOperation.IS else FirOperation.NOT_IS
+                }
                 LABELED_EXPRESSION -> convertLabeledExpression(expression)
                 PREFIX_EXPRESSION, POSTFIX_EXPRESSION -> convertUnaryExpression(expression)
                 ANNOTATED_EXPRESSION -> convertAnnotatedExpression(expression)
@@ -222,8 +226,12 @@ class ExpressionsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.Precedence.parseRightHandSide
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitBinaryWithTypeRHSExpression
+     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIsExpression
      */
-    private fun convertBinaryWithType(binaryExpression: LighterASTNode): FirTypeOperatorCall {
+    private fun convertBinaryWithTypeRHSExpression(
+        binaryExpression: LighterASTNode,
+        toFirOperation: String.() -> FirOperation
+    ): FirTypeOperatorCall {
         lateinit var operationTokenName: String
         var leftArgAsFir: FirExpression = FirErrorExpressionImpl(session, null, "No left operand")
         lateinit var firType: FirTypeRef
@@ -235,28 +243,7 @@ class ExpressionsConverter(
             }
         }
 
-        val operation = operationTokenName.getOperationSymbol().toFirOperation()
-        return FirTypeOperatorCallImpl(session, null, operation, firType).apply {
-            arguments += leftArgAsFir
-        }
-    }
-
-    /**
-     * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitIsExpression
-     */
-    private fun convertIsExpression(isExpression: LighterASTNode): FirTypeOperatorCall {
-        lateinit var operationTokenName: String
-        var leftArgAsFir: FirExpression = FirErrorExpressionImpl(session, null, "No left operand")
-        lateinit var firType: FirTypeRef
-        isExpression.forEachChildren {
-            when (it.tokenType) {
-                OPERATION_REFERENCE -> operationTokenName = it.asText
-                TYPE_REFERENCE -> firType = declarationsConverter.convertType(it)
-                else -> if (it.isExpression()) leftArgAsFir = getAsFirExpression(it, "No left operand")
-            }
-        }
-
-        val operation = if (operationTokenName == "is") FirOperation.IS else FirOperation.NOT_IS
+        val operation = operationTokenName.toFirOperation()
         return FirTypeOperatorCallImpl(session, null, operation, firType).apply {
             arguments += leftArgAsFir
         }
