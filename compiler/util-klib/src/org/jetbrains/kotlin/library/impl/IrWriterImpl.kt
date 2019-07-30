@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.library.impl
 
-import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.*
 
 class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
@@ -16,11 +15,11 @@ class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
 
     override fun addIr(ir: SerializedIr) {
         irLayout.irHeader.writeBytes(ir.module)
-        // TODO: use Files.move.
-        File(ir.combinedDeclarationFilePath).copyTo(irLayout.irDeclarations)
-        File(ir.symbolTableFilePath).copyTo(irLayout.irSymbols)
-        File(ir.typeTableFilePath).copyTo(irLayout.irTypes)
-        File(ir.stringTableFilePath).copyTo(irLayout.irStrings)
+
+        IrDeclarationWriter(ir.serializedDeclarations).writeIntoFile(irLayout.irDeclarations.absolutePath)
+        IrTableWriter(ir.symbols).writeIntoFile(irLayout.irSymbols.absolutePath)
+        IrTableWriter(ir.types).writeIntoFile(irLayout.irTypes.absolutePath)
+        IrTableWriter(ir.strings).writeIntoFile(irLayout.irStrings.absolutePath)
     }
 
     override fun addDataFlowGraph(dataFlowGraph: ByteArray) {

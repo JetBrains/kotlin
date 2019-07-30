@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.library
 
-import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.konan.properties.Properties
+import org.jetbrains.kotlin.library.impl.SerializedDeclaration
 
 interface BaseWriter {
     val versions: KonanLibraryVersioning
@@ -33,10 +33,10 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
-class SerializedIr (
+class SerializedIr(
     val module: ByteArray,
-    val symbolTableFilePath: String,
-    val typeTableFilePath: String,
-    val stringTableFilePath: String,
-    val combinedDeclarationFilePath: String
+    val symbols: List<ByteArray>,
+    val types: List<ByteArray>,
+    val strings: List<ByteArray>,
+    val serializedDeclarations: List<SerializedDeclaration>
 )
