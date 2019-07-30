@@ -14,6 +14,19 @@
 - [`KT-31535`](https://youtrack.jetbrains.com/issue/KT-31535) False positives from compiler warning IMPLICIT_NOTHING_AS_TYPE_PARAMETER
 - [`KT-31969`](https://youtrack.jetbrains.com/issue/KT-31969) NI: false positive USELESS_ELVIS with multiple elvis calls
 - [`KT-32044`](https://youtrack.jetbrains.com/issue/KT-32044) For loop over full UByte range terminates at UInt bound.
+- [`KT-25432`](https://youtrack.jetbrains.com/issue/KT-25432) No smartcast on qualifier expression of captured type
+- [`KT-30796`](https://youtrack.jetbrains.com/issue/KT-30796) psi2ir generates IrErrorType for elvis with generic type having nullable upper-bound when expected type is not nullable
+- [`KT-31242`](https://youtrack.jetbrains.com/issue/KT-31242) "Can't find enclosing method" proguard compilation exception with inline and crossinline
+- [`KT-31347`](https://youtrack.jetbrains.com/issue/KT-31347) "IndexOutOfBoundsException: Insufficient maximum stack size" with crossinline and suspend
+- [`KT-31367`](https://youtrack.jetbrains.com/issue/KT-31367) IllegalStateException: Concrete fake override public open fun (...)  defined in TheIssue[PropertyGetterDescriptorImpl@1a03c376] should have exactly one concrete super-declaration: []
+- [`KT-31734`](https://youtrack.jetbrains.com/issue/KT-31734) Empty parameter list required on Annotations of function types
+- [`KT-32434`](https://youtrack.jetbrains.com/issue/KT-32434) New type inference fails for Caffeine Cache
+- [`KT-32452`](https://youtrack.jetbrains.com/issue/KT-32452) Kotlin 1.3.40 - problem in IDE with new type inference and suspending method reference
+
+### Docs & Examples
+
+- [`KT-16602`](https://youtrack.jetbrains.com/issue/KT-16602) Provide examples of sorting API usage
+- [`KT-32353`](https://youtrack.jetbrains.com/issue/KT-32353) Document order of array elements initialization
 
 ### IDE
 
@@ -38,11 +51,18 @@
 - [`KT-32276`](https://youtrack.jetbrains.com/issue/KT-32276) Fix flaky test for ultra light classes
 - [`KT-32364`](https://youtrack.jetbrains.com/issue/KT-32364) Remove deprecated usages of OUT_OF_CODE_BLOCK_MODIFICATION_COUNT and write a replacement for Kotlin language
 - [`KT-32370`](https://youtrack.jetbrains.com/issue/KT-32370) Lambdas should have implicit `return` in Kotlin Uast
+- [`KT-12096`](https://youtrack.jetbrains.com/issue/KT-12096) Spring: rename of Kotlin bean defined in `@Bean` annotation fails
+- [`KT-28193`](https://youtrack.jetbrains.com/issue/KT-28193) Exception: Mirror element should never be calculated for light classes generated from a single file
+- [`KT-28822`](https://youtrack.jetbrains.com/issue/KT-28822) Dependencies in Kotlin MPP project could be wrongly resolved if project was not build before import
+- [`KT-29267`](https://youtrack.jetbrains.com/issue/KT-29267) Enable ultra-light classes by default
+- [`KT-31129`](https://youtrack.jetbrains.com/issue/KT-31129) Call only Kotlin-specific reference contributors for getting Kotlin references from PSI
+- [`KT-32082`](https://youtrack.jetbrains.com/issue/KT-32082) Kotlin facet: 1.3.40 plugin does not properly read target platform settings of 1.3.50 plugin
 
 ### IDE. Completion
 
 - [`KT-9792`](https://youtrack.jetbrains.com/issue/KT-9792) Don't propose the same name for arguments of lambda on completion of function call with lambda template
 - [`KT-29572`](https://youtrack.jetbrains.com/issue/KT-29572) Smart completing anonymous object uses incorrect code style
+- [`KT-25264`](https://youtrack.jetbrains.com/issue/KT-25264) Freeze in Kotlin file on completion
 
 ### IDE. Debugger
 
@@ -76,16 +96,23 @@
 - [`KT-31510`](https://youtrack.jetbrains.com/issue/KT-31510) isDumb should be used only under read action: KotlinEvaluator
 - [`KT-31702`](https://youtrack.jetbrains.com/issue/KT-31702) Debugger can't stop on breakpoint on `Unit` expression from coroutine context
 - [`KT-31709`](https://youtrack.jetbrains.com/issue/KT-31709) Evaluate: "IllegalArgumentException: Parameter specified as non-null is null: method org.jetbrains.kotlin.codegen.FrameMapBase.getIndex, parameter descriptor" with nested lambda member access
+- [`KT-24829`](https://youtrack.jetbrains.com/issue/KT-24829) Access to coroutineContext in 'Evaluate expression'
 
 ### IDE. Gradle
 
 - [`KT-19693`](https://youtrack.jetbrains.com/issue/KT-19693) Import package prefix from Gradle
 - [`KT-30667`](https://youtrack.jetbrains.com/issue/KT-30667) Dependencies of a module on a multiplatform one with a JVM target and `withJava()` configured, are incorrectly resolved in IDE
 - [`KT-32300`](https://youtrack.jetbrains.com/issue/KT-32300) Add possibility to distinguish kotlin source root from java source root
+- [`KT-31014`](https://youtrack.jetbrains.com/issue/KT-31014) Gradle, JS: Webpack watch mode
+- [`KT-31843`](https://youtrack.jetbrains.com/issue/KT-31843) Memory leak caused by KOTLIN_TARGET_DATA_NODE on project reimport
 
 ### IDE. Gradle. Script
 
 - [`KT-31779`](https://youtrack.jetbrains.com/issue/KT-31779) "Highlighting in scripts is not available"
+- [`KT-30638`](https://youtrack.jetbrains.com/issue/KT-30638) "Highlighting in scripts is not available until all Script Dependencies are loaded" in Diff viewer
+- [`KT-30974`](https://youtrack.jetbrains.com/issue/KT-30974) Script dependencies resolution failed error while trying to use Kotlin for Gradle
+- [`KT-31440`](https://youtrack.jetbrains.com/issue/KT-31440) Add link to Gradle Kotlin DSL logs when script dependencies resolution process fails
+- [`KT-32483`](https://youtrack.jetbrains.com/issue/KT-32483) CNFE org.gradle.kotlin.dsl.KotlinBuildScript on creating new Gradle Kotlin project from wizard
 
 ### IDE. Inspections and Intentions
 
@@ -105,6 +132,7 @@
 - [`KT-31533`](https://youtrack.jetbrains.com/issue/KT-31533) Make "Add operator modifier" an inspection instead of intention
 - [`KT-31795`](https://youtrack.jetbrains.com/issue/KT-31795) Inspection: simplify property setter with custom visibility
 - [`KT-31924`](https://youtrack.jetbrains.com/issue/KT-31924) Make "add import" intention more flexible based on caret position
+- [`KT-30970`](https://youtrack.jetbrains.com/issue/KT-30970) No warning for empty `if` operator and `also`method
 
 #### Fixes
 
@@ -153,10 +181,29 @@
 - [`KT-32419`](https://youtrack.jetbrains.com/issue/KT-32419) Spurious 'while' has empty body warning when body has explanatory comment
 - [`KT-32506`](https://youtrack.jetbrains.com/issue/KT-32506) False negative "Remove redundant qualifier name" with `java.util.ArrayList<Int>()`
 - [`KT-32454`](https://youtrack.jetbrains.com/issue/KT-32454) "Replace Java static method with Kotlin analog": invalid quick fix on 'abs()' function
+- [`KT-26242`](https://youtrack.jetbrains.com/issue/KT-26242) "Create test" intention does nothing in common module
+- [`KT-27208`](https://youtrack.jetbrains.com/issue/KT-27208) IDEA reports about the need to declare abstract or implement abstract method, but this method is @JvmStatic in an interface companion
+- [`KT-27555`](https://youtrack.jetbrains.com/issue/KT-27555) `Create actual ...` quick fix does nothing if the corresponding source set directory isn't created yet
+- [`KT-28121`](https://youtrack.jetbrains.com/issue/KT-28121) IDE: Warn on java files under "src/main/kotlin" or "src/test/kotlin" source roots
+- [`KT-28295`](https://youtrack.jetbrains.com/issue/KT-28295) Use `languageSettings` for a quick fix to enable experimental features in multiplatform projects
+- [`KT-28529`](https://youtrack.jetbrains.com/issue/KT-28529) Don't suggest `commonMain` source set as a target of `create expected ...` quick fix for a member of `*Test` source set
+- [`KT-28746`](https://youtrack.jetbrains.com/issue/KT-28746) “Create actual class” quick fix creates invalid file when is called from files located in package directory but don't have package name
+- [`KT-30622`](https://youtrack.jetbrains.com/issue/KT-30622) Add names to call arguments starting from given argument
+- [`KT-31404`](https://youtrack.jetbrains.com/issue/KT-31404) Redundant 'requireNotNull' or 'checkNotNull' inspection: don't remove first argument
+- [`KT-32705`](https://youtrack.jetbrains.com/issue/KT-32705) "Create expect" quick fix adds `actual` modifier to a `const`/`lateinit` declaration without a warning
+- [`KT-32967`](https://youtrack.jetbrains.com/issue/KT-32967) Warning about incorrectly placed Java source file isn't automatically dismissed on move of the file to the proper source root
+
+### IDE. JS
+
+- [`KT-31895`](https://youtrack.jetbrains.com/issue/KT-31895) New Project wizard: Kotlin Gradle + Kotlin/JS for Node.js: incorrect DSL is inserted
 
 ### IDE. KDoc
 
 - [`KT-30985`](https://youtrack.jetbrains.com/issue/KT-30985) Missing line break in quick doc for enum constant
+
+### IDE. Multiplatform
+
+- [`KT-29757`](https://youtrack.jetbrains.com/issue/KT-29757) IDE fails to import transitive dependency of a JVM module to a multiplatform one
 
 ### IDE. Navigation
 
@@ -166,6 +213,7 @@
 
 - [`KT-29720`](https://youtrack.jetbrains.com/issue/KT-29720) Refactor / Move does not update package statement with implicit prefix
 - [`KT-30762`](https://youtrack.jetbrains.com/issue/KT-30762) Inline method produces invalid code for suspend functions with receiver
+- [`KT-30748`](https://youtrack.jetbrains.com/issue/KT-30748) 100+ Seconds UI Freeze on performing a Move Refactoring on a file with a lot of usages (KotlinOptimizeImports in thread dump)
 
 ### IDE. Scratch
 
@@ -180,10 +228,17 @@
 - [`KT-31521`](https://youtrack.jetbrains.com/issue/KT-31521) CNFE „org.jetbrains.kotlin.idea.caches.project.ScriptBinariesScopeCache“ on creating new Gradle based project
 - [`KT-31826`](https://youtrack.jetbrains.com/issue/KT-31826) Gradle clean task causes IDEA to lose kotlin scripting configuration
 - [`KT-31837`](https://youtrack.jetbrains.com/issue/KT-31837) TargetPlatform for scripts should depends on scriptDefinition.additionalArguments
+- [`KT-30690`](https://youtrack.jetbrains.com/issue/KT-30690) Highlighting for scripts in diff view doesn't work for left part
+- [`KT-32061`](https://youtrack.jetbrains.com/issue/KT-32061) Check classpath jars before applying script compilation result from file attributes
+- [`KT-32554`](https://youtrack.jetbrains.com/issue/KT-32554) Freezes in ScriptDependenciesUpdater
 
 ### IDE. Tests Support
 
 - [`KT-30814`](https://youtrack.jetbrains.com/issue/KT-30814) MPP, 191 platform: with Gradle test runner run configuration for platform test is created without tasks
+
+### IDE. Wizards
+
+- [`KT-32105`](https://youtrack.jetbrains.com/issue/KT-32105) MPP project wizard: add option for Kotlin Gradle DSL
 
 ### JS. Tools
 
@@ -191,11 +246,16 @@
 - [`KT-31565`](https://youtrack.jetbrains.com/issue/KT-31565) Gradle/JS: `npmResolve` is never UP-TO-DATE
 - [`KT-32326`](https://youtrack.jetbrains.com/issue/KT-32326) Gradle, test runner: support postponing test running error reporting at the end of the build
 - [`KT-32393`](https://youtrack.jetbrains.com/issue/KT-32393) Gradle, JS: Resolve projects lazily
+- [`KT-31560`](https://youtrack.jetbrains.com/issue/KT-31560) Gradle: provide descriptions for JS tasks
+- [`KT-31563`](https://youtrack.jetbrains.com/issue/KT-31563) Gradle/JS: npmResolve fails with "Invalid version" when user project's version does not match npm rules
+- [`KT-31566`](https://youtrack.jetbrains.com/issue/KT-31566) Gradle/JS: with explicit call to `nodejs { testTask { useNodeJs() } }` configuration fails : "Could not find which method to invoke"
+- [`KT-31694`](https://youtrack.jetbrains.com/issue/KT-31694) Gradle, NPM, windows: creating symlink requires administrator privilege
 
 ### Libraries
 
 - [`KT-29372`](https://youtrack.jetbrains.com/issue/KT-29372) measureTime that returns both the result of block and elapsed time
 - [`KT-32083`](https://youtrack.jetbrains.com/issue/KT-32083) Incorrect ReplaceWith annotation on kotlin.js.pow
+- [`KT-12749`](https://youtrack.jetbrains.com/issue/KT-12749) Provide Int.bitCount, Long.bitCount etc.
 
 ### Reflection
 
@@ -205,6 +265,10 @@
 ### Tools. Daemon
 
 - [`KT-31550`](https://youtrack.jetbrains.com/issue/KT-31550) NSME org.jetbrains.kotlin.com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem.clearHandlersCache()V on compileKotlin task with plugin from master
+- [`KT-32490`](https://youtrack.jetbrains.com/issue/KT-32490) Compiler daemon tests fail on windows due to directory name being too long
+- [`KT-32950`](https://youtrack.jetbrains.com/issue/KT-32950) Daemon should inherit "-XX:MaxMetaspaceSize" of client VM
+- [`KT-32992`](https://youtrack.jetbrains.com/issue/KT-32992) Enable assertions in Kotlin Compile Daemon
+- [`KT-33027`](https://youtrack.jetbrains.com/issue/KT-33027) Compilation with daemon fails, because IncrementalModuleInfo#serialVersionUID does not match
 
 ### Tools. Gradle
 
@@ -216,6 +280,15 @@
 - [`KT-31890`](https://youtrack.jetbrains.com/issue/KT-31890) Gradle, JS, webpack: provide property with full bundle file path
 - [`KT-32015`](https://youtrack.jetbrains.com/issue/KT-32015) Gradle, JS: resolve configuration only while executing tasks of specific projects
 - [`KT-32136`](https://youtrack.jetbrains.com/issue/KT-32136) Gradle, test runner: handle case when test runtime exits abnormally
+- [`KT-26256`](https://youtrack.jetbrains.com/issue/KT-26256) In new MPP, support Java compilation in JVM targets
+- [`KT-30573`](https://youtrack.jetbrains.com/issue/KT-30573) Gradle, JS: enable source maps by default, change paths relative to node_modules directory
+- [`KT-30747`](https://youtrack.jetbrains.com/issue/KT-30747) Gradle, JS tests: provide option to disable test configuration per target
+- [`KT-31010`](https://youtrack.jetbrains.com/issue/KT-31010) Gradle, JS tests: Mocha
+- [`KT-31011`](https://youtrack.jetbrains.com/issue/KT-31011) Gradle, JS tests: Karma
+- [`KT-31013`](https://youtrack.jetbrains.com/issue/KT-31013) Gradle, JS: Webpack
+- [`KT-31016`](https://youtrack.jetbrains.com/issue/KT-31016) Gradle: yarn downloading
+- [`KT-31017`](https://youtrack.jetbrains.com/issue/KT-31017) Gradle, yarn: support workspaces
+- [`KT-31697`](https://youtrack.jetbrains.com/issue/KT-31697) Gradle, NPM: report about clashes in packages_imported
 
 #### Performance Improvements
 
@@ -231,6 +304,12 @@
 - [`KT-32204`](https://youtrack.jetbrains.com/issue/KT-32204) In an MPP, a dependency that is added to a non-root source set is incorrectly analyzed for source sets visibility
 - [`KT-32225`](https://youtrack.jetbrains.com/issue/KT-32225) In an MPP, if a dependency is added to a source set that does not take part in published compilations, it is not correctly analyzed in source set visibility inference
 - [`KT-32564`](https://youtrack.jetbrains.com/issue/KT-32564) Provide a flag to enable/disable hierarchical multiplatform mechanism in Gradle
+- [`KT-31023`](https://youtrack.jetbrains.com/issue/KT-31023) Update Gradle module metadata warning in MPP publishing
+- [`KT-31696`](https://youtrack.jetbrains.com/issue/KT-31696) Gradle, NPM: select one version between tools and all of compile configurations
+- [`KT-31891`](https://youtrack.jetbrains.com/issue/KT-31891) Gradle: JS or Native tests execution: `build --scan` fails with ISE "Expected attachment of type ... but did not find it"
+- [`KT-32210`](https://youtrack.jetbrains.com/issue/KT-32210) Kapt randomly fails with java.io.UTFDataFormatException
+- [`KT-32706`](https://youtrack.jetbrains.com/issue/KT-32706) Gradle target "jsBrowserWebpack" should use output of JS compile task as input
+
 
 ### Tools. Incremental Compile
 
@@ -257,19 +336,42 @@
 - [`KT-31809`](https://youtrack.jetbrains.com/issue/KT-31809) "Attempt to modify PSI for non-committed Document!" exception and broken kotlin file after new J2K conversion
 - [`KT-31821`](https://youtrack.jetbrains.com/issue/KT-31821) J2K: IDEA Ultimate: local variable: CCE: "PsiLocalVariableImpl cannot be cast to class JvmAnnotatedElement" at JavaToJKTreeBuilder$DeclarationMapper.toJK()
 - [`KT-32436`](https://youtrack.jetbrains.com/issue/KT-32436) NewJ2K generic field is not initialized after convertion
+- [`KT-19327`](https://youtrack.jetbrains.com/issue/KT-19327) Java to Kotlin converter fails to convert code using Java 8 Stream API
+- [`KT-21467`](https://youtrack.jetbrains.com/issue/KT-21467) Convert To Kotlin fails when using chained stream.flatmap methods
+- [`KT-24677`](https://youtrack.jetbrains.com/issue/KT-24677) j2k creates nullable type for child function but keeps not null type for parent function
+- [`KT-32572`](https://youtrack.jetbrains.com/issue/KT-32572) New J2K: Map with complex type as parameter is wrongly converted
+- [`KT-32602`](https://youtrack.jetbrains.com/issue/KT-32602) J2K: no conversion of `String.length()` method call to property access of existing String property
+- [`KT-32604`](https://youtrack.jetbrains.com/issue/KT-32604) kotlin.NotImplementedError exception occurs on converting Java call of toString method of data class to Kotlin
+- [`KT-32609`](https://youtrack.jetbrains.com/issue/KT-32609) New J2K: Comparable class is wrongly converted to Kotlin if parameter of compareTo marked with @NotNull annotation
+- [`KT-32693`](https://youtrack.jetbrains.com/issue/KT-32693) New J2K is throwing „Read access is allowed from event dispatch thread or inside read-action only“ on converting Java code inside Evaluate Expression window
+- [`KT-32702`](https://youtrack.jetbrains.com/issue/KT-32702) New J2K: lambda with method reference is converted to lamdba with excessive parameter declaration
+- [`KT-32835`](https://youtrack.jetbrains.com/issue/KT-32835) New J2K: NumberFormatException occurs on converting binary literals
+- [`KT-32837`](https://youtrack.jetbrains.com/issue/KT-32837) J2K: NumberFormatException occurs on converting literals with underscore characters
 
 ### Tools. JPS
 
 - [`KT-27181`](https://youtrack.jetbrains.com/issue/KT-27181) Compiler arguments are listed twice on JPS build of Gradle-based project
+- [`KT-13563`](https://youtrack.jetbrains.com/issue/KT-13563) Kotlin jps-plugin should allow to instrument bytecode from Intellij IDEA.
 
 ### Tools. REPL
 
 - [`KT-15125`](https://youtrack.jetbrains.com/issue/KT-15125) Support JSR 223 bindings directly via script variables
 - [`KT-32085`](https://youtrack.jetbrains.com/issue/KT-32085) Kotlinc REPL: "java.lang.NoClassDefFoundError: org/jline/reader/LineReaderBuilder"
 
+### Tools. Scripts
+
+- [`KT-28137`](https://youtrack.jetbrains.com/issue/KT-28137) Implement result/return value for the regular (non-REPL) scripts
+
 ### Tools. kapt
 
 - [`KT-30578`](https://youtrack.jetbrains.com/issue/KT-30578) `build/generated/source/kaptKotlin` is added as source directory to `main` instead of `jvmMain` when jvm { withJava() } is configured in a multiplatform project
+- [`KT-30739`](https://youtrack.jetbrains.com/issue/KT-30739) Kapt generated sources are not visible from the IDE when "Create separate module per source set" is disabled
+- [`KT-31127`](https://youtrack.jetbrains.com/issue/KT-31127) Kotlin-generating processor which uses Filer API breaks JavaCompile task
+- [`KT-31378`](https://youtrack.jetbrains.com/issue/KT-31378) v1.3.31: NoSuchElementException in kapt when kapt.incremental.apt=true
+- [`KT-32535`](https://youtrack.jetbrains.com/issue/KT-32535) Kapt aptMode=compile don't include files generated at `kapt.kotlin.generated` as sources to compile
+
+### Kotlin Native
+Related [Kotlin Native changelog](https://github.com/JetBrains/kotlin-native/blob/master/CHANGELOG.md#v1350-aug-2019) can be found separately.
 
 ## Previous releases
 This release also includes the fixes and improvements from the [previous releases](https://github.com/JetBrains/kotlin/releases/tag/v1.3.41).
