@@ -78,7 +78,7 @@ open class DescriptorReferenceSerializer(
         val realDeclaration = if (isFakeOverride) {
             when (declaration) {
                 is IrSimpleFunction -> declaration.resolveFakeOverrideMaybeAbstract()
-                is IrField -> declaration.resolveFakeOverrideMaybeAbstract()
+                is IrField -> declaration.resolveFakeOverride()
                 is IrProperty -> declaration.resolveFakeOverrideMaybeAbstract()
                 else -> error("Unexpected fake override declaration")
             }

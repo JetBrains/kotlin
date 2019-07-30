@@ -7,30 +7,27 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.symbols.IrBindableSymbol
 import org.jetbrains.kotlin.ir.util.isReal
 import org.jetbrains.kotlin.ir.util.original
 
-
-/**
- * Implementation of given method.
- *
- * TODO: this method is actually a part of resolve and probably duplicates another one
- */
-fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
+// We may get several real supers here (e.g. see the code snippet from KT-33034).
+// TODO: Consider reworking the resolution algorithm to get a determined super declaration.
+private fun <S: IrBindableSymbol<*, D>, D: IrOverridableDeclaration<S>> D.getRealSupers(): Set<D> {
     if (this.isReal) {
-        return this
+        return setOf(this)
     }
 
-    val visited = mutableSetOf<IrSimpleFunction>()
-    val realSupers = mutableSetOf<IrSimpleFunction>()
+    val visited = mutableSetOf<D>()
+    val realSupers = mutableSetOf<D>()
 
-    fun findRealSupers(function: IrSimpleFunction) {
-        if (function in visited) return
-        visited += function
-        if (function.isReal) {
-            realSupers += function
+    fun findRealSupers(declaration: D) {
+        if (declaration in visited) return
+        visited += declaration
+        if (declaration.isReal) {
+            realSupers += declaration
         } else {
-            function.overriddenSymbols.forEach { findRealSupers(it.owner) }
+            declaration.overriddenSymbols.forEach { findRealSupers(it.owner) }
         }
     }
 
@@ -39,10 +36,10 @@ fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimp
     if (realSupers.size > 1) {
         visited.clear()
 
-        fun excludeOverridden(function: IrSimpleFunction) {
-            if (function in visited) return
-            visited += function
-            function.overriddenSymbols.forEach {
+        fun excludeOverridden(declaration: D) {
+            if (declaration in visited) return
+            visited += declaration
+            declaration.overriddenSymbols.forEach {
                 realSupers.remove(it.owner)
                 excludeOverridden(it.owner)
             }
@@ -51,7 +48,22 @@ fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimp
         realSupers.toList().forEach { excludeOverridden(it) }
     }
 
-    return realSupers.first { allowAbstract || it.modality != Modality.ABSTRACT }
+    return realSupers
+}
+
+/**
+ * Implementation of given method.
+ *
+ * TODO: this method is actually a part of resolve and probably duplicates another one
+ */
+fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimpleFunction {
+    val realSupers = getRealSupers()
+
+    return if (allowAbstract) {
+        realSupers.first()
+    } else {
+        realSupers.single { it.modality != Modality.ABSTRACT }
+    }
 }
 
 /**
@@ -61,9 +73,17 @@ fun IrSimpleFunction.resolveFakeOverride(allowAbstract: Boolean = false): IrSimp
  */
 internal fun IrSimpleFunction.resolveFakeOverrideMaybeAbstract() = this.resolveFakeOverride(allowAbstract = true)
 
-internal fun IrProperty.resolveFakeOverrideMaybeAbstract() = this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!
+internal fun IrProperty.resolveFakeOverrideMaybeAbstract(): IrProperty =
+    this.getter!!.resolveFakeOverrideMaybeAbstract().correspondingPropertySymbol!!.owner
 
-internal fun IrField.resolveFakeOverrideMaybeAbstract() = this.correspondingProperty!!.getter!!.resolveFakeOverrideMaybeAbstract().correspondingProperty!!.backingField
+/**
+ * TODO: This method can be simplified if the "overriddenSymbols" list of an IrField always includes only one element.
+ * Currently it's not the case for some cinterop libraries (e.g. Foundation). In these libraries interfaces containing
+ * final properties with external getters are created (corresponding compiler error is suppressed). Due to KT-33081
+ * such a property gets a backing field and a field of a class implementing such interfaces can have several elements
+ * in the overriddenSymbols list.
+ */
+internal fun IrField.resolveFakeOverride(): IrField = getRealSupers().first()
 
 val IrSimpleFunction.target: IrSimpleFunction
     get() = (if (modality == Modality.ABSTRACT) this else resolveFakeOverride()).original

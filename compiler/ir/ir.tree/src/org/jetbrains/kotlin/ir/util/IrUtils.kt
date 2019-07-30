@@ -210,11 +210,11 @@ val IrBody.statements: List<IrStatement>
 val IrClass.defaultType: IrSimpleType
     get() = this.thisReceiver!!.type as IrSimpleType
 
-val IrSimpleFunction.isReal: Boolean get() = descriptor.kind.isReal
-
 val IrSimpleFunction.isSynthesized: Boolean get() = descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED
 
-val IrSimpleFunction.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
+val IrDeclaration.isReal: Boolean get() = !isFakeOverride
+
+val IrDeclaration.isFakeOverride: Boolean get() = origin == IrDeclarationOrigin.FAKE_OVERRIDE
 
 fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
 
