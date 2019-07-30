@@ -87,7 +87,6 @@ fun Project.projectTest(taskName: String = "test", parallel: Boolean = false, bo
     jvmArgs(
         "-ea",
         "-XX:+HeapDumpOnOutOfMemoryError",
-        "-Xmx1600m",
         "-XX:+UseCodeCacheFlushing",
         "-XX:ReservedCodeCacheSize=128m",
         "-Djna.nosys=true"
