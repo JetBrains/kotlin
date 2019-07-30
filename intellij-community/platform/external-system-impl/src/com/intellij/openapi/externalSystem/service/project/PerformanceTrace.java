@@ -5,13 +5,13 @@ import com.intellij.openapi.externalSystem.model.Key;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 public class PerformanceTrace {
   public static final Key<PerformanceTrace> TRACE_NODE_KEY = Key.create(PerformanceTrace.class, ExternalSystemConstants.UNORDERED + 1);
 
-  private final Map<String, Long> myPerformanceData = new LinkedHashMap<>();
+  private final Map<String, Long> myPerformanceData = new ConcurrentSkipListMap<>();
 
   public void logPerformance(@NotNull final String key, long millis) {
     myPerformanceData.put(key, millis);
