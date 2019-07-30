@@ -16,19 +16,16 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.org.objectweb.asm.Type
 
 object ArrayGet : IntrinsicMethod() {
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val arrayType = calcReceiverType(expression, context)
-        val elementType = AsmUtil.correctElementType(arrayType)
-        return IrIntrinsicFunction.create(expression, signature.newReturnType(elementType), context, listOf(arrayType, Type.INT_TYPE)) {
-            it.aload(elementType)
-        }
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
+        val receiver = expression.dispatchReceiver!!.accept(codegen, data).materialized
+        val elementType = AsmUtil.correctElementType(receiver.type)
+        expression.getValueArgument(0)!!.accept(codegen, data).materialize()
+        codegen.mv.aload(elementType)
+        return MaterialValue(codegen, elementType, expression.type)
     }
 }
