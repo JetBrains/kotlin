@@ -114,6 +114,11 @@ public class MultiplatformAnalysisTestGenerated extends AbstractMultiplatformAna
         runTest("idea/testData/multiplatform/supertypes/");
     }
 
+    @TestMetadata("transitiveDependencyOnCommonSourceSets")
+    public void testTransitiveDependencyOnCommonSourceSets() throws Exception {
+        runTest("idea/testData/multiplatform/transitiveDependencyOnCommonSourceSets/");
+    }
+
     @TestMetadata("typeAliasToExpectClassExplicitReference")
     public void testTypeAliasToExpectClassExplicitReference() throws Exception {
         runTest("idea/testData/multiplatform/typeAliasToExpectClassExplicitReference/");
