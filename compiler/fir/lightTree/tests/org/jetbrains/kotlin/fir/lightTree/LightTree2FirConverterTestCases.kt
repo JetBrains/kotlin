@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.lightTree
 import com.intellij.testFramework.TestDataPath
 import junit.framework.TestCase
 import org.jetbrains.kotlin.fir.FirRenderer
-import org.jetbrains.kotlin.fir.FirSessionBase
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderTestCase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
@@ -21,7 +20,7 @@ class LightTree2FirConverterTestCases : AbstractRawFirBuilderTestCase() {
     private val testDirPath = "compiler/fir/psi2fir/testData/rawBuilder/declarations"
 
     private fun executeTest(filePath: String) {
-        val lightTree2Fir = LightTree2Fir(myProject, stubMode = true).buildFirFile(Paths.get(filePath)).render()
+        val lightTree2Fir = LightTree2Fir(stubMode = true, project = myProject).buildFirFile(Paths.get(filePath)).render()
 
         val file = createKtFile(filePath)
         val firFile = file.toFirFile(stubMode = true)
