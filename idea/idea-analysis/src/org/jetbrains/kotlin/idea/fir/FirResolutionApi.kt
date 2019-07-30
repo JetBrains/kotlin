@@ -97,6 +97,17 @@ fun KtClassOrObject.getOrBuildFir(
     return firClass
 }
 
+fun KtFile.getOrBuildFir(
+    state: FirResolveState,
+    phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
+): FirFile {
+    val session = state.getSession(this)
+    val firProvider = FirProvider.getInstance(session) as IdeFirProvider
+    val firFile = firProvider.getOrBuildFile(this)
+    firFile.runResolve(firFile, firProvider, phase, state)
+    return firFile
+}
+
 private fun FirDeclaration.runResolve(
     file: FirFile,
     firProvider: IdeFirProvider,
@@ -108,21 +119,23 @@ private fun FirDeclaration.runResolve(
     if (toPhase > nonLazyPhase) {
         val designation = mutableListOf<FirElement>()
         designation += file
-        val id = when (this) {
-            is FirCallableDeclaration<*> -> {
-                this.symbol.callableId.classId
+        if (this !is FirFile) {
+            val id = when (this) {
+                is FirCallableDeclaration<*> -> {
+                    this.symbol.callableId.classId
+                }
+                is FirRegularClass -> {
+                    this.symbol.classId
+                }
+                else -> error("Unsupported: ${render()}")
             }
-            is FirRegularClass -> {
-                this.symbol.classId
+            val outerClasses = generateSequence(id) { classId ->
+                classId.outerClassId
+            }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
+            designation += outerClasses.asReversed()
+            if (this is FirCallableDeclaration<*>) {
+                designation += this
             }
-            else -> error("Unsupported: ${render()}")
-        }
-        val outerClasses = generateSequence(id) { classId ->
-            classId.outerClassId
-        }.mapTo(mutableListOf()) { firProvider.getFirClassifierByFqName(it)!! }
-        designation += outerClasses.asReversed()
-        if (this is FirCallableDeclaration<*>) {
-            designation += this
         }
         val transformer = FirDesignatedBodyResolveTransformer(
             designation.iterator(), state.getSession(psi as KtElement),
@@ -132,12 +145,12 @@ private fun FirDeclaration.runResolve(
     }
 }
 
-private fun KtElement.containingNonLocalDeclaration(): KtDeclaration {
+private fun KtElement.containingNonLocalDeclaration(): KtDeclaration? {
     var container = this.containingDeclarationForPseudocode
     while (container != null && KtPsiUtil.isLocal(container)) {
         container = container.containingDeclarationForPseudocode
     }
-    return container ?: error("No containing non-local declaration: $text")
+    return container
 }
 
 fun KtElement.getOrBuildFir(
@@ -148,6 +161,7 @@ fun KtElement.getOrBuildFir(
         when (val container = this.containingNonLocalDeclaration()) {
             is KtCallableDeclaration -> container.getOrBuildFir(state, phase)
             is KtClassOrObject -> container.getOrBuildFir(state, phase)
+            null -> containingKtFile.getOrBuildFir(state, phase)
             else -> error("Unsupported: ${container.text}")
         }
 

@@ -34,6 +34,11 @@ public class FirLazyResolveTestGenerated extends AbstractFirLazyResolveTest {
         runTest("idea/testData/fir/lazyResolve/elvis/elvis.test");
     }
 
+    @TestMetadata("import/import.test")
+    public void testImport_Import() throws Exception {
+        runTest("idea/testData/fir/lazyResolve/import/import.test");
+    }
+
     @TestMetadata("inInit/inInit.test")
     public void testInInit_InInit() throws Exception {
         runTest("idea/testData/fir/lazyResolve/inInit/inInit.test");

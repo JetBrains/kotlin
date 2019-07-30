@@ -13,6 +13,7 @@ import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.search.FileTypeIndex
 import com.intellij.testFramework.LightProjectDescriptor
 import junit.framework.TestCase
+import org.jetbrains.kotlin.fir.declarations.FirResolvedImport
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.idea.KotlinFileType
@@ -63,9 +64,23 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
         } as KtExpression
 
         val resolveState = expressionToResolve.firResolveState()
-        val firExpression = expressionToResolve.getOrBuildFir(resolveState)
-
-        val resultsDump = firExpression.render()
+        val resultsDump = when (val firElement = expressionToResolve.getOrBuildFir(resolveState)) {
+            is FirResolvedImport -> buildString {
+                append("import ")
+                append(firElement.packageFqName)
+                val className = firElement.relativeClassName
+                if (className != null) {
+                    append("/")
+                    append(className)
+                }
+                val name = firElement.importedName
+                if (name != null) {
+                    append(".")
+                    append(name)
+                }
+            }
+            else -> firElement.render()
+        }
         KotlinTestUtils.assertEqualsToFile(File(testFile.parent, "results.txt"), resultsDump)
 
         fun expectedTxtPath(virtualFile: VirtualFile): String {
@@ -73,7 +88,7 @@ abstract class AbstractFirLazyResolveTest : KotlinLightCodeInsightFixtureTestCas
             var result: String? = null
             val root = File(path).parentFile
             for (file in root.walkTopDown()) {
-                if (!file.isDirectory && virtualPath in file.absolutePath) {
+                if (!file.isDirectory && virtualPath in file.absolutePath.replace("\\", "/")) {
                     result = file.absolutePath.replace(".kt", ".txt")
                 }
             }
