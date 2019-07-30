@@ -23,11 +23,12 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.PsiPackageImpl
 import com.intellij.psi.search.GlobalSearchScope
-import gnu.trove.THashMap
 import gnu.trove.THashSet
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.fir.concurrent.ConcurrentHashMapNonRecursiveComputeCache
+import org.jetbrains.kotlin.fir.concurrent.NonRecursiveCooperativeComputeCache
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
@@ -41,9 +42,7 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
-import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
@@ -53,7 +52,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
     private lateinit var index: JvmDependenciesIndex
     private lateinit var singleJavaFileRootsIndex: SingleJavaFileRootsIndex
     private lateinit var packagePartProviders: List<JvmPackagePartProvider>
-    private val topLevelClassesCache: MutableMap<FqName, VirtualFile?> = THashMap()
+    private val topLevelClassesCache = ConcurrentHashMapNonRecursiveComputeCache<FqName, VirtualFile?>()
     private val allScope = GlobalSearchScope.allScope(myPsiManager.project)
     private var useFastClassFilesReading = false
 
@@ -75,16 +74,16 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
     private fun findVirtualFileForTopLevelClass(classId: ClassId, searchScope: GlobalSearchScope): VirtualFile? {
         val relativeClassName = classId.relativeClassName.asString()
-        return findVirtualFileLock.withLock {
-            topLevelClassesCache.getOrPut(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
-                index.findClass(classId) { dir, type ->
-                    findVirtualFileGivenPackage(dir, relativeClassName, type)
-                } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
-            }?.takeIf { it in searchScope }
-        }
+        return topLevelClassesCache.lookup(classId.packageFqName.child(classId.relativeClassName.pathSegments().first())) {
+            index.findClass(classId) { dir, type ->
+                findVirtualFileGivenPackage(dir, relativeClassName, type)
+            } ?: singleJavaFileRootsIndex.findJavaSourceClass(classId)
+        }?.takeIf { it in searchScope }
+
     }
 
-    private val binaryCache: MutableMap<ClassId, JavaClass?> = THashMap()
+    private val binaryCache: NonRecursiveCooperativeComputeCache<ClassId, JavaClass?> =
+        NonRecursiveCooperativeComputeCache()
     private val signatureParsingComponent = BinaryClassSignatureParser()
 
     fun findClass(classId: ClassId, searchScope: GlobalSearchScope): JavaClass? = findClass(JavaClassFinder.Request(classId), searchScope)
@@ -96,9 +95,9 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         val (classId, classFileContentFromRequest, outerClassFromRequest) = request
         val virtualFile = findVirtualFileForTopLevelClass(classId, searchScope) ?: return null
 
-        if (useFastClassFilesReading && virtualFile.extension == "class") binaryCacheLock.withLock {
+        if (useFastClassFilesReading && virtualFile.extension == "class") {
             // We return all class files' names in the directory in knownClassNamesInPackage method, so one may request an inner class
-            return binaryCache.getOrPut(classId) {
+            return binaryCache.lookup(classId) {
                 // Note that currently we implicitly suppose that searchScope for binary classes is constant and we do not use it
                 // as a key in cache
                 // This is a true assumption by now since there are two search scopes in compiler: one for sources and another one for binary
@@ -108,7 +107,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
                 classId.outerClassId?.let { outerClassId ->
                     val outerClass = outerClassFromRequest ?: findClass(outerClassId, searchScope)
 
-                    return if (outerClass is BinaryJavaClass)
+                    return@lookup if (outerClass is BinaryJavaClass)
                         outerClass.findInnerClass(classId.shortClassName, classFileContentFromRequest)
                     else
                         outerClass?.findInnerClass(classId.shortClassName)
@@ -116,7 +115,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
 
                 // Here, we assume the class is top-level
                 val classContent = classFileContentFromRequest ?: virtualFile.contentsToByteArray()
-                if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@getOrPut null
+                if (virtualFile.nameWithoutExtension.contains("$") && isNotTopLevelClass(classContent)) return@lookup null
 
                 val resolver = ClassifierResolutionContext { findClass(it, allScope) }
 

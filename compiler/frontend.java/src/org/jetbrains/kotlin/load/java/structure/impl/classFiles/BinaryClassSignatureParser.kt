@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.utils.compact
 import org.jetbrains.org.objectweb.asm.Type
 import java.text.CharacterIterator
 import java.text.StringCharacterIterator
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 /**
  * Take a look at com.intellij.psi.impl.compiled.SignatureParsing
@@ -38,6 +40,7 @@ import java.text.StringCharacterIterator
 class BinaryClassSignatureParser {
 
     private val canonicalNameInterner = StringInterner()
+    private val internerLock = ReentrantLock()
 
     fun parseTypeParametersDeclaration(signature: CharacterIterator, context: ClassifierResolutionContext): List<JavaTypeParameter> {
         if (signature.current() != '<') {
@@ -99,7 +102,7 @@ class BinaryClassSignatureParser {
             signature.next()
         }
 
-        val parameterName = canonicalNameInterner.intern(id.toString())
+        val parameterName = internerLock.withLock { canonicalNameInterner.intern(id.toString()) }
 
         return PlainJavaClassifierType({ context.resolveTypeParameter(parameterName) }, emptyList())
     }
@@ -136,7 +139,9 @@ class BinaryClassSignatureParser {
         }
         signature.next()
 
-        val internalName = canonicalNameInterner.intern(canonicalName.toString().replace('.', '$'))
+        val internalName = internerLock.withLock {
+            canonicalNameInterner.intern(canonicalName.toString().replace('.', '$'))
+        }
         return PlainJavaClassifierType(
             { context.resolveByInternalName(internalName) },
             argumentGroups.reversed().flattenTo(arrayListOf()).compact()

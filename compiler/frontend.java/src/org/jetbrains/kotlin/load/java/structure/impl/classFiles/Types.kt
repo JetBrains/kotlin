@@ -33,7 +33,7 @@ internal class PlainJavaClassifierType(
         classifierComputation: () -> ClassifierResolutionContext.Result,
         override val typeArguments: List<JavaType>
 ) : JavaClassifierType {
-    private val classifierResolverResult by lazy(LazyThreadSafetyMode.NONE, classifierComputation)
+    private val classifierResolverResult by lazy(LazyThreadSafetyMode.PUBLICATION, classifierComputation)
 
     override val classifier get() = classifierResolverResult.classifier
     override val isRaw

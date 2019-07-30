@@ -28,10 +28,35 @@ import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
+class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
+    override val indexedRoots: Sequence<JavaRoot>
+        get() = local.get().indexedRoots
+
+    override fun <T : Any> findClass(
+        classId: ClassId,
+        acceptedRootTypes: Set<JavaRoot.RootType>,
+        findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
+    ): T? = local.get().findClass(classId, acceptedRootTypes, findClassGivenDirectory)
+
+    override fun traverseDirectoriesInPackage(
+        packageFqName: FqName,
+        acceptedRootTypes: Set<JavaRoot.RootType>,
+        continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
+    ) = local.get().traverseDirectoriesInPackage(packageFqName, acceptedRootTypes, continueSearch)
+
+    val local = object : ThreadLocal<JvmDependenciesIndexImplU>() {
+        override fun initialValue(): JvmDependenciesIndexImplU {
+            return JvmDependenciesIndexImplU(_roots)
+        }
+    }
+
+
+}
+
 // speeds up finding files/classes in classpath/java source roots
 // NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
-class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
+class JvmDependenciesIndexImplU(_roots: List<JavaRoot>) : JvmDependenciesIndex {
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
@@ -74,7 +99,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         packageFqName: FqName,
         acceptedRootTypes: Set<JavaRoot.RootType>,
         continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
-    ) = lock.withLock {
+    ) {
         search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
             if (continueSearch(dir, rootType)) null else Unit
         }
@@ -86,7 +111,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         classId: ClassId,
         acceptedRootTypes: Set<JavaRoot.RootType>,
         findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
-    ): T? = lock.withLock {
+    ): T? {
         // make a decision based on information saved from last class search
         if (lastClassSearch?.first?.classId != classId) {
             return search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
@@ -124,7 +149,7 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         // NOTE: indices manipulation instead of using caches.reversed() is here for performance reasons
         for (cacheIndex in caches.lastIndex downTo 0) {
             val cacheRootIndices = caches[cacheIndex].rootIndices
-            for (i in 0..cacheRootIndices.size() - 1) {
+            for (i in 0 until cacheRootIndices.size()) {
                 val rootIndex = cacheRootIndices[i]
                 if (rootIndex <= processedRootsUpTo) continue // roots with those indices have been processed by now
 
@@ -218,7 +243,6 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         return childDirectory
     }
 
-    val lock = ReentrantLock()
 
     private fun cachesPath(path: List<String>): List<Cache> {
         val caches = ArrayList<Cache>(path.size + 1)
