@@ -67,7 +67,7 @@ internal open class SaveSessionProducerManager : SaveExecutor {
     }
 
     if (isVfsRequired) {
-      return withContext(storeEdtCoroutineContext) {
+      return withContext(storeEdtCoroutineDispatcher) {
         runWriteAction(task)
       }
     }

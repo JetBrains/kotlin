@@ -52,7 +52,7 @@ abstract class ComponentStoreWithExtraComponents : ComponentStoreImpl() {
   internal suspend fun saveSettingsSavingComponentsAndCommitComponents(result: SaveResult, forceSavingAllSettings: Boolean): SaveSessionProducerManager {
     coroutineScope {
       // expects EDT
-      launch(storeEdtCoroutineContext) {
+      launch(storeEdtCoroutineDispatcher) {
         @Suppress("Duplicates")
         val errors = SmartList<Throwable>()
         for (settingsSavingComponent in settingsSavingComponents) {

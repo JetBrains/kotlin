@@ -146,7 +146,7 @@ internal class StoreReloadManagerImpl : StoreReloadManager, Disposable {
 
   override suspend fun reloadChangedStorageFiles() {
     val unfinishedRequest = changedFilesAlarm.getUnfinishedRequest() ?: return
-    withContext(storeEdtCoroutineContext) {
+    withContext(storeEdtCoroutineDispatcher) {
       unfinishedRequest.run()
       // just to be sure
       changedFilesAlarm.getUnfinishedRequest()?.run()

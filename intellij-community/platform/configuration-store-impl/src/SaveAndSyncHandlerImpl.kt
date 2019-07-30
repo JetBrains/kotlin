@@ -79,7 +79,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
       LOG.runAndLogException {
         coroutineScope {
           if (task.saveDocuments) {
-            launch(storeEdtCoroutineContext) {
+            launch(storeEdtCoroutineDispatcher) {
               // forceSavingAllSettings is set to true currently only if save triggered explicitly (or on close app/project), so, pass equal isDocumentsSavingExplicit
               // in any case flag isDocumentsSavingExplicit is not really important
               (FileDocumentManagerImpl.getInstance() as FileDocumentManagerImpl).saveAllDocuments(task.forceSavingAllSettings)

@@ -632,7 +632,7 @@ internal suspend fun ComponentStoreImpl.childlessSaveImplementation(result: Save
 }
 
 internal suspend inline fun <T> withEdtContext(disposable: ComponentManager?, crossinline task: suspend () -> T): T {
-  return withContext(storeEdtCoroutineContext) {
+  return withContext(storeEdtCoroutineDispatcher) {
     @Suppress("NullableBooleanElvis")
     if (disposable?.isDisposed ?: false) {
       throw CancellationException()
