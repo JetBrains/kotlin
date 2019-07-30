@@ -1,4 +1,4 @@
-import org.gradle.util.*
+import org.gradle.util.GradleVersion
 
 String[] ijTestIncludes = ${TEST_NAME_INCLUDES}
 boolean ijTestFilteringSupported = GradleVersion.current().compareTo(GradleVersion.version("1.10"))>=0
@@ -40,6 +40,7 @@ gradle.taskGraph.beforeTask { Task task ->
     try {
       if(ijTestIncludes != ['*'] && ijTestFilteringSupported) {
         task.filter {
+          setIncludePatterns(new String[0])
           ijTestIncludes.each(){ includeTestsMatching "${it}" }
         }
       }
