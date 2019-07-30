@@ -1,5 +1,7 @@
 <idea-plugin xmlns:xi="http://www.w3.org/2001/XInclude">
   <xi:include href="/META-INF/KonanCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
+  <!--suppress XmlPathReference -->
+  <xi:include href="/META-INF/CocoaCommonPlugin.xml" xpointer="xpointer(/idea-plugin/*)"/>
 
   <id>org.jetbrains.kotlin.mobile.plugin</id>
   <name>Mobile for CLion</name>
@@ -34,6 +36,9 @@
                               implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
 
     <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
+
+    <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
+                        serviceImplementation="org.jetbrains.konan.PathManagerCustomization" overrides="true"/>
   </extensions>
 
   <extensions defaultExtensionNs="clion">

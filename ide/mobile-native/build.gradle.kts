@@ -3,6 +3,7 @@ plugins {
 }
 
 val clionUnscrambledJarDir: File by rootProject.extra
+val clionCocoaCommonPluginDir: File by rootProject.extra
 
 val isStandaloneBuild: Boolean = rootProject.findProject(":idea") == null
 val cacheRedirectorEnabled: Boolean = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -18,6 +19,7 @@ if (!isStandaloneBuild) {
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
+    compile(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
     compile("com.android.tools.ddms:ddmlib:22.0.2")
 

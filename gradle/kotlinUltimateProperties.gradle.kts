@@ -59,6 +59,15 @@ val clionJavaPluginDownloadUrl: URL? by rootProject.extra(
         else
             null
 )
+val clionCocoaCommonPluginArtifact: String by rootProject.extra(
+    "$clionRepo:$clionVersion:CL-plugins/cidr-cocoaCommon-plugin-$clionVersion.zip"
+)
+val clionCocoaCommonPluginDir: File by rootProject.extra(
+    externalDepsDir(
+        "cocoa-common-plugin",
+        "cidr-cocoaCommon-plugin"
+    )
+)
 
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
