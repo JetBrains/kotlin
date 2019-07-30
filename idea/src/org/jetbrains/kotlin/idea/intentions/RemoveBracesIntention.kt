@@ -58,6 +58,7 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
     override fun applyTo(element: KtElement, editor: Editor?) {
         val block = element.findChildBlock() ?: return
+        val factory = KtPsiFactory(element)
         val statement = block.statements.single()
         val caretOnAfterStatement = if (editor != null) editor.caretModel.offset >= statement.endOffset else false
 
@@ -67,8 +68,6 @@ class RemoveBracesIntention : SelfTargetingIntention<KtElement>(KtElement::class
 
         val newElement = block.replace(statement.copy())
         editor?.caretModel?.moveToOffset(if (caretOnAfterStatement) newElement.endOffset else newElement.startOffset)
-        
-        val factory = KtPsiFactory(block)
 
         if (construct is KtDoWhileExpression) {
             newElement.parent!!.addAfter(factory.createNewLine(), newElement)
