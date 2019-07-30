@@ -12,6 +12,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
+import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtToken
@@ -23,8 +24,9 @@ import org.jetbrains.kotlin.name.Name
 
 open class BaseConverter(
     session: FirSession,
-    private val tree: FlyweightCapableTreeStructure<LighterASTNode>
-) : BaseFirBuilder<LighterASTNode>(session) {
+    private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    context: Context = Context()
+) : BaseFirBuilder<LighterASTNode>(session, context) {
     protected val implicitType = FirImplicitTypeRefImpl(session, null)
 
     override val LighterASTNode.elementType: IElementType

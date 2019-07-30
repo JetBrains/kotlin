@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //T can be either PsiElement, or LighterASTNode
-abstract class BaseFirBuilder<T>(val session: FirSession) {
+abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context = Context()) {
 
     protected val implicitUnitType = FirImplicitUnitTypeRef(session, null)
     protected val implicitAnyType = FirImplicitAnyTypeRef(session, null)
@@ -56,41 +56,26 @@ abstract class BaseFirBuilder<T>(val session: FirSession) {
     abstract val T?.selectorExpression: T?
 
     /**** Class name utils ****/
-//    var packageFqName: FqName = FqName.ROOT
-//    var className: FqName = FqName.ROOT
-//    val currentClassId get() = ClassId(packageFqName, className, false)
-
     inline fun <T> withChildClassName(name: Name, l: () -> T): T {
-        className = className.child(name)
+        context.className = context.className.child(name)
         val t = l()
-        className = className.parent()
+        context.className = context.className.parent()
         return t
     }
 
     fun callableIdForName(name: Name, local: Boolean = false) =
         when {
             local -> CallableId(name)
-            className == FqName.ROOT -> CallableId(packageFqName, name)
-            else -> CallableId(packageFqName, className, name)
+            context.className == FqName.ROOT -> CallableId(context.packageFqName, name)
+            else -> CallableId(context.packageFqName, context.className, name)
         }
 
     fun callableIdForClassConstructor() =
-        if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
-        else CallableId(packageFqName, className, className.shortName())
+        if (context.className == FqName.ROOT) CallableId(context.packageFqName, Name.special("<anonymous-init>"))
+        else CallableId(context.packageFqName, context.className, context.className.shortName())
 
 
     /**** Function utils ****/
-    companion object {
-        val firFunctions = mutableListOf<FirFunction>()
-        val firFunctionCalls = mutableListOf<FirFunctionCall>()
-        val firLabels = mutableListOf<FirLabel>()
-        val firLoops = mutableListOf<FirLoop>()
-
-        lateinit var packageFqName: FqName
-        var className: FqName = FqName.ROOT
-        val currentClassId get() = ClassId(packageFqName, className, false)
-    }
-
     fun <T> MutableList<T>.removeLast() {
         removeAt(size - 1)
     }
@@ -111,7 +96,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession) {
             this
         ).apply {
             target = FirFunctionTarget(labelName)
-            val lastFunction = firFunctions.lastOrNull()
+            val lastFunction = context.firFunctions.lastOrNull()
             if (labelName == null) {
                 if (lastFunction != null) {
                     target.bind(lastFunction)
@@ -119,7 +104,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession) {
                     target.bind(FirErrorFunction(this@BaseFirBuilder.session, psi, "Cannot bind unlabeled return to a function"))
                 }
             } else {
-                for (firFunction in firFunctions.asReversed()) {
+                for (firFunction in context.firFunctions.asReversed()) {
                     when (firFunction) {
                         is FirAnonymousFunction -> {
                             if (firFunction.label?.name == labelName) {
@@ -165,10 +150,10 @@ abstract class BaseFirBuilder<T>(val session: FirSession) {
     }
 
     fun FirAbstractLoop.configure(generateBlock: () -> FirBlock): FirAbstractLoop {
-        label = firLabels.pop()
-        firLoops += this
+        label = context.firLabels.pop()
+        context.firLoops += this
         block = generateBlock()
-        firLoops.removeLast()
+        context.firLoops.removeLast()
         return this
     }
 
@@ -349,7 +334,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession) {
         }
     }
 
-    fun FirModifiableQualifiedAccess<*>.initializeLValue(
+    private fun FirModifiableQualifiedAccess<*>.initializeLValue(
         left: T?,
         convertQualified: T.() -> FirQualifiedAccess?
     ): FirReference {
