@@ -44,8 +44,6 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-common")) { isTransitive = false }
 }
 
-val jpsIncrementalTestsClass = "**/KotlinGradlePluginJpsParametrizedIT.class"
-
 projectTest {
     executable = "${rootProject.extra["JDK_18"]!!}/bin/java"
     dependsOn(":kotlin-gradle-plugin:validateTaskProperties")
@@ -71,19 +69,12 @@ projectTest {
         ":kotlin-scripting-compiler-embeddable:install",
         ":kotlin-test-nodejs-runner:install"
     )
-    exclude(jpsIncrementalTestsClass)
-}
-
-tasks.register<Test>("testsFromJps") {
-    include(jpsIncrementalTestsClass)
-    dependsOn(tasks.getByName("test").dependsOn)
 }
 
 tasks.register<Test>("testAdvanceGradleVersion") {
     val gradleVersionForTests = "5.3-rc-2"
     systemProperty("kotlin.gradle.version.for.tests", gradleVersionForTests)
     dependsOn(tasks.getByName("test").dependsOn)
-    exclude(jpsIncrementalTestsClass)
 }
 
 tasks.named<Task>("check") {
