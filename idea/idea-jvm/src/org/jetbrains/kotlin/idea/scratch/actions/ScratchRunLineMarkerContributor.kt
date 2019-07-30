@@ -8,15 +8,19 @@ package org.jetbrains.kotlin.idea.scratch.actions
 import com.intellij.execution.lineMarker.RunLineMarkerContributor
 import com.intellij.ide.scratch.ScratchFileService
 import com.intellij.ide.scratch.ScratchRootType
-import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.fileEditor.TextEditor
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
-import org.jetbrains.kotlin.idea.scratch.getEditorWithScratchPanel
+import org.jetbrains.kotlin.idea.scratch.getScratchPanel
 import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
@@ -69,14 +73,24 @@ class ScratchRunLineMarkerContributor : RunLineMarkerContributor() {
     }
 
     private fun getLastExecutedExpression(element: PsiElement): ScratchExpression? {
-        val (_, panel) = getEditorWithScratchPanel(
-            FileEditorManager.getInstance(element.project),
-            element.containingFile.virtualFile
-        ) ?: return null
+        val panel = getSingleOpenedTextEditor(element.containingFile)?.getScratchPanel() ?: return null
 
         val scratchFile = panel.scratchFile
         if (!scratchFile.options.isRepl) return null
         val replExecutor = scratchFile.replScratchExecutor ?: return null
         return replExecutor.getFirstNewExpression()
+    }
+
+    /**
+     * This method returns single editor in which passed [psiFile] opened.
+     * If there is no such editor or there is more than one editor, it returns `null`.
+     *
+     * We use [PsiDocumentManager.getCachedDocument] instead of [PsiDocumentManager.getDocument]
+     * so this would not require read action.
+     */
+    private fun getSingleOpenedTextEditor(psiFile: PsiFile): TextEditor? {
+        val document = PsiDocumentManager.getInstance(psiFile.project).getCachedDocument(psiFile) ?: return null
+        val singleOpenedEditor = EditorFactory.getInstance().getEditors(document, psiFile.project).singleOrNull() ?: return null
+        return TextEditorProvider.getInstance().getTextEditor(singleOpenedEditor)
     }
 }
