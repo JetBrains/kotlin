@@ -11,11 +11,13 @@ import com.intellij.openapi.options.SearchableConfigurable;
 import com.intellij.openapi.options.ShowSettingsUtil;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.NotNullFactory;
 import com.intellij.openapi.wm.StatusBar;
 import com.intellij.openapi.wm.StatusBarWidget;
 import com.intellij.openapi.wm.StatusBarWidgetProvider;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.LanguageCodeStyleSettingsProvider;
+import com.intellij.util.ObjectUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,10 +36,11 @@ public class CodeStyleStatusBarWidgetProvider implements StatusBarWidgetProvider
 
   @NotNull
   public static DumbAwareAction createDefaultIndentConfigureAction(@NotNull PsiFile psiFile) {
+    String langName = getLangName(psiFile);
     return DumbAwareAction.create(
-      ApplicationBundle.message("code.style.widget.configure.indents", psiFile.getLanguage().getDisplayName()),
+      ApplicationBundle.message("code.style.widget.configure.indents", langName),
       event -> {
-        Configurable configurable = findCodeStyleConfigurableId(psiFile);
+        Configurable configurable = findCodeStyleConfigurableId(psiFile.getProject(), langName);
         if (configurable instanceof CodeStyleConfigurableWrapper) {
           ShowSettingsUtil.getInstance().editConfigurable(event.getProject(), configurable,
                                                           () -> ((CodeStyleConfigurableWrapper)configurable)
@@ -47,21 +50,23 @@ public class CodeStyleStatusBarWidgetProvider implements StatusBarWidgetProvider
     );
   }
 
-  @Nullable
-  public static Configurable findCodeStyleConfigurableId(@NotNull PsiFile file) {
-    final Project project = file.getProject();
-    final Language language = file.getLanguage();
+  @NotNull
+  private static String getLangName(@NotNull PsiFile psiFile) {
+    final Language language = psiFile.getLanguage();
     LanguageCodeStyleSettingsProvider provider = LanguageCodeStyleSettingsProvider.findUsingBaseLanguage(language);
-    CodeStyleSchemesConfigurable topConfigurable = new CodeStyleSchemesConfigurable(project);
     if (provider != null && provider.getIndentOptionsEditor() != null) {
       String name = provider.getConfigurableDisplayName();
       if (name != null) {
-        SearchableConfigurable result = topConfigurable.findSubConfigurable(name);
-        if (result != null) {
-          return result;
-        }
+        return name;
       }
     }
-    return topConfigurable.findSubConfigurable(OtherFileTypesCodeStyleConfigurable.DISPLAY_NAME);
+    return language.getDisplayName();
+  }
+
+  @Nullable
+  public static Configurable findCodeStyleConfigurableId(@NotNull Project project, @NotNull String langName) {
+    CodeStyleSchemesConfigurable topConfigurable = new CodeStyleSchemesConfigurable(project);
+    SearchableConfigurable found = topConfigurable.findSubConfigurable(langName);
+    return found != null ? found : topConfigurable.findSubConfigurable(OtherFileTypesCodeStyleConfigurable.DISPLAY_NAME);
   }
 }
