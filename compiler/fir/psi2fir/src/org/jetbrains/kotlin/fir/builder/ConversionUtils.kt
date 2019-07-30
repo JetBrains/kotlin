@@ -185,25 +185,25 @@ internal fun FirExpression.generateNotNullOrOther(
     session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement
 ): FirWhenExpression {
     val subjectName = Name.special("<$caseId>")
-    val subjectVariable = generateTemporaryVariable(session, psi, subjectName, this)
+    val subjectVariable = generateTemporaryVariable(session, basePsi, subjectName, this)
     val subject = FirWhenSubject()
-    val subjectExpression = FirWhenSubjectExpressionImpl(psi, subject)
+    val subjectExpression = FirWhenSubjectExpressionImpl(basePsi, subject)
     return FirWhenExpressionImpl(
         basePsi, this, subjectVariable
     ).apply {
         subject.bind(this)
         branches += FirWhenBranchImpl(
-            psi,
-            FirOperatorCallImpl(psi, FirOperation.EQ).apply {
+            basePsi,
+            FirOperatorCallImpl(basePsi, FirOperation.EQ).apply {
                 arguments += subjectExpression
-                arguments += FirConstExpressionImpl(psi, IrConstKind.Null, null)
+                arguments += FirConstExpressionImpl(basePsi, IrConstKind.Null, null)
             },
             FirSingleExpressionBlock(other)
         )
         branches += FirWhenBranchImpl(
-            other.psi, FirElseIfTrueCondition(psi),
+            other.psi, FirElseIfTrueCondition(basePsi),
             FirSingleExpressionBlock(
-                FirUncheckedNotNullCastImpl(psi, generateResolvedAccessExpression(psi, subjectVariable))
+                FirUncheckedNotNullCastImpl(basePsi, generateResolvedAccessExpression(basePsi, subjectVariable))
             )
         )
     }
