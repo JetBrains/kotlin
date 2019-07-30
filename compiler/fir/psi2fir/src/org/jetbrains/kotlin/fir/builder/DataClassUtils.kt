@@ -23,16 +23,15 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtTypeReference
 
-internal fun KtClassOrObject.generateComponentFunctions(
+fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
     session: FirSession, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName
 ) {
     var componentIndex = 1
-    val zippedParameters =
-        primaryConstructorParameters.zip(firClass.declarations.filterIsInstance<FirProperty>())
-    for ((ktParameter, firProperty) in zippedParameters) {
-        if (!ktParameter.hasValOrVar()) continue
+    for ((ktParameter, firProperty) in this) {
+        if (!firProperty.isVal && !firProperty.isVar) continue
         val name = Name.identifier("component$componentIndex")
         componentIndex++
         val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, name))
@@ -52,7 +51,7 @@ internal fun KtClassOrObject.generateComponentFunctions(
                     FirReturnExpressionImpl(
                         ktParameter,
                         FirQualifiedAccessExpressionImpl(ktParameter).apply {
-                            val parameterName = ktParameter.nameAsSafeName
+                            val parameterName = firProperty.name
                             calleeReference = FirResolvedCallableReferenceImpl(
                                 ktParameter,
                                 parameterName, firProperty.symbol
@@ -70,15 +69,14 @@ internal fun KtClassOrObject.generateComponentFunctions(
 
 private val copyName = Name.identifier("copy")
 
-internal fun KtClassOrObject.generateCopyFunction(
-    session: FirSession, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName,
-    firPrimaryConstructor: FirConstructor,
-    toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef
+fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
+    session: FirSession, classOrObject: KtClassOrObject?, firClass: FirClassImpl, packageFqName: FqName, classFqName: FqName,
+    firPrimaryConstructor: FirConstructor
 ) {
     val symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
     firClass.addDeclaration(
         FirMemberFunctionImpl(
-            session, this, symbol, copyName,
+            session, classOrObject, symbol, copyName,
             Visibilities.PUBLIC, Modality.FINAL,
             isExpect = false, isActual = false,
             isOverride = false, isOperator = false,
@@ -88,13 +86,11 @@ internal fun KtClassOrObject.generateCopyFunction(
             returnTypeRef = firPrimaryConstructor.returnTypeRef//FirImplicitTypeRefImpl(session, this)
         ).apply {
             val copyFunction = this
-            val zippedParameters =
-                primaryConstructorParameters.zip(firClass.declarations.filterIsInstance<FirProperty>())
-            for ((ktParameter, firProperty) in zippedParameters) {
-                val name = ktParameter.nameAsSafeName
+            for ((ktParameter, firProperty) in this@generateCopyFunction) {
+                val name = firProperty.name
                 valueParameters += FirValueParameterImpl(
                     session, ktParameter, name,
-                    ktParameter.typeReference.toFirOrErrorTypeRef(),
+                    firProperty.returnTypeRef,
                     FirQualifiedAccessExpressionImpl(ktParameter).apply {
                         calleeReference = FirResolvedCallableReferenceImpl(ktParameter, name, firProperty.symbol)
                     },
