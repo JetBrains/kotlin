@@ -9,7 +9,7 @@ import com.intellij.lang.LighterASTNode;
 import com.intellij.lang.PsiBuilder;
 import com.intellij.util.diff.FlyweightCapableTreeStructure;
 
-public class MyKotlinParser {
+public class KotlinLightParser {
     public static FlyweightCapableTreeStructure<LighterASTNode> parse(PsiBuilder builder) {
         KotlinParsing ktParsing = KotlinParsing.createForTopLevel(new SemanticWhitespaceAwarePsiBuilderImpl(builder));
         ktParsing.parseFile();

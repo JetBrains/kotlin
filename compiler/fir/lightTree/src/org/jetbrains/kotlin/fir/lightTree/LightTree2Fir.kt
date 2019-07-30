@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.lightTree.converter.DeclarationsConverter
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
-import org.jetbrains.kotlin.parsing.MyKotlinParser
+import org.jetbrains.kotlin.parsing.KotlinLightParser
 import java.io.File
 import java.nio.file.Path
 
@@ -35,14 +35,14 @@ class LightTree2Fir(
         fun buildLightTreeBlockExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
             //KotlinParser.parseBlockExpression(builder)
-            MyKotlinParser.parseBlockExpression(builder)
+            KotlinLightParser.parseBlockExpression(builder)
             return builder.lightTree
         }
 
         fun buildLightTreeLambdaExpression(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
             //KotlinParser.parseLambdaExpression(builder)
-            MyKotlinParser.parseLambdaExpression(builder)
+            KotlinLightParser.parseLambdaExpression(builder)
             return builder.lightTree
         }
     }
@@ -59,7 +59,7 @@ class LightTree2Fir(
     fun buildLightTree(code: String): FlyweightCapableTreeStructure<LighterASTNode> {
         val builder = PsiBuilderFactoryImpl().createBuilder(parserDefinition, lexer, code)
         //KotlinParser(project).parse(null, builder, ktDummyFile)
-        MyKotlinParser.parse(builder)
+        KotlinLightParser.parse(builder)
         return builder.lightTree
     }
 
