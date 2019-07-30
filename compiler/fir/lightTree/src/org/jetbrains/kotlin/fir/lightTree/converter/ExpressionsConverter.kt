@@ -49,8 +49,9 @@ class ExpressionsConverter(
     session: FirSession,
     private val stubMode: Boolean,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    private val declarationsConverter: DeclarationsConverter
-) : BaseConverter(session, tree) {
+    private val declarationsConverter: DeclarationsConverter,
+    context: Context = Context()
+) : BaseConverter(session, tree, context) {
 
     inline fun <reified R : FirElement> LighterASTNode?.toFirExpression(errorReason: String = ""): R {
         return this?.let { convertExpression(it, errorReason) } as? R ?: (FirErrorExpressionImpl(session, null, errorReason) as R)
@@ -66,7 +67,7 @@ class ExpressionsConverter(
             return when (expression.tokenType) {
                 LAMBDA_EXPRESSION -> {
                     val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
-                    ExpressionsConverter(session, stubMode, lambdaTree, declarationsConverter).convertLambdaExpression(lambdaTree.root)
+                    ExpressionsConverter(session, stubMode, lambdaTree, declarationsConverter, context).convertLambdaExpression(lambdaTree.root)
                 }
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)
                 BINARY_WITH_TYPE -> convertBinaryWithType(expression)
@@ -122,7 +123,7 @@ class ExpressionsConverter(
         }
 
         return FirAnonymousFunctionImpl(session, null, implicitType, implicitType).apply {
-            firFunctions += this
+            context.firFunctions += this
             var destructuringBlock: FirExpression? = null
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
@@ -143,7 +144,7 @@ class ExpressionsConverter(
                     valueParameter.firValueParameter
                 }
             }
-            label = firLabels.pop() ?: firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
+            label = context.firLabels.pop() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
                 FirLabelImpl(this@ExpressionsConverter.session, null, it.asString())
             }
             val bodyExpression = block?.let { declarationsConverter.convertBlockExpression(it) }
@@ -162,7 +163,7 @@ class ExpressionsConverter(
                 FirSingleExpressionBlock(this@ExpressionsConverter.session, bodyExpression.toReturn())
             }
 
-            firFunctions.removeLast()
+            context.firFunctions.removeLast()
         }
     }
 
@@ -277,19 +278,19 @@ class ExpressionsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitLabeledExpression
      */
     private fun convertLabeledExpression(labeledExpression: LighterASTNode): FirElement {
-        val size = firLabels.size
+        val size = context.firLabels.size
         var firExpression: FirElement? = null
         labeledExpression.forEachChildren {
             when (it.tokenType) {
-                LABEL_QUALIFIER -> firLabels += FirLabelImpl(session, null, it.toString().replace("@", ""))
+                LABEL_QUALIFIER -> context.firLabels += FirLabelImpl(session, null, it.toString().replace("@", ""))
                 BLOCK -> firExpression = declarationsConverter.convertBlock(it)
                 PROPERTY -> firExpression = declarationsConverter.convertPropertyDeclaration(it)
                 else -> if (it.isExpression()) firExpression = getAsFirExpression(it)
             }
         }
 
-        if (size != firLabels.size) {
-            firLabels.removeLast()
+        if (size != context.firLabels.size) {
+            context.firLabels.removeLast()
             //println("Unused label: ${labeledExpression.getAsString()}")
         }
         return firExpression ?: FirErrorExpressionImpl(session, null, "Empty label")
@@ -460,10 +461,10 @@ class ExpressionsConverter(
                 else -> FirErrorNamedReference(this@ExpressionsConverter.session, null, "Call has no callee")
             }
 
-            firFunctionCalls += this
+            context.firFunctionCalls += this
             this.extractArgumentsFrom(valueArguments.flatMap { convertValueArguments(it) }, stubMode)
             typeArguments += firTypeArguments
-            firFunctionCalls.removeLast()
+            context.firFunctionCalls.removeLast()
         }
     }
 
@@ -885,7 +886,7 @@ class ExpressionsConverter(
 
         return (if (isBreak) FirBreakExpressionImpl(session, null) else FirContinueExpressionImpl(session, null)).apply {
             target = FirLoopTarget(labelName)
-            val lastLoop = firLoops.lastOrNull()
+            val lastLoop = context.firLoops.lastOrNull()
             if (labelName == null) {
                 if (lastLoop != null) {
                     target.bind(lastLoop)
@@ -893,7 +894,7 @@ class ExpressionsConverter(
                     target.bind(FirErrorLoop(this@ExpressionsConverter.session, null, "Cannot bind unlabeled jump to a loop"))
                 }
             } else {
-                for (firLoop in firLoops.asReversed()) {
+                for (firLoop in context.firLoops.asReversed()) {
                     if (firLoop.label?.name == labelName) {
                         target.bind(firLoop)
                         return this

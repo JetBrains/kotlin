@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -49,9 +50,10 @@ import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
 class DeclarationsConverter(
     session: FirSession,
     private val stubMode: Boolean,
-    tree: FlyweightCapableTreeStructure<LighterASTNode>
-) : BaseConverter(session, tree) {
-    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this)
+    tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    context: Context = Context()
+) : BaseConverter(session, tree, context) {
+    private val expressionConverter = ExpressionsConverter(session, stubMode, tree, this, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -66,11 +68,11 @@ class DeclarationsConverter(
         val fileAnnotationList = mutableListOf<FirAnnotationCall>()
         val importList = mutableListOf<FirImport>()
         val firDeclarationList = mutableListOf<FirDeclaration>()
-        packageFqName = FqName.ROOT
+        context.packageFqName = FqName.ROOT
         file.forEachChildren {
             when (it.tokenType) {
                 FILE_ANNOTATION_LIST -> fileAnnotationList += convertFileAnnotationList(it)
-                PACKAGE_DIRECTIVE -> packageFqName = convertPackageName(it)
+                PACKAGE_DIRECTIVE -> context.packageFqName = convertPackageName(it)
                 IMPORT_LIST -> importList += convertImportDirectives(it)
                 CLASS -> firDeclarationList += convertClass(it)
                 FUN -> firDeclarationList += convertFunctionDeclaration(it)
@@ -84,7 +86,7 @@ class DeclarationsConverter(
             session,
             null,
             fileName,
-            packageFqName
+            context.packageFqName
         )
         firFile.annotations += fileAnnotationList
         firFile.imports += importList
@@ -368,7 +370,7 @@ class DeclarationsConverter(
             val firClass = FirClassImpl(
                 session,
                 null,
-                FirClassSymbol(currentClassId),
+                FirClassSymbol(context.currentClassId),
                 className,
                 if (isLocal) Visibilities.LOCAL else modifiers.getVisibility(),
                 modifiers.getModality(),
@@ -413,8 +415,8 @@ class DeclarationsConverter(
             //parse data class
             if (modifiers.isDataClass() && firPrimaryConstructor != null) {
                 val zippedParameters = MutableList(properties.size) { null }.zip(properties)
-                zippedParameters.generateComponentFunctions(session, firClass, packageFqName, Companion.className)
-                zippedParameters.generateCopyFunction(session, null, firClass, packageFqName, Companion.className, firPrimaryConstructor)
+                zippedParameters.generateComponentFunctions(session, firClass, context.packageFqName, context.className)
+                zippedParameters.generateCopyFunction(session, null, firClass, context.packageFqName, context.className, firPrimaryConstructor)
                 // TODO: equals, hashCode, toString
             }
 
@@ -499,7 +501,7 @@ class DeclarationsConverter(
             val firEnumEntry = FirEnumEntryImpl(
                 session,
                 null,
-                FirClassSymbol(currentClassId),
+                FirClassSymbol(context.currentClassId),
                 enumEntryName
             )
             firEnumEntry.annotations += modifiers.annotations
@@ -657,12 +659,12 @@ class DeclarationsConverter(
             constructorDelegationCall
         )
 
-        firFunctions += firConstructor
+        context.firFunctions += firConstructor
         firConstructor.annotations += modifiers.annotations
         firConstructor.typeParameters += typeParametersFromSelfType(delegatedSelfTypeRef)
         firConstructor.valueParameters += firValueParameters.map { it.firValueParameter }
         firConstructor.body = convertFunctionBody(block, null)
-        firFunctions.removeLast()
+        context.firFunctions.removeLast()
         return firConstructor
     }
 
@@ -725,7 +727,7 @@ class DeclarationsConverter(
             return@withChildClassName FirTypeAliasImpl(
                 session,
                 null,
-                FirTypeAliasSymbol(currentClassId),
+                FirTypeAliasSymbol(context.currentClassId),
                 typeAliasName,
                 modifiers.getVisibility(),
                 modifiers.hasExpect(),
@@ -886,7 +888,7 @@ class DeclarationsConverter(
             modifiers.getVisibility(),
             returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
         )
-        firFunctions += firAccessor
+        context.firFunctions += firAccessor
         firAccessor.annotations += modifiers.annotations
 
         if (!isGetter) {
@@ -894,7 +896,7 @@ class DeclarationsConverter(
         }
 
         firAccessor.body = convertFunctionBody(block, expression)
-        firFunctions.removeLast()
+        context.firFunctions.removeLast()
         return firAccessor
     }
 
@@ -991,7 +993,7 @@ class DeclarationsConverter(
             )
         }
 
-        firFunctions += firFunction
+        context.firFunctions += firFunction
         firFunction.annotations += modifiers.annotations
 
         if (firFunction is FirMemberFunctionImpl) {
@@ -1001,7 +1003,7 @@ class DeclarationsConverter(
 
         valueParametersList?.let { firFunction.valueParameters += convertValueParameters(it).map { it.firValueParameter } }
         firFunction.body = convertFunctionBody(block, expression)
-        firFunctions.removeLast()
+        context.firFunctions.removeLast()
         return firFunction
     }
 
@@ -1033,7 +1035,7 @@ class DeclarationsConverter(
         }
         return if (!stubMode) {
             val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-            return DeclarationsConverter(session, stubMode, blockTree).convertBlockExpression(blockTree.root)
+            return DeclarationsConverter(session, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
                 session,
