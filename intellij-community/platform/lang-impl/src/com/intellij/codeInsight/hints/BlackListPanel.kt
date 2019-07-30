@@ -15,14 +15,11 @@ import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.util.text.StringUtil
 import com.intellij.ui.EditorTextField
-import com.intellij.ui.components.JBLabel
-import com.intellij.ui.components.labels.SwingActionLink
-import com.intellij.util.ui.JBUI
-import java.awt.BorderLayout
+import com.intellij.ui.layout.*
 import java.awt.Component
 import java.awt.Dimension
-import java.awt.event.ActionEvent
-import javax.swing.*
+import javax.swing.JComponent
+import javax.swing.JPanel
 
 
 class BlackListDialog(val language: Language, private val patternToAdd: String? = null) : DialogWrapper(null) {
@@ -46,10 +43,12 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
     val blackList = getLanguageBlackList(language)
     val finalText = if (patternToAdd != null) {
       blackList + "\n" + patternToAdd
-    } else {
+    }
+    else {
       blackList
     }
     val editorTextField = createBlacklistEditorField(finalText)
+    editorTextField.alignmentX = Component.LEFT_ALIGNMENT
     editorTextField.addDocumentListener(object : DocumentListener {
       override fun documentChanged(e: DocumentEvent) {
         updateOkEnabled(editorTextField)
@@ -59,55 +58,31 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 
     myEditor = editorTextField
 
-    val mainPanel = JPanel(BorderLayout())
-    val blacklistPanel = JPanel()
-    val layout = BoxLayout(blacklistPanel, BoxLayout.Y_AXIS)
-    blacklistPanel.layout = layout
 
-    mainPanel.add(blacklistPanel, BorderLayout.NORTH)
+    return panel {
+      row {
+        right {
+          link("Reset") {
+            setLanguageBlacklistToDefault(language)
+          }
+        }
 
-    val resetPanel = createResetPanel(language)
-    resetPanel.alignmentX = Component.LEFT_ALIGNMENT
-    blacklistPanel.add(resetPanel)
-    blacklistPanel.add(Box.createRigidArea(Dimension(0, 5)))
-
-    editorTextField.alignmentX = Component.LEFT_ALIGNMENT
-    blacklistPanel.add(editorTextField)
-
-    val label = createBlacklistDependencyInfoLabel(language)
-    if (label != null) {
-      label.alignmentX = Component.LEFT_ALIGNMENT
-      blacklistPanel.add(label)
-      mainPanel.add(label, BorderLayout.CENTER)
-    }
-
-    val explanationPanel = explanationPanel()
-    explanationPanel.alignmentX = Component.LEFT_ALIGNMENT
-    mainPanel.add(explanationPanel, BorderLayout.SOUTH)
-    return mainPanel
-  }
-
-  private fun explanationPanel() : JPanel {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-    panel.add(Box.createRigidArea(JBUI.size(0, 10)))
-    panel.add(JBLabel(getBlacklistExplanationHTML(language)))
-    panel.add(Box.createRigidArea(JBUI.size(0, 10)))
-    return panel
-  }
-
-  private fun createResetPanel(language: Language): JComponent {
-    val link = SwingActionLink(object : AbstractAction("Reset") {
-      override fun actionPerformed(e: ActionEvent) {
-        setLanguageBlacklistToDefault(language)
+        row {
+          editorTextField(grow)
+        }
+        row {
+          baseLanguageComment(provider)?.also {
+            commentRow(it)
+          }
+          commentRow(getBlacklistExplanationHTML(language))
+        }
       }
-    })
+    }
+  }
 
-    val box = Box.createHorizontalBox()
-    box.add(Box.createHorizontalGlue())
-    box.add(link)
-
-    return box
+  private fun baseLanguageComment(provider: InlayParameterHintsProvider): String? {
+    return provider.blackListDependencyLanguage
+      ?.let { CodeInsightBundle.message("inlay.hints.base.blacklist.description", it.displayName) }
   }
 
   private fun setLanguageBlacklistToDefault(language: Language) {
@@ -147,7 +122,6 @@ class BlackListDialog(val language: Language, private val patternToAdd: String? 
 }
 
 
-
 private fun getLanguageBlackList(language: Language): String {
   val hintsProvider = InlayParameterHintsExtension.forLanguage(language) ?: return ""
   val diff = ParameterNameHintsSettings.getInstance().getBlackListDiff(getLanguageForSettingKey(language))
@@ -158,7 +132,7 @@ private fun getLanguageBlackList(language: Language): String {
 private fun createBlacklistEditorField(text: String): EditorTextField {
   val document = EditorFactory.getInstance().createDocument(text)
   val field = EditorTextField(document, null, FileTypes.PLAIN_TEXT, false, false)
-  field.preferredSize = Dimension(200, 350)
+  field.preferredSize = Dimension(400, 350)
   field.addSettingsProvider { editor ->
     editor.setVerticalScrollbarVisible(true)
     editor.setHorizontalScrollbarVisible(true)
@@ -184,16 +158,4 @@ private fun getBlacklistExplanationHTML(language: Language): String {
   val hintsProvider = InlayParameterHintsExtension.forLanguage(language) ?: return CodeInsightBundle.message(
     "inlay.hints.blacklist.pattern.explanation")
   return hintsProvider.blacklistExplanationHTML
-}
-
-private fun createBlacklistDependencyInfoLabel(language: Language): JPanel? {
-  val panel = JPanel()
-  panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-  val provider = InlayParameterHintsExtension.forLanguage(language)
-  val dependencyLanguage = provider.blackListDependencyLanguage ?: return null
-  panel.add(Box.createRigidArea(Dimension(0, 5)))
-  val label = JBLabel(CodeInsightBundle.message("inlay.hints.base.blacklist.description", dependencyLanguage.displayName))
-  label.alignmentX = Component.RIGHT_ALIGNMENT
-  panel.add(label)
-  return panel
 }
