@@ -207,14 +207,14 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     returnTypeReference.toFirOrUnitType()
                 }
             )
-            firFunctions += firAccessor
+            this@RawFirBuilder.context.firFunctions += firAccessor
             extractAnnotationsTo(firAccessor)
             extractValueParametersTo(firAccessor, propertyTypeRef)
             if (!isGetter && firAccessor.valueParameters.isEmpty()) {
                 firAccessor.valueParameters += FirDefaultSetterValueParameter(session, this, propertyTypeRef)
             }
             firAccessor.body = this.buildFirBody()
-            firFunctions.removeLast()
+            this@RawFirBuilder.context.firFunctions.removeLast()
             return firAccessor
         }
 
@@ -394,8 +394,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         override fun visitKtFile(file: KtFile, data: Unit): FirElement {
-            packageFqName = file.packageFqName
-            val firFile = FirFileImpl(session, file, file.name, packageFqName)
+            context.packageFqName = file.packageFqName
+            val firFile = FirFileImpl(session, file, file.name, context.packageFqName)
             for (annotationEntry in file.annotationEntries) {
                 firFile.annotations += annotationEntry.convert<FirAnnotationCall>()
             }
@@ -418,7 +418,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 val firEnumEntry = FirEnumEntryImpl(
                     session,
                     enumEntry,
-                    FirClassSymbol(currentClassId),
+                    FirClassSymbol(context.currentClassId),
                     enumEntry.nameAsSafeName
                 )
                 enumEntry.extractAnnotationsTo(firEnumEntry)
@@ -451,7 +451,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 val firClass = FirClassImpl(
                     session,
                     classOrObject,
-                    FirClassSymbol(currentClassId),
+                    FirClassSymbol(context.currentClassId),
                     classOrObject.nameAsSafeName,
                     if (classOrObject.isLocal) Visibilities.LOCAL else classOrObject.visibility,
                     classOrObject.modality,
@@ -489,8 +489,10 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     val zippedParameters = classOrObject.primaryConstructorParameters.zip(
                         firClass.declarations.filterIsInstance<FirProperty>()
                     )
-                    zippedParameters.generateComponentFunctions(session, firClass, packageFqName, className)
-                    zippedParameters.generateCopyFunction(session, classOrObject, firClass, packageFqName, className, firPrimaryConstructor)
+                    zippedParameters.generateComponentFunctions(session, firClass, context.packageFqName, context.className)
+                    zippedParameters.generateCopyFunction(
+                        session, classOrObject, firClass, context.packageFqName, context.className, firPrimaryConstructor
+                    )
                     // TODO: equals, hashCode, toString
                 }
 
@@ -519,7 +521,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 val firTypeAlias = FirTypeAliasImpl(
                     session,
                     typeAlias,
-                    FirTypeAliasSymbol(currentClassId),
+                    FirTypeAliasSymbol(context.currentClassId),
                     typeAlias.nameAsSafeName,
                     typeAlias.visibility,
                     typeAlias.hasExpectModifier(),
@@ -564,7 +566,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     returnType
                 )
             }
-            firFunctions += firFunction
+            context.firFunctions += firFunction
             function.extractAnnotationsTo(firFunction)
             if (firFunction is FirMemberFunctionImpl) {
                 function.extractTypeParametersTo(firFunction)
@@ -573,7 +575,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 firFunction.valueParameters += valueParameter.convert<FirValueParameter>()
             }
             firFunction.body = function.buildFirBody()
-            firFunctions.removeLast()
+            context.firFunctions.removeLast()
             return firFunction
         }
 
@@ -582,7 +584,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val returnType = FirImplicitTypeRefImpl(literal)
             val receiverType = FirImplicitTypeRefImpl(literal)
             return FirAnonymousFunctionImpl(session, literal, returnType, receiverType).apply {
-                firFunctions += this
+                context.firFunctions += this
                 var destructuringBlock: FirExpression? = null
                 for (valueParameter in literal.valueParameters) {
                     val multiDeclaration = valueParameter.destructuringDeclaration
@@ -604,7 +606,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                         valueParameter.toFirValueParameter(FirImplicitTypeRefImpl(psi))
                     }
                 }
-                label = firLabels.pop() ?: firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
+                label = context.firLabels.pop() ?: context.firFunctionCalls.lastOrNull()?.calleeReference?.name?.let {
                     FirLabelImpl(expression, it.asString())
                 }
                 val bodyExpression = literal.bodyExpression.toFirExpression("Lambda has no body")
@@ -622,7 +624,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     FirSingleExpressionBlock(bodyExpression.toReturn())
                 }
 
-                firFunctions.removeLast()
+                context.firFunctions.removeLast()
             }
         }
 
@@ -642,12 +644,12 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                 delegatedSelfTypeRef,
                 getDelegationCall().convert(delegatedSuperTypeRef, delegatedSelfTypeRef, hasPrimaryConstructor)
             )
-            firFunctions += firConstructor
+            this@RawFirBuilder.context.firFunctions += firConstructor
             extractAnnotationsTo(firConstructor)
             firConstructor.typeParameters += typeParametersFromSelfType(delegatedSelfTypeRef)
             extractValueParametersTo(firConstructor)
             firConstructor.body = buildFirBody()
-            firFunctions.removeLast()
+            this@RawFirBuilder.context.firFunctions.removeLast()
             return firConstructor
         }
 
@@ -1036,7 +1038,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         private fun FirLoopJump.bindLabel(expression: KtExpressionWithLabel): FirLoopJump {
             val labelName = expression.getLabelName()
             target = FirLoopTarget(labelName)
-            val lastLoop = firLoops.lastOrNull()
+            val lastLoop = context.firLoops.lastOrNull()
             if (labelName == null) {
                 if (lastLoop != null) {
                     target.bind(lastLoop)
@@ -1044,7 +1046,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     target.bind(FirErrorLoop(psi, "Cannot bind unlabeled jump to a loop"))
                 }
             } else {
-                for (firLoop in firLoops.asReversed()) {
+                for (firLoop in context.firLoops.asReversed()) {
                     if (firLoop.label?.name == labelName) {
                         target.bind(firLoop)
                         return this
@@ -1178,12 +1180,12 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     }
                 }
                 this.calleeReference = calleeReference
-                firFunctionCalls += this
+                context.firFunctionCalls += this
                 expression.extractArgumentsTo(this)
                 for (typeArgument in expression.typeArguments) {
                     typeArguments += typeArgument.convert<FirTypeProjection>()
                 }
-                firFunctionCalls.removeLast()
+                context.firFunctionCalls.removeLast()
             }
         }
 
@@ -1229,13 +1231,13 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
 
         override fun visitLabeledExpression(expression: KtLabeledExpression, data: Unit): FirElement {
             val labelName = expression.getLabelName()
-            val size = firLabels.size
+            val size = context.firLabels.size
             if (labelName != null) {
-                firLabels += FirLabelImpl(expression, labelName)
+                context.firLabels += FirLabelImpl(expression, labelName)
             }
             val result = expression.baseExpression?.accept(this, data) ?: FirErrorExpressionImpl(expression, "Empty label")
-            if (size != firLabels.size) {
-                firLabels.removeLast()
+            if (size != context.firLabels.size) {
+                context.firLabels.removeLast()
                 println("Unused label: ${expression.text}")
             }
             return result
