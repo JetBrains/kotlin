@@ -3253,6 +3253,12 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.headers "$projectDir/interop/objc/smoke.h"
         it.linkerOpts "-L$buildDir",  "-lobjcsmoke"
     }
+
+    createInterop("objcMisc") {
+        it.defFile 'interop/objc_with_initializer/objc_misc.def'
+        it.headers "$projectDir/interop/objc_with_initializer/objc_misc.h"
+        it.linkerOpts "-L$buildDir",  "-lobjcmisc"
+    }
 }
 
 createInterop("withSpaces") {
@@ -3441,6 +3447,27 @@ interopTest("interop_objc_smoke") {
         }
     }
 }
+
+interopTest("interop_objc_global_initializer") {
+    disabled = !isAppleTarget(project)
+    goldValue = "OK\n"
+
+    source = "interop/objc_with_initializer/objc_test.kt"
+    interop = 'objcMisc'
+    flags = ['-g']
+
+    doBefore {
+        execKonanClang(project.target) {
+            args "$projectDir/interop/objc_with_initializer/objc_misc.m"
+            args "-lobjc", '-fobjc-arc'
+            args '-fPIC', '-shared', '-o', "$buildDir/libobjcmisc.dylib"
+        }
+        if (project.target instanceof KonanTarget.IOS_X64) {
+            UtilsKt.codesign(project, "$buildDir/libobjcmisc.dylib")
+        }
+    }
+}
+
 
 standaloneTest("jsinterop_math") {
     doBefore {

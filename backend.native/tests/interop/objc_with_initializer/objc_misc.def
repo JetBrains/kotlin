@@ -1,0 +1,4 @@
+language = Objective-C
+headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
+headerFilter = **/objc_misc.h Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
+
