@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumen
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringWithoutBacktick
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.converter.utils.bangBangToWhen
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.generateDestructuringBlock
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.getOperationSymbol
 import org.jetbrains.kotlin.fir.lightTree.converter.utils.qualifiedAccessTokens
@@ -313,7 +312,7 @@ class ExpressionsConverter(
 
         val operationToken = operationTokenName.getOperationSymbol()
         if (operationToken == EXCLEXCL) {
-            return bangBangToWhen(session, getAsFirExpression(argument, "No operand"))
+            return argument.bangBangToWhen(null) { toFirExpression(it) }
         }
 
         val conventionCallName = operationToken.toUnaryName()
@@ -875,34 +874,14 @@ class ExpressionsConverter(
      */
     private fun convertLoopJump(jump: LighterASTNode): FirExpression {
         var isBreak = true
-        var labelName: String? = null
         jump.forEachChildren {
             when (it.tokenType) {
                 CONTINUE_KEYWORD -> isBreak = false
                 //BREAK -> isBreak = true
-                LABEL_QUALIFIER -> labelName = it.asText.replace("@", "")
             }
         }
 
-        return (if (isBreak) FirBreakExpressionImpl(session, null) else FirContinueExpressionImpl(session, null)).apply {
-            target = FirLoopTarget(labelName)
-            val lastLoop = context.firLoops.lastOrNull()
-            if (labelName == null) {
-                if (lastLoop != null) {
-                    target.bind(lastLoop)
-                } else {
-                    target.bind(FirErrorLoop(this@ExpressionsConverter.session, null, "Cannot bind unlabeled jump to a loop"))
-                }
-            } else {
-                for (firLoop in context.firLoops.asReversed()) {
-                    if (firLoop.label?.name == labelName) {
-                        target.bind(firLoop)
-                        return this
-                    }
-                }
-                target.bind(FirErrorLoop(this@ExpressionsConverter.session, null, "Cannot bind label $labelName to a loop"))
-            }
-        }
+        return (if (isBreak) FirBreakExpressionImpl(session, null) else FirContinueExpressionImpl(session, null)).bindLabel(jump)
     }
 
     /**

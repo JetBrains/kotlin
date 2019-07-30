@@ -63,14 +63,3 @@ fun generateDestructuringBlock(
         }
     }
 }
-
-fun bangBangToWhen(session: FirSession, baseExpression: FirExpression): FirWhenExpression {
-    return baseExpression.generateNotNullOrOther(
-        session,
-        FirThrowExpressionImpl(
-            session, null, FirFunctionCallImpl(session, null).apply {
-                calleeReference = FirSimpleNamedReference(session, null, RawFirBuilder.KNPE)
-            }
-        ), "bangbang", null
-    )
-}
