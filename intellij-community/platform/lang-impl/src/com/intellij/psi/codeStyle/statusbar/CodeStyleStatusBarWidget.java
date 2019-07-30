@@ -3,6 +3,8 @@ package com.intellij.psi.codeStyle.statusbar;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -17,6 +19,7 @@ import com.intellij.psi.codeStyle.*;
 import com.intellij.psi.codeStyle.modifier.CodeStyleSettingsModifier;
 import com.intellij.psi.codeStyle.modifier.CodeStyleStatusBarUIContributor;
 import com.intellij.psi.codeStyle.modifier.TransientCodeStyleSettings;
+import com.intellij.util.concurrency.NonUrgentExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -155,7 +158,11 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
   @Override
   protected void registerCustomListeners() {
     Project project = getProject();
-    CodeStyleSettingsManager.getInstance(project).addListener(this);
+    NonUrgentExecutor.getInstance().execute(
+      () -> {
+        CodeStyleSettingsManager csm = CodeStyleSettingsManager.getInstance(project);
+        ApplicationManager.getApplication().invokeLater(() -> csm.addListener(this), ModalityState.any());
+      });
     Disposer.register(this, () -> CodeStyleSettingsManager.removeListener(project, this));
   }
 
