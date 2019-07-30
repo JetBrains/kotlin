@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.perf.tcReg
+import org.jetbrains.kotlin.fir.concurrent.tcReg
 import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.resolve.transformers.FirResolveStage
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import java.io.PrintStream
-import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import kotlin.math.max
@@ -55,7 +55,9 @@ class FirResolveBench(val withProgress: Boolean) {
     var fileCount = 0
     var totalLines = 0
 
-    var parallelThreads = 1
+    var parallelThreads = Runtime.getRuntime().availableProcessors()
+
+    var isParallel = true
 
     val singleThreadPool = Executors.newSingleThreadExecutor()
     val pool by lazy { Executors.newFixedThreadPool(parallelThreads) }
@@ -71,28 +73,105 @@ class FirResolveBench(val withProgress: Boolean) {
         realTimePerStage.merge(builder::class, time) { a, b -> a + b }
     }
 
+    private fun runBuilder(builder: RawFirBuilder, ktFiles: List<KtFile>): List<FirFile> {
+        return ktFiles.map { file ->
+            var firFile: FirFile? = null
+            val time = measureNanoTime {
+                firFile = builder.buildFirFile(file)
+                (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
+            }
+            summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
+            firFile!!
+        }
+    }
+
+    private fun runBuilderConcurrently(builder: RawFirBuilder, ktFiles: List<KtFile>): List<FirFile> {
+        return ktFiles.map { file ->
+            pool.submit(Callable {
+                var firFile: FirFile? = null
+                val time = measureNanoTime {
+                    firFile = builder.buildFirFile(file)
+                    (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
+                }
+                summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
+                firFile!!
+            })
+        }.map { it.get() }
+    }
+
     fun buildFiles(
         builder: RawFirBuilder,
         ktFiles: List<KtFile>
     ): List<FirFile> {
         val (result, time) = measureNanoTimeWithResult {
-            ktFiles.map { file ->
-                pool.submit(Callable {
-                    var firFile: FirFile? = null
-                    val time = measureNanoTime {
-                        firFile = builder.buildFirFile(file)
-                        (builder.session.service<FirProvider>() as FirProviderImpl).recordFile(firFile!!)
-                    }
-                    summaryTimePerStage.merge(builder::class, time) { a, b -> a + b }
-                    builder.buildFirFile(file)
-                })
-            }.map { it.get() }
+            if (isParallel)
+                runBuilderConcurrently(builder, ktFiles)
+            else
+                runBuilder(builder, ktFiles)
         }
         realTimePerStage.merge(builder::class, time) { a, b -> a + b }
         ktFiles.forEach {
             totalLines += it.text.lines().count()
         }
         return result
+    }
+
+
+    private fun runStage(stage: FirResolveStage, firFiles: List<FirFile>) {
+        val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
+        val transformer = stage.createTransformer()
+        for (firFile in firFileSequence) {
+            var fail = false
+            val time = measureNanoTime {
+                try {
+                    transformer.transformFile(firFile, null)
+                } catch (e: Throwable) {
+                    val ktFile = firFile.psi as KtFile
+                    println("Fail in file: ${ktFile.virtualFilePath}")
+                    fail = true
+                    fails += FailureInfo(stage::class, e, ktFile.virtualFilePath)
+                    //println(ktFile.text)
+                    //throw e
+                }
+            }
+            if (!fail) {
+                summaryTimePerStage.merge(stage::class, time) { a, b -> a + b }
+            }
+        }
+    }
+
+    private fun runStageConcurrently(stage: FirResolveStage, firFiles: List<FirFile>) {
+        require(stage.isParallel)
+        val transformerLocal = object : ThreadLocal<FirTransformer<Nothing?>>() {
+            override fun initialValue(): FirTransformer<Nothing?> {
+                return stage.createTransformer()
+            }
+        }
+        val tasks = (firFiles).shuffled().map { firFile ->
+            firFile to pool.submit {
+                var fail = false
+                val time = measureNanoTime {
+                    try {
+                        transformerLocal.get().transformFile(firFile, null)
+                    } catch (e: Throwable) {
+                        val ktFile = firFile.psi as KtFile
+                        println("Fail in file: ${ktFile.virtualFilePath}")
+                        fail = true
+                        fails += FailureInfo(stage::class, e, ktFile.virtualFilePath)
+                        //println(ktFile.text)
+                        //throw e
+                    }
+                }
+                if (!fail) {
+                    summaryTimePerStage.merge(stage::class, time) { a, b -> a + b }
+                }
+            }
+
+        }
+        val tasksSequence = if (withProgress) tasks.progress("   ~ ") else tasks.asSequence()
+        tasksSequence.forEach { (_, future) ->
+            future.get()
+        }
     }
 
     fun processFiles(
@@ -102,48 +181,15 @@ class FirResolveBench(val withProgress: Boolean) {
         fileCount += firFiles.size
         try {
             for ((stageNum, stage) in factory.resolveStages.withIndex()) {
-                val usedThreads = if (stage.isParallel) parallelThreads else 1
+                val usedThreads = if (stage.isParallel && isParallel) parallelThreads else 1
                 println("Starting stage #$stageNum, $stage, isParallel = ${stage.isParallel}, using threads: $usedThreads")
-                val firFileSequence = if (withProgress) firFiles.progress("   ~ ") else firFiles.asSequence()
-
-                val runPool = if (stage.isParallel) {
-                    pool
-                } else {
-                    singleThreadPool
-                }
-
-
-                val tQueue = ArrayBlockingQueue<FirTransformer<Nothing?>>(usedThreads)
-
 
                 val realTime = measureNanoTime {
-                    for (i in 0 until usedThreads) {
-                        tQueue.add(stage.createTransformer())
-                    }
-                    (firFileSequence).toList().shuffled().map { firFile ->
-                        runPool.submit {
-                            val transformer = tQueue.poll()
-                            var fail = false
-                            val time = measureNanoTime {
-                                try {
-                                    transformer.transformFile(firFile, null)
-                                } catch (e: Throwable) {
-                                    val ktFile = firFile.psi as KtFile
-                                    println("Fail in file: ${ktFile.virtualFilePath}")
-                                    fail = true
-                                    fails += FailureInfo(stage::class, e, ktFile.virtualFilePath)
-                                    //println(ktFile.text)
-                                    //throw e
-                                }
-                            }
-                            if (!fail) {
-                                summaryTimePerStage.merge(stage::class, time) { a, b -> a + b }
-                            }
-                            tQueue.put(transformer)
-                        }
-                    }.forEach {
-                        it.get()
-                    }
+
+                    if (stage.isParallel && isParallel)
+                        runStageConcurrently(stage, firFiles)
+                    else
+                        runStage(stage, firFiles)
                 }
 
 

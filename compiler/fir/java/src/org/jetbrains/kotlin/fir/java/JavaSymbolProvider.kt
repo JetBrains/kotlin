@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassEnhancementScope
 import org.jetbrains.kotlin.fir.java.scopes.JavaClassUseSiteScope
-import org.jetbrains.kotlin.fir.perf.ReadLockFreeOpenAddressingHashMap
-import org.jetbrains.kotlin.fir.perf.TransactionCache
+import org.jetbrains.kotlin.fir.concurrent.ConcurrentHashMapNonRecursiveComputeCache
+import org.jetbrains.kotlin.fir.concurrent.TransactionalCache
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirSuperTypeScope
@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.types.Variance.INVARIANT
 import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class JavaSymbolProvider(
     val session: FirSession,
@@ -146,7 +145,7 @@ class JavaSymbolProvider(
 
     val findClassLock = globalFindClassLock
 
-    val nClassCache = TransactionCache<ClassId, ClassCacheRec?>(ReadLockFreeOpenAddressingHashMap())
+    val nClassCache = TransactionalCache<ClassId, ClassCacheRec?>()
 
     data class ClassCacheRec(val symbol: FirClassLikeSymbol<*>, var foundClass: JavaClass?)
 
@@ -280,15 +279,15 @@ class JavaSymbolProvider(
         )?.symbol
     }
 
-
-
     private fun findPackageUncached(fqName: FqName): PsiPackage? {
         return facade.findPackage(fqName.asString(), searchScope)
     }
 
+    val nPackageCache = ConcurrentHashMapNonRecursiveComputeCache<FqName, FqName?>()
+
     override fun getPackage(fqName: FqName): FqName? {
-        return packageCache.lookupCacheOrCalculate(fqName) {
-            val javaPackage = findPackageUncached(fqName) ?: return@lookupCacheOrCalculate null
+        return nPackageCache.lookup(fqName) {
+            val javaPackage = findPackageUncached(fqName) ?: return@lookup null
             FqName(javaPackage.qualifiedName)
         }
     }
@@ -300,10 +299,11 @@ class JavaSymbolProvider(
             .map { it.fir }
     }
 
-    private val knownClassNamesInPackage = mutableMapOf<FqName, Set<String>?>()
+    private val knownClassNamesInPackage =
+        ConcurrentHashMapNonRecursiveComputeCache<FqName, Set<String>?>()
 
     private fun hasTopLevelClassOf(classId: ClassId): Boolean {
-        val knownNames = knownClassNamesInPackage.getOrPut(classId.packageFqName) {
+        val knownNames = knownClassNamesInPackage.lookup(classId.packageFqName) {
             facade.knownClassNamesInPackage(classId.packageFqName)
         } ?: return true
         return classId.relativeClassName.topLevelName() in knownNames

@@ -29,23 +29,21 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return topLevelCallableCache.lookupCacheOrCalculate(CallableId(packageFqName, null, name)) {
-            dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
-        } ?: emptyList()
+        return dependencyProviders.flatMap { provider -> provider.getTopLevelCallableSymbols(packageFqName, name) }
     }
 
     override fun getClassDeclaredMemberScope(classId: ClassId) =
         dependencyProviders.firstNotNullResult { it.getClassDeclaredMemberScope(classId) }
 
     override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>? {
-        return classCache.lookupCacheOrCalculate(classId) {
-            for (provider in dependencyProviders) {
-                provider.getClassLikeSymbolByFqName(classId)?.let {
-                    return@lookupCacheOrCalculate it
-                }
+
+        for (provider in dependencyProviders) {
+            provider.getClassLikeSymbolByFqName(classId)?.let {
+                return it
             }
-            null
         }
+        return null
+
     }
 
     override fun getClassUseSiteMemberScope(
@@ -57,14 +55,12 @@ class FirDependenciesSymbolProviderImpl(val session: FirSession) : AbstractFirSy
     }
 
     override fun getPackage(fqName: FqName): FqName? {
-        return packageCache.lookupCacheOrCalculate(fqName) {
-            for (provider in dependencyProviders) {
-                provider.getPackage(fqName)?.let {
-                    return@lookupCacheOrCalculate it
-                }
+        for (provider in dependencyProviders) {
+            provider.getPackage(fqName)?.let {
+                return it
             }
-            null
         }
+        return null
     }
 
     override fun getAllCallableNamesInPackage(fqName: FqName): Set<Name> {

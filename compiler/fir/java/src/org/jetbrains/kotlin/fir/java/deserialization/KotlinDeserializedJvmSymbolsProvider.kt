@@ -21,7 +21,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.createConstant
 import org.jetbrains.kotlin.fir.java.topLevelName
-import org.jetbrains.kotlin.fir.perf.TransactionCache
+import org.jetbrains.kotlin.fir.concurrent.ConcurrentHashMapNonRecursiveComputeCache
+import org.jetbrains.kotlin.fir.concurrent.SynchronizedComputeCache
+import org.jetbrains.kotlin.fir.concurrent.TransactionalCache
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.*
@@ -53,9 +55,6 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErrorData
 import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
-import org.jetbrains.kotlin.utils.getOrPutNullable
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
 
 class KotlinDeserializedJvmSymbolsProvider(
     val session: FirSession,
@@ -66,8 +65,11 @@ class KotlinDeserializedJvmSymbolsProvider(
     private val javaClassFinder: JavaClassFinder
 ) : AbstractFirSymbolProvider() {
     private val classesCache = HashMap<ClassId, FirClassSymbol>()
-    private val typeAliasCache = HashMap<ClassId, FirTypeAliasSymbol?>()
-    private val packagePartsCache = HashMap<FqName, Collection<PackagePartsCacheData>>()
+    private val typeAliasCache =
+        ConcurrentHashMapNonRecursiveComputeCache<ClassId, FirTypeAliasSymbol?>()
+    private val packagePartsCache =
+        SynchronizedComputeCache<FqName, Collection<PackagePartsCacheData>>()
+
 
     private val handledByJava = HashSet<ClassId>()
 
@@ -159,7 +161,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     private fun findAndDeserializeTypeAlias(
         classId: ClassId
     ): FirTypeAliasSymbol? {
-        return typeAliasCache.getOrPutNullable(classId) {
+        return typeAliasCache.lookup(classId) {
             getPackageParts(classId.packageFqName).firstNotNullResult { part ->
                 val ids = part.typeAliasNameIndex[classId.shortClassName]
                 if (ids == null || ids.isEmpty()) return@firstNotNullResult null
@@ -310,7 +312,7 @@ class KotlinDeserializedJvmSymbolsProvider(
     }
 
 
-    private val nClassesCache = TransactionCache<ClassId, ClassCacheRec?/* null | FirClassSymbol */>()
+    private val nClassesCache = TransactionalCache<ClassId, ClassCacheRec?/* null | FirClassSymbol */>()
 
     private data class ClassCacheRec(
         val symbol: FirClassSymbol,
@@ -318,7 +320,7 @@ class KotlinDeserializedJvmSymbolsProvider(
         val fromJava: Boolean = false
     )
 
-    private val enumEntryCache = TransactionCache<FirClassSymbol, Map<Name, FirClassSymbol>?>()
+    private val enumEntryCache = TransactionalCache<FirClassSymbol, Map<Name, FirClassSymbol>?>()
 
     private fun findAndDeserializeClass(
         classId: ClassId,
@@ -431,9 +433,14 @@ class KotlinDeserializedJvmSymbolsProvider(
             }
     }
 
+    private val topLevelCallablesCache =
+        ConcurrentHashMapNonRecursiveComputeCache<CallableId, List<FirCallableSymbol<*>>>()
+
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return getPackageParts(packageFqName).flatMap { part ->
-            loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
+        return topLevelCallablesCache.lookup(CallableId(packageFqName, null, name)) {
+            getPackageParts(packageFqName).flatMap { part ->
+                loadFunctionsByName(part, name) + loadPropertiesByName(part, name)
+            }
         }
     }
 
@@ -443,7 +450,8 @@ class KotlinDeserializedJvmSymbolsProvider(
         }
 
     private fun getPackageParts(packageFqName: FqName): Collection<PackagePartsCacheData> {
-        return packagePartsCache.getOrPut(packageFqName) {
+
+        return packagePartsCache.lookup(packageFqName) {
             computePackagePartsInfos(packageFqName)
         }
     }

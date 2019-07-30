@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.perf
+package org.jetbrains.kotlin.fir.concurrent
 
 import java.lang.RuntimeException
 import java.util.concurrent.atomic.AtomicInteger
@@ -11,12 +11,15 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.getOrSet
 import kotlin.concurrent.withLock
 
-val tcReg = mutableListOf<TransactionCache<*, *>>()
+val tcReg = mutableListOf<TransactionalCache<*, *>>()
 
-class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMap<K, Any> = ReadLockFreeOpenAddressingHashMap()) {
+class TransactionalCache<K : Any, V> : AbstractLateBindingLookupCache<K, V>() {
     init {
         tcReg += this
     }
+
+    val storage: ReadLockFreeOpenAddressingHashMap<K, Any> =
+        ReadLockFreeOpenAddressingHashMap()
 
     private var commits = 0L
     private var retries = 0L
@@ -28,6 +31,7 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
 
     private val transaction = ThreadLocal<Transaction<K>>()
 
+    @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
     class Transaction<K>(
         val index: Int,
         val transactionStorage: MutableMap<K, Any>
@@ -71,23 +75,26 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
     }
 
     private fun Transaction<K>.commit(): Boolean {
-        return lock.withLock {
-            commits++
-            val canCommit = transactionStorage.keys.all {
-                val v = storage[it]
-                v is Transaction<*>?
+        return try {
+            lock.withLock {
+                commits++
+                val canCommit = transactionStorage.keys.all {
+                    val v = storage[it]
+                    v is Transaction<*>?
+                }
+
+                transaction.remove()
+
+                if (!canCommit) {
+                    retries++
+                    return@withLock false
+                }
+
+                storage.putAll(transactionStorage)
+                true
             }
+        } finally {
             this.complete()
-            transaction.remove()
-
-            if (!canCommit) {
-                retries++
-                return@withLock false
-            }
-
-
-            storage.putAll(transactionStorage)
-            true
         }
     }
 
@@ -96,15 +103,11 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
         transaction.remove()
     }
 
-    fun storeToTransaction(key: K, value: V) {
-        transaction.get().transactionStorage[key] = value ?: NULL
+    override fun lookup(key: K, compute: (K) -> V): V {
+        return lookup(key, compute, {})
     }
 
-    fun readFromTransaction(key: K): V {
-        return unbox(transaction.get().transactionStorage[key]!!)
-    }
-
-    tailrec fun lookup(key: K, compute: (K) -> V, postCompute: (V) -> Unit): V? {
+    override tailrec fun lookup(key: K, compute: (K) -> V, postCompute: (V) -> Unit): V {
 
         val v = storage[key]
         if (v != null && v !is Transaction<*>) return unbox(v)
@@ -121,8 +124,8 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
         if (cached != null)
             return unbox(cached)
         else {
-            val v = beginCompute(currentTransaction, key)
-            if (v == null) {
+            val nv = beginCompute(currentTransaction, key)
+            if (nv == null) {
                 try {
                     computed = compute(key) as Any? ?: NULL
                     currentTransaction.transactionStorage[key] = computed
@@ -133,7 +136,7 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
                     throw RuntimeException("Exception in compute", t)
                 }
             } else {
-                computed = v
+                computed = nv
             }
         }
         if (startedTransaction) {
@@ -144,6 +147,7 @@ class TransactionCache<K : Any, V>(val storage: ReadLockFreeOpenAddressingHashMa
         return unbox(computed)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun unbox(computed: Any) = (if (computed === NULL) null else computed) as V
 
 

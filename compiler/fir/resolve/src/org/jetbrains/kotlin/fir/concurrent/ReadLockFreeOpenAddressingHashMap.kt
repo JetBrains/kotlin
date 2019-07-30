@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.perf
+package org.jetbrains.kotlin.fir.concurrent
 
 import java.util.concurrent.atomic.AtomicReferenceArray
 import kotlin.math.pow
@@ -11,21 +11,29 @@ import kotlin.math.sqrt
 
 class ReadLockFreeOpenAddressingHashMap<K : Any, V> {
     @Volatile
-    private var core = Core(16)
+    private var core = Core(128)
 
     operator fun contains(key: K) = core.getKey(key) === NOT_FOUND
 
+    @Suppress("UNCHECKED_CAST")
     operator fun get(key: K): V? {
         val value = core.getKey(key)
         return if (value === NOT_FOUND) null else value as V
     }
 
+    /**
+     * Should be externally synchronized
+     */
     // @Synchronized
     operator fun set(key: K, value: V) {
         while (core.isOverpopulated() || !core.putKey(key, value))
             core = core.rehash(core.length())
     }
 
+    /**
+     * Should be externally synchronized
+     */
+    // @Synchronized
     fun putAll(map: Map<K, V>) {
         for ((k, v) in map) {
             set(k, v)
@@ -103,7 +111,7 @@ class ReadLockFreeOpenAddressingHashMap<K : Any, V> {
 
 private val MAGIC: Int = ((sqrt(5.0) - 1) * 2.0.pow(31)).toLong().toInt() // golden
 private val NOT_FOUND = Any()
-private val DEFAULT_LOAD_FACTOR = 0.5
+private const val DEFAULT_LOAD_FACTOR = 0.5
 
 
 

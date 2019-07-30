@@ -18,9 +18,7 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.dump.MultiModuleHtmlFirDump
-import org.jetbrains.kotlin.fir.perf.tcReg
-import org.jetbrains.kotlin.fir.resolve.FirProvider
-import org.jetbrains.kotlin.fir.resolve.impl.FirProviderImpl
+import org.jetbrains.kotlin.fir.concurrent.tcReg
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStagesTransformerFactory
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.test.ConfigurationKind
@@ -30,7 +28,6 @@ import java.io.File
 import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.system.measureNanoTime
 
 
 private const val FAIL_FAST = true

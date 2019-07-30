@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
-import org.jetbrains.kotlin.fir.perf.TransactionCache
+import org.jetbrains.kotlin.fir.concurrent.TransactionalCache
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
@@ -76,7 +76,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             ).memberDeserializer
         }
 
-        val classCache = TransactionCache<ClassId, FirClassSymbol>()
+        val classCache = TransactionalCache<ClassId, FirClassSymbol>()
 
         fun getClassLikeSymbolByFqName(classId: ClassId): FirClassSymbol? =
             findAndDeserializeClass(classId)
