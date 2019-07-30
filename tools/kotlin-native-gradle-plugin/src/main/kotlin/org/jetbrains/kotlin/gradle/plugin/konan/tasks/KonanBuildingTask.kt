@@ -47,16 +47,8 @@ abstract class KonanBuildingTask: KonanArtifactWithLibrariesTask(), KonanBuildin
     val konanVersion
         @Input get() = project.konanVersion.toString(true, true)
 
-    protected abstract fun buildArgs(): List<String>
-
     @TaskAction
-    open fun run() {
-        destinationDir.mkdirs()
-        if (dumpParameters) {
-            dumpProperties(this)
-        }
-        toolRunner.run(buildArgs())
-    }
+    abstract fun run()
 
     // DSL.
 

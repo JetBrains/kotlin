@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
+ * Copyright 2010-2019 JetBrains s.r.o.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,6 @@ import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifact
 import org.jetbrains.kotlin.gradle.plugin.model.KonanModelArtifactImpl
-import org.jetbrains.kotlin.konan.CURRENT
-import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.library.defaultResolver
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Distribution
@@ -97,6 +95,14 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     val apiVersion      : String?
         @Optional @Input get() = project.konanExtension.apiVersion
 
+    /**
+     * Is the two-stage compilation enabled.
+     *
+     * In regular (one-stage) compilation, sources are directly compiled into a final native binary.
+     * In two-stage compilation, sources are compiled into a klib first and then a final native binary is produced from this klib.
+     */
+    abstract val enableTwoStageCompilation: Boolean
+
     protected fun directoryToKt(dir: Any) = project.fileTree(dir).apply {
         include("**/*.kt")
         exclude { it.file.startsWith(project.buildDir) }
@@ -104,9 +110,85 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
     // Command line  ------------------------------------------------------------
 
-    override fun buildArgs() = mutableListOf<String>().apply {
-        addArg("-output", artifact.canonicalPath)
+    // Exclude elements matching the predicate.
+    private fun List<String>.excludeFlags(predicate: (String) -> Boolean) = filterNot(predicate)
 
+    // Exclude the listed elements.
+    private fun List<String>.excludeFlags(vararg keys: String) = keys.toSet().let { keysToExclude ->
+        excludeFlags { it in keysToExclude }
+    }
+
+    // Exclude the arguments passed by the given keys.
+    // E.g. if the list contains the following elements: ["-l", "foo", "-r", "bar"],
+    // call exclude("-r") returns the following list: ["-l", "foo"].
+    private fun List<String>.excludeArguments(vararg args: String): List<String> {
+        val argsToExclude = args.toSet()
+        val xPrefixesToExclude = argsToExclude.filter { it.startsWith("-X") }.map { "$it=" }
+        val result = mutableListOf<String>()
+
+        var i = 0
+        while (i < size) {
+            val key = this[i]
+            when {
+                key in argsToExclude -> {
+                    // Skip the key and the following arg.
+                    i++
+                }
+                // Support args passed as -X<arg>=<value>.
+                xPrefixesToExclude.any { key.startsWith(it) } -> { /* Skip the key. */ }
+                else -> result += key
+            }
+            i++
+        }
+        return result
+    }
+
+    // Don't include coverage flags into the first stage because they are not supported when compiling a klib.
+    private fun firstStageExtraOpts() = extraOpts
+        .excludeFlags("-Xcoverage")
+        .excludeArguments("-Xcoverage-file", "-Xlibrary-to-cover")
+
+    // Don't include the -Xemit-lazy-objc-header flag into
+    // the second stage because this stage have no sources.
+    private fun secondStageExtraOpts() = extraOpts
+        .excludeArguments("-Xemit-lazy-objc-header")
+
+    /** Args passed to the compiler at the first stage of two-stage compilation (klib building). */
+    protected fun buildFirstStageArgs(klibPath: String) = mutableListOf<String>().apply {
+        addArg("-output", klibPath)
+        addArg("-produce", CompilerOutputKind.LIBRARY.name.toLowerCase())
+
+        addAll(buildCommonArgs())
+
+        addAll(firstStageExtraOpts())
+
+        allSourceFiles.mapTo(this) { it.absolutePath }
+        commonSrcFiles
+            .flatMap { it.files }
+            .mapTo(this) { "-Xcommon-sources=${it.absolutePath}" }
+    }
+
+    /** Args passed to the compiler at the second stage of two-stage compilation (producing a final binary from the klib).  */
+    protected fun buildSecondStageArgs(klibPath: String) = mutableListOf<String>().apply {
+        addArg("-output", artifact.canonicalPath)
+        addArg("-produce", produce.name.toLowerCase())
+        addArgIfNotNull("-entry", entryPoint)
+
+        addAll(buildCommonArgs())
+
+        addFileArgs("-native-library", nativeLibraries)
+        linkerOpts.forEach {
+            addArg("-linker-option", it)
+        }
+
+        addAll(secondStageExtraOpts())
+
+        addArg("-l", klibPath)
+        add("-Xsource-library=${klibPath}")
+    }
+
+    /** Args passed to the compiler at both stages of the two-stage compilation and during the singe-stage compilation. */
+    protected fun buildCommonArgs() = mutableListOf<String>().apply {
         addArgs("-repo", libraries.repos.map { it.canonicalPath })
 
         if (platformConfiguration.files.isNotEmpty()) {
@@ -119,12 +201,6 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addArgs("-library", libraries.namedKlibs)
         // The library's directory is added in libraries.repos.
         addArgs("-library", libraries.artifacts.map { it.artifact.nameWithoutExtension })
-
-        addFileArgs("-native-library", nativeLibraries)
-        addArg("-produce", produce.name.toLowerCase())
-        linkerOpts.forEach {
-            addArg("-linker-option", it)
-        }
 
         addArgIfNotNull("-target", konanTarget.visibleName)
         addArgIfNotNull("-language-version", languageVersion)
@@ -143,6 +219,21 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         if (libraries.friends.isNotEmpty())
             addArg("-friend-modules", libraries.friends.joinToString(File.pathSeparator))
+    }
+
+    /** Args passed to the compiler if the two-stage compilation is disabled. */
+    fun buildSingleStageArgs() = mutableListOf<String>().apply {
+        addArg("-output", artifact.canonicalPath)
+        addArg("-produce", produce.name.toLowerCase())
+        addArgIfNotNull("-entry", entryPoint)
+
+        addAll(buildCommonArgs())
+
+        addFileArgs("-native-library", nativeLibraries)
+
+        linkerOpts.forEach {
+            addArg("-linker-option", it)
+        }
 
         addAll(extraOpts)
 
@@ -253,9 +344,37 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         )
     }
     // endregion
+
+    override fun run() {
+        destinationDir.mkdirs()
+        if (dumpParameters) {
+            dumpProperties(this)
+        }
+        if (enableTwoStageCompilation) {
+            logger.info("Start two-stage compilation")
+            val intermediateDir = project.konanBuildRoot
+                .resolve("intermediate")
+                .targetSubdir(konanTarget)
+                .apply { mkdirs() }
+            val klibPrefix = CompilerOutputKind.LIBRARY.prefix(konanTarget)
+            val klibSuffix = CompilerOutputKind.LIBRARY.suffix(konanTarget)
+            val intermediateKlib = intermediateDir.resolve("$klibPrefix$artifactName$klibSuffix").absolutePath
+            logger.info("Start first stage")
+            toolRunner.run(buildFirstStageArgs(intermediateKlib))
+            logger.info("Start second stage")
+            toolRunner.run(buildSecondStageArgs(intermediateKlib))
+        } else {
+            toolRunner.run(buildSingleStageArgs())
+        }
+    }
 }
 
-open class KonanCompileProgramTask: KonanCompileTask() {
+abstract class KonanCompileNativeBinary: KonanCompileTask() {
+    @Input
+    override var enableTwoStageCompilation: Boolean = false
+}
+
+open class KonanCompileProgramTask: KonanCompileNativeBinary() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.PROGRAM
 
     var runTask: Exec? = null
@@ -287,14 +406,14 @@ open class KonanCompileProgramTask: KonanCompileTask() {
 
 }
 
-open class KonanCompileDynamicTask: KonanCompileTask() {
+open class KonanCompileDynamicTask: KonanCompileNativeBinary() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.DYNAMIC
 
     val headerFile: File
         @OutputFile get() = destinationDir.resolve("$artifactPrefix${artifactName}_api.h")
 }
 
-open class KonanCompileFrameworkTask: KonanCompileTask() {
+open class KonanCompileFrameworkTask: KonanCompileNativeBinary() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.FRAMEWORK
 
     override val artifact
@@ -303,8 +422,9 @@ open class KonanCompileFrameworkTask: KonanCompileTask() {
 
 open class KonanCompileLibraryTask: KonanCompileTask() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.LIBRARY
+    override val enableTwoStageCompilation: Boolean = false
 }
 
-open class KonanCompileBitcodeTask: KonanCompileTask() {
+open class KonanCompileBitcodeTask: KonanCompileNativeBinary() {
     override val produce: CompilerOutputKind get() = CompilerOutputKind.BITCODE
 }

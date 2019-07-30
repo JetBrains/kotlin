@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+import shadow.org.jetbrains.kotlin.gradle.plugin.tasks.KonanCompileNativeBinary
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
@@ -16,7 +17,7 @@ buildscript {
         maven {
             url buildKotlinCompilerRepo
         }
-	maven {
+	    maven {
             url kotlinCompilerRepo
         }
     }
@@ -86,6 +87,13 @@ project.convention.plugins.executor = ExecutorServiceKt.create(project)
 
 // Do not generate run tasks for konan built artifacts
 ext.konanNoRun = true
+
+// Enable two-stage compilation if the test_two_stage property is set.
+if (project.hasProperty("test_two_stage")) {
+    tasks.withType(KonanCompileNativeBinary.class) {
+        enableTwoStageCompilation = true
+    }
+}
 
 allprojects {
     // Root directories for test output (logs, compiled files, statistics etc). Only single path must be in each set.
