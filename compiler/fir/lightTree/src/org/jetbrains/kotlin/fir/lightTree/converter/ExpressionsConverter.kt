@@ -45,10 +45,6 @@ class ExpressionsConverter(
     context: Context = Context()
 ) : BaseConverter(session, tree, context) {
 
-    inline fun <reified R : FirElement> LighterASTNode?.toFirExpression(errorReason: String = ""): R {
-        return this?.let { convertExpression(it, errorReason) } as? R ?: (FirErrorExpressionImpl(session, null, errorReason) as R)
-    }
-
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
         return expression?.let { convertExpression(it, errorReason) } as? R ?: (FirErrorExpressionImpl(session, null, errorReason) as R)
     }
@@ -213,7 +209,7 @@ class ExpressionsConverter(
         } else {
             val firOperation = operationToken.toFirOperation()
             if (firOperation in FirOperation.ASSIGNMENTS) {
-                return leftArgNode.generateAssignment(null, rightArgAsFir, firOperation) { toFirExpression() }
+                return leftArgNode.generateAssignment(null, rightArgAsFir, firOperation) { getAsFirExpression(this) }
             } else {
                 FirOperatorCallImpl(session, null, firOperation).apply {
                     arguments += getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
@@ -306,7 +302,7 @@ class ExpressionsConverter(
 
         val operationToken = operationTokenName.getOperationSymbol()
         if (operationToken == EXCLEXCL) {
-            return argument.bangBangToWhen(null) { toFirExpression(it) }
+            return argument.bangBangToWhen(null) { getAsFirExpression(this, it) }
         }
 
         val conventionCallName = operationToken.toUnaryName()
@@ -317,7 +313,7 @@ class ExpressionsConverter(
                     argument,
                     callName = conventionCallName,
                     prefix = unaryExpression.tokenType == PREFIX_EXPRESSION
-                ) { toFirExpression() }
+                ) { getAsFirExpression(this) }
             }
             FirFunctionCallImpl(session, null).apply {
                 calleeReference = FirSimpleNamedReference(this@ExpressionsConverter.session, null, conventionCallName)
