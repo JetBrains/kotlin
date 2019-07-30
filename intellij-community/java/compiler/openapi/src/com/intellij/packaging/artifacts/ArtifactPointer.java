@@ -19,7 +19,11 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * @author nik
+ * Represents a reliable and efficient reference to (probably non-existing) artifact by its name. If you have a part of a project configuration
+ * which refers to a artifact by name, you can store an instance returned by {@link ArtifactPointerManager#createPointer(String)} instead of
+ * storing the artifact name. This allows you to get a Artifact instance via {@link #getArtifact()} which is more efficient than
+ * {@link ArtifactManager#findArtifact(String)}, and {@link #getArtifactName()}  artifact name} encapsulated inside the instance will be properly
+ * updated if the artifact it refers to is renamed.
  */
 public interface ArtifactPointer {
 
