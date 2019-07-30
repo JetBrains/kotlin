@@ -1385,7 +1385,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.mapTo(destinat
 }
 
 /**
- * Returns a lazy [Iterable] of [IndexedValue] for each element of the original collection.
+ * Returns a lazy [Iterable] that wraps each element of the original collection
+ * into an [IndexedValue] containing the index of that element and the element itself.
  */
 public fun <T> Iterable<T>.withIndex(): Iterable<IndexedValue<T>> {
     return IndexingIterable { iterator() }
