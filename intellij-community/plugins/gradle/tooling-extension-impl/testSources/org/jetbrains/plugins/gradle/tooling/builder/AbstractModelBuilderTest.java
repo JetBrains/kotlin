@@ -15,7 +15,9 @@
  */
 package org.jetbrains.plugins.gradle.tooling.builder;
 
+import com.amazon.ion.IonType;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.SystemInfoRt;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.io.StreamUtil;
 import com.intellij.testFramework.IdeaTestUtil;
@@ -23,6 +25,7 @@ import com.intellij.testFramework.UsefulTestCase;
 import com.intellij.util.Function;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.lang.JavaVersion;
+import gnu.trove.THash;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
 import org.gradle.tooling.BuildActionExecuter;
@@ -193,7 +196,13 @@ public abstract class AbstractModelBuilderTest {
       // gradle-tooling-extension-impl jar
       ModelBuildScriptClasspathBuilderImpl.class,
       Multimap.class,
-      ShortTypeHandling.class
+      ShortTypeHandling.class,
+      // trove4j jar
+      THash.class,
+      // ion-java jar
+      IonType.class,
+      // util-rt jat
+      SystemInfoRt.class // !!! do not replace it with SystemInfo.class from util module
     );
 
     ContainerUtil.addAllNotNull(classes, doGetToolingExtensionClasses());
