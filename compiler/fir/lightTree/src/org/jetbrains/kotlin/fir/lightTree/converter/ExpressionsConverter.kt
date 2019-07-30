@@ -20,13 +20,6 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.labels.FirLabelImpl
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringWithoutBacktick
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.converter.utils.generateDestructuringBlock
-import org.jetbrains.kotlin.fir.lightTree.converter.utils.getOperationSymbol
-import org.jetbrains.kotlin.fir.lightTree.converter.utils.qualifiedAccessTokens
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -66,7 +59,8 @@ class ExpressionsConverter(
             return when (expression.tokenType) {
                 LAMBDA_EXPRESSION -> {
                     val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
-                    ExpressionsConverter(session, stubMode, lambdaTree, declarationsConverter, context).convertLambdaExpression(lambdaTree.root)
+                    ExpressionsConverter(session, stubMode, lambdaTree, declarationsConverter, context)
+                        .convertLambdaExpression(lambdaTree.root)
                 }
                 BINARY_EXPRESSION -> convertBinaryExpression(expression)
                 BINARY_WITH_TYPE -> convertBinaryWithType(expression)

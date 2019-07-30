@@ -18,8 +18,6 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
 import org.jetbrains.kotlin.name.Name
 
 open class BaseConverter(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -32,15 +33,15 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(callableId: CallableId): FirProperty {
+    fun toFirProperty(session: FirSession, callableId: CallableId): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
-            type = FirErrorTypeRefImpl(this.firValueParameter.session, null, "Incomplete code")
+            type = FirErrorTypeRefImpl(session, null, "Incomplete code")
         }
 
         return FirMemberPropertyImpl(
-            this.firValueParameter.session,
+            session,
             null,
             FirPropertySymbol(callableId),
             name,
@@ -54,14 +55,14 @@ class ValueParameter(
             receiverTypeRef = null,
             returnTypeRef = type,
             isVar = this.isVar,
-            initializer = FirQualifiedAccessExpressionImpl(this.firValueParameter.session, null).apply {
+            initializer = FirQualifiedAccessExpressionImpl(session, null).apply {
                 calleeReference = FirPropertyFromParameterCallableReference(
-                    this@ValueParameter.firValueParameter.session, null, name, this@ValueParameter.firValueParameter.symbol
+                    session, null, name, this@ValueParameter.firValueParameter.symbol
                 )
             },
-            getter = FirDefaultPropertyGetter(this.firValueParameter.session, null, type, modifiers.getVisibility()),
+            getter = FirDefaultPropertyGetter(session, null, type, modifiers.getVisibility()),
             setter = if (this.isVar) FirDefaultPropertySetter(
-                this.firValueParameter.session,
+                session,
                 null,
                 type,
                 modifiers.getVisibility()
