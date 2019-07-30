@@ -166,7 +166,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
 
   @NotNull
   @Override
-  protected StatusBarWidget createInstance(Project project) {
+  protected StatusBarWidget createInstance(@NotNull Project project) {
     return new CodeStyleStatusBarWidget(project);
   }
 
