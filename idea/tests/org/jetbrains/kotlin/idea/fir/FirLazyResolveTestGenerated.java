@@ -29,9 +29,24 @@ public class FirLazyResolveTestGenerated extends AbstractFirLazyResolveTest {
         KotlinTestUtils.assertAllTestsPresentInSingleGeneratedClass(this.getClass(), new File("idea/testData/fir/lazyResolve"), Pattern.compile("^(.+)\\.test$"), TargetBackend.ANY);
     }
 
+    @TestMetadata("inInit/inInit.test")
+    public void testInInit_InInit() throws Exception {
+        runTest("idea/testData/fir/lazyResolve/inInit/inInit.test");
+    }
+
     @TestMetadata("inLocal/inLocal.test")
     public void testInLocal_InLocal() throws Exception {
         runTest("idea/testData/fir/lazyResolve/inLocal/inLocal.test");
+    }
+
+    @TestMetadata("inSecondary/inSecondary.test")
+    public void testInSecondary_InSecondary() throws Exception {
+        runTest("idea/testData/fir/lazyResolve/inSecondary/inSecondary.test");
+    }
+
+    @TestMetadata("secondary/secondary.test")
+    public void testSecondary_Secondary() throws Exception {
+        runTest("idea/testData/fir/lazyResolve/secondary/secondary.test");
     }
 
     @TestMetadata("simple/simple.test")

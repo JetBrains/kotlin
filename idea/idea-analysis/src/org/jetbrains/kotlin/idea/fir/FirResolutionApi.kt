@@ -51,7 +51,7 @@ private fun FirFile.findCallableMember(
             ProcessorAction.NEXT
         }
     }
-    if (callableMember is KtNamedFunction) {
+    if (callableMember is KtNamedFunction || callableMember is KtConstructor<*>) {
         memberScope.processFunctionsByName(declName, processor)
     } else {
         memberScope.processPropertiesByName(declName, processor)
