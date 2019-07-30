@@ -703,7 +703,7 @@ class ExpressionsConverter(
         }
 
         //TODO psi must be null
-        return FirBlockImpl(session, KtForExpression(PsiForStatementImpl())).apply {
+        return FirBlockImpl(session, null).apply {
             val rangeVal =
                 generateTemporaryVariable(this@ExpressionsConverter.session, null, Name.special("<range>"), rangeExpression)
             statements += rangeVal
