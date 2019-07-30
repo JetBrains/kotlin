@@ -128,6 +128,8 @@ tasks.withType<Test> {
 
     useAndroidSdk()
 
+    maxHeapSize = "512m"
+
     testLogging {
         // set options for log level LIFECYCLE
         events("passed", "skipped", "failed", "standardOut")
