@@ -1,46 +1,46 @@
 FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
   CLASS INTERFACE name:I1 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I1
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS INTERFACE name:I2 modality:ABSTRACT visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2 
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.I2
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:component1 visibility:public modality:FINAL <> ($receiver:<root>.I1) returnType:kotlin.Int 
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.I1 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:component1 visibility:public modality:FINAL <> ($receiver:<root>.I1) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.I1
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=1
-  FUN name:component2 visibility:public modality:FINAL <> ($receiver:<root>.I2) returnType:kotlin.String 
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.I2 
+  FUN name:component2 visibility:public modality:FINAL <> ($receiver:<root>.I2) returnType:kotlin.String
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.I2
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String declared in <root>'
         CONST String type=kotlin.String value=""
-  FUN name:test visibility:public modality:FINAL <> (x:<root>.I1) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:x index:0 type:<root>.I1 
+  FUN name:test visibility:public modality:FINAL <> (x:<root>.I1) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:<root>.I1
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -49,12 +49,12 @@ FILE fqName:<root> fileName:/smartCastsWithDestructuring.kt
           then: RETURN type=kotlin.Nothing from='public final fun test (x: <root>.I1): kotlin.Unit declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:<root>.I1 [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:<root>.I1 [val]
           GET_VAR 'x: <root>.I1 declared in <root>.test' type=<root>.I1 origin=null
-        VAR name:c1 type:kotlin.Int [val] 
+        VAR name:c1 type:kotlin.Int [val]
           CALL 'public final fun component1 (): kotlin.Int declared in <root>' type=kotlin.Int origin=COMPONENT_N(index=1)
             $receiver: GET_VAR 'val tmp0_container: <root>.I1 [val] declared in <root>.test' type=<root>.I1 origin=null
-        VAR name:c2 type:kotlin.String [val] 
+        VAR name:c2 type:kotlin.String [val]
           CALL 'public final fun component2 (): kotlin.String declared in <root>' type=kotlin.String origin=COMPONENT_N(index=2)
             $receiver: TYPE_OP type=<root>.I2 origin=IMPLICIT_CAST typeOperand=<root>.I2
               GET_VAR 'val tmp0_container: <root>.I1 [val] declared in <root>.test' type=<root>.I1 origin=null

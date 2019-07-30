@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/typeArguments.kt
-  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
+  FUN name:test1 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (x: kotlin.Any): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND

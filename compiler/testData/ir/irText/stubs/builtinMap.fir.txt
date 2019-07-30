@@ -20,8 +20,8 @@ FILE fqName:<root> fileName:/builtinMap.kt
                 <class: V>: <none>
                 <anonymous Java parameter>: ERROR_CALL 'Unresolved reference: this#' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
               block: FUN_EXPR type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
-                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit 
-                  VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> 
+                FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit
+                  VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>
                   BLOCK_BODY
                     ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [java/util/HashMap.put]>#' type=IrErrorType
                       ERROR_CALL 'No getter found for R|kotlin/Pair.first|' type=A of kotlin.Pair

@@ -1,56 +1,55 @@
 FILE fqName:<root> fileName:/extensionProperties.kt
-  PROPERTY name:test1 visibility:public modality:FINAL [val] 
+  PROPERTY name:test1 visibility:public modality:FINAL [val]
     FUN name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val] 
+      correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=42
-  PROPERTY name:test2 visibility:public modality:FINAL [var] 
+  PROPERTY name:test2 visibility:public modality:FINAL [var]
     FUN name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Int
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=42
     FUN name:<set-test2> visibility:public modality:FINAL <> (value:kotlin.Int) returnType:kotlin.Unit
-      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var] 
+      correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host 
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    PROPERTY name:test3 visibility:public modality:FINAL [val] 
+    PROPERTY name:test3 visibility:public modality:FINAL [val]
       FUN name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val] 
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+        correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
-    PROPERTY name:test4 visibility:public modality:FINAL [var] 
+    PROPERTY name:test4 visibility:public modality:FINAL [var]
       FUN name:<get-test4> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.Int
-        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in <root>.Host'
             CONST Int type=kotlin.Int value=42
       FUN name:<set-test4> visibility:public modality:FINAL <> ($this:<root>.Host, value:kotlin.Int) returnType:kotlin.Unit
-        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var] 
-        $this: VALUE_PARAMETER name:<this> type:<root>.Host 
+        correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Host
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

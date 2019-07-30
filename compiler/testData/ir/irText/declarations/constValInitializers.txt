@@ -1,64 +1,64 @@
 FILE fqName:<root> fileName:/constValInitializers.kt
-  PROPERTY name:I0 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:I0 type:kotlin.Int visibility:public [final,static] 
+  PROPERTY name:I0 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:I0 type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I0> visibility:public modality:FINAL <> () returnType:kotlin.Int 
-      correspondingProperty: PROPERTY name:I0 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I0> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:I0 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-I0> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I0 type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
-  PROPERTY name:I1 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:I1 type:kotlin.Int visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I0 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:I1 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:I1 type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I1> visibility:public modality:FINAL <> () returnType:kotlin.Int 
-      correspondingProperty: PROPERTY name:I1 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I1> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:I1 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-I1> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I1 type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
-  PROPERTY name:I2 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:I2 type:kotlin.Int visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I1 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:I2 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:I2 type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=2
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I2> visibility:public modality:FINAL <> () returnType:kotlin.Int 
-      correspondingProperty: PROPERTY name:I2 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-I2> visibility:public modality:FINAL <> () returnType:kotlin.Int
+      correspondingProperty: PROPERTY name:I2 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-I2> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I2 type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
-  PROPERTY name:STR1 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:STR1 type:kotlin.String visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:I2 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+  PROPERTY name:STR1 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:STR1 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="String1"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR1> visibility:public modality:FINAL <> () returnType:kotlin.String 
-      correspondingProperty: PROPERTY name:STR1 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR1> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:STR1 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-STR1> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR1 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
-  PROPERTY name:STR2 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:STR2 type:kotlin.String visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR1 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+  PROPERTY name:STR2 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:STR2 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="String2"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR2> visibility:public modality:FINAL <> () returnType:kotlin.String 
-      correspondingProperty: PROPERTY name:STR2 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR2> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:STR2 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-STR2> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR2 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
-  PROPERTY name:STR3 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:STR3 type:kotlin.String visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR2 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+  PROPERTY name:STR3 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:STR3 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="String1String2"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR3> visibility:public modality:FINAL <> () returnType:kotlin.String 
-      correspondingProperty: PROPERTY name:STR3 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR3> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:STR3 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-STR3> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR3 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
-  PROPERTY name:STR4 visibility:public modality:FINAL [const,val] 
-    FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:public [final,static] 
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR3 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+  PROPERTY name:STR4 visibility:public modality:FINAL [const,val]
+    FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:public [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="String1String2"
-    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR4> visibility:public modality:FINAL <> () returnType:kotlin.String 
-      correspondingProperty: PROPERTY name:STR4 visibility:public modality:FINAL [const,val] 
+    FUN DEFAULT_PROPERTY_ACCESSOR name:<get-STR4> visibility:public modality:FINAL <> () returnType:kotlin.String
+      correspondingProperty: PROPERTY name:STR4 visibility:public modality:FINAL [const,val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-STR4> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:public [final,static] ' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:STR4 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null

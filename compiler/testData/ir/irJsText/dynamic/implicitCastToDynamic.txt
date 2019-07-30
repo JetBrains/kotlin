@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
       correspondingProperty: PROPERTY name:d1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-d1> (): dynamic declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d1 type:dynamic visibility:public [final,static] ' type=dynamic origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d1 type:dynamic visibility:public [final,static]' type=dynamic origin=null
   PROPERTY name:p visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static]
       EXPRESSION_BODY
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static] ' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
   PROPERTY name:d2 visibility:public modality:FINAL [var]
     FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:public [static]
       EXPRESSION_BODY
@@ -25,12 +25,12 @@ FILE fqName:<root> fileName:/implicitCastToDynamic.kt
       correspondingProperty: PROPERTY name:d2 visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-d2> (): dynamic declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:public [static] ' type=dynamic origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:public [static]' type=dynamic origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-d2> visibility:public modality:FINAL <> (<set-?>:dynamic) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:d2 visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:dynamic
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:public [static] ' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d2 type:dynamic visibility:public [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: dynamic declared in <root>.<set-d2>' type=dynamic origin=null
   FUN name:withDynamic visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
     VALUE_PARAMETER name:d index:0 type:dynamic

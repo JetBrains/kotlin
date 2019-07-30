@@ -89,11 +89,11 @@ FILE fqName:<root> fileName:/intersectionType2_NI.kt
           fn: FUN_EXPR type=kotlin.Function0<kotlin.Any> origin=LAMBDA
             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any
               BLOCK_BODY
-                VAR name:mm type:<root>.B [val] 
+                VAR name:mm type:<root>.B [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.B' type=<root>.B origin=null
                 VAR name:nn type:<root>.C [val]
                   CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.C' type=<root>.C origin=null
-                VAR name:c type:kotlin.Any [val] 
+                VAR name:c type:kotlin.Any [val]
                   WHEN type=kotlin.Any origin=IF
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true

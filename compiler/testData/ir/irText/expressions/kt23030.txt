@@ -1,13 +1,13 @@
 FILE fqName:<root> fileName:/kt23030.kt
-  FUN name:compareTo visibility:public modality:FINAL <> ($receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int 
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int 
-    VALUE_PARAMETER name:c index:0 type:kotlin.Char 
+  FUN name:compareTo visibility:public modality:FINAL <> ($receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+    VALUE_PARAMETER name:c index:0 type:kotlin.Char
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>'
         CONST Int type=kotlin.Int value=0
-  FUN name:testOverloadedCompareToCall visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Char) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Int 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Char 
+  FUN name:testOverloadedCompareToCall visibility:public modality:FINAL <> (x:kotlin.Int, y:kotlin.Char) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    VALUE_PARAMETER name:y index:1 type:kotlin.Char
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testOverloadedCompareToCall (x: kotlin.Int, y: kotlin.Char): kotlin.Boolean declared in <root>'
         CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
@@ -15,9 +15,9 @@ FILE fqName:<root> fileName:/kt23030.kt
             $receiver: GET_VAR 'x: kotlin.Int declared in <root>.testOverloadedCompareToCall' type=kotlin.Int origin=null
             c: GET_VAR 'y: kotlin.Char declared in <root>.testOverloadedCompareToCall' type=kotlin.Char origin=null
           arg1: CONST Int type=kotlin.Int value=0
-  FUN name:testOverloadedCompareToCallWithSmartCast visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any 
+  FUN name:testOverloadedCompareToCallWithSmartCast visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testOverloadedCompareToCallWithSmartCast (x: kotlin.Any, y: kotlin.Any): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -41,9 +41,9 @@ FILE fqName:<root> fileName:/kt23030.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testEqualsWithSmartCast visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Any 
+  FUN name:testEqualsWithSmartCast visibility:public modality:FINAL <> (x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testEqualsWithSmartCast (x: kotlin.Any, y: kotlin.Any): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -64,22 +64,22 @@ FILE fqName:<root> fileName:/kt23030.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
   CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C 
-    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C
+    CONSTRUCTOR visibility:public <> () returnType:<root>.C [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:compareTo visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER name:<this> type:<root>.C 
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int 
-      VALUE_PARAMETER name:c index:0 type:kotlin.Char 
+    FUN name:compareTo visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int, c:kotlin.Char) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
+      VALUE_PARAMETER name:c index:0 type:kotlin.Char
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun compareTo (c: kotlin.Char): kotlin.Int declared in <root>.C'
           CONST Int type=kotlin.Int value=0
-    FUN name:testMemberExtensionCompareToCall visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Int, y:kotlin.Char) returnType:kotlin.Boolean 
-      $this: VALUE_PARAMETER name:<this> type:<root>.C 
-      VALUE_PARAMETER name:x index:0 type:kotlin.Int 
-      VALUE_PARAMETER name:y index:1 type:kotlin.Char 
+    FUN name:testMemberExtensionCompareToCall visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Int, y:kotlin.Char) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+      VALUE_PARAMETER name:y index:1 type:kotlin.Char
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun testMemberExtensionCompareToCall (x: kotlin.Int, y: kotlin.Char): kotlin.Boolean declared in <root>.C'
           CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
@@ -88,10 +88,10 @@ FILE fqName:<root> fileName:/kt23030.kt
               $receiver: GET_VAR 'x: kotlin.Int declared in <root>.C.testMemberExtensionCompareToCall' type=kotlin.Int origin=null
               c: GET_VAR 'y: kotlin.Char declared in <root>.C.testMemberExtensionCompareToCall' type=kotlin.Char origin=null
             arg1: CONST Int type=kotlin.Int value=0
-    FUN name:testMemberExtensionCompareToCallWithSmartCast visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean 
-      $this: VALUE_PARAMETER name:<this> type:<root>.C 
-      VALUE_PARAMETER name:x index:0 type:kotlin.Any 
-      VALUE_PARAMETER name:y index:1 type:kotlin.Any 
+    FUN name:testMemberExtensionCompareToCallWithSmartCast visibility:public modality:FINAL <> ($this:<root>.C, x:kotlin.Any, y:kotlin.Any) returnType:kotlin.Boolean
+      $this: VALUE_PARAMETER name:<this> type:<root>.C
+      VALUE_PARAMETER name:x index:0 type:kotlin.Any
+      VALUE_PARAMETER name:y index:1 type:kotlin.Any
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun testMemberExtensionCompareToCallWithSmartCast (x: kotlin.Any, y: kotlin.Any): kotlin.Boolean declared in <root>.C'
           WHEN type=kotlin.Boolean origin=ANDAND
@@ -116,16 +116,16 @@ FILE fqName:<root> fileName:/kt23030.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CONST Boolean type=kotlin.Boolean value=false
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

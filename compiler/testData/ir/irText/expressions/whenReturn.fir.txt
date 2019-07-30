@@ -1,9 +1,9 @@
 FILE fqName:<root> fileName:/whenReturn.kt
-  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String 
-    VALUE_PARAMETER name:grade index:0 type:kotlin.String 
+  FUN name:toString visibility:public modality:FINAL <> (grade:kotlin.String) returnType:kotlin.String
+    VALUE_PARAMETER name:grade index:0 type:kotlin.String
     BLOCK_BODY
       BLOCK type=kotlin.String origin=WHEN
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_subject type:kotlin.String [val]
         WHEN type=kotlin.String origin=WHEN
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -35,4 +35,3 @@ FILE fqName:<root> fileName:/whenReturn.kt
               CONST String type=kotlin.String value="Failure"
       RETURN type=kotlin.Nothing from='public final fun toString (grade: kotlin.String): kotlin.String declared in <root>'
         CONST String type=kotlin.String value="???"
-

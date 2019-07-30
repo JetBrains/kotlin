@@ -1,9 +1,9 @@
 @0:0..19:14 FILE fqName:test fileName:/topLevelFuns.kt
-  @3:0..14 FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  @3:0..14 FUN name:test0 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @3:12..14 BLOCK_BODY
-  @9:0..14 FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  @9:0..14 FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @9:12..14 BLOCK_BODY
-  @15:0..14 FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  @15:0..14 FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     @15:12..14 BLOCK_BODY
-  @19:0..14 FUN name:test3 visibility:private modality:FINAL <> () returnType:kotlin.Unit 
+  @19:0..14 FUN name:test3 visibility:private modality:FINAL <> () returnType:kotlin.Unit
     @19:12..14 BLOCK_BODY

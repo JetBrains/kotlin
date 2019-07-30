@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/whenElse.kt
-  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int 
+  FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=WHEN

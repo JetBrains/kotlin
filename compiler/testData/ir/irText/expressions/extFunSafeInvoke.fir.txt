@@ -1,10 +1,9 @@
 FILE fqName:<root> fileName:/extFunSafeInvoke.kt
-  FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>) returnType:IrErrorType 
-    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any? 
-    VALUE_PARAMETER name:fn index:1 type:kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit> 
+  FUN name:test visibility:public modality:FINAL <> (receiver:kotlin.Any?, fn:kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>) returnType:IrErrorType
+    VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
+    VALUE_PARAMETER name:fn index:1 type:kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test (receiver: kotlin.Any?, fn: kotlin.Function3<kotlin.Any, kotlin.Int, kotlin.String, kotlin.Unit>): IrErrorType declared in <root>'
         ERROR_CALL 'Unresolved reference: <Unresolved name: fn>#' type=IrErrorType
           CONST Int type=kotlin.Int value=42
           CONST String type=kotlin.String value="Hello"
-

@@ -1,54 +1,54 @@
 FILE fqName:<root> fileName:/fun.kt
-  FUN name:test1 visibility:public modality:FINAL <T> (i:kotlin.Int, j:T of <root>.test1) returnType:kotlin.Unit 
+  FUN name:test1 visibility:public modality:FINAL <T> (i:kotlin.Int, j:T of <root>.test1) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int 
-    VALUE_PARAMETER name:j index:1 type:T of <root>.test1 
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    VALUE_PARAMETER name:j index:1 type:T of <root>.test1
     BLOCK_BODY
-  FUN name:test2 visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int 
+  FUN name:test2 visibility:public modality:FINAL <> (i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=0
-    VALUE_PARAMETER name:j index:1 type:kotlin.String 
+    VALUE_PARAMETER name:j index:1 type:kotlin.String
       EXPRESSION_BODY
         CONST String type=kotlin.String value=""
     BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg] 
+  FUN name:test3 visibility:public modality:FINAL <> (args:kotlin.Array<out kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:args index:0 type:kotlin.Array<out kotlin.String> varargElementType:kotlin.String [vararg]
     BLOCK_BODY
-  FUN name:textExt1 visibility:public modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
-    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
-    VALUE_PARAMETER name:i index:0 type:kotlin.Int 
-    VALUE_PARAMETER name:j index:1 type:kotlin.String 
+  FUN name:textExt1 visibility:public modality:FINAL <> ($receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+    VALUE_PARAMETER name:i index:0 type:kotlin.Int
+    VALUE_PARAMETER name:j index:1 type:kotlin.String
     BLOCK_BODY
   CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host 
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Host
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Host [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Host modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:testMembetExt1 visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit 
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host 
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
-      VALUE_PARAMETER name:i index:0 type:kotlin.Int 
-      VALUE_PARAMETER name:j index:1 type:kotlin.String 
+    FUN name:testMembetExt1 visibility:public modality:FINAL <> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:kotlin.String) returnType:kotlin.Unit
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
+      VALUE_PARAMETER name:j index:1 type:kotlin.String
       BLOCK_BODY
-    FUN name:testMembetExt2 visibility:public modality:FINAL <T> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:T of <root>.Host.testMembetExt2) returnType:kotlin.Unit 
+    FUN name:testMembetExt2 visibility:public modality:FINAL <T> ($this:<root>.Host, $receiver:kotlin.String, i:kotlin.Int, j:T of <root>.Host.testMembetExt2) returnType:kotlin.Unit
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
-      $this: VALUE_PARAMETER name:<this> type:<root>.Host 
-      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String 
-      VALUE_PARAMETER name:i index:0 type:kotlin.Int 
-      VALUE_PARAMETER name:j index:1 type:T of <root>.Host.testMembetExt2 
+      $this: VALUE_PARAMETER name:<this> type:<root>.Host
+      $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
+      VALUE_PARAMETER name:i index:0 type:kotlin.Int
+      VALUE_PARAMETER name:j index:1 type:T of <root>.Host.testMembetExt2
       BLOCK_BODY
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

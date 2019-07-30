@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/dynamicWithSmartCast.kt
-  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (d: dynamic): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF
@@ -13,8 +13,8 @@ FILE fqName:<root> fileName:/dynamicWithSmartCast.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Int type=kotlin.Int value=-1
-  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (d: dynamic): kotlin.Int declared in <root>'
         WHEN type=kotlin.Int origin=IF

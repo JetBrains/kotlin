@@ -1,26 +1,25 @@
 FILE fqName:<root> fileName:/stringComparisons.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/String' type=kotlin.Boolean
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/String' type=kotlin.Boolean
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/String' type=kotlin.Boolean
-  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.String 
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.String) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test4 (a: kotlin.String, b: kotlin.String): kotlin.Boolean declared in <root>'
         ERROR_CALL 'Comparison of arguments with unsupported type: kotlin/String' type=kotlin.Boolean
-

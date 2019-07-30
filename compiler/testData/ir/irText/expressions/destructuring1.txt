@@ -1,65 +1,65 @@
 FILE fqName:<root> fileName:/destructuring1.kt
   CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A 
-    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.A
+    CONSTRUCTOR visibility:private <> () returnType:<root>.A [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B 
-    CONSTRUCTOR visibility:private <> () returnType:<root>.B [primary] 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.B
+    CONSTRUCTOR visibility:private <> () returnType:<root>.B [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:B modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER name:<this> type:<root>.B 
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.A 
+    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=1
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int 
-      $this: VALUE_PARAMETER name:<this> type:<root>.B 
-      $receiver: VALUE_PARAMETER name:<this> type:<root>.A 
+    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.B, $receiver:<root>.A) returnType:kotlin.Int
+      $this: VALUE_PARAMETER name:<this> type:<root>.B
+      $receiver: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int declared in <root>.B'
           CONST Int type=kotlin.Int value=2
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.B) returnType:kotlin.Unit 
-    $receiver: VALUE_PARAMETER name:<this> type:<root>.B 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test visibility:public modality:FINAL <> ($receiver:<root>.B) returnType:kotlin.Unit
+    $receiver: VALUE_PARAMETER name:<this> type:<root>.B
     BLOCK_BODY
       COMPOSITE type=kotlin.Unit origin=DESTRUCTURING_DECLARATION
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:<root>.A [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_container type:<root>.A [val]
           GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
-        VAR name:x type:kotlin.Int [val] 
+        VAR name:x type:kotlin.Int [val]
           CALL 'public final fun component1 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=1)
             $this: GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=null
             $receiver: GET_VAR 'val tmp0_container: <root>.A [val] declared in <root>.test' type=<root>.A origin=null
-        VAR name:y type:kotlin.Int [val] 
+        VAR name:y type:kotlin.Int [val]
           CALL 'public final fun component2 (): kotlin.Int declared in <root>.B' type=kotlin.Int origin=COMPONENT_N(index=2)
             $this: GET_VAR '<this>: <root>.B declared in <root>.test' type=<root>.B origin=null
             $receiver: GET_VAR 'val tmp0_container: <root>.A [val] declared in <root>.test' type=<root>.A origin=null

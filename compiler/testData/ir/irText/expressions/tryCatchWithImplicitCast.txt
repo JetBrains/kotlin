@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
-  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
+  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH
@@ -8,12 +8,12 @@ FILE fqName:<root> fileName:/tryCatchWithImplicitCast.kt
             GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testImplicitCast (a: kotlin.Any): kotlin.Unit declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
-      VAR name:t type:kotlin.String [val] 
+      VAR name:t type:kotlin.String [val]
         TRY type=kotlin.String
           try: BLOCK type=kotlin.String origin=null
             TYPE_OP type=kotlin.String origin=IMPLICIT_CAST typeOperand=kotlin.String
               GET_VAR 'a: kotlin.Any declared in <root>.testImplicitCast' type=kotlin.Any origin=null
           CATCH parameter=val e: kotlin.Throwable [val] declared in <root>.testImplicitCast
-            VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val] 
+            VAR CATCH_PARAMETER name:e type:kotlin.Throwable [val]
             BLOCK type=kotlin.String origin=null
               CONST String type=kotlin.String value=""

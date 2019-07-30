@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
-  FUN name:testAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:testAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       DYN_OP operator=PLUSEQ type=kotlin.Unit
         receiver: DYN_MEMBER memberName='m' type=dynamic
@@ -22,11 +22,11 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
         receiver: DYN_MEMBER memberName='m' type=dynamic
           GET_VAR 'd: dynamic declared in <root>.testAugmentedMemberAssignment' type=dynamic origin=null
         0: CONST String type=kotlin.String value="%="
-  FUN name:testSafeAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:testSafeAugmentedMemberAssignment visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Unit
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:dynamic [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:dynamic [val]
           GET_VAR 'd: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
                 GET_VAR 'val tmp0_safe_receiver: dynamic [val] declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
               0: CONST String type=kotlin.String value="+="
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:dynamic [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp1_safe_receiver type:dynamic [val]
           GET_VAR 'd: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
                 GET_VAR 'val tmp1_safe_receiver: dynamic [val] declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
               0: CONST String type=kotlin.String value="-="
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:dynamic [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp2_safe_receiver type:dynamic [val]
           GET_VAR 'd: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
                 GET_VAR 'val tmp2_safe_receiver: dynamic [val] declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
               0: CONST String type=kotlin.String value="*="
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:dynamic [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp3_safe_receiver type:dynamic [val]
           GET_VAR 'd: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/dynamicMemberAugmentedAssignment.kt
                 GET_VAR 'val tmp3_safe_receiver: dynamic [val] declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
               0: CONST String type=kotlin.String value="/="
       BLOCK type=kotlin.Unit origin=SAFE_CALL
-        VAR IR_TEMPORARY_VARIABLE name:tmp4_safe_receiver type:dynamic [val] 
+        VAR IR_TEMPORARY_VARIABLE name:tmp4_safe_receiver type:dynamic [val]
           GET_VAR 'd: dynamic declared in <root>.testSafeAugmentedMemberAssignment' type=dynamic origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
