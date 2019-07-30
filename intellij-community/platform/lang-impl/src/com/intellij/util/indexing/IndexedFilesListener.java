@@ -23,7 +23,6 @@ import com.intellij.openapi.vfs.newvfs.ManagingFS;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
 import com.intellij.openapi.vfs.newvfs.events.*;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.List;
@@ -31,12 +30,10 @@ import java.util.List;
 public abstract class IndexedFilesListener implements AsyncFileListener {
   private final ManagingFS myManagingFS = ManagingFS.getInstance();
   private final VfsEventsMerger myEventMerger = new VfsEventsMerger();
-  @Nullable private final VirtualFile myConfig;
-  @Nullable private final VirtualFile myLog;
 
-  public IndexedFilesListener() {
-    myConfig = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getConfigPath()));
-    myLog = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getLogPath()));
+  private static class ConfigHolder {
+    private static final VirtualFile myConfig = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getConfigPath()));
+    private static final VirtualFile myLog = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getLogPath()));
   }
 
   protected VfsEventsMerger getEventMerger() {
@@ -153,8 +150,8 @@ public abstract class IndexedFilesListener implements AsyncFileListener {
     }
   }
 
-  private boolean isUnderConfigOrSystem(@NotNull VirtualFile file) {
-    return myConfig != null && VfsUtilCore.isAncestor(myConfig, file, false) ||
-           myLog != null && VfsUtilCore.isAncestor(myLog, file, false);
+  private static boolean isUnderConfigOrSystem(@NotNull VirtualFile file) {
+    return ConfigHolder.myConfig != null && VfsUtilCore.isAncestor(ConfigHolder.myConfig, file, false) ||
+           ConfigHolder.myLog != null && VfsUtilCore.isAncestor(ConfigHolder.myLog, file, false);
   }
 }
