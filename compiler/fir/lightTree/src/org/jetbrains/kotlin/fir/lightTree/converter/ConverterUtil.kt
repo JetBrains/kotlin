@@ -62,10 +62,6 @@ object ConverterUtil {
         return this.toString().replace("`", "")
     }
 
-    fun LighterASTNode.getAsString(): String {
-        return this.toString()
-    }
-
     fun LighterASTNode.isExpression(): Boolean {
         return when (this.tokenType) {
             is KtNodeType,
@@ -73,59 +69,6 @@ object ConverterUtil {
             is KtStringTemplateExpressionElementType,
             in expressionSet -> true
             else -> false
-        }
-    }
-
-    fun toDelegatedSelfType(firClass: FirRegularClass): FirTypeRef {
-        val typeParameters = firClass.typeParameters.map {
-            FirTypeParameterImpl(firClass.session, it.psi, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
-                this.bounds += it.bounds
-            }
-        }
-        return FirResolvedTypeRefImpl(
-            firClass.session,
-            null,
-            ConeClassTypeImpl(
-                firClass.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
-                false
-            )
-        )
-    }
-
-    fun FirExpression.toReturn(labelName: String? = null): FirReturnExpression {
-        return FirReturnExpressionImpl(
-            session,
-            null,
-            this
-        ).apply {
-            target = FirFunctionTarget(labelName)
-            val lastFunction = FunctionUtil.firFunctions.lastOrNull()
-            if (labelName == null) {
-                if (lastFunction != null) {
-                    target.bind(lastFunction)
-                } else {
-                    target.bind(FirErrorFunction(session, psi, "Cannot bind unlabeled return to a function"))
-                }
-            } else {
-                for (firFunction in FunctionUtil.firFunctions.asReversed()) {
-                    when (firFunction) {
-                        is FirAnonymousFunction -> {
-                            if (firFunction.label?.name == labelName) {
-                                target.bind(firFunction)
-                                return@apply
-                            }
-                        }
-                        is FirNamedFunction -> {
-                            if (firFunction.name.asString() == labelName) {
-                                target.bind(firFunction)
-                                return@apply
-                            }
-                        }
-                    }
-                }
-                target.bind(FirErrorFunction(session, psi, "Cannot bind label $labelName to a function"))
-            }
         }
     }
 
@@ -139,13 +82,6 @@ object ConverterUtil {
                 }
             }
         }
-    }
-
-    fun typeParametersFromSelfType(delegatedSelfTypeRef: FirTypeRef): List<FirTypeParameter> {
-        return delegatedSelfTypeRef.coneTypeSafe<ConeKotlinType>()
-            ?.typeArguments
-            ?.map { ((it as ConeTypeParameterType).lookupTag.symbol as FirTypeParameterSymbol).fir }
-            ?: emptyList()
     }
 
     fun <T : FirCallWithArgumentList> T.extractArgumentsFrom(container: List<FirExpression>, stubMode: Boolean): T {
@@ -176,152 +112,3 @@ object ConverterUtil {
         return false
     }
 }
-
-object ClassNameUtil {
-    lateinit var packageFqName: FqName
-
-    inline fun <T> withChildClassName(name: Name, l: () -> T): T {
-        className = className.child(name)
-        val t = l()
-        className = className.parent()
-        return t
-    }
-
-    val currentClassId
-        get() = ClassId(
-            packageFqName,
-            className, false
-        )
-
-    fun callableIdForName(name: Name, local: Boolean = false) =
-        when {
-            local -> CallableId(name)
-            className == FqName.ROOT -> CallableId(packageFqName, name)
-            else -> CallableId(
-                packageFqName,
-                className, name
-            )
-        }
-
-    fun callableIdForClassConstructor() =
-        if (className == FqName.ROOT) CallableId(packageFqName, Name.special("<anonymous-init>"))
-        else CallableId(
-            packageFqName,
-            className, className.shortName()
-        )
-
-    var className: FqName = FqName.ROOT
-}
-
-object FunctionUtil {
-    val firFunctions = mutableListOf<FirFunction>()
-    val firFunctionCalls = mutableListOf<FirFunctionCall>()
-    val firLabels = mutableListOf<FirLabel>()
-    val firLoops = mutableListOf<FirLoop>()
-
-    fun <T> MutableList<T>.removeLast() {
-        removeAt(size - 1)
-    }
-
-    fun <T> MutableList<T>.pop(): T? {
-        val result = lastOrNull()
-        if (result != null) {
-            removeAt(size - 1)
-        }
-        return result
-    }
-}
-
-object DataClassUtil {
-    fun generateComponentFunctions(
-        session: FirSession, firClass: FirClassImpl, properties: List<FirProperty>
-    ) {
-        var componentIndex = 1
-        for (property in properties) {
-            if (!property.isVal && !property.isVar) continue
-            val name = Name.identifier("component$componentIndex")
-            componentIndex++
-            val symbol = FirNamedFunctionSymbol(
-                CallableId(
-                    ClassNameUtil.packageFqName,
-                    ClassNameUtil.className,
-                    name
-                )
-            )
-            firClass.addDeclaration(
-                FirMemberFunctionImpl(
-                    session, null, symbol, name,
-                    Visibilities.PUBLIC, Modality.FINAL,
-                    isExpect = false, isActual = false,
-                    isOverride = false, isOperator = false,
-                    isInfix = false, isInline = false,
-                    isTailRec = false, isExternal = false,
-                    isSuspend = false, receiverTypeRef = null,
-                    returnTypeRef = FirImplicitTypeRefImpl(session, null)
-                ).apply {
-                    val componentFunction = this
-                    body = FirSingleExpressionBlock(
-                        session,
-                        FirReturnExpressionImpl(
-                            session, null,
-                            FirQualifiedAccessExpressionImpl(session, null).apply {
-                                val parameterName = property.name
-                                calleeReference = FirResolvedCallableReferenceImpl(
-                                    session, null,
-                                    parameterName, property.symbol
-                                )
-                            }
-                        ).apply {
-                            target = FirFunctionTarget(null)
-                            target.bind(componentFunction)
-                        }
-                    )
-                }
-            )
-        }
-    }
-
-    private val copyName = Name.identifier("copy")
-
-    fun generateCopyFunction(
-        session: FirSession, firClass: FirClassImpl,
-        firPrimaryConstructor: FirConstructor,
-        properties: List<FirProperty>
-    ) {
-        val symbol = FirNamedFunctionSymbol(
-            CallableId(
-                ClassNameUtil.packageFqName,
-                ClassNameUtil.className,
-                copyName
-            )
-        )
-        firClass.addDeclaration(
-            FirMemberFunctionImpl(
-                session, null, symbol, copyName,
-                Visibilities.PUBLIC, Modality.FINAL,
-                isExpect = false, isActual = false,
-                isOverride = false, isOperator = false,
-                isInfix = false, isInline = false,
-                isTailRec = false, isExternal = false,
-                isSuspend = false, receiverTypeRef = null,
-                returnTypeRef = firPrimaryConstructor.returnTypeRef//FirImplicitTypeRefImpl(session, this)
-            ).apply {
-                val copyFunction = this
-                for (property in properties) {
-                    val name = property.name
-                    valueParameters += FirValueParameterImpl(
-                        session, null, name,
-                        property.returnTypeRef,
-                        FirQualifiedAccessExpressionImpl(session, null).apply {
-                            calleeReference = FirResolvedCallableReferenceImpl(session, null, name, property.symbol)
-                        },
-                        isCrossinline = false, isNoinline = false, isVararg = false
-                    )
-                }
-
-                body = FirEmptyExpressionBlock(session)
-            }
-        )
-    }
-}
-

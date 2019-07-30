@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirMemberPropertyImpl
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirQualifiedAccessExpressionImpl
-import org.jetbrains.kotlin.fir.lightTree.converter.ClassNameUtil
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.references.FirPropertyFromParameterCallableReference
+import org.jetbrains.kotlin.fir.symbols.CallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
@@ -32,7 +32,7 @@ class ValueParameter(
         return isVal || isVar
     }
 
-    fun toFirProperty(): FirProperty {
+    fun toFirProperty(callableId: CallableId): FirProperty {
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
@@ -42,7 +42,7 @@ class ValueParameter(
         return FirMemberPropertyImpl(
             this.firValueParameter.session,
             null,
-            FirPropertySymbol(ClassNameUtil.callableIdForName(name)),
+            FirPropertySymbol(callableId),
             name,
             modifiers.getVisibility(),
             modifiers.getModality(),
