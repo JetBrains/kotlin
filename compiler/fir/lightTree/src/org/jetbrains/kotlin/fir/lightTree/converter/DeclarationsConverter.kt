@@ -22,12 +22,6 @@ import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.extractArgumentsFrom
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.getAsStringWithoutBacktick
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.joinTypeParameters
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
-import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isClassLocal
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
@@ -403,7 +397,7 @@ class DeclarationsConverter(
                 //parse properties
                 properties += primaryConstructorWrapper.valueParameters
                     .filter { it.hasValOrVar() }
-                    .map { it.toFirProperty(callableIdForName(it.firValueParameter.name)) }
+                    .map { it.toFirProperty(session, callableIdForName(it.firValueParameter.name)) }
                 firClass.addDeclarations(properties)
             }
 
