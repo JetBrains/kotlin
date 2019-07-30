@@ -7,7 +7,6 @@ import com.intellij.configurationStore.deserializeInto
 import com.intellij.configurationStore.serialize
 import com.intellij.lang.Language
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
@@ -71,8 +70,8 @@ class CollectorWithSettings<T : Any>(
 
   fun applyToEditor(
     editor: Editor,
-    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    existingHorizontalInlays: MarkList<Inlay<*>>,
+    existingVerticalInlays: MarkList<Inlay<*>>,
     isEnabled: Boolean
   ) {
     sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, isEnabled)

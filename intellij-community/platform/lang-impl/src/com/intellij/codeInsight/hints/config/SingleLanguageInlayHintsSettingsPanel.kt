@@ -9,6 +9,7 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -168,8 +169,8 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val model = editor.inlayModel
     val startOffset = file.textOffset
     val endOffset = file.textRange.endOffset
-    val existingHorizontalInlays = model.getInlineElementsInRange(startOffset, endOffset)
-    val existingVerticalInlays = model.getBlockElementsInRange(startOffset, endOffset)
+    val existingHorizontalInlays: MarkList<Inlay<*>> = MarkList(model.getInlineElementsInRange(startOffset, endOffset))
+    val existingVerticalInlays: MarkList<Inlay<*>> = MarkList(model.getBlockElementsInRange(startOffset, endOffset))
     collector.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, true)
   }
 

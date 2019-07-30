@@ -6,7 +6,6 @@ import com.intellij.codeInsight.hints.presentation.PresentationListener
 import com.intellij.codeInsight.hints.presentation.PresentationRenderer
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.EditorCustomElementRenderer
 import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.InlayModel
 import com.intellij.openapi.editor.ex.util.EditorScrollingPositionKeeper
@@ -84,8 +83,8 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
    * This method called every time, when it is required to update hints even for disabled providers.
    */
   fun applyToEditor(editor: Editor,
-                    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-                    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+                    existingHorizontalInlays: MarkList<Inlay<*>>,
+                    existingVerticalInlays: MarkList<Inlay<*>>,
                     isEnabled: Boolean) {
     val inlayModel = editor.inlayModel
     val isBulkChange = existingHorizontalInlays.size + hints.size() > BulkChangeThreshold
@@ -123,7 +122,7 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
                     presentationRenderer
                   )
                 } ?: return null
-    inlay.putUserData(INLAY_KEY, key)
+    putSettingsKey(inlay, key)
     presentation.addListener(InlayListener(inlay))
     return inlay
   }
@@ -136,18 +135,18 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
   }
 
   private fun updateOrDeleteExistingHints(
-    existingHorizontalInlays: List<Inlay<EditorCustomElementRenderer>>,
-    existingVerticalInlays: List<Inlay<EditorCustomElementRenderer>>,
+    existingHorizontalInlays: MarkList<Inlay<*>>,
+    existingVerticalInlays: MarkList<Inlay<*>>,
     isEnabled: Boolean
   ) {
     updateOrDeleteExistingHints(existingHorizontalInlays, true, isEnabled)
     updateOrDeleteExistingHints(existingVerticalInlays, false, isEnabled)
   }
 
-  private fun updateOrDeleteExistingHints(existingInlays: List<Inlay<EditorCustomElementRenderer>>, isInline: Boolean, isEnabled: Boolean) {
-    for (inlay in existingInlays) {
+  private fun updateOrDeleteExistingHints(existingInlays: MarkList<Inlay<*>>, isInline: Boolean, isEnabled: Boolean) {
+    existingInlays.iterateNonMarked { index, inlay ->
       val inlayKey = getSettingsKey(inlay)
-      if (inlayKey != key) continue
+      if (inlayKey != key) return@iterateNonMarked
       val offset = inlay.offset
       val hint = when (val hintsAtOffset = hints[offset]) {
         null -> null
@@ -170,12 +169,15 @@ class InlayHintsSinkImpl<T>(val key: SettingsKey<T>) : InlayHintsSink {
           newPresentation.fireUpdateEvent(previousPresentation.dimension())
         }
         hints.remove(offset)
+        existingInlays.mark(index)
       }
     }
   }
 
   companion object {
     fun getSettingsKey(inlay: Inlay<*>): SettingsKey<*>? = inlay.getUserData(INLAY_KEY)
+    fun putSettingsKey(inlay: Inlay<*>, settingsKey: SettingsKey<*>) = inlay.putUserData(INLAY_KEY, settingsKey)
+    fun isProvidersInlay(inlay: Inlay<*>): Boolean = getSettingsKey(inlay) != null
     private val INLAY_KEY: Key<SettingsKey<*>> = Key.create("INLAY_KEY")
     private const val BulkChangeThreshold = 1000
 
