@@ -10,6 +10,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.Inlay
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.psi.SyntaxTraverser
 import java.awt.Dimension
 import java.awt.Rectangle
 
@@ -75,6 +76,19 @@ class CollectorWithSettings<T : Any>(
     isEnabled: Boolean
   ) {
     sink.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, isEnabled)
+  }
+
+  fun collectTraversingAndApply(editor: Editor, file: PsiFile) {
+    val traverser = SyntaxTraverser.psiTraverser(file)
+    traverser.forEach {
+      collectHints(it, editor)
+    }
+    val model = editor.inlayModel
+    val startOffset = file.textOffset
+    val endOffset = file.textRange.endOffset
+    val existingHorizontalInlays: MarkList<Inlay<*>> = MarkList(model.getInlineElementsInRange(startOffset, endOffset))
+    val existingVerticalInlays: MarkList<Inlay<*>> = MarkList(model.getBlockElementsInRange(startOffset, endOffset))
+    applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, true)
   }
 }
 

@@ -9,7 +9,6 @@ import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.Editor
-import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -19,9 +18,7 @@ import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.fileTypes.FileTypes
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
-import com.intellij.psi.SyntaxTraverser
 import com.intellij.ui.CheckBoxList
 import com.intellij.ui.EditorTextField
 import com.intellij.ui.JBColor
@@ -163,20 +160,7 @@ internal class SingleLanguageInlayHintsSettingsPanel(
     val settingsWrapper = settingsWrappers.find { it.providerWithSettings.provider === provider.provider }!!
     val collector = settingsWrapper.providerWithSettings.getCollectorWrapperFor(file, editor, settingsWrapper.language)
                     ?: return
-    traverse(file) {
-      collector.collectHints(it, editor)
-    }
-    val model = editor.inlayModel
-    val startOffset = file.textOffset
-    val endOffset = file.textRange.endOffset
-    val existingHorizontalInlays: MarkList<Inlay<*>> = MarkList(model.getInlineElementsInRange(startOffset, endOffset))
-    val existingVerticalInlays: MarkList<Inlay<*>> = MarkList(model.getBlockElementsInRange(startOffset, endOffset))
-    collector.applyToEditor(editor, existingHorizontalInlays, existingVerticalInlays, true)
-  }
-
-  private fun traverse(root: PsiElement, action: (PsiElement) -> Unit) {
-    val traverser = SyntaxTraverser.psiTraverser(root)
-    traverser.forEach { action(it) }
+    collector.collectTraversingAndApply(editor, file)
   }
 
   private fun updateEditor(text: String?) {
