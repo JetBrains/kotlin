@@ -294,7 +294,7 @@ class KotlinGradleProjectResolverExtension : AbstractProjectResolverExtension() 
             val gradleSourceSets = ideModule.children.filter { it.data is GradleSourceSetData } as Collection<DataNode<GradleSourceSetData>>
             for (gradleSourceSetNode in gradleSourceSets) {
                 val propertiesForSourceSet =
-                    gradleModel.kotlinTaskProperties.filter { (k, v) -> gradleSourceSetNode.data.externalName == "$moduleNamePrefix:$k" }
+                    gradleModel.kotlinTaskProperties.filter { (k, v) -> gradleSourceSetNode.data.id == "$moduleNamePrefix:$k" }
                         .toList().singleOrNull()
                 gradleSourceSetNode.children.forEach { dataNode ->
                     val data = dataNode.data as?  ContentRootData
