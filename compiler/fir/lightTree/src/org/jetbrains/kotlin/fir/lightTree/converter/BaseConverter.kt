@@ -9,22 +9,74 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.BaseFirBuilder
+import org.jetbrains.kotlin.fir.builder.escapedStringToCharacter
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.isExpression
+import org.jetbrains.kotlin.fir.lightTree.converter.ConverterUtil.nameAsSafeName
+import org.jetbrains.kotlin.name.Name
 
 open class BaseConverter(
     session: FirSession,
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>
-) {
-    protected val implicitUnitType = FirImplicitUnitTypeRef(session, null)
-    protected val implicitAnyType = FirImplicitAnyTypeRef(session, null)
-    protected val implicitEnumType = FirImplicitEnumTypeRef(session, null)
-    protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
+) : BaseFirBuilder<LighterASTNode>(session) {
     protected val implicitType = FirImplicitTypeRefImpl(session, null)
+
+    override val LighterASTNode.elementType: IElementType
+        get() = this.tokenType
+
+    override val LighterASTNode.asText: String
+        get() = this.toString()
+
+    override val LighterASTNode.unescapedValue: String
+        get() {
+            val escape = this.asText
+            return escapedStringToCharacter(escape)?.toString()
+                ?: escape.replace("\\", "").replace("u", "\\u")
+        }
+
+    override fun LighterASTNode.getReferencedNameAsName(): Name {
+        return this.asText.nameAsSafeName()
+    }
+
+    override fun LighterASTNode.getLabelName(): String? {
+        this.forEachChildren {
+            when (it.tokenType) {
+                KtNodeTypes.LABEL_QUALIFIER -> return it.asText.replaceFirst("@", "")
+            }
+        }
+
+        return null
+    }
+
+    override fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? {
+        this.forEachChildren {
+            if (it.isExpression()) return it
+        }
+
+        return null
+    }
+
+    override fun LighterASTNode.getChildNodeByType(type: IElementType): LighterASTNode? {
+        return this.getChildNodesByType(type).firstOrNull()
+    }
+
+    override val LighterASTNode?.selectorExpression: LighterASTNode?
+        get() {
+            var isSelector = false
+            this?.forEachChildren {
+                when (it.tokenType) {
+                    DOT, SAFE_ACCESS -> isSelector = true
+                    else -> if (isSelector) return it
+                }
+            }
+            return null
+        }
 
     fun LighterASTNode.getParent(): LighterASTNode? {
         return tree.getParent(this)
@@ -38,20 +90,12 @@ open class BaseConverter(
         } ?: listOf()
     }
 
-    fun LighterASTNode?.getChildrenAsArray(): Array<LighterASTNode?> {
+    fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
         if (this == null) return arrayOf()
 
         val kidsRef = Ref<Array<LighterASTNode?>>()
         tree.getChildren(this, kidsRef)
         return kidsRef.get()
-    }
-
-    fun LighterASTNode.getExpressionInParentheses(): LighterASTNode? {
-        this.forEachChildren {
-            if (it.isExpression()) return it
-        }
-
-        return null
     }
 
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
