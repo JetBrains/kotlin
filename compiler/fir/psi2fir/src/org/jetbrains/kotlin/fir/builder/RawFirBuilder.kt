@@ -1035,45 +1035,12 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
         }
 
-        private fun FirLoopJump.bindLabel(expression: KtExpressionWithLabel): FirLoopJump {
-            val labelName = expression.getLabelName()
-            target = FirLoopTarget(labelName)
-            val lastLoop = context.firLoops.lastOrNull()
-            if (labelName == null) {
-                if (lastLoop != null) {
-                    target.bind(lastLoop)
-                } else {
-                    target.bind(FirErrorLoop(psi, "Cannot bind unlabeled jump to a loop"))
-                }
-            } else {
-                for (firLoop in context.firLoops.asReversed()) {
-                    if (firLoop.label?.name == labelName) {
-                        target.bind(firLoop)
-                        return this
-                    }
-                }
-                target.bind(FirErrorLoop(psi, "Cannot bind label $labelName to a loop"))
-            }
-            return this
-        }
-
         override fun visitBreakExpression(expression: KtBreakExpression, data: Unit): FirElement {
             return FirBreakExpressionImpl(expression).bindLabel(expression)
         }
 
         override fun visitContinueExpression(expression: KtContinueExpression, data: Unit): FirElement {
             return FirContinueExpressionImpl(expression).bindLabel(expression)
-        }
-
-        private fun KtUnaryExpression.bangBangToWhen(): FirWhenExpression {
-            return baseExpression.toFirExpression("No operand").generateNotNullOrOther(
-                session,
-                FirThrowExpressionImpl(
-                    this, FirFunctionCallImpl(this).apply {
-                        calleeReference = FirSimpleNamedReference(this@bangBangToWhen, KNPE)
-                    }
-                ), "bangbang", this
-            )
         }
 
         override fun visitBinaryExpression(expression: KtBinaryExpression, data: Unit): FirElement {
@@ -1137,7 +1104,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val operationToken = expression.operationToken
             val argument = expression.baseExpression
             if (operationToken == EXCLEXCL) {
-                return expression.bangBangToWhen()
+                return expression.baseExpression.bangBangToWhen(expression) { (this as KtExpression).toFirExpression(it) }
             }
             val conventionCallName = operationToken.toUnaryName()
             return if (conventionCallName != null) {
@@ -1297,9 +1264,5 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         override fun visitExpression(expression: KtExpression, data: Unit): FirElement {
             return FirExpressionStub(expression)
         }
-    }
-
-    companion object {
-        val KNPE = Name.identifier("KotlinNullPointerException")
     }
 }

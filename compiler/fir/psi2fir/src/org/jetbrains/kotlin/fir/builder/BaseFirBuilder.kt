@@ -9,11 +9,15 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.FirLabel
+import org.jetbrains.kotlin.fir.FirLoopTarget
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirErrorFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirErrorLoop
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
@@ -30,10 +34,11 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtStringTemplateExpression
+import org.jetbrains.kotlin.psi.KtUnaryExpression
 import org.jetbrains.kotlin.resolve.constants.evaluate.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -89,6 +94,10 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
     }
 
     /**** Common utils ****/
+    companion object {
+        val KNPE = Name.identifier("KotlinNullPointerException")
+    }
+
     fun FirExpression.toReturn(basePsi: PsiElement? = psi, labelName: String? = null): FirReturnExpression {
         return FirReturnExpressionImpl(
             this@BaseFirBuilder.session,
@@ -149,11 +158,44 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             ?: emptyList()
     }
 
+    fun T?.bangBangToWhen(parent: KtUnaryExpression?, convert: T?.(String) -> FirExpression): FirWhenExpression {
+        return this.convert("No operand").generateNotNullOrOther(
+            session,
+            FirThrowExpressionImpl(
+                session, parent.getPsiOrNull(), FirFunctionCallImpl(session, parent.getPsiOrNull()).apply {
+                    calleeReference = FirSimpleNamedReference(this@BaseFirBuilder.session, parent, KNPE)
+                }
+            ), "bangbang", parent
+        )
+    }
+
     fun FirAbstractLoop.configure(generateBlock: () -> FirBlock): FirAbstractLoop {
         label = context.firLabels.pop()
         context.firLoops += this
         block = generateBlock()
         context.firLoops.removeLast()
+        return this
+    }
+
+    fun FirLoopJump.bindLabel(expression: T): FirLoopJump {
+        val labelName = expression.getLabelName()
+        target = FirLoopTarget(labelName)
+        val lastLoop = context.firLoops.lastOrNull()
+        if (labelName == null) {
+            if (lastLoop != null) {
+                target.bind(lastLoop)
+            } else {
+                target.bind(FirErrorLoop(this@BaseFirBuilder.session, expression.getPsiOrNull(), "Cannot bind unlabeled jump to a loop"))
+            }
+        } else {
+            for (firLoop in context.firLoops.asReversed()) {
+                if (firLoop.label?.name == labelName) {
+                    target.bind(firLoop)
+                    return this
+                }
+            }
+            target.bind(FirErrorLoop(this@BaseFirBuilder.session, expression.getPsiOrNull(), "Cannot bind label $labelName to a loop"))
+        }
         return this
     }
 
@@ -181,7 +223,9 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     )
                 } else if (convertedText is Number) {
                     // TODO: support byte / short
-                    FirConstExpressionImpl(session, expression.getPsiOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text")
+                    FirConstExpressionImpl(
+                        session, expression.getPsiOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text"
+                    )
                 } else {
                     FirErrorExpressionImpl(session, expression.getPsiOrNull(), reason = "Incorrect constant expression: $text")
                 }
