@@ -189,6 +189,7 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         val bridge = createBridgeHeader(irClass, target, method, isSpecial = isSpecial, isSynthetic = !isSpecial)
         bridge.createBridgeBody(target, defaultValueGenerator, isSpecial)
         irClass.declarations.add(bridge)
+        target.overriddenSymbols.remove(method.symbol)
         signaturesToSkip.add(signature)
     }
 
