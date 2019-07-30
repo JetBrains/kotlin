@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.fir.resolve.FirProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
@@ -37,15 +37,14 @@ private fun KtClassOrObject.relativeFqName(): FqName {
 private fun FirFile.findCallableMember(
     provider: FirProvider, callableMember: KtCallableDeclaration,
     packageFqName: FqName, klassFqName: FqName?, declName: Name
-): FirCallableMemberDeclaration<*> {
+): FirCallableDeclaration<*> {
     val memberScope =
         if (klassFqName == null) FirTopLevelDeclaredMemberScope(this, session)
         else provider.getClassDeclaredMemberScope(ClassId(packageFqName, klassFqName, false))!!
-    var result: FirCallableMemberDeclaration<*>? = null
-    val processor = { symbol: ConeCallableSymbol ->
-        val firSymbol = symbol as? FirBasedSymbol<*>
-        val fir = firSymbol?.fir as? FirCallableMemberDeclaration<*>
-        if (fir?.psi == callableMember) {
+    var result: FirCallableDeclaration<*>? = null
+    val processor = { symbol: FirCallableSymbol<*> ->
+        val fir = symbol.fir
+        if (fir.psi == callableMember) {
             result = fir
             ProcessorAction.STOP
         } else {
@@ -58,13 +57,15 @@ private fun FirFile.findCallableMember(
         memberScope.processPropertiesByName(declName, processor)
     }
 
-    return result!!
+    return result
+        ?: error("Cannot find FIR callable declaration ${CallableId(packageFqName, klassFqName, declName)}")
 }
 
+// NB: at this moment it crashes with ISE when called on local declaration
 fun KtCallableDeclaration.getOrBuildFir(
     state: FirResolveState,
     phase: FirResolvePhase = FirResolvePhase.DECLARATIONS
-): FirCallableMemberDeclaration<*> {
+): FirCallableDeclaration<*> {
     val session = state.getSession(this)
 
     val file = this.containingKtFile
@@ -131,12 +132,20 @@ private fun FirDeclaration.runResolve(
     }
 }
 
+private fun KtElement.containingNonLocalDeclaration(): KtDeclaration {
+    var container = this.containingDeclarationForPseudocode
+    while (container != null && KtPsiUtil.isLocal(container)) {
+        container = container.containingDeclarationForPseudocode
+    }
+    return container ?: error("No containing non-local declaration: $text")
+}
+
 fun KtElement.getOrBuildFir(
     state: FirResolveState,
     phase: FirResolvePhase = FirResolvePhase.BODY_RESOLVE
 ): FirElement {
     val containerFir: FirDeclaration =
-        when (val container = this.containingDeclarationForPseudocode ?: error("No containing declaration: $text")) {
+        when (val container = this.containingNonLocalDeclaration()) {
             is KtCallableDeclaration -> container.getOrBuildFir(state, phase)
             is KtClassOrObject -> container.getOrBuildFir(state, phase)
             else -> error("Unsupported: ${container.text}")

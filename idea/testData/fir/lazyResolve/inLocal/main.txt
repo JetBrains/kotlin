@@ -1,0 +1,12 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        local final fun foo(): R|kotlin/Int| {
+            ^foo R|main/bar|()
+        }
+
+        R|<local>/foo|()
+    }
+    public final fun bar(): R|kotlin/Int| {
+        lval x: <implicit> = Int(4)
+        ^bar Int(9).times#(x#)
+    }
