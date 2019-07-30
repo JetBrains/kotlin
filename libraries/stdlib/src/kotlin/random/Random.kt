@@ -329,8 +329,8 @@ public fun Random.nextInt(range: IntRange): Int = when {
 @SinceKotlin("1.3")
 public fun Random.nextLong(range: LongRange): Long = when {
     range.isEmpty() -> throw IllegalArgumentException("Cannot get random in empty range: $range")
-    range.last < Long.MAX_VALUE -> nextLong(range.start, range.endInclusive + 1)
-    range.start > Long.MIN_VALUE -> nextLong(range.start - 1, range.endInclusive) + 1
+    range.last < Long.MAX_VALUE -> nextLong(range.first, range.last + 1)
+    range.first > Long.MIN_VALUE -> nextLong(range.first - 1, range.last) + 1
     else -> nextLong()
 }
 
