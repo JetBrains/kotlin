@@ -17,6 +17,7 @@ import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
 import com.intellij.util.IconUtil;
@@ -152,7 +153,10 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       @Override
       public void onClosed(@NotNull LightweightWindowEvent event) {
         // rerun code-insight after popup close
-        DaemonCodeAnalyzer.getInstance(project).restart();
+        PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+        if (file != null) {
+          DaemonCodeAnalyzer.getInstance(project).restart(file);
+        }
       }
     });
 
