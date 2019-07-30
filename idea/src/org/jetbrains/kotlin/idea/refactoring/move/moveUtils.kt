@@ -128,7 +128,8 @@ fun KtElement.processInternalReferencesToUpdateOnPackageNameChange(
             if (descriptor.isCompanionObject()
                 && bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, refExpr] != null
             ) {
-                result = (result as KtObjectDeclaration).containingClassOrObject ?: result
+                if (result !is KtObjectDeclaration) return@lazy null
+                result = result.containingClassOrObject ?: result
             }
 
             result
