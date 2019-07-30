@@ -924,7 +924,7 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
     return originalElementPointer != null ? originalElementPointer.getElement() : null;
   }
 
-  void navigateByLink(DocumentationComponent component, String url) {
+  public void navigateByLink(DocumentationComponent component, String url) {
     component.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
     PsiElement psiElement = component.getElement();
     if (psiElement == null) {

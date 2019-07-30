@@ -779,8 +779,8 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     if (myManager == null) return;
 
     myText = text;
-    myDecoratedText = decorate(text);
     setElement(element);
+    myDecoratedText = decorate(text);
 
     showHint(viewRect, ref);
   }
