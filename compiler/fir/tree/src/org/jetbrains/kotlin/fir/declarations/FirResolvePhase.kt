@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
-import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirElement
-
-// TODO: remove : FirElement
-enum class FirResolvePhase : FirElement {
+enum class FirResolvePhase {
     RAW_FIR,
     IMPORTS,
     SUPER_TYPES,
@@ -21,9 +17,6 @@ enum class FirResolvePhase : FirElement {
     val prev: FirResolvePhase get() = values()[ordinal - 1]
 
     val next: FirResolvePhase get() = values()[ordinal + 1]
-
-    override val psi: PsiElement?
-        get() = null
 
     companion object {
         // Short-cut
