@@ -20,16 +20,18 @@ import com.intellij.navigation.ItemPresentationProviders
 import com.intellij.psi.*
 import com.intellij.psi.impl.PsiClassImplUtil
 import com.intellij.psi.impl.light.AbstractLightClass
-import com.intellij.psi.impl.source.ClassInnerStuffCache
 import com.intellij.psi.impl.source.PsiExtensibleClass
 import com.intellij.psi.scope.PsiScopeProcessor
+import org.jetbrains.kotlin.analyzer.KotlinModificationTrackerService
+import org.jetbrains.kotlin.asJava.classes.KotlinClassInnerStuffCache.processDeclarationsInEnum
 import org.jetbrains.kotlin.asJava.elements.KtLightFieldImpl
 import org.jetbrains.kotlin.asJava.elements.KtLightMethodImpl
 import org.jetbrains.kotlin.idea.KotlinLanguage
 
 abstract class KtLightClassBase protected constructor(manager: PsiManager)
     : AbstractLightClass(manager, KotlinLanguage.INSTANCE), KtLightClass, PsiExtensibleClass {
-    private val myInnersCache = ClassInnerStuffCache(this)
+    protected open val myInnersCache = KotlinClassInnerStuffCache(
+        this, listOf(KotlinModificationTrackerService.getInstance(manager.project).outOfBlockModificationTracker))
 
     override fun getDelegate() = clsDelegate
 
@@ -61,7 +63,7 @@ abstract class KtLightClassBase protected constructor(manager: PsiManager)
             processor: PsiScopeProcessor, state: ResolveState, lastParent: PsiElement?, place: PsiElement
     ): Boolean {
         if (isEnum) {
-            if (!PsiClassImplUtil.processDeclarationsInEnum(processor, state, myInnersCache)) return false
+            if (!processDeclarationsInEnum(processor, state, myInnersCache)) return false
         }
 
         return super.processDeclarations(processor, state, lastParent, place)

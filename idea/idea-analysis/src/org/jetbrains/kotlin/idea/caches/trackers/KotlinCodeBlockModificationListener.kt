@@ -86,6 +86,8 @@ class KotlinCodeBlockModificationListener(
                 val changeSet = event.getChangeSet(treeAspect) as TreeChangeEvent? ?: return
                 val ktFile = changeSet.rootElement.psi.containingFile as? KtFile ?: return
 
+                incFileModificationCount(ktFile)
+
                 val changedElements = changeSet.changedElements
                 // When a code fragment is reparsed, Intellij doesn't do an AST diff and considers the entire
                 // contents to be replaced, which is represented in a POM event as an empty list of changed elements
@@ -157,6 +159,12 @@ class KotlinCodeBlockModificationListener(
             file.putUserData(FILE_OUT_OF_BLOCK_MODIFICATION_COUNT, count + 1)
         }
 
+        private fun incFileModificationCount(file: KtFile) {
+            val tracker = file.getUserData(PER_FILE_MODIFICATION_TRACKER)
+                ?: file.putUserDataIfAbsent(PER_FILE_MODIFICATION_TRACKER, SimpleModificationTracker())
+            tracker.incModificationCount()
+        }
+
         fun getInsideCodeBlockModificationScope(element: PsiElement): KtElement? {
             val lambda = element.getTopmostParentOfType<KtLambdaExpression>()
             if (lambda is KtLambdaExpression) {
@@ -215,6 +223,11 @@ class KotlinCodeBlockModificationListener(
             project.getComponent(KotlinCodeBlockModificationListener::class.java)
     }
 }
+
+private val PER_FILE_MODIFICATION_TRACKER = Key<SimpleModificationTracker>("FILE_OUT_OF_BLOCK_MODIFICATION_COUNT")
+
+val KtFile.perFileModificationTracker: ModificationTracker
+    get() = putUserDataIfAbsent(PER_FILE_MODIFICATION_TRACKER, SimpleModificationTracker())
 
 private val FILE_OUT_OF_BLOCK_MODIFICATION_COUNT = Key<Long>("FILE_OUT_OF_BLOCK_MODIFICATION_COUNT")
 
