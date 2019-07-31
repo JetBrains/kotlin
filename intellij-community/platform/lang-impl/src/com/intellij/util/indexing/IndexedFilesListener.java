@@ -27,16 +27,21 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.util.List;
 
-public abstract class IndexedFilesListener implements AsyncFileListener {
-  private final ManagingFS myManagingFS = ManagingFS.getInstance();
+abstract class IndexedFilesListener implements AsyncFileListener {
+  private final ManagingFS myManagingFS;
   private final VfsEventsMerger myEventMerger = new VfsEventsMerger();
+
+  IndexedFilesListener(@NotNull ManagingFS managingFS) {
+    myManagingFS = managingFS;
+  }
 
   private static class ConfigHolder {
     private static final VirtualFile myConfig = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getConfigPath()));
     private static final VirtualFile myLog = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getLogPath()));
   }
 
-  protected VfsEventsMerger getEventMerger() {
+  @NotNull
+  VfsEventsMerger getEventMerger() {
     return myEventMerger;
   }
 
@@ -54,7 +59,7 @@ public abstract class IndexedFilesListener implements AsyncFileListener {
     }
   }
 
-  private boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, VfsEventsMerger eventMerger) {
+  private boolean invalidateIndicesForFile(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
     if (isUnderConfigOrSystem(file)) {
       return false;
     }
@@ -65,7 +70,7 @@ public abstract class IndexedFilesListener implements AsyncFileListener {
 
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
 
-  void invalidateIndicesRecursively(@NotNull VirtualFile file, boolean contentChange, VfsEventsMerger eventMerger) {
+  void invalidateIndicesRecursively(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
     VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
@@ -143,7 +148,8 @@ public abstract class IndexedFilesListener implements AsyncFileListener {
         if (propertyName.equals(VirtualFile.PROP_NAME)) {
           // indexes may depend on file name
           buildIndicesForFileRecursively(pce.getFile(), false);
-        } else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
+        }
+        else if (propertyName.equals(VirtualFile.PROP_ENCODING)) {
           buildIndicesForFileRecursively(pce.getFile(), true);
         }
       }
