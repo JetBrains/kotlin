@@ -117,7 +117,7 @@ class JvmSymbols(
         if (firMode) createClass(FqName("java.lang.Class")) {}.symbol else context.getTopLevelClass(FqName("java.lang.Class"))
 
     val javaLangAssertionError: IrClassSymbol =
-        context.getTopLevelClass(FqName("java.lang.AssertionError"))
+        if (firMode) createClass(FqName("java.lang.AssertionError")) {}.symbol else context.getTopLevelClass(FqName("java.lang.AssertionError"))
 
     val assertionErrorConstructor by lazy {
         context.ir.symbols.javaLangAssertionError.constructors.single {
