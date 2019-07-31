@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import groovy.lang.Closure
+import org.gradle.api.Task
+import org.gradle.api.file.FileCollection
 import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputFile
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.SkipWhenEmpty
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.*
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.jetbrains.kotlin.compilerRunner.konanVersion
@@ -21,14 +21,27 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.konan.KonanVersion
 import org.jetbrains.kotlin.konan.MetaVersion
 import java.io.File
+import java.util.concurrent.Callable
 
 open class KotlinNativeTest : KotlinTest() {
     @Suppress("LeakingThis")
     private val processOptions: ProcessForkOptions = DefaultProcessForkOptions(fileResolver)
 
-    @InputFile
-    @SkipWhenEmpty
-    val executableProperty: Property<File> = project.objects.property(File::class.java)
+    @get:Internal
+    val executableProperty: Property<FileCollection> = project.objects.property(FileCollection::class.java)
+
+    @get:InputFiles // use FileCollection & @InputFiles rather than @InputFile to allow for task dependencies built-into this FileCollection
+    @get:SkipWhenEmpty
+    @Suppress("UNUSED") // Gradle input
+    internal val executableFiles: FileCollection // Gradle < 5.0 seems to not work properly with @InputFiles Property<FileCollection>
+        get() = executableProperty.get()
+
+    private val executableFile
+        get() = executableProperty.get().singleFile
+
+    init {
+        onlyIf { executableFile.exists() }
+    }
 
     @Input
     var args: List<String> = emptyList()
@@ -36,9 +49,9 @@ open class KotlinNativeTest : KotlinTest() {
     // Already taken into account in the executableProperty.
     @get:Internal
     var executable: File
-        get() = executableProperty.get()
+        get() = executableProperty.get().singleFile
         set(value) {
-            executableProperty.set(value)
+            executableProperty.set(project.files(value))
         }
 
     @get:Input
@@ -58,19 +71,27 @@ open class KotlinNativeTest : KotlinTest() {
     private fun <T> Property<T>.set(providerLambda: () -> T) = set(project.provider { providerLambda() })
 
     fun executable(file: File) {
-        executableProperty.set(file)
+        executableProperty.set(project.files(file))
     }
 
     fun executable(path: String) {
-        executableProperty.set { project.file(path) }
+        executableProperty.set { project.files(path) }
     }
 
     fun executable(provider: () -> File) {
-        executableProperty.set(provider)
+        executableProperty.set(project.files(Callable { provider() }))
+    }
+
+    fun executable(builtByTask: Task, provider: () -> File) {
+        executableProperty.set(project.files(Callable { provider() }).builtBy(builtByTask))
+    }
+
+    fun executable(provider: Provider<File>) {
+        executableProperty.set(provider.map { project.files(it) })
     }
 
     fun executable(provider: Closure<File>) {
-        executableProperty.set(project.provider(provider))
+        executableProperty.set(project.provider(provider).map { project.files(it) })
     }
 
     fun environment(name: String, value: Any) {

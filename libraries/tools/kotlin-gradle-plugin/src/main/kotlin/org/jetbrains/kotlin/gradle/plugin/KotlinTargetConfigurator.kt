@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
@@ -25,30 +26,36 @@ import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
-import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
-import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import java.util.concurrent.Callable
+import kotlin.reflect.KMutableProperty1
+import kotlin.reflect.full.memberProperties
 
-abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
-    protected val createDefaultSourceSets: Boolean,
-    protected val createTestCompilation: Boolean
-) {
-    open fun configureTarget(
+interface KotlinTargetConfigurator<KotlinTargetType : KotlinTarget> {
+    fun configureTarget(
         target: KotlinTargetType
     ) {
         configureCompilationDefaults(target)
         configureCompilations(target)
         defineConfigurationsForTarget(target)
         configureArchivesAndComponent(target)
-        configureTest(target)
         configureBuild(target)
+        configurePlatformSpecificModel(target)
     }
 
+    fun configureCompilationDefaults(target: KotlinTargetType)
+    fun configureCompilations(target: KotlinTargetType)
+    fun defineConfigurationsForTarget(target: KotlinTargetType)
+    fun configureArchivesAndComponent(target: KotlinTargetType)
+    fun configureBuild(target: KotlinTargetType)
 
-    protected abstract fun configureArchivesAndComponent(target: KotlinTargetType)
-    protected abstract fun configureTest(target: KotlinTargetType)
+    fun configurePlatformSpecificModel(target: KotlinTargetType) = Unit
+}
+
+abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>(
+    protected val createDefaultSourceSets: Boolean,
+    protected val createTestCompilation: Boolean
+) : KotlinTargetConfigurator<KotlinTargetType> {
 
     private fun Project.registerOutputsForStaleOutputCleanup(kotlinCompilation: KotlinCompilation<*>) {
         val cleanTask = tasks.getByName(LifecycleBasePlugin.CLEAN_TASK_NAME) as Delete
@@ -62,17 +69,17 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    protected open fun configureCompilations(platformTarget: KotlinTargetType) {
-        val project = platformTarget.project
-        val main = platformTarget.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
+    override fun configureCompilations(target: KotlinTargetType) {
+        val project = target.project
+        val main = target.compilations.create(KotlinCompilation.MAIN_COMPILATION_NAME)
 
-        platformTarget.compilations.all {
+        target.compilations.all {
             project.registerOutputsForStaleOutputCleanup(it)
             setupCompilationDependencyFiles(project, it)
         }
 
         if (createTestCompilation) {
-            platformTarget.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
+            target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
                 compileDependencyFiles += main.output.allOutputs
 
                 if (this is KotlinCompilationToRunnableFiles) {
@@ -82,7 +89,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    protected fun configureCompilationDefaults(target: KotlinTargetType) {
+    override fun configureCompilationDefaults(target: KotlinTargetType) {
         val project = target.project
 
         target.compilations.all { compilation ->
@@ -129,7 +136,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    protected open fun defineConfigurationsForTarget(target: KotlinTargetType) {
+    override fun defineConfigurationsForTarget(target: KotlinTargetType) {
         val project = target.project
 
         val configurations = project.configurations
@@ -195,7 +202,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
         }
     }
 
-    protected fun configureBuild(target: KotlinTargetType) {
+    override fun configureBuild(target: KotlinTargetType) {
         val project = target.project
 
         val buildNeeded = project.tasks.getByName(JavaBasePlugin.BUILD_NEEDED_TASK_NAME)
@@ -305,23 +312,23 @@ internal val KotlinCompilationToRunnableFiles<*>.deprecatedRuntimeConfigurationN
 internal val KotlinTarget.testTaskName: String
     get() = lowerCamelCaseName(targetName, AbstractKotlinTargetConfigurator.testTaskNameSuffix)
 
-abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>>(
+abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompilation<*>, KotlinTargetType : KotlinOnlyTarget<KotlinCompilationType>>(
     createDefaultSourceSets: Boolean,
     createTestCompilation: Boolean,
     val kotlinPluginVersion: String
-) : AbstractKotlinTargetConfigurator<KotlinOnlyTarget<KotlinCompilationType>>(
+) : AbstractKotlinTargetConfigurator<KotlinTargetType>(
     createDefaultSourceSets,
     createTestCompilation
 ) {
     internal abstract fun buildCompilationProcessor(compilation: KotlinCompilationType): KotlinSourceSetProcessor<*>
 
-    override fun configureCompilations(platformTarget: KotlinOnlyTarget<KotlinCompilationType>) {
-        super.configureCompilations(platformTarget)
+    override fun configureCompilations(target: KotlinTargetType) {
+        super.configureCompilations(target)
 
-        platformTarget.compilations.all { compilation ->
+        target.compilations.all { compilation ->
             buildCompilationProcessor(compilation).run()
             if (compilation.name == KotlinCompilation.MAIN_COMPILATION_NAME) {
-                sourcesJarTask(compilation, platformTarget.targetName, platformTarget.targetName.toLowerCase())
+                sourcesJarTask(compilation, target.targetName, target.targetName.toLowerCase())
             }
         }
     }
@@ -334,7 +341,7 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
         result.from(target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).output.allOutputs)
     }
 
-    override fun configureArchivesAndComponent(target: KotlinOnlyTarget<KotlinCompilationType>) {
+    override fun configureArchivesAndComponent(target: KotlinTargetType) {
         val project = target.project
 
         val mainCompilation = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
@@ -365,36 +372,52 @@ abstract class KotlinTargetConfigurator<KotlinCompilationType : KotlinCompilatio
         }
     }
 
-    override fun configureTest(target: KotlinOnlyTarget<KotlinCompilationType>) {
-        val testCompilation =
-            target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME) as? KotlinCompilationToRunnableFiles<*>
-                ?: return // Otherwise, there is no runtime classpath
-
-        val testTaskName = lowerCamelCaseName(target.disambiguationClassifier, testTaskNameSuffix)
-        val testTask = target.project.createOrRegisterTask<KotlinJvmTest>(testTaskName) { testTask ->
-            testTask.targetName = target.disambiguationClassifier
-        }
-
-        testTask.project.afterEvaluate {
-            // use afterEvaluate to override the JavaPlugin defaults for Test tasks
-            testTask.configure { testTask ->
-                testTask.conventionMapping.map("testClassesDirs") { testCompilation.output.classesDirs }
-                testTask.conventionMapping.map("classpath") { testCompilation.runtimeDependencyFiles }
-                testTask.description = "Runs the unit tests."
-                testTask.group = JavaBasePlugin.VERIFICATION_GROUP
-                testTask.project.tasks.findByName(JavaBasePlugin.CHECK_TASK_NAME)?.dependsOn(testTask)
-            }
-        }
-
-        target.project.kotlinTestRegistry.registerTestTask(testTask)
-    }
-
     private fun addJar(configuration: Configuration, jarArtifact: PublishArtifact) {
         val publications = configuration.outgoing
 
         // Configure an implicit variant
         publications.artifacts.add(jarArtifact)
         publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, ArtifactTypeDefinition.JAR_TYPE)
+    }
+}
+
+internal interface KotlinTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>, T : KotlinTargetWithTests<*, R>>
+    : KotlinTargetConfigurator<T> {
+
+    override fun configureTarget(target: T) {
+        super.configureTarget(target)
+        configureTest(target)
+    }
+
+    val testRunClass: Class<R>
+
+    fun createTestRun(name: String, target: T): R
+
+    fun configureTest(target: T) {
+        initializeTestRuns(target)
+        target.testRuns.create(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
+    }
+
+    private fun initializeTestRuns(target: T) {
+        val project = target.project
+
+        val testRunsPropertyName = KotlinTargetWithTests<*, *>::testRuns.name
+        val mutableProperty =
+            target::class.memberProperties
+                .find { it.name == testRunsPropertyName } as? KMutableProperty1<*, *>
+                ?: error(
+                    "The ${this::class.qualifiedName} implementation of ${KotlinTargetWithTests::class.qualifiedName} must " +
+                            "override the $testRunsPropertyName property with a var."
+                )
+
+        @Suppress("UNCHECKED_CAST")
+        (mutableProperty as KMutableProperty1<KotlinTargetWithTests<*, R>, NamedDomainObjectContainer<R>>)
+            .set(
+                target,
+                project.container(testRunClass) { testRunName ->
+                    createTestRun(testRunName, target)
+                }
+            )
     }
 }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.targets.jvm
 
 import org.gradle.api.InvalidUserCodeException
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.plugins.JavaPlugin
@@ -23,9 +24,11 @@ import java.util.concurrent.Callable
 
 class KotlinJvmTarget(
     project: Project
-) : KotlinOnlyTarget<KotlinJvmCompilation>(
-    project, KotlinPlatformType.jvm
-) {
+) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
+    KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {
+
+    override lateinit var testRuns: NamedDomainObjectContainer<KotlinJvmTestRun>
+
     var withJavaEnabled = false
         private set
 
@@ -163,3 +166,4 @@ class KotlinJvmTarget(
         }
     }
 }
+

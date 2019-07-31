@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetPreset
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTests
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTargetWithTestsPreset
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 
@@ -258,11 +260,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun linuxX64(
         name: String = "linuxX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithTests.() -> Unit = { }
+    ): KotlinNativeTargetWithTests =
         configureOrCreate(
             name,
-            presets.getByName("linuxX64") as KotlinNativeTargetPreset,
+            presets.getByName("linuxX64") as KotlinNativeTargetWithTestsPreset,
             configure
         )
 
@@ -333,11 +335,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun mingwX64(
         name: String = "mingwX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithTests.() -> Unit = { }
+    ): KotlinNativeTargetWithTests =
         configureOrCreate(
             name,
-            presets.getByName("mingwX64") as KotlinNativeTargetPreset,
+            presets.getByName("mingwX64") as KotlinNativeTargetWithTestsPreset,
             configure
         )
 
@@ -363,11 +365,11 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
 
     fun macosX64(
         name: String = "macosX64",
-        configure: KotlinNativeTarget.() -> Unit = { }
-    ): KotlinNativeTarget =
+        configure: KotlinNativeTargetWithTests.() -> Unit = { }
+    ): KotlinNativeTargetWithTests =
         configureOrCreate(
             name,
-            presets.getByName("macosX64") as KotlinNativeTargetPreset,
+            presets.getByName("macosX64") as KotlinNativeTargetWithTestsPreset,
             configure
         )
 

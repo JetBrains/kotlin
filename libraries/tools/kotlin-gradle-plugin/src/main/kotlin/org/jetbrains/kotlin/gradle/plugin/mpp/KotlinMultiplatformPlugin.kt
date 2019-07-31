@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.HostManager
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.presetName
 
 class KotlinMultiplatformPlugin(
@@ -137,8 +138,17 @@ class KotlinMultiplatformPlugin(
             add(KotlinJsTargetPreset(project, kotlinPluginVersion))
             add(KotlinAndroidTargetPreset(project, kotlinPluginVersion))
             add(KotlinJvmWithJavaTargetPreset(project, kotlinPluginVersion))
-            HostManager().targets.forEach { _, target ->
-                add(KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion))
+
+            // Note: modifying this set should also be reflected in the DSL code generator, see 'presetEntries.kt'
+            val testableNativeTargets = setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MINGW_X64)
+
+            HostManager().targets.forEach { (_, target) ->
+                add(
+                    if (target in testableNativeTargets)
+                        KotlinNativeTargetWithTestsPreset(target.presetName, project, target, kotlinPluginVersion)
+                    else
+                        KotlinNativeTargetPreset(target.presetName, project, target, kotlinPluginVersion)
+                )
             }
         }
     }

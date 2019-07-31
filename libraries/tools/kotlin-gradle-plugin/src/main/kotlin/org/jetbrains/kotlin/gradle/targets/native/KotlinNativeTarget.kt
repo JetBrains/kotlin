@@ -7,16 +7,20 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.util.ConfigureUtil
 import org.gradle.util.WrapUtil
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetWithTests
+import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
+import org.jetbrains.kotlin.gradle.targets.native.NativeBinaryTestRunSource
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
-class KotlinNativeTarget(
+open class KotlinNativeTarget(
     project: Project,
     val konanTarget: KonanTarget
 ) : KotlinOnlyTarget<KotlinNativeCompilation>(project, KotlinPlatformType.native) {
@@ -61,4 +65,13 @@ class KotlinNativeTarget(
             String::class.java
         )
     }
+}
+
+open class KotlinNativeTargetWithTests(
+    project: Project,
+    konanTarget: KonanTarget
+) : KotlinNativeTarget(project, konanTarget), KotlinTargetWithTests<NativeBinaryTestRunSource, KotlinNativeBinaryTestRun> {
+
+    override lateinit var testRuns: NamedDomainObjectContainer<KotlinNativeBinaryTestRun>
+        internal set
 }

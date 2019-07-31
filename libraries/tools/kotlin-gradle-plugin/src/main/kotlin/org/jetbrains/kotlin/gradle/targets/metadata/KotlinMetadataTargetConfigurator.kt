@@ -35,7 +35,7 @@ internal val Project.isKotlinGranularMetadataEnabled: Boolean
     get() = PropertiesProvider(rootProject).enableGranularSourceSetsMetadata == true
 
 class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
-    KotlinTargetConfigurator<KotlinCommonCompilation>(
+    KotlinOnlyTargetConfigurator<KotlinCommonCompilation, KotlinMetadataTarget>(
         createDefaultSourceSets = false,
         createTestCompilation = false,
         kotlinPluginVersion = kotlinPluginVersion
@@ -59,7 +59,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private val KotlinOnlyTarget<KotlinCommonCompilation>.apiElementsConfiguration: Configuration
         get() = project.configurations.getByName(apiElementsConfigurationName)
 
-    override fun configureTarget(target: KotlinOnlyTarget<KotlinCommonCompilation>) {
+    override fun configureTarget(target: KotlinMetadataTarget) {
         super.configureTarget(target)
 
         if (target.project.isKotlinGranularMetadataEnabled) {

@@ -254,7 +254,7 @@ internal fun javaApiUsageForMavenScoping() =
         JAVA_API
     }
 
-open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
+abstract class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     project: Project,
     override val platformType: KotlinPlatformType
 ) : AbstractKotlinTarget(project) {
@@ -268,4 +268,3 @@ open class KotlinOnlyTarget<T : KotlinCompilation<*>>(
     override var disambiguationClassifier: String? = null
         internal set
 }
-

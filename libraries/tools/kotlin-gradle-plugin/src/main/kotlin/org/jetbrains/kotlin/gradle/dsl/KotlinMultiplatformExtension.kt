@@ -9,9 +9,7 @@ import groovy.lang.Closure
 import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetPreset
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetsContainerWithPresets
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 
@@ -21,6 +19,10 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTarget
 
     override lateinit var targets: NamedDomainObjectCollection<KotlinTarget>
         internal set
+
+    @Suppress("unused") // DSL
+    val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
+        get() = targets.withType(KotlinTargetWithTests::class.java)
 
     internal var isGradleMetadataAvailable: Boolean = false
     internal var isGradleMetadataExperimental: Boolean = false
