@@ -37,6 +37,7 @@ sourceSets {
 
 projectTest {
     workingDir = rootDir
+    exclude("**/benchmark/**")
 }
 
 val compactClasspath by tasks.creating(Jar::class) {

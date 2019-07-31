@@ -14,6 +14,13 @@ import org.openjdk.jmh.annotations.*
 import java.io.File
 import java.util.concurrent.TimeUnit
 
+/**
+ * This class is base for all benchmarks.
+ *
+ * To run benchmarks use gradle and consistently run next tasks:
+ * 1. jmhBytecode
+ * 2. jmhExec
+ */
 @BenchmarkMode(Mode.SingleShotTime)
 @Warmup(iterations = 10, batchSize = 1)
 @Measurement(iterations = 10, batchSize = 1)
