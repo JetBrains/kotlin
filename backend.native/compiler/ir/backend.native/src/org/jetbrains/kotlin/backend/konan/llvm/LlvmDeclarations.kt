@@ -371,11 +371,6 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
             function
         }
 
-        // TODO: do we still need it?
-        if (!context.shouldOptimize()) {
-            LLVMAddTargetDependentFunctionAttr(llvmFunction, "no-frame-pointer-elim", "true")
-        }
-
         this.functions[declaration] = FunctionLlvmDeclarations(llvmFunction)
     }
 }
