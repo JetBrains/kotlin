@@ -36,8 +36,8 @@ abstract class IndexedFilesListener implements AsyncFileListener {
   }
 
   private static class ConfigHolder {
-    private static final VirtualFile myConfig = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getConfigPath()));
-    private static final VirtualFile myLog = LocalFileSystem.getInstance().refreshAndFindFileByIoFile(new File(PathManager.getLogPath()));
+    private static final VirtualFile myConfig = LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getConfigPath()));
+    private static final VirtualFile myLog = LocalFileSystem.getInstance().findFileByIoFile(new File(PathManager.getLogPath()));
   }
 
   @NotNull
