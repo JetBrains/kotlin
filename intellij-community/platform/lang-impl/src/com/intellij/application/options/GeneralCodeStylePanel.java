@@ -29,6 +29,7 @@ import com.intellij.openapi.fileTypes.FileTypes;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.ProjectManager;
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.MessageType;
 import com.intellij.openapi.ui.VerticalFlowLayout;
 import com.intellij.openapi.ui.popup.Balloon;
@@ -72,7 +73,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
 
   private IntegerField myRightMarginField;
 
-  private com.intellij.openapi.ui.ComboBox myLineSeparatorCombo;
+  private ComboBox myLineSeparatorCombo;
   private JPanel myPanel;
   private JBCheckBox myCbWrapWhenTypingReachesRightMargin;
   private JCheckBox myEnableFormatterTags;
@@ -84,7 +85,6 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
   private JPanel myMarkerOptionsPanel;
   private JPanel myAdditionalSettingsPanel;
   private JCheckBox myAutodetectIndentsBox;
-  private JPanel myIndentsDetectionPanel;
   private CommaSeparatedIntegersField myVisualGuides;
   private JBLabel myVisualGuidesHint;
   private JBLabel myLineSeparatorHint;
@@ -116,8 +116,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
       setFormatterTagControlsEnabled(tagsEnabled);
     });
 
-    myIndentsDetectionPanel
-      .setBorder(IdeBorderFactory.createTitledBorder(ApplicationBundle.message("settings.code.style.general.indents.detection")));
+    myAutodetectIndentsBox.setBorder(JBUI.Borders.emptyTop(10));
 
     myPanel.setBorder(JBUI.Borders.empty(0, 10));
     myScrollPane = ScrollPaneFactory.createScrollPane(null, true);
@@ -129,6 +128,7 @@ public class GeneralCodeStylePanel extends CodeStyleAbstractPanel {
     for (GeneralCodeStyleOptionsProvider provider : myAdditionalOptions) {
       JComponent generalSettingsComponent = provider.createComponent();
       if (generalSettingsComponent != null) {
+        myAdditionalSettingsPanel.add(Box.createRigidArea(JBUI.size(0, 5)));
         myAdditionalSettingsPanel.add(generalSettingsComponent);
       }
     }
