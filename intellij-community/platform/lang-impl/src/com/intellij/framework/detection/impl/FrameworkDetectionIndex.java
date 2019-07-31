@@ -20,6 +20,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.util.EventDispatcher;
 import com.intellij.util.containers.MultiMap;
@@ -100,7 +101,12 @@ public class FrameworkDetectionIndex extends ScalarIndexExtension<Integer> {
     for (FrameworkDetector detector : FrameworkDetector.EP_NAME.getExtensions()) {
       acceptedTypes.add(detector.getFileType());
     }
-    return new DefaultFileTypeSpecificInputFilter(acceptedTypes.toArray(FileType.EMPTY_ARRAY));
+    return new DefaultFileTypeSpecificInputFilter(acceptedTypes.toArray(FileType.EMPTY_ARRAY)) {
+      @Override
+      public boolean acceptInput(@NotNull VirtualFile file) {
+        return file.isInLocalFileSystem();
+      }
+    };
   }
 
   @Override
