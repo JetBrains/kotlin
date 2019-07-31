@@ -176,6 +176,13 @@ dependencies {
     testRuntime(intellijPluginDep("smali"))
     testRuntime(intellijPluginDep("testng"))
 
+    if (Ide.AS36.orHigher()) {
+        testRuntime(intellijPluginDep("android-layoutlib"))
+        testRuntime(intellijPluginDep("git4idea"))
+        testRuntime(intellijPluginDep("google-cloud-tools-core-as"))
+        testRuntime(intellijPluginDep("google-login-as"))
+    }
+
     performanceTestCompile(sourceSets["test"].output)
     performanceTestCompile(sourceSets["main"].output)
     performanceTestCompile(project(":nj2k"))
