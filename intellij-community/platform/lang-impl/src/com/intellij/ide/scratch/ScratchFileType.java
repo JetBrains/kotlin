@@ -34,7 +34,7 @@ public class ScratchFileType extends LanguageFileType implements FileTypeIdentif
   public static final LanguageFileType INSTANCE = new ScratchFileType();
 
   ScratchFileType() {
-    super(PlainTextLanguage.INSTANCE);
+    super(PlainTextLanguage.INSTANCE, true);
   }
 
   @Override
