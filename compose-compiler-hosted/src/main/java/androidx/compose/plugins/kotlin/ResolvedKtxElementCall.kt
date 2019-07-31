@@ -238,13 +238,13 @@ sealed class EmitOrCallNode {
         collector: MutableMap<String, MutableList<AttributeMeta>>
     ) {
         callDescriptor?.let {
-            it.valueParameters.forEach { param ->
+            it.valueParameters.forEachIndexed { index, param ->
                 collector.multiPut(
                     AttributeMeta(
                         name = param.name.asString(),
                         type = param.type,
                         descriptor = param,
-                        isChildren = param.hasChildrenAnnotation()
+                        isChildren = param.hasChildrenAnnotation() || it.valueParameters.size-1 == index
                     )
                 )
             }

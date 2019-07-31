@@ -160,10 +160,10 @@ class KtxTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
 
             @Composable fun test(
-                @Children children: @Composable() () -> Unit,
+                children: @Composable() () -> Unit,
                 value: Int,
                 x: Int,
-                @Children children2: @Composable() () -> Unit,
+                children2: @Composable() () -> Unit,
                 value2: Int
             ) {
                 <LinearLayout>
