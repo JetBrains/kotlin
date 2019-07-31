@@ -44,8 +44,8 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
 
   @Nullable
   @Override
-  protected Matcher getMatcher(@NotNull String pattern) {
-    return getProvider().getMatcher(pattern);
+  protected Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern) {
+    return getProvider().getMatcher(dataContext, pattern);
   }
 
   public static Collection<RunAnythingGroup> createCompletionGroups() {

@@ -134,10 +134,11 @@ public interface RunAnythingProvider<V> {
 
   /**
    * Returns group matcher for filtering group elements. Remain {@code null} to use default matcher
+   * @param dataContext use it to fetch project, module, working directory
    * @param pattern to build matcher
    */
   @Nullable
-  Matcher getMatcher(@NotNull String pattern);
+  Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern);
 
   /**
    * Finds provider that matches {@code pattern}

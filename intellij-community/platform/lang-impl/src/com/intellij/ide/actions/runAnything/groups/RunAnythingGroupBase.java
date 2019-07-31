@@ -15,7 +15,7 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
   public abstract Collection<RunAnythingItem> getGroupItems(@NotNull DataContext dataContext, @NotNull String pattern);
 
   @Nullable
-  protected Matcher getMatcher(@NotNull String pattern) {
+  protected Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern) {
     return null;
   }
 
@@ -28,7 +28,7 @@ public abstract class RunAnythingGroupBase extends RunAnythingGroup {
     cancellationChecker.run();
     SearchResult result = new SearchResult();
     for (RunAnythingItem runConfigurationItem : getGroupItems(dataContext, pattern)) {
-      Matcher matcher = getMatcher(pattern);
+      Matcher matcher = getMatcher(dataContext, pattern);
       if (matcher == null) {
         matcher = RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build();
       }

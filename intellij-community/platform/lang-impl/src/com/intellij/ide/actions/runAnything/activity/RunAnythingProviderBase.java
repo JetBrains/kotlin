@@ -68,7 +68,7 @@ public abstract class RunAnythingProviderBase<V> implements RunAnythingProvider<
 
   @Nullable
   @Override
-  public Matcher getMatcher(@NotNull String pattern) {
+  public Matcher getMatcher(@NotNull DataContext dataContext, @NotNull String pattern) {
     return null;
   }
 
