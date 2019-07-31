@@ -77,9 +77,12 @@ class Kapt3WorkersIT : Kapt3IT() {
 
         val project =
             Project("simple", directoryPrefix = "kapt2", gradleVersionRequirement = gradleVersionRequired)
+
         project.build("build", options = options) {
             assertSuccessful()
             assertKaptSuccessful()
+            // Check added because of https://youtrack.jetbrains.com/issue/KT-33056.
+            assertNotContains("javaslang.match.PatternsProcessor")
         }
     }
 
