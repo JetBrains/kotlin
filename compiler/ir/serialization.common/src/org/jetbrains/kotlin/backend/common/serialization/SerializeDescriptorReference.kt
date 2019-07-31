@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.proto.DescriptorReference as ProtoDescriptorReference
-import org.jetbrains.kotlin.backend.common.serialization.proto.String as ProtoString
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex as ProtoString
+import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.isAccessor
 import org.jetbrains.kotlin.ir.util.isGetter
 import org.jetbrains.kotlin.ir.util.isSetter
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
     val serializeString: (String) -> ProtoString,
+    val serializeFqName: (FqName) -> ProtoFqName,
     mangler: KotlinMangler): KotlinMangler by mangler {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
@@ -28,14 +31,14 @@ open class DescriptorReferenceSerializer(
         return DescriptorFactory.isEnumValueOfMethod(descriptor) || DescriptorFactory.isEnumValuesMethod(descriptor)
     }
 
-    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<String, String>? {
+    fun extractPackageAndClassFqns(descriptor: DeclarationDescriptor): Pair<FqName, FqName>? {
         val containingDeclaration = descriptor.containingDeclaration
         return when (containingDeclaration) {
             is ClassDescriptor -> {
                 val classId = containingDeclaration.classId ?: return null
-                Pair(classId.packageFqName.toString(), classId.relativeClassName.toString())
+                Pair(classId.packageFqName, classId.relativeClassName)
             }
-            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName.toString(), "")
+            is PackageFragmentDescriptor -> Pair(containingDeclaration.fqName, FqName.ROOT)
             is PropertyDescriptor -> if (descriptor !is TypeParameterDescriptor) null else {
                 extractPackageAndClassFqns(containingDeclaration)
             }
@@ -111,8 +114,8 @@ open class DescriptorReferenceSerializer(
         uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
-            .setPackageFqName(serializeString(packageFqName))
-            .setClassFqName(serializeString(classFqName))
+            .setPackageFqName(serializeFqName(packageFqName))
+            .setClassFqName(serializeFqName(classFqName))
             .setName(serializeString(nameString))
 
         if (uniqId != null) proto.setUniqId(protoUniqId(uniqId))

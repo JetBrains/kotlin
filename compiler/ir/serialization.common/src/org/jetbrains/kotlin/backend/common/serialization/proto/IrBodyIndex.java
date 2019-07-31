@@ -4,30 +4,30 @@
 package org.jetbrains.kotlin.backend.common.serialization.proto;
 
 /**
- * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol}
+ * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex}
  */
-public final class IrSymbol extends
+public final class IrBodyIndex extends
     org.jetbrains.kotlin.protobuf.GeneratedMessageLite implements
-    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol)
-    IrSymbolOrBuilder {
-  // Use IrSymbol.newBuilder() to construct.
-  private IrSymbol(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
+    // @@protoc_insertion_point(message_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex)
+    IrBodyIndexOrBuilder {
+  // Use IrBodyIndex.newBuilder() to construct.
+  private IrBodyIndex(org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder builder) {
     super(builder);
     this.unknownFields = builder.getUnknownFields();
   }
-  private IrSymbol(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
+  private IrBodyIndex(boolean noInit) { this.unknownFields = org.jetbrains.kotlin.protobuf.ByteString.EMPTY;}
 
-  private static final IrSymbol defaultInstance;
-  public static IrSymbol getDefaultInstance() {
+  private static final IrBodyIndex defaultInstance;
+  public static IrBodyIndex getDefaultInstance() {
     return defaultInstance;
   }
 
-  public IrSymbol getDefaultInstanceForType() {
+  public IrBodyIndex getDefaultInstanceForType() {
     return defaultInstance;
   }
 
   private final org.jetbrains.kotlin.protobuf.ByteString unknownFields;
-  private IrSymbol(
+  private IrBodyIndex(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
@@ -76,18 +76,18 @@ public final class IrSymbol extends
       makeExtensionsImmutable();
     }
   }
-  public static org.jetbrains.kotlin.protobuf.Parser<IrSymbol> PARSER =
-      new org.jetbrains.kotlin.protobuf.AbstractParser<IrSymbol>() {
-    public IrSymbol parsePartialFrom(
+  public static org.jetbrains.kotlin.protobuf.Parser<IrBodyIndex> PARSER =
+      new org.jetbrains.kotlin.protobuf.AbstractParser<IrBodyIndex>() {
+    public IrBodyIndex parsePartialFrom(
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
-      return new IrSymbol(input, extensionRegistry);
+      return new IrBodyIndex(input, extensionRegistry);
     }
   };
 
   @java.lang.Override
-  public org.jetbrains.kotlin.protobuf.Parser<IrSymbol> getParserForType() {
+  public org.jetbrains.kotlin.protobuf.Parser<IrBodyIndex> getParserForType() {
     return PARSER;
   }
 
@@ -155,53 +155,53 @@ public final class IrSymbol extends
     return super.writeReplace();
   }
 
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       org.jetbrains.kotlin.protobuf.ByteString data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(byte[] data)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(byte[] data)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       byte[] data,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException {
     return PARSER.parseFrom(data, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseDelimitedFrom(java.io.InputStream input)
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseDelimitedFrom(java.io.InputStream input)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseDelimitedFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseDelimitedFrom(
       java.io.InputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
     return PARSER.parseDelimitedFrom(input, extensionRegistry);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input)
       throws java.io.IOException {
     return PARSER.parseFrom(input);
   }
-  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parseFrom(
+  public static org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parseFrom(
       org.jetbrains.kotlin.protobuf.CodedInputStream input,
       org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
       throws java.io.IOException {
@@ -210,21 +210,21 @@ public final class IrSymbol extends
 
   public static Builder newBuilder() { return Builder.create(); }
   public Builder newBuilderForType() { return newBuilder(); }
-  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol prototype) {
+  public static Builder newBuilder(org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex prototype) {
     return newBuilder().mergeFrom(prototype);
   }
   public Builder toBuilder() { return newBuilder(this); }
 
   /**
-   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol}
+   * Protobuf type {@code org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex}
    */
   public static final class Builder extends
       org.jetbrains.kotlin.protobuf.GeneratedMessageLite.Builder<
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol, Builder>
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex, Builder>
       implements
-      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol)
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbolOrBuilder {
-    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.newBuilder()
+      // @@protoc_insertion_point(builder_implements:org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex)
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndexOrBuilder {
+    // Construct using org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex.newBuilder()
     private Builder() {
       maybeForceBuilderInitialization();
     }
@@ -246,20 +246,20 @@ public final class IrSymbol extends
       return create().mergeFrom(buildPartial());
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getDefaultInstanceForType() {
-      return org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex getDefaultInstanceForType() {
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex.getDefaultInstance();
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol build() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol result = buildPartial();
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex build() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex result = buildPartial();
       if (!result.isInitialized()) {
         throw newUninitializedMessageException(result);
       }
       return result;
     }
 
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol buildPartial() {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol(this);
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex buildPartial() {
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex result = new org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex(this);
       int from_bitField0_ = bitField0_;
       int to_bitField0_ = 0;
       if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -270,8 +270,8 @@ public final class IrSymbol extends
       return result;
     }
 
-    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol other) {
-      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance()) return this;
+    public Builder mergeFrom(org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex other) {
+      if (other == org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex.getDefaultInstance()) return this;
       if (other.hasIndex()) {
         setIndex(other.getIndex());
       }
@@ -292,11 +292,11 @@ public final class IrSymbol extends
         org.jetbrains.kotlin.protobuf.CodedInputStream input,
         org.jetbrains.kotlin.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol parsedMessage = null;
+      org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex parsedMessage = null;
       try {
         parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
-        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol) e.getUnfinishedMessage();
+        parsedMessage = (org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex) e.getUnfinishedMessage();
         throw e;
       } finally {
         if (parsedMessage != null) {
@@ -339,13 +339,13 @@ public final class IrSymbol extends
       return this;
     }
 
-    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol)
+    // @@protoc_insertion_point(builder_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex)
   }
 
   static {
-    defaultInstance = new IrSymbol(true);
+    defaultInstance = new IrBodyIndex(true);
     defaultInstance.initFields();
   }
 
-  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol)
+  // @@protoc_insertion_point(class_scope:org.jetbrains.kotlin.backend.common.serialization.proto.IrBodyIndex)
 }

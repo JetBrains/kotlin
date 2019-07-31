@@ -55,10 +55,10 @@ public final class TypeArguments extends
           }
           case 10: {
             if (!((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
-              typeArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex>();
+              typeArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>();
               mutable_bitField0_ |= 0x00000001;
             }
-            typeArgument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.PARSER, extensionRegistry));
+            typeArgument_.add(input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry));
             break;
           }
         }
@@ -98,36 +98,36 @@ public final class TypeArguments extends
   }
 
   public static final int TYPE_ARGUMENT_FIELD_NUMBER = 1;
-  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> typeArgument_;
+  private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> typeArgument_;
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
    */
-  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> getTypeArgumentList() {
+  public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getTypeArgumentList() {
     return typeArgument_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
    */
-  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndexOrBuilder> 
+  public java.util.List<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder> 
       getTypeArgumentOrBuilderList() {
     return typeArgument_;
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
    */
   public int getTypeArgumentCount() {
     return typeArgument_.size();
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getTypeArgument(int index) {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getTypeArgument(int index) {
     return typeArgument_.get(index);
   }
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndexOrBuilder getTypeArgumentOrBuilder(
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndexOrBuilder getTypeArgumentOrBuilder(
       int index) {
     return typeArgument_.get(index);
   }
@@ -342,38 +342,38 @@ public final class TypeArguments extends
     }
     private int bitField0_;
 
-    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> typeArgument_ =
+    private java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> typeArgument_ =
       java.util.Collections.emptyList();
     private void ensureTypeArgumentIsMutable() {
       if (!((bitField0_ & 0x00000001) == 0x00000001)) {
-        typeArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex>(typeArgument_);
+        typeArgument_ = new java.util.ArrayList<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex>(typeArgument_);
         bitField0_ |= 0x00000001;
        }
     }
 
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
-    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> getTypeArgumentList() {
+    public java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> getTypeArgumentList() {
       return java.util.Collections.unmodifiableList(typeArgument_);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public int getTypeArgumentCount() {
       return typeArgument_.size();
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getTypeArgument(int index) {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getTypeArgument(int index) {
       return typeArgument_.get(index);
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder setTypeArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -383,19 +383,19 @@ public final class TypeArguments extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder setTypeArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureTypeArgumentIsMutable();
       typeArgument_.set(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
-    public Builder addTypeArgument(org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex value) {
+    public Builder addTypeArgument(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -405,10 +405,10 @@ public final class TypeArguments extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder addTypeArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex value) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -418,30 +418,30 @@ public final class TypeArguments extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder addTypeArgument(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureTypeArgumentIsMutable();
       typeArgument_.add(builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder addTypeArgument(
-        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex.Builder builderForValue) {
+        int index, org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       ensureTypeArgumentIsMutable();
       typeArgument_.add(index, builderForValue.build());
 
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder addAllTypeArgument(
-        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex> values) {
+        java.lang.Iterable<? extends org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> values) {
       ensureTypeArgumentIsMutable();
       org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
           values, typeArgument_);
@@ -449,7 +449,7 @@ public final class TypeArguments extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder clearTypeArgument() {
       typeArgument_ = java.util.Collections.emptyList();
@@ -458,7 +458,7 @@ public final class TypeArguments extends
       return this;
     }
     /**
-     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex type_argument = 1;</code>
+     * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_argument = 1;</code>
      */
     public Builder removeTypeArgument(int index) {
       ensureTypeArgumentIsMutable();

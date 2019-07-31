@@ -17,13 +17,13 @@ public interface IrEnumEntryOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex initializer = 2;</code>
    */
   boolean hasInitializer();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression initializer = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex initializer = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression getInitializer();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getInitializer();
 
   /**
    * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrClass corresponding_class = 3;</code>
@@ -35,11 +35,11 @@ public interface IrEnumEntryOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrClass getCorrespondingClass();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 4;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 4;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 4;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 4;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 }

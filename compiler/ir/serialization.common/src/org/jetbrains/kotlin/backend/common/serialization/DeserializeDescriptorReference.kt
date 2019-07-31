@@ -42,11 +42,7 @@ abstract class DescriptorReferenceDeserializer(
             with(mangler) { uniqName.hashMangle }
         } else null
 
-    protected fun getContributedDescriptors(packageFqNameString: String, name: String): Collection<DeclarationDescriptor> {
-        val packageFqName = packageFqNameString.let {
-            if (it == "<root>") FqName.ROOT else FqName(it)
-        }// TODO: would we store an empty string in the protobuf?
-
+    protected fun getContributedDescriptors(packageFqName: FqName, name: String): Collection<DeclarationDescriptor> {
         val memberScope = currentModule.getPackage(packageFqName).memberScope
         return getContributedDescriptors(memberScope, name)
     }
@@ -91,8 +87,8 @@ abstract class DescriptorReferenceDeserializer(
     }
 
     open fun deserializeDescriptorReference(
-        packageFqNameString: String,
-        classFqNameString: String,
+        packageFqName: FqName,
+        classFqName: FqName,
         name: String,
         index: Long?,
         isEnumEntry: Boolean = false,
@@ -103,22 +99,19 @@ abstract class DescriptorReferenceDeserializer(
         isSetter: Boolean = false,
         isTypeParameter: Boolean = false
     ): DeclarationDescriptor {
-        val packageFqName = packageFqNameString.let {
-            if (it == "<root>") FqName.ROOT else FqName(it)
-        }// TODO: whould we store an empty string in the protobuf?
 
-        val classFqName = if (classFqNameString == "<root>") FqName.ROOT else FqName(classFqNameString)
         val protoIndex = index
 
-        val (clazz, members) = if (classFqNameString == "" || classFqNameString == "<root>") {
-            Pair(null, getContributedDescriptors(packageFqNameString, name))
+        val (clazz, members) = if (classFqName.isRoot) {
+            Pair(null, getContributedDescriptors(packageFqName, name))
         } else {
             val clazz = currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, classFqName, false))!!
             Pair(clazz, getContributedDescriptors(clazz.unsubstitutedMemberScope, name) + clazz.getConstructors())
         }
 
         // TODO: This is still native specific. Eliminate.
-        if (packageFqNameString.startsWith("cnames.") || packageFqNameString.startsWith("objcnames.")) {
+        val rootSegment = packageFqName.pathSegments().firstOrNull()?.identifier ?: ""
+        if (rootSegment == "cnames" || rootSegment == "objcnames") {
             val descriptor =
                 currentModule.findClassAcrossModuleDependencies(ClassId(packageFqName, FqName(name), false))!!
             if (!descriptor.fqNameUnsafe.asString().startsWith("cnames") && !descriptor.fqNameUnsafe.asString().startsWith(

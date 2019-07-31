@@ -8,13 +8,18 @@ public interface IrModuleOrBuilder extends
     org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required string name = 1;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 1;</code>
+   * <code>required string name = 1;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  java.lang.String getName();
+  /**
+   * <code>required string name = 1;</code>
+   */
+  org.jetbrains.kotlin.protobuf.ByteString
+      getNameBytes();
 
   /**
    * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrFile file = 2;</code>

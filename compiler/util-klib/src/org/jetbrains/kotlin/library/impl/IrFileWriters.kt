@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
+import java.io.ByteArrayOutputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
 import java.io.FileOutputStream
@@ -24,12 +25,66 @@ abstract class IrFileWriter {
     }
 }
 
-class IrTableWriter(private val data: List<ByteArray>) : IrFileWriter() {
+abstract class IrMemoryWriter {
+
+    protected abstract fun writeData(dataOutput: DataOutput)
+
+    fun writeIntoMemory(): ByteArray {
+        val memoryStream = ByteArrayOutputStream()
+        val dataOutputStream = DataOutputStream(memoryStream)
+
+        writeData(dataOutputStream)
+
+        dataOutputStream.close()
+        memoryStream.close()
+
+        return memoryStream.toByteArray()
+    }
+}
+
+
+class IrArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
     override fun writeData(dataOutput: DataOutput) {
         dataOutput.writeInt(data.size)
 
         data.forEach { dataOutput.writeInt(it.size) }
         data.forEach { dataOutput.write(it) }
+    }
+}
+
+class IrMemoryArrayWriter(private val data: List<ByteArray>) : IrMemoryWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeInt(it.size) }
+        data.forEach { dataOutput.write(it) }
+    }
+}
+
+
+class IrByteArrayWriter(private val data: List<ByteArray>) : IrFileWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        data.forEach { dataOutput.writeInt(it.size) }
+        data.forEach { dataOutput.write(it) }
+    }
+}
+
+class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWriter() {
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(data.size)
+
+        var dataOffset = 4 + data.size * (8 + 4 + 4)
+
+        data.forEach {
+            dataOutput.writeLong(it.first)
+            dataOutput.writeInt(dataOffset)
+            dataOutput.writeInt(it.second.size)
+            dataOffset += it.second.size
+        }
+
+        data.forEach { dataOutput.write(it.second) }
     }
 }
 
@@ -39,10 +94,10 @@ sealed class SerializedDeclaration {
     abstract val size: Int
     abstract val bytes: ByteArray
 
-    var offset: Int = -1
+    abstract val declarationName: String
 }
 
-class TopLevelDeclaration(override val id: Long, isLocal: Boolean, override val bytes: ByteArray) : SerializedDeclaration() {
+class TopLevelDeclaration(override val id: Long, isLocal: Boolean, override val declarationName: String, override val bytes: ByteArray) : SerializedDeclaration() {
     override val local = if (isLocal) 1 else 0
     override val size = bytes.size
 }
@@ -52,6 +107,9 @@ object SkippedDeclaration : SerializedDeclaration() {
     override val local = -1
     override val size = 0
     override val bytes = ByteArray(0)
+    override val declarationName: String = "<SKIPPED>"
+
+
 }
 
 class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrFileWriter() {
@@ -65,15 +123,36 @@ class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>)
         var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
 
         for (d in declarations) {
-            d.offset = dataOffset
+            dataOutput.writeLong(d.id)
+            dataOutput.writeInt(d.local)
+            dataOutput.writeInt(dataOffset)
+            dataOutput.writeInt(d.size)
             dataOffset += d.size
         }
 
         for (d in declarations) {
+            dataOutput.write(d.bytes)
+        }
+    }
+
+}
+
+class IrMemoryDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrMemoryWriter() {
+
+    private val SINGLE_INDEX_RECORD_SIZE = 20  // sizeof(Long) + 3 * sizeof(Int).
+    private val INDEX_HEADER_SIZE = 4  // sizeof(Int).
+
+    override fun writeData(dataOutput: DataOutput) {
+        dataOutput.writeInt(declarations.size)
+
+        var dataOffset = INDEX_HEADER_SIZE + SINGLE_INDEX_RECORD_SIZE * declarations.size
+
+        for (d in declarations) {
             dataOutput.writeLong(d.id)
             dataOutput.writeInt(d.local)
-            dataOutput.writeInt(d.offset)
+            dataOutput.writeInt(dataOffset)
             dataOutput.writeInt(d.size)
+            dataOffset += d.size
         }
 
         for (d in declarations) {

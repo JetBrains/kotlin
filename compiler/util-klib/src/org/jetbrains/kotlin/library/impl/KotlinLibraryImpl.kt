@@ -83,7 +83,7 @@ open class IrLibraryImpl(
         }
     }
 
-    override fun irDeclaration(index: Long, isLocal: Boolean) = loadIrDeclaraton(index, isLocal)
+    override fun irDeclaration(index: Long, isLocal: Boolean) = error("Should not call this") //loadIrDeclaraton(index, isLocal)
 
     override fun symbol(index: Int) = symbols.tableItemBytes(index)
 
@@ -91,28 +91,107 @@ open class IrLibraryImpl(
 
     override fun string(index: Int) = strings.tableItemBytes(index)
 
-    private val combinedDeclarations: CombinedIrFileReader by lazy {
-        CombinedIrFileReader(access.realFiles {
+    override fun file(index: Int): ByteArray = files.tableItemBytes(index)
+
+    override fun fileCount(): Int = files.entryCount()
+
+    override fun irDeclaration(index: Long, isLocal: Boolean, fileIndex: Int) = loadIrDeclaraton(index, isLocal, fileIndex)
+
+    override fun symbol(index: Int, fileIndex: Int) = symbols.tableItemBytes(fileIndex, index)
+
+    override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
+
+    override fun string(index: Int, fileIndex: Int) = strings.tableItemBytes(fileIndex, index)
+
+    override fun body(index: Int, fileIndex: Int) = bodies.tableItemBytes(fileIndex, index)
+
+    private val combinedDeclarations: DeclarationIrMultiTableReader by lazy {
+        DeclarationIrMultiTableReader(access.realFiles {
             it.irDeclarations
         })
     }
 
-    private val symbols: SimpleIrTableFileReader by lazy {
-        SimpleIrTableFileReader(access.realFiles {
+    private val symbols: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access.realFiles {
             it.irSymbols
         })
     }
 
-    private val types: SimpleIrTableFileReader by lazy {
-        SimpleIrTableFileReader(access.realFiles {
+    private val types: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access.realFiles {
             it.irTypes
         })
     }
 
-    private val strings: SimpleIrTableFileReader by lazy {
-        SimpleIrTableFileReader(access.realFiles {
+    private val strings: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access.realFiles {
             it.irStrings
         })
+    }
+
+    private val bodies: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access.realFiles {
+            it.irBodies
+        })
+    }
+
+    private val files: IrArrayReader by lazy {
+        IrArrayReader(access.realFiles {
+            it.irFiles
+        })
+    }
+
+
+    private fun getFileDirectory(fileName: String): File {
+        val directoryName = "${fileName.hashCode().toString(Character.MAX_RADIX)}.file"
+        return access.realFiles {
+            it.irFilesX.first { it.name == directoryName }
+        }
+    }
+
+    private val fileToDeclarationMap = mutableMapOf<String, DeclarationIrTableReader>()
+    private fun combinedDeclarations(fileName: String): DeclarationIrTableReader {
+        return fileToDeclarationMap.getOrPut(fileName) {
+            DeclarationIrTableReader(access.realFiles {
+                it.irDeclarations(getFileDirectory(fileName))
+            })
+        }
+    }
+
+    private val fileToSymbolMap = mutableMapOf<String, IrArrayReader>()
+    private fun symbols(fileName: String): IrArrayReader {
+        return fileToSymbolMap.getOrPut(fileName) {
+            IrArrayReader(access.realFiles {
+                it.irSymbols(getFileDirectory(fileName))
+            })
+        }
+    }
+
+    private val fileToTypeMap = mutableMapOf<String, IrArrayReader>()
+    private fun types(fileName: String): IrArrayReader {
+        return fileToTypeMap.getOrPut(fileName) {
+            IrArrayReader(access.realFiles {
+                it.irTypes(getFileDirectory(fileName))
+            })
+        }
+    }
+
+//    private val fileToStringMap = mutableMapOf<String, IrArrayReader>()
+//    private fun strings(fileIndex: Int): IrArrayReader {
+//        return fileToStringMap.getOrPut(fileName) {
+//            IrArrayReader(access.realFiles {
+//                it.irStrings(getFileDirectory(fileName))
+//            })
+//        }
+//    }
+
+    private val fileToBodyMap = mutableMapOf<String, IrArrayReader>()
+    private fun bodies(fileName: String): IrArrayReader {
+        return fileToBodyMap.getOrPut(fileName) {
+            IrArrayReader(access.realFiles {
+                it.irBodies(getFileDirectory(fileName))
+            })
+        }
     }
 
     private fun loadIrHeader(): ByteArray =
@@ -120,8 +199,11 @@ open class IrLibraryImpl(
             it.irHeader.readBytes()
         }
 
-    private fun loadIrDeclaraton(index: Long, isLocal: Boolean) =
-        combinedDeclarations.declarationBytes(DeclarationId(index, isLocal))
+//    private fun loadIrDeclaraton(index: Long, isLocal: Boolean) =
+//        combinedDeclarations.tableItemBytes(DeclarationId(index, isLocal))
+
+    private fun loadIrDeclaraton(index: Long, isLocal: Boolean, fileIndex: Int) =
+        combinedDeclarations.tableItemBytes(fileIndex, DeclarationId(index, isLocal))
 
     override val dataFlowGraph by lazy {
         access.inPlace { it: IrKotlinLibraryLayout ->

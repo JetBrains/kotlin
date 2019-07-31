@@ -20,12 +20,13 @@ class DescriptorTable {
 }
 
 // TODO: We don't manage id clashes anyhow now.
-abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: DescriptorTable, mangler: KotlinMangler): KotlinMangler by mangler {
+abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: DescriptorTable, mangler: KotlinMangler) : KotlinMangler by mangler {
 
     private val builtInsTable = mutableMapOf<IrSymbol, UniqId>()
     private val table = mutableMapOf<IrDeclaration, UniqId>()
     val descriptors = descriptorTable
     protected abstract var currentIndex: Long
+    protected abstract val initialIndex: Long
 
     open fun loadKnownBuiltins(): Long {
         builtIns.knownBuiltins.forEach {

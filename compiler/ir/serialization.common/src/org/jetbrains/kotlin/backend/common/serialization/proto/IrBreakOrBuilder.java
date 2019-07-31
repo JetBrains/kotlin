@@ -17,11 +17,11 @@ public interface IrBreakOrBuilder extends
   int getLoopId();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
    */
   boolean hasLabel();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getLabel();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel();
 }

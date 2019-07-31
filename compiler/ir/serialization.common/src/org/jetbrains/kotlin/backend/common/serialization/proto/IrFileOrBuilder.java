@@ -31,13 +31,13 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.FileEntry getFileEntry();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
    */
   boolean hasFqName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String fq_name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName fq_name = 3;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getFqName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.FqName getFqName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Annotations annotations = 4;</code>
@@ -49,16 +49,16 @@ public interface IrFileOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.Annotations getAnnotations();
 
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol> 
+  java.util.List<org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex> 
       getExplicitlyExportedToCompilerList();
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getExplicitlyExportedToCompiler(int index);
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getExplicitlyExportedToCompiler(int index);
   /**
-   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol explicitly_exported_to_compiler = 5;</code>
+   * <code>repeated .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex explicitly_exported_to_compiler = 5;</code>
    */
   int getExplicitlyExportedToCompilerCount();
 }

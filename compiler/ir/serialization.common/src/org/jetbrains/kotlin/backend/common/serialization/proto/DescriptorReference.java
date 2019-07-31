@@ -54,11 +54,11 @@ public final class DescriptorReference extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
             if (((bitField0_ & 0x00000001) == 0x00000001)) {
               subBuilder = packageFqName_.toBuilder();
             }
-            packageFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            packageFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(packageFqName_);
               packageFqName_ = subBuilder.buildPartial();
@@ -67,11 +67,11 @@ public final class DescriptorReference extends
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = classFqName_.toBuilder();
             }
-            classFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            classFqName_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.FqName.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(classFqName_);
               classFqName_ = subBuilder.buildPartial();
@@ -80,11 +80,11 @@ public final class DescriptorReference extends
             break;
           }
           case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000004) == 0x00000004)) {
               subBuilder = name_.toBuilder();
             }
-            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            name_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(name_);
               name_ = subBuilder.buildPartial();
@@ -180,47 +180,47 @@ public final class DescriptorReference extends
 
   private int bitField0_;
   public static final int PACKAGE_FQ_NAME_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String packageFqName_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName packageFqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
    */
   public boolean hasPackageFqName() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getPackageFqName() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName() {
     return packageFqName_;
   }
 
   public static final int CLASS_FQ_NAME_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String classFqName_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.FqName classFqName_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
    */
   public boolean hasClassFqName() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getClassFqName() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName() {
     return classFqName_;
   }
 
   public static final int NAME_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String name_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
    */
   public boolean hasName() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getName() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
     return name_;
   }
 
@@ -368,9 +368,9 @@ public final class DescriptorReference extends
   }
 
   private void initFields() {
-    packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
-    classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
-    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+    classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
+    name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
     isGetter_ = false;
     isSetter_ = false;
@@ -611,11 +611,11 @@ public final class DescriptorReference extends
 
     public Builder clear() {
       super.clear();
-      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
       uniqId_ = org.jetbrains.kotlin.backend.common.serialization.proto.UniqId.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -806,23 +806,23 @@ public final class DescriptorReference extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
     public boolean hasPackageFqName() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getPackageFqName() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getPackageFqName() {
       return packageFqName_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
-    public Builder setPackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setPackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -832,23 +832,23 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
     public Builder setPackageFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
       packageFqName_ = builderForValue.build();
 
       bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
-    public Builder mergePackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergePackageFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          packageFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          packageFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
         packageFqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(packageFqName_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(packageFqName_).mergeFrom(value).buildPartial();
       } else {
         packageFqName_ = value;
       }
@@ -857,32 +857,32 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String package_fq_name = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName package_fq_name = 1;</code>
      */
     public Builder clearPackageFqName() {
-      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      packageFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.FqName classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
     public boolean hasClassFqName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getClassFqName() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.FqName getClassFqName() {
       return classFqName_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
-    public Builder setClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -892,23 +892,23 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
     public Builder setClassFqName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.FqName.Builder builderForValue) {
       classFqName_ = builderForValue.build();
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
-    public Builder mergeClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeClassFqName(org.jetbrains.kotlin.backend.common.serialization.proto.FqName value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          classFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          classFqName_ != org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance()) {
         classFqName_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(classFqName_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.FqName.newBuilder(classFqName_).mergeFrom(value).buildPartial();
       } else {
         classFqName_ = value;
       }
@@ -917,32 +917,32 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String class_fq_name = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.FqName class_fq_name = 2;</code>
      */
     public Builder clearClassFqName() {
-      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      classFqName_ = org.jetbrains.kotlin.backend.common.serialization.proto.FqName.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
     public boolean hasName() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getName() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName() {
       return name_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
-    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -952,23 +952,23 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
     public Builder setName(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       name_ = builderForValue.build();
 
       bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
-    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeName(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          name_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         name_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(name_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(name_).mergeFrom(value).buildPartial();
       } else {
         name_ = value;
       }
@@ -977,10 +977,10 @@ public final class DescriptorReference extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 3;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 3;</code>
      */
     public Builder clearName() {
-      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
       return this;

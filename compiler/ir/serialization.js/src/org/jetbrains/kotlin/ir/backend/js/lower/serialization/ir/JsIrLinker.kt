@@ -29,21 +29,26 @@ class JsIrLinker(
     override val descriptorReferenceDeserializer =
         JsDescriptorReferenceDeserializer(currentModule, mangler, builtIns)
 
-    override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray {
-        return moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, uniqId.isLocal)
-    }
+    override fun reader(moduleDescriptor: ModuleDescriptor, fileIndex: Int, uniqId: UniqId) =
+        moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, uniqId.isLocal, fileIndex)
 
-    override val ModuleDescriptor.irHeader: ByteArray?
-        get() = this.kotlinLibrary.irHeader
+    override fun readSymbol(moduleDescriptor: ModuleDescriptor, fileIndex: Int, symbolIndex: Int) =
+        moduleDescriptor.kotlinLibrary.symbol(symbolIndex, fileIndex)
 
-    override fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int) =
-        moduleDescriptor.kotlinLibrary.symbol(symbolIndex)
+    override fun readType(moduleDescriptor: ModuleDescriptor, fileIndex: Int, typeIndex: Int) =
+        moduleDescriptor.kotlinLibrary.type(typeIndex, fileIndex)
 
-    override fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int) =
-        moduleDescriptor.kotlinLibrary.type(typeIndex)
+    override fun readString(moduleDescriptor: ModuleDescriptor, fileIndex: Int, stringIndex: Int) =
+        moduleDescriptor.kotlinLibrary.string(stringIndex, fileIndex)
 
-    override fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int) =
-        moduleDescriptor.kotlinLibrary.string(stringIndex)
+    override fun readBody(moduleDescriptor: ModuleDescriptor, fileIndex: Int, bodyIndex: Int) =
+        moduleDescriptor.kotlinLibrary.body(bodyIndex, fileIndex)
+
+    override fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int) =
+        moduleDescriptor.kotlinLibrary.file(fileIndex)
+
+    override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
+        moduleDescriptor.kotlinLibrary.fileCount()
 
     override fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
         if (size == 1)

@@ -37,6 +37,13 @@ interface IrLibrary {
     fun symbol(index: Int): ByteArray
     fun type(index: Int): ByteArray
     fun string(index: Int): ByteArray
+    fun irDeclaration(index: Long, isLocal: Boolean, fileIndex: Int): ByteArray
+    fun symbol(index: Int, fileIndex: Int): ByteArray
+    fun type(index: Int, fileIndex: Int): ByteArray
+    fun string(index: Int, fileIndex: Int): ByteArray
+    fun body(index: Int, fileIndex: Int): ByteArray
+    fun file(index: Int): ByteArray
+    fun fileCount(): Int
 }
 
 val BaseKotlinLibrary.uniqueName: String

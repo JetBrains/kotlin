@@ -53,13 +53,35 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irHeader
         get() = File(irDir, "irHeaders.kni")
     val irDeclarations
-        get() = File(irTablesDir, "irCombined.knd")
+        get() = File(irDir, "irDeclarations.knd")
     val irSymbols
-        get() = File(irTablesDir, "symbols.knt")
+        get() = File(irDir, "symbols.knt")
     val irTypes
-        get() = File(irTablesDir, "types.knt")
+        get() = File(irDir, "types.knt")
     val irStrings
-        get() = File(irTablesDir, "strings.knt")
+        get() = File(irDir, "strings.knt")
+    val irBodies
+        get() = File(irDir, "bodies.knb")
+    val irFiles
+        get() = File(irDir, "files.knf")
     val dataFlowGraphFile
         get() = File(irDir, "module_data_flow_graph")
+
+    fun irDeclarations(file: File): File = File(file, "irCombined.knd")
+    fun irSymbols(file: File): File = File(file, "symbols.knt")
+    fun irTypes(file: File): File = File(file, "types.knt")
+    fun irStrings(file: File): File = File(file, "strings.knt")
+    fun irBodies(file: File): File = File(file, "body.knb")
+    fun irFile(file: File): File = File(file, "file.knf")
+
+    val irFilesX
+        get() = run {
+            val fileDirectories = mutableListOf<File>()
+            irDir.postorder {
+                if (it.fileName.toString().endsWith(".file")) {
+                    fileDirectories.add(File(it))
+                }
+            }
+            fileDirectories
+        }
 }

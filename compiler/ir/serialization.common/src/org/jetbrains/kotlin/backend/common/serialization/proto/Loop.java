@@ -72,11 +72,11 @@ public final class Loop extends
             break;
           }
           case 26: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000004) == 0x00000004)) {
               subBuilder = label_.toBuilder();
             }
-            label_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.String.PARSER, extensionRegistry);
+            label_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(label_);
               label_ = subBuilder.buildPartial();
@@ -175,17 +175,17 @@ public final class Loop extends
   }
 
   public static final int LABEL_FIELD_NUMBER = 3;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.String label_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
    */
   public boolean hasLabel() {
     return ((bitField0_ & 0x00000004) == 0x00000004);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.String getLabel() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel() {
     return label_;
   }
 
@@ -222,7 +222,7 @@ public final class Loop extends
   private void initFields() {
     loopId_ = 0;
     condition_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
-    label_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
     origin_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrStatementOrigin.getDefaultInstance();
   }
@@ -411,7 +411,7 @@ public final class Loop extends
       bitField0_ = (bitField0_ & ~0x00000001);
       condition_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
-      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
       body_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000008);
@@ -631,23 +631,23 @@ public final class Loop extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.String label_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
     public boolean hasLabel() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.String getLabel() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getLabel() {
       return label_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
-    public Builder setLabel(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder setLabel(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -657,23 +657,23 @@ public final class Loop extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
     public Builder setLabel(
-        org.jetbrains.kotlin.backend.common.serialization.proto.String.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       label_ = builderForValue.build();
 
       bitField0_ |= 0x00000004;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
-    public Builder mergeLabel(org.jetbrains.kotlin.backend.common.serialization.proto.String value) {
+    public Builder mergeLabel(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000004) == 0x00000004) &&
-          label_ != org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance()) {
+          label_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         label_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.String.newBuilder(label_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(label_).mergeFrom(value).buildPartial();
       } else {
         label_ = value;
       }
@@ -682,10 +682,10 @@ public final class Loop extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.String label = 3;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex label = 3;</code>
      */
     public Builder clearLabel() {
-      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.String.getDefaultInstance();
+      label_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000004);
       return this;

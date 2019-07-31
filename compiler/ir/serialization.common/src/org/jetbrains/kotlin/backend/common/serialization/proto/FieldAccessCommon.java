@@ -54,11 +54,11 @@ public final class FieldAccessCommon extends
             break;
           }
           case 10: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000001) == 0x00000001)) {
               subBuilder = symbol_.toBuilder();
             }
-            symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.PARSER, extensionRegistry);
+            symbol_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(symbol_);
               symbol_ = subBuilder.buildPartial();
@@ -67,11 +67,11 @@ public final class FieldAccessCommon extends
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = super_.toBuilder();
             }
-            super_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.PARSER, extensionRegistry);
+            super_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(super_);
               super_ = subBuilder.buildPartial();
@@ -127,32 +127,32 @@ public final class FieldAccessCommon extends
 
   private int bitField0_;
   public static final int SYMBOL_FIELD_NUMBER = 1;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
    */
   public boolean hasSymbol() {
     return ((bitField0_ & 0x00000001) == 0x00000001);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
     return symbol_;
   }
 
   public static final int SUPER_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_;
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
    */
   public boolean hasSuper() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSuper() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuper() {
     return super_;
   }
 
@@ -172,8 +172,8 @@ public final class FieldAccessCommon extends
   }
 
   private void initFields() {
-    symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
-    super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
+    super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
   }
   private byte memoizedIsInitialized = -1;
@@ -333,9 +333,9 @@ public final class FieldAccessCommon extends
 
     public Builder clear() {
       super.clear();
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
       receiver_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -437,23 +437,23 @@ public final class FieldAccessCommon extends
     }
     private int bitField0_;
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public boolean hasSymbol() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSymbol() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSymbol() {
       return symbol_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder setSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -463,23 +463,23 @@ public final class FieldAccessCommon extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public Builder setSymbol(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       symbol_ = builderForValue.build();
 
       bitField0_ |= 0x00000001;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
-    public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder mergeSymbol(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000001) == 0x00000001) &&
-          symbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance()) {
+          symbol_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         symbol_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.newBuilder(symbol_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(symbol_).mergeFrom(value).buildPartial();
       } else {
         symbol_ = value;
       }
@@ -488,32 +488,32 @@ public final class FieldAccessCommon extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol symbol = 1;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex symbol = 1;</code>
      */
     public Builder clearSymbol() {
-      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      symbol_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000001);
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
     public boolean hasSuper() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getSuper() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getSuper() {
       return super_;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
-    public Builder setSuper(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder setSuper(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -523,23 +523,23 @@ public final class FieldAccessCommon extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
     public Builder setSuper(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       super_ = builderForValue.build();
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
-    public Builder mergeSuper(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder mergeSuper(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          super_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance()) {
+          super_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         super_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.newBuilder(super_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(super_).mergeFrom(value).buildPartial();
       } else {
         super_ = value;
       }
@@ -548,10 +548,10 @@ public final class FieldAccessCommon extends
       return this;
     }
     /**
-     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol super = 2;</code>
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex super = 2;</code>
      */
     public Builder clearSuper() {
-      super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      super_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;

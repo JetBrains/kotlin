@@ -88,7 +88,7 @@ class KoltinLibraryWriterImpl(
 fun buildKoltinLibrary(
     linkDependencies: List<KotlinLibrary>,
     metadata: SerializedMetadata,
-    ir: SerializedIr,
+    ir: SerializedIrModule,
     versions: KonanLibraryVersioning,
     output: String,
     moduleName: String,

@@ -20,7 +20,7 @@ interface MetadataWriter {
 }
 
 interface IrWriter {
-    fun addIr(ir: SerializedIr)
+    fun addIr(ir: SerializedIrModule)
     fun addDataFlowGraph(dataFlowGraph: ByteArray)
 }
 
@@ -33,8 +33,37 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
+class SerializedIrSymbol(
+    val symbolData: ByteArray,
+    val id: Long,
+    val isLocal: Boolean
+)
+
+//class SerializedIrFile(
+//    val fileData: ByteArray,
+//    val symbols: List<SerializedIrSymbol>,
+//    val types: List<ByteArray>,
+//    val strings: List<ByteArray>
+//)
+
+class IrIrSerializedIrFile(
+    val fileData: ByteArray,
+//    val fileProto: ProtoFile,
+    val fqName: List<String>,
+    val path: String,
+//    val symbols: List<SerializedIrSymbol>,
+    val symbols: List<ByteArray>,
+    val types: List<ByteArray>,
+    val strings: List<ByteArray>,
+    val bodies: List<ByteArray>,
+    val declarations: List<SerializedDeclaration>
+)
+
+class SerializedIrModule(val files: Collection<IrIrSerializedIrFile>)
+
 class SerializedIr(
     val module: ByteArray,
+//    val symbols: List<Pair<Long, ByteArray>>,
     val symbols: List<ByteArray>,
     val types: List<ByteArray>,
     val strings: List<ByteArray>,

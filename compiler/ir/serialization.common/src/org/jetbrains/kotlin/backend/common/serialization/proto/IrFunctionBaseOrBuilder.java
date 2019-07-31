@@ -17,13 +17,13 @@ public interface IrFunctionBaseOrBuilder extends
   org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase getBase();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
   boolean hasName();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.String name = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex name = 2;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.String getName();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getName();
 
   /**
    * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.Visibility visibility = 3;</code>
@@ -94,20 +94,20 @@ public interface IrFunctionBaseOrBuilder extends
   int getValueParameterCount();
 
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement body = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 10;</code>
    */
   boolean hasBody();
   /**
-   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement body = 10;</code>
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex body = 10;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrStatement getBody();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getBody();
 
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex return_type = 11;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex return_type = 11;</code>
    */
   boolean hasReturnType();
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex return_type = 11;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex return_type = 11;</code>
    */
-  org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeIndex getReturnType();
+  org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getReturnType();
 }
