@@ -64,6 +64,11 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
         private val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
     }
 
+    @Deprecated(
+        "@Parcelize is now available in non-experimental setups as well.",
+        replaceWith = ReplaceWith("true"),
+        level = DeprecationLevel.ERROR
+    )
     protected open fun isExperimental(element: KtElement) = true
 
     override val shouldGenerateClassSyntheticPartsInLightClassesMode: Boolean
@@ -72,9 +77,6 @@ open class ParcelableCodegenExtension : ExpressionCodegenExtension {
     override fun generateClassSyntheticParts(codegen: ImplementationBodyCodegen) {
         val parcelableClass = codegen.descriptor
         if (!parcelableClass.isParcelize) return
-
-        val sourceElement = (codegen.myClass as? KtClassOrObject) ?: return
-        if (!isExperimental(sourceElement)) return
 
         if (parcelableClass.kind !in ALLOWED_CLASS_KINDS) return
 
