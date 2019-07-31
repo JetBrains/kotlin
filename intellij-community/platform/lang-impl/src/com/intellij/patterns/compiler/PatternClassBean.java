@@ -39,13 +39,7 @@ public class PatternClassBean extends AbstractExtensionPointBean {
   }
 
   public Class getPatternClass() {
-    try {
-      return findClass(className);
-    }
-    catch (ClassNotFoundException e) {
-      LOG.error(e);
-    }
-    return null;
+    return findClassNoExceptions(className);
   }
 
 }

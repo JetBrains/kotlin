@@ -38,8 +38,8 @@ public class CompletionDataEP extends AbstractExtensionPointBean {
 
   private final LazyInstance<CompletionData> myHandler = new LazyInstance<CompletionData>() {
     @Override
-    protected Class<CompletionData> getInstanceClass() throws ClassNotFoundException {
-      return findClass(className);
+    protected Class<CompletionData> getInstanceClass() {
+      return findExtensionClass(className);
     }
   };
 

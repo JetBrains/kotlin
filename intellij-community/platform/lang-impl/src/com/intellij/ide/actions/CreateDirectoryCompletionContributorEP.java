@@ -14,8 +14,8 @@ public class CreateDirectoryCompletionContributorEP extends AbstractExtensionPoi
 
   private final LazyInstance<CreateDirectoryCompletionContributor> myHandler = new LazyInstance<CreateDirectoryCompletionContributor>() {
     @Override
-    protected Class<CreateDirectoryCompletionContributor> getInstanceClass() throws ClassNotFoundException {
-      return findClass(implementationClass);
+    protected Class<CreateDirectoryCompletionContributor> getInstanceClass() {
+      return findExtensionClass(implementationClass);
     }
   };
 

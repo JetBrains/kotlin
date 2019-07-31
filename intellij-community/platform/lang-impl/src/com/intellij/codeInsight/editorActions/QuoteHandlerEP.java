@@ -20,8 +20,8 @@ public class QuoteHandlerEP extends AbstractExtensionPointBean {
 
   private final LazyInstance<QuoteHandler> myHandler = new LazyInstance<QuoteHandler>() {
     @Override
-    protected Class<QuoteHandler> getInstanceClass() throws ClassNotFoundException {
-      return findClass(className);
+    protected Class<QuoteHandler> getInstanceClass() {
+      return findExtensionClass(className);
     }
   };
 
