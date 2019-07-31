@@ -7,16 +7,15 @@ package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.psi.TokenType
-import com.intellij.psi.tree.IFileElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -104,7 +103,7 @@ class DeclarationsConverter(
                 else -> if (node.isExpression()) container += expressionConverter.getAsFirExpression<FirStatement>(node)
             }
         }
-        return FirBlockImpl(session, null).apply {
+        return FirBlockImpl(null).apply {
             firStatements.forEach { firStatement ->
                 if (firStatement !is FirBlock || firStatement.annotations.isNotEmpty()) {
                     statements += firStatement
@@ -156,7 +155,6 @@ class DeclarationsConverter(
         }
 
         return FirImportImpl(
-            session,
             null,
             importedFqName,
             isAllUnder,
@@ -180,7 +178,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseModifierList
      */
     private fun convertModifierList(modifiers: LighterASTNode): Modifier {
-        val modifier = Modifier(session)
+        val modifier = Modifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> modifier.annotations += convertAnnotation(it)
@@ -195,7 +193,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeModifierList
      */
     private fun convertTypeModifierList(modifiers: LighterASTNode): TypeModifier {
-        val typeModifierList = TypeModifier(session)
+        val typeModifierList = TypeModifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> typeModifierList.annotations += convertAnnotation(it)
@@ -210,7 +208,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
      */
     private fun convertTypeArgumentModifierList(modifiers: LighterASTNode): TypeProjectionModifier {
-        val typeArgumentModifierList = TypeProjectionModifier(session)
+        val typeArgumentModifierList = TypeProjectionModifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> typeArgumentModifierList.annotations += convertAnnotation(it)
@@ -225,7 +223,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeArgumentModifierList
      */
     private fun convertTypeParameterModifiers(modifiers: LighterASTNode): TypeParameterModifier {
-        val modifier = TypeParameterModifier(session)
+        val modifier = TypeParameterModifier()
         modifiers.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> modifier.annotations += convertAnnotation(it)
@@ -301,7 +299,6 @@ class DeclarationsConverter(
             }
         }
         return FirAnnotationCallImpl(
-            session,
             null,
             annotationUseSiteTarget ?: defaultAnnotationUseSiteTarget,
             constructorCalleePair.first
@@ -313,7 +310,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseClassOrObject
      */
     private fun convertClass(classNode: LighterASTNode): FirDeclaration {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var classKind: ClassKind = ClassKind.CLASS //TODO
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -382,10 +379,10 @@ class DeclarationsConverter(
             firClass.superTypeRefs += superTypeRefs
 
             val classWrapper = ClassWrapper(
-                session, className, modifiers, classKind,
-                primaryConstructor != null,
+                className, modifiers, classKind, primaryConstructor != null,
                 classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
-                null.toDelegatedSelfType(firClass), delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry
+                null.toDelegatedSelfType(firClass),
+                delegatedSuperTypeRef ?: defaultDelegatedSuperTypeRef, superTypeCallEntry
             )
             //parse primary constructor
             val primaryConstructorWrapper = convertPrimaryConstructor(primaryConstructor, classWrapper)
@@ -410,7 +407,9 @@ class DeclarationsConverter(
             if (modifiers.isDataClass() && firPrimaryConstructor != null) {
                 val zippedParameters = MutableList(properties.size) { null }.zip(properties)
                 zippedParameters.generateComponentFunctions(session, firClass, context.packageFqName, context.className)
-                zippedParameters.generateCopyFunction(session, null, firClass, context.packageFqName, context.className, firPrimaryConstructor)
+                zippedParameters.generateCopyFunction(
+                    session, null, firClass, context.packageFqName, context.className, firPrimaryConstructor
+                )
                 // TODO: equals, hashCode, toString
             }
 
@@ -423,7 +422,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitObjectLiteralExpression
      */
     fun convertObjectLiteral(objectLiteral: LighterASTNode): FirElement {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var primaryConstructor: LighterASTNode? = null
         val superTypeRefs = mutableListOf<FirTypeRef>()
         val superTypeCallEntry = mutableListOf<FirExpression>()
@@ -445,14 +444,13 @@ class DeclarationsConverter(
         superTypeRefs.ifEmpty { superTypeRefs += implicitAnyType }
         val delegatedType = delegatedSuperTypeRef ?: implicitAnyType
 
-        return FirAnonymousObjectImpl(session, null).apply {
+        return FirAnonymousObjectImpl(null).apply {
             annotations += modifiers.annotations
             this.superTypeRefs += superTypeRefs
             this.typeRef = superTypeRefs.first()
 
             val classWrapper = ClassWrapper(
-                this@DeclarationsConverter.session, SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT,
-                hasPrimaryConstructor = false,
+                SpecialNames.NO_NAME_PROVIDED, modifiers, ClassKind.OBJECT, hasPrimaryConstructor = false,
                 hasSecondaryConstructor = classBody.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                 delegatedSelfTypeRef = delegatedType,
                 delegatedSuperTypeRef = delegatedType,
@@ -472,7 +470,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseEnumEntry
      */
     private fun convertEnumEntry(enumEntry: LighterASTNode, classWrapper: ClassWrapper): FirEnumEntryImpl {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         lateinit var identifier: String
         var hasInitializerList = false
         val enumSuperTypeCallEntry = mutableListOf<FirExpression>()
@@ -507,8 +505,7 @@ class DeclarationsConverter(
             }
 
             val enumClassWrapper = ClassWrapper(
-                session, enumEntryName, modifiers, ClassKind.ENUM_ENTRY,
-                hasPrimaryConstructor = true,
+                enumEntryName, modifiers, ClassKind.ENUM_ENTRY, hasPrimaryConstructor = true,
                 hasSecondaryConstructor = classBodyNode.getChildNodesByType(SECONDARY_CONSTRUCTOR).isNotEmpty(),
                 delegatedSelfTypeRef = null.toDelegatedSelfType(firEnumEntry),
                 delegatedSuperTypeRef = if (hasInitializerList) classWrapper.getFirUserTypeFromClassName() else defaultDelegatedSuperTypeRef,
@@ -566,7 +563,7 @@ class DeclarationsConverter(
         if (primaryConstructor == null && classWrapper.hasSecondaryConstructor) return null
         if (classWrapper.isInterface()) return null
 
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         val valueParameters = mutableListOf<ValueParameter>()
         primaryConstructor?.forEachChildren {
             when (it.tokenType) {
@@ -577,7 +574,6 @@ class DeclarationsConverter(
 
         val defaultVisibility = classWrapper.defaultConstructorVisibility()
         val firDelegatedCall = FirDelegatedConstructorCallImpl(
-            session,
             null,
             classWrapper.delegatedSuperTypeRef,
             isThis = false
@@ -616,7 +612,7 @@ class DeclarationsConverter(
         return FirAnonymousInitializerImpl(
             session,
             null,
-            if (stubMode) FirEmptyExpressionBlock(session) else firBlock
+            if (stubMode) FirEmptyExpressionBlock() else firBlock
         )
     }
 
@@ -624,7 +620,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseSecondaryConstructor
      */
     private fun convertSecondaryConstructor(secondaryConstructor: LighterASTNode, classWrapper: ClassWrapper): FirConstructor {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         val firValueParameters = mutableListOf<ValueParameter>()
         var constructorDelegationCall: FirDelegatedConstructorCall? = null
         var block: LighterASTNode? = null
@@ -639,7 +635,7 @@ class DeclarationsConverter(
         }
 
         val delegatedSelfTypeRef =
-            if (classWrapper.isObjectLiteral()) FirErrorTypeRefImpl(session, null, "Constructor in object")
+            if (classWrapper.isObjectLiteral()) FirErrorTypeRefImpl(null, "Constructor in object")
             else classWrapper.delegatedSelfTypeRef
 
         val firConstructor = FirConstructorImpl(
@@ -683,8 +679,8 @@ class DeclarationsConverter(
         val isThis = (isImplicit && classWrapper.hasPrimaryConstructor) || thisKeywordPresent
         val delegatedType =
             if (classWrapper.isObjectLiteral() || classWrapper.isInterface()) when {
-                isThis -> FirErrorTypeRefImpl(session, null, "Constructor in object")
-                else -> FirErrorTypeRefImpl(session, null, "No super type")
+                isThis -> FirErrorTypeRefImpl(null, "Constructor in object")
+                else -> FirErrorTypeRefImpl(null, "No super type")
             }
             else when {
                 isThis -> classWrapper.delegatedSelfTypeRef
@@ -692,7 +688,6 @@ class DeclarationsConverter(
             }
 
         return FirDelegatedConstructorCallImpl(
-            session,
             null,
             delegatedType,
             isThis
@@ -703,7 +698,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeAlias
      */
     private fun convertTypeAlias(typeAlias: LighterASTNode): FirDeclaration {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var identifier: String? = null
         lateinit var firType: FirTypeRef
         val firTypeParameters = mutableListOf<FirTypeParameter>()
@@ -738,7 +733,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseProperty
      */
     fun convertPropertyDeclaration(property: LighterASTNode): FirDeclaration {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var isReturnType = false
@@ -780,9 +775,14 @@ class DeclarationsConverter(
                 returnType,
                 isVar,
                 firExpression,
-                delegate = delegateExpression?.let { expressionConverter.getAsFirExpression(it, "Incorrect delegate expression") }
+                delegate = delegateExpression?.let {
+                    FirWrappedDelegateExpressionImpl(
+                        null, expressionConverter.getAsFirExpression(it, "Incorrect delegate expression")
+                    )
+                }
             ).apply {
                 annotations += modifiers.annotations
+                this.generateAccessorsByDelegate(this@DeclarationsConverter.session, member = false, stubMode = stubMode)
             }
         } else {
             FirMemberPropertyImpl(
@@ -801,13 +801,21 @@ class DeclarationsConverter(
                 returnType,
                 isVar,
                 firExpression,
-                getter ?: FirDefaultPropertyGetter(session, null, returnType, modifiers.getVisibility()),
-                if (isVar) setter ?: FirDefaultPropertySetter(session, null, returnType, modifiers.getVisibility()) else null,
-                delegateExpression?.let { expressionConverter.getAsFirExpression(it, "Should have delegate") }
+                delegateExpression?.let {
+                    FirWrappedDelegateExpressionImpl(
+                        null,
+                        expressionConverter.getAsFirExpression(it, "Should have delegate")
+                    )
+                }
             ).apply {
                 this.typeParameters += firTypeParameters
                 this.joinTypeParameters(typeConstraints)
                 annotations += modifiers.annotations
+                this.getter = getter ?: FirDefaultPropertyGetter(session, null, returnType, modifiers.getVisibility())
+                this.setter = if (isVar) setter ?: FirDefaultPropertySetter(session, null, returnType, modifiers.getVisibility()) else null
+                generateAccessorsByDelegate(
+                    this@DeclarationsConverter.session, member = parentNode?.tokenType != KT_FILE, stubMode = stubMode
+                )
             }
         }
     }
@@ -818,7 +826,7 @@ class DeclarationsConverter(
     private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var isVar = false
         val entries = mutableListOf<FirVariable<*>>()
-        var firExpression: FirExpression = FirErrorExpressionImpl(session, null, "Destructuring declaration without initializer")
+        var firExpression: FirExpression = FirErrorExpressionImpl(null, "Destructuring declaration without initializer")
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
                 VAR_KEYWORD -> isVar = true
@@ -835,7 +843,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
      */
     private fun convertDestructingDeclarationEntry(entry: LighterASTNode): FirVariable<*> {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
         entry.forEachChildren {
@@ -857,7 +865,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parsePropertyGetterOrSetter
      */
     private fun convertGetterOrSetter(getterOrSetter: LighterASTNode, propertyTypeRef: FirTypeRef): FirPropertyAccessor {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var isGetter = true
         var returnType: FirTypeRef? = null
         var firValueParameters: FirValueParameter = FirDefaultSetterValueParameter(session, null, propertyTypeRef)
@@ -901,7 +909,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.toFirValueParameter
      */
     private fun convertSetterParameter(setterParameter: LighterASTNode, propertyTypeRef: FirTypeRef): FirValueParameter {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         lateinit var firValueParameter: FirValueParameter
         setterParameter.forEachChildren {
             when (it.tokenType) {
@@ -928,7 +936,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
     fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirDeclaration {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var identifier: String? = null
         val firTypeParameters = mutableListOf<FirTypeParameter>()
         var valueParametersList: LighterASTNode? = null
@@ -1009,7 +1017,6 @@ class DeclarationsConverter(
         return when {
             blockNode != null -> return convertBlock(blockNode)
             expression != null -> FirSingleExpressionBlock(
-                session,
                 expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
             )
             else -> null
@@ -1020,10 +1027,9 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
     fun convertBlock(block: LighterASTNode?): FirBlock {
-        if (block == null) return FirEmptyExpressionBlock(session)
+        if (block == null) return FirEmptyExpressionBlock()
         if (block.tokenType != BLOCK) {
             return FirSingleExpressionBlock(
-                session,
                 expressionConverter.getAsFirExpression(block)
             )
         }
@@ -1032,8 +1038,7 @@ class DeclarationsConverter(
             return DeclarationsConverter(session, stubMode, blockTree, context).convertBlockExpression(blockTree.root)
         } else {
             FirSingleExpressionBlock(
-                session,
-                FirExpressionStub(session, null).toReturn()
+                FirExpressionStub(null).toReturn()
             )
         }
     }
@@ -1093,7 +1098,7 @@ class DeclarationsConverter(
      */
     private fun convertExplicitDelegation(explicitDelegation: LighterASTNode): FirDelegatedTypeRef {
         lateinit var firTypeRef: FirTypeRef
-        var firExpression: FirExpression? = FirErrorExpressionImpl(session, null, "Should have delegate")
+        var firExpression: FirExpression? = FirErrorExpressionImpl(null, "Should have delegate")
         explicitDelegation.forEachChildren {
             when (it.tokenType) {
                 TYPE_REFERENCE -> firTypeRef = convertType(it)
@@ -1102,7 +1107,6 @@ class DeclarationsConverter(
         }
 
         return FirDelegatedTypeRefImpl(
-            session,
             firTypeRef,
             firExpression
         )
@@ -1154,7 +1158,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseTypeParameter
      */
     private fun convertTypeParameter(typeParameter: LighterASTNode): FirTypeParameter {
-        var typeParameterModifiers = TypeParameterModifier(session)
+        var typeParameterModifiers = TypeParameterModifier()
         var identifier: String? = null
         var firType: FirTypeRef? = null
         typeParameter.forEachChildren {
@@ -1184,10 +1188,10 @@ class DeclarationsConverter(
      */
     fun convertType(type: LighterASTNode): FirTypeRef {
         if (type.asText.isEmpty()) {
-            return FirErrorTypeRefImpl(session, null, "Unwrapped type is null")
+            return FirErrorTypeRefImpl(null, "Unwrapped type is null")
         }
-        var typeModifiers = TypeModifier(session) //TODO what with suspend?
-        var firType: FirTypeRef = FirErrorTypeRefImpl(session, null, "Incomplete code")
+        var typeModifiers = TypeModifier() //TODO what with suspend?
+        var firType: FirTypeRef = FirErrorTypeRefImpl(null, "Incomplete code")
         var afterLPar = false
         type.forEachChildren {
             when (it.tokenType) {
@@ -1197,8 +1201,8 @@ class DeclarationsConverter(
                 USER_TYPE -> firType = convertUserType(it)
                 NULLABLE_TYPE -> firType = convertNullableType(it)
                 FUNCTION_TYPE -> firType = convertFunctionType(it)
-                DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(session, null, false)
-                TokenType.ERROR_ELEMENT -> firType = FirErrorTypeRefImpl(session, null, "Unwrapped type is null")
+                DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(null, false)
+                TokenType.ERROR_ELEMENT -> firType = FirErrorTypeRefImpl(null, "Unwrapped type is null")
             }
         }
 
@@ -1230,7 +1234,7 @@ class DeclarationsConverter(
                     convertUserType(it, true)
                 FUNCTION_TYPE -> firType = convertFunctionType(it, true)
                 NULLABLE_TYPE -> firType = convertNullableType(it)
-                DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(session, null, true)
+                DYNAMIC_TYPE -> firType = FirDynamicTypeRefImpl(null, true)
             }
         }
 
@@ -1253,14 +1257,13 @@ class DeclarationsConverter(
         }
 
         if (identifier == null)
-            return FirErrorTypeRefImpl(session, null, "Incomplete user type")
+            return FirErrorTypeRefImpl(null, "Incomplete user type")
 
         val qualifier = FirQualifierPartImpl(
             identifier.nameAsSafeName()
         ).apply { typeArguments += firTypeArguments }
 
         return FirUserTypeRefImpl(
-            session,
             null,
             isNullable
         ).apply {
@@ -1284,7 +1287,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.tryParseTypeArgumentList
      */
     private fun convertTypeProjection(typeProjection: LighterASTNode): FirTypeProjection {
-        var modifiers = TypeProjectionModifier(session)
+        var modifiers = TypeProjectionModifier()
         lateinit var firType: FirTypeRef
         var isStarProjection = false
         typeProjection.forEachChildren {
@@ -1296,9 +1299,8 @@ class DeclarationsConverter(
         }
 
         //annotations from modifiers must be ignored
-        return if (isStarProjection) FirStarProjectionImpl(session, null)
+        return if (isStarProjection) FirStarProjectionImpl(null)
         else FirTypeProjectionWithVarianceImpl(
-            session,
             null,
             modifiers.getVariance(),
             firType
@@ -1321,7 +1323,6 @@ class DeclarationsConverter(
         }
 
         return FirFunctionTypeRefImpl(
-            session,
             null,
             isNullable,
             receiverTypeReference,
@@ -1344,7 +1345,7 @@ class DeclarationsConverter(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseValueParameter
      */
     fun convertValueParameter(valueParameter: LighterASTNode): ValueParameter {
-        var modifiers = Modifier(session)
+        var modifiers = Modifier()
         var isVal = false
         var isVar = false
         var identifier: String? = null

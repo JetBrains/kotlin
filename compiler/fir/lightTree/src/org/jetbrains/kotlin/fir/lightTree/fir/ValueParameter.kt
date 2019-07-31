@@ -37,7 +37,7 @@ class ValueParameter(
         val name = this.firValueParameter.name
         var type = this.firValueParameter.returnTypeRef
         if (type is FirImplicitTypeRef) {
-            type = FirErrorTypeRefImpl(session, null, "Incomplete code")
+            type = FirErrorTypeRefImpl(null, "Incomplete code")
         }
 
         return FirMemberPropertyImpl(
@@ -55,19 +55,16 @@ class ValueParameter(
             receiverTypeRef = null,
             returnTypeRef = type,
             isVar = this.isVar,
-            initializer = FirQualifiedAccessExpressionImpl(session, null).apply {
+            initializer = FirQualifiedAccessExpressionImpl(null).apply {
                 calleeReference = FirPropertyFromParameterCallableReference(
-                    session, null, name, this@ValueParameter.firValueParameter.symbol
+                    null, name, this@ValueParameter.firValueParameter.symbol
                 )
             },
-            getter = FirDefaultPropertyGetter(session, null, type, modifiers.getVisibility()),
-            setter = if (this.isVar) FirDefaultPropertySetter(
-                session,
-                null,
-                type,
-                modifiers.getVisibility()
-            ) else null,
             delegate = null
-        ).apply { annotations += this@ValueParameter.firValueParameter.annotations }
+        ).apply {
+            annotations += this@ValueParameter.firValueParameter.annotations
+            getter = FirDefaultPropertyGetter(session, null, type, modifiers.getVisibility())
+            setter = if (this.isVar) FirDefaultPropertySetter(session, null, type, modifiers.getVisibility()) else null
+        }
     }
 }

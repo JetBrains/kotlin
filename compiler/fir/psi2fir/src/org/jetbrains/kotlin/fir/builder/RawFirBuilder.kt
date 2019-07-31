@@ -413,12 +413,6 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             return firFile
         }
 
-        private fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
-            if (bounds.isEmpty()) {
-                bounds += FirImplicitNullableAnyTypeRef(null)
-            }
-        }
-
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit): FirElement {
             return withChildClassName(enumEntry.nameAsSafeName) {
                 val firEnumEntry = FirEnumEntryImpl(
