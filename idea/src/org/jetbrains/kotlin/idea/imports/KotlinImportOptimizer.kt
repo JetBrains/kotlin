@@ -20,6 +20,7 @@ import com.intellij.lang.ImportOptimizer
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 import com.intellij.openapi.util.text.StringUtil
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.descriptors.*
@@ -60,8 +61,22 @@ class KotlinImportOptimizer : ImportOptimizer {
         }
     }
 
+    // The same as com.intellij.pom.core.impl.PomModelImpl.isDocumentUncommitted
+    // Which is checked in com.intellij.pom.core.impl.PomModelImpl.startTransaction
+    private val KtFile.isDocumentUncommitted: Boolean
+        get() {
+            val documentManager = PsiDocumentManager.getInstance(project)
+            val cachedDocument = documentManager.getCachedDocument(this)
+            return cachedDocument != null && documentManager.isUncommited(cachedDocument)
+        }
+
     private fun prepareImports(file: KtFile): OptimizeInformation? {
         ApplicationManager.getApplication().assertReadAccessAllowed()
+
+        // Optimize imports may be called after command
+        // And document can be uncommitted after running that command
+        // In that case we will get ISE: Attempt to modify PSI for non-committed Document!
+        if (file.isDocumentUncommitted) return null
 
         val moduleInfo = file.getNullableModuleInfo()
         if (moduleInfo !is ModuleSourceInfo && moduleInfo !is ScriptModuleInfo) return null
