@@ -8,23 +8,23 @@ package org.jetbrains.kotlin.backend.jvm.lower
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyTo
+import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -52,19 +52,14 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             expression.symbol.owner.name.asString() != "invoke")
             return super.visitFunctionAccess(expression)
 
-        return IrCallImpl(
-            expression.startOffset, expression.endOffset,
-            expression.type, functionNInvokeFun, functionNInvokeFun.descriptor,
-            1, expression.origin
-        ).apply {
-            putTypeArgument(0, expression.type)
-            dispatchReceiver = expression.dispatchReceiver
-            putValueArgument(0, IrVarargImpl(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                context.ir.symbols.array.typeWith(context.irBuiltIns.anyNType),
-                context.irBuiltIns.anyNType,
-                (0 until expression.valueArgumentsCount).map { expression.getValueArgument(it)!! }
-            ))
+        return context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+            at(expression)
+            irCall(functionNInvokeFun).apply {
+                dispatchReceiver = expression.dispatchReceiver
+                putValueArgument(0, irArray(backendContext.ir.symbols.array.typeWith(context.irBuiltIns.anyNType)) {
+                    (0 until expression.valueArgumentsCount).forEach { +expression.getValueArgument(it)!! }
+                })
+            }
         }
     }
 

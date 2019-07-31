@@ -16,11 +16,12 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineFunctionCall
 import org.jetbrains.kotlin.backend.jvm.codegen.isInlineIrExpression
+import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.ir.isInlineParameter
 import org.jetbrains.kotlin.codegen.PropertyReferenceCodegen
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -30,7 +31,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -257,7 +257,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                 }
             }
 
-            body = context.createIrBuilder(symbol).run {
+            body = context.createJvmIrBuilder(symbol).run {
                 var unboundIndex = 0
                 irExprBody(irCall(callee).apply {
                     for ((typeParameter, typeArgument) in typeArgumentsMap) {
@@ -273,25 +273,26 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                     boundReceiver.second.type
                                 )
 
-                            unboundIndex >= argumentTypes.size ->
-                                // Unbound, but out of range - empty vararg or default value.
-                                // TODO For suspend functions the last argument is continuation and it is implicit:
-                                //      irCall(getContinuationSymbol, listOf(ourSymbol.descriptor.returnType!!))
-                                null
-
                             // If a vararg parameter corresponds to exactly one KFunction argument, which is an array, that array
-                            // is forwarded as a spread. In all other cases, excess arguments are packed into a new array.
+                            // is forwarded as is. In all other cases, excess arguments are packed into a new array.
                             //
                             //     fun f(x: (Int, Array<String>) -> String) = x(0, arrayOf("OK", "FAIL"))
                             //     fun g(x: (Int, String, String) -> String) = x(0, "OK", "FAIL")
                             //     fun h(i: Int, vararg xs: String) = xs[i]
                             //     f(::h) == g(::h)
                             //
-                            parameter.isVararg && (unboundIndex < argumentTypes.size - 1 || argumentTypes.last() != parameter.type) ->
-                                IrVarargImpl(
-                                    startOffset, endOffset, parameter.type, parameter.varargElementType!!,
-                                    (unboundIndex until argumentTypes.size).map { irGet(valueParameters[unboundIndex++]) }
-                                )
+                            parameter.isVararg && unboundIndex < argumentTypes.size && parameter.type == valueParameters[unboundIndex].type ->
+                                irArray(parameter.type) { addSpread(irGet(valueParameters[unboundIndex++])) }
+                            parameter.isVararg && (unboundIndex < argumentTypes.size || !parameter.hasDefaultValue()) ->
+                                irArray(parameter.type) {
+                                    (unboundIndex until argumentTypes.size).forEach { +irGet(valueParameters[unboundIndex++]) }
+                                }
+
+                            unboundIndex >= argumentTypes.size ->
+                                // Default value argument
+                                // TODO For suspend functions the last argument is continuation and it is implicit:
+                                //      irCall(getContinuationSymbol, listOf(ourSymbol.descriptor.returnType!!))
+                                null
 
                             else ->
                                 irGet(valueParameters[unboundIndex++])
