@@ -72,23 +72,39 @@ public class FileReferenceQuickFixProvider {
       }
     }
 
-    @Nullable
-    Module module = containingFile == null ? null : ModuleUtilCore.findModuleForPsiElement(containingFile);
 
     if (reference.isLast()) {
-      List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, false);
-      if (targetDirectories.isEmpty()) return emptyList();
-
-      NewFileLocation location = new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
+      NewFileLocation location = getNewFileLocation(reference, newFileName, containingFile, false);
+      if (location == null) return emptyList();
       return singletonList(new MyCreateFileFix(element, location, reference.getNewFileTemplateName()));
     }
     else {
-      List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, true);
-      if (targetDirectories.isEmpty()) return emptyList();
-
-      NewFileLocation location = new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
+      NewFileLocation location = getNewFileLocation(reference, newFileName, containingFile, true);
+      if (location == null) return emptyList();
       return singletonList(new CreateDirectoryPathFix(element, location));
     }
+  }
+
+  @Nullable
+  public static NewFileLocation getNewFileLocation(@NotNull FileReference reference,
+                                                   String newFileName,
+                                                   boolean isDirectory) {
+    return getNewFileLocation(reference, newFileName, reference.getElement().getContainingFile(), isDirectory);
+  }
+
+  @Nullable
+  private static NewFileLocation getNewFileLocation(@NotNull FileReference reference,
+                                                    String newFileName,
+                                                    PsiFile containingFile,
+                                                    boolean isDirectory) {
+    @Nullable
+    Module module = ModuleUtilCore.findModuleForPsiElement(containingFile);
+
+    List<TargetDirectory> targetDirectories = getTargets(reference, module, newFileName, isDirectory);
+    if (targetDirectories.isEmpty()) {
+      return null;
+    }
+    return new NewFileLocation(targetDirectories, getPathToReferencePart(reference), newFileName);
   }
 
   @NotNull
