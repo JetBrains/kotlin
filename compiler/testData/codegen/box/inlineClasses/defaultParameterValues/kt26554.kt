@@ -1,5 +1,5 @@
 // !LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JS, JS_IR, NATIVE
+// KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 
 data class RGBA(val rgba: Int)
