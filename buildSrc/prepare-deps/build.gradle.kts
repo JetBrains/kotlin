@@ -74,8 +74,8 @@ repositories {
             }
 
             credentials {
-                username = System.getenv("AS_BINTRAY_USER_NAME")
-                password = System.getenv("AS_BINTRAY_API_KEY")
+                username = System.getenv("AS_BINTRAY_USER_NAME") ?: findProperty("bintray.user") as String?
+                password = System.getenv("AS_BINTRAY_API_KEY") ?: findProperty("bintray.apikey") as String?
             }
 
             metadataSources {
