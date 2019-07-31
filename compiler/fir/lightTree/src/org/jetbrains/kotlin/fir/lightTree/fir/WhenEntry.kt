@@ -5,10 +5,6 @@
 
 package org.jetbrains.kotlin.fir.lightTree.fir
 
-import com.intellij.lang.LighterASTNode
-import com.intellij.psi.tree.IElementType
-import org.jetbrains.kotlin.KtNodeTypes
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.builder.generateContainsOperation
 import org.jetbrains.kotlin.fir.builder.generateLazyLogicalOperation
@@ -24,20 +20,20 @@ data class WhenEntry(
     val firBlock: FirBlock,
     val isElse: Boolean = false
 ) {
-    fun toFirWhenCondition(session: FirSession, subject: FirWhenSubject): FirExpression {
+    fun toFirWhenCondition(subject: FirWhenSubject): FirExpression {
         var firCondition: FirExpression? = null
         for (condition in conditions) {
-            val firConditionElement = condition.toFirWhenCondition(session, subject)
+            val firConditionElement = condition.toFirWhenCondition(subject)
             firCondition = when (firCondition) {
                 null -> firConditionElement
-                else -> firCondition.generateLazyLogicalOperation(session, firConditionElement, false, null)
+                else -> firCondition.generateLazyLogicalOperation(firConditionElement, false, null)
             }
         }
         return firCondition!!
     }
 
-    private fun FirExpression.toFirWhenCondition(session: FirSession, subject: FirWhenSubject): FirExpression {
-        val firSubjectExpression = FirWhenSubjectExpressionImpl(session, null, subject)
+    private fun FirExpression.toFirWhenCondition(subject: FirWhenSubject): FirExpression {
+        val firSubjectExpression = FirWhenSubjectExpressionImpl(null, subject)
         return when (this) {
             is FirOperatorCallImpl -> {
                 this.apply {
@@ -47,7 +43,7 @@ data class WhenEntry(
             is FirFunctionCall -> {
                 val firExpression = this.explicitReceiver!!
                 val isNegate = this.calleeReference.name == OperatorNameConventions.NOT
-                firExpression.generateContainsOperation(session, firSubjectExpression, isNegate, null, null)
+                firExpression.generateContainsOperation(firSubjectExpression, isNegate, null, null)
             }
             is FirTypeOperatorCallImpl -> {
                 this.apply {
@@ -55,18 +51,15 @@ data class WhenEntry(
                 }
             }
             else -> {
-                FirErrorExpressionImpl(session, null, "Unsupported when condition: ${this.javaClass}")
+                FirErrorExpressionImpl(null, "Unsupported when condition: ${this.javaClass}")
             }
         }
     }
 
-    fun toFirWhenConditionWithoutSubject(session: FirSession): FirExpression {
-        val condition = conditions.first()
-        return when (condition) {
+    fun toFirWhenConditionWithoutSubject(): FirExpression {
+        return when (val condition = conditions.first()) {
             is FirOperatorCallImpl -> condition.arguments.first()
-            //is FirFunctionCall -> condition.explicitReceiver!!
-            //is FirTypeOperatorCallImpl -> condition
-            else -> FirErrorExpressionImpl(session, null, "No expression in condition with expression")
+            else -> FirErrorExpressionImpl(null, "No expression in condition with expression")
         }
     }
 }

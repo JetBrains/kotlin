@@ -25,7 +25,7 @@ open class BaseConverter(
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context = Context()
 ) : BaseFirBuilder<LighterASTNode>(session, context) {
-    protected val implicitType = FirImplicitTypeRefImpl(session, null)
+    protected val implicitType = FirImplicitTypeRefImpl(null)
 
     override val LighterASTNode.elementType: IElementType
         get() = this.tokenType
