@@ -62,22 +62,7 @@ object Kapt {
     }
 
     private fun findClassLoaderWithJavac(): ClassLoader {
-        fun Class<*>.toClassFilePath() = name.replace('.', '/') + ".class"
-
-        // find topmost class loader with javac
-        val javacContextPath = Context::class.java.toClassFilePath()
-        val kaptPath = Kapt::class.java.toClassFilePath()
-
-        fun findRightClassLoader(current: ClassLoader): ClassLoader? {
-            if (current.getResource(javacContextPath) != null && current.getResource(kaptPath) == null) {
-                return current
-            }
-
-            val parent = current.parent ?: return null
-            return findRightClassLoader(parent)
-        }
-
-        val kaptClassLoader = Kapt::class.java.classLoader
-        return findRightClassLoader(kaptClassLoader) ?: kaptClassLoader
+        // Class.getClassLoader() may return null if the class is defined in a bootstrap class loader
+        return Context::class.java.classLoader ?: ClassLoader.getSystemClassLoader()
     }
 }
