@@ -503,6 +503,7 @@ tasks {
         dependsOn(":compiler:fir:psi2fir:test")
         dependsOn(":compiler:fir:resolve:test")
         dependsOn(":compiler:fir:fir2ir:test")
+        dependsOn(":compiler:fir:lightTree:test")
     }
 
     create("scriptingTest") {
