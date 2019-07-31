@@ -142,7 +142,7 @@ public class CompileAction extends CompileActionBase {
     return buffer.toString();
   }
 
-  private static VirtualFile[] getCompilableFiles(Project project, VirtualFile[] files) {
+  protected static VirtualFile[] getCompilableFiles(Project project, VirtualFile[] files) {
     if (files == null || files.length == 0) {
       return VirtualFile.EMPTY_ARRAY;
     }
