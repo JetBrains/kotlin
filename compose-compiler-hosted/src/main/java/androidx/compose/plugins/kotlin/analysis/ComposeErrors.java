@@ -94,6 +94,8 @@ public interface ComposeErrors {
             MISSING_REQUIRED_CHILDREN = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory2<KtExpression, Collection<KotlinType>, Collection<KotlinType>>
             ILLEGAL_ASSIGN_TO_UNIONTYPE = DiagnosticFactory2.create(ERROR);
+    DiagnosticFactory0<KtElement>
+            CHILDREN_MUST_BE_LAST = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object INITIALIZER = new Object() {
