@@ -486,11 +486,26 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             noSource()
         }
 
-        impl(resolvedTypeRef)
+        impl(resolvedTypeRef) {
+            default("delegatedTypeRef") {
+                value = "null"
+            }
+        }
 
         val errorTypeRefImpl = impl(errorTypeRef) {
             default("type", "ConeClassErrorType(diagnostic.reason)")
+            default("delegatedTypeRef") {
+                value = "null"
+                withGetter = true
+            }
             useTypes(coneClassErrorTypeType)
+        }
+
+        impl(resolvedFunctionTypeRef) {
+            default("delegatedTypeRef") {
+                value = "null"
+                withGetter = true
+            }
         }
 
         impl(errorFunction) {

@@ -490,6 +490,7 @@ object NodeConfigurator : AbstractFieldConfigurator() {
 
         resolvedTypeRef.configure {
             +field("type", coneKotlinTypeType)
+            +field("delegatedTypeRef", typeRef, nullable = true)
         }
 
         delegatedTypeRef.configure {

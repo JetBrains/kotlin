@@ -27,6 +27,7 @@ class FirResolvedFunctionTypeRefImpl(
     override var returnTypeRef: FirTypeRef
 ) : FirResolvedFunctionTypeRef(), FirAbstractAnnotatedElement {
     override val annotations: MutableList<FirAnnotationCall> = mutableListOf()
+    override val delegatedTypeRef: FirTypeRef? get() = null
     override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {

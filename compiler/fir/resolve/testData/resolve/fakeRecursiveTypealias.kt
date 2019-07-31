@@ -2,4 +2,4 @@ import incorrect.directory.Your
 
 typealias My = incorrect.directory.My
 
-typealias Your = Your
+typealias Your = <!OTHER_ERROR!>Your<!>

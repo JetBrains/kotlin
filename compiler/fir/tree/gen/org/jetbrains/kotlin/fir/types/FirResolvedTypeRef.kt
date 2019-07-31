@@ -19,6 +19,7 @@ abstract class FirResolvedTypeRef : FirPureAbstractElement(), FirTypeRef {
     abstract override val source: FirSourceElement?
     abstract override val annotations: List<FirAnnotationCall>
     abstract val type: ConeKotlinType
+    abstract val delegatedTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitResolvedTypeRef(this, data)
 }
