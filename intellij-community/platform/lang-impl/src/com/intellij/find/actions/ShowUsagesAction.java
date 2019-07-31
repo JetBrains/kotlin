@@ -567,7 +567,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction {
                                           @NotNull DefaultActionGroup pinGroup) {
     Icon icon = ToolWindowManagerEx.getInstanceEx(handler.getProject()).getLocationIcon(ToolWindowId.FIND, AllIcons.General.Pin_tab);
     final AnAction pinAction =
-      new AnAction("Open Find Usages Toolwindow", "Show all usages in a separate toolwindow", icon) {
+      new AnAction("Open in Find Tool Window", "Show all usages in a separate tool window", icon) {
         {
           AnAction action = ActionManager.getInstance().getAction(IdeActions.ACTION_FIND_USAGES);
           setShortcutSet(action.getShortcutSet());
