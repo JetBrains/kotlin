@@ -81,7 +81,7 @@ private val localDeclarationsPhase = makeIrFilePhase<CommonBackendContext>(
     },
     name = "JvmLocalDeclarations",
     description = "Move local declarations to classes",
-    prerequisite = setOf(sharedVariablesPhase)
+    prerequisite = setOf(callableReferencePhase, sharedVariablesPhase)
 )
 
 private val defaultArgumentStubPhase = makeIrFilePhase<CommonBackendContext>(
@@ -124,6 +124,7 @@ private val jvmFilePhases =
 
         enumWhenPhase then
         singletonReferencesPhase then
+        callableReferencePhase then
         localDeclarationsPhase then
         defaultArgumentStubPhase then
 
@@ -133,7 +134,6 @@ private val jvmFilePhases =
 
         singleAbstractMethodPhase then
         addContinuationPhase then
-        callableReferencePhase then
         functionNVarargInvokePhase then
 
         innerClassesPhase then

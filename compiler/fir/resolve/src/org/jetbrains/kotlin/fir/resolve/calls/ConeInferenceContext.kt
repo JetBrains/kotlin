@@ -60,7 +60,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         when (constructor) {
             is ConeClassLikeSymbol -> return ConeClassTypeImpl(
                 constructor.toLookupTag(),
-                arguments.cast(),
+                (arguments as List<ConeKotlinTypeProjection>).toTypedArray(),
                 nullable
             )
             else -> error("!")

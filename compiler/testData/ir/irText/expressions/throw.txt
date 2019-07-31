@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/throw.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       THROW type=kotlin.Nothing
         CONSTRUCTOR_CALL 'public constructor <init> () declared in kotlin.Throwable' type=kotlin.Throwable origin=null
-  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any 
+  FUN name:testImplicitCast visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       WHEN type=kotlin.Unit origin=IF
         BRANCH

@@ -1,0 +1,53 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.resolve.transformers
+
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
+import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
+
+abstract class FirAbstractPhaseTransformer<D>(
+    protected val transformerPhase: FirResolvePhase
+) : FirTransformer<D>() {
+
+    abstract val session: FirSession
+
+    init {
+        assert(transformerPhase != FirResolvePhase.RAW_FIR) {
+            "Raw FIR building shouldn't be done in phase transformer"
+        }
+    }
+
+    open val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
+        get() {
+            val requiredPhase = transformerPhase.prev
+            return phasedFir(session, requiredPhase)
+        }
+
+    override fun transformDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
+        declaration.resolvePhase = transformerPhase
+
+        return super.transformDeclaration(declaration, data)
+    }
+}
+
+fun FirFile.runResolve(toPhase: FirResolvePhase, fromPhase: FirResolvePhase = FirResolvePhase.RAW_FIR) {
+    var currentPhase = fromPhase
+    while (currentPhase < toPhase) {
+        currentPhase = currentPhase.next
+        val phaseTransformer = currentPhase.createTransformerByPhase()
+        transform<FirFile, Nothing?>(phaseTransformer, null)
+    }
+}

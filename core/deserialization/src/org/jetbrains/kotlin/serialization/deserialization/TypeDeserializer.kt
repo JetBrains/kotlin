@@ -241,7 +241,7 @@ class TypeDeserializer(
     private fun typeArgument(parameter: TypeParameterDescriptor?, typeArgumentProto: ProtoBuf.Type.Argument): TypeProjection {
         if (typeArgumentProto.projection == ProtoBuf.Type.Argument.Projection.STAR) {
             return if (parameter == null)
-                TypeBasedStarProjectionImpl(c.components.moduleDescriptor.builtIns.nullableAnyType)
+                StarProjectionForAbsentTypeParameter(c.components.moduleDescriptor.builtIns)
             else
                 StarProjectionImpl(parameter)
         }

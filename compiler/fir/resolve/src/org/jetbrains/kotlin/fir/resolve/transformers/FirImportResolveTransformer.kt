@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedImportImpl
 import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -16,14 +17,14 @@ import org.jetbrains.kotlin.fir.visitors.compose
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
-class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
+class FirImportResolveTransformer() : FirAbstractTreeTransformer(phase = FirResolvePhase.IMPORTS) {
     override fun <E : FirElement> transformElement(element: E, data: Nothing?): CompositeTransformResult<E> {
         return element.compose()
     }
 
     private lateinit var symbolProvider: FirSymbolProvider
 
-    private lateinit var session: FirSession
+    override lateinit var session: FirSession
 
     constructor(session: FirSession) : this() {
         this.session = session
@@ -50,7 +51,7 @@ class FirImportResolveTransformer() : FirAbstractTreeTransformer() {
 
     private fun transformImportForFqName(fqName: FqName, delegate: FirImport): CompositeTransformResult<FirImport> {
         val (packageFqName, relativeClassFqName) = resolveToPackageOrClass(symbolProvider, fqName) ?: return delegate.compose()
-        return FirResolvedImportImpl(session, delegate, packageFqName, relativeClassFqName).compose()
+        return FirResolvedImportImpl(delegate, packageFqName, relativeClassFqName).compose()
     }
 
 

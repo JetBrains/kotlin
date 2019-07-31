@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.idea.util.ImportInsertHelper
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
-import org.junit.AfterClass
 
 /**
  * inspired by @see org.jetbrains.kotlin.addImport.AbstractAddImportTest
@@ -24,11 +23,11 @@ abstract class AbstractPerformanceAddImportTest : AbstractPerformanceImportTest(
         @JvmStatic
         val stats: Stats = Stats("add-import")
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.close()
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
+
     }
 
     override fun stats(): Stats = stats

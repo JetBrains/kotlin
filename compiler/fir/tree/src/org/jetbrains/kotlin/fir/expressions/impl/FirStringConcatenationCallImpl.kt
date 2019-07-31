@@ -7,20 +7,16 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirStringConcatenationCall
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirStringConcatenationCallImpl(
-    session: FirSession,
-    psi: PsiElement?
-) : FirStringConcatenationCall(session, psi) {
+class FirStringConcatenationCallImpl(psi: PsiElement?) : FirStringConcatenationCall(psi) {
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
-    override var typeRef: FirTypeRef = FirImplicitStringTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitStringTypeRef(psi)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         typeRef = typeRef.transformSingle(transformer, data)

@@ -635,7 +635,9 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
                 }
                 ?: representativeTarget
 
-        return outputItemCollector.outputs.groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
+        return outputItemCollector.outputs
+            .sortedBy { it.outputFile }
+            .groupBy(SimpleOutputItem::target, SimpleOutputItem::toGeneratedFile)
     }
 
     private fun updateLookupStorage(
@@ -648,7 +650,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
         lookupStorageManager.withLookupStorage { lookupStorage ->
             lookupStorage.removeLookupsFrom(dirtyFilesHolder.allDirtyFiles.asSequence() + dirtyFilesHolder.allRemovedFilesFiles.asSequence())
-            lookupStorage.addAll(lookupTracker.lookups.entrySet(), lookupTracker.pathInterner.values)
+            lookupStorage.addAll(lookupTracker.lookups, lookupTracker.pathInterner.values)
         }
     }
 }

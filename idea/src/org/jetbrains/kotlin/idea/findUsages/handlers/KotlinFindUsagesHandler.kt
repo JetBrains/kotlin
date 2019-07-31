@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.idea.findUsages.handlers
 import com.intellij.find.findUsages.FindUsagesHandler
 import com.intellij.find.findUsages.FindUsagesOptions
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.openapi.project.DumbService
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiReference
 import com.intellij.psi.impl.light.LightMemberReference
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.KotlinReferencePreservingUsageInfo
 import org.jetbrains.kotlin.idea.findUsages.KotlinReferenceUsageInfo
 import org.jetbrains.kotlin.idea.util.application.runReadAction
+import org.jetbrains.kotlin.idea.util.runReadActionInSmartMode
 import java.util.*
 
 abstract class KotlinFindUsagesHandler<T : PsiElement>(
@@ -76,7 +76,7 @@ abstract class KotlinFindUsagesHandler<T : PsiElement>(
 
     private fun searchReferences(element: PsiElement, processor: Processor<UsageInfo>, options: FindUsagesOptions): Boolean {
         val searcher = createSearcher(element, processor, options)
-        if (!DumbService.getInstance(element.project).runReadActionInSmartMode<Boolean> { searcher.buildTaskList() }) return false
+        if (!project.runReadActionInSmartMode { searcher.buildTaskList() }) return false
         return searcher.executeTasks()
     }
 

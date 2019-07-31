@@ -21,7 +21,9 @@ import java.lang.reflect.*
 import java.util.*
 
 private object ClassTraversalCache {
-    private val cache = ContainerUtil.newConcurrentMap<Class<*>, ClassInfo>()
+    private val cache =
+        if (System.getProperty("idea.system.path") != null) ContainerUtil.newConcurrentMap<Class<*>, ClassInfo>()
+        else ContainerUtil.createConcurrentWeakKeySoftValueMap<Class<*>, ClassInfo>()
 
     fun getClassInfo(c: Class<*>): ClassInfo {
         val classInfo = cache.get(c)

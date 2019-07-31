@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.fir.expressions
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-abstract class FirLambdaArgumentExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirWrappedArgumentExpression(session, psi) {
+abstract class FirLambdaArgumentExpression(psi: PsiElement?) : FirWrappedArgumentExpression(psi) {
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitLambdaArgumentExpression(this, data)
 }

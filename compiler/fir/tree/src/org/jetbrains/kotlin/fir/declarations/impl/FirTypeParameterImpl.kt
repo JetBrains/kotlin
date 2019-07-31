@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -28,7 +29,11 @@ class FirTypeParameterImpl(
         symbol.bind(this)
     }
 
-    override val bounds = mutableListOf<FirTypeRef>()
+    /*
+     * Note that each type parameter have to has at least one upper bound (Any? if there is no other bounds)
+     *   so if you create FirTypeParameterImpl you need to guarantee this contract
+     */
+    override val bounds: MutableList<FirTypeRef> = mutableListOf()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         bounds.transformInplace(transformer, data)

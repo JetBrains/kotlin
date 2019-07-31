@@ -1,10 +1,10 @@
 FILE fqName:<root> fileName:/bangbang.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Any
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.Any?): kotlin.Any declared in <root>'
         BLOCK type=kotlin.Any origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? [val] 
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Any? [val]
             GET_VAR 'a: kotlin.Any? declared in <root>.test1' type=kotlin.Any? origin=null
           WHEN type=kotlin.Any origin=null
             BRANCH
@@ -15,14 +15,14 @@ FILE fqName:<root> fileName:/bangbang.kt
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val tmp0_notnull: kotlin.Any? [val] declared in <root>.test1' type=kotlin.Any? origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int 
-    VALUE_PARAMETER name:a index:0 type:kotlin.Any? 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any?) returnType:kotlin.Int
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.Any?): kotlin.Int declared in <root>'
         BLOCK type=kotlin.Int origin=EXCLEXCL
-          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? [val] 
+          VAR IR_TEMPORARY_VARIABLE name:tmp1_notnull type:kotlin.Int? [val]
             BLOCK type=kotlin.Int? origin=SAFE_CALL
-              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val] 
+              VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]
                 GET_VAR 'a: kotlin.Any? declared in <root>.test2' type=kotlin.Any? origin=null
               WHEN type=kotlin.Int? origin=null
                 BRANCH

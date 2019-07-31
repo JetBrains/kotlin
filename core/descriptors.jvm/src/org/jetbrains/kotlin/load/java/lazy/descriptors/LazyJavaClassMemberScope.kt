@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -66,8 +67,10 @@ import java.util.*
 class LazyJavaClassMemberScope(
     c: LazyJavaResolverContext,
     override val ownerDescriptor: ClassDescriptor,
-    private val jClass: JavaClass
-) : LazyJavaScope(c) {
+    private val jClass: JavaClass,
+    private val skipRefinement: Boolean,
+    mainScope: LazyJavaClassMemberScope? = null
+) : LazyJavaScope(c, mainScope) {
 
     override fun computeMemberIndex() = ClassDeclaredMemberIndex(jClass) { !it.isStatic }
 
@@ -280,7 +283,8 @@ class LazyJavaClassMemberScope(
 
         // Merge functions with same signatures
         val mergedFunctionFromSuperTypes = resolveOverridesForNonStaticMembers(
-            name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING
+            name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING,
+            c.components.kotlinTypeChecker.overridingUtil
         )
 
         // add declarations
@@ -309,7 +313,8 @@ class LazyJavaClassMemberScope(
     ) {
 
         val additionalOverrides = resolveOverridesForNonStaticMembers(
-            name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter
+            name, functionsFromSupertypes, result, ownerDescriptor, c.components.errorReporter,
+            c.components.kotlinTypeChecker.overridingUtil
         )
 
         if (!isSpecialBuiltinName) {
@@ -428,9 +433,10 @@ class LazyJavaClassMemberScope(
     }
 
     private fun getFunctionsFromSupertypes(name: Name): Set<SimpleFunctionDescriptor> {
-        return ownerDescriptor.typeConstructor.supertypes.flatMapTo(LinkedHashSet()) {
-            it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
-        }
+        return computeSupertypes()
+            .flatMapTo(LinkedHashSet()) {
+                it.memberScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
+            }
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
@@ -451,7 +457,12 @@ class LazyJavaClassMemberScope(
 
         result.addAll(
             resolveOverridesForNonStaticMembers(
-                name, propertiesFromSupertypes + propertiesOverridesFromSuperTypes, result, ownerDescriptor, c.components.errorReporter
+                name,
+                propertiesFromSupertypes + propertiesOverridesFromSuperTypes,
+                result,
+                ownerDescriptor,
+                c.components.errorReporter,
+                c.components.kotlinTypeChecker.overridingUtil
             )
         )
     }
@@ -540,9 +551,16 @@ class LazyJavaClassMemberScope(
     }
 
     private fun getPropertiesFromSupertypes(name: Name): Set<PropertyDescriptor> {
-        return ownerDescriptor.typeConstructor.supertypes.flatMap {
+        return computeSupertypes().flatMap {
             it.memberScope.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).map { p -> p }
         }.toSet()
+    }
+
+    private fun computeSupertypes(): Collection<KotlinType> {
+        if (skipRefinement) return ownerDescriptor.typeConstructor.supertypes
+
+        @UseExperimental(TypeRefinement::class)
+        return c.components.kotlinTypeChecker.kotlinTypeRefiner.refineSupertypes(ownerDescriptor)
     }
 
     override fun resolveMethodSignature(
@@ -720,7 +738,8 @@ class LazyJavaClassMemberScope(
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         recordLookup(name, location)
-        return nestedClasses(name)
+
+        return (mainScope as LazyJavaClassMemberScope?)?.nestedClasses?.invoke(name) ?: nestedClasses(name)
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {

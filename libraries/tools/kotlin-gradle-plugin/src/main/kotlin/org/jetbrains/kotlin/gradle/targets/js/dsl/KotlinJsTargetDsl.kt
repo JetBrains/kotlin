@@ -48,7 +48,7 @@ interface KotlinJsBrowserDsl : KotlinJsSubTargetDsl {
 
     fun webpackTask(body: KotlinWebpack.() -> Unit)
     fun webpackTask(fn: Closure<*>) {
-        testTask {
+        webpackTask {
             ConfigureUtil.configure(fn, this)
         }
     }

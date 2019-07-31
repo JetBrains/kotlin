@@ -32,7 +32,7 @@ class FirEnumEntryImpl(
         symbol.bind(this)
     }
 
-    override var status = FirDeclarationStatusImpl(session, Visibilities.UNKNOWN, Modality.FINAL)
+    override var status = FirDeclarationStatusImpl(Visibilities.UNKNOWN, Modality.FINAL)
 
     override val classKind: ClassKind
         get() = ClassKind.ENUM_ENTRY
@@ -46,9 +46,11 @@ class FirEnumEntryImpl(
     override val companionObject: FirRegularClass?
         get() = null
 
-    override var typeRef: FirTypeRef = FirImplicitEnumTypeRef(session, null)
+    override var typeRef: FirTypeRef = FirImplicitEnumTypeRef(null)
 
     override val arguments = mutableListOf<FirExpression>()
+
+    override var resolvePhase = FirResolvePhase.RAW_FIR
 
     override fun replaceSupertypes(newSupertypes: List<FirTypeRef>): FirRegularClass {
         superTypeRefs.clear()

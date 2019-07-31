@@ -55,31 +55,32 @@ import static org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE;
 
 public class ArgumentTypeResolver {
     @NotNull private final TypeResolver typeResolver;
-    @NotNull private final DoubleColonExpressionResolver doubleColonExpressionResolver;
     @NotNull private final KotlinBuiltIns builtIns;
     @NotNull private final ReflectionTypes reflectionTypes;
     @NotNull private final ConstantExpressionEvaluator constantExpressionEvaluator;
     @NotNull private final FunctionPlaceholders functionPlaceholders;
     @NotNull private final ModuleDescriptor moduleDescriptor;
+    @NotNull private final KotlinTypeChecker kotlinTypeChecker;
 
     private ExpressionTypingServices expressionTypingServices;
+    private DoubleColonExpressionResolver doubleColonExpressionResolver;
 
     public ArgumentTypeResolver(
             @NotNull TypeResolver typeResolver,
-            @NotNull DoubleColonExpressionResolver doubleColonExpressionResolver,
             @NotNull KotlinBuiltIns builtIns,
             @NotNull ReflectionTypes reflectionTypes,
             @NotNull ConstantExpressionEvaluator constantExpressionEvaluator,
             @NotNull FunctionPlaceholders functionPlaceholders,
-            @NotNull ModuleDescriptor moduleDescriptor
+            @NotNull ModuleDescriptor moduleDescriptor,
+            @NotNull KotlinTypeChecker kotlinTypeChecker
     ) {
         this.typeResolver = typeResolver;
-        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
         this.builtIns = builtIns;
         this.reflectionTypes = reflectionTypes;
         this.constantExpressionEvaluator = constantExpressionEvaluator;
         this.functionPlaceholders = functionPlaceholders;
         this.moduleDescriptor = moduleDescriptor;
+        this.kotlinTypeChecker = kotlinTypeChecker;
     }
 
     // component dependency cycle
@@ -88,15 +89,20 @@ public class ArgumentTypeResolver {
         this.expressionTypingServices = expressionTypingServices;
     }
 
-    public static boolean isSubtypeOfForArgumentType(
+    @Inject
+    public void setDoubleColonExpressionResolver(@NotNull DoubleColonExpressionResolver doubleColonExpressionResolver) {
+        this.doubleColonExpressionResolver = doubleColonExpressionResolver;
+    }
+
+    public boolean isSubtypeOfForArgumentType(
             @NotNull KotlinType actualType,
             @NotNull KotlinType expectedType
     ) {
         if (FunctionPlaceholdersKt.isFunctionPlaceholder(actualType)) {
             KotlinType functionType = ConstraintSystemBuilderImplKt.createTypeForFunctionPlaceholder(actualType, expectedType);
-            return KotlinTypeChecker.DEFAULT.isSubtypeOf(functionType, expectedType);
+            return kotlinTypeChecker.isSubtypeOf(functionType, expectedType);
         }
-        return KotlinTypeChecker.DEFAULT.isSubtypeOf(actualType, expectedType);
+        return kotlinTypeChecker.isSubtypeOf(actualType, expectedType);
     }
 
     public void checkTypesWithNoCallee(

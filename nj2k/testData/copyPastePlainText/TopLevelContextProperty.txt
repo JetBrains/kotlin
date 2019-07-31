@@ -1,0 +1,3 @@
+void f() {
+    str.length();
+}

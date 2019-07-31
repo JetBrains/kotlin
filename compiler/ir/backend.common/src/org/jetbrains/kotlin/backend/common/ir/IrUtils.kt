@@ -153,7 +153,11 @@ fun IrValueParameter.copyTo(
     isCrossinline: Boolean = this.isCrossinline,
     isNoinline: Boolean = this.isNoinline
 ): IrValueParameter {
-    val descriptor = WrappedValueParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
+    val descriptor = if (index < 0) {
+        WrappedReceiverParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    } else {
+        WrappedValueParameterDescriptor(this.descriptor.annotations, this.descriptor.source)
+    }
     val symbol = IrValueParameterSymbolImpl(descriptor)
     val defaultValueCopy = defaultValue?.deepCopyWithVariables()
     defaultValueCopy?.patchDeclarationParents(irFunction)
@@ -519,7 +523,8 @@ fun createStaticFunctionWithReceivers(
         oldFunction.visibility,
         Modality.FINAL,
         oldFunction.returnType,
-        isInline = false, isExternal = false, isTailrec = false, isSuspend = false
+        isInline = oldFunction.isInline,
+        isExternal = false, isTailrec = false, isSuspend = false
     ).apply {
         descriptor.bind(this)
         parent = irParent

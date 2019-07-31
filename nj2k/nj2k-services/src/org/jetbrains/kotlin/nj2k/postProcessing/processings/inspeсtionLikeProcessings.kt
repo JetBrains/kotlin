@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.nj2k.postProcessing.processings
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.search.searches.ReferencesSearch
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -41,7 +42,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -57,8 +57,7 @@ class RemoveExplicitPropertyTypeProcessing : ApplicabilityBasedInspectionLikePro
         val withoutExpectedType =
             initializer.analyzeInContext(initializer.getResolutionScope()).getType(initializer) ?: return false
         val descriptor = element.resolveToDescriptorIfAny() as? CallableDescriptor ?: return false
-        return if (element.isVar) withoutExpectedType == descriptor.returnType
-        else withoutExpectedType.makeNotNullable() == descriptor.returnType?.makeNotNullable()
+        return withoutExpectedType == descriptor.returnType
     }
 
     override fun apply(element: KtProperty) {
@@ -100,6 +99,26 @@ class RemoveExplicitTypeArgumentsProcessing : ApplicabilityBasedInspectionLikePr
         element.delete()
     }
 }
+
+// the types arguments for Stream.collect calls cannot be explicitly specified in Kotlin
+// but we need them in nullability inference, so we remove it here
+class RemoveJavaStreamsCollectCallTypeArgumentsProcessing :
+    ApplicabilityBasedInspectionLikeProcessing<KtCallExpression>(KtCallExpression::class) {
+    override fun isApplicableTo(element: KtCallExpression, settings: ConverterSettings?): Boolean {
+        if (element.typeArgumentList == null) return false
+        val resolved = element.calleeExpression?.mainReference?.resolve() as? PsiMethod ?: return false
+        return resolved.getKotlinFqName()?.asString() == COLLECT_FQ_NAME
+    }
+
+    override fun apply(element: KtCallExpression) {
+        element.typeArgumentList?.delete()
+    }
+
+    companion object {
+        private const val COLLECT_FQ_NAME = "java.util.stream.Stream.collect"
+    }
+}
+
 
 class RemoveRedundantOverrideVisibilityProcessing : InspectionLikeProcessing {
     override val writeActionNeeded = true

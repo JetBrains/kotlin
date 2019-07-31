@@ -7,8 +7,8 @@ internal class TestT {
 internal class U {
     fun main() {
         val t = TestT()
-        t.getT<String>()
-        t.getT<Int>()
-        t.getT<Any>()
+        t.getT<String?>()
+        t.getT<Int?>()
+        t.getT<Any?>()
     }
 }

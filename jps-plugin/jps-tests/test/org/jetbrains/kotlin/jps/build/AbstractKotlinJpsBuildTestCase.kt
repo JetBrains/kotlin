@@ -73,15 +73,6 @@ abstract class AbstractKotlinJpsBuildTestCase : BaseKotlinJpsBuildTestCase() {
     companion object {
         val TEST_DATA_PATH = "jps-plugin/testData/"
 
-        @Throws(IOException::class)
-        @JvmStatic
-        protected fun copyTestDataToTmpDir(testDataDir: File): File {
-            assert(testDataDir.exists()) { "Cannot find source folder " + testDataDir.absolutePath }
-            val tmpDir = FileUtil.createTempDirectory("jps-build", null)
-            FileUtil.copyDir(testDataDir, tmpDir)
-            return tmpDir
-        }
-
         @JvmStatic
         protected fun addKotlinStdlibDependency(modules: Collection<JpsModule>, exported: Boolean = false): JpsLibrary {
             return addDependency(modules, KotlinJpsLibrary.JvmStdLib, exported)

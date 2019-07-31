@@ -18,8 +18,11 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
 import org.jetbrains.kotlin.fir.visitors.compose
 
-open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(reversedScopePriority = true) {
-    private lateinit var session: FirSession
+open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
+    phase = FirResolvePhase.TYPES,
+    reversedScopePriority = true
+) {
+    override lateinit var session: FirSession
 
     override fun transformFile(file: FirFile, data: Nothing?): CompositeTransformResult<FirFile> {
         session = file.fileSession
@@ -95,21 +98,18 @@ open class FirTypeResolveTransformer : FirAbstractTreeTransformerWithSuperTypes(
     }
 
     override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): CompositeTransformResult<FirDeclaration> {
-
-        val valueParameter = super.transformValueParameter(valueParameter, data).single as FirValueParameter
-
-        if (valueParameter.isVararg) {
-            val returnTypeRef = valueParameter.returnTypeRef
+        val result = super.transformValueParameter(valueParameter, data).single as FirValueParameter
+        if (result.isVararg) {
+            val returnTypeRef = result.returnTypeRef
             val returnType = returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
-            valueParameter.transformReturnTypeRef(
+            result.transformReturnTypeRef(
                 StoreType,
-                valueParameter.returnTypeRef.withReplacedConeType(
-                    session,
+                result.returnTypeRef.withReplacedConeType(
                     returnType.createArrayOf(session)
                 )
             )
         }
-        return valueParameter.compose()
+        return result.compose()
     }
 
 }

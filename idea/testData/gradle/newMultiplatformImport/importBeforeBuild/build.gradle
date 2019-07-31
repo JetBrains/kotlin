@@ -1,0 +1,40 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.41' apply false
+}
+
+allprojects {
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+}
+
+project('library1') {
+    apply plugin: 'kotlin-multiplatform'
+
+    kotlin { targets { fromPreset(presets.jvm, 'jvm') } }
+}
+project('library2') {
+    apply plugin: 'kotlin-multiplatform'
+
+    kotlin {
+        targets { fromPreset(presets.jvm, 'jvm') }
+
+        sourceSets {
+            jvmMain {
+                dependencies {
+                    implementation project(':library1')
+                }
+            }
+        }
+    }
+}
+project('java-project') {
+    apply plugin: 'java'
+
+    dependencies {
+        implementation project(':library1')
+        implementation project(':library2')
+    }
+}

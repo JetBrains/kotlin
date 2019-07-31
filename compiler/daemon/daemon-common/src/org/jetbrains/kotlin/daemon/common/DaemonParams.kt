@@ -186,14 +186,13 @@ fun Iterable<String>.filterExtractProps(vararg groups: OptionsGroup, prefix: Str
 
 data class DaemonJVMOptions(
         var maxMemory: String = "",
-        var maxPermSize: String = "",
+        var maxMetaspaceSize: String = "",
         var reservedCodeCacheSize: String = "",
         var jvmParams: MutableCollection<String> = arrayListOf()
 ) : OptionsGroup {
-
     override val mappers: List<PropMapper<*, *, *>>
         get() = listOf(StringPropMapper(this, DaemonJVMOptions::maxMemory, listOf("Xmx"), mergeDelimiter = ""),
-                       StringPropMapper(this, DaemonJVMOptions::maxPermSize, listOf("XX:MaxPermSize"), mergeDelimiter = "="),
+                       StringPropMapper(this, DaemonJVMOptions::maxMetaspaceSize, listOf("XX:MaxMetaspaceSize"), mergeDelimiter = "="),
                        StringPropMapper(this, DaemonJVMOptions::reservedCodeCacheSize, listOf("XX:ReservedCodeCacheSize"), mergeDelimiter = "="),
                        restMapper)
 
@@ -279,11 +278,13 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
         val targetOptions = if (inheritMemoryLimits) opts else DaemonJVMOptions()
         val otherArgs = jvmArguments.filterExtractProps(targetOptions.mappers, prefix = "-")
 
-        if (inheritMemoryLimits && opts.maxMemory.isBlank()) {
-            val maxMemBytes = Runtime.getRuntime().maxMemory()
-            // rounding up
-            val maxMemMegabytes = maxMemBytes / (1024 * 1024) + if (maxMemBytes % (1024 * 1024) == 0L) 0 else 1
-            opts.maxMemory = "${maxMemMegabytes}m"
+        if (inheritMemoryLimits) {
+            if (opts.maxMemory.isBlank()) {
+                val maxMemBytes = Runtime.getRuntime().maxMemory()
+                // rounding up
+                val maxMemMegabytes = maxMemBytes / (1024 * 1024) + if (maxMemBytes % (1024 * 1024) == 0L) 0 else 1
+                opts.maxMemory = "${maxMemMegabytes}m"
+            }
         }
 
         if (inheritOtherJvmOptions) {
@@ -313,9 +314,14 @@ fun configureDaemonJVMOptions(opts: DaemonJVMOptions,
         System.getProperty(COMPILE_DAEMON_LOG_PATH_PROPERTY)?.let { opts.jvmParams.add("D$COMPILE_DAEMON_LOG_PATH_PROPERTY=\"$it\"") }
         System.getProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY)?.let { opts.jvmParams.add("D$KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY") }
     }
+
+    if (opts.jvmParams.none { it.matches(jvmAssertArgsRegex) }) {
+        opts.jvmParams.add("ea")
+    }
     return opts
 }
 
+private val jvmAssertArgsRegex = "(es?a|ds?a|(enable|disable)(system)?assertions)(${'$'}|:)".toRegex()
 
 fun configureDaemonJVMOptions(vararg additionalParams: String,
                               inheritMemoryLimits: Boolean,
@@ -365,7 +371,7 @@ private fun String.memToBytes(): Long? =
 
 
 private val daemonJVMOptionsMemoryProps =
-    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxPermSize, DaemonJVMOptions::reservedCodeCacheSize)
+    listOf(DaemonJVMOptions::maxMemory, DaemonJVMOptions::maxMetaspaceSize, DaemonJVMOptions::reservedCodeCacheSize)
 
 infix fun DaemonJVMOptions.memorywiseFitsInto(other: DaemonJVMOptions): Boolean =
         daemonJVMOptionsMemoryProps

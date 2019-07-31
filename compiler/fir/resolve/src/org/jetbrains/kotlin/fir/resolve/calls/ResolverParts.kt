@@ -48,7 +48,6 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
             }
         }
     }
-
 }
 
 internal sealed class CheckReceivers : ResolutionStage() {
@@ -141,7 +140,6 @@ internal object MapArguments : ResolutionStage() {
             return sink.yieldApplicability(CandidateApplicability.PARAMETER_MAPPING_ERROR)
         }
     }
-
 }
 
 internal object CheckArguments : CheckerStage() {
@@ -171,11 +169,9 @@ internal object DiscriminateSynthetics : CheckerStage() {
             sink.reportApplicability(CandidateApplicability.SYNTHETIC_RESOLVED)
         }
     }
-
 }
 
 internal object CheckVisibility : CheckerStage() {
-
     private fun ConeSymbol.packageFqName(): FqName {
         return when (this) {
             is ConeClassLikeSymbol -> classId.packageFqName
@@ -215,19 +211,3 @@ internal object CheckVisibility : CheckerStage() {
         }
     }
 }
-
-
-internal fun functionCallResolutionSequence() = listOf(
-    CheckVisibility, MapArguments, CheckExplicitReceiverConsistency, CreateFreshTypeVariableSubstitutorStage,
-    CheckReceivers.Dispatch, CheckReceivers.Extension, CheckArguments
-)
-
-
-internal fun qualifiedAccessResolutionSequence() = listOf(
-    CheckVisibility,
-    DiscriminateSynthetics,
-    CheckExplicitReceiverConsistency,
-    CreateFreshTypeVariableSubstitutorStage,
-    CheckReceivers.Dispatch,
-    CheckReceivers.Extension
-)

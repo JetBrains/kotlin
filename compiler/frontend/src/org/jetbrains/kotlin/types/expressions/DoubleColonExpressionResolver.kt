@@ -45,8 +45,10 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.TransientReceiver
 import org.jetbrains.kotlin.resolve.source.toSourceElement
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport.LanguageVersionDependent
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
@@ -74,6 +76,28 @@ sealed class DoubleColonLHS(val type: KotlinType) {
     class Type(type: KotlinType, val possiblyBareType: PossiblyBareType) : DoubleColonLHS(type)
 }
 
+@TypeRefinement
+private fun KotlinTypeRefiner.refineBareType(type: PossiblyBareType): PossiblyBareType {
+    if (type.isBare) return type
+    val newType = type.actualType.let { refineType(it) }
+    return PossiblyBareType.type(newType)
+}
+
+@UseExperimental(TypeRefinement::class)
+private fun <T : DoubleColonLHS> KotlinTypeRefiner.refineLHS(lhs: T): T = when (lhs) {
+    is DoubleColonLHS.Expression -> {
+        val newType = lhs.typeInfo.type?.let { refineType(it) }
+        DoubleColonLHS.Expression(
+            lhs.typeInfo.replaceType(newType),
+            lhs.isObjectQualifier
+        ) as T
+    }
+    is DoubleColonLHS.Type -> {
+        DoubleColonLHS.Type(refineType(lhs.type), refineBareType(lhs.possiblyBareType)) as T
+    }
+    else -> throw IllegalStateException()
+}
+
 // Returns true if this expression has the form "A<B>" which means it's a type on the LHS of a double colon expression
 internal val KtCallExpression.isWithoutValueArguments: Boolean
     get() = valueArgumentList == null && lambdaArguments.isEmpty()
@@ -88,7 +112,8 @@ class DoubleColonExpressionResolver(
     val additionalCheckers: Iterable<ClassLiteralChecker>,
     val dataFlowValueFactory: DataFlowValueFactory,
     val bigAritySupport: FunctionWithBigAritySupport,
-    val genericArrayClassLiteralSupport: GenericArrayClassLiteralSupport
+    val genericArrayClassLiteralSupport: GenericArrayClassLiteralSupport,
+    val kotlinTypeRefiner: KotlinTypeRefiner
 ) {
     private lateinit var expressionTypingServices: ExpressionTypingServices
 
@@ -346,7 +371,11 @@ class DoubleColonExpressionResolver(
         if (isReservedExpressionSyntax) return doubleColonLHS
 
         val resultForType = tryResolveLHS(doubleColonExpression, c, this::shouldTryResolveLHSAsType) { expression, context ->
-            resolveTypeOnLHS(expression, doubleColonExpression, context)
+            resolveTypeOnLHS(expression, doubleColonExpression, context)?.let {
+                // If lhs is not expression then ExpressionTypingVisitor don't refine it's type and we should do this manually
+                @UseExperimental(TypeRefinement::class)
+                DoubleColonLHS.Type(kotlinTypeRefiner.refineType(it.type), kotlinTypeRefiner.refineBareType(it.possiblyBareType))
+            }
         }
         if (resultForType != null) {
             val lhs = resultForType.lhs

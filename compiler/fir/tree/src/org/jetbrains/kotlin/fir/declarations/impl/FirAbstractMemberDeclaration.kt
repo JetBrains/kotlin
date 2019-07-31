@@ -32,7 +32,6 @@ abstract class FirAbstractMemberDeclaration(
         isActual: Boolean
     ) : this(session, psi, name) {
         this.status = FirDeclarationStatusImpl(
-            session,
             visibility,
             modality
         ).apply {

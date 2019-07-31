@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ReferenceSearcher
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.JKLiteralExpression.LiteralType.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
@@ -171,7 +172,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAssignmentExpression.toJK(): JKJavaAssignmentExpression {
             return JKJavaAssignmentExpressionImpl(
-                lExpression.toJK() as? JKAssignableExpression ?: error("Its possible? ${lExpression.toJK().prettyDebugPrintTree()}"),
+                lExpression.toJK() as JKAssignableExpression,
                 rExpression.toJK(),
                 operationSign.tokenType.toJK()
             ).also {
@@ -357,15 +358,15 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiFunctionalExpression.functionalType(): JKTypeElement =
-            functionalInterfaceType?.toJK(symbolProvider)?.takeIf { type ->
-                type.safeAs<JKClassType>()?.classReference is JKMultiverseClassSymbol
+            functionalInterfaceType?.toJK(symbolProvider)?.takeUnless { type ->
+                type.isKotlinFunctionType
             }?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
 
         fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
-            val symbol = symbolProvider.provideSymbol<JKNamedSymbol>(this).let { symbol ->
+            val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this).let { symbol ->
                 when {
-                    symbol.isUnresolved() && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
-                    symbol.isUnresolved() && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
+                    symbol.isUnresolved && isConstructor -> JKUnresolvedClassSymbol(qualifier?.text ?: text)
+                    symbol.isUnresolved && !isConstructor -> JKUnresolvedMethod(referenceName ?: text)
                     else -> symbol
                 }
             }
@@ -391,7 +392,7 @@ class JavaToJKTreeBuilder constructor(
                 return qualifierExpression?.toJK() ?: JKStubExpressionImpl()
             }
 
-            val symbol = symbolProvider.provideSymbol<JKSymbol>(this)
+            val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this)
             return when (symbol) {
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
@@ -526,6 +527,7 @@ class JavaToJKTreeBuilder constructor(
                 nameIdentifier.toJK(),
                 extendsListTypes.map { JKTypeElementImpl(it.toJK(symbolProvider, Nullability.Default)) }
             ).also {
+                symbolProvider.provideUniverseSymbol(this, it)
                 it.assignNonCodeElements(this)
             }
 
@@ -656,7 +658,7 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
-                symbolProvider.provideSymbol<JKSymbol>(nameReferenceElement!!).safeAs<JKClassSymbol>()
+                symbolProvider.provideSymbolForReference<JKSymbol>(nameReferenceElement!!).safeAs<JKClassSymbol>()
                     ?: JKUnresolvedClassSymbol(nameReferenceElement!!.text),
                 parameterList.attributes.map { parameter ->
                     if (parameter.nameIdentifier != null) {

@@ -1,16 +1,16 @@
 FILE fqName:<root> fileName:/dynamicMemberAccess.kt
-  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (d: dynamic): dynamic declared in <root>'
         DYN_MEMBER memberName='member' type=dynamic
           GET_VAR 'd: dynamic declared in <root>.test1' type=dynamic origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic 
-    VALUE_PARAMETER name:d index:0 type:dynamic 
+  FUN name:test2 visibility:public modality:FINAL <> (d:dynamic) returnType:dynamic
+    VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (d: dynamic): dynamic declared in <root>'
         BLOCK type=dynamic origin=SAFE_CALL
-          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:dynamic [val] 
+          VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:dynamic [val]
             GET_VAR 'd: dynamic declared in <root>.test2' type=dynamic origin=null
           WHEN type=dynamic origin=null
             BRANCH

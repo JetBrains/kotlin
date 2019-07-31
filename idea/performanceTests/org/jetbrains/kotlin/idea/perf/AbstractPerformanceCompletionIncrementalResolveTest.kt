@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.junit.AfterClass
 
 /**
  * inspired by @see AbstractCompletionIncrementalResolveTest
@@ -33,10 +32,9 @@ abstract class AbstractPerformanceCompletionIncrementalResolveTest : KotlinLight
         @JvmStatic
         val stats: Stats = Stats("completion-incremental")
 
-        @AfterClass
-        @JvmStatic
-        fun teardown() {
-            stats.close()
+        init {
+            // there is no @AfterClass for junit3.8
+            Runtime.getRuntime().addShutdownHook(Thread(Runnable { stats.close() }))
         }
     }
 

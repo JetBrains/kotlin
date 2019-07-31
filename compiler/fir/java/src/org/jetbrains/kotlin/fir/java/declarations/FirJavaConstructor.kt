@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl.Companion.NAME
@@ -38,6 +39,7 @@ class FirJavaConstructor(
 
     init {
         symbol.bind(this)
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 
     override val delegatedConstructor: FirDelegatedConstructorCall?

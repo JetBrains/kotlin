@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.codegen.optimization.common.isMeaningful
 import org.jetbrains.kotlin.codegen.optimization.common.removeAll
 import org.jetbrains.kotlin.codegen.optimization.transformer.MethodTransformer
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
+import org.jetbrains.org.objectweb.asm.tree.analysis.SourceInterpreter
 
 // Inliner emits a lot of locals during inlining.
 // Remove all of them since these locals are
@@ -221,5 +223,23 @@ class RedundantLocalsEliminationMethodTransformer(private val languageVersionSet
     private fun AbstractInsnNode.localIndex(): Int {
         assert(this is VarInsnNode)
         return (this as VarInsnNode).`var`
+    }
+}
+
+private fun findSourceInstructions(
+    internalClassName: String,
+    methodNode: MethodNode,
+    insns: Collection<AbstractInsnNode>,
+    ignoreCopy: Boolean
+): Map<AbstractInsnNode, Collection<AbstractInsnNode>> {
+    val frames = MethodTransformer.analyze(
+        internalClassName,
+        methodNode,
+        if (ignoreCopy) IgnoringCopyOperationSourceInterpreter() else SourceInterpreter()
+    )
+    return insns.keysToMap {
+        val index = methodNode.instructions.indexOf(it)
+        if (isUnreachable(index, frames)) return@keysToMap emptySet<AbstractInsnNode>()
+        frames[index].getStack(0).insns
     }
 }

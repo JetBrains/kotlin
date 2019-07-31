@@ -84,6 +84,7 @@ where advanced options include:
   -Xdump-perf=<path>         Dump detailed performance statistics to the specified file
   -Xeffect-system            Enable experimental language feature: effect system
   -Xexperimental=<fq.name>   Enable and propagate usages of experimental API for marker annotation with the given fully qualified name
+  -Xinline-classes           Enable experimental inline classes
   -Xintellij-plugin-root=<path> Path to the kotlin-compiler.jar or directory where IntelliJ configuration files can be found
   -Xlegacy-smart-cast-after-try Allow var smart casts despite assignment in try block
   -Xlist-phases              List backend phases
@@ -100,6 +101,7 @@ where advanced options include:
   -Xphases-to-validate-after Validate backend state after these phases
   -Xphases-to-validate-before Validate backend state before these phases
   -Xplugin=<path>            Load plugins from the given classpath
+  -Xpolymorphic-signature    Enable experimental support for @PolymorphicSignature (MethodHandle/VarHandle)
   -Xprofile-phases           Profile backend phases
   -Xproper-ieee754-comparisons Generate proper IEEE 754 comparisons in all cases if values are statically known to be of primitive numeric types
   -Xread-deserialized-contracts Enable reading of contracts from metadata

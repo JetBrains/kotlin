@@ -346,6 +346,10 @@ public class Node implements Cloneable {
         return position;
     }
 
+    public void setPosition(CodePosition position) {
+        this.position = position;
+    }
+
     /** Can only be called when <tt>getType() == TokenStream.NUMBER</tt> */
     public double getDouble() throws UnsupportedOperationException {
         throw new UnsupportedOperationException(this + " is not a number node");

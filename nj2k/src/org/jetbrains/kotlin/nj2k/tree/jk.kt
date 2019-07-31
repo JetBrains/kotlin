@@ -17,18 +17,15 @@
 package org.jetbrains.kotlin.nj2k.tree
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.symbols.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKBranchElementBase
+import org.jetbrains.kotlin.nj2k.tree.impl.JKSpaceElementImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKTokenElementImpl
 import org.jetbrains.kotlin.nj2k.tree.visitors.JKVisitor
 
 interface JKTreeElement : JKElement, JKNonCodeElementsListOwner {
-    fun <R, D> accept(visitor: JKVisitor<R, D>, data: D): R
-
-    fun <R> accept(visitor: JKVisitor<R, Nothing?>): R = accept(visitor, null)
-
-    fun <D> acceptChildren(visitor: JKVisitor<Unit, D>, data: D)
-
-    fun acceptChildren(visitor: JKVisitor<Unit, Nothing?>) = acceptChildren(visitor, null)
-
+    fun accept(visitor: JKVisitor)
+    fun acceptChildren(visitor: JKVisitor)
     fun copy(): JKTreeElement
 }
 
@@ -42,6 +39,7 @@ interface PsiOwner {
 
 abstract class JKDeclaration : JKTreeElement, JKBranchElementBase() {
     override var rightNonCodeElements: List<JKNonCodeElement> = listOf(JKSpaceElementImpl("\n"))
+    abstract val name: JKNameIdentifier
 }
 
 interface JKImportStatement : JKTreeElement {
@@ -61,10 +59,7 @@ interface JKFile : JKTreeElement, JKBranchElement {
 abstract class JKClass : JKDeclaration(), JKVisibilityOwner, JKOtherModifiersOwner, JKModalityOwner, JKTypeParameterListOwner,
     JKAnnotationListOwner,
     JKBranchElement {
-    abstract val name: JKNameIdentifier
-
     abstract val inheritance: JKInheritanceInfo
-
     abstract var classBody: JKClassBody
     abstract var classKind: ClassKind
 
@@ -111,7 +106,6 @@ interface JKAnnotationListOwner : JKTreeElement {
 
 abstract class JKMethod : JKDeclaration(), JKVisibilityOwner, JKModalityOwner, JKOtherModifiersOwner, JKTypeParameterListOwner,
     JKAnnotationListOwner {
-    abstract val name: JKNameIdentifier
     abstract var parameters: List<JKParameter>
     abstract var returnType: JKTypeElement
     abstract var block: JKBlock
@@ -122,7 +116,6 @@ abstract class JKMethod : JKDeclaration(), JKVisibilityOwner, JKModalityOwner, J
 
 abstract class JKVariable : JKDeclaration(), JKAnnotationListOwner {
     abstract var type: JKTypeElement
-    abstract var name: JKNameIdentifier
     abstract var initializer: JKExpression
 }
 
@@ -291,7 +284,7 @@ interface JKExpression : JKTreeElement, JKAnnotationMemberValue
 
 interface JKMethodReferenceExpression : JKExpression, PsiOwner {
     val qualifier: JKExpression
-    val identifier: JKNamedSymbol
+    val identifier: JKSymbol
     val functionalType: JKTypeElement
     val isConstructorCall: Boolean
 }
@@ -492,9 +485,8 @@ interface JKTypeParameterList : JKTreeElement {
     var typeParameters: List<JKTypeParameter>
 }
 
-interface JKTypeParameter : JKTreeElement {
-    var name: JKNameIdentifier
-    var upperBounds: List<JKTypeElement>
+abstract class JKTypeParameter : JKDeclaration() {
+    abstract var upperBounds: List<JKTypeElement>
 }
 
 interface JKTypeParameterListOwner : JKTreeElement {
@@ -512,9 +504,7 @@ abstract class JKForInStatement : JKStatement() {
     abstract var body: JKStatement
 }
 
-abstract class JKPackageDeclaration : JKDeclaration() {
-    abstract var packageName: JKNameIdentifier
-}
+abstract class JKPackageDeclaration : JKDeclaration()
 
 interface JKClassLiteralExpression : JKExpression {
     val classType: JKTypeElement

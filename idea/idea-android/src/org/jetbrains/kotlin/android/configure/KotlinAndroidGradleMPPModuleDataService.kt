@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.DependencyScope
 import com.intellij.openapi.roots.ModifiableRootModel
+import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.VfsUtil
 import com.intellij.util.SmartList
 import com.intellij.util.containers.stream
@@ -160,6 +161,10 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
         it.kotlinSourceSet?.actualPlatforms?.supports(platform) ?: false
     }
 
+    private fun List<DataNode<GradleSourceSetData>>.filterByPlatform(platform: KotlinPlatform) = this.filter {
+        it.kotlinSourceSet?.actualPlatforms?.supports(platform) ?: false
+    }
+
     private fun addExtraDependeeModules(
         moduleNode: DataNode<ModuleData>,
         projectNode: DataNode<ProjectData>,
@@ -167,6 +172,7 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
         rootModel: ModifiableRootModel,
         testScope: Boolean
     ) {
+        val legacyMode = !Registry.`is`("kotlin.android.import.mpp.all.transitive", true)
         val dependeeModuleNodes = getDependeeModuleNodes(moduleNode, projectNode, modelsProvider, testScope)
         val relevantNodes = dependeeModuleNodes
             .flatMap { ExternalSystemApiUtil.getChildren(it, GradleSourceSetData.KEY) }
@@ -179,15 +185,29 @@ class KotlinAndroidGradleMPPModuleDataService : AbstractProjectDataService<Modul
 
         val gradleSourceSetDataNodes = SmartList<DataNode<GradleSourceSetData>>()
             .apply {
-                addIfNotNull(
-                    (if (isAndroidModule) relevantNodes.firstByPlatformOrNull(KotlinPlatform.ANDROID) else null)
-                        ?: relevantNodes.firstByPlatformOrNull(KotlinPlatform.JVM)
-                )
-                addIfNotNull(
-                    relevantNodes.firstOrNull {
-                        (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                if (legacyMode) {
+                    addIfNotNull(
+                        (if (isAndroidModule) relevantNodes.firstByPlatformOrNull(KotlinPlatform.ANDROID) else null)
+                            ?: relevantNodes.firstByPlatformOrNull(KotlinPlatform.JVM)
+                    )
+                    addIfNotNull(
+                        relevantNodes.firstOrNull {
+                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                        }
+                    )
+                } else {
+                    val androidSourceSets = if (isAndroidModule) relevantNodes.filterByPlatform(KotlinPlatform.ANDROID) else emptyList()
+                    if (androidSourceSets.isEmpty()) {
+                        addAll(relevantNodes.filterByPlatform(KotlinPlatform.JVM))
+                    } else {
+                        addAll(androidSourceSets)
                     }
-                )
+                    addAll(
+                        relevantNodes.filter {
+                            (it.kotlinSourceSet?.actualPlatforms?.supports(KotlinPlatform.COMMON) ?: false) && it.kotlinSourceSet?.kotlinModule?.name == commonSourceSetName
+                        }
+                    )
+                }
             }
 
         val testKotlinModules =

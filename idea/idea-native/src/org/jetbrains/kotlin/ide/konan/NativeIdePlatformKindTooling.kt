@@ -29,8 +29,6 @@ class NativeIdePlatformKindTooling : IdePlatformKindTooling() {
 
     override fun compilerArgumentsForProject(project: Project): CommonCompilerArguments? = null
 
-    override val resolverForModuleFactory get() = NativeResolverForModuleFactory
-
     override val mavenLibraryIds: List<String> get() = emptyList()
     override val gradlePluginId: String get() = ""
     override val gradlePlatformIds: List<KotlinPlatform> get() = listOf(KotlinPlatform.NATIVE)

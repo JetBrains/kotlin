@@ -16,14 +16,14 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.C declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C visibility:public ' type=T of <root>.C origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C visibility:public' type=T of <root>.C origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-x>' type=<root>.C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-x> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:T of <root>.C) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:T of <root>.C
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C visibility:public ' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.C visibility:public' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-x>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: T of <root>.C declared in <root>.C.<set-x>' type=T of <root>.C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
@@ -56,11 +56,11 @@ FILE fqName:<root> fileName:/genericPropertyReferenceType.kt
   FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: CALL 'public final fun <get-y> (): IrErrorType declared in <root>' type=IrErrorType origin=null
+        p: PROPERTY_REFERENCE 'public final y: IrErrorType [var]' field=null getter='public final fun <get-y> (): IrErrorType declared in <root>' setter='public final fun <set-y> (v: IrErrorType): kotlin.Unit declared in <root>' type=IrErrorType origin=null
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
       TYPE_OP type=<root>.C<kotlin.String> origin=CAST typeOperand=<root>.C<kotlin.String>
         GET_VAR 'a: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
       CALL 'public final fun use (p: kotlin.reflect.KMutableProperty<kotlin.String>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        p: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/y]>#' type=IrErrorType
+        p: ERROR_CALL 'Unsupported callable reference: R|<local>/a|::<Inapplicable(WRONG_RECEIVER): [/y]>#' type=IrErrorType

@@ -85,6 +85,7 @@ public abstract class MavenImportingTestCase extends MavenTestCase {
     @Override
     protected void tearDown() throws Exception {
         try {
+            JavaAwareProjectJdkTableImpl.removeInternalJdkInTests();
             if (myGlobalSettingsFile != null) {
                 VfsRootAccess.disallowRootAccess(myGlobalSettingsFile.getAbsolutePath());
             }

@@ -31,18 +31,9 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
                 }.onSuccess { importedScriptsEvalResults ->
 
                     val refinedEvalConfiguration =
-                        configuration[ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate]
-                            ?.handler?.invoke(
-                            ScriptEvaluationConfigurationRefinementContext(
-                                compiledScript,
-                                configuration
-                            )
-                        )
-                            ?.onFailure {
-                                return@invoke ResultWithDiagnostics.Failure(it.reports)
-                            }
-                            ?.valueOrNull()
-                            ?: configuration
+                        configuration.refineBeforeEvaluation(compiledScript).valueOr {
+                            return@invoke ResultWithDiagnostics.Failure(it.reports)
+                        }
 
                     val resultValue = try {
                         val instance =
@@ -50,11 +41,11 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
                         compiledScript.resultField?.let { (resultFieldName, resultType) ->
                             val resultField = scriptClass.java.getDeclaredField(resultFieldName).apply { isAccessible = true }
-                            ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, instance)
-                        } ?: ResultValue.Unit(instance)
+                            ResultValue.Value(resultFieldName, resultField.get(instance), resultType.typeName, scriptClass, instance)
+                        } ?: ResultValue.Unit(scriptClass, instance)
 
                     } catch (e: InvocationTargetException) {
-                        ResultValue.Error(e.targetException ?: e, e)
+                        ResultValue.Error(e.targetException ?: e, e, scriptClass)
                     }
 
                     EvaluationResult(resultValue, refinedEvalConfiguration).let {

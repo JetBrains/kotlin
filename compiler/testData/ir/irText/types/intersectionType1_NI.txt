@@ -57,7 +57,7 @@ FILE fqName:<root> fileName:/intersectionType1_NI.kt
           elements: VARARG type=kotlin.Array<out <root>.In<kotlin.Int>> varargElementType=<root>.In<kotlin.Int>
             CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.In' type=<root>.In<kotlin.Int> origin=null
               <class: I>: kotlin.Int
-      VAR name:a2 type:kotlin.Array<<root>.In<kotlin.String>> [val] 
+      VAR name:a2 type:kotlin.Array<<root>.In<kotlin.String>> [val]
         CALL 'public final fun arrayOf <T> (vararg elements: T of kotlin.arrayOf): kotlin.Array<T of kotlin.arrayOf> [inline] declared in kotlin' type=kotlin.Array<<root>.In<kotlin.String>> origin=null
           <T>: <root>.In<kotlin.String>
           elements: VARARG type=kotlin.Array<out <root>.In<kotlin.String>> varargElementType=<root>.In<kotlin.String>

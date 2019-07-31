@@ -9,12 +9,10 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtil
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootManager
-import com.intellij.openapi.roots.ProjectRootModificationTracker
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.CommonProcessors
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.caches.project.cached
+import org.jetbrains.kotlin.caches.project.cacheByClassInvalidatingOnRootModifications
 import org.jetbrains.kotlin.psi.KtFile
 
 class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private val module: Module, private val updater: Updater) :
@@ -29,17 +27,16 @@ class KotlinModuleOutOfCodeBlockModificationTracker private constructor(private 
         // Avoid implicit capturing for this to make CachedValueStabilityChecker happy
         val module = module
 
-        module.cached(CachedValueProvider {
-            CachedValueProvider.Result.create(
-                HashSet<Module>().also { resultModuleSet ->
-                    ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
-                        CommonProcessors.CollectProcessor(resultModuleSet)
-                    )
-                },
-                ProjectRootModificationTracker.getInstance(module.project)
-            )
-        })
+        module.cacheByClassInvalidatingOnRootModifications(KeyForCachedDependencies::class.java) {
+            HashSet<Module>().also { resultModuleSet ->
+                ModuleRootManager.getInstance(module).orderEntries().recursively().forEachModule(
+                    CommonProcessors.CollectProcessor(resultModuleSet)
+                )
+            }
+        }
     }
+
+    object KeyForCachedDependencies
 
     override fun getModificationCount(): Long {
         val currentGlobalCount = kotlinOutOfCodeBlockTracker.modificationCount

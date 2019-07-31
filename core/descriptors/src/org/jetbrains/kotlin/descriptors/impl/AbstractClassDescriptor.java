@@ -17,21 +17,23 @@
 package org.jetbrains.kotlin.descriptors.impl;
 
 import kotlin.jvm.functions.Function0;
+import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.DeclarationDescriptorVisitor;
-import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor;
+import org.jetbrains.kotlin.descriptors.*;
 import org.jetbrains.kotlin.name.Name;
+import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.resolve.descriptorUtil.DescriptorUtilsKt;
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.resolve.scopes.SubstitutingScope;
 import org.jetbrains.kotlin.storage.NotNullLazyValue;
 import org.jetbrains.kotlin.storage.StorageManager;
 import org.jetbrains.kotlin.types.*;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 
 import java.util.List;
 
-public abstract class AbstractClassDescriptor implements ClassDescriptor {
+public abstract class AbstractClassDescriptor extends ModuleAwareClassDescriptor {
     private final Name name;
     protected final NotNullLazyValue<SimpleType> defaultType;
     private final NotNullLazyValue<MemberScope> unsubstitutedInnerClassesScope;
@@ -42,7 +44,35 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
         this.defaultType = storageManager.createLazyValue(new Function0<SimpleType>() {
             @Override
             public SimpleType invoke() {
-                return TypeUtils.makeUnsubstitutedType(AbstractClassDescriptor.this, getUnsubstitutedMemberScope());
+                return TypeUtils.makeUnsubstitutedType(
+                        AbstractClassDescriptor.this, getUnsubstitutedMemberScope(),
+                        new Function1<KotlinTypeRefiner, SimpleType>() {
+                            @Override
+                            public SimpleType invoke(KotlinTypeRefiner kotlinTypeRefiner) {
+                                ClassifierDescriptor descriptor = kotlinTypeRefiner.refineDescriptor(AbstractClassDescriptor.this);
+                                // If we've refined descriptor
+                                if (descriptor == null) return defaultType.invoke();
+
+                                if (descriptor instanceof TypeAliasDescriptor) {
+                                    return KotlinTypeFactory.computeExpandedType(
+                                            (TypeAliasDescriptor) descriptor,
+                                            TypeUtils.getDefaultTypeProjections(descriptor.getTypeConstructor().getParameters())
+                                    );
+                                }
+
+                                if (descriptor instanceof ModuleAwareClassDescriptor) {
+                                    TypeConstructor refinedConstructor = descriptor.getTypeConstructor().refine(kotlinTypeRefiner);
+                                    return TypeUtils.makeUnsubstitutedType(
+                                            refinedConstructor,
+                                            ((ModuleAwareClassDescriptor) descriptor).getUnsubstitutedMemberScope(kotlinTypeRefiner),
+                                            this
+                                    );
+                                }
+
+                                return descriptor.getDefaultType();
+                            }
+                        }
+                );
             }
         });
         this.unsubstitutedInnerClassesScope = storageManager.createLazyValue(new Function0<MemberScope>() {
@@ -85,23 +115,41 @@ public abstract class AbstractClassDescriptor implements ClassDescriptor {
 
     @NotNull
     @Override
-    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
         assert typeArguments.size() == getTypeConstructor().getParameters().size() : "Illegal number of type arguments: expected "
                                                                                      + getTypeConstructor().getParameters().size() + " but was " + typeArguments.size()
                                                                                      + " for " + getTypeConstructor() + " " + getTypeConstructor().getParameters();
-        if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope();
+        if (typeArguments.isEmpty()) return getUnsubstitutedMemberScope(kotlinTypeRefiner);
 
         TypeSubstitutor substitutor = TypeConstructorSubstitution.create(getTypeConstructor(), typeArguments).buildSubstitutor();
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+        return new SubstitutingScope(getUnsubstitutedMemberScope(kotlinTypeRefiner), substitutor);
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution, @NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+        if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope(kotlinTypeRefiner);
+
+        TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
+        return new SubstitutingScope(getUnsubstitutedMemberScope(kotlinTypeRefiner), substitutor);
+    }
+
+    @NotNull
+    @Override
+    public MemberScope getMemberScope(@NotNull List<? extends TypeProjection> typeArguments) {
+        return getMemberScope(typeArguments, DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(this)));
     }
 
     @NotNull
     @Override
     public MemberScope getMemberScope(@NotNull TypeSubstitution typeSubstitution) {
-        if (typeSubstitution.isEmpty()) return getUnsubstitutedMemberScope();
+        return getMemberScope(typeSubstitution, DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(this)));
+    }
 
-        TypeSubstitutor substitutor = TypeSubstitutor.create(typeSubstitution);
-        return new SubstitutingScope(getUnsubstitutedMemberScope(), substitutor);
+    @NotNull
+    @Override
+    public MemberScope getUnsubstitutedMemberScope() {
+        return getUnsubstitutedMemberScope(DescriptorUtilsKt.getKotlinTypeRefiner(DescriptorUtils.getContainingModule(this)));
     }
 
     @NotNull

@@ -16,13 +16,15 @@
 
 package org.jetbrains.kotlin.types
 
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptorWithTypeParameters
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 class StarProjectionImpl(
-        private val typeParameter: TypeParameterDescriptor
+    private val typeParameter: TypeParameterDescriptor
 ) : TypeProjectionBase() {
     override fun isStarProjection() = true
 
@@ -34,28 +36,37 @@ class StarProjectionImpl(
     }
 
     override fun getType() = _type
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
 }
 
 fun TypeParameterDescriptor.starProjectionType(): KotlinType {
     val classDescriptor = this.containingDeclaration as ClassifierDescriptorWithTypeParameters
     val typeParameters = classDescriptor.typeConstructor.parameters.map { it.typeConstructor }
     return TypeSubstitutor.create(
-            object : TypeConstructorSubstitution() {
-                override fun get(key: TypeConstructor) =
-                        if (key in typeParameters)
-                            TypeUtils.makeStarProjection(key.declarationDescriptor as TypeParameterDescriptor)
-                        else null
+        object : TypeConstructorSubstitution() {
+            override fun get(key: TypeConstructor) =
+                if (key in typeParameters)
+                    TypeUtils.makeStarProjection(key.declarationDescriptor as TypeParameterDescriptor)
+                else null
 
-            }
+        }
     ).substitute(this.upperBounds.first(), Variance.OUT_VARIANCE) ?: builtIns.defaultBound
 }
 
-class TypeBasedStarProjectionImpl(
-        private val _type: KotlinType
+// It should only be used in rare cases when type parameter for the relevant argument is not available
+class StarProjectionForAbsentTypeParameter(
+    kotlinBuiltIns: KotlinBuiltIns
 ) : TypeProjectionBase() {
+    private val nullableAnyType: KotlinType = kotlinBuiltIns.nullableAnyType
+
     override fun isStarProjection() = true
 
     override fun getProjectionKind() = Variance.OUT_VARIANCE
 
-    override fun getType() = _type
+    override fun getType() = nullableAnyType
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): TypeProjection = this
 }

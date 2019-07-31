@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.types.checker
 
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor
 import org.jetbrains.kotlin.types.*
 import java.util.*
@@ -114,19 +113,12 @@ object TypeIntersector {
 
         IntegerLiteralTypeConstructor.findIntersectionType(filteredEqualTypes)?.let { return it }
 
-        val filteredSuperAndEqualTypes = filterTypes(filteredEqualTypes, NewKotlinTypeChecker::equalTypes)
+        val filteredSuperAndEqualTypes = filterTypes(filteredEqualTypes, NewKotlinTypeChecker.Default::equalTypes)
         assert(filteredSuperAndEqualTypes.isNotEmpty(), errorMessage)
 
         if (filteredSuperAndEqualTypes.size < 2) return filteredSuperAndEqualTypes.single()
 
-        val constructor = IntersectionTypeConstructor(inputTypes)
-        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            Annotations.EMPTY,
-            constructor,
-            listOf(),
-            false,
-            constructor.createScopeForKotlinType()
-        )
+        return IntersectionTypeConstructor(inputTypes).createType()
     }
 
     private fun filterTypes(
@@ -145,7 +137,7 @@ object TypeIntersector {
     }
 
     private fun isStrictSupertype(subtype: KotlinType, supertype: KotlinType): Boolean {
-        return with(NewKotlinTypeChecker) {
+        return with(NewKotlinTypeChecker.Default) {
             isSubtypeOf(subtype, supertype) && !isSubtypeOf(supertype, subtype)
         }
     }

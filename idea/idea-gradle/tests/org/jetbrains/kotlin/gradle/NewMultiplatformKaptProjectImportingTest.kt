@@ -37,8 +37,13 @@ class NewMultiplatformKaptProjectImportingTest : MultiplePluginVersionGradleImpo
         ) {
             module("project")
 
-            module("project_main")
-            module("project_test")
+            // Importing module per source set is not supported in Android Studio
+            if (KaptImportingTest().isAndroidStudio()) {
+                module("project")
+            } else {
+                module("project_main")
+                module("project_test")
+            }
 
             module("project_commonMain")
             module("project_commonTest") {

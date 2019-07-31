@@ -96,10 +96,11 @@ interface IrBuilderExtension {
         ) else compilerContext.externalSymbols.referenceConstructor(descriptor).owner
         c.parent = this
         c.returnType = descriptor.returnType.toIrType()
-        if (!fromStubs || overwriteValueParameters) c.createParameterDeclarations(receiver = null, overwriteValueParameters = overwriteValueParameters)
-        if (c.typeParameters.isEmpty()) {
-            c.copyTypeParamsFromDescriptor()
-        }
+        if (!fromStubs || overwriteValueParameters) c.createParameterDeclarations(
+            receiver = null,
+            overwriteValueParameters = overwriteValueParameters,
+            copyTypeParameters = false
+        )
         c.body = compilerContext.createIrBuilder(c.symbol).at(this).irBlockBody(this.startOffset, this.endOffset) { bodyGen(c) }
         this.addMember(c)
     }
@@ -247,8 +248,10 @@ interface IrBuilderExtension {
             propertyDescriptor
         )
         irProperty.parent = propertyParent
-        irProperty.backingField =
-            generatePropertyBackingField(propertyDescriptor, irProperty).apply { parent = propertyParent }
+        irProperty.backingField = generatePropertyBackingField(propertyDescriptor, irProperty).apply {
+            parent = propertyParent
+            correspondingProperty = irProperty
+        }
         val fieldSymbol = irProperty.backingField!!.symbol
         irProperty.getter = propertyDescriptor.getter?.let { generatePropertyAccessor(it, fieldSymbol) }
             ?.apply { parent = propertyParent }
@@ -356,7 +359,11 @@ interface IrBuilderExtension {
         }
     }
 
-    fun IrFunction.createParameterDeclarations(receiver: IrValueParameter?, overwriteValueParameters: Boolean = false) {
+    fun IrFunction.createParameterDeclarations(
+        receiver: IrValueParameter?,
+        overwriteValueParameters: Boolean = false,
+        copyTypeParameters: Boolean = true
+    ) {
         fun ParameterDescriptor.irValueParameter() = IrValueParameterImpl(
             this@createParameterDeclarations.startOffset, this@createParameterDeclarations.endOffset,
             SERIALIZABLE_PLUGIN_ORIGIN,
@@ -377,7 +384,7 @@ interface IrBuilderExtension {
         valueParameters.addAll(descriptor.valueParameters.map { it.irValueParameter() })
 
         assert(typeParameters.isEmpty())
-        copyTypeParamsFromDescriptor()
+        if (copyTypeParameters) copyTypeParamsFromDescriptor()
     }
 
     fun IrFunction.copyTypeParamsFromDescriptor() {
@@ -392,7 +399,7 @@ interface IrBuilderExtension {
         }
     }
 
-    fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference {
+    fun createClassReference(classType: KotlinType, startOffset: Int, endOffset: Int): IrClassReference {
         val clazz = classType.toClassDescriptor!!
         val kClass = clazz.module.findClassAcrossModuleDependencies(ClassId(FqName("kotlin.reflect"), Name.identifier("KClass")))!!
         val returnType =
@@ -405,6 +412,8 @@ interface IrBuilderExtension {
             classType.toIrType()
         )
     }
+
+    fun IrBuilderWithScope.classReference(classType: KotlinType): IrClassReference = createClassReference(classType, startOffset, endOffset)
 
     fun buildInitializersRemapping(irClass: IrClass): (IrField) -> IrExpression? {
         val original = irClass.constructors.singleOrNull { it.isPrimary }

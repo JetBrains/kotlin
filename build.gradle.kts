@@ -122,30 +122,19 @@ extra["JDK_9"] = jdkPath("9")
 extra["JDK_10"] = jdkPath("10")
 extra["JDK_11"] = jdkPath("11")
 
-gradle.taskGraph.beforeTask() {
+// allow opening the project without setting up all env variables (see KT-26413)
+if (!kotlinBuildProperties.isInIdeaSync) {
     checkJDK()
 }
 
-var jdkChecked: Boolean = false
 fun checkJDK() {
-    if (jdkChecked) {
-        return
+    val missingEnvVars = JdkMajorVersion.values()
+        .filter { it.isMandatory() && extra[it.name] == jdkNotFoundConst }
+        .mapTo(ArrayList()) { it.name }
+
+    if (missingEnvVars.isNotEmpty()) {
+        throw GradleException("Required environment variables are missing: ${missingEnvVars.joinToString()}")
     }
-
-    val unpresentJdks = JdkMajorVersion.values()
-        .filter { it.isMandatory() }
-        .map { it.name }
-        .filter { extra[it] == jdkNotFoundConst }
-        .toList()
-
-    if (unpresentJdks.isNotEmpty()) {
-        throw GradleException("Please set environment variable" +
-                                      (if (unpresentJdks.size > 1) "s" else "") +
-                                      ": " + unpresentJdks.joinToString() +
-                                      " to point to corresponding JDK installation.")
-    }
-
-    jdkChecked = true
 }
 
 rootProject.apply {
@@ -342,6 +331,7 @@ allprojects {
     configureJvmProject(javaHome!!, jvmTarget!!)
 
     val commonCompilerArgs = listOfNotNull(
+        "-Xuse-experimental=kotlin.Experimental",
         "-Xallow-kotlin-package",
         "-Xread-deserialized-contracts",
         "-Xjvm-default=compatibility",
@@ -732,9 +722,14 @@ fun jdkPath(version: String): String {
 
 
 fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
+    val currentJavaHome = File(System.getProperty("java.home")!!).canonicalPath
+    val shouldFork = !currentJavaHome.startsWith(File(javaHome).canonicalPath)
+
     tasks.withType<JavaCompile> {
         if (name != "compileJava9Java") {
-            options.isFork = true
+            sourceCompatibility = javaVersion
+            targetCompatibility = javaVersion
+            options.isFork = shouldFork
             options.forkOptions.javaHome = file(javaHome)
             options.compilerArgs.add("-proc:none")
             options.encoding = "UTF-8"
@@ -750,6 +745,28 @@ fun Project.configureJvmProject(javaHome: String, javaVersion: String) {
     tasks.withType<Test> {
         executable = File(javaHome, "bin/java").canonicalPath
     }
+
+    plugins.withId("java-base") {
+        configureShadowJarSubstitutionInCompileClasspath()
+    }
+}
+
+fun Project.configureShadowJarSubstitutionInCompileClasspath() {
+    val substitutionMap = mapOf(":kotlin-reflect" to ":kotlin-reflect-api")
+
+    fun configureSubstitution(substitution: DependencySubstitution) {
+        val requestedProject = (substitution.requested as? ProjectComponentSelector)?.projectPath ?: return
+        val replacementProject = substitutionMap[requestedProject] ?: return
+        substitution.useTarget(project(replacementProject), "Non-default shadow jars should not be used in compile classpath")
+    }
+
+    sourceSets.all {
+        for (configName in listOf(compileOnlyConfigurationName, compileClasspathConfigurationName)) {
+            configurations.getByName(configName).resolutionStrategy.dependencySubstitution {
+                all(::configureSubstitution)
+            }
+        }
+    }
 }
 
 tasks.create("findShadowJarsInClasspath").doLast {
@@ -757,12 +774,19 @@ tasks.create("findShadowJarsInClasspath").doLast {
         sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
     }
 
+    val mainJars = hashSetOf<File>()
     val shadowJars = hashSetOf<File>()
     for (project in rootProject.allprojects) {
+        project.withJavaPlugin {
+            project.sourceSets.forEach { sourceSet ->
+                val jarTask = project.tasks.findByPath(sourceSet.jarTaskName) as? Jar
+                jarTask?.outputFile?.let { mainJars.add(it) }
+            }
+        }
         for (task in project.tasks) {
             when (task) {
                 is ShadowJar -> {
-                    shadowJars.add(fileFrom(task.archivePath))
+                    shadowJars.add(fileFrom(task.outputFile))
                 }
                 is ProGuardTask -> {
                     shadowJars.addAll(task.outputs.files.toList())
@@ -771,7 +795,8 @@ tasks.create("findShadowJarsInClasspath").doLast {
         }
     }
 
-    println("Shadow jars:")
+    shadowJars.removeAll(mainJars)
+    println("Shadow jars that might break incremental compilation:")
     shadowJars.printSorted()
 
     fun Project.checkConfig(configName: String) {
@@ -785,7 +810,14 @@ tasks.create("findShadowJarsInClasspath").doLast {
     }
 
     for (project in rootProject.allprojects) {
-        project.checkConfig("compileClasspath")
-        project.checkConfig("testCompileClasspath")
+        project.sourceSetsOrNull?.forEach { sourceSet ->
+            project.checkConfig(sourceSet.compileClasspathConfigurationName)
+        }
     }
 }
+
+val Jar.outputFile: File
+    get() = archiveFile.get().asFile
+
+val Project.sourceSetsOrNull: SourceSetContainer?
+    get() = convention.findPlugin(JavaPluginConvention::class.java)?.sourceSets

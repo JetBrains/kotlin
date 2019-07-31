@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JVM_IR, NATIVE
+// IGNORE_BACKEND: JS, JS_IR, JVM_IR
 // WITH_RUNTIME
 
 fun box(): String {

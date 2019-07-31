@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.TypeArgumentsToParametersMapper.TypeArgumentsMapping.NoExplicitArguments
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.components.FreshVariableNewTypeSubstitutor
-import org.jetbrains.kotlin.resolve.calls.inference.model.DeclaredUpperBoundConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.ExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.KnownTypeParameterConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
+import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.substitute
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCast
@@ -197,7 +194,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = freshTypeVariables[index]
-            val position = DeclaredUpperBoundConstraintPosition(typeParameter)
+            val position = DeclaredUpperBoundConstraintPositionImpl(typeParameter)
 
             for (upperBound in typeParameter.upperBounds) {
                 freshVariable.addSubtypeConstraint(upperBound, position)
@@ -218,7 +215,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                     // there can be null in case we already captured type parameter in outer class (in case of inner classes)
                     // see test innerClassTypeAliasConstructor.kt
                     val originalTypeParameter = originalTypeParameters.getOrNull(originalIndex) ?: continue
-                    val position = DeclaredUpperBoundConstraintPosition(originalTypeParameter)
+                    val position = DeclaredUpperBoundConstraintPositionImpl(originalTypeParameter)
                     for (upperBound in originalTypeParameter.upperBounds) {
                         freshVariable.addSubtypeConstraint(upperBound, position)
                     }

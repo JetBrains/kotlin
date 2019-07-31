@@ -7,15 +7,13 @@ package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 class FirImportImpl(
-    session: FirSession,
     psi: PsiElement?,
     override val importedFqName: FqName?,
     override val isAllUnder: Boolean,
     override val aliasName: Name?
-) : FirImport, FirAbstractElement(session, psi)
+) : FirImport, FirAbstractElement(psi)

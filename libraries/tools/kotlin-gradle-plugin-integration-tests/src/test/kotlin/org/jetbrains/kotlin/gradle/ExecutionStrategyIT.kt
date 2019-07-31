@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.gradle
 import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.getFileByName
 import org.jetbrains.kotlin.gradle.util.modify
+import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
@@ -69,6 +70,10 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
             assertContains(finishMessage)
             checkOutput()
             assertNoWarnings()
+
+            if (executionStrategy == "daemon") {
+                checkCompileDaemon()
+            }
         }
 
         val classesKt = project.projectDir.getFileByName("classes.kt")
@@ -81,6 +86,28 @@ abstract class ExecutionStrategyIT : BaseGradleIT() {
             checkOutputAfterChange()
             assertNoWarnings()
         }
+    }
+
+    private fun CompiledProject.checkCompileDaemon() {
+        val isGradleAtLeast50 = project.testGradleVersionAtLeast("5.0")
+
+        val m = "Kotlin compile daemon JVM options: \\[(.*?)\\]".toRegex().find(output)
+            ?: error("Could not find Kotlin compile daemon JVM options in Gradle's output")
+        val kotlinDaemonJvmArgs = m.groupValues[1].split(",").mapTo(LinkedHashSet()) { it.trim() }
+
+        fun assertDaemonArgsContain(arg: String) {
+            Assert.assertTrue(
+                "Expected '$arg' in kotlin daemon JVM args, got: $kotlinDaemonJvmArgs",
+                arg in kotlinDaemonJvmArgs
+            )
+        }
+
+        if (isGradleAtLeast50) {
+            // 256m is the default value for Gradle 5.0+
+            assertDaemonArgsContain("-XX:MaxMetaspaceSize=256m")
+        }
+
+        assertDaemonArgsContain("-ea")
     }
 
     protected open fun setupProject(project: Project) {

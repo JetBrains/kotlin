@@ -1,0 +1,5 @@
+@kotlin.Metadata
+public final class PrivateAccessorKt {
+    synthetic final static @org.jetbrains.annotations.Nullable method bar(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    private final static method foo(): void
+}

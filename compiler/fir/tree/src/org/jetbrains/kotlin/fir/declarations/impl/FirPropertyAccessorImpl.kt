@@ -22,9 +22,7 @@ class FirPropertyAccessorImpl(
     visibility: Visibility,
     override var returnTypeRef: FirTypeRef
 ) : FirAbstractFunction(session, psi), FirPropertyAccessor {
-    override var status = FirDeclarationStatusImpl(
-        session, visibility, Modality.FINAL
-    )
+    override var status = FirDeclarationStatusImpl(visibility, Modality.FINAL)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)

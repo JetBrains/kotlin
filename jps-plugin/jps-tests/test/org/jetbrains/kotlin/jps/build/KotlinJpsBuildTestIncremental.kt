@@ -22,35 +22,28 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.jps.builders.JpsBuildTestCase
 import org.jetbrains.jps.builders.logging.BuildLoggingManager
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinCompilerRunner
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.LanguageVersion
 import kotlin.reflect.KMutableProperty1
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_CUSTOM_RUN_FILES_PATH_FOR_TESTS
 import org.jetbrains.kotlin.daemon.common.COMPILE_DAEMON_ENABLED_PROPERTY
 import org.jetbrains.kotlin.daemon.common.isDaemonEnabled
 import org.jetbrains.kotlin.incremental.LookupSymbol
+import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.model.kotlinCommonCompilerArguments
 import org.jetbrains.kotlin.jps.model.kotlinCompilerArguments
 import org.junit.Assert
 import java.io.File
 
 class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
-    var isICEnabledBackup: Boolean = false
-    var isICEnabledForJsBackup: Boolean = false
+    private val enableICFixture = EnableICFixture()
 
     override fun setUp() {
         super.setUp()
-        isICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        IncrementalCompilation.setIsEnabledForJvm(true)
-
-        isICEnabledForJsBackup = IncrementalCompilation.isEnabledForJs()
-        IncrementalCompilation.setIsEnabledForJs(true)
+        enableICFixture.setUp()
     }
 
     override fun tearDown() {
-        IncrementalCompilation.setIsEnabledForJvm(isICEnabledBackup)
-        IncrementalCompilation.setIsEnabledForJs(isICEnabledForJsBackup)
-
+        enableICFixture.tearDown()
         super.tearDown()
     }
 
@@ -63,58 +56,6 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         JpsBuildTestCase.change(class2Kt.path, newClass2KtContent)
         buildAllModules().assertSuccessful()
         checkOutputFilesList(File(workDir, "out/production"))
-    }
-
-    fun testRelocatableCaches() {
-        fun buildAndGetMappings(): String {
-            workDir.deleteRecursively()
-            workDir = AbstractKotlinJpsBuildTestCase.copyTestDataToTmpDir(originalProjectDir)
-            myDataStorageRoot.deleteRecursively()
-            myDataStorageRoot.mkdirs()
-
-            initProject(LibraryDependency.JVM_FULL_RUNTIME)
-
-            val workDirPath = FileUtil.toSystemIndependentName(workDir.absolutePath)
-            val logger = AbstractIncrementalJpsTest.MyLogger(workDirPath)
-            val projectDescriptor = createProjectDescriptor(BuildLoggingManager(logger))
-
-            val lookupTracker = TestLookupTracker()
-            val testingContext = TestingContext(lookupTracker, buildLogger = null)
-            myProject.setTestingContext(testingContext)
-
-            try {
-                doBuild(projectDescriptor, CompileScopeTestBuilder.rebuild().allModules()).assertSuccessful()
-
-                assertFilesExistInOutput(
-                    myProject.modules.single(),
-                    "MainKt.class", "Foo.class", "FooChild.class", "utils/Utils.class"
-                )
-
-                val kotlinContext = testingContext.kotlinCompileContext!!
-                val lookups = lookupTracker.lookups.mapTo(HashSet()) { LookupSymbol(it.name, it.scopeFqName) }
-
-                return createKotlinCachesDump(projectDescriptor, kotlinContext, lookups)
-            } finally {
-                projectDescriptor.release()
-            }
-        }
-
-        val mappings1 = buildAndGetMappings()
-        val projectDir1 = workDir
-        tearDown()
-        // hack to prevent setUp from creating the same dir after tearDown
-        projectDir1.mkdirs()
-
-        try {
-            setUp()
-            val projectDir2 = workDir
-            Assert.assertNotEquals(projectDir1, projectDir2)
-
-            val mappings2 = buildAndGetMappings()
-            Assert.assertEquals(mappings1, mappings2)
-        } finally {
-            projectDir1.deleteRecursively()
-        }
     }
 
     fun testJpsDaemonIC() {

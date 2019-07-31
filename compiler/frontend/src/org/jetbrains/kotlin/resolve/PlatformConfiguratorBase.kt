@@ -100,7 +100,7 @@ abstract class PlatformConfiguratorBase(
         container.useImpl<ExperimentalMarkerDeclarationAnnotationChecker>()
     }
 
-    private fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
+    fun configureExtensionsAndCheckers(container: StorageComponentContainer) {
         with(container) {
             useInstanceIfNotNull(dynamicTypesSettings)
             additionalDeclarationCheckers.forEach { useInstance(it) }

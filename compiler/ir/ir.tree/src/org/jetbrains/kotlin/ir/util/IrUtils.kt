@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -197,6 +198,14 @@ val IrDeclarationContainer.properties: Sequence<IrProperty>
 
 val IrFunction.explicitParameters: List<IrValueParameter>
     get() = (listOfNotNull(dispatchReceiverParameter, extensionReceiverParameter) + valueParameters)
+
+val IrBody.statements: List<IrStatement>
+    get() = when (this) {
+        is IrBlockBody -> statements
+        is IrExpressionBody -> listOf(expression)
+        is IrSyntheticBody -> error("Synthetic body contains no statements $this")
+        else -> error("Unknown subclass of IrBody")
+    }
 
 val IrClass.defaultType: IrSimpleType
     get() = this.thisReceiver!!.type as IrSimpleType

@@ -23,13 +23,12 @@ interface FirProperty :
     override val isOverride: Boolean get() = status.isOverride
 
     // Should it be nullable or have some default?
-    val getter: FirPropertyAccessor
+    override val getter: FirPropertyAccessor?
 
-    val setter: FirPropertyAccessor?
+    override val setter: FirPropertyAccessor?
 
+    // TODO: it should be probably nullable
     val backingFieldSymbol: FirBackingFieldSymbol
-
-    fun <D> transformChildrenWithoutAccessors(transformer: FirTransformer<D>, data: D)
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitProperty(this, data)
@@ -38,7 +37,7 @@ interface FirProperty :
         super<FirCallableMemberDeclaration>.acceptChildren(visitor, data)
         initializer?.accept(visitor, data)
         delegate?.accept(visitor, data)
-        getter.accept(visitor, data)
+        getter?.accept(visitor, data)
         setter?.accept(visitor, data)
     }
 }

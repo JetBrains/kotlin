@@ -58,7 +58,7 @@ abstract class ResolverForProject<M : ModuleInfo> {
 
     abstract val name: String
     abstract val allModules: Collection<M>
-    abstract val builtIns: KotlinBuiltIns
+    abstract val builtInsProvider: (M) -> KotlinBuiltIns
 
     override fun toString() = name
 
@@ -83,7 +83,7 @@ class EmptyResolverForProject<M : ModuleInfo> : ResolverForProject<M>() {
     override fun descriptorForModule(moduleInfo: M) = diagnoseUnknownModuleInfo(listOf(moduleInfo))
     override val allModules: Collection<M> = listOf()
     override fun diagnoseUnknownModuleInfo(infos: List<ModuleInfo>) = throw IllegalStateException("Should not be called for $infos")
-    override val builtIns get() = DefaultBuiltIns.Instance
+    override val builtInsProvider: (M) -> KotlinBuiltIns = { DefaultBuiltIns.Instance }
 }
 
 class ResolverForProjectImpl<M : ModuleInfo>(
@@ -93,12 +93,10 @@ class ResolverForProjectImpl<M : ModuleInfo>(
     private val modulesContent: (M) -> ModuleContent<M>,
     private val moduleLanguageSettingsProvider: LanguageSettingsProvider,
     private val resolverForModuleFactoryByPlatform: (TargetPlatform?) -> ResolverForModuleFactory,
-    private val platformParameters: (TargetPlatform) -> PlatformAnalysisParameters,
     private val invalidateOnOOCB: Boolean,
-    private val targetEnvironment: TargetEnvironment = CompilerEnvironment,
-    override val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
+    override val builtInsProvider: (M) -> KotlinBuiltIns,
     private val delegateResolver: ResolverForProject<M> = EmptyResolverForProject(),
-    private val firstDependency: M? = null,
+    private val sdkDependency: (M) -> M?,
     private val packageOracleFactory: PackageOracleFactory = PackageOracleFactory.OptimisticFactory,
     private val isReleaseCoroutines: Boolean? = null
 ) : ResolverForProject<M>() {
@@ -141,7 +139,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
             LazyModuleDependencies(
                 projectContext.storageManager,
                 module,
-                firstDependency,
+                sdkDependency(module),
                 this
             )
         )
@@ -194,8 +192,6 @@ class ResolverForProjectImpl<M : ModuleInfo>(
                     descriptor as ModuleDescriptorImpl,
                     projectContext.withModule(descriptor),
                     moduleContent,
-                    platformParameters(module.platform),
-                    targetEnvironment,
                     this@ResolverForProjectImpl,
                     languageVersionSettings
                 )
@@ -255,7 +251,7 @@ class ResolverForProjectImpl<M : ModuleInfo>(
         val moduleDescriptor = ModuleDescriptorImpl(
             module.name,
             projectContext.storageManager,
-            builtIns,
+            builtInsProvider(module),
             module.platform,
             module.capabilities,
             module.stableName
@@ -308,8 +304,6 @@ abstract class ResolverForModuleFactory {
         moduleDescriptor: ModuleDescriptorImpl,
         moduleContext: ModuleContext,
         moduleContent: ModuleContent<M>,
-        platformParameters: PlatformAnalysisParameters,
-        targetEnvironment: TargetEnvironment,
         resolverForProject: ResolverForProject<M>,
         languageVersionSettings: LanguageVersionSettings
     ): ResolverForModule

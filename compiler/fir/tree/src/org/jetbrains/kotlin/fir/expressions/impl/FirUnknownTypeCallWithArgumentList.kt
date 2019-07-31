@@ -7,17 +7,15 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirUnknownTypeCallWithArgumentList(
-    session: FirSession,
     psi: PsiElement?
-) : FirCallWithArgumentList(session, psi) {
-    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(session, null)
+) : FirCallWithArgumentList(psi) {
+    override var typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef

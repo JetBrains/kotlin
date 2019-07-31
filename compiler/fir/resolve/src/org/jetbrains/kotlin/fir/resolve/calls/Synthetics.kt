@@ -61,10 +61,12 @@ class FirSyntheticPropertiesScope(
             returnTypeRef = returnTypeRef,
             isVar = true,
             initializer = null,
-            getter = FirDefaultPropertyGetter(session, null, returnTypeRef, fir.visibility),
-            setter = FirDefaultPropertySetter(session, null, returnTypeRef, fir.visibility),
             delegate = null
-        )
+        ).apply {
+            resolvePhase = fir.resolvePhase
+            getter = FirDefaultPropertyGetter(this@FirSyntheticPropertiesScope.session, null, returnTypeRef, fir.visibility)
+            setter = FirDefaultPropertySetter(this@FirSyntheticPropertiesScope.session, null, returnTypeRef, fir.visibility)
+        }
         return processor(synthetic)
     }
 

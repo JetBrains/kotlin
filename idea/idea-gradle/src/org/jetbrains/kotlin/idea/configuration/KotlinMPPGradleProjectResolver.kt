@@ -121,6 +121,20 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
         }
     }
 
+    private fun ExternalDependency.getDependencyArtifacts(): Collection<File> =
+        when (this) {
+            is ExternalProjectDependency -> this.projectDependencyArtifacts
+            is FileCollectionDependency -> this.files
+            else -> emptyList()
+        }
+
+    private fun ExternalDependency.addDependencyArtifactInternal(file: File) {
+        when (this) {
+            is ExternalProjectDependency -> this.projectDependencyArtifacts.add(file)
+            is FileCollectionDependency -> this.files.add(file)
+        }
+    }
+
     override fun populateModuleDependencies(gradleModule: IdeaModule, ideModule: DataNode<ModuleData>, ideProject: DataNode<ProjectData>) {
         if (resolverCtx.getExtraProject(gradleModule, KotlinMPPGradleModel::class.java) == null) {
             // Add mpp-artifacts into map used for dependency substitution
@@ -130,24 +144,30 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 // processing case when one artifact could be produced by several (actualized!)source sets
                 if (mppArtifacts.isNotEmpty() && resolverCtx.isResolveModulePerSourceSet) {
                     val externalProject = resolverCtx.getExtraProject(gradleModule, ExternalProject::class.java)
-                    val artifactToDependency = HashMap<String, ExternalProjectDependency>()
+
+                    //Note! Should not use MultiValuesMap as it contains Set of values, but we need comparision === instead of ==
+                    val artifactToDependency = HashMap<String, MutableCollection<ExternalDependency>>()
                     externalProject?.sourceSets?.values?.forEach { sourceSet ->
                         sourceSet.dependencies.forEach { dependency ->
-                            if (dependency is ExternalProjectDependency) {
-                                dependency.projectDependencyArtifacts.map { toCanonicalPath(it.absolutePath) }
-                                    .filter { mppArtifacts.keys.contains(it) }.forEach {
-                                        artifactToDependency[it] = dependency
-                                    }
-                            }
+                            dependency.getDependencyArtifacts().map { toCanonicalPath(it.absolutePath) }
+                                .filter { mppArtifacts.keys.contains(it) }.forEach {filePath ->
+                                    (artifactToDependency[filePath] ?: ArrayList<ExternalDependency>().also { newCollection ->
+                                        artifactToDependency[filePath] = newCollection
+                                    }).add(dependency)
+                                }
+
                         }
                     }
                     // create 'fake' dependency artifact files and put them into dependency substitution map
-                    mppArtifacts.forEach { (k, v) ->
-                        artifactToDependency[k]?.apply {
-                            for ((index, module) in v.withIndex()) {
-                                val fakeArtifact = "$k-MPP-$index"
-                                configArtifacts[fakeArtifact] = module
-                                this.projectDependencyArtifacts.add(File(fakeArtifact))
+                    mppArtifacts.forEach { (filePath, moduleIds) ->
+                        moduleIds.firstOrNull()?.also { configArtifacts[filePath] = it }
+                        artifactToDependency[filePath]?.forEach { externalDependency ->
+                            for ((index, module) in moduleIds.withIndex()) {
+                                if (index != 0) {
+                                    val fakeArtifact = "$filePath-MPP-$index"
+                                    configArtifacts[fakeArtifact] = module
+                                    externalDependency.addDependencyArtifactInternal(File(fakeArtifact))
+                                }
                             }
                         }
                     }
@@ -218,13 +238,11 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
             mppModel.targets.filter { it.jar != null && it.jar!!.archiveFile != null }.forEach { target ->
                 val path = toCanonicalPath(target.jar!!.archiveFile!!.absolutePath)
                 val currentModules = userData[path] ?: ArrayList<String>().apply { userData[path] = this }
-                //TODO possibly add support of test modules
+                // Test modules should not be added. Otherwise we could get dependnecy of java.mail on jvmTest
                 val allSourceSets = target.compilations.filter { !it.isTestModule }.flatMap { it.sourceSets }.toSet()
-                val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.toSet()
-                allSourceSets.filter { !availableViaDependsOn.contains(it.name) }.forEach { sourceSet ->
-                    run {
-                        currentModules.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))
-                    }
+                val availableViaDependsOn = allSourceSets.flatMap { it.dependsOnSourceSets }.mapNotNull { mppModel.sourceSets[it] }
+                allSourceSets.union(availableViaDependsOn).forEach { sourceSet ->
+                    currentModules.add(getKotlinModuleId(gradleModule, sourceSet, resolverCtx))
                 }
             }
 

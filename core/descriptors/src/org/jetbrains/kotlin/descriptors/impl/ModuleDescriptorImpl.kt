@@ -26,8 +26,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.checker.REFINER_CAPABILITY
+import org.jetbrains.kotlin.types.checker.Ref
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.utils.sure
-import java.lang.IllegalArgumentException
 
 class ModuleDescriptorImpl @JvmOverloads constructor(
     moduleName: Name,
@@ -35,13 +37,18 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     override val builtIns: KotlinBuiltIns,
     // May be null in compiler context, should be not-null in IDE context
     override val platform: TargetPlatform? = null,
-    private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
+    capabilities: Map<ModuleDescriptor.Capability<*>, Any?> = emptyMap(),
     override val stableName: Name? = null
 ) : DeclarationDescriptorImpl(Annotations.EMPTY, moduleName), ModuleDescriptor {
+    private val capabilities: Map<ModuleDescriptor.Capability<*>, Any?>
+
     init {
         if (!moduleName.isSpecial) {
             throw IllegalArgumentException("Module name must be special: $moduleName")
         }
+        this.capabilities = capabilities.toMutableMap()
+        @UseExperimental(TypeRefinement::class)
+        this.capabilities[REFINER_CAPABILITY] = Ref(null)
     }
 
     private var dependencies: ModuleDependencies? = null
@@ -118,7 +125,12 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
-        return this == targetModule || targetModule in dependencies!!.modulesWhoseInternalsAreVisible || targetModule in expectedByModules
+        if (this == targetModule) return true
+        if (targetModule in dependencies!!.modulesWhoseInternalsAreVisible) return true
+        if (targetModule in expectedByModules) return true
+        if (this in targetModule.expectedByModules) return true
+
+        return false
     }
 
     private val id: String

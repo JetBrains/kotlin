@@ -168,6 +168,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitResolvedCallableReference(backingFieldReference, null)
     }
 
+    open fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference) {
+        visitResolvedCallableReference(delegateFieldReference, null)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference) {
         visitReference(superReference, null)
     }
@@ -316,8 +320,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitUnknownTypeExpression(whenSubjectExpression, null)
     }
 
+    open fun visitWrappedExpression(wrappedExpression: FirWrappedExpression) {
+        visitExpression(wrappedExpression, null)
+    }
+
     open fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression) {
-        visitExpression(wrappedArgumentExpression, null)
+        visitWrappedExpression(wrappedArgumentExpression, null)
     }
 
     open fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression) {
@@ -330,6 +338,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression) {
         visitWrappedArgumentExpression(spreadArgumentExpression, null)
+    }
+
+    open fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression) {
+        visitWrappedExpression(wrappedDelegateExpression, null)
     }
 
     open fun visitClass(klass: FirClass) {
@@ -550,6 +562,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: Nothing?) {
         visitDefaultPropertyAccessor(defaultPropertyAccessor)
+    }
+
+    final override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: Nothing?) {
+        visitDelegateFieldReference(delegateFieldReference)
     }
 
     final override fun visitDelegatedConstructorCall(delegatedConstructorCall: FirDelegatedConstructorCall, data: Nothing?) {
@@ -862,6 +878,14 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: Nothing?) {
         visitWrappedArgumentExpression(wrappedArgumentExpression)
+    }
+
+    final override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression, data: Nothing?) {
+        visitWrappedDelegateExpression(wrappedDelegateExpression)
+    }
+
+    final override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: Nothing?) {
+        visitWrappedExpression(wrappedExpression)
     }
 
     final override fun visitElement(element: FirElement, data: Nothing?) {

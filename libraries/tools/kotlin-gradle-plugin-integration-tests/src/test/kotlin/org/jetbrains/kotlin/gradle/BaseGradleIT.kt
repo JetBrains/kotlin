@@ -33,7 +33,8 @@ abstract class BaseGradleIT {
 
     @Before
     fun setUp() {
-        workingDir = createTempDir("BaseGradleIT")
+        // Aapt2 from Android Gradle Plugin 3.2 and below does not handle long paths on Windows.
+        workingDir = createTempDir(if (isWindows) "" else "BaseGradleIT")
         acceptAndroidSdkLicenses()
     }
 
@@ -734,7 +735,6 @@ abstract class BaseGradleIT {
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")
-            add("-Dkotlin.daemon.ea=true")
             addAll(options.freeCommandLineArgs)
         }
 

@@ -17,9 +17,9 @@ suspend fun lambdaAsParameterNotTailCall(c: suspend ()->Unit) { c(); c() }
 suspend fun lambdaAsParameterReturn(c: suspend ()->Unit) { return c() }
 suspend fun returnsInt() = 42.also { TailCallOptimizationChecker.saveStackTrace() }
 // This should not be tail-call, since the caller should push Unit.INSTANCE on stack
-suspend fun callsIntNotTailCall() { returnsInt() }
+suspend fun callsIntTailCall() { returnsInt() }
 suspend fun multipleExitPoints(b: Boolean) { if (b) empty() else withoutReturn() }
-suspend fun multipleExitPointsNotTailCall(b: Boolean) { if (b) empty() else returnsInt() }
+suspend fun multipleExitPointsTailCall(b: Boolean) { if (b) empty() else returnsInt() }
 
 fun ordinary() = 1
 inline fun ordinaryInline() { ordinary() }
@@ -95,14 +95,14 @@ fun box(): String {
         lambdaAsParameterReturn { TailCallOptimizationChecker.saveStackTrace() }
         TailCallOptimizationChecker.checkNoStateMachineIn("lambdaAsParameterReturn")
 
-        callsIntNotTailCall()
-        TailCallOptimizationChecker.checkStateMachineIn("callsIntNotTailCall")
+        callsIntTailCall()
+        TailCallOptimizationChecker.checkNoStateMachineIn("callsIntTailCall")
 
         multipleExitPoints(false)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPoints")
 
-        multipleExitPointsNotTailCall(false)
-        TailCallOptimizationChecker.checkStateMachineIn("multipleExitPointsNotTailCall")
+        multipleExitPointsTailCall(false)
+        TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsTailCall")
 
         multipleExitPointsWithOrdinaryInline(true)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsWithOrdinaryInline")
@@ -120,7 +120,7 @@ fun box(): String {
         TailCallOptimizationChecker.checkNoStateMachineIn("useGenericInferType")
 
         useNullableUnit()
-        TailCallOptimizationChecker.checkStateMachineIn("useNullableUnit")
+        TailCallOptimizationChecker.checkNoStateMachineIn("useNullableUnit")
 
         useRunRunRunRunRun()
         TailCallOptimizationChecker.checkNoStateMachineIn("useRunRunRunRunRun")

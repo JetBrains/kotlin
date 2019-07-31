@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.storage.*;
 import org.jetbrains.kotlin.types.WrappedTypeFactory;
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker;
 import org.jetbrains.kotlin.utils.SmartList;
 
 import javax.inject.Inject;
@@ -83,6 +84,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     private PlatformDiagnosticSuppressor platformDiagnosticSuppressor;
 
     private final SyntheticResolveExtension syntheticResolveExtension;
+
+    private final NewKotlinTypeChecker kotlinTypeChecker;
 
     private Project project;
 
@@ -153,7 +156,8 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
             @NotNull GlobalContext globalContext,
             @NotNull ModuleDescriptor rootDescriptor,
             @NotNull DeclarationProviderFactory declarationProviderFactory,
-            @NotNull BindingTrace delegationTrace
+            @NotNull BindingTrace delegationTrace,
+            @NotNull NewKotlinTypeChecker kotlinTypeChecker
     ) {
         LockBasedLazyResolveStorageManager lockBasedLazyResolveStorageManager =
                 new LockBasedLazyResolveStorageManager(globalContext.getStorageManager());
@@ -194,6 +198,7 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
         syntheticResolveExtension = SyntheticResolveExtension.Companion.getInstance(project);
 
         this.project = project;
+        this.kotlinTypeChecker = kotlinTypeChecker;
     }
 
     private LazyAnnotations createAnnotations(KtFile file, List<KtAnnotationEntry> annotationEntries) {
@@ -463,5 +468,11 @@ public class ResolveSession implements KotlinCodeAnalyzer, LazyClassContext {
     @Override
     public void assertValid() {
         module.assertValid();
+    }
+
+    @NotNull
+    @Override
+    public NewKotlinTypeChecker getKotlinTypeChecker() {
+        return kotlinTypeChecker;
     }
 }

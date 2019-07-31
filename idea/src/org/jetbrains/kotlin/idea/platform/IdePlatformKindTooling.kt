@@ -24,8 +24,6 @@ abstract class IdePlatformKindTooling {
 
     abstract fun compilerArgumentsForProject(project: Project): CommonCompilerArguments?
 
-    abstract val resolverForModuleFactory: ResolverForModuleFactory
-
     abstract val mavenLibraryIds: List<String>
     abstract val gradlePluginId: String
 

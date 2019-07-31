@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.toFirClassLike
 import org.jetbrains.kotlin.fir.resolve.constructClassType
 import org.jetbrains.kotlin.fir.resolve.constructType
@@ -16,7 +17,7 @@ import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 
-class FirCorrespondingSupertypesCache(private val session: FirSession) {
+class FirCorrespondingSupertypesCache(private val session: FirSession) : FirSessionComponent {
     private val context = ConeTypeCheckerContext(false, session)
     private val cache = HashMap<ConeClassLikeSymbol, Map<ConeClassLikeSymbol, List<ConeClassLikeType>>?>(1000, 0.5f)
 

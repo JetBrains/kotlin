@@ -231,18 +231,42 @@ class Fir2IrDeclarationStorage(
         for ((index, valueParameter) in function.valueParameters.withIndex()) {
             valueParameters += createAndSaveIrParameter(valueParameter, index).apply { this.parent = parent }
         }
-        if (function !is FirConstructor && containingClass != null && (function as? FirNamedFunction)?.isStatic != true) {
+        if (function !is FirConstructor) {
             val thisOrigin = IrDeclarationOrigin.DEFINED
-            val thisType = containingClass.thisReceiver!!.type
-            dispatchReceiverParameter = irSymbolTable.declareValueParameter(
-                startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(),
-                thisType
-            ) { symbol ->
-                IrValueParameterImpl(
-                    startOffset, endOffset, thisOrigin, symbol,
-                    Name.special("<this>"), -1, thisType,
-                    varargElementType = null, isCrossinline = false, isNoinline = false
-                ).apply { this.parent = parent }
+            if (function is FirNamedFunction) {
+                val receiverTypeRef = function.receiverTypeRef
+                if (receiverTypeRef != null) {
+                    extensionReceiverParameter = receiverTypeRef.convertWithOffsets { startOffset, endOffset ->
+                        val type = receiverTypeRef.toIrType(session, this@Fir2IrDeclarationStorage)
+                        val receiverDescriptor = WrappedReceiverParameterDescriptor()
+                        irSymbolTable.declareValueParameter(
+                            startOffset, endOffset, thisOrigin,
+                            receiverDescriptor, type
+                        ) { symbol ->
+                            IrValueParameterImpl(
+                                startOffset, endOffset, thisOrigin, symbol,
+                                Name.special("<this>"), -1, type,
+                                varargElementType = null, isCrossinline = false, isNoinline = false
+                            ).apply {
+                                this.parent = parent
+                                receiverDescriptor.bind(this)
+                            }
+                        }
+                    }
+                }
+            }
+            if (containingClass != null && (function as? FirNamedFunction)?.isStatic != true) {
+                val thisType = containingClass.thisReceiver!!.type
+                dispatchReceiverParameter = irSymbolTable.declareValueParameter(
+                    startOffset, endOffset, thisOrigin, WrappedReceiverParameterDescriptor(),
+                    thisType
+                ) { symbol ->
+                    IrValueParameterImpl(
+                        startOffset, endOffset, thisOrigin, symbol,
+                        Name.special("<this>"), -1, thisType,
+                        varargElementType = null, isCrossinline = false, isNoinline = false
+                    ).apply { this.parent = parent }
+                }
             }
         }
     }
@@ -514,6 +538,20 @@ class Fir2IrDeclarationStorage(
                 irSymbolTable.referenceField(irField.descriptor)
             }
             else -> throw IllegalArgumentException("Unexpected fir in property symbol: ${fir.render()}")
+        }
+    }
+
+    fun getIrBackingFieldSymbol(firVariableSymbol: FirVariableSymbol<*>): IrSymbol {
+        return when (val fir = firVariableSymbol.fir) {
+            is FirProperty -> {
+                val irProperty = getIrProperty(fir).apply {
+                    setAndModifyParent(findIrParent(fir))
+                }
+                irSymbolTable.referenceField(irProperty.backingField!!.descriptor)
+            }
+            else -> {
+                getIrVariableSymbol(fir)
+            }
         }
     }
 

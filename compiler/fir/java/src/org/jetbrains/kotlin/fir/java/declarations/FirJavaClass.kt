@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
 import org.jetbrains.kotlin.fir.java.JavaTypeParameterStack
@@ -39,6 +40,7 @@ class FirJavaClass internal constructor(
         status.isCompanion = false
         status.isData = false
         status.isInline = false
+        resolvePhase = FirResolvePhase.DECLARATIONS
     }
 
     override val superTypeRefs = mutableListOf<FirTypeRef>()

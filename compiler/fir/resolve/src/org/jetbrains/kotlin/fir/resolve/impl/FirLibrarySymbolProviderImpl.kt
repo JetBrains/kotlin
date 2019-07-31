@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirCallableMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
@@ -95,7 +97,9 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
             }
             return lookup.getOrPut(classId, { FirClassSymbol(classId) }) { symbol ->
                 if (shouldBeEnumEntry) {
-                    FirEnumEntryImpl(session, null, symbol, classId.shortClassName)
+                    FirEnumEntryImpl(session, null, symbol, classId.shortClassName).apply {
+                        resolvePhase = FirResolvePhase.DECLARATIONS
+                    }
                 } else {
                     val classData = classDataFinder.findClassData(classId)!!
                     val classProto = classData.classProto
@@ -179,9 +183,10 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                         isData = false,
                         isInline = false
                     ).apply klass@{
+                        resolvePhase = FirResolvePhase.DECLARATIONS
                         typeParameters.addAll((1..arity).map {
                             FirTypeParameterImpl(
-                                session,
+                                this@FirLibrarySymbolProviderImpl.session,
                                 null,
                                 FirTypeParameterSymbol(),
                                 Name.identifier("P$it"),
@@ -191,7 +196,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                         })
                         typeParameters.add(
                             FirTypeParameterImpl(
-                                session,
+                                this@FirLibrarySymbolProviderImpl.session,
                                 null,
                                 FirTypeParameterSymbol(),
                                 Name.identifier("R"),
@@ -202,7 +207,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                         val name = OperatorNameConventions.INVOKE
                         addDeclaration(
                             FirMemberFunctionImpl(
-                                session,
+                                this@FirLibrarySymbolProviderImpl.session,
                                 null,
                                 FirNamedFunctionSymbol(CallableId(packageFqName, relativeClassName, name)),
                                 name,
@@ -219,7 +224,6 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 isSuspend = false,
                                 receiverTypeRef = null,
                                 returnTypeRef = FirResolvedTypeRefImpl(
-                                    session,
                                     null,
                                     ConeTypeParameterTypeImpl(
                                         typeParameters.last().symbol.toLookupTag(),
@@ -227,13 +231,13 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                     )
                                 )
                             ).apply {
+                                resolvePhase = FirResolvePhase.DECLARATIONS
                                 valueParameters += this@klass.typeParameters.dropLast(1).map { typeParameter ->
                                     FirValueParameterImpl(
-                                        session,
+                                        this@FirLibrarySymbolProviderImpl.session,
                                         null,
                                         Name.identifier(typeParameter.name.asString().toLowerCase()),
                                         FirResolvedTypeRefImpl(
-                                            session,
                                             null,
                                             ConeTypeParameterTypeImpl(typeParameter.symbol.toLookupTag(), false)
                                         ),
@@ -245,6 +249,7 @@ class FirLibrarySymbolProviderImpl(val session: FirSession) : FirSymbolProvider(
                                 }
                             }
                         )
+                        replaceSupertypes(listOf(FirImplicitAnyTypeRef(null)))
                     }
                 }
             }

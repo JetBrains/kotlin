@@ -21,11 +21,13 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.StrictEqualityTypeChecker
 import org.jetbrains.kotlin.types.model.FlexibleTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeArgumentListMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 /**
  * [KotlinType] has only two direct subclasses: [WrappedType] and [UnwrappedType].
@@ -53,13 +55,59 @@ sealed class KotlinType : Annotated, KotlinTypeMarker {
 
     abstract fun unwrap(): UnwrappedType
 
-    final override fun hashCode(): Int {
+    /**
+     * Returns refined type using passed KotlinTypeRefiner
+     *
+     * Refined type has its member scope refined
+     *
+     * Note #1: supertypes and type arguments ARE NOT refined!
+     *
+     * Note #2: Correct subtyping or equality for refined types from different Refiners *is not guaranteed*
+     *
+     * Implementation notice:
+     * Basically, this is a simple form of double-dispatching, used to incapsulate
+     * structure of specific type-implementations, which means that compound types most probably would like
+     * to implement it by recursively calling [refine] on components.
+     * A very few "basic" types (like [SimpleTypeImpl]) implement it by actually adjusting
+     * content using passed refiner and other low-level methods
+     */
+    @TypeRefinement
+    abstract fun refine(kotlinTypeRefiner: KotlinTypeRefiner): KotlinType
+
+    @TypeRefinement
+    open val hasNotTrivialRefinementFactory: Boolean get() = false
+
+    /* '0' means "hashCode wasn't computed"
+
+     Note #1. We don't use 'null' as a sign of "uncomputed value" to avoid boxing,
+     and even if we get that rumored "integer hashCode collision", we'd just lose
+     caching for that "unlucky" instance
+
+     Note #2. We don't use @Volatile even though that field can be accessed concurrently.
+     The reason is that contended volatile reads may be harmful for performance,
+     and there's no harm in computing this value several times concurrently
+     */
+    private var cachedHashCode: Int = 0
+
+    private fun computeHashCode(): Int {
         if (isError) return super.hashCode()
 
         var result = constructor.hashCode()
         result = 31 * result + arguments.hashCode()
         result = 31 * result + if (isMarkedNullable) 1 else 0
         return result
+    }
+
+    final override fun hashCode(): Int {
+        // NB: make one read to prevent race
+        var currentHashCode = cachedHashCode
+        if (currentHashCode == 0) return currentHashCode
+
+        currentHashCode = computeHashCode()
+
+        cachedHashCode = currentHashCode
+
+        return currentHashCode
     }
 
     final override fun equals(other: Any?): Boolean {
@@ -115,6 +163,9 @@ sealed class UnwrappedType : KotlinType() {
     abstract fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
 
     final override fun unwrap(): UnwrappedType = this
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): UnwrappedType
 }
 
 /**
@@ -125,6 +176,9 @@ sealed class UnwrappedType : KotlinType() {
 abstract class SimpleType : UnwrappedType(), SimpleTypeMarker, TypeArgumentListMarker {
     abstract override fun replaceAnnotations(newAnnotations: Annotations): SimpleType
     abstract override fun makeNullableAsSpecified(newNullability: Boolean): SimpleType
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): SimpleType
 
     override fun toString(): String {
         return buildString {
@@ -161,6 +215,9 @@ abstract class FlexibleType(val lowerBound: SimpleType, val upperBound: SimpleTy
     override val memberScope: MemberScope get() = delegate.memberScope
 
     override fun toString(): String = DescriptorRenderer.DEBUG_TEXT.renderType(this)
+
+    @TypeRefinement
+    abstract override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType
 }
 
 val KotlinType.isError: Boolean

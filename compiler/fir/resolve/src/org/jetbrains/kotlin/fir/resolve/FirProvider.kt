@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
@@ -29,6 +30,9 @@ abstract class FirProvider : FirSymbolProvider() {
     }
 
     abstract fun getFirClassifierContainerFile(fqName: ClassId): FirFile
+
+    fun getFirClassifierContainerFile(symbol: ConeClassLikeSymbol): FirFile =
+        getFirClassifierContainerFile(symbol.classId)
 
     abstract fun getFirCallableContainerFile(symbol: ConeCallableSymbol): FirFile?
 

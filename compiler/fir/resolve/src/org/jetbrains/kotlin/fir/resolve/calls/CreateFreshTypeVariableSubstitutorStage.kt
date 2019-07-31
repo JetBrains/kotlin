@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.symbols.invoke
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.FirTypePlaceholderProjection
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
+import org.jetbrains.kotlin.resolve.calls.inference.model.FirDeclaredUpperBoundConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 
 
@@ -102,7 +103,7 @@ fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         upperBound: ConeKotlinType//,
         //position: DeclaredUpperBoundConstraintPosition
     ) {
-        csBuilder.addSubtypeConstraint(defaultType, toFreshVariables.substituteOrSelf(upperBound), SimpleConstraintSystemConstraintPosition)
+        csBuilder.addSubtypeConstraint(defaultType, toFreshVariables.substituteOrSelf(upperBound), FirDeclaredUpperBoundConstraintPosition())
     }
 
     for (index in typeParameters.indices) {

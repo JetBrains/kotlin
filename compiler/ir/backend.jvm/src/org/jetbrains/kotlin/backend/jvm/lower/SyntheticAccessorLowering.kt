@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
@@ -59,8 +60,14 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         if (expression.usesDefaultArguments()) {
             return super.visitFunctionAccess(expression)
         }
+
         fun makeFunctionAccessorSymbolWithSuper(functionSymbol: IrFunctionSymbol): IrFunctionSymbol =
-            makeFunctionAccessorSymbol(functionSymbol, (expression as? IrCall)?.superQualifierSymbol)
+            when (functionSymbol) {
+                is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
+                is IrSimpleFunctionSymbol -> functionSymbol.owner.makeSimpleFunctionAccessor(expression as IrCall).symbol
+                else -> error("Unknown subclass of IrFunctionSymbol")
+            }
+
         return super.visitExpression(
             handleAccess(
                 expression,
@@ -98,20 +105,13 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             expression
         }
 
-    private fun makeFunctionAccessorSymbol(functionSymbol: IrFunctionSymbol, superQualifierSymbol: IrClassSymbol?): IrFunctionSymbol =
-        when (functionSymbol) {
-            is IrConstructorSymbol -> functionSymbol.owner.makeConstructorAccessor().symbol
-            is IrSimpleFunctionSymbol -> functionSymbol.owner.makeSimpleFunctionAccessor(superQualifierSymbol).symbol
-            else -> error("Unknown subclass of IrFunctionSymbol")
-        }
-
     // In case of Java `protected static`, access could be done from a public inline function in the same package,
-    // requiring an accessor, which we cannot add to the Java class.
-    private fun IrDeclarationWithVisibility.accessorParent() =
-        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY)
-            currentClass!!.irElement as IrClass
-        else
-            parent
+    // or a subclass of the Java class. Both cases require an accessor, which we cannot add to the Java class.
+    private fun IrDeclarationWithVisibility.accessorParent(parent: IrDeclarationParent = this.parent) =
+        if (visibility == JavaVisibilities.PROTECTED_STATIC_VISIBILITY) {
+            val classes = allScopes.map { it.irElement }.filterIsInstance<IrClass>()
+            classes.lastOrNull { parent is IrClass && it.isSubclassOf(parent) } ?: classes.last()
+        } else parent
 
     private fun IrConstructor.makeConstructorAccessor(): IrConstructor {
         val source = this
@@ -150,7 +150,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             copyAllParamsToArgs(it, accessor)
         }
 
-    private fun IrSimpleFunction.makeSimpleFunctionAccessor(superQualifierSymbol: IrClassSymbol?): IrSimpleFunction {
+    private fun IrSimpleFunction.makeSimpleFunctionAccessor(expression: IrCall): IrSimpleFunction {
         val source = this
         return buildFun {
             origin = JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
@@ -158,30 +158,51 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
             visibility = Visibilities.PUBLIC
             isSuspend = false // do not generate state-machine for synthetic accessors
         }.also { accessor ->
-            accessor.parent = if ((source.parent as? IrClass)?.isInterface == true) {
-                // Accessors for interfaces are only for private methods. They should always be placed in DefaultImpls. The only exception
-                // is private methods annotated with @JvmDefault; Only in such cases JVM default method is generated.
-                // TODO: Handle the exception after targeting Java 8 or newer, where JVM default methods are available.
-                context.declarationFactory.getDefaultImplsClass(source.parent as IrClass)
-            } else {
-                source.accessorParent()
-            }
+            // Find the right container to insert the accessor. Simply put, when we call a function on a class A,
+            // we also need to put its accessor into A. However, due to the way that calls are implemented in the
+            // IR we generally need to look at the type of the dispatchReceiver *argument* in order to find the
+            // correct class. Consider the following code:
+            //
+            //     fun run(f : () -> Int): Int = f()
+            //
+            //     open class A {
+            //         private fun f() = 0
+            //         fun g() = run { this.f() }
+            //     }
+            //
+            //     class B : A {
+            //         override fun g() = 1
+            //         fun h() = run { super.g() }
+            //     }
+            //
+            // We have calls to the private methods A.f from a generated Lambda subclass for the argument to `run`
+            // in class A and a super call to A.g from a generated Lambda subclass in class B.
+            //
+            // In the first case, we need to produce an accessor in class A to access the private member of A.
+            // Both the parent of the function f and the type of the dispatch receiver point to the correct class.
+            // In the second case we need to call A.g from within class B, since this is the only way to invoke
+            // a method of a superclass on the JVM. However, the IR for the call to super.g points directly to the
+            // function g in class A. Confusingly, the `superQualifier` on this call also points to class A.
+            // The only way to compute the actual enclosing class for the call is by looking at the type of the
+            // dispatch receiver argument, which points to B.
+            //
+            // Beyond this, there can be accessors that are needed because other lowerings produce code calling
+            // private methods (e.g., local functions for lambdas are private and called from generated
+            // SAM wrapper classes). In this case we rely on the parent field of the called function.
+            //
+            // Finally, we need to produce accessors for calls to protected static methods coming from Java,
+            // which we put in the closest enclosing class which has access to the method in question.
+            val dispatchReceiverType = expression.dispatchReceiver?.type
+            accessor.parent = source.accessorParent(dispatchReceiverType?.classOrNull?.owner ?: source.parent)
             pendingTransformations.add { (accessor.parent as IrDeclarationContainer).declarations.add(accessor) }
 
             accessor.copyTypeParametersFrom(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR)
-            // When a method is defined in class C1 but called on C1's subclass C2, source.dispatchReceiverParameter.type can be resolved
-            // to C1, while the method symbol still bound to C2, which expects a receiver of type C2. Therefore, we need to specify
-            // dispatchReceiver's type using super qualifier's type explicitly.
-            accessor.copyValueParametersToStatic(
-                source,
-                JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR,
-                superQualifierSymbol?.owner?.defaultType ?: source.dispatchReceiverParameter?.type
-            )
+            accessor.copyValueParametersToStatic(source, JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR, dispatchReceiverType)
             accessor.returnType = source.returnType.remapTypeParameters(source, accessor)
 
             accessor.body = IrExpressionBodyImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
+                createSimpleFunctionCall(accessor, source.symbol, expression.superQualifierSymbol)
             )
         }
     }
@@ -391,22 +412,25 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
         }
     }
 
+    // Counter used to disambiguate accessors to functions with the same base name.
+    private var nameCounter = 0
+
     private fun IrFunction.accessorName(): Name {
         val jvmName = context.state.typeMapper.mapFunctionName(
             descriptor,
             OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
         )
-        return Name.identifier("access\$$jvmName")
+        return Name.identifier("access\$$jvmName\$${nameCounter++}")
     }
 
     private fun IrField.accessorNameForGetter(): Name {
         val getterName = JvmAbi.getterName(name.asString())
-        return Name.identifier("access\$prop\$$getterName")
+        return Name.identifier("access\$prop\$$getterName\$${nameCounter++}")
     }
 
     private fun IrField.accessorNameForSetter(): Name {
         val setterName = JvmAbi.setterName(name.asString())
-        return Name.identifier("access\$prop\$$setterName")
+        return Name.identifier("access\$prop\$$setterName\$${nameCounter++}")
     }
 
     private val Visibility.isPrivate

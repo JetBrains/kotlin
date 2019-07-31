@@ -1,7 +1,7 @@
 FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
-  FUN name:testD visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Double>, y:kotlin.Comparable<kotlin.Double>) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Double> 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Double> 
+  FUN name:testD visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Double>, y:kotlin.Comparable<kotlin.Double>) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Double>
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Double>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testD (x: kotlin.Comparable<kotlin.Double>, y: kotlin.Comparable<kotlin.Double>): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -19,9 +19,9 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-  FUN name:testF visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Float>, y:kotlin.Comparable<kotlin.Float>) returnType:kotlin.Boolean 
-    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Float> 
-    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Float> 
+  FUN name:testF visibility:public modality:FINAL <> (x:kotlin.Comparable<kotlin.Float>, y:kotlin.Comparable<kotlin.Float>) returnType:kotlin.Boolean
+    VALUE_PARAMETER name:x index:0 type:kotlin.Comparable<kotlin.Float>
+    VALUE_PARAMETER name:y index:1 type:kotlin.Comparable<kotlin.Float>
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testF (x: kotlin.Comparable<kotlin.Float>, y: kotlin.Comparable<kotlin.Float>): kotlin.Boolean declared in <root>'
         WHEN type=kotlin.Boolean origin=ANDAND
@@ -39,4 +39,3 @@ FILE fqName:<root> fileName:/comparableWithDoubleOrFloat.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
-

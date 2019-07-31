@@ -46,11 +46,11 @@ import org.jetbrains.jps.util.JpsPathUtil
 import org.jetbrains.kotlin.cli.common.KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
-import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.incremental.LookupSymbol
 import org.jetbrains.kotlin.incremental.testingUtils.*
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxt
 import org.jetbrains.kotlin.jps.build.dependeciestxt.ModulesTxtBuilder
+import org.jetbrains.kotlin.jps.build.fixtures.EnableICFixture
 import org.jetbrains.kotlin.jps.incremental.*
 import org.jetbrains.kotlin.jps.model.JpsKotlinFacetModuleExtension
 import org.jetbrains.kotlin.jps.model.kotlinFacet
@@ -121,17 +121,14 @@ abstract class AbstractIncrementalJpsTest(
         System.setProperties(props)
     }
 
+    private val enableICFixture = EnableICFixture()
+
     override fun setUp() {
         super.setUp()
 
+        enableICFixture.setUp()
         lookupsDuringTest = hashSetOf()
-        isJvmICEnabledBackup = IncrementalCompilation.isEnabledForJvm()
-        isJsICEnabledBackup = IncrementalCompilation.isEnabledForJs()
-
         System.setProperty(KOTLIN_COMPILER_ENVIRONMENT_KEEPALIVE_PROPERTY, "true")
-
-        IncrementalCompilation.setIsEnabledForJvm(true)
-        IncrementalCompilation.setIsEnabledForJs(true)
 
         if (DEBUG_LOGGING_ENABLED) {
             enableDebugLogging()
@@ -146,10 +143,7 @@ abstract class AbstractIncrementalJpsTest(
         (AbstractIncrementalJpsTest::systemPropertiesBackup).javaField!![this] = null
 
         lookupsDuringTest.clear()
-
-        IncrementalCompilation.setIsEnabledForJvm(isJvmICEnabledBackup)
-        IncrementalCompilation.setIsEnabledForJs(isJsICEnabledBackup)
-
+        enableICFixture.tearDown()
         super.tearDown()
     }
 

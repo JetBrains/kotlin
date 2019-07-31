@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 
-abstract class FirAnnotatedStatement(
-    session: FirSession,
-    psi: PsiElement?
-) : FirAbstractAnnotatedElement(session, psi), FirStatement
+abstract class FirAnnotatedStatement(psi: PsiElement?) : FirAbstractAnnotatedElement(psi), FirStatement

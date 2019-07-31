@@ -7,20 +7,16 @@ package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-class FirUnitExpression(
-    session: FirSession,
-    psi: PsiElement?
-) : FirExpression(session, psi) {
+class FirUnitExpression(psi: PsiElement?) : FirExpression(psi) {
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 
-    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(psi)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         typeRef = typeRef.transformSingle(transformer, data)

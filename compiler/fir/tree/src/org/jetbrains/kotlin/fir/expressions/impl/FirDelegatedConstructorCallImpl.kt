@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
@@ -19,13 +18,12 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirDelegatedConstructorCallImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var constructedTypeRef: FirTypeRef,
     override val isThis: Boolean
-) : FirDelegatedConstructorCall(session, psi) {
+) : FirDelegatedConstructorCall(psi) {
     override var calleeReference: FirReference =
-        if (isThis) FirExplicitThisReference(session, psi, null) else FirExplicitSuperReference(session, psi, constructedTypeRef)
+        if (isThis) FirExplicitThisReference(psi, null) else FirExplicitSuperReference(psi, constructedTypeRef)
 
     override fun <D> transformCalleeReference(transformer: FirTransformer<D>, data: D): FirQualifiedAccess {
         calleeReference = calleeReference.transformSingle(transformer, data)
@@ -44,7 +42,7 @@ class FirDelegatedConstructorCallImpl(
         return this
     }
 
-    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitUnitTypeRef(psi)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

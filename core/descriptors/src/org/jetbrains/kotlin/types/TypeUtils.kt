@@ -127,21 +127,42 @@ fun KotlinType.isDefaultBound(): Boolean = KotlinBuiltIns.isDefaultBound(getSupe
 fun createProjection(type: KotlinType, projectionKind: Variance, typeParameterDescriptor: TypeParameterDescriptor?): TypeProjection =
     TypeProjectionImpl(if (typeParameterDescriptor?.variance == projectionKind) Variance.INVARIANT else projectionKind, type)
 
-fun <T> Collection<T>.closure(f: (T) -> Collection<T>): Collection<T> {
+fun <T> Collection<T>.closure(preserveOrder: Boolean = false, f: (T) -> Collection<T>): Collection<T> {
     if (size == 0) return this
 
-    val result = HashSet(this)
+    val result = if (preserveOrder) LinkedHashSet(this) else HashSet(this)
     var elementsToCheck = result
     var oldSize = 0
     while (result.size > oldSize) {
         oldSize = result.size
-        val toAdd = hashSetOf<T>()
+        val toAdd = if (preserveOrder) linkedSetOf() else hashSetOf<T>()
         elementsToCheck.forEach { toAdd.addAll(f(it)) }
         result.addAll(toAdd)
         elementsToCheck = toAdd
     }
 
     return result
+}
+
+fun <T> Collection<T>.lazyClosure(f: (T) -> Collection<T>): Sequence<T> = sequence {
+    if (size == 0) return@sequence
+    var sizeBeforeIteration = 0
+
+    yieldAll(this@lazyClosure)
+    var yieldedCount = size
+    var elementsToCheck = this@lazyClosure
+
+    while (yieldedCount > sizeBeforeIteration) {
+        val toAdd = hashSetOf<T>()
+        elementsToCheck.forEach {
+            val neighbours = f(it)
+            yieldAll(neighbours)
+            yieldedCount += neighbours.size
+            toAdd.addAll(neighbours)
+        }
+        elementsToCheck = toAdd
+        sizeBeforeIteration = yieldedCount
+    }
 }
 
 fun boundClosure(types: Collection<KotlinType>): Collection<KotlinType> =

@@ -6,10 +6,6 @@
 package org.jetbrains.kotlin.fir.expressions.impl
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
 
-class FirArrayOfCallImpl(
-    session: FirSession,
-    psi: PsiElement?
-) : FirArrayOfCall(session, psi)
+class FirArrayOfCallImpl(psi: PsiElement?) : FirArrayOfCall(psi)

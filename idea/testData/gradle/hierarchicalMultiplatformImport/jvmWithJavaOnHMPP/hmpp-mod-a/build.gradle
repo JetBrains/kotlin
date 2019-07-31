@@ -1,0 +1,82 @@
+version '1.0.0'
+
+apply plugin: 'kotlin-multiplatform'
+
+buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+    }
+    repositories {
+        mavenLocal()
+        jcenter()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+}
+
+kotlin {
+    jvm {
+      withJava()
+    }
+
+    js()
+    
+    linuxX64()
+
+    sourceSets {
+        commonMain {
+        }
+        commonTest {
+        }
+
+
+        jvmAndJsMain {
+            dependsOn(commonMain)
+        }
+
+	jvmAndJsTest {
+            dependsOn(commonTest)
+        }
+
+        linuxAndJsMain {
+            dependsOn(commonMain)
+        }
+        
+        linuxAndJsTest {
+            dependsOn(commonTest)
+        }
+
+        jvm().compilations["main"].defaultSourceSet {
+            dependsOn(jvmAndJsMain)
+        }
+
+        jvm().compilations["test"].defaultSourceSet {
+            dependsOn(jvmAndJsTest)
+        }
+
+        js().compilations["main"].defaultSourceSet {
+            dependsOn(jvmAndJsMain)
+            dependsOn(linuxAndJsMain)
+        }
+
+        js().compilations["test"].defaultSourceSet {
+            dependsOn(jvmAndJsTest)
+            dependsOn(linuxAndJsTest)
+        }
+
+        linuxX64().compilations["main"].defaultSourceSet {
+            dependsOn(linuxAndJsMain)
+        }
+
+        linuxX64().compilations["test"].defaultSourceSet {
+            dependsOn(linuxAndJsTest)
+        }
+    }
+}
+

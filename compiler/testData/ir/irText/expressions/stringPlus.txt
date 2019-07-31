@@ -1,15 +1,15 @@
 FILE fqName:<root> fileName:/stringPlus.kt
-  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.Any 
+  FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Any) returnType:kotlin.String
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (a: kotlin.String, b: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: GET_VAR 'a: kotlin.String declared in <root>.test1' type=kotlin.String origin=null
           other: GET_VAR 'b: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int 
+  FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test2 (a: kotlin.String, b: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
@@ -17,9 +17,9 @@ FILE fqName:<root> fileName:/stringPlus.kt
             $this: GET_VAR 'a: kotlin.String declared in <root>.test2' type=kotlin.String origin=null
             other: CONST String type=kotlin.String value="+"
           other: GET_VAR 'b: kotlin.Int declared in <root>.test2' type=kotlin.Int origin=null
-  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String 
-    VALUE_PARAMETER name:a index:0 type:kotlin.String 
-    VALUE_PARAMETER name:b index:1 type:kotlin.Int 
+  FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.String, b:kotlin.Int) returnType:kotlin.String
+    VALUE_PARAMETER name:a index:0 type:kotlin.String
+    VALUE_PARAMETER name:b index:1 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.String, b: kotlin.Int): kotlin.String declared in <root>'
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS

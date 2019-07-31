@@ -65,7 +65,8 @@ import java.io.StringWriter
 import java.io.Writer
 import java.net.URLClassLoader
 import javax.annotation.processing.Processor
-import com.sun.tools.javac.util.List as JavacList
+
+private const val KAPT_KOTLIN_GENERATED_OPTION_NAME = "kapt.kotlin.generated"
 
 class ClasspathBasedKapt3Extension(
     options: KaptOptions,
@@ -204,13 +205,19 @@ abstract class AbstractKapt3Extension(
         return if (options.mode != WITH_COMPILATION) {
             doNotGenerateCode()
         } else {
-            AnalysisResult.RetryWithAdditionalJavaRoots(
+            AnalysisResult.RetryWithAdditionalRoots(
                 bindingTrace.bindingContext,
                 module,
                 listOf(options.sourcesOutputDir),
+                listOfNotNull(options.sourcesOutputDir, getKotlinGeneratedSourcesDirectory()),
                 addToEnvironment = true
             )
         }
+    }
+
+    private fun getKotlinGeneratedSourcesDirectory(): File? {
+        val value = options.processingOptions[KAPT_KOTLIN_GENERATED_OPTION_NAME] ?: return null
+        return File(value).takeIf { it.exists() }
     }
 
     private fun runAnnotationProcessing(kaptContext: KaptContext, processors: LoadedProcessors) {

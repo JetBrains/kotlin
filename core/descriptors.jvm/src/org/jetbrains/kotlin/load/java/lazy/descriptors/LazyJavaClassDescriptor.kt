@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.resolveTopLevelClass
 import org.jetbrains.kotlin.resolve.scopes.InnerClassesScopeWrapper
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -100,10 +101,21 @@ class LazyJavaClassDescriptor(
     private val typeConstructor = LazyJavaClassTypeConstructor()
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
 
-    private val unsubstitutedMemberScope = LazyJavaClassMemberScope(c, this, jClass)
-    override fun getUnsubstitutedMemberScope() = unsubstitutedMemberScope
+    private val unsubstitutedMemberScope =
+        LazyJavaClassMemberScope(c, this, jClass, skipRefinement = additionalSupertypeClassDescriptor != null)
 
-    private val innerClassesScope = InnerClassesScopeWrapper(getUnsubstitutedMemberScope())
+    private val scopeHolder =
+        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner) { kotlinTypeRefiner ->
+            LazyJavaClassMemberScope(
+                c, this, jClass,
+                skipRefinement = additionalSupertypeClassDescriptor != null,
+                mainScope = unsubstitutedMemberScope
+            )
+        }
+
+    override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = scopeHolder.getScope(kotlinTypeRefiner)
+
+    private val innerClassesScope = InnerClassesScopeWrapper(unsubstitutedMemberScope)
     override fun getUnsubstitutedInnerClassesScope(): MemberScope = innerClassesScope
 
     private val staticScope = LazyJavaStaticClassScope(c, jClass, this)
@@ -113,6 +125,7 @@ class LazyJavaClassDescriptor(
 
     override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
 
+    override fun getUnsubstitutedMemberScope() = super.getUnsubstitutedMemberScope() as LazyJavaClassMemberScope
     override fun getConstructors() = unsubstitutedMemberScope.constructors()
 
     override val annotations = c.resolveAnnotations(jClass)

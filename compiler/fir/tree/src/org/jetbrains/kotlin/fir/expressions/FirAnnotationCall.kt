@@ -16,10 +16,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.FqName
 
-abstract class FirAnnotationCall(
-    session: FirSession,
-    psi: PsiElement?
-) : FirCallWithArgumentList(session, psi) {
+abstract class FirAnnotationCall(psi: PsiElement?) : FirCallWithArgumentList(psi) {
     abstract val annotationTypeRef: FirTypeRef
 
     // May be should be not-null (with correct default target)

@@ -13,8 +13,12 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asQualifierWithThisAsSelector
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.parentOfType
+import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
+import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKClassAccessExpressionImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKKtQualifierImpl
+import org.jetbrains.kotlin.nj2k.tree.impl.JKQualifiedExpressionImpl
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtObjectDeclaration

@@ -64,6 +64,10 @@ sealed class ConeKotlinType : ConeKotlinTypeProjection(), ConeTypedProjection, K
         get() = this
 
     abstract val nullability: ConeNullability
+
+    override fun toString(): String {
+        return render()
+    }
 }
 
 val ConeKotlinType.isNullable: Boolean get() = nullability != ConeNullability.NOT_NULL
@@ -105,8 +109,6 @@ abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
     abstract override val lookupTag: ConeTypeParameterLookupTag
 }
 
-
-
 data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: ConeKotlinType) : ConeKotlinType(),
     FlexibleTypeMarker {
 
@@ -126,10 +128,10 @@ data class ConeFlexibleType(val lowerBound: ConeKotlinType, val upperBound: Cone
 fun ConeKotlinType.upperBoundIfFlexible() = (this as? ConeFlexibleType)?.upperBound ?: this
 fun ConeKotlinType.lowerBoundIfFlexible() = (this as? ConeFlexibleType)?.lowerBound ?: this
 
-class ConeCapturedTypeConstructor(val projection: ConeKotlinTypeProjection, var supertypes: List<ConeKotlinType>? = null) :
-    TypeConstructorMarker {
-
-}
+class ConeCapturedTypeConstructor(
+    val projection: ConeKotlinTypeProjection,
+    var supertypes: List<ConeKotlinType>? = null
+) : TypeConstructorMarker
 
 class ConeCapturedType(
     val captureStatus: CaptureStatus,

@@ -6245,6 +6245,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
                 runTest("compiler/testData/codegen/box/coroutines/debug/debuggerMetadata.kt");
             }
 
+            @TestMetadata("elvisLineNumber.kt")
+            public void testElvisLineNumber() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/debug/elvisLineNumber.kt");
+            }
+
             @TestMetadata("firstSuspensionPoint.kt")
             public void testFirstSuspensionPoint() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/debug/firstSuspensionPoint.kt");

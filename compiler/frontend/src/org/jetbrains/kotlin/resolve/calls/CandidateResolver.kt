@@ -362,7 +362,7 @@ class CandidateResolver(
                 if (type == null || (type.isError && !type.isFunctionPlaceholder)) {
                     matchStatus = ArgumentMatchStatus.ARGUMENT_HAS_NO_TYPE
                 } else if (!noExpectedType(expectedType)) {
-                    if (!ArgumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
+                    if (!argumentTypeResolver.isSubtypeOfForArgumentType(type, expectedType)) {
                         val smartCast = smartCastValueArgumentTypeIfPossible(expression, newContext.expectedType, type, newContext)
                         if (smartCast == null) {
                             resultStatus = tryNotNullableArgument(type, expectedType) ?: OTHER_ERROR
@@ -377,7 +377,7 @@ class CandidateResolver(
                     val spreadElement = argument.getSpreadElement()
                     if (spreadElement != null && !type.isFlexible() && type.isMarkedNullable) {
                         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(expression, type, context)
-                        val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
+                        val smartCastResult = smartCastManager.checkAndRecordPossibleCast(
                             dataFlowValue, expectedType, expression, context,
                             call = null, recordExpressionType = false
                         )
@@ -410,7 +410,7 @@ class CandidateResolver(
         if (!argumentType.isMarkedNullable || parameterType.isMarkedNullable) return null
 
         val notNullableArgumentType = argumentType.makeNotNullable()
-        val isApplicable = ArgumentTypeResolver.isSubtypeOfForArgumentType(notNullableArgumentType, parameterType)
+        val isApplicable = argumentTypeResolver.isSubtypeOfForArgumentType(notNullableArgumentType, parameterType)
         return if (isApplicable) NULLABLE_ARGUMENT_TYPE_MISMATCH else null
     }
 
@@ -544,11 +544,10 @@ class CandidateResolver(
         } else if (!nullableImplicitInvokeReceiver && smartCastNeeded) {
             // Look if smart cast has some useful nullability info
 
-            val smartCastResult = SmartCastManager.checkAndRecordPossibleCast(
+            val smartCastResult = smartCastManager.checkAndRecordPossibleCast(
                 dataFlowValue, expectedReceiverParameterType,
-                { possibleSmartCast -> isCandidateVisibleOrExtensionReceiver(receiverArgument, possibleSmartCast, isDispatchReceiver) },
                 expression, this, candidateCall.call, recordExpressionType = true
-            )
+            ) { possibleSmartCast -> isCandidateVisibleOrExtensionReceiver(receiverArgument, possibleSmartCast, isDispatchReceiver) }
 
             if (smartCastResult == null) {
                 if (notNullReceiverExpected) {
@@ -694,7 +693,7 @@ class CandidateResolver(
             val typeParameter = typeParameters[i]
             val substitutedTypeArgument = substitutedTypeProjection.type
             val unsubstitutedTypeArgument = unsubstitutedType.arguments[i].type
-            DescriptorResolver.checkBoundsInTypeAlias(
+            TypeAliasExpander.checkBoundsInTypeAlias(
                 reportStrategy,
                 unsubstitutedTypeArgument,
                 substitutedTypeArgument,

@@ -164,7 +164,8 @@ class DeserializedPropertyDescriptor(
         newVisibility: Visibility,
         original: PropertyDescriptor?,
         kind: CallableMemberDescriptor.Kind,
-        newName: Name
+        newName: Name,
+        source: SourceElement
     ): PropertyDescriptorImpl {
         return DeserializedPropertyDescriptor(
             newOwner, original, annotations, newModality, newVisibility, isVar, newName, kind, isLateInit, isConst, isExternal,

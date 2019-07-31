@@ -10,8 +10,13 @@ import java.io.*
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.system.measureNanoTime
+import java.lang.ref.WeakReference
+import kotlin.math.exp
+import kotlin.math.ln
 
 class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "ValueMS", "StdDev")) : Closeable {
+    private val perfTestRawDataMs = mutableListOf<Long>()
+
     private val statsFile: File =
         File("build/stats${if (name.isNotEmpty()) "-${name.toLowerCase().replace(' ', '-')}" else ""}.csv")
             .absoluteFile
@@ -21,6 +26,22 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         statsOutput = statsFile.bufferedWriter()
 
         statsOutput.appendln(header.joinToString())
+    }
+
+    private fun append(id: String, timingsNs: LongArray) {
+        val meanNs = timingsNs.average()
+        val meanMs = meanNs.toLong().nsToMs
+
+        val stdDivMs = (sqrt(
+            timingsNs.fold(0.0,
+                           { accumulator, next -> accumulator + (1.0 * (next - meanMs)).pow(2.0) })
+        ) / timingsNs.size).toLong().nsToMs
+
+        println("##teamcity[buildStatisticValue key='$id' value='$meanMs']")
+        println("##teamcity[buildStatisticValue key='$id stdDev' value='$stdDivMs']")
+
+        perfTestRawDataMs.addAll(timingsNs.map { it.nsToMs }.toList())
+        append(arrayOf(id, meanMs, stdDivMs))
     }
 
     private fun append(values: Array<Any>) {
@@ -34,7 +55,8 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
     }
 
     fun append(file: String, id: String, nanoTime: Long) {
-        append(arrayOf(file, id, nanoTime.nsToMs))
+        val ms = nanoTime.nsToMs
+        append(arrayOf(file, id, ms))
     }
 
     fun <K, T> perfTest(
@@ -54,28 +76,19 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
 
             mainPhase(iterations, setUp, test, tearDown, timingsNs, namePrefix, errors)
 
-            val meanNs = timingsNs.average()
-            val meanMs = meanNs.toLong().nsToMs
-            val stdDivMs = (sqrt(
-                timingsNs.fold(0.0,
-                               { accumulator, next -> accumulator + (1.0 * (next - meanMs)).pow(2.0) })
-            ) / timingsNs.size).toLong().nsToMs
-
             for (attempt in 0 until iterations) {
-                val n = "$namePrefix #$attempt"
-                println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
-                if (errors[attempt] != null) {
-                    tcPrintErrors(n, listOf(errors[attempt]!!))
+                for (n in listOf("$namePrefix #$attempt", "performance test: $namePrefix #$attempt")) {
+                    println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
+                    if (errors[attempt] != null) {
+                        tcPrintErrors(n, listOf(errors[attempt]!!))
+                    }
+                    val spentMs = timingsNs[attempt].nsToMs
+                    println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
+                    println("##teamcity[testFinished name='$n' duration='$spentMs']")
                 }
-                val spentMs = timingsNs[attempt].nsToMs
-                println("##teamcity[buildStatisticValue key='$n' value='$spentMs']")
-                println("##teamcity[testFinished name='$n' duration='$spentMs']")
             }
 
-            println("##teamcity[buildStatisticValue key='$namePrefix' value='$meanMs']")
-            println("##teamcity[buildStatisticValue key='$namePrefix stdDev' value='${stdDivMs}']")
-
-            append(arrayOf(namePrefix, meanMs, stdDivMs))
+            append(namePrefix, timingsNs)
         }
     }
 
@@ -92,6 +105,8 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         try {
             for (attempt in 0 until iterations) {
                 testData.reset()
+                triggerGC(attempt)
+
                 setUp(testData)
                 try {
                     val spentNs = measureNanoTime {
@@ -122,6 +137,9 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         val testData = TestData<K, T>(null, null)
         for (attempt in 0 until warmUpIterations) {
             testData.reset()
+
+            triggerGC(attempt)
+
             val n = "$namePrefix warm-up #$attempt"
             println("##teamcity[testStarted name='$n' captureStandardOutput='true']")
 
@@ -156,7 +174,24 @@ class Stats(val name: String = "", val header: Array<String> = arrayOf("Name", "
         }
     }
 
+    private fun triggerGC(attempt: Int) {
+        if (attempt > 0) {
+            val ref = WeakReference(IntArray(32 * 1024))
+            while (ref.get() != null) {
+                System.gc()
+                Thread.sleep(1)
+            }
+        }
+    }
+
+    private fun geomMean(data: List<Long>) = exp(data.fold(0.0, { mul, next -> mul + ln(1.0 * next) }) / data.size).toLong()
+
     override fun close() {
+        if (perfTestRawDataMs.isNotEmpty()) {
+            val geomMeanMs = geomMean(perfTestRawDataMs.toList())
+            println("##teamcity[buildStatisticValue key='$name geomMean' value='$geomMeanMs']")
+            append(arrayOf("$name geomMean", geomMeanMs, 0))
+        }
         statsOutput.flush()
         statsOutput.close()
     }

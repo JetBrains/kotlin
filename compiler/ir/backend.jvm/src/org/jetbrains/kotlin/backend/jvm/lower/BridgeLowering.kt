@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.bridges.FunctionHandle
 import org.jetbrains.kotlin.backend.common.bridges.findAllReachableDeclarations
 import org.jetbrains.kotlin.backend.common.bridges.findConcreteSuperDeclaration
 import org.jetbrains.kotlin.backend.common.bridges.generateBridges
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedReceiverParameterDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
 import org.jetbrains.kotlin.backend.common.ir.*
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.eraseTypeParameters
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -320,7 +322,11 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
             }
 
     private fun IrValueParameter.copyWithTypeErasure(target: IrSimpleFunction): IrValueParameter {
-        val descriptor = WrappedValueParameterDescriptor(this.descriptor.annotations)
+        val descriptor = if (this.descriptor is ReceiverParameterDescriptor) {
+            WrappedReceiverParameterDescriptor(this.descriptor.annotations)
+        } else {
+            WrappedValueParameterDescriptor(this.descriptor.annotations)
+        }
         return IrValueParameterImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             IrDeclarationOrigin.BRIDGE,

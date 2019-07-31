@@ -150,7 +150,6 @@ internal class GradleKotlinCompilerWork @Inject constructor(
 
     private fun compileWithDaemon(messageCollector: MessageCollector): ExitCode? {
         val isDebugEnabled = log.isDebugEnabled || System.getProperty("kotlin.daemon.debug.log")?.toBoolean() ?: true
-        val enableAssertions = System.getProperty("kotlin.daemon.ea")?.toBoolean() ?: false
         val daemonMessageCollector =
             if (isDebugEnabled) messageCollector else MessageCollector.NONE
 
@@ -161,8 +160,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                     sessionFlagFile,
                     compilerFullClasspath,
                     daemonMessageCollector,
-                    isDebugEnabled = isDebugEnabled,
-                    enableAssertions = enableAssertions
+                    isDebugEnabled = isDebugEnabled
                 )
             } catch (e: Throwable) {
                 log.error("Caught an exception trying to connect to Kotlin Daemon:")
@@ -179,6 +177,12 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         }
 
         val (daemon, sessionId) = connection
+
+        if (log.isDebugEnabled) {
+            daemon.getDaemonJVMOptions().takeIf { it.isGood }?.let { jvmOpts ->
+                log.debug("Kotlin compile daemon JVM options: ${jvmOpts.get().mappers.flatMap { it.toArgs("-") }}")
+            }
+        }
         val targetPlatform = when (compilerClassName) {
             KotlinCompilerClass.JVM -> CompileService.TargetPlatform.JVM
             KotlinCompilerClass.JS -> CompileService.TargetPlatform.JS

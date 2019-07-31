@@ -94,6 +94,21 @@ public class FirResolveTestCaseWithStdlibGenerated extends AbstractFirResolveTes
         runTest("compiler/fir/resolve/testData/resolve/stdlib/reflectionClass.kt");
     }
 
+    @TestMetadata("simpleDelegateProvider.kt")
+    public void testSimpleDelegateProvider() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/simpleDelegateProvider.kt");
+    }
+
+    @TestMetadata("simpleDelegatedToMap.kt")
+    public void testSimpleDelegatedToMap() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/simpleDelegatedToMap.kt");
+    }
+
+    @TestMetadata("simpleLazy.kt")
+    public void testSimpleLazy() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/stdlib/simpleLazy.kt");
+    }
+
     @TestMetadata("topLevelResolve.kt")
     public void testTopLevelResolve() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/stdlib/topLevelResolve.kt");

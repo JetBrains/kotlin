@@ -48,6 +48,8 @@ object SerialEntityNames {
     const val DECODER_CLASS = "Decoder"
     const val STRUCTURE_DECODER_CLASS = "CompositeDecoder"
 
+    const val ANNOTATION_MARKER_CLASS = "SerializableWith"
+
     const val SERIAL_SAVER_CLASS = "SerializationStrategy"
     const val SERIAL_LOADER_CLASS = "DeserializationStrategy"
 

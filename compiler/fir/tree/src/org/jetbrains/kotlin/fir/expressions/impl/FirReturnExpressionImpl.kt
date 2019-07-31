@@ -15,10 +15,9 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirReturnExpressionImpl(
-    session: FirSession,
     psi: PsiElement?,
     override var result: FirExpression
-) : FirReturnExpression(session, psi) {
+) : FirReturnExpression(psi) {
     override lateinit var target: FirTarget<FirFunction>
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
@@ -27,7 +26,7 @@ class FirReturnExpressionImpl(
         return super.transformChildren(transformer, data)
     }
 
-    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(session, psi)
+    override var typeRef: FirTypeRef = FirImplicitNothingTypeRef(psi)
 
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {}
 }

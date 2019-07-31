@@ -181,6 +181,16 @@ public abstract class ExpressionTypingVisitorDispatcher extends KtVisitor<Kotlin
                     if (result.getType() instanceof DeferredType) {
                         result = result.replaceType(((DeferredType) result.getType()).getDelegate());
                     }
+
+                    KotlinType refinedType =
+                            result.getType() != null
+                            ? components.kotlinTypeChecker.getKotlinTypeRefiner().refineType(result.getType())
+                            : null;
+
+                    if (refinedType != result.getType()) {
+                        result = result.replaceType(refinedType);
+                    }
+
                     context.trace.record(BindingContext.EXPRESSION_TYPE_INFO, expression, result);
                 }
                 catch (ReenteringLazyValueComputationException e) {

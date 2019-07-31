@@ -16,14 +16,13 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirResolvedFunctionTypeRefImpl(
     psi: PsiElement?,
-    session: FirSession,
     override val isMarkedNullable: Boolean,
     override val annotations: MutableList<FirAnnotationCall>,
     override var receiverTypeRef: FirTypeRef?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var returnTypeRef: FirTypeRef,
     override val type: ConeKotlinType
-) : FirResolvedFunctionTypeRef, FirAbstractElement(session, psi) {
+) : FirResolvedFunctionTypeRef, FirAbstractElement(psi) {
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)

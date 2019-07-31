@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAnonymousFunction(
-    session: FirSession,
+    final override val session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirFunction, FirUnknownTypeExpression(session, psi), FirTypedDeclaration, FirLabeledElement {
+) : @VisitedSupertype FirFunction, FirUnknownTypeExpression(psi), FirTypedDeclaration, FirLabeledElement {
     abstract val receiverTypeRef: FirTypeRef?
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =

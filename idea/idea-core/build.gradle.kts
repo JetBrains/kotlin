@@ -18,6 +18,10 @@ dependencies {
     compile(project(":idea:idea-jps-common"))
     compile(project(":plugins:android-extensions-compiler"))
     compile(project(":kotlin-scripting-compiler-impl"))
+    compile(project(":compiler:fir:psi2fir"))
+    compile(project(":compiler:fir:fir2ir"))
+    compile(project(":compiler:fir:resolve"))
+    compile(project(":compiler:fir:java"))
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
     compile(commonDep("org.jetbrains.kotlinx", "kotlinx-coroutines-jdk8")) { isTransitive = false }
 

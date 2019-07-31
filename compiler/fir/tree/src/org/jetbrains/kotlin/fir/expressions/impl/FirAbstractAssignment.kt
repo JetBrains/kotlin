@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAssignment
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirOperation
@@ -17,12 +16,11 @@ import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractAssignment(
-    session: FirSession,
     psi: PsiElement?,
     final override var rValue: FirExpression,
     final override val operation: FirOperation,
     safe: Boolean = false
-) : FirAbstractQualifiedAccess(session, psi, safe), FirVariableAssignment {
+) : FirAbstractQualifiedAccess(psi, safe), FirVariableAssignment {
 
     override var lValue: FirReference
         get() = calleeReference

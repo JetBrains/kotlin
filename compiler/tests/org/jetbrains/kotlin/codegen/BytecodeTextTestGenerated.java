@@ -2277,6 +2277,11 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inline/inlineSuspendReifiedNoSpilling.kt");
         }
 
+        @TestMetadata("interfaceDefaultMethod.kt")
+        public void testInterfaceDefaultMethod() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inline/interfaceDefaultMethod.kt");
+        }
+
         @TestMetadata("linenumberForOneParametersArgumentCall.kt")
         public void testLinenumberForOneParametersArgumentCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inline/linenumberForOneParametersArgumentCall.kt");

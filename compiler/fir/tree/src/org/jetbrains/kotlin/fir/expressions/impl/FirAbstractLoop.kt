@@ -13,10 +13,9 @@ import org.jetbrains.kotlin.fir.expressions.FirLoop
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractLoop(
-    session: FirSession,
     psi: PsiElement?,
     override var condition: FirExpression
-) : FirAnnotatedStatement(session, psi), FirLoop {
+) : FirAnnotatedStatement(psi), FirLoop {
     override lateinit var block: FirBlock
 
     override var label: FirLabel? = null

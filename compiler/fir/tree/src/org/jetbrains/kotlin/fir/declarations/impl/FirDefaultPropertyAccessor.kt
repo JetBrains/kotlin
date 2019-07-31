@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -25,14 +25,14 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirDefaultPropertyAccessor(
-    session: FirSession,
+    final override val session: FirSession,
     psi: PsiElement?,
     final override val isGetter: Boolean,
     visibility: Visibility
-) : FirAbstractElement(session, psi), FirPropertyAccessor {
-    override var status = FirDeclarationStatusImpl(
-        session, visibility, Modality.FINAL
-    )
+) : FirAbstractElement(psi), FirPropertyAccessor {
+    override var status = FirDeclarationStatusImpl(visibility, Modality.FINAL)
+
+    override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 
     final override val body: FirBlock? =
         null
@@ -81,7 +81,7 @@ class FirDefaultPropertySetter(
         )
     )
 
-    override var returnTypeRef: FirTypeRef = FirImplicitUnitTypeRef(session, psi)
+    override var returnTypeRef: FirTypeRef = FirImplicitUnitTypeRef(psi)
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         valueParameters.transformInplace(transformer, data)

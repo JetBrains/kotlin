@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.Variance.IN_VARIANCE
 import org.jetbrains.kotlin.types.Variance.OUT_VARIANCE
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewCapturedTypeConstructor
 import org.jetbrains.kotlin.types.model.CapturedTypeMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 interface CapturedTypeConstructor : TypeConstructor {
@@ -62,6 +64,10 @@ class CapturedTypeConstructorImpl(
     override fun toString() = "CapturedTypeConstructor($projection)"
 
     override fun getBuiltIns(): KotlinBuiltIns = projection.type.constructor.builtIns
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        CapturedTypeConstructorImpl(projection.refine(kotlinTypeRefiner))
 }
 
 class CapturedType(
@@ -98,6 +104,10 @@ class CapturedType(
 
     override fun replaceAnnotations(newAnnotations: Annotations): CapturedType =
         CapturedType(typeProjection, constructor, isMarkedNullable, newAnnotations)
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        CapturedType(typeProjection.refine(kotlinTypeRefiner), constructor, isMarkedNullable, annotations)
 }
 
 fun createCapturedType(typeProjection: TypeProjection): KotlinType = CapturedType(typeProjection)

@@ -1,15 +1,15 @@
 FILE fqName:<root> fileName:/localDelegatedProperties.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:x type:IrErrorType [val] 
-      ERROR_CALL 'Unresolved reference: <Ambiguity: println, [kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println, kotlin/io/println]>#' type=IrErrorType
-        GET_VAR 'val x: IrErrorType [val] declared in <root>.test1' type=IrErrorType origin=null
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+      VAR name:x type:kotlin.Int [val]
+      CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
+        message: GET_VAR 'val x: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:x type:IrErrorType [var] 
+      VAR name:x type:IrErrorType [var]
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         CONST Int type=IrErrorType value=0
-      VAR name:<unary> type:IrErrorType [val] 
+      VAR name:<unary> type:IrErrorType [val]
         GET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
       SET_VAR 'var x: IrErrorType [var] declared in <root>.test2' type=IrErrorType origin=null
         ERROR_CALL 'Unresolved reference: <Ambiguity: inc, [kotlin/inc, kotlin/inc]>#' type=IrErrorType

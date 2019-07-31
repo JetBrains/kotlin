@@ -394,13 +394,7 @@ open class WrappedSimpleFunctionDescriptor(
         (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
     }
 
-    val extensionReceiver by lazy {
-        owner.extensionReceiverParameter?.let {
-            ReceiverParameterDescriptorImpl(this, ExtensionReceiver(it.descriptor, it.type.toKotlinType(), null), Annotations.EMPTY)
-        }
-    }
-
-    override fun getExtensionReceiverParameter() = extensionReceiver
+    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.descriptor as? ReceiverParameterDescriptor
     override fun getTypeParameters() = owner.typeParameters.map { it.descriptor }
     override fun getValueParameters() = owner.valueParameters
         .asSequence()
@@ -586,7 +580,7 @@ open class WrappedClassDescriptor(
 
 
     private val _defaultType: SimpleType by lazy {
-        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope, KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
     }
 
     override fun getDefaultType(): SimpleType = _defaultType
@@ -697,7 +691,7 @@ open class WrappedEnumEntryDescriptor(
 
 
     private val _defaultType: SimpleType by lazy {
-        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope)
+        TypeUtils.makeUnsubstitutedType(this, unsubstitutedMemberScope, KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY)
     }
 
     override fun getDefaultType(): SimpleType = _defaultType

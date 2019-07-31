@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.resolve.constants.IntegerLiteralTypeConstructor;
 import org.jetbrains.kotlin.resolve.constants.IntegerValueTypeConstructor;
 import org.jetbrains.kotlin.resolve.scopes.MemberScope;
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker;
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner;
 import org.jetbrains.kotlin.types.checker.NewTypeVariableConstructor;
+import org.jetbrains.kotlin.types.refinement.TypeRefinement;
 
 import java.util.*;
 
@@ -59,6 +61,20 @@ public class TypeUtils {
         @Override
         public String toString() {
             return name;
+        }
+
+        @NotNull
+        @Override
+        @TypeRefinement
+        public DelegatingSimpleType replaceDelegate(@NotNull SimpleType delegate) {
+            throw new IllegalStateException(name);
+        }
+
+        @NotNull
+        @Override
+        @TypeRefinement
+        public SpecialType refine(@NotNull KotlinTypeRefiner kotlinTypeRefiner) {
+            return this;
         }
     }
 
@@ -185,18 +201,31 @@ public class TypeUtils {
     }
 
     @NotNull
-    public static SimpleType makeUnsubstitutedType(ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope) {
+    public static SimpleType makeUnsubstitutedType(
+            ClassifierDescriptor classifierDescriptor, MemberScope unsubstitutedMemberScope,
+            Function1<KotlinTypeRefiner, SimpleType> refinedTypeFactory
+    ) {
         if (ErrorUtils.isError(classifierDescriptor)) {
             return ErrorUtils.createErrorType("Unsubstituted type for " + classifierDescriptor);
         }
         TypeConstructor typeConstructor = classifierDescriptor.getTypeConstructor();
+        return makeUnsubstitutedType(typeConstructor, unsubstitutedMemberScope, refinedTypeFactory);
+    }
+
+    @NotNull
+    public static SimpleType makeUnsubstitutedType(
+            @NotNull TypeConstructor typeConstructor,
+            @NotNull MemberScope unsubstitutedMemberScope,
+            @NotNull Function1<KotlinTypeRefiner, SimpleType> refinedTypeFactory
+    ) {
         List<TypeProjection> arguments = getDefaultTypeProjections(typeConstructor.getParameters());
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 Annotations.Companion.getEMPTY(),
                 typeConstructor,
                 arguments,
                 false,
-                unsubstitutedMemberScope
+                unsubstitutedMemberScope,
+                refinedTypeFactory
         );
     }
 

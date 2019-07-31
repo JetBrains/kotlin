@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
 import org.jetbrains.kotlin.nj2k.isEquals
 import org.jetbrains.kotlin.nj2k.parenthesizeIfBinaryExpression
+import org.jetbrains.kotlin.nj2k.symbols.isUnresolved
+import org.jetbrains.kotlin.nj2k.symbols.parameterTypesWithUnfoldedVarargs
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
@@ -78,7 +80,7 @@ class ImplicitCastsConversion(private val context: NewJ2kConverterContext) : Rec
 
 
     private fun convertMethodCallExpression(expression: JKMethodCallExpression) {
-        if (expression.identifier.isUnresolved()) return
+        if (expression.identifier.isUnresolved) return
         val parameterTypes = expression.identifier.parameterTypesWithUnfoldedVarargs() ?: return
         val newArguments =
             (expression.arguments.arguments.asSequence() zip parameterTypes)

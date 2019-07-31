@@ -8,9 +8,12 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.impl.FirAbstractAnnotatedElement
 
 abstract class FirAbstractAnnotatedDeclaration(
-    session: FirSession,
+    final override val session: FirSession,
     psi: PsiElement?
-) : FirAbstractAnnotatedElement(session, psi), FirDeclaration
+) : FirAbstractAnnotatedElement(psi), FirDeclaration {
+    override var resolvePhase = FirResolvePhase.RAW_FIR
+}

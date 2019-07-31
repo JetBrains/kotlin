@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/jdkClassSyntheticProperty.kt
-  PROPERTY name:test visibility:public modality:FINAL [val] 
-    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field?>? 
-      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val] 
-      $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*> 
+  PROPERTY name:test visibility:public modality:FINAL [val]
+    FUN name:<get-test> visibility:public modality:FINAL <> ($receiver:java.lang.Class<*>) returnType:kotlin.Array<out java.lang.reflect.Field?>?
+      correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
+      $receiver: VALUE_PARAMETER name:<this> type:java.lang.Class<*>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Array<out java.lang.reflect.Field?>? declared in <root>'
           CALL 'public open fun getDeclaredFields (): kotlin.Array<out java.lang.reflect.Field?>? declared in java.lang.Class' type=kotlin.Array<out java.lang.reflect.Field?>? origin=GET_PROPERTY

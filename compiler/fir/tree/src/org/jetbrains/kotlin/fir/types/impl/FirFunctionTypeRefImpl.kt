@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.types.impl
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -16,12 +15,11 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirFunctionTypeRefImpl(
-    session: FirSession,
     psi: PsiElement?,
     isNullable: Boolean,
     override var receiverTypeRef: FirTypeRef?,
     override var returnTypeRef: FirTypeRef
-) : FirAbstractAnnotatedTypeRef(session, psi, isNullable), FirFunctionTypeRef {
+) : FirAbstractAnnotatedTypeRef(psi, isNullable), FirFunctionTypeRef {
     override val valueParameters = mutableListOf<FirValueParameter>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {

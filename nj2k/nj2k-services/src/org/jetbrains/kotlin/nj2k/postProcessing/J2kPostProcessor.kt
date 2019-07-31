@@ -161,6 +161,7 @@ private val removeRedundantElementsProcessingGroup =
         runSingleTime = true,
         processings = listOf(
             RemoveExplicitTypeArgumentsProcessing(),
+            RemoveJavaStreamsCollectCallTypeArgumentsProcessing(),
             generalInspectionBasedProcessing(RedundantCompanionReferenceInspection()),
             generalInspectionBasedProcessing(ExplicitThisInspection()),
             intentionBasedProcessing(RemoveEmptyClassBodyIntention())
@@ -234,7 +235,10 @@ private val cleaningUpDiagnosticBasedPostProcessingGroup =
 private val processings: List<NamedPostProcessingGroup> = listOf(
     NamedPostProcessingGroup(
         "Inferring declarations nullability",
-        listOf(nullabilityProcessing)
+        listOf(
+            nullabilityProcessing,
+            clearUndefinedLabelsProcessing
+        )
     ),
     NamedPostProcessingGroup(
         "Formatting code",

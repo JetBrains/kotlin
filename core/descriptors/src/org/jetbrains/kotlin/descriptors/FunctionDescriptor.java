@@ -122,6 +122,7 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setSignatureChange();
 
         @NotNull
+        @Override
         CopyBuilder<D> setPreserveSourceElement();
 
         @NotNull

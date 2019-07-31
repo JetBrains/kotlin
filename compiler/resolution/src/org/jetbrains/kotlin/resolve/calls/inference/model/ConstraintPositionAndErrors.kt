@@ -37,9 +37,13 @@ class ExpectedTypeConstraintPosition(val topLevelCall: KotlinCall) : ConstraintP
     override fun toString() = "ExpectedType for call $topLevelCall"
 }
 
-class DeclaredUpperBoundConstraintPosition(val typeParameterDescriptor: TypeParameterDescriptor) : ConstraintPosition() {
+sealed class DeclaredUpperBoundConstraintPosition : ConstraintPosition()
+
+class DeclaredUpperBoundConstraintPositionImpl(val typeParameterDescriptor: TypeParameterDescriptor) : DeclaredUpperBoundConstraintPosition() {
     override fun toString() = "DeclaredUpperBound ${typeParameterDescriptor.name} from ${typeParameterDescriptor.containingDeclaration}"
 }
+
+class FirDeclaredUpperBoundConstraintPosition : DeclaredUpperBoundConstraintPosition()
 
 class ArgumentConstraintPosition(val argument: KotlinCallArgument) : ConstraintPosition() {
     override fun toString() = "Argument $argument"

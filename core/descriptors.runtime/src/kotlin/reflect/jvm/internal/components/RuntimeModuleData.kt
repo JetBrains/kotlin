@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ContractDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationComponents
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.utils.Jsr305State
 
 class RuntimeModuleData private constructor(
@@ -70,7 +71,7 @@ class RuntimeModuleData private constructor(
                 singleModuleClassResolver, PackagePartProvider.Empty, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
                 ReflectionTypes(module, notFoundClasses), annotationTypeQualifierResolver,
                 SignatureEnhancement(annotationTypeQualifierResolver, Jsr305State.DISABLED),
-                JavaClassesTracker.Default, JavaResolverSettings.Default
+                JavaClassesTracker.Default, JavaResolverSettings.Default, NewKotlinTypeChecker.Default
             )
 
             val lazyJavaPackageFragmentProvider = LazyJavaPackageFragmentProvider(javaResolverComponents)
@@ -85,14 +86,14 @@ class RuntimeModuleData private constructor(
             val deserializationComponentsForJava = DeserializationComponentsForJava(
                 storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
                 binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
-                RuntimeErrorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT
+                RuntimeErrorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default
             )
 
             // .kotlin_builtins files should be found by the same class loader that loaded stdlib classes
             val stdlibClassLoader = Unit::class.java.classLoader
             val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
                 storageManager, ReflectKotlinClassFinder(stdlibClassLoader), module, notFoundClasses, builtIns.settings, builtIns.settings,
-                DeserializationConfiguration.Default
+                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default
             )
 
             singleModuleClassResolver.resolver = javaDescriptorResolver

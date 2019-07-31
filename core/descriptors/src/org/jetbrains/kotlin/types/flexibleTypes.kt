@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.types.checker.ErrorTypesAreEqualToAnything
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 
@@ -134,4 +136,13 @@ class FlexibleTypeImpl(lowerBound: SimpleType, upperBound: SimpleType) : Flexibl
 
     override fun makeNullableAsSpecified(newNullability: Boolean): UnwrappedType
             = KotlinTypeFactory.flexibleType(lowerBound.makeNullableAsSpecified(newNullability), upperBound.makeNullableAsSpecified(newNullability))
+
+    @TypeRefinement
+    @UseExperimental(TypeRefinement::class)
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner): FlexibleType {
+        return FlexibleTypeImpl(
+            kotlinTypeRefiner.refineType(lowerBound) as SimpleType,
+            kotlinTypeRefiner.refineType(upperBound) as SimpleType
+        )
+    }
 }

@@ -5,6 +5,10 @@ plugins {
 
 dependencies {
     testCompile(projectTests(":compiler"))
+    Platform[192].orHigher {
+        testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
+        testRuntimeOnly(intellijPluginDep("java"))
+    }
 }
 
 sourceSets {

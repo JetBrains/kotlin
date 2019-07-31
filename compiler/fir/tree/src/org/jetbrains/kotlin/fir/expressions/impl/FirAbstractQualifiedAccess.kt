@@ -12,10 +12,9 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 abstract class FirAbstractQualifiedAccess(
-    session: FirSession,
     psi: PsiElement?,
     final override var safe: Boolean = false
-) : FirAnnotatedStatement(session, psi), FirModifiableQualifiedAccess<FirReference> {
+) : FirAnnotatedStatement(psi), FirModifiableQualifiedAccess<FirReference> {
     final override lateinit var calleeReference: FirReference
 
     final override var explicitReceiver: FirExpression? = null

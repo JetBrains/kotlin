@@ -1,0 +1,28 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+    }
+
+    dependencies {
+        apply from: "include.gradle"
+        def kotlinVersion = gradleKotlinPluginVersion('1.3.20')
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
+    }
+}
+
+apply plugin: 'kotlin'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-dev' }
+}
+
+compileKotlin {
+    javaPackagePrefix = "package.prefix.main"
+}
+
+compileTestKotlin {
+    javaPackagePrefix = "package.prefix.test"
+}
+

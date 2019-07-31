@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.nj2k.conversions.JKResolver
+import org.jetbrains.kotlin.nj2k.symbols.*
 import org.jetbrains.kotlin.nj2k.tree.*
-import org.jetbrains.kotlin.nj2k.tree.impl.*
 import org.jetbrains.kotlin.psi.*
 
 
@@ -31,6 +31,8 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
     private fun symbolForNonKotlinElement(psi: PsiElement) =
         when (psi) {
+            is PsiTypeParameter -> JKMultiverseTypeParameterSymbol(psi, this)
+            is KtTypeParameter -> JKMultiverseKtTypeParameterSymbol(psi, this)
             is KtEnumEntry -> JKMultiverseKtEnumEntrySymbol(psi, this)
             is PsiClass -> JKMultiverseClassSymbol(psi, this)
             is KtClassOrObject -> JKMultiverseKtClassSymbol(psi, this)
@@ -41,7 +43,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             is KtParameter -> JKMultiversePropertySymbol(psi, this)
             is PsiParameter -> JKMultiverseFieldSymbol(psi, this)
             is PsiLocalVariable -> JKMultiverseFieldSymbol(psi, this)
-            is PsiPackage -> JKMultiversePackageSymbol(psi)
+            is PsiPackage -> JKMultiversePackageSymbol(psi, this)
             else -> TODO(psi::class.toString())
         }
 
@@ -55,7 +57,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
         }
     }
 
-    internal inline fun <reified T : JKSymbol> provideSymbol(reference: PsiReference): T {
+    internal inline fun <reified T : JKSymbol> provideSymbolForReference(reference: PsiReference): T {
         val target = reference.resolve()
         if (target != null) return provideDirectSymbol(target) as T
         return (if (isAssignable<T, JKUnresolvedField>()) JKUnresolvedField(
@@ -69,6 +71,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             is JKUniverseClassSymbol -> it.target = jk as JKClass
             is JKUniverseFieldSymbol -> it.target = jk as JKVariable
             is JKUniverseMethodSymbol -> it.target = jk as JKMethod
+            is JKUniverseTypeParameterSymbol -> it.target = jk as JKTypeParameter
         }
         symbolsByJK[jk] = it
     }
@@ -78,6 +81,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
             when (psi) {
                 is PsiVariable -> JKUniverseFieldSymbol(this)
                 is PsiMethod -> JKUniverseMethodSymbol(this)
+                is PsiTypeParameter -> JKUniverseTypeParameterSymbol(this)
                 is PsiClass -> JKUniverseClassSymbol(this)
                 else -> TODO()
             }
@@ -85,7 +89,7 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
 
     fun transferSymbol(to: JKDeclaration, from: JKDeclaration) = symbolsByJK[from]?.also {
         @Suppress("UNCHECKED_CAST")
-        it as JKUniverseSymbol<JKTreeElement>
+        it as JKUniverseSymbol<JKDeclaration>
         it.target = to
         symbolsByJK[to] = it
     }
@@ -163,6 +167,10 @@ class JKSymbolProvider(project: Project, module: Module, contextElement: PsiElem
         override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
             provideUniverseSymbol(enumConstant)
             enumConstant.acceptChildren(this)
+        }
+
+        override fun visitTypeParameter(classParameter: PsiTypeParameter) {
+            provideUniverseSymbol(classParameter)
         }
 
         override fun visitFile(file: PsiFile) {

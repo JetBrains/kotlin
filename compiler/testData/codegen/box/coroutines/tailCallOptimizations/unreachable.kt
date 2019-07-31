@@ -40,8 +40,8 @@ suspend fun lambdaAsParameterReturn(c: suspend () -> Unit) {
 }
 
 suspend fun returnsInt() = 42.also { TailCallOptimizationChecker.saveStackTrace() }
-// This should not be tail-call, since the caller should push Unit.INSTANCE on stack
-suspend fun callsIntNotTailCall() {
+
+suspend fun callsIntTailCall() {
     returnsInt()
     return
     empty()
@@ -53,7 +53,7 @@ suspend fun multipleExitPoints(b: Boolean) {
     empty()
 }
 
-suspend fun multipleExitPointsNotTailCall(b: Boolean) {
+suspend fun multipleExitPointsTailCall(b: Boolean) {
     if (b) empty() else returnsInt()
     return
     empty()
@@ -153,14 +153,14 @@ fun box(): String {
         lambdaAsParameterReturn { TailCallOptimizationChecker.saveStackTrace() }
         TailCallOptimizationChecker.checkNoStateMachineIn("lambdaAsParameterReturn")
 
-        callsIntNotTailCall()
-        TailCallOptimizationChecker.checkStateMachineIn("callsIntNotTailCall")
+        callsIntTailCall()
+        TailCallOptimizationChecker.checkNoStateMachineIn("callsIntTailCall")
 
         multipleExitPoints(false)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPoints")
 
-        multipleExitPointsNotTailCall(false)
-        TailCallOptimizationChecker.checkStateMachineIn("multipleExitPointsNotTailCall")
+        multipleExitPointsTailCall(false)
+        TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsTailCall")
 
         multipleExitPointsWithOrdinaryInline(true)
         TailCallOptimizationChecker.checkNoStateMachineIn("multipleExitPointsWithOrdinaryInline")
@@ -178,7 +178,7 @@ fun box(): String {
         TailCallOptimizationChecker.checkNoStateMachineIn("useGenericInferType")
 
         useNullableUnit()
-        TailCallOptimizationChecker.checkStateMachineIn("useNullableUnit")
+        TailCallOptimizationChecker.checkNoStateMachineIn("useNullableUnit")
 
         useRunRunRunRunRun()
         TailCallOptimizationChecker.checkNoStateMachineIn("useRunRunRunRunRun")

@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/platformTypeReceiver.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 (): kotlin.Boolean declared in <root>'
         CALL 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any' type=kotlin.Boolean origin=null
-          $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:BOOL_NULL type:kotlin.Boolean? visibility:public [static] ' type=kotlin.Boolean? origin=GET_PROPERTY
+          $this: GET_FIELD 'FIELD IR_EXTERNAL_JAVA_DECLARATION_STUB name:BOOL_NULL type:kotlin.Boolean? visibility:public [static]' type=kotlin.Boolean? origin=GET_PROPERTY
           other: CONST Null type=kotlin.Nothing? value=null
   FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Boolean
     BLOCK_BODY

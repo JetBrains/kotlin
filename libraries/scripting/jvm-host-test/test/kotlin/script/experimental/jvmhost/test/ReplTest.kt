@@ -56,14 +56,35 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testImplicitReceiver() {
+        val receiver = TestReceiver()
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration.with {
+                implicitReceivers(TestReceiver::class)
+            },
+            simpleScriptEvaluationConfiguration.with {
+                implicitReceivers(receiver)
+            },
+            sequenceOf(
+                "val x = 4",
+                "x + prop1",
+                "res1 * 3"
+            ),
+            sequenceOf(null, 7, 21)
+        )
+    }
+
+    @Test
     fun testEvalWithError() {
         chechEvaluateInRepl(
             simpleScriptompilationConfiguration,
             simpleScriptEvaluationConfiguration,
             sequenceOf(
-                "throw RuntimeException(\"abc\")"
+                "throw RuntimeException(\"abc\")",
+                "val x = 3",
+                "x + 1"
             ),
-            sequenceOf(RuntimeException("abc"))
+            sequenceOf(RuntimeException("abc"), null, 4)
         )
     }
 
@@ -88,11 +109,12 @@ class ReplTest : TestCase() {
                     }
                 }
                 .onSuccess {
-                    it.returnValue.scriptInstance?.let { snippetInstance ->
-                        currentEvalConfig = ScriptEvaluationConfiguration(currentEvalConfig) {
-                            previousSnippets.append(snippetInstance)
+                    val snippetClass = it.returnValue.scriptClass
+                    currentEvalConfig = ScriptEvaluationConfiguration(currentEvalConfig) {
+                        previousSnippets.append(it.returnValue.scriptInstance)
+                        if (snippetClass != null) {
                             jvm {
-                                baseClassLoader(snippetInstance::class.java.classLoader)
+                                baseClassLoader(snippetClass.java.classLoader)
                             }
                         }
                     }
@@ -142,3 +164,5 @@ val simpleScriptompilationConfiguration = createJvmCompilationConfigurationFromT
 }
 
 val simpleScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
+
+class TestReceiver(val prop1: Int = 3)

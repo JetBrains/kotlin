@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor;
-import org.jetbrains.kotlin.descriptors.annotations.Annotations;
 import org.jetbrains.kotlin.resolve.calls.inference.CallHandle;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystem;
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilderImpl;
@@ -132,15 +131,7 @@ public class TypeIntersector {
             return TypeUtils.makeNullableAsSpecified(resultingTypes.get(0), allNullable);
         }
 
-        IntersectionTypeConstructor constructor = new IntersectionTypeConstructor(resultingTypes);
-
-        return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-                Annotations.Companion.getEMPTY(),
-                constructor,
-                Collections.emptyList(),
-                allNullable,
-                constructor.createScopeForKotlinType()
-        );
+        return new IntersectionTypeConstructor(resultingTypes).createType();
     }
 
     /**

@@ -43,15 +43,10 @@ class BridgeDependenciesResolver(
 
             val script = getScriptSource(scriptContents) ?: scriptContents.toScriptSource()
 
-            val refineResults = scriptCompilationConfiguration.refineWith(
-                scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.handler,
-                processedScriptData, script
-            ).onSuccess {
-                it.refineWith(
-                    scriptCompilationConfiguration[ScriptCompilationConfiguration.refineConfigurationBeforeCompiling]?.handler,
-                    processedScriptData, script
-                )
-            }
+            val refineResults =
+                scriptCompilationConfiguration.refineOnAnnotations(script, processedScriptData).onSuccess {
+                    it.refineBeforeCompiling(script, processedScriptData)
+                }
 
             val refinedConfiguration = when (refineResults) {
                 is ResultWithDiagnostics.Failure ->

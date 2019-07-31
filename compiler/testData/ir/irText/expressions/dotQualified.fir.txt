@@ -1,11 +1,11 @@
 FILE fqName:<root> fileName:/dotQualified.kt
-  FUN name:length visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Int 
-    VALUE_PARAMETER name:s index:0 type:kotlin.String 
+  FUN name:length visibility:public modality:FINAL <> (s:kotlin.String) returnType:kotlin.Int
+    VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun length (s: kotlin.String): kotlin.Int declared in <root>'
         ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int
   FUN name:lengthN visibility:public modality:FINAL <> (s:kotlin.String?) returnType:kotlin.Int?
-    VALUE_PARAMETER name:s index:0 type:kotlin.String? 
+    VALUE_PARAMETER name:s index:0 type:kotlin.String?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun lengthN (s: kotlin.String?): kotlin.Int? declared in <root>'
         ERROR_CALL 'No getter found for R|kotlin/String.length|' type=kotlin.Int?

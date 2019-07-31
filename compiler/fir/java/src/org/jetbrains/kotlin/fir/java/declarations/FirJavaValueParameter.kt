@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.declarations
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
 import org.jetbrains.kotlin.fir.java.types.FirJavaTypeRef
 import org.jetbrains.kotlin.name.Name
@@ -18,4 +19,8 @@ class FirJavaValueParameter(
 ) : FirValueParameterImpl(
     session, psi = null, name = name, returnTypeRef = returnTypeRef,
     defaultValue = null, isCrossinline = false, isNoinline = false, isVararg = isVararg
-)
+) {
+    init {
+        resolvePhase = FirResolvePhase.DECLARATIONS
+    }
+}

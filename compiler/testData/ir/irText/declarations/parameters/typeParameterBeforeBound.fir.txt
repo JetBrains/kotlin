@@ -1,35 +1,34 @@
 FILE fqName:<root> fileName:/typeParameterBeforeBound.kt
   CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]
-    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1 
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test1
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:U index:1 variance: superTypes:[]
-    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>> [primary] 
+    CONSTRUCTOR visibility:public <> () returnType:<root>.Test1<T of <uninitialized parent>, U of <uninitialized parent>> [primary]
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public superTypes:[kotlin.Any]'
-    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean 
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-      VALUE_PARAMETER name:other index:0 type:kotlin.Any? 
-    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER name:<this> type:kotlin.Any 
-  FUN name:test2 visibility:public modality:FINAL <T, U> () returnType:kotlin.Unit 
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test2 visibility:public modality:FINAL <T, U> () returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     TYPE_PARAMETER name:U index:1 variance: superTypes:[]
     BLOCK_BODY
-  PROPERTY name:test3 visibility:public modality:FINAL [var] 
-    FUN name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Unit 
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
+  PROPERTY name:test3 visibility:public modality:FINAL [var]
+    FUN name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
       BLOCK_BODY
-    FUN name:<set-test3> visibility:public modality:FINAL <> (value:kotlin.Unit) returnType:kotlin.Unit 
-      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var] 
-      VALUE_PARAMETER name:value index:0 type:kotlin.Unit 
+    FUN name:<set-test3> visibility:public modality:FINAL <> (value:kotlin.Unit) returnType:kotlin.Unit
+      correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
+      VALUE_PARAMETER name:value index:0 type:kotlin.Unit
       BLOCK_BODY
-

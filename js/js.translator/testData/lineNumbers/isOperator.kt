@@ -11,4 +11,4 @@ inline fun foo(): Boolean {
     return true
 }
 
-// LINES: 7 4 4 4 10 10 4 11 4 5 5 12 10 10 11 11 * 1 * 1
+// LINES: 3 7 4 4 4 10 10 4 11 4 5 5 9 12 10 10 11 11 * 1 * 1

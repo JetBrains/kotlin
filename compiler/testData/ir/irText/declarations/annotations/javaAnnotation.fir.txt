@@ -1,8 +1,7 @@
 FILE fqName:<root> fileName:/javaAnnotation.kt
-  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit 
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-

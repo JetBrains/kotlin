@@ -10,6 +10,7 @@ package kotlin.script.experimental.api
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.host.getEvaluationContext
 import kotlin.script.experimental.util.PropertiesCollection
 
 interface ScriptEvaluationConfigurationKeys
@@ -68,10 +69,10 @@ val ScriptEvaluationConfigurationKeys.constructorArgs by PropertiesCollection.ke
  * For the first snippet in a REPL an empty list should be passed explicitly
  * An array of the previous snippets will be passed to the current snippet constructor
  */
-val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any>>()
+val ScriptEvaluationConfigurationKeys.previousSnippets by PropertiesCollection.key<List<Any?>>(isTransient = true)
 
 @Deprecated("use scriptsInstancesSharing flag instead", level = DeprecationLevel.ERROR)
-val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>()
+val ScriptEvaluationConfigurationKeys.scriptsInstancesSharingMap by PropertiesCollection.key<MutableMap<KClass<*>, EvaluationResult>>(isTransient = true)
 
 /**
  * If enabled - the evaluator will try to get imported script from a shared container
@@ -83,12 +84,12 @@ val ScriptEvaluationConfigurationKeys.scriptsInstancesSharing by PropertiesColle
 /**
  * Scripting host configuration
  */
-val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>()
+val ScriptEvaluationConfigurationKeys.hostConfiguration by PropertiesCollection.key<ScriptingHostConfiguration>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
  */
-val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<RefineEvaluationConfigurationData>()
+val ScriptEvaluationConfigurationKeys.refineConfigurationBeforeEvaluate by PropertiesCollection.key<List<RefineEvaluationConfigurationData>>(isTransient = true)
 
 /**
  * A helper to enable scriptsInstancesSharingMap with default implementation
@@ -103,7 +104,7 @@ fun ScriptEvaluationConfiguration.Builder.enableScriptsInstancesSharing() {
  * A helper to enable passing lambda directly to the refinement "keyword"
  */
 fun ScriptEvaluationConfiguration.Builder.refineConfigurationBeforeEvaluate(handler: RefineScriptEvaluationConfigurationHandler) {
-    set(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate, RefineEvaluationConfigurationData(handler))
+    ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate.append(RefineEvaluationConfigurationData(handler))
 }
 
 /**
@@ -118,27 +119,43 @@ data class RefineEvaluationConfigurationData(
     companion object { private const val serialVersionUID: Long = 1L }
 }
 
+fun ScriptEvaluationConfiguration.refineBeforeEvaluation(
+    script: CompiledScript<*>,
+    contextData: ScriptEvaluationContextData? = null
+): ResultWithDiagnostics<ScriptEvaluationConfiguration> {
+    val hostConfiguration = get(ScriptEvaluationConfiguration.hostConfiguration)
+    val baseContextData = hostConfiguration?.get(ScriptingHostConfiguration.getEvaluationContext)?.invoke(hostConfiguration)
+    val actualContextData = merge(baseContextData, contextData)
+    return simpleRefineImpl(ScriptEvaluationConfiguration.refineConfigurationBeforeEvaluate) { config, refineData ->
+        refineData.handler.invoke(ScriptEvaluationConfigurationRefinementContext(script, config, actualContextData))
+    }
+}
+
 /**
  * The script evaluation result value
  */
-sealed class ResultValue(val scriptInstance: Any? = null) {
+sealed class ResultValue(val scriptClass: KClass<*>? = null, val scriptInstance: Any? = null) {
 
     /**
      * The result value representing a script return value - the value of the last expression in the script
      * @param name assigned name of the result field - used e.g. in REPL
      * @param value actual result value
      * @param type name of the result type
+     * @param scriptClass the loaded class of the script
      * @param scriptInstance instance of the script class
      */
-    class Value(val name: String, val value: Any?, val type: String, scriptInstance: Any) : ResultValue(scriptInstance) {
+    class Value(val name: String, val value: Any?, val type: String, scriptClass: KClass<*>, scriptInstance: Any) :
+        ResultValue(scriptClass, scriptInstance) {
+
         override fun toString(): String = "$name: $type = $value"
     }
 
     /**
      * The result value representing unit result, e.g. when the script ends with a statement
+     * @param scriptClass the loaded class of the script
      * @param scriptInstance instance of the script class
      */
-    class Unit(scriptInstance: Any) : ResultValue(scriptInstance) {
+    class Unit(scriptClass: KClass<*>, scriptInstance: Any) : ResultValue(scriptClass, scriptInstance) {
         override fun toString(): String = "Unit"
     }
 
@@ -146,8 +163,9 @@ sealed class ResultValue(val scriptInstance: Any? = null) {
      * The result value representing an exception from script itself
      * @param error the actual exception thrown on script evaluation
      * @param wrappingException the wrapping exception e.g. InvocationTargetException, sometimes useful for calculating the relevant stacktrace
+     * @param scriptClass the loaded class of the script, if any
      */
-    class Error(val error: Throwable, val wrappingException: Throwable? = null) : ResultValue() {
+    class Error(val error: Throwable, val wrappingException: Throwable? = null, scriptClass: KClass<*>? = null) : ResultValue(scriptClass) {
         override fun toString(): String = error.toString()
     }
 

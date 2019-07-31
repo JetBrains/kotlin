@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.types.AbstractClassTypeConstructor
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 
 class DeserializedClassDescriptor(
@@ -52,7 +54,11 @@ class DeserializedClassDescriptor(
 
     private val staticScope = if (kind == ClassKind.ENUM_CLASS) StaticScopeForKotlinEnum(c.storageManager, this) else MemberScope.Empty
     private val typeConstructor = DeserializedClassTypeConstructor()
-    private val memberScope = DeserializedClassMemberScope()
+
+    private val memberScopeHolder =
+        ScopesHolderForClass.create(this, c.storageManager, c.components.kotlinTypeChecker.kotlinTypeRefiner, this::DeserializedClassMemberScope)
+
+    private val memberScope get() = memberScopeHolder.getScope(c.components.kotlinTypeChecker.kotlinTypeRefiner)
     private val enumEntries = if (kind == ClassKind.ENUM_CLASS) EnumEntryClassDescriptors() else null
 
     private val containingDeclaration = outerContext.containingDeclaration
@@ -98,7 +104,8 @@ class DeserializedClassDescriptor(
 
     override fun isExternal() = Flags.IS_EXTERNAL_CLASS.get(classProto.flags)
 
-    override fun getUnsubstitutedMemberScope(): MemberScope = memberScope
+    override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner): MemberScope =
+        memberScopeHolder.getScope(kotlinTypeRefiner)
 
     override fun getStaticScope() = staticScope
 
@@ -200,7 +207,7 @@ class DeserializedClassDescriptor(
             get() = SupertypeLoopChecker.EMPTY
     }
 
-    private inner class DeserializedClassMemberScope : DeserializedMemberScope(
+    private inner class DeserializedClassMemberScope(private val kotlinTypeRefiner: KotlinTypeRefiner) : DeserializedMemberScope(
         c, classProto.functionList, classProto.propertyList, classProto.typeAliasList,
         classProto.nestedClassNameList.map(c.nameResolver::getName).let { { it } } // workaround KT-13454
     ) {
@@ -208,6 +215,11 @@ class DeserializedClassDescriptor(
 
         private val allDescriptors = c.storageManager.createLazyValue {
             computeDescriptors(DescriptorKindFilter.ALL, MemberScope.ALL_NAME_FILTER, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
+        }
+
+        private val refinedSupertypes = c.storageManager.createLazyValue {
+            @UseExperimental(TypeRefinement::class)
+            kotlinTypeRefiner.refineSupertypes(classDescriptor)
         }
 
         override fun getContributedDescriptors(
@@ -226,7 +238,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredFunctions(name: Name, functions: MutableCollection<SimpleFunctionDescriptor>) {
             val fromSupertypes = ArrayList<SimpleFunctionDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in refinedSupertypes()) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedFunctions(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
 
@@ -240,7 +252,7 @@ class DeserializedClassDescriptor(
 
         override fun computeNonDeclaredProperties(name: Name, descriptors: MutableCollection<PropertyDescriptor>) {
             val fromSupertypes = ArrayList<PropertyDescriptor>()
-            for (supertype in classDescriptor.getTypeConstructor().supertypes) {
+            for (supertype in refinedSupertypes()) {
                 fromSupertypes.addAll(supertype.memberScope.getContributedVariables(name, NoLookupLocation.FOR_ALREADY_TRACKED))
             }
             generateFakeOverrides(name, fromSupertypes, descriptors)
@@ -252,7 +264,7 @@ class DeserializedClassDescriptor(
             result: MutableCollection<D>
         ) {
             val fromCurrent = ArrayList<CallableMemberDescriptor>(result)
-            OverridingUtil.generateOverridesInFunctionGroup(
+            c.components.kotlinTypeChecker.overridingUtil.generateOverridesInFunctionGroup(
                 name,
                 fromSupertypes,
                 fromCurrent,

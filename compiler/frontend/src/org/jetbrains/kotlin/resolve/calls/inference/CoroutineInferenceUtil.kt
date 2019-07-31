@@ -39,11 +39,13 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.TypeUtils.NO_EXPECTED_TYPE
-import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerContext
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 
@@ -64,6 +66,9 @@ class TypeTemplate(
 
     override fun render(renderer: DescriptorRenderer, options: DescriptorRendererOptions) =
         "~${renderer.renderType(typeVariable.type)}"
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this
 }
 
 class CoroutineInferenceData {
@@ -228,7 +233,7 @@ class CoroutineInferenceSupport(
         forceInferenceForArguments(context) { valueArgument: ValueArgument, kotlinType: KotlinType ->
             val argumentMatch = resultingCall.getArgumentMapping(valueArgument) as? ArgumentMatch ?: return@forceInferenceForArguments
 
-            with(NewKotlinTypeChecker) {
+            with(NewKotlinTypeChecker.Default) {
                 val parameterType = getEffectiveExpectedType(argumentMatch.valueParameter, valueArgument, context)
                 CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = false).isSubtypeOf(kotlinType.unwrap(), parameterType.unwrap())
             }
@@ -242,7 +247,7 @@ class CoroutineInferenceSupport(
                 false
 
         resultingCall.extensionReceiver?.let { actualReceiver ->
-            with(NewKotlinTypeChecker) {
+            with(NewKotlinTypeChecker.Default) {
                 CoroutineTypeCheckerContext(allowOnlyTrivialConstraints = allowOnlyTrivialConstraintsForReceiver).isSubtypeOf(
                     actualReceiver.type.unwrap(), extensionReceiver.value.type.unwrap()
                 )

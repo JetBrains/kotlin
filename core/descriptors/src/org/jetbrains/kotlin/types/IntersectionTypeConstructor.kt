@@ -19,8 +19,11 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.TypeIntersectionScope
+import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
+import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import java.util.*
 
 class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : TypeConstructor {
@@ -60,7 +63,19 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
         return intersectedTypes == other.intersectedTypes
     }
 
+    @UseExperimental(TypeRefinement::class)
+    fun createType(): SimpleType =
+        KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+            Annotations.EMPTY, this, listOf(), false, this.createScopeForKotlinType()
+        ) { kotlinTypeRefiner ->
+            this.refine(kotlinTypeRefiner).createType()
+        }
+
     override fun hashCode(): Int = hashCode
+
+    @TypeRefinement
+    override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) =
+        IntersectionTypeConstructor(intersectedTypes.map { it.refine(kotlinTypeRefiner) })
 }
 
 inline fun IntersectionTypeConstructor.transformComponents(

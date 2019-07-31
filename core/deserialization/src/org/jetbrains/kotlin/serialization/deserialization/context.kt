@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.storage.StorageManager
+import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 class DeserializationComponents(
     val storageManager: StorageManager,
@@ -46,7 +47,8 @@ class DeserializationComponents(
     val contractDeserializer: ContractDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
     val platformDependentDeclarationFilter: PlatformDependentDeclarationFilter = PlatformDependentDeclarationFilter.All,
-    val extensionRegistryLite: ExtensionRegistryLite
+    val extensionRegistryLite: ExtensionRegistryLite,
+    val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
 

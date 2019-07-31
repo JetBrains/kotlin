@@ -1,4 +1,4 @@
-// ERROR: Type inference failed: Not enough information to infer parameter E in constructor ArrayList<E : Any!>() Please specify it explicitly.
+// ERROR: Not enough information to infer type variable E
 package demo
 
 import java.util.ArrayList

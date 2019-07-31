@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.js.isJs
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.projectModel.*
+import org.jetbrains.kotlin.types.typeUtil.closure
 import java.io.File
 
 // allows to configure a test mpp project
@@ -74,9 +75,9 @@ fun AbstractMultiModuleTest.doSetup(projectModel: ProjectResolveModel) {
     }.toMap()
 
     for ((resolveModule, ideaModule) in resolveModulesToIdeaModules.entries) {
-        resolveModule.dependencies.forEach {
+        resolveModule.dependencies.closure(preserveOrder = true) { it.to.dependencies }.forEach {
             when (val to = it.to) {
-                FullJdk -> ConfigLibraryUtil.configureSdk(module, PluginTestCaseBase.addJdk(testRootDisposable) {
+                FullJdk -> ConfigLibraryUtil.configureSdk(ideaModule, PluginTestCaseBase.addJdk(testRootDisposable) {
                     PluginTestCaseBase.jdk(TestJdkKind.FULL_JDK)
                 })
 

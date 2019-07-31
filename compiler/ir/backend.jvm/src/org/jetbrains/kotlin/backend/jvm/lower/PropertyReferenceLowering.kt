@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
@@ -30,7 +29,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.createType
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
-import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -85,48 +83,18 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : Class
     private val kPropertiesFieldType =
         context.ir.symbols.array.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
 
-    // Return some declaration the parent of which is the containing class/package for the referenced property. This is
-    // a bit of a hack, as the reason for not returning the container itself is the `mapImplementationOwner` call below.
-    // TODO: move after LocalDeclarationsLowering and always use the getter/field? Can't move below ConstLowering
-    //       right now -- get() would not be optimized.
-    private val IrMemberAccessExpression.propertyContainerChild: IrDeclaration?
+    private val IrMemberAccessExpression.propertyContainer: IrDeclarationParent
         get() {
-            var current: IrDeclaration? = getter?.owner ?: field?.owner
-            while (current?.parent is IrFunction)
+            var current: IrDeclaration = getter?.owner ?: field?.owner ?: error("Property without getter or field: ${dump()}")
+            while (current.parent is IrFunction)
                 current = current.parent as IrFunction // Local delegated property.
-            return current
+            return current.parent
         }
 
-    // TODO: remove code duplication with CallableReferenceLowering
-    private val IrMemberAccessExpression.parentJavaClassReference
-        get() = IrClassReferenceImpl(
-            startOffset, endOffset,
-            context.ir.symbols.javaLangClass.typeWith(),
-            context.ir.symbols.javaLangClass,
-            // TODO: when the parent is an interface, this should map to DefaultImpls. However, that requires
-            //       moving this lowering below InterfaceLowering; see comment about the ordering above, though.
-            CrIrType(context.state.typeMapper.mapImplementationOwner(propertyContainerChild!!.descriptor))
-        )
-
-    private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression {
-        val parent = expression.propertyContainerChild?.parent
-        val context = this@PropertyReferenceLowering.context
-        return when {
-            // FileClassLowering creates a class to which all package-level declarations are moved. However, there
-            // can still be external declarations at the package level, which is why we check for both a file class
-            // and a package fragment.
-            parent is IrPackageFragment || (parent is IrClass && parent.origin == IrDeclarationOrigin.FILE_CLASS) ->
-                irCall(context.ir.symbols.getOrCreateKotlinPackage).apply {
-                    putValueArgument(0, expression.parentJavaClassReference)
-                    putValueArgument(1, irString(context.state.moduleName))
-                }
-            parent is IrClass ->
-                irCall(context.ir.symbols.getOrCreateKotlinClass).apply {
-                    putValueArgument(0, expression.parentJavaClassReference)
-                }
-            else -> throw AssertionError("referenced property not inside a class/package fragment")
+    private fun IrBuilderWithScope.buildReflectedContainerReference(expression: IrMemberAccessExpression): IrExpression =
+        with(CallableReferenceLowering) {
+            calculateOwner(expression.propertyContainer, this@PropertyReferenceLowering.context)
         }
-    }
 
     private fun IrClass.addOverride(method: IrSimpleFunction, buildBody: IrBuilderWithScope.(List<IrValueParameter>) -> IrExpression) =
         addFunction {

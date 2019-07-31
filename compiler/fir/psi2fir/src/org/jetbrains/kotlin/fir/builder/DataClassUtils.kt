@@ -44,17 +44,16 @@ fun List<Pair<KtParameter?, FirProperty>>.generateComponentFunctions(
                 isInfix = false, isInline = false,
                 isTailRec = false, isExternal = false,
                 isSuspend = false, receiverTypeRef = null,
-                returnTypeRef = FirImplicitTypeRefImpl(session, ktParameter)
+                returnTypeRef = FirImplicitTypeRefImpl(ktParameter)
             ).apply {
                 val componentFunction = this
                 body = FirSingleExpressionBlock(
-                    session,
                     FirReturnExpressionImpl(
-                        session, ktParameter,
-                        FirQualifiedAccessExpressionImpl(session, ktParameter).apply {
+                        ktParameter,
+                        FirQualifiedAccessExpressionImpl(ktParameter).apply {
                             val parameterName = firProperty.name
                             calleeReference = FirResolvedCallableReferenceImpl(
-                                session, ktParameter,
+                                ktParameter,
                                 parameterName, firProperty.symbol
                             )
                         }
@@ -92,14 +91,14 @@ fun List<Pair<KtParameter?, FirProperty>>.generateCopyFunction(
                 valueParameters += FirValueParameterImpl(
                     session, ktParameter, name,
                     firProperty.returnTypeRef,
-                    FirQualifiedAccessExpressionImpl(session, ktParameter).apply {
-                        calleeReference = FirResolvedCallableReferenceImpl(session, ktParameter, name, firProperty.symbol)
+                    FirQualifiedAccessExpressionImpl(ktParameter).apply {
+                        calleeReference = FirResolvedCallableReferenceImpl(ktParameter, name, firProperty.symbol)
                     },
                     isCrossinline = false, isNoinline = false, isVararg = false
                 )
             }
 
-            body = FirEmptyExpressionBlock(session)
+            body = FirEmptyExpressionBlock()
 //            body = FirSingleExpressionBlock(
 //                session,
 //                FirReturnExpressionImpl(

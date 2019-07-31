@@ -8,16 +8,14 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
 class FirCallableReferenceAccessImpl(
-    session: FirSession,
     psi: PsiElement?
-) : FirCallableReferenceAccess(session, psi), FirModifiableQualifiedAccess<FirReference> {
+) : FirCallableReferenceAccess(psi), FirModifiableQualifiedAccess<FirReference> {
     override lateinit var calleeReference: FirReference
 
     override var explicitReceiver: FirExpression? = null

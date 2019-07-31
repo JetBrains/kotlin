@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.nj2k.conversions
 
 import org.jetbrains.kotlin.nj2k.*
+import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKFieldAccessExpressionImpl
-import org.jetbrains.kotlin.nj2k.tree.impl.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 

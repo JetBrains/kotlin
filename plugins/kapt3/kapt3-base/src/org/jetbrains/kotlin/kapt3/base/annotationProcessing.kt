@@ -13,7 +13,9 @@ import com.sun.tools.javac.processing.JavacFiler
 import com.sun.tools.javac.processing.JavacProcessingEnvironment
 import com.sun.tools.javac.tree.JCTree
 import org.jetbrains.kotlin.base.kapt3.KaptFlag
-import org.jetbrains.kotlin.kapt3.base.incremental.*
+import org.jetbrains.kotlin.kapt3.base.incremental.GeneratedTypesTaskListener
+import org.jetbrains.kotlin.kapt3.base.incremental.IncrementalProcessor
+import org.jetbrains.kotlin.kapt3.base.incremental.MentionedTypesTaskListener
 import org.jetbrains.kotlin.kapt3.base.util.KaptBaseError
 import org.jetbrains.kotlin.kapt3.base.util.isJava9OrLater
 import org.jetbrains.kotlin.kapt3.base.util.measureTimeMillisWithResult
@@ -51,7 +53,7 @@ fun KaptContext.doAnnotationProcessing(
         val parsedJavaFiles = parseJavaFiles(javaSourceFiles)
 
         val sourcesStructureListener = cacheManager?.let {
-            if (processors.any { it.kind == DeclaredProcType.NON_INCREMENTAL }) return@let null
+            if (processors.any { it.isUnableToRunIncrementally() }) return@let null
 
             val recordTypesListener = MentionedTypesTaskListener(cacheManager.javaCache, processingEnvironment.elementUtils, Trees.instance(processingEnvironment))
             compiler.getTaskListeners().add(recordTypesListener)
@@ -89,13 +91,15 @@ fun KaptContext.doAnnotationProcessing(
                 logger.info("Analyzing sources structure took ${it.time}[ms].")
             }
         }
-        if (cacheManager != null && processors.any { it.getRuntimeType() == RuntimeProcType.NON_INCREMENTAL }) {
-            val nonIncremental =
-                processors.filter { it.getRuntimeType() == RuntimeProcType.NON_INCREMENTAL }.map { it.processorName }
-            logger.warn(
-                "Incremental annotation processing requested, but support is disabled because the following " +
-                        "processors are not incremental: ${nonIncremental.joinToString()}."
-            )
+        if (cacheManager != null) {
+            val missingIncrementalSupport = processors.filter { it.isMissingIncrementalSupport() }
+            if (missingIncrementalSupport.isNotEmpty()) {
+                val nonIncremental = missingIncrementalSupport.map { "${it.processorName} (${it.incrementalSupportType})" }
+                logger.warn(
+                    "Incremental annotation processing requested, but support is disabled because the following " +
+                            "processors are not incremental: ${nonIncremental.joinToString()}."
+                )
+            }
         }
 
         val log = compilerAfterAP.log

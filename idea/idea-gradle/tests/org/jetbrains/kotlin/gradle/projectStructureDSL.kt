@@ -204,11 +204,18 @@ class ModuleInfo(
         expectedDependencyNames += moduleEntry.presentableName
     }
 
-    fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>) {
+    private val ANY_PACKAGE_PREFIX = "any_package_prefix"
+
+    fun sourceFolder(pathInProject: String, rootType: JpsModuleSourceRootType<*>, packagePrefix: String? = ANY_PACKAGE_PREFIX) {
         val sourceFolder = sourceFolderByPath[pathInProject]
         if (sourceFolder == null) {
             projectInfo.messageCollector.report("Module '${module.name}': No source folder found: '$pathInProject'")
             return
+        }
+        if (packagePrefix != ANY_PACKAGE_PREFIX && sourceFolder.packagePrefix != packagePrefix) {
+            projectInfo.messageCollector.report(
+                "Module '${module.name}', source root '$pathInProject': Expected package prefix $packagePrefix doesn't match the actual one: ${sourceFolder.packagePrefix}"
+            )
         }
         expectedSourceRoots += pathInProject
         val actualRootType = sourceFolder.rootType

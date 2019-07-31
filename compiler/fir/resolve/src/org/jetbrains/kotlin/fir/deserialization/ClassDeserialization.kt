@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.impl.FirClassImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirEnumEntryImpl
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
@@ -45,7 +46,7 @@ fun deserializeClassToSymbol(
         Flags.IS_DATA.get(classProto.flags),
         Flags.IS_INLINE_CLASS.get(classProto.flags)
     ).apply {
-
+        resolvePhase = FirResolvePhase.DECLARATIONS
         val context =
             parentContext?.childContext(
                 classProto.typeParameterList,
@@ -68,7 +69,7 @@ fun deserializeClassToSymbol(
 
         superTypesDeserialized.mapNotNullTo(superTypeRefs) {
             if (it == null) return@mapNotNullTo null
-            FirResolvedTypeRefImpl(session, null, it)
+            FirResolvedTypeRefImpl(null, it)
         }
 
         addDeclarations(classProto.functionList.map(classDeserializer::loadFunction))
@@ -94,8 +95,8 @@ fun deserializeClassToSymbol(
 
                 val symbol = FirClassSymbol(enumEntryId)
                 FirEnumEntryImpl(session, null, symbol, enumEntryId.shortClassName).apply {
+                    resolvePhase = FirResolvePhase.DECLARATIONS
                     superTypeRefs += FirResolvedTypeRefImpl(
-                        session,
                         null,
                         ConeClassTypeImpl(ConeClassLikeLookupTagImpl(classId), emptyArray(), false),
                         emptyList()

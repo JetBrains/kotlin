@@ -1,0 +1,12 @@
+FILE: main.kt
+    public final fun main(): R|kotlin/Unit| {
+        R|/callMe|()
+        R|/foo|()
+        R|/bar|(Int(1), Int(2))
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        lval y: <implicit> = Double(2.0)
+    }
+    public final fun bar(x: R|kotlin/Int|, y: R|kotlin/Int|): R|kotlin/Int| {
+        ^bar R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)
+    }

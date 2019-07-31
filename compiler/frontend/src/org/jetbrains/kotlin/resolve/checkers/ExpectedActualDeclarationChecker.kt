@@ -143,7 +143,9 @@ class ExpectedActualDeclarationChecker(
             trace.report(Errors.AMBIGUOUS_ACTUALS.on(
                 reportOn,
                 descriptor,
-                atLeastWeaklyCompatibleActuals.map { DescriptorUtils.getContainingSourceFile(it).let { it.name ?: it.toString() } }
+                atLeastWeaklyCompatibleActuals
+                    .map { DescriptorUtils.getContainingSourceFile(it).let { it.name ?: it.toString() } }
+                    .sorted()
             ))
         }
     }
@@ -304,6 +306,7 @@ class ExpectedActualDeclarationChecker(
             .map { (_, members) -> members }
             .flatten()
             .map { DescriptorUtils.getContainingSourceFile(it).let { it.name ?: it.toString() } }
+            .sorted()
             .toList()
 
         if (filesWithAtLeastWeaklyCompatibleExpects.size > 1) {
