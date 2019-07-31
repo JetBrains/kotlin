@@ -72,7 +72,7 @@ public class CreateFileAction extends CreateElementActionBase implements DumbAwa
       }
     }
     else {
-      if (Experiments.isFeatureEnabled("show.create.new.element.in.popup")) {
+      if (Experiments.getInstance().isFeatureEnabled("show.create.new.element.in.popup")) {
         createLightWeightPopup(validator, elementsConsumer).showCenteredInCurrentWindow(project);
       }
       else {

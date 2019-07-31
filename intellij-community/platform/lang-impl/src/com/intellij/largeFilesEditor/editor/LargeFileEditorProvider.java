@@ -16,8 +16,7 @@ import com.intellij.psi.SingleRootFileViewProvider;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class LargeFileEditorProvider implements DefaultPlatformFileEditorProvider, DumbAware {
-
+public final class LargeFileEditorProvider implements DefaultPlatformFileEditorProvider, DumbAware {
   public static final String PROVIDER_ID = "LargeFileEditorProvider";
 
   private static final String CARET_PAGE_NUMBER_ATTR = "caret-page-number";
@@ -27,7 +26,7 @@ public class LargeFileEditorProvider implements DefaultPlatformFileEditorProvide
   public boolean accept(@NotNull Project project, @NotNull VirtualFile file) {
     return TextEditorProvider.isTextFile(file)
            && SingleRootFileViewProvider.isTooLargeForContentLoading(file)
-           && (Experiments.isFeatureEnabled("new.large.text.file.viewer")
+           && (Experiments.getInstance().isFeatureEnabled("new.large.text.file.viewer")
                && !file.getFileType().isBinary()
                && file.isInLocalFileSystem());
   }
