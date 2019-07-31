@@ -35,6 +35,9 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
   private static final int REFRESH_INTERVAL = 1000;
 
+  protected static final String CURRENT_DIRECTORY_REF = ".";
+  protected static final String PARENT_DIRECTORY_REF = "..";
+
   protected final String myNewFileName;
   protected final List<TargetDirectory> myDirectories;
   protected final String[] mySubPath;
@@ -107,6 +110,13 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
   protected abstract void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException;
 
   protected static PsiDirectory findOrCreateSubdirectory(PsiDirectory directory, String subDirectoryName) {
+    if (CURRENT_DIRECTORY_REF.equals(subDirectoryName)) {
+      return directory;
+    }
+    if (PARENT_DIRECTORY_REF.equals(subDirectoryName)) {
+      return directory.getParentDirectory();
+    }
+
     PsiDirectory existingDirectory = directory.findSubdirectory(subDirectoryName);
     if (existingDirectory == null) {
       return directory.createSubdirectory(subDirectoryName);
