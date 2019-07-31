@@ -312,8 +312,7 @@ internal class Llvm(val context: Context, val llvmModule: LLVMModuleRef) {
         val result = LLVMAddFunction(llvmModule, name, type)!!
         attributes.forEach {
             val kindId = getLlvmAttributeKindId(it)
-            val attribute = LLVMCreateEnumAttribute(LLVMGetTypeContext(type), kindId, 0)!!
-            LLVMAddAttributeAtIndex(result, LLVMAttributeFunctionIndex, attribute)
+            addLlvmFunctionEnumAttribute(result, kindId)
         }
         return result
     }

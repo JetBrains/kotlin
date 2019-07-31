@@ -121,12 +121,12 @@ extern "C" {
 
 // TODO: this implementation is just a hack, e.g. the result is inexact;
 // however it is better to have an inexact stacktrace than not to have any.
-OBJ_GETTER0(GetCurrentStackTrace) {
+NO_INLINE OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
 #if OMIT_BACKTRACE
   return AllocArrayInstance(theNativePtrArrayTypeInfo, 0, OBJ_RESULT);
 #else
-  // Skips first 3 elements as irrelevant.
-  constexpr int kSkipFrames = 3;
+  // Skips first 2 elements as irrelevant: this function and primary Throwable constructor.
+  constexpr int kSkipFrames = 2;
 #if USE_GCC_UNWIND
   int depth = 0;
   _Unwind_Backtrace(depthCountCallback, &depth);

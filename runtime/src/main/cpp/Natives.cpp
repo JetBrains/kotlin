@@ -39,10 +39,6 @@ KInt Kotlin_Any_hashCode(KConstRef thiz) {
   return reinterpret_cast<uintptr_t>(thiz);
 }
 
-OBJ_GETTER0(Kotlin_getCurrentStackTrace) {
-  RETURN_RESULT_OF0(GetCurrentStackTrace);
-}
-
 OBJ_GETTER(Kotlin_getStackTraceStrings, KConstRef stackTrace) {
   RETURN_RESULT_OF(GetStackTraceStrings, stackTrace);
 }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -366,8 +365,9 @@ private class DeclarationsGeneratorVisitor(override val context: Context) :
                 "kfun:" + qualifyInternalName(declaration)
             }
             val function = LLVMAddFunction(context.llvmModule, symbolName, llvmFunctionType)!!
-            if (declaration.returnType.isNothing())
-                setFunctionNoReturn(function)
+
+            addLlvmAttributes(context, declaration, function)
+
             function
         }
 
