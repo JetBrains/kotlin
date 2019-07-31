@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
 class ClassWrapper(
-    private val session: FirSession,
     private val className: Name,
     private val modifiers: Modifier,
     private val classKind: ClassKind,
@@ -63,7 +61,6 @@ class ClassWrapper(
         )
 
         return FirUserTypeRefImpl(
-            session,
             null,
             false
         ).apply {

@@ -9,42 +9,29 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
 import com.intellij.psi.tree.TokenSet
 import org.jetbrains.kotlin.KtNodeType
-import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtNodeTypes.*
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.fir.FirFunctionTarget
-import org.jetbrains.kotlin.fir.FirLabel
-import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.builder.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.builder.generateResolvedAccessExpression
-import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterContainer
+import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.FirVariableImpl
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirVariable
+import org.jetbrains.kotlin.fir.expressions.impl.FirBlockImpl
+import org.jetbrains.kotlin.fir.expressions.impl.FirCallWithArgumentList
+import org.jetbrains.kotlin.fir.expressions.impl.FirComponentCallImpl
 import org.jetbrains.kotlin.fir.lightTree.fir.DestructuringDeclaration
 import org.jetbrains.kotlin.fir.lightTree.fir.TypeConstraint
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
-import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
-import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
-import org.jetbrains.kotlin.fir.symbols.CallableId
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
-import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.parsing.KotlinExpressionParsing
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
-import org.jetbrains.kotlin.types.Variance
 
 private val expressionSet = listOf(
     REFERENCE_EXPRESSION,
@@ -93,6 +80,7 @@ fun FirTypeParameterContainer.joinTypeParameters(typeConstraints: List<TypeConst
                 typeParameter.annotations += typeConstraint.firTypeRef.annotations
                 typeParameter.annotations += typeConstraint.annotations
             }
+            (typeParameter as FirTypeParameterImpl).addDefaultBoundIfNecessary()
         }
     }
 }
@@ -131,7 +119,7 @@ fun generateDestructuringBlock(
     container: FirVariable<*>,
     tmpVariable: Boolean
 ): FirExpression {
-    return FirBlockImpl(session, null).apply {
+    return FirBlockImpl(null).apply {
         if (tmpVariable) {
             statements += container
         }
@@ -140,7 +128,7 @@ fun generateDestructuringBlock(
             statements += FirVariableImpl(
                 session, null, entry.name,
                 entry.returnTypeRef, isVar,
-                FirComponentCallImpl(session, null, index + 1, generateResolvedAccessExpression(session, null, container)),
+                FirComponentCallImpl(null, index + 1, generateResolvedAccessExpression(null, container)),
                 FirVariableSymbol(entry.name) // TODO?
             ).apply {
                 annotations += entry.annotations

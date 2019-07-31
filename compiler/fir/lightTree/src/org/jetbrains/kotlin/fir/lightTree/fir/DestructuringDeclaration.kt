@@ -7,10 +7,8 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.generateTemporaryVariable
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirVariable
-import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
 import org.jetbrains.kotlin.fir.lightTree.converter.generateDestructuringBlock
 
 data class DestructuringDeclaration(

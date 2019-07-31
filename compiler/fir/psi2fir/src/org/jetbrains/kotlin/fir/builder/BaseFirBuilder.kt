@@ -46,10 +46,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 //T can be either PsiElement, or LighterASTNode
 abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context = Context()) {
 
-    protected val implicitUnitType = FirImplicitUnitTypeRef(session, null)
-    protected val implicitAnyType = FirImplicitAnyTypeRef(session, null)
-    protected val implicitEnumType = FirImplicitEnumTypeRef(session, null)
-    protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(session, null)
+    protected val implicitUnitType = FirImplicitUnitTypeRef(null)
+    protected val implicitAnyType = FirImplicitAnyTypeRef(null)
+    protected val implicitEnumType = FirImplicitEnumTypeRef(null)
+    protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(null)
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String
@@ -100,7 +100,6 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
 
     fun FirExpression.toReturn(basePsi: PsiElement? = psi, labelName: String? = null): FirReturnExpression {
         return FirReturnExpressionImpl(
-            this@BaseFirBuilder.session,
             basePsi,
             this
         ).apply {
@@ -138,10 +137,10 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         val typeParameters = firClass.typeParameters.map {
             FirTypeParameterImpl(session, it.psi, FirTypeParameterSymbol(), it.name, Variance.INVARIANT, false).apply {
                 this.bounds += it.bounds
+                addDefaultBoundIfNecessary()
             }
         }
         return FirResolvedTypeRefImpl(
-            session,
             this,
             ConeClassTypeImpl(
                 firClass.symbol.toLookupTag(),
@@ -162,8 +161,8 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         return this.convert("No operand").generateNotNullOrOther(
             session,
             FirThrowExpressionImpl(
-                session, parent.getPsiOrNull(), FirFunctionCallImpl(session, parent.getPsiOrNull()).apply {
-                    calleeReference = FirSimpleNamedReference(this@BaseFirBuilder.session, parent, KNPE)
+                parent.getPsiOrNull(), FirFunctionCallImpl(parent.getPsiOrNull()).apply {
+                    calleeReference = FirSimpleNamedReference(parent, KNPE)
                 }
             ), "bangbang", parent
         )
@@ -185,7 +184,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
             if (lastLoop != null) {
                 target.bind(lastLoop)
             } else {
-                target.bind(FirErrorLoop(this@BaseFirBuilder.session, expression.getPsiOrNull(), "Cannot bind unlabeled jump to a loop"))
+                target.bind(FirErrorLoop(expression.getPsiOrNull(), "Cannot bind unlabeled jump to a loop"))
             }
         } else {
             for (firLoop in context.firLoops.asReversed()) {
@@ -194,7 +193,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     return this
                 }
             }
-            target.bind(FirErrorLoop(this@BaseFirBuilder.session, expression.getPsiOrNull(), "Cannot bind label $labelName to a loop"))
+            target.bind(FirErrorLoop(expression.getPsiOrNull(), "Cannot bind label $labelName to a loop"))
         }
         return this
     }
@@ -219,34 +218,34 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                             convertedText > Int.MAX_VALUE || convertedText < Int.MIN_VALUE)
                 ) {
                     FirConstExpressionImpl(
-                        session, expression.getPsiOrNull(), IrConstKind.Long, convertedText, "Incorrect long: $text"
+                        expression.getPsiOrNull(), IrConstKind.Long, convertedText, "Incorrect long: $text"
                     )
                 } else if (convertedText is Number) {
                     // TODO: support byte / short
                     FirConstExpressionImpl(
-                        session, expression.getPsiOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text"
+                        expression.getPsiOrNull(), IrConstKind.Int, convertedText.toInt(), "Incorrect int: $text"
                     )
                 } else {
-                    FirErrorExpressionImpl(session, expression.getPsiOrNull(), reason = "Incorrect constant expression: $text")
+                    FirErrorExpressionImpl(expression.getPsiOrNull(), reason = "Incorrect constant expression: $text")
                 }
             FLOAT_CONSTANT ->
                 if (convertedText is Float) {
                     FirConstExpressionImpl(
-                        session, expression.getPsiOrNull(), IrConstKind.Float, convertedText, "Incorrect float: $text"
+                        expression.getPsiOrNull(), IrConstKind.Float, convertedText, "Incorrect float: $text"
                     )
                 } else {
                     FirConstExpressionImpl(
-                        session, expression.getPsiOrNull(), IrConstKind.Double, convertedText as Double, "Incorrect double: $text"
+                        expression.getPsiOrNull(), IrConstKind.Double, convertedText as Double, "Incorrect double: $text"
                     )
                 }
             CHARACTER_CONSTANT ->
                 FirConstExpressionImpl(
-                    session, expression.getPsiOrNull(), IrConstKind.Char, text.parseCharacter(), "Incorrect character: $text"
+                    expression.getPsiOrNull(), IrConstKind.Char, text.parseCharacter(), "Incorrect character: $text"
                 )
             BOOLEAN_CONSTANT ->
-                FirConstExpressionImpl(session, expression.getPsiOrNull(), IrConstKind.Boolean, convertedText as Boolean)
+                FirConstExpressionImpl(expression.getPsiOrNull(), IrConstKind.Boolean, convertedText as Boolean)
             NULL ->
-                FirConstExpressionImpl(session, expression.getPsiOrNull(), IrConstKind.Null, null)
+                FirConstExpressionImpl(expression.getPsiOrNull(), IrConstKind.Null, null)
             else ->
                 throw AssertionError("Unknown literal type: $type, $text")
         }
@@ -267,11 +266,11 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 OPEN_QUOTE, CLOSING_QUOTE -> continue@L
                 LITERAL_STRING_TEMPLATE_ENTRY -> {
                     sb.append(entry.asText)
-                    FirConstExpressionImpl(session, entry.getPsiOrNull(), IrConstKind.String, entry.asText)
+                    FirConstExpressionImpl(entry.getPsiOrNull(), IrConstKind.String, entry.asText)
                 }
                 ESCAPE_STRING_TEMPLATE_ENTRY -> {
                     sb.append(entry.unescapedValue)
-                    FirConstExpressionImpl(session, entry.getPsiOrNull(), IrConstKind.String, entry.unescapedValue)
+                    FirConstExpressionImpl(entry.getPsiOrNull(), IrConstKind.String, entry.unescapedValue)
                 }
                 SHORT_STRING_TEMPLATE_ENTRY, LONG_STRING_TEMPLATE_ENTRY -> {
                     hasExpressions = true
@@ -280,7 +279,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 else -> {
                     hasExpressions = true
                     FirErrorExpressionImpl(
-                        session, entry.getPsiOrNull(), "Incorrect template entry: ${entry.asText}"
+                        entry.getPsiOrNull(), "Incorrect template entry: ${entry.asText}"
                     )
                 }
             }
@@ -291,14 +290,14 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
                 else -> {
                     callCreated = true
-                    FirStringConcatenationCallImpl(session, base).apply {
+                    FirStringConcatenationCallImpl(base).apply {
                         arguments += result!!
                         arguments += nextArgument
                     }
                 }
             }
         }
-        return if (hasExpressions) result!! else FirConstExpressionImpl(session, base, IrConstKind.String, sb.toString())
+        return if (hasExpressions) result!! else FirConstExpressionImpl(base, IrConstKind.String, sb.toString())
     }
 
     /**
@@ -333,22 +332,22 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         convert: T.() -> FirExpression
     ): FirExpression {
         if (argument == null) {
-            return FirErrorExpressionImpl(session, argument, "Inc/dec without operand")
+            return FirErrorExpressionImpl(argument, "Inc/dec without operand")
         }
-        return FirBlockImpl(session, baseExpression).apply {
+        return FirBlockImpl(baseExpression).apply {
             val tempName = Name.special("<unary>")
             val temporaryVariable = generateTemporaryVariable(this@BaseFirBuilder.session, baseExpression, tempName, argument.convert())
             statements += temporaryVariable
             val resultName = Name.special("<unary-result>")
-            val resultInitializer = FirFunctionCallImpl(this@BaseFirBuilder.session, baseExpression).apply {
-                this.calleeReference = FirSimpleNamedReference(this@BaseFirBuilder.session, baseExpression?.operationReference, callName)
-                this.explicitReceiver = generateResolvedAccessExpression(this@BaseFirBuilder.session, baseExpression, temporaryVariable)
+            val resultInitializer = FirFunctionCallImpl(baseExpression).apply {
+                this.calleeReference = FirSimpleNamedReference(baseExpression?.operationReference, callName)
+                this.explicitReceiver = generateResolvedAccessExpression(baseExpression, temporaryVariable)
             }
             val resultVar = generateTemporaryVariable(this@BaseFirBuilder.session, baseExpression, resultName, resultInitializer)
             val assignment = argument.generateAssignment(
                 baseExpression,
                 if (prefix && argument.elementType != REFERENCE_EXPRESSION)
-                    generateResolvedAccessExpression(this@BaseFirBuilder.session, baseExpression, resultVar)
+                    generateResolvedAccessExpression(baseExpression, resultVar)
                 else
                     resultInitializer,
                 FirOperation.ASSIGN, convert
@@ -366,14 +365,14 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 if (argument.elementType != REFERENCE_EXPRESSION) {
                     statements += resultVar
                     appendAssignment()
-                    statements += generateResolvedAccessExpression(this@BaseFirBuilder.session, baseExpression, resultVar)
+                    statements += generateResolvedAccessExpression(baseExpression, resultVar)
                 } else {
                     appendAssignment()
-                    statements += generateAccessExpression(this@BaseFirBuilder.session, baseExpression, argument.getReferencedNameAsName())
+                    statements += generateAccessExpression(baseExpression, argument.getReferencedNameAsName())
                 }
             } else {
                 appendAssignment()
-                statements += generateResolvedAccessExpression(this@BaseFirBuilder.session, baseExpression, temporaryVariable)
+                statements += generateResolvedAccessExpression(baseExpression, temporaryVariable)
             }
         }
     }
@@ -386,10 +385,10 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         if (left != null) {
             when (tokenType) {
                 REFERENCE_EXPRESSION -> {
-                    return FirSimpleNamedReference(this@BaseFirBuilder.session, left.getPsiOrNull(), left.getReferencedNameAsName())
+                    return FirSimpleNamedReference(left.getPsiOrNull(), left.getReferencedNameAsName())
                 }
                 THIS_EXPRESSION -> {
-                    return FirExplicitThisReference(this@BaseFirBuilder.session, left.getPsiOrNull(), left.getLabelName())
+                    return FirExplicitThisReference(left.getPsiOrNull(), left.getLabelName())
                 }
                 DOT_QUALIFIED_EXPRESSION, SAFE_ACCESS_EXPRESSION -> {
                     val firMemberAccess = left.convertQualified()
@@ -399,7 +398,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                         firMemberAccess.calleeReference
                     } else {
                         FirErrorNamedReference(
-                            this@BaseFirBuilder.session, left.getPsiOrNull(), "Unsupported qualified LValue: ${left.asText}"
+                            left.getPsiOrNull(), "Unsupported qualified LValue: ${left.asText}"
                         )
                     }
                 }
@@ -408,7 +407,7 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                 }
             }
         }
-        return FirErrorNamedReference(this@BaseFirBuilder.session, left.getPsiOrNull(), "Unsupported LValue: $tokenType")
+        return FirErrorNamedReference(left.getPsiOrNull(), "Unsupported LValue: $tokenType")
     }
 
     fun T?.generateAssignment(
@@ -424,12 +423,12 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
         if (tokenType == ARRAY_ACCESS_EXPRESSION) {
             val firArrayAccess = this!!.convert() as FirFunctionCallImpl
             val arraySet = if (operation != FirOperation.ASSIGN) {
-                FirArraySetCallImpl(session, psi, value, operation).apply {
+                FirArraySetCallImpl(psi, value, operation).apply {
                     indexes += firArrayAccess.arguments
                 }
             } else {
                 return firArrayAccess.apply {
-                    calleeReference = FirSimpleNamedReference(this@BaseFirBuilder.session, psi, OperatorNameConventions.SET)
+                    calleeReference = FirSimpleNamedReference(psi, OperatorNameConventions.SET)
                     arguments += value
                 }
             }
@@ -439,31 +438,32 @@ abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context =
                     lValue = initializeLValue(arrayExpression) { convert() as? FirQualifiedAccess }
                 }
             }
-            return FirBlockImpl(session, arrayExpression).apply {
+            val psiArrayExpression = firArrayAccess.explicitReceiver?.psi
+            return FirBlockImpl(psiArrayExpression).apply {
                 val name = Name.special("<array-set>")
                 statements += generateTemporaryVariable(
                     this@BaseFirBuilder.session, this@generateAssignment.getPsiOrNull(), name, firArrayAccess.explicitReceiver!!
                 )
-                statements += arraySet.apply { lValue = FirSimpleNamedReference(this@BaseFirBuilder.session, arrayExpression, name) }
+                statements += arraySet.apply { lValue = FirSimpleNamedReference(psiArrayExpression, name) }
             }
         }
         if (operation != FirOperation.ASSIGN &&
             tokenType != REFERENCE_EXPRESSION && tokenType != THIS_EXPRESSION &&
             ((tokenType != DOT_QUALIFIED_EXPRESSION && tokenType != SAFE_ACCESS_EXPRESSION) || this.selectorExpression?.elementType != REFERENCE_EXPRESSION)
         ) {
-            return FirBlockImpl(session, this.getPsiOrNull()).apply {
+            return FirBlockImpl(this.getPsiOrNull()).apply {
                 val name = Name.special("<complex-set>")
                 statements += generateTemporaryVariable(
                     this@BaseFirBuilder.session, this@generateAssignment.getPsiOrNull(), name,
                     this@generateAssignment?.convert()
-                        ?: FirErrorExpressionImpl(this@BaseFirBuilder.session, this.getPsiOrNull(), "No LValue in assignment")
+                        ?: FirErrorExpressionImpl(this.getPsiOrNull(), "No LValue in assignment")
                 )
-                statements += FirVariableAssignmentImpl(this@BaseFirBuilder.session, psi, value, operation).apply {
-                    lValue = FirSimpleNamedReference(this@BaseFirBuilder.session, this.getPsiOrNull(), name)
+                statements += FirVariableAssignmentImpl(psi, value, operation).apply {
+                    lValue = FirSimpleNamedReference(this.getPsiOrNull(), name)
                 }
             }
         }
-        return FirVariableAssignmentImpl(session, psi, value, operation).apply {
+        return FirVariableAssignmentImpl(psi, value, operation).apply {
             lValue = initializeLValue(this@generateAssignment) { convert() as? FirQualifiedAccess }
         }
     }
