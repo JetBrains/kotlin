@@ -90,6 +90,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -2384,7 +2385,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private class FileIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
     private final IndexConfiguration state = new IndexConfiguration();
-    private final AtomicBoolean versionChanged = new AtomicBoolean();
+    private final Set<ID> versionChangedIndexes = ContainerUtil.newConcurrentSet();
     private boolean currentVersionCorrupted;
     private SerializationManagerEx mySerializationManagerEx;
 
@@ -2417,7 +2418,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
         addNestedInitializationTask(() -> {
           try {
-            versionChanged.compareAndSet(false, registerIndexer(extension, state));
+            if (registerIndexer(extension, state)) {
+              versionChangedIndexes.add(extension.getName());
+            }
           }
           catch (IOException io) {
             throw io;
@@ -2468,8 +2471,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         if (currentVersionCorrupted) {
           rebuildNotification = "Index files on disk are corrupted. Indices will be rebuilt.";
         }
-        else if (versionChanged.get()) {
-          rebuildNotification = "Index file format has changed for some indices. These indices will be rebuilt.";
+        else if (!versionChangedIndexes.isEmpty()) {
+          String changedIndexesText = versionChangedIndexes.stream().map(id -> id.getName()).collect(Collectors.joining(", "));
+          rebuildNotification = "Index file format has changed for " + changedIndexesText + " indices. These indices will be rebuilt.";
         }
         if (rebuildNotification != null
             && !ApplicationManager.getApplication().isHeadlessEnvironment()
