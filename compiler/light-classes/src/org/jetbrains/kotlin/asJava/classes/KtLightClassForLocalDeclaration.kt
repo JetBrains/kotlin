@@ -35,9 +35,12 @@ open class KtLightClassForLocalDeclaration(
         KotlinClassInnerStuffCache(
             this,
             with(KotlinModificationTrackerService.getInstance(classOrObject.project)) {
-                listOf(
-                    outOfBlockModificationTracker, fileModificationTracker(classOrObject.containingKtFile)
-                )
+                val file = classOrObject.containingFile
+                if (file is KtFile) {
+                    listOf(outOfBlockModificationTracker, fileModificationTracker(file))
+                } else {
+                    listOf(outOfBlockModificationTracker)
+                }
             }
         )
 

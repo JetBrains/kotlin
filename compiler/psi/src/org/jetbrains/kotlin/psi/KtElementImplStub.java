@@ -67,7 +67,8 @@ public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiEle
     @Override
     public KtFile getContainingKtFile() {
         PsiFile file = getContainingFile();
-        if(!(file instanceof KtFile))  {
+        if (!(file instanceof KtFile)) {
+            // KtElementImpl.copy() might be the reason for this exception
             String fileString = file.isValid() ? file.getText() : "";
             throw new IllegalStateException("KtElement not inside KtFile: " + file + fileString +
                                             "for element " + this + " of type " + this.getClass() + " node = " + getNode());
