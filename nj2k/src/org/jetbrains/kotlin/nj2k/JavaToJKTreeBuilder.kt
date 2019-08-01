@@ -134,14 +134,16 @@ class JavaToJKTreeBuilder constructor(
                 )
                 is PsiPolyadicExpression -> JKJavaPolyadicExpressionImpl(
                     operands.map { it.toJK() },
-                    Array(operands.lastIndex) { getTokenBeforeOperand(operands[it + 1]) }.map { it?.tokenType?.toJK() ?: TODO() }
+                    Array(operands.lastIndex) { index ->
+                        getTokenBeforeOperand(operands[index + 1])
+                    }.map {
+                        it?.tokenType?.toJK() ?: throwCanNotConvertError()
+                    }
                 )
                 is PsiArrayInitializerExpression -> toJK()
                 is PsiLambdaExpression -> toJK()
                 is PsiClassObjectAccessExpressionImpl -> toJK()
-                else -> {
-                    throw RuntimeException("Not supported: ${this::class}")
-                }
+                else -> throwCanNotConvertError()
             }.also {
                 if (this != null) {
                     (it as PsiOwner).psi = this
@@ -275,7 +277,7 @@ class JavaToJKTreeBuilder constructor(
                     val callee = when ((methodExpression.referenceNameElement as PsiKeyword).tokenType) {
                         SUPER_KEYWORD -> JKSuperExpressionImpl()
                         THIS_KEYWORD -> JKThisExpressionImpl(JKLabelEmptyImpl())
-                        else -> error("Unknown keyword in callee position")
+                        else -> throwCanNotConvertError("unknown keyword in callee position")
                     }
                     JKDelegationConstructorCallImpl(symbol as JKMethodSymbol, callee, arguments.toJK())
                 }
@@ -332,7 +334,7 @@ class JavaToJKTreeBuilder constructor(
                                         JKJavaOperatorImpl.tokenToOperator[JavaTokenType.EQ]!!
                                     )
                                 }
-                                else -> TODO()
+                                else -> throwCanNotConvertError("expected getter or setter call")
                             }
                         }
 
@@ -351,7 +353,7 @@ class JavaToJKTreeBuilder constructor(
                         .qualified(qualifier)
                 symbol is JKFieldSymbol ->
                     JKFieldAccessExpressionImpl(symbol).qualified(qualifier)
-                else -> TODO(text)
+                else -> throwCanNotConvertError("unexpected symbol ${symbol::class}")
             }.also {
                 it.assignNonCodeElements(this)
             }
@@ -397,7 +399,7 @@ class JavaToJKTreeBuilder constructor(
                 is JKClassSymbol -> JKClassAccessExpressionImpl(symbol)
                 is JKFieldSymbol -> JKFieldAccessExpressionImpl(symbol)
                 is JKPackageSymbol -> JKPackageAccessExpressionImpl(symbol)
-                else -> TODO()
+                else -> throwCanNotConvertError("unexpected symbol ${symbol::class}")
             }.qualified(qualifierExpression?.toJK()).also {
                 it.assignNonCodeElements(this)
             }
@@ -441,7 +443,7 @@ class JavaToJKTreeBuilder constructor(
                     val classSymbol =
                         classOrAnonymousClassReference?.resolve()?.let {
                             symbolProvider.provideDirectSymbol(it) as JKClassSymbol
-                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference?.referenceName!!)
+                        } ?: JKUnresolvedClassSymbol(classOrAnonymousClassReference?.referenceName ?: throwCanNotConvertError())
                     val typeArgumentList =
                         this.typeArgumentList.toJK()
                             .takeIf { it.typeArguments.isNotEmpty() }
@@ -470,21 +472,25 @@ class JavaToJKTreeBuilder constructor(
 
 
         fun PsiArrayAccessExpression.toJK(): JKExpression {
-            return JKArrayAccessExpressionImpl(arrayExpression.toJK(), indexExpression?.toJK() ?: TODO())
-                .also {
-                    it.assignNonCodeElements(this)
-                }
+            return JKArrayAccessExpressionImpl(
+                arrayExpression.toJK(),
+                indexExpression?.toJK() ?: throwCanNotConvertError()
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiTypeCastExpression.toJK(): JKExpression {
-            return JKTypeCastExpressionImpl(operand?.toJK() ?: TODO(), castType?.type?.toJK(symbolProvider)?.asTypeElement() ?: TODO())
-                .also {
-                    it.assignNonCodeElements(this)
-                }
+            return JKTypeCastExpressionImpl(
+                operand?.toJK() ?: throwCanNotConvertError(),
+                castType?.type?.toJK(symbolProvider)?.asTypeElement() ?: throwCanNotConvertError()
+            ).also {
+                it.assignNonCodeElements(this)
+            }
         }
 
         fun PsiParenthesizedExpression.toJK(): JKExpression {
-            return JKParenthesizedExpressionImpl(expression?.toJK() ?: TODO())
+            return JKParenthesizedExpressionImpl(expression.toJK())
                 .also {
                     it.assignNonCodeElements(this)
                 }
@@ -595,7 +601,12 @@ class JavaToJKTreeBuilder constructor(
                 nameIdentifier.toJK(),
                 with(expressionTreeMapper) { argumentList?.toJK() ?: JKArgumentListImpl() },
                 initializingClass?.createClassBody() ?: JKEmptyClassBodyImpl(),
-                JKTypeElementImpl(JKClassTypeImpl(symbolProvider.provideDirectSymbol(containingClass!!) as JKClassSymbol, emptyList()))
+                JKTypeElementImpl(
+                    JKClassTypeImpl(
+                        symbolProvider.provideDirectSymbol(containingClass ?: throwCanNotConvertError()) as JKClassSymbol,
+                        emptyList()
+                    )
+                )
             ).also {
                 symbolProvider.provideUniverseSymbol(this, it)
                 it.psi = this
@@ -658,13 +669,15 @@ class JavaToJKTreeBuilder constructor(
 
         fun PsiAnnotation.toJK(): JKAnnotation =
             JKAnnotationImpl(
-                symbolProvider.provideSymbolForReference<JKSymbol>(nameReferenceElement!!).safeAs<JKClassSymbol>()
-                    ?: JKUnresolvedClassSymbol(nameReferenceElement!!.text),
+                symbolProvider.provideSymbolForReference<JKSymbol>(
+                    nameReferenceElement ?: throwCanNotConvertError()
+                ).safeAs<JKClassSymbol>()
+                    ?: JKUnresolvedClassSymbol(nameReferenceElement?.text ?: throwCanNotConvertError()),
                 parameterList.attributes.map { parameter ->
                     if (parameter.nameIdentifier != null) {
                         JKAnnotationNameParameterImpl(
                             parameter.value?.toJK() ?: JKStubExpressionImpl(),
-                            JKNameIdentifierImpl(parameter.name!!)
+                            JKNameIdentifierImpl(parameter.name ?: throwCanNotConvertError())
                         )
                     } else {
                         JKAnnotationParameterImpl(
@@ -694,7 +707,7 @@ class JavaToJKTreeBuilder constructor(
                     JKKtAnnotationArrayInitializerExpressionImpl(
                         initializers.map { it.toJK() }
                     )
-                else -> TODO(this::class.toString())
+                else -> throwCanNotConvertError()
             }.also {
                 it.assignNonCodeElements(this)
             }
@@ -703,7 +716,7 @@ class JavaToJKTreeBuilder constructor(
             JKJavaAnnotationMethodImpl(
                 returnType?.toJK(symbolProvider)?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
-                    ?: TODO(),
+                    ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
                 nameIdentifier.toJK(),
                 defaultValue?.toJK() ?: JKStubExpressionImpl()
             ).also {
@@ -718,7 +731,7 @@ class JavaToJKTreeBuilder constructor(
             return JKJavaMethodImpl(
                 returnType?.toJK(symbolProvider)?.asTypeElement()
                     ?: JKTypeElementImpl(JKJavaVoidType).takeIf { isConstructor }
-                    ?: TODO(),
+                    ?: throwCanNotConvertError("type of PsiAnnotationMethod can not be retrieved"),
                 nameIdentifier.toJK(),
                 parameterList.parameters.map { it.toJK() },
                 body?.toJK() ?: JKBodyStubImpl,
@@ -794,7 +807,7 @@ class JavaToJKTreeBuilder constructor(
                         when (it) {
                             is PsiClass -> it.toJK()
                             is PsiLocalVariable -> it.toJK()
-                            else -> TODO(it::class.java.toString())
+                            else -> it.throwCanNotConvertError()
                         }
                     })
                 is PsiAssertStatement ->
@@ -884,7 +897,7 @@ class JavaToJKTreeBuilder constructor(
                         with(expressionTreeMapper) { lockExpression?.toJK() } ?: JKStubExpressionImpl(),
                         body?.toJK() ?: JKBodyStubImpl
                     )
-                else -> TODO("for ${this::class}")
+                else -> throwCanNotConvertError()
             }.also {
                 if (this != null) {
                     (it as PsiOwner).psi = this
@@ -894,19 +907,21 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiCatchSection.toJK(): JKJavaTryCatchSection =
-            JKJavaTryCatchSectionImpl(parameter?.toJK()!!, catchBlock?.toJK() ?: JKBodyStubImpl)
-                .also {
-                    it.psi = this
-                }.also {
-                    it.assignNonCodeElements(this)
-                }
+            JKJavaTryCatchSectionImpl(
+                parameter?.toJK() ?: throwCanNotConvertError(),
+                catchBlock?.toJK() ?: JKBodyStubImpl
+            ).also {
+                it.psi = this
+            }.also {
+                it.assignNonCodeElements(this)
+            }
     }
 
     //TODO better way than generateSequence.last??
     fun PsiLabeledStatement.collectLabels(): Pair<List<PsiIdentifier>, PsiStatement> =
         generateSequence(emptyList<PsiIdentifier>() to this as PsiStatement) { (labels, statement) ->
             if (statement !is PsiLabeledStatementImpl) return@generateSequence null
-            (labels + statement.labelIdentifier) to statement.statement!!
+            (labels + statement.labelIdentifier) to (statement.statement ?: throwCanNotConvertError())
         }.last()
 
 
@@ -934,7 +949,7 @@ class JavaToJKTreeBuilder constructor(
 
     private fun PsiElement.collectNonCodeElements(): Pair<List<JKNonCodeElement>, List<JKNonCodeElement>> {
         fun PsiElement.toToken(): JKNonCodeElement? {
-            if (this in tokenCache) return tokenCache[this]!!
+            if (this in tokenCache) return tokenCache.getValue(this)
             val token = when {
                 this is PsiDocComment ->
                     JKCommentElementImpl(IdeaDocCommentConverter.convertDocComment(this))
@@ -1001,5 +1016,10 @@ class JavaToJKTreeBuilder constructor(
 
     private inline fun <reified T : JKNonCodeElementsListOwner> T.withAssignedNonCodeElements(psi: PsiElement?): T =
         also { it.assignNonCodeElements(psi) }
+
+    private fun PsiElement.throwCanNotConvertError(message: String? = null): Nothing {
+        error("Cannot convert the following Java element ${this::class} with text `$text`" + message?.let { " due to `$it`" }.orEmpty())
+    }
+
 }
 
