@@ -280,7 +280,8 @@ public class ModifiersChecker {
             if (!(modifierListOwner instanceof KtTypeParameterListOwner)) return;
             List<KtTypeParameter> typeParameters = ((KtTypeParameterListOwner) modifierListOwner).getTypeParameters();
             for (KtTypeParameter typeParameter : typeParameters) {
-                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, null, languageVersionSettings);
+                TypeParameterDescriptor descriptor = trace.get(BindingContext.TYPE_PARAMETER, typeParameter);
+                ModifierCheckerCore.INSTANCE.check(typeParameter, trace, descriptor, languageVersionSettings);
             }
         }
     }
