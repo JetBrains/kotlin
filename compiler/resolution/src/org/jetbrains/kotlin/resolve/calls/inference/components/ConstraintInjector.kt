@@ -153,7 +153,6 @@ class ConstraintInjector(
             if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)) {
                 // todo improve error reporting -- add information about base types
                 c.addError(NewConstraintError(lowerType, upperType, position))
-                AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)
             }
         }
 
