@@ -363,9 +363,6 @@ public class ArrangementEngine {
       if (!entry.canBeMatched()) {
         // Split entries to arrange by 'can not be matched' rules.
         // See IDEA-104046 for a problem use-case example.
-        if (toArrange.isEmpty()) {
-          arranged.addAll(arrange(toArrange, context.sectionRules, context.rulesByPriority, entryToSection));
-        }
         arranged.add(entry);
         toArrange.clear();
       }
