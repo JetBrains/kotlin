@@ -10,6 +10,7 @@ val intellijBranch: Int by rootProject.extra
 dependencies {
     compile(kotlinStdlib("jdk8"))
     compile(project(":compiler:cli-common")) { isTransitive = false }
+    compile(project(":compiler:psi")) { isTransitive = false }
     compile(project(":core:descriptors")) { isTransitive = false }
     compile(project(":idea:kotlin-gradle-tooling")) { isTransitive = false }
     compile(project(":idea:idea-core")) { isTransitive = false }

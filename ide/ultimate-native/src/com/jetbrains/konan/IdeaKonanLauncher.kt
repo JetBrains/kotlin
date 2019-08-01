@@ -18,13 +18,14 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ThrowableComputable
 import com.intellij.xdebugger.XDebugSession
+import com.intellij.xdebugger.impl.settings.XDebuggerSettingManagerImpl
 import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.TrivialInstaller
 import com.jetbrains.cidr.execution.TrivialRunParameters
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.system.LocalHost
 import com.jetbrains.konan.debugger.KonanLLDBDriverConfiguration
+import com.jetbrains.konan.debugger.KonanLocalDebugProcess
 import java.io.File
 
 
@@ -51,7 +52,6 @@ class IdeaKonanLauncher(
         })
     }
 
-
     @Throws(ExecutionException::class)
     fun createProcess(state: CommandLineState): ProcessHandler {
         val usePty = usePty()
@@ -77,7 +77,12 @@ class IdeaKonanLauncher(
     fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess {
         val cl = createCommandLine(false)
         val parameters = getDebugParameters(cl)
-        return CidrLocalDebugProcess(parameters, session, state.consoleBuilder, DefaultConsoleFiltersProvider())
+        return KonanLocalDebugProcess(
+            parameters,
+            session,
+            state.consoleBuilder,
+            DefaultConsoleFiltersProvider()
+        )
     }
 
     private fun getParameters(defaultWorkingDir: String): SimpleProgramParameters {

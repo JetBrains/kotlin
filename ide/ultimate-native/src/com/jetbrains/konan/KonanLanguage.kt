@@ -6,8 +6,11 @@
 package com.jetbrains.konan
 
 import com.intellij.lang.Language
+import com.intellij.openapi.fileTypes.LanguageFileType
+import org.jetbrains.kotlin.idea.KotlinFileType
 
 class KonanLanguage : Language("Kotlin/Native") {
+    override fun getAssociatedFileType(): LanguageFileType? = KotlinFileType.INSTANCE
 
     override fun isCaseSensitive(): Boolean = true
 
