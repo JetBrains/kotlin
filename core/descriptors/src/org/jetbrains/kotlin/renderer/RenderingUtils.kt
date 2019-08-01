@@ -20,15 +20,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 
-fun Name.render(): String {
-    return if (this.shouldBeEscaped()) '`' + asString() + '`' else asString()
+fun Name.render(escapeUnderscore: Boolean = false): String {
+    return if (this.shouldBeEscaped(escapeUnderscore)) '`' + asString() + '`' else asString()
 }
 
-private fun Name.shouldBeEscaped(): Boolean {
+private fun Name.shouldBeEscaped(escapeUnderscore: Boolean = false): Boolean {
     if (isSpecial) return false
 
     val string = asString()
-    return string in KeywordStringsGenerated.KEYWORDS || string.any { !Character.isLetterOrDigit(it) && it != '_' }
+    return string in KeywordStringsGenerated.KEYWORDS || 
+            if (escapeUnderscore) string.any { !Character.isLetterOrDigit(it) } else string.any { !Character.isLetterOrDigit(it) && it != '_' }
 }
 
 fun FqNameUnsafe.render(): String {
@@ -39,13 +40,13 @@ fun FqName.render(): String {
     return renderFqName(pathSegments())
 }
 
-fun renderFqName(pathSegments: List<Name>): String {
+fun renderFqName(pathSegments: List<Name>, escapeUnderscore: Boolean = false): String {
     return buildString {
         for (element in pathSegments) {
             if (length > 0) {
                 append(".")
             }
-            append(element.render())
+            append(element.render(escapeUnderscore))
         }
     }
 }

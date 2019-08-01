@@ -268,4 +268,9 @@ public class AddImportTestGenerated extends AbstractAddImportTest {
     public void testStdlibImportsLast() throws Exception {
         runTest("idea/testData/addImport/StdlibImportsLast.kt");
     }
+
+    @TestMetadata("UnderscoreNames.kt")
+    public void testUnderscoreNames() throws Exception {
+        runTest("idea/testData/addImport/UnderscoreNames.kt");
+    }
 }

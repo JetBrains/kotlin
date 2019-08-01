@@ -17,13 +17,14 @@
 package org.jetbrains.kotlin.resolve
 
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.*
 
 data class ImportPath @JvmOverloads constructor(val fqName: FqName, val isAllUnder: Boolean, val alias: Name? = null) {
 
     val pathStr: String
-        get() = fqName.toUnsafe().render() + if (isAllUnder) ".*" else ""
+        get() = fqName.toUnsafe().renderPathStr() + if (isAllUnder) ".*" else ""
 
     override fun toString(): String {
         return pathStr + if (alias != null) " as " + alias.asString() else ""
@@ -53,4 +54,8 @@ data class ImportPath @JvmOverloads constructor(val fqName: FqName, val isAllUnd
             }
         }
     }
+}
+
+private fun FqNameUnsafe.renderPathStr(): String {
+    return renderFqName(pathSegments(), true)
 }
