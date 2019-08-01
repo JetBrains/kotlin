@@ -532,6 +532,7 @@ func testNames() throws {
     try assertEquals(actual: Deeply.NestedType().thirtyTwo, expected: 32)
     try assertEquals(actual: WithGenericDeeply.NestedType().thirtyThree, expected: 33)
     try assertEquals(actual: CKeywords(float: 1.0, enum : 42, goto: true).goto_, expected: true)
+    try assertEquals(actual: TypeOuter.Type_().thirtyFour, expected: 34)
 }
 
 class Base123 : Base23, ExtendedBase1 {

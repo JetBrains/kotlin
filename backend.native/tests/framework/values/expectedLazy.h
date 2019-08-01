@@ -345,6 +345,21 @@ __attribute__((swift_name("WithGenericDeeply.NestedType")))
 @end;
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TypeOuter")))
+@interface ValuesTypeOuter : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TypeOuter.Type_")))
+@interface ValuesTypeOuterType_ : KotlinBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t thirtyFour __attribute__((swift_name("thirtyFour")));
+@end;
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("CKeywords")))
 @interface ValuesCKeywords : KotlinBase
 - (instancetype)initWithFloat:(float)float_ enum:(int32_t)enum_ goto:(BOOL)goto_ __attribute__((swift_name("init(float:enum:goto:)"))) __attribute__((objc_designated_initializer));

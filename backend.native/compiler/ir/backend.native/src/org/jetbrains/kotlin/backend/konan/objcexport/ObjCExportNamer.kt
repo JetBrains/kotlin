@@ -120,7 +120,7 @@ internal open class ObjCExportNameTranslatorImpl(
             }
 
             if (importAsMember) {
-                append(".").append(ownName)
+                append(".").append(helper.mangleSwiftNestedClassName(ownName))
             } else {
                 append(ownName.capitalize())
             }
@@ -154,6 +154,11 @@ private class ObjCExportNamingHelper(
 
     fun getFileClassName(file: KtFile): ObjCExportNamer.ClassOrProtocolName =
             getFileClassName(file.name)
+
+    fun mangleSwiftNestedClassName(name: String): String = when (name) {
+        "Type" -> "${name}_" // See https://github.com/JetBrains/kotlin-native/issues/3167
+        else -> name
+    }
 }
 
 internal class ObjCExportNamerImpl(
@@ -332,7 +337,7 @@ internal class ObjCExportNamerImpl(
                 }
                 val ownName = descriptor.name.asString().toIdentifier()
                 if (importAsMember) {
-                    append(".").append(ownName)
+                    append(".").append(helper.mangleSwiftNestedClassName(ownName))
                 } else {
                     append(ownName.capitalize())
                 }

@@ -290,6 +290,13 @@ class WithGenericDeeply() {
     }
 }
 
+// https://github.com/JetBrains/kotlin-native/issues/3167
+class TypeOuter {
+    class Type {
+        val thirtyFour = 34
+    }
+}
+
 data class CKeywords(val float: Float, val `enum`: Int, var goto: Boolean)
 
 interface Base1 {
