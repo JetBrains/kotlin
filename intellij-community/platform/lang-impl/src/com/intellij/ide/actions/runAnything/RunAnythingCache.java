@@ -49,6 +49,19 @@ public class RunAnythingCache implements PersistentStateComponent<RunAnythingCac
   @Override
   public void loadState(@NotNull State state) {
     XmlSerializerUtil.copyBean(state, mySettings);
+
+    updateNewProvidersGroupVisibility(mySettings);
+  }
+
+  /**
+   * Updates group visibilities store for new providers
+   */
+  private static void updateNewProvidersGroupVisibility(@NotNull State settings) {
+    StreamEx.of(RunAnythingProvider.EP_NAME.getExtensions())
+      .filter(provider -> provider.getCompletionGroupTitle() != null)
+      .distinct(RunAnythingProvider::getCompletionGroupTitle)
+      .filter(provider -> !settings.myKeys.containsKey(provider.getCompletionGroupTitle()))
+      .forEach(provider -> settings.myKeys.put(provider.getCompletionGroupTitle(), true));
   }
 
   public static class State {
