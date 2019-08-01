@@ -126,6 +126,16 @@ public class PullUpTestGenerated extends AbstractPullUpTest {
             runTest("idea/testData/refactoring/pullUp/k2k/fromClassToClassMakeAbstract.kt");
         }
 
+        @TestMetadata("fromClassToClassMakeAbstractWithCommentAndAnotherIndent.kt")
+        public void testFromClassToClassMakeAbstractWithCommentAndAnotherIndent() throws Exception {
+            runTest("idea/testData/refactoring/pullUp/k2k/fromClassToClassMakeAbstractWithCommentAndAnotherIndent.kt");
+        }
+
+        @TestMetadata("fromClassToClassMakeAbstractWithCommentAndAnotherIndent2.kt")
+        public void testFromClassToClassMakeAbstractWithCommentAndAnotherIndent2() throws Exception {
+            runTest("idea/testData/refactoring/pullUp/k2k/fromClassToClassMakeAbstractWithCommentAndAnotherIndent2.kt");
+        }
+
         @TestMetadata("fromClassToClassWithGenerics.kt")
         public void testFromClassToClassWithGenerics() throws Exception {
             runTest("idea/testData/refactoring/pullUp/k2k/fromClassToClassWithGenerics.kt");
