@@ -44,6 +44,6 @@ fun test5(x: Inv<out Any?>) {
 
 fun test6(x: Inv<out String?>) {
     when (val <!UNUSED_VARIABLE!>y<!> = x.data) {
-        is String -> <!OI;DEBUG_INFO_SMARTCAST!>x.data<!><!NI;UNSAFE_CALL!>.<!>length // should be ok
+        is String -> <!DEBUG_INFO_SMARTCAST!>x.data<!>.length // should be ok
     }
 }
