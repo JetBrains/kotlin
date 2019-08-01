@@ -6,6 +6,7 @@ import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.Matcher;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +47,12 @@ public class RunAnythingCompletionGroup<V, P extends RunAnythingProvider<V>> ext
   public Collection<RunAnythingItem> getGroupItems(@NotNull DataContext dataContext, @NotNull String pattern) {
     P provider = getProvider();
     return ContainerUtil.map(provider.getValues(dataContext, pattern), value -> provider.getMainListItem(dataContext, value));
+  }
+
+  @Nullable
+  @Override
+  protected Matcher getMatcher(@NotNull String pattern) {
+    return getProvider().getMatcher(pattern);
   }
 
   public static Collection<RunAnythingGroup> createCompletionGroups() {

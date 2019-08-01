@@ -4,6 +4,7 @@ package com.intellij.ide.actions.runAnything.activity;
 import com.intellij.ide.actions.runAnything.items.RunAnythingItem;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.extensions.ExtensionPointName;
+import com.intellij.util.text.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -130,6 +131,13 @@ public interface RunAnythingProvider<V> {
    */
   @Nullable
   String getCompletionGroupTitle();
+
+  /**
+   * Returns group matcher for filtering group elements. Remain {@code null} to use default matcher
+   * @param pattern to build matcher
+   */
+  @Nullable
+  Matcher getMatcher(@NotNull String pattern);
 
   /**
    * Returns help/completion group icon.

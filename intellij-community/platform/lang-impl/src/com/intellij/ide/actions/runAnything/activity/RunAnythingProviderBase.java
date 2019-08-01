@@ -7,6 +7,7 @@ import com.intellij.ide.actions.runAnything.items.RunAnythingItemBase;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.text.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +62,12 @@ public abstract class RunAnythingProviderBase<V> implements RunAnythingProvider<
   @Override
   @Nullable
   public String getCompletionGroupTitle() {
+    return null;
+  }
+
+  @Nullable
+  @Override
+  public Matcher getMatcher(@NotNull String pattern) {
     return null;
   }
 
