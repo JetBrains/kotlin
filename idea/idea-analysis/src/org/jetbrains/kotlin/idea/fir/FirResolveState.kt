@@ -58,12 +58,5 @@ class FirResolveStateImpl(override val sessionProvider: FirSessionProvider) : Fi
     }
 }
 
-// TODO: caching
-object FirIdeResolveFactory {
-    fun initiate(psi: KtElement): FirResolveState {
-        val provider = FirProjectSessionProvider(psi.project)
-        return FirResolveStateImpl(provider)
-    }
-}
-
-fun KtElement.firResolveState(): FirResolveState = FirIdeResolveFactory.initiate(this)
+fun KtElement.firResolveState(): FirResolveState =
+    FirIdeResolveStateService.getInstance(project).getResolveState(getModuleInfo())
