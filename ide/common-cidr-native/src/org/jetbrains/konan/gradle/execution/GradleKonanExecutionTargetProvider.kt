@@ -19,7 +19,7 @@ class GradleKonanExecutionTargetProvider : ExecutionTargetProvider() {
     }
 }
 
-class GradleKonanBuildProfileExecutionTarget(val profileName: String) : ExecutionTarget() {
+open class GradleKonanBuildProfileExecutionTarget(val profileName: String) : ExecutionTarget() {
     override fun getId(): String = "GradleKonanBuildProfile:$profileName"
     override fun getDisplayName(): String = profileName
     override fun getIcon(): Icon? = null

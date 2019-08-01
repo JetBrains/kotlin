@@ -39,6 +39,8 @@
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="org.jetbrains.konan.PathManagerCustomization" overrides="true"/>
+    <applicationService serviceImplementation="org.jetbrains.konan.execution.DeviceService"/>
+    <executionTargetProvider implementation="org.jetbrains.konan.execution.DeviceExecutionTargetProvider"/>
   </extensions>
 
   <extensions defaultExtensionNs="clion">
