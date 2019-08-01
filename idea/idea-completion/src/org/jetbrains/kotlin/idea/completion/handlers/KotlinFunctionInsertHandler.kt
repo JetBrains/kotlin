@@ -91,7 +91,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
             val document = context.document
             val editor = context.editor
             val project = context.project
-            val chars = document.charsSequence
+            var chars = document.charsSequence
 
             val isSmartEnterCompletion = completionChar == Lookup.COMPLETE_STATEMENT_SELECT_CHAR
             val isReplaceCompletion = completionChar == Lookup.REPLACE_SELECT_CHAR
@@ -127,6 +127,7 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
 
             if (insertTypeArguments) {
                 document.insertString(offset, "<>")
+                chars = document.charsSequence
                 editor.caretModel.moveToOffset(offset + 1)
                 offset += 2
             }
@@ -160,8 +161,8 @@ sealed class KotlinFunctionInsertHandler(callType: CallType<*>) : KotlinCallable
                 }
                 PsiDocumentManager.getInstance(project).commitDocument(document)
 
-                openingBracketOffset = chars.indexOfSkippingSpace(openingBracket, offset)!!
-                closeBracketOffset = chars.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
+                openingBracketOffset = document.charsSequence.indexOfSkippingSpace(openingBracket, offset)!!
+                closeBracketOffset = document.charsSequence.indexOfSkippingSpace(closingBracket, openingBracketOffset + 1)
             }
 
             if (insertLambda && lambdaInfo!!.explicitParameters) {
