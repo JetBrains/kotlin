@@ -33,6 +33,7 @@ interface ImplementationViewSession : Disposable {
                                         processor: Processor<in PsiElement>): List<ImplementationViewElement>
   fun elementRequiresIncludeSelf(): Boolean
   fun needUpdateInBackground(): Boolean
+  @JvmDefault fun createImplementationViewElement(psiElement: PsiElement): ImplementationViewElement = PsiImplementationViewElement(psiElement)
 }
 
 interface ImplementationViewSessionFactory {
