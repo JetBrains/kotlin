@@ -45,7 +45,7 @@ import java.util.*;
 
 public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<SerializedStubTree>
   implements CustomImplementationFileBasedIndexExtension<Integer, SerializedStubTree> {
-  static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.StubUpdatingIndex");
+  static final Logger LOG = Logger.getInstance(StubUpdatingIndex.class);
   private static final int VERSION = 41 + (PersistentHashMapValueStorage.COMPRESSION_ENABLED ? 1 : 0);
 
   // todo remove once we don't need this for stub-ast mismatch debug info
@@ -53,7 +53,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
 
   public static final ID<Integer, SerializedStubTree> INDEX_ID = ID.create("Stubs");
 
-  protected static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
+  private static final FileBasedIndex.InputFilter INPUT_FILTER = file -> canHaveStub(file);
 
   public static boolean canHaveStub(@NotNull VirtualFile file) {
     FileType fileType = SubstitutedFileType.substituteFileType(file, file.getFileType(), ProjectUtil.guessProjectForFile(file));
@@ -114,8 +114,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
             }
 
             if (serializedStubTree == null) {
-              Stub rootStub;
-              rootStub = StubTreeBuilder.buildStubTree(inputData);
+              Stub rootStub = StubTreeBuilder.buildStubTree(inputData);
               if (rootStub != null) {
                 serializedStubTree = new SerializedStubTree(rootStub, SerializationManagerEx.getInstanceEx(), StubForwardIndexExternalizer.IdeStubForwardIndexesExternalizer.INSTANCE);
                 if (DebugAssertions.DEBUG) {
@@ -208,7 +207,8 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       }
       else if (readOnlyOneLength) {
         charLength = (int)byteLength;
-      } else {
+      }
+      else {
         charLength = DataInputOutputUtil.readINT(stream);
       }
       return new IndexingStampInfo(stamp, byteLength, charLength);
@@ -229,11 +229,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
   @Override
   public FileBasedIndex.InputFilter getInputFilter() {
     return INPUT_FILTER;
-  }
-
-  @Override
-  public boolean dependsOnFileContent() {
-    return true;
   }
 
   @Override

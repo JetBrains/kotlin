@@ -19,7 +19,8 @@ public class SerializedStubTreeDataExternalizer implements DataExternalizer<Seri
       out.write(tree.myTreeBytes, 0, tree.myTreeByteLength);
       DataInputOutputUtil.writeINT(out, tree.myIndexedStubByteLength);
       out.write(tree.myIndexedStubBytes, 0, tree.myIndexedStubByteLength);
-    } else {
+    }
+    else {
       CompressionUtil.writeCompressed(out, tree.myTreeBytes, 0, tree.myTreeByteLength);
       CompressionUtil.writeCompressed(out, tree.myIndexedStubBytes, 0, tree.myIndexedStubByteLength);
     }
@@ -36,10 +37,9 @@ public class SerializedStubTreeDataExternalizer implements DataExternalizer<Seri
       byte[] indexedStubBytes = new byte[indexedStubByteLength];
       in.readFully(indexedStubBytes);
       return new SerializedStubTree(bytes, bytes.length,  null, indexedStubBytes, indexedStubByteLength, null);
-    } else {
-      byte[] treeBytes = CompressionUtil.readCompressed(in);
-      byte[] indexedStubBytes = CompressionUtil.readCompressed(in);
-      return new SerializedStubTree(treeBytes, treeBytes.length, null, indexedStubBytes, indexedStubBytes.length, null);
     }
+    byte[] treeBytes = CompressionUtil.readCompressed(in);
+    byte[] indexedStubBytes = CompressionUtil.readCompressed(in);
+    return new SerializedStubTree(treeBytes, treeBytes.length, null, indexedStubBytes, indexedStubBytes.length, null);
   }
 }

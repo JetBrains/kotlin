@@ -48,7 +48,7 @@ class StubUpdatingForwardIndexAccessor implements ForwardIndexAccessor<Integer, 
     return null;
   }
 
-  public void setIndex(@NotNull UpdatableIndex<Integer, SerializedStubTree, FileContent> index) {
+  void setIndex(@NotNull UpdatableIndex<Integer, SerializedStubTree, FileContent> index) {
     myIndex = index;
   }
 }

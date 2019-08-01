@@ -21,20 +21,17 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Computable;
 import com.intellij.openapi.util.ShutDownTracker;
 import com.intellij.util.io.IOUtil;
-import com.intellij.util.io.PersistentEnumeratorBase;
 import com.intellij.util.io.PersistentStringEnumerator;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.TestOnly;
 
 import java.io.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.ObjIntConsumer;
 
 /*
  * @author max
  */
 public class SerializationManagerImpl extends SerializationManagerEx implements Disposable {
-  private static final Logger LOG = Logger.getInstance("#com.intellij.psi.stubs.SerializationManagerImpl");
+  private static final Logger LOG = Logger.getInstance(SerializationManagerImpl.class);
 
   private final AtomicBoolean myNameStorageCrashed = new AtomicBoolean(false);
   private final File myFile;
@@ -43,6 +40,7 @@ public class SerializationManagerImpl extends SerializationManagerEx implements 
   private PersistentStringEnumerator myNameStorage;
   private StubSerializationHelper myStubSerializationHelper;
 
+  @SuppressWarnings("unused") // used from componentSets/Lang.xml:14
   public SerializationManagerImpl() {
     this(new File(PathManager.getIndexRoot(), "rep.names"), false);
   }
@@ -188,16 +186,5 @@ public class SerializationManagerImpl extends SerializationManagerEx implements 
     myStubSerializationHelper.reSerializeStub(new DataInputStream(inStub),
                                               new DataOutputStream(outStub),
                                               ((SerializationManagerImpl)newSerializationManager).myStubSerializationHelper);
-  }
-
-  @TestOnly
-  public void acceptSerializerId(ObjIntConsumer<? super String> consumer) throws IOException {
-    myNameStorage.traverseAllRecords(new PersistentEnumeratorBase.RecordsProcessor() {
-      @Override
-      public boolean process(int record) throws IOException {
-        consumer.accept(myNameStorage.valueOf(record), record);
-        return true;
-      }
-    });
   }
 }

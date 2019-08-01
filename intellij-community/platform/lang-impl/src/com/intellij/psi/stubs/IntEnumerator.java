@@ -13,7 +13,7 @@ import java.util.function.IntUnaryOperator;
 class IntEnumerator {
   private final TIntIntHashMap myEnumerates;
   private final TIntArrayList myIds;
-  private int myNext = 0;
+  private int myNext;
 
   IntEnumerator() {
     this(true);

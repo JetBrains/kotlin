@@ -4,6 +4,7 @@ package com.intellij.psi.stubs;
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream;
 import gnu.trove.TObjectHashingStrategy;
 import gnu.trove.TObjectIntHashMap;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -22,7 +23,7 @@ class ByteArrayInterner {
   private final TObjectIntHashMap<byte[]> arrayToStart = new TObjectIntHashMap<>(BYTE_ARRAY_STRATEGY);
   final BufferExposingByteArrayOutputStream joinedBuffer = new BufferExposingByteArrayOutputStream();
 
-  int internBytes(byte[] bytes) {
+  int internBytes(@NotNull byte[] bytes) {
     if (bytes.length == 0) return 0;
 
     int start = arrayToStart.get(bytes);

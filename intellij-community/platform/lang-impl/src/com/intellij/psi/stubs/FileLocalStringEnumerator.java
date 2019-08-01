@@ -14,7 +14,7 @@ import java.util.function.UnaryOperator;
 
 class FileLocalStringEnumerator implements AbstractStringEnumerator {
   private final TObjectIntHashMap<String> myEnumerates;
-  final ArrayList<String> myStrings = new ArrayList<>();
+  private final ArrayList<String> myStrings = new ArrayList<>();
 
   FileLocalStringEnumerator(boolean forSavingStub) {
     myEnumerates = forSavingStub ? new TObjectIntHashMap<>() : null;

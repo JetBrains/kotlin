@@ -109,7 +109,7 @@ public class SerializedStubTree {
                                   reSerializedIndexBytes, reSerializedIndexByteLength, myIndexedStubs);
   }
 
-  public void restoreIndexedStubs(@NotNull StubForwardIndexExternalizer<?> dataExternalizer) throws IOException {
+  void restoreIndexedStubs(@NotNull StubForwardIndexExternalizer<?> dataExternalizer) throws IOException {
     if (myIndexedStubs == null) {
       myIndexedStubs = dataExternalizer.read(new DataInputStream(new ByteArrayInputStream(myIndexedStubBytes, 0, myIndexedStubByteLength)));
     }
@@ -143,6 +143,7 @@ public class SerializedStubTree {
     return serializationManager.deserialize(new UnsyncByteArrayInputStream(myTreeBytes, 0, myTreeByteLength));
   }
 
+  @Override
   public boolean equals(final Object that) {
     if (this == that) {
       return true;
@@ -168,6 +169,7 @@ public class SerializedStubTree {
     return true;
   }
 
+  @Override
   public int hashCode() {
     if (myTreeBytes == null) {
       return 0;

@@ -26,12 +26,12 @@ import java.util.Collection;
 import java.util.List;
 
 public class StubIndexState {
-  public List<String> registeredIndices = new ArrayList<>();
+  final List<String> registeredIndices = new ArrayList<>();
 
   public StubIndexState() {
   }
 
-  public StubIndexState(@NotNull Collection<StubIndexKey<?, ?>> keys) {
+  public StubIndexState(@NotNull Collection<? extends StubIndexKey<?, ?>> keys) {
     for (StubIndexKey key : keys) {
       registeredIndices.add(key.getName());
     }

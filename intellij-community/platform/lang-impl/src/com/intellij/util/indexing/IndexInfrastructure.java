@@ -54,8 +54,7 @@ public class IndexInfrastructure {
   private static final boolean ourDoParallelIndicesInitialization = SystemProperties
     .getBooleanProperty("idea.parallel.indices.initialization", false);
   public static final boolean ourDoAsyncIndicesInitialization = SystemProperties.getBooleanProperty("idea.async.indices.initialization", true);
-  private static final ExecutorService ourGenesisExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor(
-    "IndexInfrastructure Pool");
+  private static final ExecutorService ourGenesisExecutor = SequentialTaskExecutor.createSequentialApplicationPoolExecutor("IndexInfrastructure Pool");
 
   private IndexInfrastructure() {
   }
@@ -151,7 +150,8 @@ public class IndexInfrastructure {
     return DummyFileSystem.getInstance().findById(id);
   }
 
-  public static <T> Future<T> submitGenesisTask(Callable<T> action) {
+  @NotNull
+  public static <T> Future<T> submitGenesisTask(@NotNull Callable<T> action) {
     return ourGenesisExecutor.submit(action);
   }
 
