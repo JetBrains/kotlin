@@ -17,6 +17,7 @@ import com.intellij.ide.DataManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.util.gotoByName.ModelDiff;
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
+import com.intellij.model.Symbol;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
@@ -87,8 +88,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static com.intellij.find.actions.ResolverKt.findShowUsages;
 import static com.intellij.find.actions.ShowUsagesActionHandler.getSecondInvocationTitle;
 import static com.intellij.find.actions.ShowUsagesActionHandler.showUsagesInMaximalScope;
+import static com.intellij.find.findUsages.FindUsagesHandlerFactory.OperationMode.USAGES_WITH_DEFAULT_OPTIONS;
 
 public class ShowUsagesAction extends AnAction implements PopupAction, HintManagerImpl.ActionToIgnore {
   public static final String ID = "ShowUsages";
@@ -175,7 +178,32 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(e.getDataContext());
     PsiDocumentManager.getInstance(project).commitAllDocuments();
     FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.usages");
+    if (Registry.is("ide.symbol.find.usages")) {
+      showSymbolUsages(project, e.getDataContext());
+    }
+    else {
+      showPsiUsages(project, e, popupPosition);
+    }
+  }
 
+  private static void showSymbolUsages(@NotNull Project project, @NotNull DataContext dataContext) {
+    findShowUsages(project, dataContext, FindBundle.message("show.usages.ambiguous.title"), new UsageVariantHandler() {
+
+      @Override
+      public void handleSymbol(@NotNull Symbol symbol) {
+        ShowTargetUsagesActionHandler.showUsages(project, dataContext, symbol);
+      }
+
+      @Override
+      public void handlePsi(@NotNull PsiElement element) {
+        Editor editor = dataContext.getData(CommonDataKeys.EDITOR);
+        RelativePoint popupPosition = JBPopupFactory.getInstance().guessBestPopupLocation(dataContext);
+        startFindUsages(element, popupPosition, editor);
+      }
+    });
+  }
+
+  private static void showPsiUsages(@NotNull Project project, @NotNull AnActionEvent e, @NotNull RelativePoint popupPosition) {
     UsageTarget[] usageTargets = e.getData(UsageView.USAGE_TARGETS_KEY);
     Editor editor = e.getData(CommonDataKeys.EDITOR);
     if (usageTargets == null) {
@@ -199,7 +227,7 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
   public static void startFindUsages(@NotNull PsiElement element, @NotNull RelativePoint popupPosition, @Nullable Editor editor) {
     Project project = element.getProject();
     FindUsagesManager findUsagesManager = ((FindManagerImpl)FindManager.getInstance(project)).getFindUsagesManager();
-    FindUsagesHandlerBase handler = findUsagesManager.getFindUsagesHandler(element, FindUsagesHandlerFactory.OperationMode.USAGES_WITH_DEFAULT_OPTIONS);
+    FindUsagesHandlerBase handler = findUsagesManager.getFindUsagesHandler(element, USAGES_WITH_DEFAULT_OPTIONS);
     if (handler == null) return;
     //noinspection deprecation
     FindUsagesOptions options = handler.getFindUsagesOptions(DataManager.getInstance().getDataContext());
@@ -282,14 +310,14 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     );
   }
 
-  private static void showElementUsages(@NotNull Project project,
-                                        @Nullable Editor editor,
-                                        @NotNull RelativePoint popupPosition,
-                                        int maxUsages,
-                                        @NotNull IntRef minWidth,
-                                        @NotNull UsageSearchPresentation presentation,
-                                        @NotNull UsageSearcher usageSearcher,
-                                        @NotNull ShowUsagesActionHandler actionHandler) {
+  static void showElementUsages(@NotNull Project project,
+                                @Nullable Editor editor,
+                                @NotNull RelativePoint popupPosition,
+                                int maxUsages,
+                                @NotNull IntRef minWidth,
+                                @NotNull UsageSearchPresentation presentation,
+                                @NotNull UsageSearcher usageSearcher,
+                                @NotNull ShowUsagesActionHandler actionHandler) {
     ApplicationManager.getApplication().assertIsDispatchThread();
     UsageViewSettings usageViewSettings = UsageViewSettings.getInstance();
     ShowUsagesSettings showUsagesSettings = ShowUsagesSettings.getInstance();
@@ -981,10 +1009,11 @@ public class ShowUsagesAction extends AnAction implements PopupAction, HintManag
     else {
       //opening editor is performing in invokeLater
       IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() ->
-        editor.getScrollingModel().runActionOnScrollingFinished(() -> {
-          // after new editor created, some editor resizing events are still bubbling. To prevent hiding hint, invokeLater this
-          IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(() -> AsyncEditorLoader.performWhenLoaded(editor, runnable));
-        })
+                                                                    editor.getScrollingModel().runActionOnScrollingFinished(() -> {
+                                                                      // after new editor created, some editor resizing events are still bubbling. To prevent hiding hint, invokeLater this
+                                                                      IdeFocusManager.getInstance(project).doWhenFocusSettlesDown(
+                                                                        () -> AsyncEditorLoader.performWhenLoaded(editor, runnable));
+                                                                    })
       );
     }
   }

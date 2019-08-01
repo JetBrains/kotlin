@@ -35,6 +35,7 @@ import com.intellij.psi.search.SearchScope;
 import com.intellij.psi.search.searches.ReferencesSearch;
 import com.intellij.util.AstLoadingFilter;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -248,7 +249,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
 
   private void highlightTargetUsages(@NotNull Symbol target) {
     final Couple<? extends Collection<TextRange>> usages = AstLoadingFilter.disallowTreeLoading(
-      () -> getUsages(target),
+      () -> getUsages(myFile, target),
       () -> "Currently highlighted file: \n" +
             "psi file: " + myFile + ";\n" +
             "virtual file: " + myFile.getVirtualFile()
@@ -257,16 +258,18 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
     myWriteAccessRanges.addAll(usages.second);
   }
 
-  private @NotNull Couple<? extends List<TextRange>> getUsages(@NotNull Symbol symbol) {
+  @ApiStatus.Internal
+  public static @NotNull Couple<List<TextRange>> getUsages(@NotNull PsiFile file, @NotNull Symbol symbol) {
     final List<TextRange> readRanges = new ArrayList<>();
     final List<TextRange> writeRanges = new ArrayList<>();
 
-    final SearchScope searchScope = new LocalSearchScope(myFile);
+    final SearchScope searchScope = new LocalSearchScope(file);
 
+    final Project project = file.getProject();
     final PsiElement psiTarget = PsiSymbolService.getInstance().extractElementFromSymbol(symbol);
     final ReadWriteAccessDetector detector = psiTarget != null ? ReadWriteAccessDetector.findDetector(psiTarget) : null;
 
-    final Collection<? extends PsiSymbolReference> refs = getReferences(myProject, searchScope, symbol, psiTarget);
+    final Collection<? extends PsiSymbolReference> refs = getReferences(project, searchScope, symbol, psiTarget);
     for (PsiSymbolReference ref : refs) {
       boolean write = detector != null &&
                       ref instanceof PsiReference &&
@@ -275,7 +278,7 @@ public class IdentifierHighlighterPass extends TextEditorHighlightingPass {
     }
 
     final Collection<? extends PsiSymbolDeclaration> declarations = SearchService.getInstance()
-      .searchPsiSymbolDeclarations(myProject, symbol, searchScope)
+      .searchPsiSymbolDeclarations(project, symbol, searchScope)
       .findAll();
     final boolean declarationWrite = psiTarget != null && detector != null && detector.isDeclarationWriteAccess(psiTarget);
     for (PsiSymbolDeclaration declaration : declarations) {

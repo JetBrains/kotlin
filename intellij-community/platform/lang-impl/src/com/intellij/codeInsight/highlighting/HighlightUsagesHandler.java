@@ -8,6 +8,7 @@ import com.intellij.codeInsight.daemon.impl.IdentifierUtil;
 import com.intellij.codeInsight.daemon.impl.VisibleHighlightingPassFactory;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.find.EditorSearchSession;
+import com.intellij.find.actions.HighlightUsagesKt;
 import com.intellij.find.findUsages.PsiElement2UsageTargetAdapter;
 import com.intellij.injected.editor.EditorWindow;
 import com.intellij.lang.injection.InjectedLanguageManager;
@@ -28,8 +29,10 @@ import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.ProperTextRange;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.pom.PomTarget;
@@ -40,6 +43,7 @@ import com.intellij.psi.util.PsiUtilBase;
 import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageTargetUtil;
 import com.intellij.util.containers.ContainerUtil;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -71,6 +75,12 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     }
 
     DumbService.getInstance(project).withAlternativeResolveEnabled(() -> {
+      if (Registry.is("ide.symbol.find.usages")) {
+        if (!HighlightUsagesKt.highlightUsages(project, editor, file)) {
+          handleNoUsageTargets(file, editor, selectionModel, project);
+        }
+        return;
+      }
       UsageTarget[] usageTargets = getUsageTargets(editor, file);
       if (usageTargets.length == 0) {
         handleNoUsageTargets(file, editor, selectionModel, project);
@@ -84,7 +94,8 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
     });
   }
 
-  private static UsageTarget @NotNull[] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
+  @ApiStatus.Internal
+  public static UsageTarget @NotNull[] getUsageTargets(@NotNull Editor editor, @NotNull PsiFile file) {
     UsageTarget[] usageTargets = UsageTargetUtil.findUsageTargets(editor, file);
 
     if (usageTargets.length == 0) {
@@ -268,6 +279,21 @@ public class HighlightUsagesHandler extends HighlightHandlerBase {
       }
       highlightRanges(highlightManager, editor, nameAttributes, clearHighlights, Collections.singletonList(range));
     }
+  }
+
+  @ApiStatus.Experimental
+  public static void highlightUsages(@NotNull Project project,
+                                     @NotNull Editor editor,
+                                     @NotNull Couple<@NotNull List<@NotNull TextRange>> usages,
+                                     boolean clearHighlights) {
+    HighlightManager highlightManager = HighlightManager.getInstance(project);
+    EditorColorsManager manager = EditorColorsManager.getInstance();
+    TextAttributes attributes = manager.getGlobalScheme().getAttributes(EditorColors.SEARCH_RESULT_ATTRIBUTES);
+    TextAttributes writeAttributes = manager.getGlobalScheme().getAttributes(EditorColors.WRITE_SEARCH_RESULT_ATTRIBUTES);
+    setupFindModel(project);
+    highlightRanges(highlightManager, editor, attributes, clearHighlights, usages.first);
+    highlightRanges(highlightManager, editor, writeAttributes, clearHighlights, usages.second);
+    setStatusText(project, null, usages.first.size() + usages.second.size(), clearHighlights);
   }
 
   @Nullable

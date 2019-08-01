@@ -6,6 +6,9 @@ import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.navigation.actions.GotoDeclarationAction;
 import com.intellij.find.FindBundle;
 import com.intellij.find.FindManager;
+import com.intellij.find.FindSettings;
+import com.intellij.find.findUsages.FindUsagesOptions;
+import com.intellij.model.Symbol;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -14,18 +17,27 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
+import com.intellij.openapi.util.registry.Registry;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.search.PsiElementProcessor;
+import com.intellij.psi.search.SearchScope;
 import com.intellij.usages.PsiElementUsageTarget;
 import com.intellij.usages.UsageTarget;
 import com.intellij.usages.UsageView;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.find.actions.ImplKt.findUsages;
+import static com.intellij.find.actions.ResolverKt.findShowUsages;
+
 public class FindUsagesAction extends AnAction {
 
   public FindUsagesAction() {
     setInjectedContext(true);
+  }
+
+  protected boolean toShowDialog() {
+    return false;
   }
 
   @Override
@@ -35,7 +47,29 @@ public class FindUsagesAction extends AnAction {
       return;
     }
     PsiDocumentManager.getInstance(project).commitAllDocuments();
-    findUsageTargetUsages(project, e.getDataContext());
+    DataContext dataContext = e.getDataContext();
+    if (Registry.is("ide.symbol.find.usages")) {
+      findSymbolUsages(project, dataContext);
+    }
+    else {
+      findUsageTargetUsages(project, dataContext);
+    }
+  }
+
+  private void findSymbolUsages(@NotNull Project project, @NotNull DataContext dataContext) {
+    findShowUsages(project, dataContext, FindBundle.message("find.usages.ambiguous.title"), new UsageVariantHandler() {
+
+      @Override
+      public void handleSymbol(@NotNull Symbol symbol) {
+        SearchScope searchScope = FindUsagesOptions.findScopeByName(project, dataContext, FindSettings.getInstance().getDefaultScopeName());
+        findUsages(toShowDialog(), project, searchScope, symbol);
+      }
+
+      @Override
+      public void handlePsi(@NotNull PsiElement element) {
+        startFindUsages(element);
+      }
+    });
   }
 
   private void findUsageTargetUsages(@NotNull Project project, @NotNull DataContext dataContext) {
@@ -95,6 +129,11 @@ public class FindUsagesAction extends AnAction {
     @Override
     protected void startFindUsages(@NotNull PsiElement element) {
       FindManager.getInstance(element.getProject()).findUsages(element, true);
+    }
+
+    @Override
+    protected boolean toShowDialog() {
+      return true;
     }
   }
 }
