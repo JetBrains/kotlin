@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.impl.FirTypeParameterImpl
+import org.jetbrains.kotlin.fir.declarations.impl.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.resolve.toTypeProjection
 import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -98,6 +99,7 @@ class FirTypeDeserializer(
                 proto.upperBoundList.mapTo(bounds) {
                     FirResolvedTypeRefImpl(null, type(it), emptyList())
                 }
+                addDefaultBoundIfNecessary()
             }
         }
     }

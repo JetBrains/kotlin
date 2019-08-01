@@ -128,12 +128,6 @@ fun IElementType.toFirOperation(): FirOperation =
         else -> throw AssertionError(this.toString())
     }
 
-fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
-    if (bounds.isEmpty()) {
-        bounds += FirImplicitNullableAnyTypeRef(null)
-    }
-}
-
 fun FirExpression.generateNotNullOrOther(
     session: FirSession, other: FirExpression, caseId: String, basePsi: KtElement?
 ): FirWhenExpression {

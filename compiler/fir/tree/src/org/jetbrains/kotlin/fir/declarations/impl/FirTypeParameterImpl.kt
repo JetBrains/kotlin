@@ -31,7 +31,8 @@ class FirTypeParameterImpl(
 
     /*
      * Note that each type parameter have to has at least one upper bound (Any? if there is no other bounds)
-     *   so if you create FirTypeParameterImpl you need to guarantee this contract
+     *   so after initializing FirTypeParameterImpl you should call [addDefaultBoundIfNecessary] to guarantee
+     *   this contract
      */
     override val bounds: MutableList<FirTypeRef> = mutableListOf()
 
@@ -39,5 +40,11 @@ class FirTypeParameterImpl(
         bounds.transformInplace(transformer, data)
 
         return super<FirAbstractNamedAnnotatedDeclaration>.transformChildren(transformer, data)
+    }
+}
+
+fun FirTypeParameterImpl.addDefaultBoundIfNecessary() {
+    if (bounds.isEmpty()) {
+        bounds += FirImplicitNullableAnyTypeRef(null)
     }
 }
