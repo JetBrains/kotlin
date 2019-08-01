@@ -108,6 +108,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
     private fun generateContinuationClassForLambda(info: SuspendLambdaInfo) {
         val suspendLambda = suspendLambda.owner
         suspendLambda.createContinuationClassFor(info.function).apply {
+            copyAttributes(info.reference)
             val functionNClass = context.ir.symbols.getJvmFunctionClass(info.arity + 1)
             superTypes.add(
                 IrSimpleTypeImpl(
@@ -443,7 +444,11 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
                 expression.acceptChildrenVoid(this)
 
                 if (expression.isSuspend) {
-                    suspendLambdas += SuspendLambdaInfo(expression.symbol.owner, (expression.type as IrSimpleType).arguments.size - 1)
+                    suspendLambdas += SuspendLambdaInfo(
+                        expression.symbol.owner,
+                        (expression.type as IrSimpleType).arguments.size - 1,
+                        expression
+                    )
                 }
             }
         })
@@ -552,7 +557,7 @@ private class AddContinuationLowering(private val context: JvmBackendContext) : 
             }
         }
 
-    private class SuspendLambdaInfo(val function: IrFunction, val arity: Int) {
+    private class SuspendLambdaInfo(val function: IrFunction, val arity: Int, val reference: IrFunctionReference) {
         lateinit var constructor: IrConstructor
     }
 }
