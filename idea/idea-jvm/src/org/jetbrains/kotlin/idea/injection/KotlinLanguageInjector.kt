@@ -53,10 +53,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class KotlinLanguageInjector(
-    private val configuration: Configuration,
-    private val project: Project,
-    private val temporaryPlacesRegistry: TemporaryPlacesRegistry
+    private val project: Project
 ) : MultiHostInjector {
+    private val configuration get() = Configuration.getProjectInstance(project)
+
     companion object {
         private val STRING_LITERALS_REGEXP = "\"([^\"]*)\"".toRegex()
         private val ABSENT_KOTLIN_INJECTION = BaseInjection("ABSENT_KOTLIN_BASE_INJECTION")
@@ -143,7 +143,7 @@ class KotlinLanguageInjector(
     ): BaseInjection? {
         val containingFile = ktHost.containingFile
 
-        val tempInjectedLanguage = temporaryPlacesRegistry.getLanguageFor(ktHost, containingFile)
+        val tempInjectedLanguage = TemporaryPlacesRegistry.getInstance(project).getLanguageFor(ktHost, containingFile)
         if (tempInjectedLanguage != null) {
             InjectorUtils.putInjectedFileUserData(registrar, LanguageInjectionSupport.TEMPORARY_INJECTED_LANGUAGE, tempInjectedLanguage)
             return BaseInjection(support.id).apply {
@@ -389,25 +389,18 @@ class KotlinLanguageInjector(
         return InjectionInfo(id, prefix, suffix)
     }
 
-    private val injectableTargetClassShortNames = CachedValuesManager.getManager(project)
-        .createCachedValue({
-                               CachedValueProvider.Result.create(HashSet<String>().apply {
-                                   for (injection in configuration.getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID)) {
-                                       for (injectionPlace in injection.injectionPlaces) {
-                                           for (targetClassFQN in retrieveJavaPlaceTargetClassesFQNs(injectionPlace)) {
-                                               add(StringUtilRt.getShortName(targetClassFQN))
-                                           }
-                                       }
-                                   }
-                                   for (injection in configuration.getInjections(KOTLIN_SUPPORT_ID)) {
-                                       for (injectionPlace in injection.injectionPlaces) {
-                                           for (targetClassFQN in retrieveKotlinPlaceTargetClassesFQNs(injectionPlace)) {
-                                               add(StringUtilRt.getShortName(targetClassFQN))
-                                           }
-                                       }
-                                   }
-                               }, configuration)
-                           }, false)
+    private fun createCachedValue(): CachedValueProvider.Result<HashSet<String>>? = with(configuration) {
+        CachedValueProvider.Result.create(
+            (getInjections(JavaLanguageInjectionSupport.JAVA_SUPPORT_ID) + getInjections(KOTLIN_SUPPORT_ID))
+                .asSequence()
+                .flatMap { it.injectionPlaces.asSequence() }
+                .flatMap { retrieveJavaPlaceTargetClassesFQNs(it).asSequence() + retrieveKotlinPlaceTargetClassesFQNs(it).asSequence() }
+                .map { StringUtilRt.getShortName(it) }
+                .toHashSet()
+            , this)
+    }
+
+    private val injectableTargetClassShortNames = CachedValuesManager.getManager(project).createCachedValue(::createCachedValue, false)
 
     private fun fastCheckInjectionsExists(annotationEntry: KtCallElement): Boolean {
         val referencedName = getNameReference(annotationEntry.calleeExpression)?.getReferencedName() ?: return false

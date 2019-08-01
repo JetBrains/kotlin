@@ -21,6 +21,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ModuleRootEvent
 import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.libraries.Library
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -48,9 +49,10 @@ import javax.swing.Icon
 import javax.swing.JLabel
 import javax.swing.event.HyperlinkEvent
 
-class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
+class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) :
+    EditorNotifications.Provider<EditorNotificationPanel>(), StartupActivity {
 
-    init {
+    override fun runActivity(project: Project) {
         val connection = project.messageBus.connect()
         connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2000-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2000-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
+import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
@@ -34,16 +35,16 @@ import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.idea.versions.SuppressNotificationState
 import org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider
 import org.jetbrains.kotlin.idea.versions.createComponentActionLabel
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.psi.KtFile
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
-class KotlinSetupEnvironmentNotificationProvider(
-        private val myProject: Project,
-        notifications: EditorNotifications) : EditorNotifications.Provider<EditorNotificationPanel>() {
+class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project) : EditorNotifications.Provider<EditorNotificationPanel>(),
+    StartupActivity {
 
-    init {
-        myProject.messageBus.connect(myProject).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
+    override fun runActivity(project: Project) {
+        val notifications = EditorNotifications.getInstance(project)
+        project.messageBus.connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
             override fun rootsChanged(event: ModuleRootEvent) {
                 notifications.updateAllNotifications()
             }
@@ -109,13 +110,12 @@ class KotlinSetupEnvironmentNotificationProvider(
             return EditorNotificationPanel().apply {
                 setText("Kotlin not configured")
                 val configurators = getAbleToRunConfigurators(module).toList()
-                if (!configurators.isEmpty()) {
+                if (configurators.isNotEmpty()) {
                     createComponentActionLabel("Configure") { label ->
                         val singleConfigurator = configurators.singleOrNull()
                         if (singleConfigurator != null) {
                             singleConfigurator.apply(module.project)
-                        }
-                        else {
+                        } else {
                             val configuratorsPopup = createConfiguratorsPopup(module.project, configurators)
                             configuratorsPopup.showUnderneathOf(label)
                         }
