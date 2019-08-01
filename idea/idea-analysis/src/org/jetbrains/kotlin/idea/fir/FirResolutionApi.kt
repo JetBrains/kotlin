@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.idea.fir
 
 import com.intellij.psi.PsiElement
-import org.jetbrains.kotlin.cfg.pseudocode.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.declarations.*
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 private val FirResolvePhase.stubMode: Boolean
     get() = this <= FirResolvePhase.DECLARATIONS
@@ -143,14 +143,6 @@ private fun FirDeclaration.runResolve(
         )
         file.transform<FirFile, Nothing?>(transformer, null)
     }
-}
-
-private fun KtElement.containingNonLocalDeclaration(): KtDeclaration? {
-    var container = this.containingDeclarationForPseudocode
-    while (container != null && KtPsiUtil.isLocal(container)) {
-        container = container.containingDeclarationForPseudocode
-    }
-    return container
 }
 
 fun KtElement.getOrBuildFir(

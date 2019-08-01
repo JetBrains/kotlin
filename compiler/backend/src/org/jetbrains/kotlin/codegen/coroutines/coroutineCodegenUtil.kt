@@ -498,8 +498,10 @@ fun InstructionAdapter.invokeInvokeSuspendWithUnit(thisName: String) {
     )
 }
 
+const val SUSPEND_IMPL_NAME_SUFFIX = "\$suspendImpl"
+
 fun Method.getImplForOpenMethod(ownerInternalName: String) =
-    Method("$name\$suspendImpl", returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)
+    Method(name + SUSPEND_IMPL_NAME_SUFFIX, returnType, arrayOf(Type.getObjectType(ownerInternalName)) + argumentTypes)
 
 fun FunctionDescriptor.isSuspendLambdaOrLocalFunction() = this.isSuspend && when (this) {
     is AnonymousFunctionDescriptor -> this.isSuspendLambda
