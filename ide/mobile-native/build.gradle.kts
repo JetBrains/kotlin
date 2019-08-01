@@ -21,7 +21,7 @@ dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
     compile(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
     compileOnly(fileTree(clionUnscrambledJarDir) { include("**/*.jar") })
-    compile("com.android.tools.ddms:ddmlib:22.0.2")
+    compile("com.android.tools.ddms:ddmlib:26.0.0")
 
     if (!isStandaloneBuild) {
         compileOnly("org.jetbrains:markdown:${rootProject.extra["versions.markdown"]}")

@@ -30,7 +30,7 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     embedded(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
-    embedded("com.android.tools.ddms:ddmlib:22.0.2")
+    embedded("com.android.tools.ddms:ddmlib:26.0.0")
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(
