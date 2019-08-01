@@ -162,15 +162,17 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
 
     override fun isApplicable(project: Project, task: AbstractCompile) = task is KotlinCompile && Kapt3GradleSubplugin.isEnabled(project)
 
-    private fun Kapt3SubpluginContext.getKaptStubsDir() = createAndReturnTemporaryKaptDirectory("stubs")
+    private fun Kapt3SubpluginContext.getKaptStubsDir() = temporaryKaptDirectory("stubs")
 
-    private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = createAndReturnTemporaryKaptDirectory("incrementalData")
+    private fun Kapt3SubpluginContext.getKaptIncrementalDataDir() = temporaryKaptDirectory("incrementalData", doMkDirs = false)
 
-    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = createAndReturnTemporaryKaptDirectory("incApCache")
+    private fun Kapt3SubpluginContext.getKaptIncrementalAnnotationProcessingCache() = temporaryKaptDirectory("incApCache")
 
-    private fun Kapt3SubpluginContext.createAndReturnTemporaryKaptDirectory(name: String): File {
+    private fun Kapt3SubpluginContext.temporaryKaptDirectory(name: String, doMkDirs: Boolean = true): File {
         val dir = File(project.buildDir, "tmp/kapt3/$name/$sourceSetName")
-        dir.mkdirs()
+        if (doMkDirs) {
+            dir.mkdirs()
+        }
         return dir
     }
 
