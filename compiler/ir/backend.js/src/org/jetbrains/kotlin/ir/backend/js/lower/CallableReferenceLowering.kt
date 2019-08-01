@@ -426,7 +426,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
 
         val boundValueParameters = receivers + declaration.valueParameters.filter { it.origin == BOUND_VALUE_PARAMETER }
 
-        val factoryDeclaration = JsIrBuilder.buildFunction(getterName, reference.type, implicitDeclarationFile, declaration.visibility)
+        val factoryDeclaration = JsIrBuilder.buildFunction(getterName, reference.type, implicitDeclarationFile, Visibilities.INTERNAL)
 
         for ((i, p) in boundValueParameters.withIndex()) {
             val descriptor = WrappedValueParameterDescriptor()
