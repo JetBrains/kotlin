@@ -54,7 +54,8 @@ class CodeConformanceTest : TestCase() {
             "compiler/testData/psi/kdoc",
             "compiler/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
             "compiler/util/src/org/jetbrains/kotlin/config/MavenComparableVersion.java",
-            "dependencies/protobuf/protobuf-relocated/build"
+            "dependencies/protobuf/protobuf-relocated/build",
+            "compiler/fir/lightTree/testData"
         ).map(::File)
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS = listOf(
