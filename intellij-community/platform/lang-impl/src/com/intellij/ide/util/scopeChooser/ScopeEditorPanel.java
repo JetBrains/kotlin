@@ -399,7 +399,7 @@ public class ScopeEditorPanel {
 
   private void rebuild(final boolean updateText, @Nullable final Runnable runnable, final boolean requestFocus, final int delayMillis){
     myUpdateAlarm.cancel(false);
-    final Runnable request = () -> ApplicationManager.getApplication().executeOnPooledThread(() -> {
+    final Runnable request = () -> {
       if (updateText) {
         final String text = myCurrentScope != null ? myCurrentScope.getText() : null;
         SwingUtilities.invokeLater(() -> {
@@ -424,7 +424,7 @@ public class ScopeEditorPanel {
       if (runnable != null) {
         runnable.run();
       }
-    });
+    };
     myUpdateAlarm = AppExecutorUtil.getAppScheduledExecutorService().schedule(request, delayMillis, TimeUnit.MILLISECONDS);
   }
 
