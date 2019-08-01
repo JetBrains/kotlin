@@ -93,6 +93,7 @@ class ConvertReceiverToParameterIntention : SelfTargetingOffsetIndependentIntent
                                 runWriteAction {
                                     function.setReceiverTypeReference(addedParameter.typeReference)
                                     function.valueParameterList!!.removeParameter(addedParameter)
+                                    PsiDocumentManager.getInstance(project).commitDocument(editor.document)
                                 }
                             }
 

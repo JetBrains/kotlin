@@ -35,6 +35,9 @@ class FqNameFixingMoveJavaFileHandler : MoveFileHandler() {
             val newPackage = JavaDirectoryService.getInstance().getPackage(moveDestination) ?: return
             if (!FileTypeUtils.isInServerPageFile(file) && !PsiUtil.isModuleFile(file)) {
                 file.packageName = newPackage.qualifiedName
+                with(PsiDocumentManager.getInstance(file.project)) {
+                    commitDocument(getDocument(file) ?: return@with)
+                }
             }
         }
     }
