@@ -925,10 +925,11 @@ abstract class IrFileDeserializer(
             val descriptor = (symbol as IrTypeParameterSymbol).descriptor
             if (descriptor is DeserializedTypeParameterDescriptor && descriptor.containingDeclaration is PropertyDescriptor && symbol.isBound) {
                 // TODO: Get rid of once new properties are implemented
-                IrTypeParameterImpl(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index, proto.isReified, variance)
+                IrTypeParameterImpl(startOffset, endOffset, origin, IrTypeParameterSymbolImpl(descriptor), name, proto.index,
+                                    proto.isReified, proto.isVariadic ,variance)
             } else {
                 symbolTable.declareGlobalTypeParameter(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irrelevantOrigin, descriptor) {
-                    IrTypeParameterImpl(startOffset, endOffset, origin, it, name, proto.index, proto.isReified, variance)
+                    IrTypeParameterImpl(startOffset, endOffset, origin, it, name, proto.index, proto.isReified, proto.isVariadic, variance)
                 }
             }.apply {
                 proto.superTypeList.mapTo(superTypes) { deserializeIrType(it) }

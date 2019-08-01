@@ -28,6 +28,7 @@ interface IrTypeParameter : IrSymbolDeclaration<IrTypeParameterSymbol>, IrDeclar
     val variance: Variance
     val index: Int
     val isReified: Boolean
+    val isVariadic: Boolean
     val superTypes: MutableList<IrType>
 
     override fun <D> transform(transformer: IrElementTransformer<D>, data: D): IrTypeParameter

@@ -32,7 +32,7 @@ open class AbstractAccessorForFunctionDescriptor(
 
     protected fun copyTypeParameters(descriptor: FunctionDescriptor): List<TypeParameterDescriptor> = descriptor.typeParameters.map {
         val copy = TypeParameterDescriptorImpl.createForFurtherModification(
-                this, it.annotations, it.isReified,
+                this, it.annotations, it.isReified, it.isVariadic,
                 it.variance, it.name,
                 it.index, SourceElement.NO_SOURCE)
         for (upperBound in it.upperBounds) {

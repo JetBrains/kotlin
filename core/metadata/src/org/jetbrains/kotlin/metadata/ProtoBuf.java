@@ -7243,6 +7243,15 @@ public final class ProtoBuf {
      * <code>repeated int32 upper_bound_id = 6 [packed = true];</code>
      */
     int getUpperBoundId(int index);
+
+    /**
+     * <code>optional bool variadic = 7 [default = false];</code>
+     */
+    boolean hasVariadic();
+    /**
+     * <code>optional bool variadic = 7 [default = false];</code>
+     */
+    boolean getVariadic();
   }
   /**
    * Protobuf type {@code org.jetbrains.kotlin.metadata.TypeParameter}
@@ -7349,6 +7358,11 @@ public final class ProtoBuf {
                 upperBoundId_.add(input.readInt32());
               }
               input.popLimit(limit);
+              break;
+            }
+            case 56: {
+              bitField0_ |= 0x00000010;
+              variadic_ = input.readBool();
               break;
             }
           }
@@ -7574,6 +7588,21 @@ public final class ProtoBuf {
     }
     private int upperBoundIdMemoizedSerializedSize = -1;
 
+    public static final int VARIADIC_FIELD_NUMBER = 7;
+    private boolean variadic_;
+    /**
+     * <code>optional bool variadic = 7 [default = false];</code>
+     */
+    public boolean hasVariadic() {
+      return ((bitField0_ & 0x00000010) == 0x00000010);
+    }
+    /**
+     * <code>optional bool variadic = 7 [default = false];</code>
+     */
+    public boolean getVariadic() {
+      return variadic_;
+    }
+
     private void initFields() {
       id_ = 0;
       name_ = 0;
@@ -7581,6 +7610,7 @@ public final class ProtoBuf {
       variance_ = org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.Variance.INV;
       upperBound_ = java.util.Collections.emptyList();
       upperBoundId_ = java.util.Collections.emptyList();
+      variadic_ = false;
     }
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
@@ -7638,6 +7668,9 @@ public final class ProtoBuf {
       for (int i = 0; i < upperBoundId_.size(); i++) {
         output.writeInt32NoTag(upperBoundId_.get(i));
       }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        output.writeBool(7, variadic_);
+      }
       extensionWriter.writeUntil(1000, output);
       output.writeRawBytes(unknownFields);
     }
@@ -7681,6 +7714,10 @@ public final class ProtoBuf {
               .computeInt32SizeNoTag(dataSize);
         }
         upperBoundIdMemoizedSerializedSize = dataSize;
+      }
+      if (((bitField0_ & 0x00000010) == 0x00000010)) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeBoolSize(7, variadic_);
       }
       size += extensionsSerializedSize();
       size += unknownFields.size();
@@ -7788,6 +7825,8 @@ public final class ProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000010);
         upperBoundId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000020);
+        variadic_ = false;
+        bitField0_ = (bitField0_ & ~0x00000040);
         return this;
       }
 
@@ -7837,6 +7876,10 @@ public final class ProtoBuf {
           bitField0_ = (bitField0_ & ~0x00000020);
         }
         result.upperBoundId_ = upperBoundId_;
+        if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+          to_bitField0_ |= 0x00000010;
+        }
+        result.variadic_ = variadic_;
         result.bitField0_ = to_bitField0_;
         return result;
       }
@@ -7874,6 +7917,9 @@ public final class ProtoBuf {
             upperBoundId_.addAll(other.upperBoundId_);
           }
           
+        }
+        if (other.hasVariadic()) {
+          setVariadic(other.getVariadic());
         }
         this.mergeExtensionFields(other);
         setUnknownFields(
@@ -8240,6 +8286,38 @@ public final class ProtoBuf {
       public Builder clearUpperBoundId() {
         upperBoundId_ = java.util.Collections.emptyList();
         bitField0_ = (bitField0_ & ~0x00000020);
+        
+        return this;
+      }
+
+      private boolean variadic_ ;
+      /**
+       * <code>optional bool variadic = 7 [default = false];</code>
+       */
+      public boolean hasVariadic() {
+        return ((bitField0_ & 0x00000040) == 0x00000040);
+      }
+      /**
+       * <code>optional bool variadic = 7 [default = false];</code>
+       */
+      public boolean getVariadic() {
+        return variadic_;
+      }
+      /**
+       * <code>optional bool variadic = 7 [default = false];</code>
+       */
+      public Builder setVariadic(boolean value) {
+        bitField0_ |= 0x00000040;
+        variadic_ = value;
+        
+        return this;
+      }
+      /**
+       * <code>optional bool variadic = 7 [default = false];</code>
+       */
+      public Builder clearVariadic() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        variadic_ = false;
         
         return this;
       }

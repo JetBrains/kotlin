@@ -38,6 +38,7 @@ import java.util.List;
 public abstract class AbstractTypeParameterDescriptor extends DeclarationDescriptorNonRootImpl implements TypeParameterDescriptor {
     private final Variance variance;
     private final boolean reified;
+    private final boolean variadic;
     private final int index;
 
     private final NotNullLazyValue<TypeConstructor> typeConstructor;
@@ -50,6 +51,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
             @NotNull final Name name,
             @NotNull Variance variance,
             boolean isReified,
+            boolean isVariadic,
             int index,
             @NotNull SourceElement source,
             @NotNull final SupertypeLoopChecker supertypeLoopChecker
@@ -57,6 +59,7 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
         super(containingDeclaration, annotations, name, source);
         this.variance = variance;
         this.reified = isReified;
+        this.variadic = isVariadic;
         this.index = index;
 
         this.typeConstructor = storageManager.createLazyValue(new Function0<TypeConstructor>() {
@@ -98,6 +101,11 @@ public abstract class AbstractTypeParameterDescriptor extends DeclarationDescrip
     @Override
     public boolean isReified() {
         return reified;
+    }
+
+    @Override
+    public boolean isVariadic() {
+        return variadic;
     }
 
     @Override

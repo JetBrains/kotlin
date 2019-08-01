@@ -651,6 +651,7 @@ message IrTypeParameter {
   required IrTypeVariance variance = 4;
   repeated IrDataIndex super_type = 5;
   required bool is_reified = 6;
+  required bool is_variadic = 7;
 }
 
 message IrTypeParameterContainer {

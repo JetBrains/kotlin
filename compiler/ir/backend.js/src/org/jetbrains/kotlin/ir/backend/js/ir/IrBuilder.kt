@@ -67,7 +67,8 @@ object JsIrBuilder {
         }
     }
 
-    fun buildTypeParameter(name: Name, index: Int, isReified: Boolean, variance: Variance = Variance.INVARIANT): IrTypeParameter {
+    fun buildTypeParameter(name: Name, index: Int, isReified: Boolean, isVariadic: Boolean,
+                           variance: Variance = Variance.INVARIANT): IrTypeParameter {
         val descriptor = WrappedTypeParameterDescriptor()
         return IrTypeParameterImpl(
             UNDEFINED_OFFSET,
@@ -77,6 +78,7 @@ object JsIrBuilder {
             name,
             index,
             isReified,
+            isVariadic,
             variance
         ).also {
             descriptor.bind(it)

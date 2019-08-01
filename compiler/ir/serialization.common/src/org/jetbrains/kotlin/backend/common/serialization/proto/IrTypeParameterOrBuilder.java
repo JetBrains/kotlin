@@ -65,4 +65,13 @@ public interface IrTypeParameterOrBuilder extends
    * <code>required bool is_reified = 6;</code>
    */
   boolean getIsReified();
+
+  /**
+   * <code>required bool is_variadic = 7;</code>
+   */
+  boolean hasIsVariadic();
+  /**
+   * <code>required bool is_variadic = 7;</code>
+   */
+  boolean getIsVariadic();
 }

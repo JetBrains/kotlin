@@ -668,6 +668,11 @@ open class ProtoCompareGenerated(val oldNameResolver: NameResolver, val newNameR
 
         if (!checkEqualsTypeParameterUpperBoundId(old, new)) return false
 
+        if (old.hasVariadic() != new.hasVariadic()) return false
+        if (old.hasVariadic()) {
+            if (old.variadic != new.variadic) return false
+        }
+
         if (old.getExtensionCount(JvmProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JvmProtoBuf.typeParameterAnnotation)) {
             return false
         }
@@ -1943,6 +1948,10 @@ fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
 
     for(i in 0..upperBoundIdCount - 1) {
         hashCode = 31 * hashCode + getUpperBoundId(i)
+    }
+
+    if (hasVariadic()) {
+        hashCode = 31 * hashCode + variadic.hashCode()
     }
 
     for(i in 0..getExtensionCount(JvmProtoBuf.typeParameterAnnotation) - 1) {

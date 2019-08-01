@@ -148,6 +148,7 @@ class DynamicCallableDescriptors(storageManager: StorageManager, builtIns: Kotli
                 owner,
                 Annotations.EMPTY,
                 false,
+                false,
                 Variance.INVARIANT,
                 Name.identifier("T$index"),
                 index

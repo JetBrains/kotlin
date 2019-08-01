@@ -32,12 +32,13 @@ public abstract class AbstractLazyTypeParameterDescriptor extends AbstractTypePa
             @NotNull Name name,
             @NotNull Variance variance,
             boolean isReified,
+            boolean isVariadic,
             int index,
             @NotNull SourceElement source,
             @NotNull SupertypeLoopChecker supertypeLoopChecker
     ) {
-        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, index, source,
-              supertypeLoopChecker);
+        super(storageManager, containingDeclaration, Annotations.Companion.getEMPTY() /* TODO */, name, variance, isReified, isVariadic,
+              index, source, supertypeLoopChecker);
     }
 
     @Override

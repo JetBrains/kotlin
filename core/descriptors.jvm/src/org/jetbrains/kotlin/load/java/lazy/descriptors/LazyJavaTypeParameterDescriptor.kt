@@ -39,6 +39,7 @@ class LazyJavaTypeParameterDescriptor(
     javaTypeParameter.name,
     Variance.INVARIANT,
     /* isReified = */ false,
+    /* isVariadic = */ false,
     index,
     SourceElement.NO_SOURCE, c.components.supertypeLoopChecker
 ) {

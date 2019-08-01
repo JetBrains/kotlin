@@ -45,12 +45,14 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean reified,
+            boolean variadic,
             @NotNull Variance variance,
             @NotNull Name name,
             int index
     ) {
         TypeParameterDescriptorImpl typeParameterDescriptor =
-                createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, SourceElement.NO_SOURCE);
+                createForFurtherModification(containingDeclaration, annotations, reified, variadic, variance, name, index,
+                                             SourceElement.NO_SOURCE);
         typeParameterDescriptor.addUpperBound(getBuiltIns(containingDeclaration).getDefaultBound());
         typeParameterDescriptor.setInitialized();
         return typeParameterDescriptor;
@@ -60,12 +62,13 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean reified,
+            boolean variadic,
             @NotNull Variance variance,
             @NotNull Name name,
             int index,
             @NotNull SourceElement source
     ) {
-        return createForFurtherModification(containingDeclaration, annotations, reified, variance, name, index, source,
+        return createForFurtherModification(containingDeclaration, annotations, reified, variadic, variance, name, index, source,
                                             /* reportSupertypeLoopError = */ null, SupertypeLoopChecker.EMPTY.INSTANCE);
     }
 
@@ -73,6 +76,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean reified,
+            boolean variadic,
             @NotNull Variance variance,
             @NotNull Name name,
             int index,
@@ -80,8 +84,8 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @Nullable Function1<KotlinType, Void> reportCycleError,
             @NotNull SupertypeLoopChecker supertypeLoopsResolver
     ) {
-        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variance, name, index, source, reportCycleError,
-                                               supertypeLoopsResolver);
+        return new TypeParameterDescriptorImpl(containingDeclaration, annotations, reified, variadic, variance, name, index, source,
+                                               reportCycleError, supertypeLoopsResolver);
     }
 
     private final List<KotlinType> upperBounds = new ArrayList<KotlinType>(1);
@@ -91,6 +95,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @NotNull DeclarationDescriptor containingDeclaration,
             @NotNull Annotations annotations,
             boolean reified,
+            boolean variadic,
             @NotNull Variance variance,
             @NotNull Name name,
             int index,
@@ -98,7 +103,7 @@ public class TypeParameterDescriptorImpl extends AbstractTypeParameterDescriptor
             @Nullable Function1<KotlinType, Void> reportCycleError,
             @NotNull SupertypeLoopChecker supertypeLoopsChecker
     ) {
-        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, index, source,
+        super(LockBasedStorageManager.NO_LOCKS, containingDeclaration, annotations, name, variance, reified, variadic, index, source,
               supertypeLoopsChecker);
         this.reportCycleError = reportCycleError;
     }

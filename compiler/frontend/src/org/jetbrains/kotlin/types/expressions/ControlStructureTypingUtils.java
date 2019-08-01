@@ -201,7 +201,7 @@ public class ControlStructureTypingUtils {
         );
 
         TypeParameterDescriptor typeParameter = TypeParameterDescriptorImpl.createWithDefaultBound(
-                function, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT,
+                function, Annotations.Companion.getEMPTY(), false, false, Variance.INVARIANT,
                 construct.getSpecialTypeParameterName(), 0);
 
         KotlinType type = typeParameter.getDefaultType();

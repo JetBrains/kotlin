@@ -109,6 +109,11 @@ public final class IrTypeParameter extends
             isReified_ = input.readBool();
             break;
           }
+          case 56: {
+            bitField0_ |= 0x00000020;
+            isVariadic_ = input.readBool();
+            break;
+          }
         }
       }
     } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -256,6 +261,21 @@ public final class IrTypeParameter extends
     return isReified_;
   }
 
+  public static final int IS_VARIADIC_FIELD_NUMBER = 7;
+  private boolean isVariadic_;
+  /**
+   * <code>required bool is_variadic = 7;</code>
+   */
+  public boolean hasIsVariadic() {
+    return ((bitField0_ & 0x00000020) == 0x00000020);
+  }
+  /**
+   * <code>required bool is_variadic = 7;</code>
+   */
+  public boolean getIsVariadic() {
+    return isVariadic_;
+  }
+
   private void initFields() {
     base_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase.getDefaultInstance();
     name_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
@@ -263,6 +283,7 @@ public final class IrTypeParameter extends
     variance_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrTypeVariance.IN;
     superType_ = java.util.Collections.emptyList();
     isReified_ = false;
+    isVariadic_ = false;
   }
   private byte memoizedIsInitialized = -1;
   public final boolean isInitialized() {
@@ -287,6 +308,10 @@ public final class IrTypeParameter extends
       return false;
     }
     if (!hasIsReified()) {
+      memoizedIsInitialized = 0;
+      return false;
+    }
+    if (!hasIsVariadic()) {
       memoizedIsInitialized = 0;
       return false;
     }
@@ -329,6 +354,9 @@ public final class IrTypeParameter extends
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       output.writeBool(6, isReified_);
     }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      output.writeBool(7, isVariadic_);
+    }
     output.writeRawBytes(unknownFields);
   }
 
@@ -361,6 +389,10 @@ public final class IrTypeParameter extends
     if (((bitField0_ & 0x00000010) == 0x00000010)) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeBoolSize(6, isReified_);
+    }
+    if (((bitField0_ & 0x00000020) == 0x00000020)) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeBoolSize(7, isVariadic_);
     }
     size += unknownFields.size();
     memoizedSerializedSize = size;
@@ -468,6 +500,8 @@ public final class IrTypeParameter extends
       bitField0_ = (bitField0_ & ~0x00000010);
       isReified_ = false;
       bitField0_ = (bitField0_ & ~0x00000020);
+      isVariadic_ = false;
+      bitField0_ = (bitField0_ & ~0x00000040);
       return this;
     }
 
@@ -516,6 +550,10 @@ public final class IrTypeParameter extends
         to_bitField0_ |= 0x00000010;
       }
       result.isReified_ = isReified_;
+      if (((from_bitField0_ & 0x00000040) == 0x00000040)) {
+        to_bitField0_ |= 0x00000020;
+      }
+      result.isVariadic_ = isVariadic_;
       result.bitField0_ = to_bitField0_;
       return result;
     }
@@ -547,6 +585,9 @@ public final class IrTypeParameter extends
       if (other.hasIsReified()) {
         setIsReified(other.getIsReified());
       }
+      if (other.hasIsVariadic()) {
+        setIsVariadic(other.getIsVariadic());
+      }
       setUnknownFields(
           getUnknownFields().concat(other.unknownFields));
       return this;
@@ -570,6 +611,10 @@ public final class IrTypeParameter extends
         return false;
       }
       if (!hasIsReified()) {
+        
+        return false;
+      }
+      if (!hasIsVariadic()) {
         
         return false;
       }
@@ -949,6 +994,38 @@ public final class IrTypeParameter extends
     public Builder clearIsReified() {
       bitField0_ = (bitField0_ & ~0x00000020);
       isReified_ = false;
+      
+      return this;
+    }
+
+    private boolean isVariadic_ ;
+    /**
+     * <code>required bool is_variadic = 7;</code>
+     */
+    public boolean hasIsVariadic() {
+      return ((bitField0_ & 0x00000040) == 0x00000040);
+    }
+    /**
+     * <code>required bool is_variadic = 7;</code>
+     */
+    public boolean getIsVariadic() {
+      return isVariadic_;
+    }
+    /**
+     * <code>required bool is_variadic = 7;</code>
+     */
+    public Builder setIsVariadic(boolean value) {
+      bitField0_ |= 0x00000040;
+      isVariadic_ = value;
+      
+      return this;
+    }
+    /**
+     * <code>required bool is_variadic = 7;</code>
+     */
+    public Builder clearIsVariadic() {
+      bitField0_ = (bitField0_ & ~0x00000040);
+      isVariadic_ = false;
       
       return this;
     }

@@ -263,7 +263,7 @@ fun IrTypeParameterBuilder.build(): IrTypeParameter {
     return IrTypeParameterImpl(
         startOffset, endOffset, origin,
         IrTypeParameterSymbolImpl(wrappedDescriptor),
-        name, index, isReified, variance
+        name, index, isReified, isVariadic, variance
     ).also {
         wrappedDescriptor.bind(it)
         it.superTypes.addAll(superTypes)

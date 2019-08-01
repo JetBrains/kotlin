@@ -298,6 +298,7 @@ open class DeepCopyIrTreeWithSymbols(
             symbolRenamer.getTypeParameterName(declaration.symbol),
             declaration.index,
             declaration.isReified,
+            declaration.isVariadic,
             declaration.variance
         ).apply {
             transformAnnotations(declaration)

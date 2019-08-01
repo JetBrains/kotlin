@@ -413,6 +413,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
                     fakeFunction,
                     Annotations.EMPTY,
                     false,
+                    false,
                     Variance.INVARIANT,
                     Name.identifier(parameterNames[it]),
                     it

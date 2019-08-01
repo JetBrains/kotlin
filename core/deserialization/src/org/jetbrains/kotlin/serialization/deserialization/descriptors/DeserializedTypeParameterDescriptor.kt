@@ -33,7 +33,7 @@ class DeserializedTypeParameterDescriptor(
     index: Int
 ) : AbstractLazyTypeParameterDescriptor(
     c.storageManager, c.containingDeclaration, c.nameResolver.getName(proto.name),
-    ProtoEnumFlags.variance(proto.variance), proto.reified, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
+    ProtoEnumFlags.variance(proto.variance), proto.reified, proto.variadic, index, SourceElement.NO_SOURCE, SupertypeLoopChecker.EMPTY
 ) {
     override val annotations = DeserializedAnnotations(c.storageManager) {
         c.components.annotationAndConstantLoader.loadTypeParameterAnnotations(proto, c.nameResolver).toList()

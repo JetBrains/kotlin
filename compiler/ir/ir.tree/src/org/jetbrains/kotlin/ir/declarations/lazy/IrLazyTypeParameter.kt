@@ -26,6 +26,7 @@ class IrLazyTypeParameter(
     override val name: Name,
     override val index: Int,
     override val isReified: Boolean,
+    override val isVariadic: Boolean,
     override val variance: Variance,
     stubGenerator: DeclarationStubGenerator,
     typeTranslator: TypeTranslator
@@ -46,6 +47,7 @@ class IrLazyTypeParameter(
                 symbol.descriptor.name,
                 symbol.descriptor.index,
                 symbol.descriptor.isReified,
+                symbol.descriptor.isVariadic,
                 symbol.descriptor.variance,
                 stubGenerator, TypeTranslator
             )

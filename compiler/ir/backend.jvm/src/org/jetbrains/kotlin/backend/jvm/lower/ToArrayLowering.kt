@@ -64,7 +64,8 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
                 Name.identifier("T"),
                 index = 0,
                 variance = Variance.INVARIANT,
-                isReified = false
+                isReified = false,
+                isVariadic = false
             ).apply {
                 typeParameterDescriptor.bind(this)
                 superTypes.add(irBuiltIns.anyNType)

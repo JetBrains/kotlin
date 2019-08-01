@@ -179,7 +179,7 @@ fun IrTypeParameter.copyToWithoutSuperTypes(
 ): IrTypeParameter {
     val descriptor = WrappedTypeParameterDescriptor(symbol.descriptor.annotations, symbol.descriptor.source)
     val symbol = IrTypeParameterSymbolImpl(descriptor)
-    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, variance).also { copied ->
+    return IrTypeParameterImpl(startOffset, endOffset, origin, symbol, name, shift + index, isReified, isVariadic, variance).also { copied ->
         descriptor.bind(copied)
         copied.parent = target
     }

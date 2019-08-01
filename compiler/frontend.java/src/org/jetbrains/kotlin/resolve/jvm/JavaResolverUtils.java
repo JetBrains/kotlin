@@ -48,6 +48,7 @@ public class JavaResolverUtils {
                                newOwner == null ? typeParameter.getContainingDeclaration() : newOwner,
                                typeParameter.getAnnotations(),
                                typeParameter.isReified(),
+                               typeParameter.isVariadic(),
                                typeParameter.getVariance(),
                                typeParameter.getName(),
                                typeParameter.getIndex(),

@@ -62,6 +62,7 @@ public class DescriptorSubstitutor {
                     newContainingDeclaration,
                     descriptor.getAnnotations(),
                     descriptor.isReified(),
+                    descriptor.isVariadic(),
                     descriptor.getVariance(),
                     descriptor.getName(),
                     index++,

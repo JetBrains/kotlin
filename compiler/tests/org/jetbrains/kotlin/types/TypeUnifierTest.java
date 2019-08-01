@@ -77,7 +77,7 @@ public class TypeUnifierTest extends KotlinTestWithEnvironment {
 
     private TypeParameterDescriptor createTypeVariable(String name) {
         return TypeParameterDescriptorImpl.createWithDefaultBound(
-                module, Annotations.Companion.getEMPTY(), false, Variance.INVARIANT, Name.identifier(name), 0
+                module, Annotations.Companion.getEMPTY(), false, false, Variance.INVARIANT, Name.identifier(name), 0
         );
     }
 

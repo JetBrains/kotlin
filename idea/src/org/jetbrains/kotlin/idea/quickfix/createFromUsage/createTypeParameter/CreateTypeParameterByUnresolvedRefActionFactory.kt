@@ -99,7 +99,7 @@ object CreateTypeParameterByUnresolvedRefActionFactory : KotlinIntentionActionFa
 
 fun createFakeTypeParameterDescriptor(containingDescriptor: DeclarationDescriptor, name: String): TypeParameterDescriptor {
     return TypeParameterDescriptorImpl
-            .createWithDefaultBound(containingDescriptor, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier(name), -1)
+            .createWithDefaultBound(containingDescriptor, Annotations.EMPTY, false, false, Variance.INVARIANT, Name.identifier(name), -1)
 }
 
 fun getPossibleTypeParameterContainers(startFrom: PsiElement): List<KtTypeParameterListOwner> {

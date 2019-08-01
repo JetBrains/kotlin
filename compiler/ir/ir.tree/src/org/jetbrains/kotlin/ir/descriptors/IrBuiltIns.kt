@@ -232,7 +232,7 @@ class IrBuiltIns(
             SourceElement.NO_SOURCE
         ).apply {
             val typeParameterT = TypeParameterDescriptorImpl.createWithDefaultBound(
-                this, Annotations.EMPTY, true, Variance.INVARIANT, Name.identifier("T"), 0
+                this, Annotations.EMPTY, true, false, Variance.INVARIANT, Name.identifier("T"), 0
             )
 
             val valueParameterName = ValueParameterDescriptorImpl(

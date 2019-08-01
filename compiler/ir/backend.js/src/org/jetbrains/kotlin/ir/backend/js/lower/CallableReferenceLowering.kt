@@ -460,6 +460,7 @@ class CallableReferenceLowering(val context: JsIrBackendContext) : FileLoweringP
                 t.name,
                 t.index,
                 t.isReified,
+                t.isVariadic,
                 t.variance
             ).also {
                 descriptor.bind(it)
