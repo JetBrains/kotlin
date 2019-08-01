@@ -118,12 +118,12 @@ public class ExternalSystemUtil {
     new TObjectHashingStrategy<Pair<ProjectSystemId, File>>() {
       @Override
       public int computeHashCode(Pair<ProjectSystemId, File> object) {
-        return object.first.hashCode() + fileHashCode(object.second);
+        return object.first.hashCode() + FileUtil.fileHashCode(object.second);
       }
 
       @Override
       public boolean equals(Pair<ProjectSystemId, File> o1, Pair<ProjectSystemId, File> o2) {
-        return o1.first.equals(o2.first) && filesEqual(o1.second, o2.second);
+        return o1.first.equals(o2.first) && FileUtil.filesEqual(o1.second, o2.second);
       }
     };
 
