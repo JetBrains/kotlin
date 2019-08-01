@@ -35,12 +35,27 @@ private fun validationCallback(context: JsIrBackendContext, module: IrModuleFrag
 
 val validationAction = makeVerifyAction(::validationCallback)
 
+fun dumpDts(actionState: ActionState, data: IrModuleFragment, context: JsIrBackendContext): String? {
+    val exports = ExportLowering(context)
+    val exportedModule = exports.generateExport(data)
+    val prefix = "type Nullable<T> = T | null | undefined\n"
+    val content = prefix + exportedModule.toTypeScript()
+    val contentHash = content.hashCode()
+    if (contentHash == context.previousDtsHash) return null
+    context.previousDtsHash = contentHash
+    return content
+}
+
+val dtsDumperToFile = dumpToFile("d.ts", ::dumpDts)
+
+val actions = setOf(validationAction, /*defaultDumper,*/ dtsDumperToFile)
+
 private fun makeJsModulePhase(
     lowering: (JsIrBackendContext) -> FileLoweringPass,
     name: String,
     description: String,
     prerequisite: Set<AnyNamedPhase> = emptySet()
-) = makeIrModulePhase<JsIrBackendContext>(lowering, name, description, prerequisite, actions = setOf(validationAction, defaultDumper))
+) = makeIrModulePhase<JsIrBackendContext>(lowering, name, description, prerequisite, actions = actions)
 
 private fun makeCustomJsModulePhase(
     op: (JsIrBackendContext, IrModuleFragment) -> Unit,
@@ -51,7 +66,7 @@ private fun makeCustomJsModulePhase(
     name,
     description,
     prerequisite,
-    actions = setOf(defaultDumper, validationAction),
+    actions = actions,
     nlevels = 0,
     lower = object : SameTypeCompilerPhase<JsIrBackendContext, IrModuleFragment> {
         override fun invoke(
@@ -372,6 +387,12 @@ private val testGenerationPhase = makeJsModulePhase(
     description = "Generate invocations to kotlin.test suite and test functions"
 )
 
+private val jsExportLoweringPhase = makeJsModulePhase(
+    ::ExportLowering,
+    name = "JsExportLowering",
+    description = "Process JS exports"
+)
+
 private val staticMembersLoweringPhase = makeJsModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -394,6 +415,7 @@ val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
+            jsExportLoweringPhase then
             testGenerationPhase then
             expectDeclarationsRemovingPhase then
             provisionalFunctionExpressionPhase then

@@ -112,6 +112,7 @@ abstract class BasicBoxTest(
         }
 
         val needsFullIrRuntime = KJS_WITH_FULL_RUNTIME.matcher(fileContent).find()
+        val needCheckTypescriptDeclarations = CHECK_TYPESCRIPT_DECLARATIONS.matcher(fileContent).find()
 
         val actualMainCallParameters = if (CALL_MAIN_PATTERN.matcher(fileContent).find()) MainCallParameters.mainWithArguments(listOf("testArg")) else mainCallParameters
 
@@ -156,7 +157,7 @@ abstract class BasicBoxTest(
                     file.parent, module, outputFileName, dependencies, allDependencies, friends, modules.size > 1,
                     !SKIP_SOURCEMAP_REMAPPING.matcher(fileContent).find(),
                     outputPrefixFile, outputPostfixFile, actualMainCallParameters, testPackage, testFunction,
-                    needsFullIrRuntime, isMainModule
+                    needsFullIrRuntime, isMainModule, needCheckTypescriptDeclarations
                 )
 
                 when {
@@ -198,6 +199,27 @@ abstract class BasicBoxTest(
             val additionalJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + JavaScript.DOT_EXTENSION
             if (File(additionalJsFile).exists()) {
                 additionalFiles += additionalJsFile
+            }
+
+            if (needCheckTypescriptDeclarations) {
+                val dtsFilePath = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + ".d.ts"
+                val dtsFile = File(dtsFilePath)
+                val generatedDtsFilePath =
+                    mainModule
+                        .outputFileName(outputDir)
+                        .removeSuffix(JavaScript.DOT_EXTENSION) + ".d.ts"
+
+                val generatedDtsFile = File(generatedDtsFilePath)
+
+                if (!dtsFile.exists())
+                    error("File 1 doesn't exist: $dtsFile")
+
+                if (!generatedDtsFile.exists())
+                    error("File 2 doesn't exist: $generatedDtsFile")
+
+                val referenceDts = dtsFile.readText()
+                val generatedDts = generatedDtsFile.readText()
+                assertEquals(referenceDts, generatedDts)
             }
 
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
@@ -340,7 +362,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        generateDts: Boolean
     ) {
         val kotlinFiles =  module.files.filter { it.fileName.endsWith(".kt") }
         val testFiles = kotlinFiles.map { it.fileName }
@@ -362,7 +385,7 @@ abstract class BasicBoxTest(
         val incrementalData = IncrementalData()
         translateFiles(
             psiFiles.map(TranslationUnit::SourceFile), outputFile, config, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, isMainModule, generateDts
         )
 
         if (incrementalCompilationChecksEnabled && module.hasFilesToRecompile) {
@@ -412,7 +435,7 @@ abstract class BasicBoxTest(
 
         translateFiles(
             translationUnits, recompiledOutputFile, recompiledConfig, outputPrefixFile, outputPostfixFile,
-            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false
+            mainCallParameters, incrementalData, remap, testPackage, testFunction, needsFullIrRuntime, false, false
         )
 
         val originalOutput = FileUtil.loadFile(outputFile)
@@ -482,7 +505,8 @@ abstract class BasicBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        generateDts: Boolean
     ) {
         val translator = K2JSTranslator(config, false)
         val translationResult = translator.translateUnits(ExceptionThrowingReporter, units, mainCallParameters)
@@ -854,8 +878,9 @@ abstract class BasicBoxTest(
         private val SOURCE_MAP_SOURCE_EMBEDDING = Regex("^// *SOURCE_MAP_EMBED_SOURCES: ([A-Z]+)*\$", RegexOption.MULTILINE)
         private val CALL_MAIN_PATTERN = Pattern.compile("^// *CALL_MAIN *$", Pattern.MULTILINE)
         private val KJS_WITH_FULL_RUNTIME = Pattern.compile("^// *KJS_WITH_FULL_RUNTIME *\$", Pattern.MULTILINE)
+        private val CHECK_TYPESCRIPT_DECLARATIONS = Pattern.compile("^// *CHECK_TYPESCRIPT_DECLARATIONS *\$", Pattern.MULTILINE)
 
-        @JvmStatic
+            @JvmStatic
         protected val runTestInNashorn = getBoolean("kotlin.js.useNashorn")
 
         val TEST_MODULE = "JS_TESTS"
