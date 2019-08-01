@@ -29,7 +29,8 @@ import java.util.Objects;
 import java.util.Set;
 
 public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector {
-  public static final String FACTORY_FIELD = "factory";
+  private static final String ID_FIELD = "id";
+  private static final String FACTORY_FIELD = "factory";
 
   @NotNull
   @Override
@@ -39,7 +40,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
 
   @Override
   public int getVersion() {
-    return 4;
+    return 5;
   }
 
   @NotNull
@@ -58,13 +59,9 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
         }
 
         final ConfigurationType configurationType = configurationFactory.getType();
-        final String eventId = toConfigurationId(configurationType);
-        final FeatureUsageData data = createData(settings, runConfiguration);
-        if (configurationType.getConfigurationFactories().length > 1) {
-          data.addData(FACTORY_FIELD, configurationFactory.getId());
-        }
-
-        final Template template = new Template(eventId, data);
+        final FeatureUsageData data = newFeatureUsageData(configurationType, configurationFactory);
+        fillSettings(data, settings, runConfiguration);
+        final Template template = new Template("configured.in.project", data);
         if (templates.containsKey(template)) {
           templates.increment(template);
         }
@@ -80,14 +77,19 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
   }
 
   @NotNull
-  public static String toConfigurationId(@NotNull ConfigurationType configurationType) {
-    return configurationType instanceof UnknownConfigurationType ? "unknown" : configurationType.getId();
+  public static FeatureUsageData newFeatureUsageData(@NotNull ConfigurationType configuration, @NotNull ConfigurationFactory factory) {
+    final String id = configuration instanceof UnknownConfigurationType ? "unknown" : configuration.getId();
+    final FeatureUsageData data = new FeatureUsageData().addData(ID_FIELD, id);
+    if (configuration.getConfigurationFactories().length > 1) {
+      data.addData(FACTORY_FIELD, factory.getId());
+    }
+    return data;
   }
 
-  private static FeatureUsageData createData(@NotNull RunnerAndConfigurationSettings settings,
-                                             @NotNull RunConfiguration runConfiguration) {
-    return new FeatureUsageData().
-      addData("shared", settings.isShared()).
+  private static void fillSettings(@NotNull FeatureUsageData data,
+                                   @NotNull RunnerAndConfigurationSettings settings,
+                                   @NotNull RunConfiguration runConfiguration) {
+    data.addData("shared", settings.isShared()).
       addData("edit_before_run", settings.isEditBeforeRun()).
       addData("activate_before_run", settings.isActivateToolWindowBeforeRun()).
       addData("parallel", runConfiguration.isAllowRunningInParallel()).
@@ -126,7 +128,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
   public static class RunConfigurationUtilValidator extends CustomWhiteListRule {
     @Override
     public boolean acceptRuleId(@Nullable String ruleId) {
-      return "run_config".equals(ruleId) || "run_config_factory".equals(ruleId);
+      return "run_config_id".equals(ruleId) || "run_config_factory".equals(ruleId);
     }
 
     @NotNull
@@ -134,8 +136,12 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
       if (isThirdPartyValue(data) || "unknown".equals(data)) return ValidationResultType.ACCEPTED;
 
-      final String configurationId = context.eventId;
-      final String factoryId = context.eventData.containsKey(FACTORY_FIELD) ? context.eventData.get(FACTORY_FIELD).toString() : null;
+      final String configurationId = getDataField(context, ID_FIELD);
+      final String factoryId = getDataField(context, FACTORY_FIELD);
+      if (configurationId == null) {
+        return ValidationResultType.REJECTED;
+      }
+
       if (StringUtil.equals(data, configurationId) || StringUtil.equals(data, factoryId)) {
         final Pair<ConfigurationType, ConfigurationFactory> configurationAndFactory =
           findConfigurationAndFactory(configurationId, factoryId);
@@ -144,13 +150,16 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
         final ConfigurationFactory factory = configurationAndFactory.getSecond();
         if (configuration != null && (StringUtil.isEmpty(factoryId) || factory != null)) {
           final PluginInfo info = PluginInfoDetectorKt.getPluginInfo(configuration.getClass());
-          if (StringUtil.equals(data, context.eventId)) {
-            context.setPluginInfo(info);
-          }
+          context.setPluginInfo(info);
           return info.isDevelopedByJetBrains() ? ValidationResultType.ACCEPTED : ValidationResultType.THIRD_PARTY;
         }
       }
       return ValidationResultType.REJECTED;
+    }
+
+    @Nullable
+    private static String getDataField(@NotNull EventContext context, @NotNull String fieldName) {
+      return context.eventData.containsKey(fieldName) ? context.eventData.get(fieldName).toString() : null;
     }
 
     @NotNull

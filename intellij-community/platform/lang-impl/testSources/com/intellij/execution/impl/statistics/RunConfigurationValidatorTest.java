@@ -35,17 +35,18 @@ public class RunConfigurationValidatorTest extends LightPlatformTestCase {
     }
   }
 
-  private static void doValidateEventId(@NotNull String eventId, @NotNull FeatureUsageData eventData) {
-    final RunConfigurationUtilValidator validator = new RunConfigurationUtilValidator();
-    final EventContext context = EventContext.create(eventId, eventData.build());
-    doTest(ValidationResultType.ACCEPTED, validator, eventId, context);
+  private static void doValidateFactory(@NotNull FeatureUsageData eventData) {
+    doValidateData(eventData, "factory");
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private static void doValidateFactoryData(@NotNull String eventId, @NotNull FeatureUsageData eventData) {
+  private static void doValidateConfigId(@NotNull FeatureUsageData eventData) {
+    doValidateData(eventData, "id");
+  }
+
+  private static void doValidateData(@NotNull FeatureUsageData eventData, @NotNull String field) {
     final RunConfigurationUtilValidator validator = new RunConfigurationUtilValidator();
-    final EventContext context = EventContext.create(eventId, eventData.build());
-    final Object data = eventData.build().get("factory");
+    final EventContext context = EventContext.create("configured.in.project", eventData.build());
+    final Object data = eventData.build().get(field);
     assertTrue(data instanceof String);
     doTest(ValidationResultType.ACCEPTED, validator, (String)data, context);
   }
@@ -56,53 +57,68 @@ public class RunConfigurationValidatorTest extends LightPlatformTestCase {
     doTest(ValidationResultType.REJECTED, validator, eventId, context);
   }
 
-  @SuppressWarnings("SameParameterValue")
-  private static void doRejectFactoryData(@NotNull String eventId, @NotNull FeatureUsageData eventData) {
+  private static void doRejectConfigId(@NotNull FeatureUsageData eventData) {
+    doRejectData(eventData, "id");
+  }
+
+  private static void doRejectFactory(@NotNull FeatureUsageData eventData) {
+    doRejectData(eventData, "factory");
+  }
+
+  private static void doRejectData(@NotNull FeatureUsageData eventData, @NotNull String field) {
     final RunConfigurationUtilValidator validator = new RunConfigurationUtilValidator();
-    final EventContext context = EventContext.create(eventId, eventData.build());
-    final Object data = eventData.build().get("factory");
+    final EventContext context = EventContext.create("configured.in.project", eventData.build());
+    final Object data = eventData.build().get(field);
     assertTrue(data instanceof String);
     doTest(ValidationResultType.REJECTED, validator, (String)data, context);
   }
 
   public void testRunConfigurationWithOneFactory() {
-    doValidateEventId("FirstTestRunConfigurationType", newFeatureUsageData());
+    doValidateConfigId(newFeatureUsageData().addData("id", "FirstTestRunConfigurationType"));
   }
 
   public void testAnotherRunConfigurationWithOneFactory() {
-    doValidateEventId("SecondTestRunConfigurationType", newFeatureUsageData());
+    doValidateConfigId(newFeatureUsageData().addData("id", "SecondTestRunConfigurationType"));
   }
 
   public void testAnotherRunConfigurationWithEmptyName() {
-    doValidateEventId("SecondTestRunConfigurationType", newFeatureUsageData());
+    doValidateConfigId(newFeatureUsageData().addData("id", "SecondTestRunConfigurationType"));
   }
 
   public void testThirdPartyRunConfigurationWithOneFactory() {
-    doValidateEventId("third.party", newFeatureUsageData());
+    doValidateConfigId(newFeatureUsageData().addData("id", "third.party"));
   }
 
   public void testRejectUnknownRunConfiguration() {
-    doRejectEventId("UnknownTestRunConfigurationType", newFeatureUsageData());
+    doRejectConfigId(newFeatureUsageData().addData("id", "UnknownTestRunConfigurationType"));
   }
 
   public void testRejectEmptyRunConfiguration() {
-    doRejectEventId("", newFeatureUsageData());
+    doRejectConfigId(newFeatureUsageData().addData("id", ""));
+  }
+
+  public void testRejectNoEmptyRunConfiguration() {
+    doRejectFactory(newFeatureUsageData().addData("factory", "Local"));
   }
 
   public void testRunConfigurationWithIncorrectFactory() {
-    doRejectEventId("FirstTestRunConfigurationType/Local", newFeatureUsageData());
+    doRejectConfigId(newFeatureUsageData().addData("id", "FirstTestRunConfigurationType/Local"));
   }
 
   public void testRunConfigurationWithLocalFactory() {
-    final FeatureUsageData data = newFeatureUsageData().addData("factory", "Local");
-    doValidateEventId("MultiFactoryTestRunConfigurationType", data);
-    doValidateFactoryData("MultiFactoryTestRunConfigurationType", data);
+    final FeatureUsageData data = newFeatureUsageData().
+      addData("factory", "Local").
+      addData("id", "MultiFactoryTestRunConfigurationType");
+    doValidateConfigId(data);
+    doValidateFactory(data);
   }
 
   public void testRunConfigurationWithRemoteFactory() {
-    final FeatureUsageData data = newFeatureUsageData().addData("factory", "Remote");
-    doValidateEventId("MultiFactoryTestRunConfigurationType", data);
-    doValidateFactoryData("MultiFactoryTestRunConfigurationType", data);
+    final FeatureUsageData data = newFeatureUsageData().
+      addData("factory", "Remote").
+      addData("id", "MultiFactoryTestRunConfigurationType");
+    doValidateConfigId(data);
+    doValidateFactory(data);
   }
 
   public void testRunConfigurationWithEmptyFactory() {
@@ -110,21 +126,23 @@ public class RunConfigurationValidatorTest extends LightPlatformTestCase {
   }
 
   public void testRejectRunConfigurationWithUnknownFactory() {
-    final FeatureUsageData data = newFeatureUsageData().addData("factory", "Unknown");
-    doRejectEventId("MultiFactoryTestRunConfigurationType", data);
-    doRejectFactoryData("MultiFactoryTestRunConfigurationType", data);
+    final FeatureUsageData data = newFeatureUsageData().
+      addData("factory", "Unknown").
+      addData("id", "MultiFactoryTestRunConfigurationType");
+    doRejectConfigId(data);
+    doRejectFactory(data);
   }
 
   public void testRejectRunConfigurationWithEmptyName() {
-    doRejectEventId("/Remote", newFeatureUsageData());
+    doRejectConfigId(newFeatureUsageData().addData("id", "/Remote"));
   }
 
   public void testRejectRunConfigurationWithEmptyNameAndFactory() {
-    doRejectEventId("/", newFeatureUsageData());
+    doRejectEventId("/", newFeatureUsageData().addData("id", "/"));
   }
 
   public void testRejectRunConfigurationWithTwoMuchValues() {
-    doRejectEventId("RunConfigName/Factory/AnotherValue", newFeatureUsageData());
+    doRejectEventId("RunConfigName/Factory/AnotherValue", newFeatureUsageData().addData("id", "RunConfigName/Factory/AnotherValue"));
   }
 
   @NotNull

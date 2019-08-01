@@ -16,18 +16,14 @@ import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import static com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector.FACTORY_FIELD;
+import static com.intellij.execution.impl.statistics.RunConfigurationTypeUsagesCollector.newFeatureUsageData;
 
 public class RunConfigurationUsageTriggerCollector {
 
   public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
     final ConfigurationType configurationType = factory.getType();
-    final String eventId = RunConfigurationTypeUsagesCollector.toConfigurationId(configurationType);
-    final FeatureUsageData data = new FeatureUsageData().addProject(project).addExecutor(executor);
-    if (configurationType.getConfigurationFactories().length > 1) {
-      data.addData(FACTORY_FIELD, factory.getId());
-    }
-    FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", eventId, data);
+    final FeatureUsageData data = newFeatureUsageData(configurationType, factory).addExecutor(executor);
+    FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", "executed", data);
   }
 
   public static class RunConfigurationExecutorUtilValidator extends CustomWhiteListRule {
