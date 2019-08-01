@@ -13,6 +13,9 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.usageView.UsageInfo
+import com.intellij.usages.Usage
+import com.intellij.usages.UsageInfo2UsageAdapter
 import javax.swing.Icon
 
 /**
@@ -33,6 +36,11 @@ abstract class ImplementationViewElement {
   abstract val elementForShowUsages: PsiElement?
 
   abstract fun navigate(focusEditor: Boolean)
+
+  open val usage: Usage?
+    get() {
+      return UsageInfo2UsageAdapter(UsageInfo(elementForShowUsages ?: return null))
+    }
 }
 
 class PsiImplementationViewElement(val psiElement: PsiElement) : ImplementationViewElement() {

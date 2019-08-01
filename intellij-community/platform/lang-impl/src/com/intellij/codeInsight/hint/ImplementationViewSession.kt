@@ -13,6 +13,9 @@ import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.psi.presentation.java.SymbolPresentationUtil
+import com.intellij.usageView.UsageInfo
+import com.intellij.usages.Usage
+import com.intellij.usages.UsageInfo2UsageAdapter
 import com.intellij.util.Processor
 
 interface ImplementationViewSession : Disposable {
@@ -30,7 +33,7 @@ interface ImplementationViewSession : Disposable {
   val editor: Editor?
 
   fun searchImplementationsInBackground(indicator: ProgressIndicator,
-                                        processor: Processor<in PsiElement>): List<ImplementationViewElement>
+                                        processor: Processor<in ImplementationViewElement>): List<ImplementationViewElement>
   fun elementRequiresIncludeSelf(): Boolean
   fun needUpdateInBackground(): Boolean
 }
