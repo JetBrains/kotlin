@@ -58,6 +58,7 @@ interface KotlinProjectConfigurator {
 
     New clients are encouraged to override both methods
      */
+    @JvmDefault
     val targetPlatform: TargetPlatform
         get() = @Suppress("DEPRECATION_ERROR") getTargetPlatform().toNewPlatform()
 
