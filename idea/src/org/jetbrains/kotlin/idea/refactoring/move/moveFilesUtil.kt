@@ -57,7 +57,7 @@ fun invokeMoveFilesOrDirectoriesRefactoring(
             val elementsToMove = elements
                 .filterNot {
                     it is PsiFile
-                            && runWriteAction { CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move") }
+                            && CopyFilesOrDirectoriesHandler.checkFileExist(selectedDir, choice, it, it.name, "Move")
                 }
                 .sortedWith( // process Kotlin files first so that light classes are updated before changing references in Java files
                     java.util.Comparator { o1, o2 ->

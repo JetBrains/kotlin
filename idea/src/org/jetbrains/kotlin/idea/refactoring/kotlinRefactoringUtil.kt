@@ -327,7 +327,7 @@ fun <T> chooseContainerElement(
     toPsi: (T) -> PsiElement,
     onSelect: (T) -> Unit
 ) {
-    return getPsiElementPopup(
+    val popup = getPsiElementPopup(
         editor,
         containers,
         object : PsiElementListCellRenderer<PsiElement>() {
@@ -392,7 +392,10 @@ fun <T> chooseContainerElement(
             onSelect(it)
             true
         }
-    ).showInBestPositionFor(editor)
+    )
+    ApplicationManager.getApplication().invokeLater {
+        popup.showInBestPositionFor(editor)
+    }
 }
 
 fun <T> chooseContainerElementIfNecessary(
