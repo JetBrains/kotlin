@@ -3,6 +3,7 @@ package com.intellij.psi.codeStyle.arrangement.engine;
 
 import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.actions.FormatChangedTextUtil;
+import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -19,7 +20,6 @@ import com.intellij.psi.codeStyle.arrangement.*;
 import com.intellij.psi.codeStyle.arrangement.match.ArrangementMatchRule;
 import com.intellij.psi.codeStyle.arrangement.match.ArrangementSectionRule;
 import com.intellij.psi.codeStyle.arrangement.std.ArrangementSettingsToken;
-import com.intellij.psi.codeStyle.arrangement.std.ArrangementStandardSettingsAware;
 import com.intellij.psi.codeStyle.arrangement.std.CustomArrangementOrderToken;
 import com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens;
 import com.intellij.util.containers.ContainerUtil;
@@ -102,10 +102,7 @@ public class ArrangementEngine {
       return;
     }
 
-    ArrangementSettings arrangementSettings = settings.getCommonSettings(file.getLanguage()).getArrangementSettings();
-    if (arrangementSettings == null && rearranger instanceof ArrangementStandardSettingsAware) {
-      arrangementSettings = ((ArrangementStandardSettingsAware)rearranger).getDefaultSettings();
-    }
+    ArrangementSettings arrangementSettings = ArrangementUtil.getArrangementSettings(settings, file.getLanguage());
 
     if (arrangementSettings == null) {
       return;
@@ -371,7 +368,13 @@ public class ArrangementEngine {
       }
     }
     if (!toArrange.isEmpty()) {
-      arranged.addAll(arrange(toArrange, context.sectionRules, context.rulesByPriority, entryToSection));
+      E contextEntry = toArrange.get(0);
+      Language language = contextEntry instanceof LanguageAwareArrangementEntry ?
+                          ((LanguageAwareArrangementEntry)contextEntry).getLanguage() : null;
+      ArrangementSettings settings = context.getArrangementSettings(language);
+      List<? extends ArrangementMatchRule> rulesByPriority = settings.getRulesSortedByPriority();
+      List<ArrangementSectionRule> sectionRules = ArrangementUtil.getExtendedSectionRules(settings);
+      arranged.addAll(arrange(toArrange, sectionRules, rulesByPriority, entryToSection));
     }
 
     final NewSectionInfo<E> newSectionsInfo = NewSectionInfo.create(arranged, entryToSection);
@@ -484,32 +487,52 @@ public class ArrangementEngine {
 
     @NotNull public final List<ArrangementMoveInfo> moveInfos = new ArrayList<>();
 
-    @NotNull public final Rearranger<E>                          rearranger;
+    @NotNull private final Rearranger<E>                         rearranger;
     @NotNull public final Collection<ArrangementEntryWrapper<E>> wrappers;
     @NotNull public final Document                               document;
-    @NotNull public final List<? extends ArrangementMatchRule>   rulesByPriority;
+    @NotNull private final ArrangementSettings                   arrangementSettings;
     @NotNull public final CodeStyleSettings                      settings;
     @NotNull public final Changer                                changer;
-    @NotNull public final List<ArrangementSectionRule>           sectionRules;
 
     private Context(@NotNull Rearranger<E> rearranger,
                     @NotNull Collection<ArrangementEntryWrapper<E>> wrappers,
                     @NotNull Document document,
-                    @NotNull List<ArrangementSectionRule> sectionRules,
-                    @NotNull List<? extends ArrangementMatchRule> rulesByPriority,
+                    @NotNull ArrangementSettings arrangementSettings,
                     @NotNull CodeStyleSettings settings, @NotNull Changer changer)
     {
       this.rearranger = rearranger;
       this.wrappers = wrappers;
       this.document = document;
-      this.sectionRules = sectionRules;
-      this.rulesByPriority = rulesByPriority;
+      this.arrangementSettings = arrangementSettings;
       this.settings = settings;
       this.changer = changer;
     }
 
     public void addMoveInfo(int oldStart, int oldEnd, int newStart) {
       moveInfos.add(new ArrangementMoveInfo(oldStart, oldEnd, newStart));
+    }
+
+    @NotNull
+    public ArrangementSettings getArrangementSettings(@Nullable Language languageOverride) {
+      if (languageOverride != null) {
+        ArrangementSettings languageSettings = ArrangementUtil.getArrangementSettings(this.settings, languageOverride);
+        if (languageSettings != null) {
+          return languageSettings;
+        }
+      }
+      return arrangementSettings;
+    }
+
+    @NotNull
+    public Rearranger<E> getRearranger(@Nullable Language language) {
+      if (language != null) {
+        Rearranger<?> forLanguage = Rearranger.EXTENSION.forLanguage(language);
+        if (forLanguage != null) {
+          //noinspection unchecked
+          return (Rearranger<E>)forLanguage;
+        }
+      }
+      return rearranger;
     }
 
     public static <T extends ArrangementEntry> Context<T> from(@NotNull Rearranger<T> rearranger,
@@ -538,9 +561,7 @@ public class ArrangementEngine {
       else {
         changer = new DefaultChanger();
       }
-      final List<? extends ArrangementMatchRule> rulesByPriority = arrangementSettings.getRulesSortedByPriority();
-      final List<ArrangementSectionRule> sectionRules = ArrangementUtil.getExtendedSectionRules(arrangementSettings);
-      return new Context<>(rearranger, wrappers, document, sectionRules, rulesByPriority, codeStyleSettings, changer);
+      return new Context<>(rearranger, wrappers, document, arrangementSettings, codeStyleSettings, changer);
     }
   }
 
@@ -600,10 +621,14 @@ public class ArrangementEngine {
         return 0;
       }
       final E next = nextWrapper == null ? null : nextWrapper.getEntry();
+      final E parentEntry = parentWrapper == null ? null : parentWrapper.getEntry();
+      final Language language = parentEntry instanceof LanguageAwareArrangementEntry ?
+                                ((LanguageAwareArrangementEntry)parentEntry).getLanguage() : null;
+      final Rearranger<E> rearranger = context.getRearranger(language);
       if (next != null && isTypeOf(target, START_SECTION)) {
-        return context.rearranger.getBlankLines(context.settings, parentWrapper == null ? null : parentWrapper.getEntry(), previous, next);
+        return rearranger.getBlankLines(context.settings, parentEntry, previous, next);
       }
-      return context.rearranger.getBlankLines(context.settings, parentWrapper == null ? null : parentWrapper.getEntry(), previous, target);
+      return rearranger.getBlankLines(context.settings, parentEntry, previous, target);
     }
 
     private boolean isTypeOf(@Nullable E element, @NotNull ArrangementSettingsToken token) {
