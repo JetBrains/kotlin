@@ -29,6 +29,7 @@ import com.intellij.openapi.vfs.newvfs.ManagingFS
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile
 import com.intellij.openapi.vfs.newvfs.RefreshQueue
 import com.intellij.util.SingleAlarm
+import com.intellij.util.concurrency.EdtScheduledExecutorService
 import com.intellij.util.pooledThreadSingleAlarm
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -61,9 +62,7 @@ internal class SaveAndSyncHandlerImpl : BaseSaveAndSyncHandler(), Disposable {
 
   init {
     // add listeners after some delay - doesn't make sense to listen earlier
-    JobScheduler.getScheduler().schedule(Runnable {
-      ApplicationManager.getApplication().invokeLater { addListeners() }
-    }, LISTEN_DELAY.toLong(), TimeUnit.SECONDS)
+    EdtScheduledExecutorService.getInstance().schedule({ addListeners() }, LISTEN_DELAY.toLong(), TimeUnit.SECONDS)
   }
 
   private suspend fun processTasks() {
