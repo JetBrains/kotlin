@@ -1189,6 +1189,49 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         }
     }
 
+    @TestMetadata("js/js.translator/testData/box/dtsGeneration")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class DtsGeneration extends AbstractIrBoxJsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.JS_IR, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInDtsGeneration() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/dtsGeneration"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("declarations.kt")
+        public void testDeclarations() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/declarations.kt");
+        }
+
+        @TestMetadata("inheritance.kt")
+        public void testInheritance() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/inheritance.kt");
+        }
+
+        @TestMetadata("namespaces.kt")
+        public void testNamespaces() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/namespaces.kt");
+        }
+
+        @TestMetadata("primitives.kt")
+        public void testPrimitives() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/primitives.kt");
+        }
+
+        @TestMetadata("selectiveJsExport.kt")
+        public void testSelectiveJsExport() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/selectiveJsExport.kt");
+        }
+
+        @TestMetadata("visibility.kt")
+        public void testVisibility() throws Exception {
+            runTest("js/js.translator/testData/box/dtsGeneration/visibility.kt");
+        }
+    }
+
     @TestMetadata("js/js.translator/testData/box/dynamic")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -1408,6 +1451,11 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
 
         public void testAllFilesPresentInExport() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/export"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
+        }
+
+        @TestMetadata("irExport.kt")
+        public void testIrExport() throws Exception {
+            runTest("js/js.translator/testData/box/export/irExport.kt");
         }
 
         @TestMetadata("nonIndetifierModuleName.kt")

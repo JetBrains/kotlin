@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
 
 private val fullRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/fullRuntime/klib")
@@ -65,7 +66,8 @@ abstract class BasicIrBoxTest(
         testPackage: String?,
         testFunction: String,
         needsFullIrRuntime: Boolean,
-        isMainModule: Boolean
+        isMainModule: Boolean,
+        generateDts: Boolean
     ) {
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
@@ -85,7 +87,7 @@ abstract class BasicIrBoxTest(
         }
 
         if (isMainModule) {
-            val debugMode = false
+            val debugMode = true
 
             val phaseConfig = if (debugMode) {
                 val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
@@ -113,8 +115,13 @@ abstract class BasicIrBoxTest(
                 exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
             )
 
-            val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            val wrappedCode = wrapWithModuleEmulationMarkers(jsCode.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
+
+            if (generateDts) {
+                val dtsFile = outputFile.withReplacedExtensionOrNull(".js", ".d.ts")
+                dtsFile?.write(jsCode.tsDefinitions ?: "ERROR")
+            }
 
         } else {
             generateKLib(

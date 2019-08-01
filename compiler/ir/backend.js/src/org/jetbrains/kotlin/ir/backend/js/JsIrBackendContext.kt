@@ -56,6 +56,8 @@ class JsIrBackendContext(
 
     override var inVerbosePhase: Boolean = false
 
+    var previousDtsHash: Int = 0
+
     var externalPackageFragment = mutableMapOf<FqName, IrPackageFragment>()
     lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
 

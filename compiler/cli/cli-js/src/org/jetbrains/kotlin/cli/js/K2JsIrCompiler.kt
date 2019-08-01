@@ -189,7 +189,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 mainArguments = mainCallArguments
             )
 
-            outputFile.writeText(compiledModule)
+            outputFile.writeText(compiledModule.jsCode)
         }
 
         return OK

@@ -23,8 +23,7 @@ class IrModuleToJsTransformer(
     private val backendContext: JsIrBackendContext,
     private val mainFunction: IrSimpleFunction?,
     private val mainArguments: List<String>?
-) : BaseIrElementToJsNodeTransformer<JsNode, Nothing?> {
-
+) {
     val moduleName = backendContext.configuration[CommonConfigurationKeys.MODULE_NAME]!!
     private val moduleKind = backendContext.configuration[JSConfigurationKeys.MODULE_KIND]!!
 
@@ -117,7 +116,7 @@ class IrModuleToJsTransformer(
         return JsExpressionStatement(expression)
     }
 
-    private fun generateModule(module: IrModuleFragment): JsProgram {
+    fun generateModule(module: IrModuleFragment): JsProgram {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
@@ -246,9 +245,6 @@ class IrModuleToJsTransformer(
         val importedJsModules = (declarationLevelJsModules + packageLevelJsModules).distinctBy { it.key }
         return Pair(importStatements, importedJsModules)
     }
-
-    override fun visitModuleFragment(declaration: IrModuleFragment, data: Nothing?): JsNode =
-        generateModule(declaration)
 
     private fun processClassModels(
         classModelMap: Map<IrClassSymbol, JsIrClassModel>,
