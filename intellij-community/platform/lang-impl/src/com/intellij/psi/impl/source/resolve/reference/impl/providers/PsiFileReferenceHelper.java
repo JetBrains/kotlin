@@ -21,35 +21,33 @@ import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.*;
 import com.intellij.openapi.roots.impl.DirectoryIndex;
-import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.psi.PsiManager;
+import com.intellij.psi.impl.SyntheticFileSystemItem;
 import com.intellij.psi.search.GlobalSearchScope;
+import com.intellij.psi.search.PsiElementProcessor;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.Query;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
-import org.jetbrains.jps.model.java.JavaResourceRootType;
-import org.jetbrains.jps.model.java.JavaSourceRootType;
-import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.intellij.psi.impl.source.resolve.reference.impl.providers.FileTargetContext.toTargetContexts;
+import static com.intellij.psi.impl.source.resolve.reference.impl.providers.JpsFileTargetContextSorter.sortTargetContextsResourceFirst;
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
 
 /**
  * @author peter
  */
 public class PsiFileReferenceHelper extends FileReferenceHelper {
-
   @NotNull
   @Override
   public List<? extends LocalQuickFix> registerFixes(FileReference reference) {
@@ -76,192 +74,28 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
 
   @NotNull
   @Override
-  public Collection<PsiFileSystemItem> getRoots(@NotNull Module module, @NotNull VirtualFile file) {
-    Collection<PsiFileSystemItem> contextsForModule = getRoots(module);
-    if (contextsForModule.size() <= 1) {
-      return contextsForModule;
+  public Collection<FileTargetContext> getTargetContexts(@NotNull Project project, @NotNull VirtualFile file, boolean isAbsoluteReference) {
+    List<PsiFileSystemItem> contexts;
+    if (isAbsoluteReference) {
+      ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+      Module module = index.getModuleForFile(file);
+      if (module == null) return emptyList();
+
+      contexts = getContextsForModule(module, "", module.getModuleWithDependenciesScope());
+    } else {
+      contexts = getContexts(project, file, true);
     }
 
-    Collection<FileTargetContext> targetContexts = toTargetContexts(contextsForModule);
-    Collection<FileTargetContext> contexts = sortWithResourcePriority(module.getProject(), file, targetContexts);
-
-    return ContainerUtil.map(contexts, c -> c.getFileSystemItem());
-  }
-
-  @NotNull
-  @Override
-  public Collection<FileTargetContext> getTargetContexts(@NotNull Project project, @NotNull VirtualFile file) {
-    PsiFileSystemItem item = getPsiFileSystemItem(project, file);
-    if (item != null) {
-      PsiFileSystemItem parent = item.getParent();
-      if (parent != null) {
-        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-        VirtualFile parentFile = parent.getVirtualFile();
-        assert parentFile != null;
-
-        VirtualFile root = index.getSourceRootForFile(parentFile);
-        if (root != null) {
-          String packagePath = VfsUtilCore.getRelativePath(parentFile, root, '.');
-
-          if (packagePath != null) {
-            Module module = index.getModuleForFile(file);
-
-            if (module != null) {
-              ModuleFileIndex moduleFileIndex = ModuleRootManager.getInstance(module).getFileIndex();
-              OrderEntry orderEntry = moduleFileIndex.getOrderEntryForFile(file);
-
-              String rootPackagePrefix = getSourceRootPackagePrefix(orderEntry, root);
-              if (!rootPackagePrefix.isEmpty()) {
-                packagePath += "." + rootPackagePrefix;
-              }
-
-              Collection<PsiFileSystemItem> contextsForModule = getContextsForModule(module, packagePath, module.getModuleWithDependenciesScope());
-
-              List<SourceFolder> additionalContexts = getMissingTargetFolders(module, contextsForModule);
-              if (additionalContexts.isEmpty()) {
-                return sortWithResourcePriority(project, file, toTargetContexts(contextsForModule));
-              }
-
-              List<FileTargetContext> joinedContexts = new ArrayList<>(contextsForModule.size() + additionalContexts.size());
-              for (PsiFileSystemItem c : contextsForModule) {
-                joinedContexts.add(new FileTargetContext(c));
-              }
-              PsiManager manager = PsiManager.getInstance(module.getProject());
-
-              String[] pathToCreate = getRelativePath(parentFile, root);
-              for (SourceFolder sourceFolder : additionalContexts) {
-                String srcPackagePrefix = sourceFolder.getPackagePrefix();
-                if (!srcPackagePrefix.isEmpty()) {
-                  pathToCreate = removeCommonStartPackages(pathToCreate, srcPackagePrefix);
-                }
-
-                if (sourceFolder.getFile() != null) {
-                  PsiDirectory directory = manager.findDirectory(sourceFolder.getFile());
-                  if (directory != null) {
-
-                    joinedContexts.add(new FileTargetContext(directory, pathToCreate));
-                  }
-                }
-              }
-
-              return sortWithResourcePriority(project, file, joinedContexts);
-            }
-          }
-        }
-        return toTargetContexts(parent);
+    List<FileTargetContext> fileTargetContexts = new ArrayList<>();
+    for (PsiFileSystemItem context : contexts) {
+      if (context instanceof VirtualPsiDirectory) {
+        VirtualPsiDirectory virtual = (VirtualPsiDirectory)context;
+        fileTargetContexts.add(new FileTargetContext(virtual.getRoot(), virtual.getPathToCreate()));
+      } else {
+        fileTargetContexts.add(new FileTargetContext(context));
       }
     }
-    return Collections.emptyList();
-  }
-
-  private static Collection<FileTargetContext> sortWithResourcePriority(@NotNull Project project, @NotNull VirtualFile file,
-                                                                        @NotNull Collection<FileTargetContext> targetContexts) {
-    // here we try to sort target locations depending on src/test origin
-    if (targetContexts.isEmpty() || targetContexts.size() == 1) {
-      return targetContexts;
-    }
-
-    List<FileTargetContextWrapper> targetContextWrappers = findSourceRootTypes(targetContexts);
-
-    // sort only if we different source root types
-    if (targetContextWrappers.stream()
-        .map(FileTargetContextWrapper::getSourceRootType)
-        .distinct()
-        .count() < 2) {
-      return targetContexts;
-    }
-
-    // if file is under sources root then src/resources directories at the top
-    // if file is under test sources root then test/resources directories at the top
-    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
-    if (projectFileIndex.isInTestSourceContent(file)) {
-      targetContextWrappers.sort(PsiFileReferenceHelper::compareTargetsForTests);
-    }
-    else if (projectFileIndex.isInSourceContent(file)) {
-      targetContextWrappers.sort(PsiFileReferenceHelper::compareTargetsForProduction);
-    }
-    return ContainerUtil.map(targetContextWrappers, FileTargetContextWrapper::getTargetContext);
-  }
-
-  private static List<FileTargetContextWrapper> findSourceRootTypes(Collection<FileTargetContext> targetContexts) {
-    return ContainerUtil.map(targetContexts, c -> {
-      Project project = c.getFileSystemItem().getProject();
-
-      SourceFolder sourceFolder = null;
-      VirtualFile file = c.getFileSystemItem().getVirtualFile();
-      if (file != null) {
-        sourceFolder = getSourceFolder(project, file);
-      }
-
-      return new FileTargetContextWrapper(c, sourceFolder != null ? sourceFolder.getRootType() : null);
-    });
-  }
-
-  @Nullable
-  private static SourceFolder getSourceFolder(@NotNull Project project, @NotNull VirtualFile directory) {
-    ProjectFileIndexImpl projectFileIndex = (ProjectFileIndexImpl)ProjectRootManager.getInstance(project).getFileIndex();
-    return projectFileIndex.getSourceFolder(directory);
-  }
-
-  private static int compareTargetsForTests(@NotNull FileTargetContextWrapper d1, @NotNull FileTargetContextWrapper d2) {
-    int o1 = getTestsTargetOrdinal(d1);
-    int o2 = getTestsTargetOrdinal(d2);
-
-    if (o1 > 0 && o2 > 0) {
-      return Integer.compare(o1, o2);
-    }
-
-    return compareDirectoryPaths(d1, d2);
-  }
-
-  private static int compareTargetsForProduction(@NotNull FileTargetContextWrapper d1, @NotNull FileTargetContextWrapper d2) {
-    int o1 = getSourcesTargetOrdinal(d1);
-    int o2 = getSourcesTargetOrdinal(d2);
-
-    if (o1 > 0 && o2 > 0) {
-      return Integer.compare(o1, o2);
-    }
-
-    return compareDirectoryPaths(d1, d2);
-  }
-
-  private static int getTestsTargetOrdinal(@NotNull FileTargetContextWrapper item) {
-    JpsModuleSourceRootType type = item.getSourceRootType();
-
-    if (isSourceItem(type)) return 4;
-    if (isTestSourceItem(type)) return 3;
-    if (isResourceItem(type)) return 2;
-    if (isTestResourceItem(type)) return 1;
-
-    return 0;
-  }
-
-  private static int getSourcesTargetOrdinal(@NotNull FileTargetContextWrapper item) {
-    JpsModuleSourceRootType type = item.getSourceRootType();
-
-    if (isTestSourceItem(type)) return 4;
-    if (isSourceItem(type)) return 3;
-    if (isTestResourceItem(type)) return 2;
-    if (isResourceItem(type)) return 1;
-
-    return 0;
-  }
-
-  private static boolean isResourceRoot(@NotNull FileTargetContextWrapper d) {
-    return isResourceItem(d.getSourceRootType()) ||
-           isTestResourceItem(d.getSourceRootType());
-  }
-
-  private static int compareDirectoryPaths(@NotNull FileTargetContextWrapper d1, @NotNull FileTargetContextWrapper d2) {
-    PsiFileSystemItem directory1 = d1.getTargetContext().getFileSystemItem();
-    PsiFileSystemItem directory2 = d2.getTargetContext().getFileSystemItem();
-
-    assert directory1 != null : "Invalid PsiFileSystemItem instances found";
-    assert directory2 != null : "Invalid PsiFileSystemItem instances found";
-
-    VirtualFile f1 = directory1.getVirtualFile();
-    VirtualFile f2 = directory2.getVirtualFile();
-    return f1.getPath().compareTo(f2.getPath());
+    return sortTargetContextsResourceFirst(project, file, fileTargetContexts);
   }
 
   private static String[] removeCommonStartPackages(String[] path, String packagePath) {
@@ -329,16 +163,15 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       .collect(Collectors.toCollection(SmartList::new));
   }
 
-  @Override
-  @NotNull
-  public Collection<PsiFileSystemItem> getContexts(final Project project, @NotNull final VirtualFile file) {
-    final PsiFileSystemItem item = getPsiFileSystemItem(project, file);
+  private List<PsiFileSystemItem> getContexts(@NotNull Project project, @NotNull VirtualFile file, boolean includeMissingPackages) {
+    PsiFileSystemItem item = getPsiFileSystemItem(project, file);
     if (item != null) {
-      final PsiFileSystemItem parent = item.getParent();
+      PsiFileSystemItem parent = item.getParent();
       if (parent != null) {
-        final ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
-        final VirtualFile parentFile = parent.getVirtualFile();
+        ProjectFileIndex index = ProjectRootManager.getInstance(project).getFileIndex();
+        VirtualFile parentFile = parent.getVirtualFile();
         assert parentFile != null;
+
         VirtualFile root = index.getSourceRootForFile(parentFile);
         if (root != null) {
           String path = VfsUtilCore.getRelativePath(parentFile, root, '.');
@@ -354,16 +187,64 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
                 path +=  "." + rootPackagePrefix;
               }
 
-              return getContextsForModule(module, path, module.getModuleWithDependenciesScope());
+              List<PsiFileSystemItem> contextsForModule = getContextsForModule(module, path, module.getModuleWithDependenciesScope());
+              if (!includeMissingPackages) {
+                return contextsForModule;
+              }
+
+              return getAdditionalContexts(parentFile, root, module, contextsForModule);
             }
           }
-
-          // TODO: content root
         }
-        return Collections.singleton(parent);
+        return singletonList(parent);
       }
     }
-    return Collections.emptyList();
+    return emptyList();
+  }
+
+  @NotNull
+  private static List<PsiFileSystemItem> getAdditionalContexts(@NotNull VirtualFile parentFile,
+                                                               @NotNull VirtualFile root,
+                                                               @NotNull Module module,
+                                                               @NotNull List<PsiFileSystemItem> contextsForModule) {
+    // here we try to find source roots that are not present in contextsForModule, but could be used to create a package and file
+
+    List<SourceFolder> additionalSourceFolders = getMissingTargetFolders(module, contextsForModule);
+    if (additionalSourceFolders.isEmpty()) {
+      return contextsForModule;
+    }
+
+    List<PsiFileSystemItem> joinedContexts = new ArrayList<>(contextsForModule.size() + additionalSourceFolders.size());
+    joinedContexts.addAll(contextsForModule);
+
+    PsiManager manager = PsiManager.getInstance(module.getProject());
+
+    String[] relativePath = getRelativePath(parentFile, root);
+    for (SourceFolder sourceFolder : additionalSourceFolders) {
+      if (sourceFolder.getFile() == null) continue;
+
+      PsiDirectory directory = manager.findDirectory(sourceFolder.getFile());
+      if (directory == null) continue;
+
+      String srcPackagePrefix = sourceFolder.getPackagePrefix();
+
+      String[] pathToCreate;
+      if (srcPackagePrefix.isEmpty()) {
+        pathToCreate = relativePath;
+      } else {
+        pathToCreate = removeCommonStartPackages(relativePath, srcPackagePrefix);
+      }
+
+      joinedContexts.add(new VirtualPsiDirectory(directory, pathToCreate));
+    }
+
+    return joinedContexts;
+  }
+
+  @Override
+  @NotNull
+  public Collection<PsiFileSystemItem> getContexts(Project project, @NotNull VirtualFile file) {
+    return getContexts(project, file, false);
   }
 
   private static String getSourceRootPackagePrefix(OrderEntry orderEntry, VirtualFile sourceRootOfFile) {
@@ -394,12 +275,12 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
     return url.trim();
   }
 
-  static Collection<PsiFileSystemItem> getContextsForModule(@NotNull Module module, @NotNull String packageName, @Nullable GlobalSearchScope scope) {
+  static List<PsiFileSystemItem> getContextsForModule(@NotNull Module module, @NotNull String packageName, @Nullable GlobalSearchScope scope) {
     List<PsiFileSystemItem> result = null;
     Query<VirtualFile> query = DirectoryIndex.getInstance(module.getProject()).getDirectoriesByPackageName(packageName, false);
     PsiManager manager = null;
 
-    for(VirtualFile file:query) {
+    for (VirtualFile file : query) {
       if (scope != null && !scope.contains(file)) continue;
       if (result == null) {
         result = new ArrayList<>();
@@ -409,41 +290,57 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
       if (psiDirectory != null) result.add(psiDirectory);
     }
 
-    return result != null ? result:Collections.emptyList();
+    return result != null ? result: emptyList();
   }
 
-  private static boolean isTestResourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaResourceRootType.TEST_RESOURCE;
-  }
+  private static class VirtualPsiDirectory extends SyntheticFileSystemItem {
+    private final PsiDirectory myRoot;
+    private final String[] myPathToCreate;
 
-  private static boolean isResourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaResourceRootType.RESOURCE;
-  }
-
-  private static boolean isTestSourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaSourceRootType.TEST_SOURCE;
-  }
-
-  private static boolean isSourceItem(@Nullable JpsModuleSourceRootType type) {
-    return type == JavaSourceRootType.SOURCE;
-  }
-
-  private static class FileTargetContextWrapper {
-    private final FileTargetContext myTargetContext;
-    private final JpsModuleSourceRootType myRootType;
-
-    private FileTargetContextWrapper(FileTargetContext context, @Nullable JpsModuleSourceRootType type) {
-      myTargetContext = context;
-      myRootType = type;
-    }
-
-    private FileTargetContext getTargetContext() {
-      return myTargetContext;
+    private VirtualPsiDirectory(PsiDirectory root, String[] pathToCreate) {
+      super(root.getProject());
+      myRoot = root;
+      myPathToCreate = pathToCreate;
     }
 
     @Nullable
-    private JpsModuleSourceRootType getSourceRootType() {
-      return myRootType;
+    @Override
+    public PsiFileSystemItem getParent() {
+      return myRoot;
+    }
+
+    @Override
+    public VirtualFile getVirtualFile() {
+      return null;
+    }
+
+    private PsiDirectory getRoot() {
+      return myRoot;
+    }
+
+    private String[] getPathToCreate() {
+      return myPathToCreate;
+    }
+
+    @Override
+    public boolean isPhysical() {
+      return false;
+    }
+
+    @Override
+    public boolean isWritable() {
+      return false;
+    }
+
+    @NotNull
+    @Override
+    public String getName() {
+      return myPathToCreate.length == 0 ? myRoot.getName() : myPathToCreate[myPathToCreate.length - 1];
+    }
+
+    @Override
+    public boolean processChildren(@NotNull PsiElementProcessor<PsiFileSystemItem> processor) {
+      return false;
     }
   }
 }

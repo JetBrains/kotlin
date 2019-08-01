@@ -222,7 +222,6 @@ public class FileReferenceQuickFixProvider {
   private static List<FileTargetContext> getSuitableContexts(@NotNull FileReference reference, @Nullable Module module) {
     FileReferenceSet fileReferenceSet = reference.getFileReferenceSet();
 
-    // index == 0 or we have unresolved path
     Collection<FileTargetContext> targetContexts = fileReferenceSet.getTargetContexts();
 
     if (targetContexts.isEmpty()) {
@@ -231,19 +230,14 @@ public class FileReferenceQuickFixProvider {
 
     SmartList<FileTargetContext> contexts = new SmartList<>();
     for (FileTargetContext targetContext : targetContexts) {
-      if (targetContext != null) {
-        PsiFileSystemItem fsContext = targetContext.getFileSystemItem();
-        VirtualFile virtualFile = fsContext.getVirtualFile();
-        if (virtualFile != null && fsContext.isDirectory() && virtualFile.isInLocalFileSystem()) {
-          if (module != null) {
-            if (module == getModuleForContext(fsContext)) {
-              contexts.add(targetContext);
-            }
-          }
-          else {
-            contexts.add(targetContext);
-          }
+      PsiFileSystemItem fsContext = targetContext.getFileSystemItem();
+      if (module != null) {
+        if (module == getModuleForContext(fsContext)) {
+          contexts.add(targetContext);
         }
+      }
+      else {
+        contexts.add(targetContext);
       }
     }
 
