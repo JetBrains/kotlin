@@ -71,7 +71,7 @@ public abstract class ExecutionManagerImpl extends ExecutionManager implements D
                                                                       @Nullable RunnerAndConfigurationSettings configuration) {
     ExecutionEnvironmentBuilder builder = new ExecutionEnvironmentBuilder(project, executor);
 
-    ProgramRunner runner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
+    ProgramRunner<?> runner = ProgramRunnerUtil.getRunner(executor.getId(), configuration);
     if (runner == null && configuration != null) {
       LOG.error("Cannot find runner for " + configuration.getName());
     }

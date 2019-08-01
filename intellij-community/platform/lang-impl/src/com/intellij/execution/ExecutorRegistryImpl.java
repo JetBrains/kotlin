@@ -42,10 +42,10 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   public static final String RUN_CONTEXT_GROUP = "RunContextGroupInner";
 
   private List<Executor> myExecutors = new ArrayList<>();
-  private final Map<String, Executor> myId2Executor = new THashMap<>();
+  private final Map<String, Executor> myIdToExecutor = new THashMap<>();
   private final Set<String> myContextActionIdSet = new THashSet<>();
-  private final Map<String, AnAction> myId2Action = new THashMap<>();
-  private final Map<String, AnAction> myContextActionId2Action = new THashMap<>();
+  private final Map<String, AnAction> myIdToAction = new THashMap<>();
+  private final Map<String, AnAction> myContextActionIdToAction = new THashMap<>();
 
   // [Project, ExecutorId, RunnerId]
   private final Set<Trinity<Project, String, String>> myInProgress = Collections.synchronizedSet(new THashSet<>());
@@ -55,7 +55,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
   }
 
   synchronized void initExecutor(@NotNull Executor executor) {
-    if (myId2Executor.get(executor.getId()) != null) {
+    if (myIdToExecutor.get(executor.getId()) != null) {
       LOG.error("Executor with id: \"" + executor.getId() + "\" was already registered!");
     }
 
@@ -66,25 +66,25 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     final AnAction toolbarAction;
     final AnAction runContextAction;
     if (executor instanceof ExecutorGroup) {
-      final ActionGroup toolbarActionGroup = new ExecutorGroupActionGroup((ExecutorGroup)executor, ExecutorAction::new);
+      final ActionGroup toolbarActionGroup = new ExecutorGroupActionGroup((ExecutorGroup<?>)executor, ExecutorAction::new);
       toolbarActionGroup.setPopup(true);
       final Presentation presentation = toolbarActionGroup.getTemplatePresentation();
       presentation.setIcon(executor.getIcon());
       presentation.setText(executor.getStartActionText());
       presentation.setDescription(executor.getDescription());
       toolbarAction = toolbarActionGroup;
-      runContextAction = new ExecutorGroupActionGroup((ExecutorGroup)executor, RunContextAction::new);
+      runContextAction = new ExecutorGroupActionGroup((ExecutorGroup<?>)executor, RunContextAction::new);
     }
     else {
       toolbarAction = new ExecutorAction(executor);
       runContextAction = new RunContextAction(executor);
     }
     final Executor.ActionWrapper customizer = executor.runnerActionsGroupExecutorActionCustomizer();
-    registerAction(executor.getId(), customizer != null ? customizer.wrap(toolbarAction) : toolbarAction, RUNNERS_GROUP, myId2Action);
-    registerAction(executor.getContextActionId(), runContextAction, RUN_CONTEXT_GROUP, myContextActionId2Action);
+    registerAction(executor.getId(), customizer != null ? customizer.wrap(toolbarAction) : toolbarAction, RUNNERS_GROUP, myIdToAction);
+    registerAction(executor.getContextActionId(), runContextAction, RUN_CONTEXT_GROUP, myContextActionIdToAction);
 
     myExecutors.add(executor);
-    myId2Executor.put(executor.getId(), executor);
+    myIdToExecutor.put(executor.getId(), executor);
     myContextActionIdSet.add(executor.getContextActionId());
   }
 
@@ -102,11 +102,11 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   synchronized void deinitExecutor(@NotNull Executor executor) {
     myExecutors.remove(executor);
-    myId2Executor.remove(executor.getId());
+    myIdToExecutor.remove(executor.getId());
     myContextActionIdSet.remove(executor.getContextActionId());
 
-    unregisterAction(executor.getId(), RUNNERS_GROUP, myId2Action);
-    unregisterAction(executor.getContextActionId(), RUN_CONTEXT_GROUP, myContextActionId2Action);
+    unregisterAction(executor.getId(), RUNNERS_GROUP, myIdToAction);
+    unregisterAction(executor.getContextActionId(), RUN_CONTEXT_GROUP, myContextActionIdToAction);
   }
 
   private static void unregisterAction(@NotNull String actionId, @NotNull String groupId, @NotNull Map<String, AnAction> map) {
@@ -130,7 +130,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   @Override
   public Executor getExecutorById(final String executorId) {
-    return myId2Executor.get(executorId);
+    return myIdToExecutor.get(executorId);
   }
 
   private void init() {
@@ -225,7 +225,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
             return false;
           }
         }
-        final ProgramRunner runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
+        ProgramRunner<?> runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
         if (runner == null
             || !ExecutionTargetManager.canRun(configuration, pair.getTarget())
             || isStarting(project, myExecutor.getId(), runner.getRunnerId())) {
@@ -365,7 +365,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     private final ExecutorGroup<?> myExecutorGroup;
     private final Function<? super Executor, ? extends AnAction> myChildConverter;
 
-    private ExecutorGroupActionGroup(ExecutorGroup executorGroup, Function<? super Executor, ? extends AnAction> childConverter) {
+    private ExecutorGroupActionGroup(ExecutorGroup<?> executorGroup, Function<? super Executor, ? extends AnAction> childConverter) {
       myExecutorGroup = executorGroup;
       myChildConverter = childConverter;
     }
