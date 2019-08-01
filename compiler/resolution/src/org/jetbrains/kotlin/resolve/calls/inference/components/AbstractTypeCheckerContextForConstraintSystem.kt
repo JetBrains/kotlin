@@ -90,7 +90,7 @@ abstract class AbstractTypeCheckerContextForConstraintSystem : AbstractTypeCheck
         val projection = typeMarker.typeConstructorProjection()
         if (projection.isStarProjection()) return null
         if (projection.getVariance() == TypeVariance.IN) {
-            val type = projection.getType().let { it.asSimpleType() ?: it.asFlexibleType()?.lowerBound() } ?: return null
+            val type = projection.getType().asSimpleType() ?: return null
             if (isMyTypeVariable(type)) {
                 simplifyLowerConstraint(type, superType)
                 if (isMyTypeVariable(superType.asSimpleType() ?: return null)) {

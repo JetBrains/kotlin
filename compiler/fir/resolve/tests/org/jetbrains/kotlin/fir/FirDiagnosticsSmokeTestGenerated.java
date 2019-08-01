@@ -9541,6 +9541,11 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/inference/cannotCompleteResolveWithFunctionLiterals.kt");
         }
 
+        @TestMetadata("capturedInProjectedFlexibleType.kt")
+        public void testCapturedInProjectedFlexibleType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/inference/capturedInProjectedFlexibleType.kt");
+        }
+
         @TestMetadata("coerceFunctionLiteralToSuspend.kt")
         public void testCoerceFunctionLiteralToSuspend() throws Exception {
             runTest("compiler/testData/diagnostics/tests/inference/coerceFunctionLiteralToSuspend.kt");
