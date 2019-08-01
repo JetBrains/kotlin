@@ -116,7 +116,7 @@ internal fun String?.toFileAndFolder():FileAndFolder {
 }
 
 internal fun generateDebugInfoHeader(context: Context) {
-    if (context.shouldContainDebugInfo()) {
+    if (context.shouldContainAnyDebugInfo()) {
         val path = context.config.outputFile
             .toFileAndFolder()
         @Suppress("UNCHECKED_CAST")

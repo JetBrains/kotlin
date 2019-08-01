@@ -673,7 +673,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     internal fun debugLocation(startLocationInfo: LocationInfo, endLocation: LocationInfo?): DILocationRef? {
-        if (!context.shouldContainDebugInfo()) return null
+        if (!context.shouldContainLocationDebugInfo()) return null
         update(currentBlock, startLocationInfo, endLocation)
         val debugLocation = codegen.generateLocationInfo(startLocationInfo)
         currentPositionHolder.setBuilderDebugLocation(debugLocation)
@@ -880,7 +880,7 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
     }
 
     fun resetDebugLocation() {
-        if (!context.shouldContainDebugInfo()) return
+        if (!context.shouldContainLocationDebugInfo()) return
         currentPositionHolder.resetBuilderDebugLocation()
     }
 
@@ -1057,12 +1057,12 @@ internal class FunctionGenerationContext(val function: LLVMValueRef,
         }
 
         fun resetBuilderDebugLocation() {
-            if (!context.shouldContainDebugInfo()) return
+            if (!context.shouldContainLocationDebugInfo()) return
             LLVMBuilderResetDebugLocation(builder)
         }
 
         fun setBuilderDebugLocation(debugLocation: DILocationRef?) {
-            if (!context.shouldContainDebugInfo()) return
+            if (!context.shouldContainLocationDebugInfo()) return
             LLVMBuilderSetDebugLocation(builder, debugLocation)
         }
     }

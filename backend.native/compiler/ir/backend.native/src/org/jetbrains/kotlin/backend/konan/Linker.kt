@@ -28,7 +28,7 @@ internal class Linker(val context: Context) {
     private val linker = platform.linker
     private val target = context.config.target
     private val optimize = context.shouldOptimize()
-    private val debug = context.config.debug
+    private val debug = context.config.debug || context.config.lightDebug
 
     // Ideally we'd want to have
     //      #pragma weak main = Konan_main

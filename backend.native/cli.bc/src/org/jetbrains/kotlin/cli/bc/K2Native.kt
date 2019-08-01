@@ -150,6 +150,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(LIST_TARGETS, arguments.listTargets)
                 put(OPTIMIZATION, arguments.optimization)
                 put(DEBUG, arguments.debug)
+                put(LIGHT_DEBUG, arguments.lightDebug)
                 put(STATIC_FRAMEWORK, selectFrameworkType(configuration, arguments, outputKind))
 
                 put(PRINT_IR, arguments.printIr)

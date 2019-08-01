@@ -132,6 +132,7 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
 
     private val libtool = "$absoluteTargetToolchain/usr/bin/libtool"
     private val linker = "$absoluteTargetToolchain/usr/bin/ld"
+    private val strip = "$absoluteTargetToolchain/usr/bin/strip"
     private val dsymutil = "$absoluteLlvmHome/bin/llvm-dsymutil"
 
     private fun provideCompilerRtLibrary(libraryName: String): String? {
@@ -177,7 +178,10 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
                 +libraries
             })
         val dynamic = kind == LinkerOutputKind.DYNAMIC_LIBRARY
-        return listOf(Command(linker).apply {
+
+        val result = mutableListOf<Command>()
+
+        result += Command(linker).apply {
             +"-demangle"
             +listOf("-dynamic", "-arch", arch)
             +osVersionMinFlags
@@ -192,7 +196,17 @@ open class MacOSBasedLinker(targetProperties: AppleConfigurables)
             +libraries
             +linkerArgs
             +rpath(dynamic)
-        }) + if (debug) listOf(dsymUtilCommand(executable, outputDsymBundle)) else emptyList()
+        }
+
+        // TODO: revise debug information handling.
+        if (debug) {
+            result += dsymUtilCommand(executable, outputDsymBundle)
+            if (optimize) {
+                result += Command(strip, "-S", executable)
+            }
+        }
+
+        return result
     }
 
     private fun rpath(dynamic: Boolean): List<String> = listOfNotNull(

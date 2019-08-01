@@ -608,7 +608,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
 
         private val scope by lazy {
-            if (!context.shouldContainDebugInfo())
+            if (!context.shouldContainLocationDebugInfo())
                 return@lazy null
             declaration?.scope() ?: llvmFunction!!.scope(0, subroutineType(context, codegen.llvmTargetData, listOf(context.irBuiltIns.intType)))
         }
@@ -672,7 +672,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
     }
 
     private fun IrFunction.location(start: Boolean) =
-            if (context.shouldContainDebugInfo() && startOffset != UNDEFINED_OFFSET) LocationInfo(
+            if (context.shouldContainLocationDebugInfo() && startOffset != UNDEFINED_OFFSET) LocationInfo(
                 scope = scope()!!,
                 line = if (start) startLine() else endLine(),
                 column = if (start) startColumn() else endColumn())
@@ -1600,7 +1600,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
          * Note: DILexicalBlocks aren't nested, they should be scoped with the parent function.
          */
         private val scope by lazy {
-            if (!context.shouldContainDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
+            if (!context.shouldContainLocationDebugInfo() || returnableBlock.startOffset == UNDEFINED_OFFSET)
                 return@lazy null
             val lexicalBlockFile = DICreateLexicalBlockFile(context.debugInfo.builder, functionScope()!!.scope(), super.file.file())
             DICreateLexicalBlock(context.debugInfo.builder, lexicalBlockFile, super.file.file(), returnableBlock.startLine(), returnableBlock.startColumn())!!
@@ -1619,7 +1619,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
         @Suppress("UNCHECKED_CAST")
         private val scope by lazy {
-            if (!context.shouldContainDebugInfo())
+            if (!context.shouldContainLocationDebugInfo())
                 return@lazy null
             file.file() as DIScopeOpaqueRef?
         }
@@ -1734,16 +1734,16 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     //-------------------------------------------------------------------------//
     private fun updateBuilderDebugLocation(element: IrElement) {
-        if (!context.shouldContainDebugInfo() || currentCodeContext.functionScope() == null || element.startLocation == null) return
+        if (!context.shouldContainLocationDebugInfo() || currentCodeContext.functionScope() == null || element.startLocation == null) return
         functionGenerationContext.debugLocation(element.startLocation!!, element.endLocation!!)
     }
 
     private val IrElement.startLocation: LocationInfo?
-        get() = if (!context.shouldContainDebugInfo() || startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
             else currentCodeContext.location(startLine(), startColumn())
 
     private val IrElement.endLocation: LocationInfo?
-        get() = if (!context.shouldContainDebugInfo() || startOffset == UNDEFINED_OFFSET) null
+        get() = if (!context.shouldContainLocationDebugInfo() || startOffset == UNDEFINED_OFFSET) null
             else currentCodeContext.location(endLine(), endColumn())
 
     //-------------------------------------------------------------------------//
@@ -1807,7 +1807,7 @@ internal class CodeGeneratorVisitor(val context: Context, val lifetimes: Map<IrE
 
     @Suppress("UNCHECKED_CAST")
     private fun IrFunction.scope(startLine:Int): DIScopeOpaqueRef? {
-        if (codegen.isExternal(this) || !context.shouldContainDebugInfo())
+        if (codegen.isExternal(this) || !context.shouldContainLocationDebugInfo())
             return null
         val functionLlvmValue = codegen.llvmFunctionOrNull(this)
         return if (functionLlvmValue != null) {
