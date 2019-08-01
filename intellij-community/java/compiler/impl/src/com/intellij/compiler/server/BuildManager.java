@@ -1158,7 +1158,7 @@ public final class BuildManager implements Disposable {
     if (Registry.is("compiler.build.portable.caches")) {
       cmdLine.addParameter("-Didea.resizeable.file.truncate.on.close=true");
       cmdLine.addParameter("-Dkotlin.jps.non.caching.storage=true");
-      cmdLine.addParameter("-Dorg.jetbrains.jps.use.hashes=true");
+      cmdLine.addParameter("-Dorg.jetbrains.jps.portable.caches=true");
     }
 
     // javac's VM should use the same default locale that IDEA uses in order for javac to print messages in 'correct' language
