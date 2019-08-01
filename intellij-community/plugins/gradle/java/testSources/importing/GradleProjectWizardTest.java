@@ -8,12 +8,11 @@ import com.intellij.ide.util.projectWizard.ProjectBuilder;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
 import com.intellij.openapi.application.WriteAction;
+import com.intellij.openapi.externalSystem.model.project.ProjectId;
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager;
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsDataStorage;
-import com.intellij.openapi.externalSystem.service.ui.SelectExternalProjectDialog;
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
-import com.intellij.openapi.externalSystem.view.ProjectNode;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
 import com.intellij.openapi.project.Project;
@@ -36,7 +35,6 @@ import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess;
 import com.intellij.testFramework.IdeaTestUtil;
 import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.testFramework.RunAll;
-import com.intellij.ui.treeStructure.SimpleTree;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.Consumer;
 import com.intellij.util.containers.ContainerUtil;
@@ -44,7 +42,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder;
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep;
+import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
@@ -79,10 +77,12 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
       if (step instanceof ProjectTypeStep) {
         assertTrue(((ProjectTypeStep)step).setSelectedTemplate("Gradle", null));
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(4, steps.size());
+        assertEquals(3, steps.size());
         final ProjectBuilder projectBuilder = myWizard.getProjectBuilder();
         assertInstanceOf(projectBuilder, GradleModuleBuilder.class);
-        ((GradleModuleBuilder)projectBuilder).setName(projectName);
+        GradleModuleBuilder gradleProjectBuilder = (GradleModuleBuilder)projectBuilder;
+        gradleProjectBuilder.setName(projectName);
+        gradleProjectBuilder.setProjectId(new ProjectId("", null, null));
       }
     });
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());
@@ -120,16 +120,13 @@ public class GradleProjectWizardTest extends NewProjectWizardTestCase {
     Module childModule = createModuleFromTemplate("Gradle", null, project, step -> {
       if (step instanceof ProjectTypeStep) {
         List<ModuleWizardStep> steps = myWizard.getSequence().getSelectedSteps();
-        assertEquals(4, steps.size());
+        assertEquals(3, steps.size());
       }
-      else if (step instanceof GradleModuleWizardStep) {
-        SelectExternalProjectDialog projectDialog = new SelectExternalProjectDialog(GradleConstants.SYSTEM_ID, project, null);
-        Disposer.register(getTestRootDisposable(), projectDialog.getDisposable());
-        SimpleTree component = (SimpleTree)projectDialog.getPreferredFocusedComponent();
-        PlatformTestUtil.waitWhileBusy(component);
-        ProjectNode projectNode = (ProjectNode)component.getNodeFor(0);
-        assertEquals(projectName, projectNode.getName());
-        ((GradleModuleWizardStep)step).setArtifactId("childModule");
+      else if (step instanceof GradleStructureWizardStep) {
+        GradleStructureWizardStep gradleStructureWizardStep = (GradleStructureWizardStep)step;
+        assertEquals(projectName, gradleStructureWizardStep.getParentData().getExternalName());
+        gradleStructureWizardStep.setArtifactId("childModule");
+        gradleStructureWizardStep.setGroupId("");
       }
     });
     UIUtil.invokeAndWaitIfNeeded((Runnable)() -> PlatformTestUtil.dispatchAllInvocationEventsInIdeEventQueue());

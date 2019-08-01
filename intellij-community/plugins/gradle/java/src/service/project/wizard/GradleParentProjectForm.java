@@ -17,6 +17,7 @@ import com.intellij.openapi.externalSystem.service.ui.SelectExternalProjectDialo
 import com.intellij.openapi.externalSystem.settings.ExternalProjectSettings;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.fileTypes.FileTypes;
+import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.project.ProjectManager;
 import com.intellij.openapi.util.io.FileUtil;
@@ -36,8 +37,6 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Collection;
-
-import static org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep.isGradleModuleExist;
 
 public class GradleParentProjectForm implements Disposable {
 
@@ -62,7 +61,7 @@ public class GradleParentProjectForm implements Disposable {
     myProjectOrNull = context.getProject();
     myContext = context;
     myConsumer = consumer == null ? EmptyConsumer.getInstance() : consumer;
-    myIsVisible = !context.isCreatingNewProject() && myProjectOrNull != null && isGradleModuleExist(context);
+    myIsVisible = !context.isCreatingNewProject() && myProjectOrNull != null && gradleModuleExists(context);
     initComponents();
   }
 
@@ -233,5 +232,12 @@ public class GradleParentProjectForm implements Disposable {
       }
       super.removeNotify();
     }
+  }
+
+  public static boolean gradleModuleExists(WizardContext myContext) {
+    for (Module module : myContext.getModulesProvider().getModules()) {
+      if (ExternalSystemApiUtil.isExternalSystemAwareModule(GradleConstants.SYSTEM_ID, module)) return true;
+    }
+    return false;
   }
 }

@@ -63,8 +63,7 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.intellij.ide.util.newProjectWizard.AbstractProjectWizard.getNewProjectJdk;
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManagerImpl.setupCreatedProject;
@@ -283,7 +282,13 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   @Override
   public ModuleWizardStep[] createWizardSteps(@NotNull WizardContext wizardContext, @NotNull ModulesProvider modulesProvider) {
     myWizardContext = wizardContext;
-    return new ModuleWizardStep[]{new GradleModuleWizardStep(this, wizardContext)};
+    return new ModuleWizardStep[]{new GradleStructureWizardStep(this, wizardContext)};
+  }
+
+  @NotNull
+  @Override
+  public List<Class<? extends ModuleWizardStep>> getIgnoredSteps() {
+    return Collections.singletonList(ProjectSettingsStep.class);
   }
 
   @Nullable

@@ -3,7 +3,6 @@ package org.jetbrains.plugins.gradle.importing
 
 import com.intellij.ide.impl.NewProjectUtil
 import com.intellij.ide.projectWizard.NewProjectWizard
-import com.intellij.ide.projectWizard.ProjectSettingsStep
 import com.intellij.ide.projectWizard.ProjectTypeStep
 import com.intellij.ide.util.newProjectWizard.AbstractProjectWizard
 import com.intellij.ide.util.projectWizard.ModuleWizardStep
@@ -25,7 +24,7 @@ import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInf
 import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInfoBuilder.ModuleInfo
 import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInfoBuilder.ProjectInfo
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleFrameworksWizardStep
-import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep
+import org.jetbrains.plugins.gradle.service.project.wizard.GradleStructureWizardStep
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runners.Parameterized
@@ -102,15 +101,13 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
         frameworksStep as GradleFrameworksWizardStep
         frameworksStep.setUseKotlinDsl(moduleInfo.useKotlinDsl)
       }
-      is GradleModuleWizardStep -> {
-        step.setParentProject(parentData)
-        moduleInfo.groupId?.let { step.setGroupId(it) }
-        step.setArtifactId(moduleInfo.artifactId)
-        moduleInfo.version?.let { step.setVersion(it) }
-      }
-      is ProjectSettingsStep -> {
-        step.setNameValue(moduleInfo.root.name)
-        step.setPath(moduleInfo.root.path)
+      is GradleStructureWizardStep -> {
+        step.parentData = parentData
+        moduleInfo.groupId?.let { step.groupId = it }
+        step.artifactId = moduleInfo.artifactId
+        moduleInfo.version?.let { step.version = it }
+        step.entityName = moduleInfo.root.name
+        step.location = moduleInfo.root.path
       }
     }
   }
