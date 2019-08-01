@@ -62,7 +62,6 @@ import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.IntObjectMap;
 import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
-import com.intellij.util.indexing.impl.MapReduceIndex;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -81,6 +80,7 @@ import org.jetbrains.annotations.TestOnly;
 import java.io.*;
 import java.lang.ref.SoftReference;
 import java.lang.ref.WeakReference;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -842,11 +842,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
   @Override
   public <K, V> long getIndexModificationStamp(@NotNull ID<K, V> indexId, @NotNull Project project) {
     UpdatableIndex<K, V, FileContent> index = getState().getIndex(indexId);
-    if (index instanceof MapReduceIndex) {
-      ensureUpToDate(indexId, project, GlobalSearchScope.allScope(project));
-      return ((MapReduceIndex)index).getModificationStamp();
-    }
-    return -1;
+    ensureUpToDate(indexId, project, GlobalSearchScope.allScope(project));
+    return index.getModificationStamp();
   }
 
   @FunctionalInterface
@@ -999,10 +996,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     myTransactionMap = SmartFMap.emptyMap();
     IndexConfiguration state = getState();
     for (ID<?, ?> indexId : state.getIndexIDs()) {
-      final MapReduceIndex index = (MapReduceIndex)state.getIndex(indexId);
+      final UpdatableIndex<?, ?, FileContent> index = state.getIndex(indexId);
       assert index != null;
-      final MemoryIndexStorage memStorage = (MemoryIndexStorage)index.getStorage();
-      ConcurrencyUtil.withLock(index.getReadLock(), () -> memStorage.clearCaches());
+      index.cleanupForNextTest();
     }
   }
 
@@ -1413,9 +1409,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         if (myPreviousDataBufferingState != transientInMemoryIndices) {
           IndexConfiguration state = getState();
           for (ID<?, ?> indexId : state.getIndexIDs()) {
-            final MapReduceIndex index = (MapReduceIndex)state.getIndex(indexId);
+            final UpdatableIndex index = state.getIndex(indexId);
             assert index != null;
-            ((MemoryIndexStorage)index.getStorage()).setBufferingEnabled(transientInMemoryIndices);
+            index.setBufferingEnabled(transientInMemoryIndices);
           }
           myPreviousDataBufferingState = transientInMemoryIndices;
         }
@@ -1439,11 +1435,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     }
     for (ID<?, ?> indexId : state.getIndexIDs()) {
       if (skipPsiBasedIndices && myPsiDependentIndices.contains(indexId)) continue;
-      final MapReduceIndex index = (MapReduceIndex)state.getIndex(indexId);
+      final UpdatableIndex<?, ?, FileContent> index = state.getIndex(indexId);
       assert index != null;
-      final MemoryIndexStorage memStorage = (MemoryIndexStorage)index.getStorage();
-      ConcurrencyUtil.withLock(index.getWriteLock(), () -> memStorage.clearMemoryMap());
-      memStorage.fireMemoryStorageCleared();
+      index.cleanupMemoryStorage();
     }
   }
 
@@ -1607,13 +1601,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
             if (IdIndex.ourSnapshotMappingsEnabled) {
               FileType substituteFileType = SubstitutedFileType.substituteFileType(file, fileType, finalProject);
-              byte[] hash = fileType.isBinary() ?
-                            ContentHashesSupport.calcContentHash(currentBytes, substituteFileType) :
-                            ContentHashesSupport.calcContentHashWithFileType(
-                              currentBytes,
-                              fc.getCharset(),
-                              substituteFileType
-                            );
+              byte[] hash = calculateHash(currentBytes, fc.getCharset(), fileType, substituteFileType);
               fc.setHash(hash);
             }
 
@@ -1649,6 +1637,16 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
     });
     return setIndexedStatus.get();
+  }
+
+  @NotNull
+  public static byte[] calculateHash(@NotNull byte[] currentBytes,
+                                     @NotNull Charset charset,
+                                     @NotNull FileType fileType,
+                                     @NotNull FileType substituteFileType) {
+    return fileType.isBinary() ?
+           ContentHashesSupport.calcContentHash(currentBytes, substituteFileType) :
+           ContentHashesSupport.calcContentHashWithFileType(currentBytes, charset, substituteFileType);
   }
 
   public boolean isIndexingCandidate(@NotNull VirtualFile file, @NotNull ID<?, ?> indexId) {
