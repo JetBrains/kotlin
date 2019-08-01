@@ -308,6 +308,36 @@ class SelectionAwareScopeHighlighter(val editor: Editor) {
     }
 }
 
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.getLineStartOffset() instead",
+    ReplaceWith("this.getLineStartOffset(line)", "org.jetbrains.kotlin.idea.core.util.getLineStartOffset"),
+    DeprecationLevel.ERROR
+)
+fun PsiFile.getLineStartOffset(line: Int): Int? {
+    val doc = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
+    if (doc != null && line >= 0 && line < doc.lineCount) {
+        val startOffset = doc.getLineStartOffset(line)
+        val element = findElementAt(startOffset) ?: return startOffset
+
+        if (element is PsiWhiteSpace || element is PsiComment) {
+            return PsiTreeUtil.skipSiblingsForward(element, PsiWhiteSpace::class.java, PsiComment::class.java)?.startOffset ?: startOffset
+        }
+        return startOffset
+    }
+
+    return null
+}
+
+@Deprecated(
+    "Use org.jetbrains.kotlin.idea.core.util.getLineEndOffset() instead",
+    ReplaceWith("this.getLineEndOffset(line)", "org.jetbrains.kotlin.idea.core.util.getLineEndOffset"),
+    DeprecationLevel.ERROR
+)
+fun PsiFile.getLineEndOffset(line: Int): Int? {
+    val document = viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(this)
+    return document?.getLineEndOffset(line)
+}
+
 fun PsiElement.getLineNumber(start: Boolean = true): Int {
     val document = containingFile.viewProvider.document ?: PsiDocumentManager.getInstance(project).getDocument(containingFile)
     val index = if (start) this.startOffset else this.endOffset
