@@ -159,22 +159,32 @@ fun JavaExec.buildKLib(sources: List<String>, dependencies: List<String>, outPat
     passClasspathInJar()
 }
 
+val fullRuntimeDir = buildDir.resolve("fullRuntime/klib")
+
 val generateFullRuntimeKLib by task<NoDebugJavaExec> {
     dependsOn(fullRuntimeSources)
 
     buildKLib(sources = listOf(fullRuntimeSources.outputs.files.singleFile.path),
               dependencies = emptyList(),
-              outPath = "$buildDir/fullRuntime/klib",
+              outPath = fullRuntimeDir.absolutePath,
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/fullRuntime/src/libraries/stdlib/$it" }
     )
+}
+
+val packFullRuntimeKLib by tasks.registering(Jar::class) {
+    dependsOn(generateFullRuntimeKLib)
+    from(fullRuntimeDir)
+    destinationDirectory.set(rootProject.buildDir.resolve("js-ir-runtime"))
+    archiveFileName.set("full-runtime.klib")
 }
 
 val generateReducedRuntimeKLib by task<NoDebugJavaExec> {
     dependsOn(reducedRuntimeSources)
 
+    val outPath = buildDir.resolve("reducedRuntime/klib").absolutePath
     buildKLib(sources = listOf(reducedRuntimeSources.outputs.files.singleFile.path),
               dependencies = emptyList(),
-              outPath = "$buildDir/reducedRuntime/klib",
+              outPath = outPath,
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/reducedRuntime/src/libraries/stdlib/$it" }
     )
 }

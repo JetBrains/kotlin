@@ -33,6 +33,7 @@ sourceSets {
 
 projectTest(parallel = true) {
     workingDir = rootDir
+    dependsOn(":compiler:ir.serialization.js:packFullRuntimeKLib")
 }
 
 testsJar()
