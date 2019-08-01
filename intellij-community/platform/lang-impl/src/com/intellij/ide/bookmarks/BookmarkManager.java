@@ -26,6 +26,7 @@ import com.intellij.openapi.util.Trinity;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import com.intellij.psi.PsiDocumentListener;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiFile;
 import com.intellij.ui.AppUIUtil;
@@ -68,33 +69,37 @@ public final class BookmarkManager implements PersistentStateComponent<Element> 
     multicaster.addDocumentListener(new MyDocumentListener(), myProject);
     multicaster.addEditorMouseListener(new MyEditorMouseListener(), myProject);
 
-    connection.subscribe(PsiDocumentManager.Listener.TOPIC, new PsiDocumentManager.Listener() {
-      @Override
-      public void documentCreated(@NotNull Document document, @Nullable PsiFile psiFile) {
-        VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-        if (file == null) {
-          return;
-        }
-
-        Collection<Bookmark> fileBookmarks = myBookmarks.get(file);
-        if (!fileBookmarks.isEmpty()) {
-          AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
-            MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, myProject, true);
-            for (Bookmark bookmark : fileBookmarks) {
-              bookmark.createHighlighter(markup);
-            }
-          });
-        }
-      }
-    });
-
     mySortedState = UISettings.getInstance().getSortBookmarks();
     connection.subscribe(UISettingsListener.TOPIC, uiSettings -> {
       if (mySortedState != uiSettings.getSortBookmarks()) {
         mySortedState = uiSettings.getSortBookmarks();
-        ApplicationManager.getApplication().invokeLater(() -> project.getMessageBus().syncPublisher(BookmarksListener.TOPIC).bookmarksOrderChanged());
+        ApplicationManager.getApplication().invokeLater(() -> {
+          if (!project.isDisposed()) {
+            project.getMessageBus().syncPublisher(BookmarksListener.TOPIC).bookmarksOrderChanged();
+          }
+        });
       }
     });
+  }
+
+  static final class BookmarkManagerPsiDocumentManagerListener implements PsiDocumentListener {
+    @Override
+    public void documentCreated(@NotNull Document document, @Nullable PsiFile psiFile, @NotNull Project project) {
+      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      if (file == null) {
+        return;
+      }
+
+      Collection<Bookmark> fileBookmarks = getInstance(project).myBookmarks.get(file);
+      if (!fileBookmarks.isEmpty()) {
+        AppUIUtil.invokeLaterIfProjectAlive(project, () -> {
+          MarkupModelEx markup = (MarkupModelEx)DocumentMarkupModel.forDocument(document, project, true);
+          for (Bookmark bookmark : fileBookmarks) {
+            bookmark.createHighlighter(markup);
+          }
+        });
+      }
+    }
   }
 
   public void editDescription(@NotNull Bookmark bookmark, @NotNull JComponent popup) {

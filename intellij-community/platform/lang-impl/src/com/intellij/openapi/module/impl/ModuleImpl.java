@@ -3,7 +3,6 @@ package com.intellij.openapi.module.impl;
 
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.plugins.ContainerDescriptor;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.IdeaPluginDescriptorImpl;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationManager;
@@ -152,12 +151,6 @@ public class ModuleImpl extends PlatformComponentManagerImpl implements ModuleEx
     disposeComponents();
     Extensions.disposeArea(this);
     super.dispose();
-  }
-
-  @NotNull
-  @Override
-  public List<ComponentConfig> getMyComponentConfigsFromDescriptor(@NotNull IdeaPluginDescriptor plugin) {
-    return plugin.getModuleComponents();
   }
 
   @NotNull
