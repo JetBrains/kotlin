@@ -2027,6 +2027,10 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
         PsiBuilder.Marker typeRefMarker = mark();
 
+        // spread operator
+        if (at(MUL)) {
+            advance(); // MUL
+        }
         parseTypeModifierList();
 
         PsiBuilder.Marker typeElementMarker = mark();
@@ -2254,10 +2258,9 @@ public class KotlinParsing extends AbstractKotlinParsing {
             // Annotations on other kinds of type arguments should be parsed as common type annotations (within parseTypeRef call)
             parseTypeArgumentModifierList();
 
-            if (at(MUL)) {
-                advance(); // MUL
-            }
-            else {
+            // To avoid consuming spread operator from type reference
+            boolean isStarProjection = tryParseStarProjection();
+            if (!isStarProjection) {
                 parseTypeRef(extraRecoverySet);
             }
             projection.done(TYPE_PROJECTION);
@@ -2274,6 +2277,17 @@ public class KotlinParsing extends AbstractKotlinParsing {
         }
         myBuilder.restoreNewlinesState();
         return atGT;
+    }
+
+    private boolean tryParseStarProjection() {
+        if (!at(MUL))
+            return false;
+        TokenSet projectionEndTokenSet = TokenSet.create(COMMA, GT);
+        if (projectionEndTokenSet.contains(lookahead(1))) {
+            advance(); // MUL
+            return true;
+        }
+        return false;
     }
 
     /*
