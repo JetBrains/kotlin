@@ -131,11 +131,20 @@ object NewCommonSuperTypeCalculator {
 
         val explicitSupertypes = filterSupertypes(uniqueTypes)
         if (explicitSupertypes.size == 1) return explicitSupertypes.single()
+        findErrorTypeInSupertypesIfItIsNeeded(explicitSupertypes)?.let { return it }
 
         findCommonIntegerLiteralTypesSuperType(explicitSupertypes)?.let { return it }
 //        IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)?.let { return it }
 
         return findSuperTypeConstructorsAndIntersectResult(explicitSupertypes, depth)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.findErrorTypeInSupertypesIfItIsNeeded(types: List<SimpleTypeMarker>): SimpleTypeMarker? {
+        if (isErrorTypeAllowed) return null
+        for (type in types) {
+            collectAllSupertypes(type).firstOrNull { it.isError() }?.let { return it.toErrorType() }
+        }
+        return null
     }
 
     private fun TypeSystemCommonSuperTypesContext.findSuperTypeConstructorsAndIntersectResult(

@@ -28,6 +28,8 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
 
     val symbolProvider: FirSymbolProvider get() = session.service()
 
+    override val isErrorTypeAllowed: Boolean get() = false
+
     override fun nullableNothingType(): SimpleTypeMarker {
         return StandardClassIds.Nothing(symbolProvider).constructType(emptyArray(), true)
     }

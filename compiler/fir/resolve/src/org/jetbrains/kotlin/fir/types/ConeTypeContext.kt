@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
-class ErrorTypeConstructor(reason: String) : TypeConstructorMarker
+class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker
 
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext {
     val session: FirSession
@@ -416,6 +416,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         // TODO: Intersection types
         return false
+    }
+
+    override fun TypeConstructorMarker.isError(): Boolean {
+        return this is ErrorTypeConstructor
     }
 }
 

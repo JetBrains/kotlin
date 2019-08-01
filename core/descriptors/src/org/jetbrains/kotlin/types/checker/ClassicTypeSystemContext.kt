@@ -30,6 +30,8 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSystemCommonBackendContext {
+    override val isErrorTypeAllowed: Boolean get() = true
+
     override fun TypeConstructorMarker.isDenotable(): Boolean {
         require(this is TypeConstructor, this::errorMessage)
         return this.isDenotable
@@ -54,6 +56,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
     override fun KotlinTypeMarker.isError(): Boolean {
         require(this is KotlinType, this::errorMessage)
         return this.isError
+    }
+
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        throw IllegalStateException("Should not be called")
     }
 
     override fun KotlinTypeMarker.isUninferredParameter(): Boolean {
@@ -467,6 +473,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         @Suppress("UNCHECKED_CAST")
         explicitSupertypes as List<SimpleType>
         return IntegerLiteralTypeConstructor.findCommonSuperType(explicitSupertypes)
+    }
+
+    override fun TypeConstructorMarker.isError(): Boolean {
+        throw IllegalStateException("Should not be called")
     }
 
     override fun TypeConstructorMarker.getApproximatedIntegerLiteralType(): KotlinTypeMarker {

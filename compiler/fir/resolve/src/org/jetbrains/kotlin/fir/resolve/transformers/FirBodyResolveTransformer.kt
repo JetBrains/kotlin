@@ -778,6 +778,11 @@ private fun inferenceComponents(session: FirSession, returnTypeCalculator: Retur
         override fun KotlinTypeMarker.removeExactAnnotation(): KotlinTypeMarker {
             return this
         }
+
+        override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+            require(this is ErrorTypeConstructor)
+            return ConeClassErrorType(reason)
+        }
     }, session, returnTypeCalculator, scopeSession)
 
 

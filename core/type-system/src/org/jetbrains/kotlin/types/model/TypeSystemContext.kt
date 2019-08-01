@@ -67,6 +67,11 @@ interface TypeCheckerProviderContext {
 }
 
 interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeFactoryContext, TypeCheckerProviderContext {
+    /*
+     * If set in false then if there is an error type in input types list of `commonSuperType` it will be return
+     * That flag is needed for FIR where there are a problems with recursive class hierarchies
+     */
+    val isErrorTypeAllowed: Boolean
 
     fun KotlinTypeMarker.anySuperTypeConstructor(predicate: (TypeConstructorMarker) -> Boolean) =
         newBaseTypeCheckerContext(false).anySupertype(lowerBoundIfFlexible(), {
@@ -84,6 +89,12 @@ interface TypeSystemCommonSuperTypesContext : TypeSystemContext, TypeSystemTypeF
     }
 
     fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker?
+
+    /*
+     * Converts error type constructor to error type
+     * Used only in FIR
+     */
+    fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker
 }
 
 interface TypeSystemInferenceExtensionContextDelegate : TypeSystemInferenceExtensionContext
@@ -151,6 +162,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.asFlexibleType(): FlexibleTypeMarker?
 
     fun KotlinTypeMarker.isError(): Boolean
+    fun TypeConstructorMarker.isError(): Boolean
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
 
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?

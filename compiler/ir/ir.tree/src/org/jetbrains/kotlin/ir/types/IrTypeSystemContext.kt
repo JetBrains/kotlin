@@ -34,6 +34,8 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     val irBuiltIns: IrBuiltIns
 
+    override val isErrorTypeAllowed: Boolean get() = true
+
     override fun KotlinTypeMarker.asSimpleType() = this as? SimpleTypeMarker
 
     override fun KotlinTypeMarker.asFlexibleType() = this as? IrDynamicType
@@ -235,6 +237,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         }.max() ?: 0
 
         return maxInArguments + 1
+    }
+
+    override fun TypeConstructorMarker.toErrorType(): SimpleTypeMarker {
+        throw IllegalStateException("Should not be called")
+    }
+
+    override fun TypeConstructorMarker.isError(): Boolean {
+        throw IllegalStateException("Should not be called")
     }
 
     override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? =
