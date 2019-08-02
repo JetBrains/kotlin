@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/coercionInLoop.kt
         condition: CALL 'public abstract fun hasNext (): kotlin.Boolean declared in kotlin.collections.Iterator' type=kotlin.Boolean origin=null
           $this: GET_VAR 'val x: kotlin.collections.DoubleIterator [val] declared in <root>.box' type=kotlin.collections.DoubleIterator origin=null
         body: BLOCK type=kotlin.Int origin=null
-          WHEN type=kotlin.String origin=IF
+          WHEN type=kotlin.Unit origin=IF
             BRANCH
               if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ

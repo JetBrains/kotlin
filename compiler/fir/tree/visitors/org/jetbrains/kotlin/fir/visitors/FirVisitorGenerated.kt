@@ -284,6 +284,18 @@ abstract class FirVisitor<out R, in D> {
         return visitUnknownTypeExpression(block, data)
     }
 
+    open fun visitCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression, data: D): R {
+        return visitUnknownTypeExpression(callLikeControlFlowExpression, data)
+    }
+
+    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
+        return visitCallLikeControlFlowExpression(tryExpression, data)
+    }
+
+    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
+        return visitCallLikeControlFlowExpression(whenExpression, data)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): R {
         return visitUnknownTypeExpression(classReferenceExpression, data)
     }
@@ -306,14 +318,6 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): R {
         return visitUnknownTypeExpression(resolvedQualifier, data)
-    }
-
-    open fun visitTryExpression(tryExpression: FirTryExpression, data: D): R {
-        return visitUnknownTypeExpression(tryExpression, data)
-    }
-
-    open fun visitWhenExpression(whenExpression: FirWhenExpression, data: D): R {
-        return visitUnknownTypeExpression(whenExpression, data)
     }
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): R {
@@ -372,8 +376,12 @@ abstract class FirVisitor<out R, in D> {
         return visitLoop(whileLoop, data)
     }
 
+    open fun visitResolvable(resolvable: FirResolvable, data: D): R {
+        return visitStatement(resolvable, data)
+    }
+
     open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): R {
-        return visitStatement(qualifiedAccess, data)
+        return visitResolvable(qualifiedAccess, data)
     }
 
     open fun visitAssignment(assignment: FirAssignment, data: D): R {

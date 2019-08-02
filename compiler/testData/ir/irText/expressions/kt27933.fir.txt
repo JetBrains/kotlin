@@ -3,7 +3,7 @@ FILE fqName:<root> fileName:/kt27933.kt
     BLOCK_BODY
       VAR name:r type:kotlin.String [var]
         CONST String type=kotlin.String value=""
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/kt27933.kt
           then: BLOCK type=kotlin.Unit origin=null
             SET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.String origin=null
               CONST String type=kotlin.String value="O"
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
             arg0: GET_VAR 'var r: kotlin.String [var] declared in <root>.box' type=kotlin.String origin=null

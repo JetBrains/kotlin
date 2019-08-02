@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.FirProvider
+import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -24,6 +25,7 @@ fun <D> AbstractFirBasedSymbol<D>.phasedFir(
     if (availablePhase < requiredPhase) {
         val provider = FirProvider.getInstance(session)
         val containingFile = when (this) {
+            is FirSyntheticFunctionSymbol -> file
             is ConeCallableSymbol -> provider.getFirCallableContainerFile(this)
             is ConeClassLikeSymbol -> provider.getFirClassifierContainerFile(this)
             else -> null

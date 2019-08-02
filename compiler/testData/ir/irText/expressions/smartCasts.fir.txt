@@ -36,7 +36,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/smartCasts.kt
   FUN name:test3 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.String
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null

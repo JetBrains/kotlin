@@ -18,7 +18,7 @@ sealed class FirFunctionSymbol<D : FirMemberFunction<D>>(
         get() = emptyList()
 }
 
-class FirNamedFunctionSymbol(
+open class FirNamedFunctionSymbol(
     callableId: CallableId,
     val isFakeOverride: Boolean = false,
     // Actual for fake override only

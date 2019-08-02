@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
@@ -21,8 +20,13 @@ class FirWhenBranchImpl(
     override var result: FirBlock
 ) : FirAbstractElement(psi), FirWhenBranch {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        condition = condition.transformSingle(transformer, data)
+        transformCondition(transformer, data)
         result = result.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch {
+        condition = condition.transformSingle(transformer, data)
         return this
     }
 }

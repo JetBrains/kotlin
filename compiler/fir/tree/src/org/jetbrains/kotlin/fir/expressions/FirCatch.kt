@@ -5,10 +5,13 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
+import org.jetbrains.kotlin.fir.BaseTransformedType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
+@BaseTransformedType
 interface FirCatch : FirElement {
     val parameter: FirValueParameter
 
@@ -21,4 +24,8 @@ interface FirCatch : FirElement {
         parameter.accept(visitor, data)
         block.accept(visitor, data)
     }
+
+    fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch
+
+    fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch
 }

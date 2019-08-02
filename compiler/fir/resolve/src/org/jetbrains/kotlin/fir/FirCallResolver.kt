@@ -36,12 +36,10 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
     private val transformer: FirBodyResolveTransformer,
-    private val inferenceComponents: InferenceComponents,
     private val scopes: List<FirScope>,
     private val localScopes: List<FirScope>,
     private val implicitReceiverStack: List<ImplicitReceiverValue>,
-    private val qualifiedResolver: FirQualifiedNameResolver,
-    private val resolutionStageRunner: ResolutionStageRunner
+    private val qualifiedResolver: FirQualifiedNameResolver
 ) : BodyResolveComponents by transformer {
 
     fun resolveCallAndSelectCandidate(functionCall: FirFunctionCall, expectedTypeRef: FirTypeRef?, file: FirFile): FirFunctionCall {

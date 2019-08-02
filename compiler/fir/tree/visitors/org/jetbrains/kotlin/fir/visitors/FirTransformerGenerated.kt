@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.*
 abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirElement>, D>() {
     abstract fun <E : FirElement> transformElement(element: E, data: D): CompositeTransformResult<E>
 
-    open fun <E : FirElement> transformCatch(catch: E, data: D): CompositeTransformResult<E> {
+    open fun transformCatch(catch: FirCatch, data: D): CompositeTransformResult<FirCatch> {
         return transformElement(catch, data)
     }
 
@@ -284,6 +284,18 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformUnknownTypeExpression(block, data)
     }
 
+    open fun transformCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformUnknownTypeExpression(callLikeControlFlowExpression, data)
+    }
+
+    open fun transformTryExpression(tryExpression: FirTryExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformCallLikeControlFlowExpression(tryExpression, data)
+    }
+
+    open fun transformWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformCallLikeControlFlowExpression(whenExpression, data)
+    }
+
     open fun transformClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression, data: D): CompositeTransformResult<FirStatement> {
         return transformUnknownTypeExpression(classReferenceExpression, data)
     }
@@ -306,14 +318,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun transformResolvedQualifier(resolvedQualifier: FirResolvedQualifier, data: D): CompositeTransformResult<FirStatement> {
         return transformUnknownTypeExpression(resolvedQualifier, data)
-    }
-
-    open fun transformTryExpression(tryExpression: FirTryExpression, data: D): CompositeTransformResult<FirStatement> {
-        return transformUnknownTypeExpression(tryExpression, data)
-    }
-
-    open fun transformWhenExpression(whenExpression: FirWhenExpression, data: D): CompositeTransformResult<FirStatement> {
-        return transformUnknownTypeExpression(whenExpression, data)
     }
 
     open fun transformWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: D): CompositeTransformResult<FirStatement> {
@@ -372,8 +376,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformLoop(whileLoop, data)
     }
 
+    open fun transformResolvable(resolvable: FirResolvable, data: D): CompositeTransformResult<FirStatement> {
+        return transformStatement(resolvable, data)
+    }
+
     open fun transformQualifiedAccess(qualifiedAccess: FirQualifiedAccess, data: D): CompositeTransformResult<FirStatement> {
-        return transformStatement(qualifiedAccess, data)
+        return transformResolvable(qualifiedAccess, data)
     }
 
     open fun transformAssignment(assignment: FirAssignment, data: D): CompositeTransformResult<FirStatement> {
@@ -498,6 +506,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitCall(call: FirCall, data: D): CompositeTransformResult<FirElement> {
         return transformCall(call, data)
+    }
+
+    final override fun visitCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformCallLikeControlFlowExpression(callLikeControlFlowExpression, data)
     }
 
     final override fun visitCallWithArgumentList(callWithArgumentList: FirCallWithArgumentList, data: D): CompositeTransformResult<FirElement> {
@@ -734,6 +746,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: D): CompositeTransformResult<FirElement> {
         return transformRegularClass(regularClass, data)
+    }
+
+    final override fun visitResolvable(resolvable: FirResolvable, data: D): CompositeTransformResult<FirElement> {
+        return transformResolvable(resolvable, data)
     }
 
     final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): CompositeTransformResult<FirElement> {

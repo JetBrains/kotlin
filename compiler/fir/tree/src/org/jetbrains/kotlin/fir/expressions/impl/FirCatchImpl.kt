@@ -20,9 +20,18 @@ class FirCatchImpl(
     override var block: FirBlock
 ) : FirAbstractElement(psi), FirCatch {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        parameter = parameter.transformSingle(transformer, data)
-        block = block.transformSingle(transformer, data)
+        transformParameter(transformer, data)
+        transformBlock(transformer, data)
         return this
     }
 
+    override fun <D> transformParameter(transformer: FirTransformer<D>, data: D): FirCatch {
+        parameter = parameter.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirCatch {
+        block = block.transformSingle(transformer, data)
+        return this
+    }
 }

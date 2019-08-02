@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.resolve
 import com.google.common.collect.SetMultimap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
+import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.phasedFir
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
@@ -26,6 +29,10 @@ interface BodyResolveComponents : SessionHolder {
     val labels: SetMultimap<Name, ConeKotlinType>
     val noExpectedType: FirTypeRef
     val symbolProvider: FirSymbolProvider
+    val file: FirFile
+    val container: FirDeclaration
+    val inferenceComponents: InferenceComponents
+    val resolutionStageRunner: ResolutionStageRunner
 
     val <D> AbstractFirBasedSymbol<D>.phasedFir: D where D : FirDeclaration, D : FirSymbolOwner<D>
         get() = phasedFir(session, FirResolvePhase.DECLARATIONS)

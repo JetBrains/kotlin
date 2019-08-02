@@ -284,6 +284,18 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitUnknownTypeExpression(block, null)
     }
 
+    open fun visitCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression) {
+        visitUnknownTypeExpression(callLikeControlFlowExpression, null)
+    }
+
+    open fun visitTryExpression(tryExpression: FirTryExpression) {
+        visitCallLikeControlFlowExpression(tryExpression, null)
+    }
+
+    open fun visitWhenExpression(whenExpression: FirWhenExpression) {
+        visitCallLikeControlFlowExpression(whenExpression, null)
+    }
+
     open fun visitClassReferenceExpression(classReferenceExpression: FirClassReferenceExpression) {
         visitUnknownTypeExpression(classReferenceExpression, null)
     }
@@ -306,14 +318,6 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitResolvedQualifier(resolvedQualifier: FirResolvedQualifier) {
         visitUnknownTypeExpression(resolvedQualifier, null)
-    }
-
-    open fun visitTryExpression(tryExpression: FirTryExpression) {
-        visitUnknownTypeExpression(tryExpression, null)
-    }
-
-    open fun visitWhenExpression(whenExpression: FirWhenExpression) {
-        visitUnknownTypeExpression(whenExpression, null)
     }
 
     open fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression) {
@@ -372,8 +376,12 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitLoop(whileLoop, null)
     }
 
+    open fun visitResolvable(resolvable: FirResolvable) {
+        visitStatement(resolvable, null)
+    }
+
     open fun visitQualifiedAccess(qualifiedAccess: FirQualifiedAccess) {
-        visitStatement(qualifiedAccess, null)
+        visitResolvable(qualifiedAccess, null)
     }
 
     open fun visitAssignment(assignment: FirAssignment) {
@@ -498,6 +506,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitCall(call: FirCall, data: Nothing?) {
         visitCall(call)
+    }
+
+    final override fun visitCallLikeControlFlowExpression(callLikeControlFlowExpression: FirCallLikeControlFlowExpression, data: Nothing?) {
+        visitCallLikeControlFlowExpression(callLikeControlFlowExpression)
     }
 
     final override fun visitCallWithArgumentList(callWithArgumentList: FirCallWithArgumentList, data: Nothing?) {
@@ -734,6 +746,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitRegularClass(regularClass: FirRegularClass, data: Nothing?) {
         visitRegularClass(regularClass)
+    }
+
+    final override fun visitResolvable(resolvable: FirResolvable, data: Nothing?) {
+        visitResolvable(resolvable)
     }
 
     final override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: Nothing?) {

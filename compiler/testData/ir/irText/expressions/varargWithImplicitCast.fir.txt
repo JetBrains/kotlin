@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
   FUN name:testScalar visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.IntArray origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Int
             GET_VAR 'a: kotlin.Any declared in <root>.testScalar' type=kotlin.Any origin=null
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/varargWithImplicitCast.kt
   FUN name:testSpread visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.IntArray
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.IntArray origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.IntArray
             GET_VAR 'a: kotlin.Any declared in <root>.testSpread' type=kotlin.Any origin=null
