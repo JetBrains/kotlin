@@ -168,17 +168,15 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     final BuildEnvironment buildEnvironment = GradleExecutionHelper.getBuildEnvironment(resolverCtx);
     GradleVersion gradleVersion = null;
 
-    boolean isGradleProjectDirSupported = false;
     boolean isCompositeBuildsSupported = false;
     if (buildEnvironment != null) {
       gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
-      isGradleProjectDirSupported = gradleVersion.compareTo(GradleVersion.version("2.4")) >= 0;
-      isCompositeBuildsSupported = isGradleProjectDirSupported && gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
+      isCompositeBuildsSupported = gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
       resolverCtx.setBuildEnvironment(buildEnvironment);
     }
     boolean useCustomSerialization = Registry.is("gradle.tooling.custom.serializer", true);
     final ProjectImportAction projectImportAction =
-      new ProjectImportAction(resolverCtx.isPreviewMode(), isGradleProjectDirSupported, isCompositeBuildsSupported, useCustomSerialization);
+      new ProjectImportAction(resolverCtx.isPreviewMode(), isCompositeBuildsSupported, useCustomSerialization);
 
     GradleExecutionSettings executionSettings = resolverCtx.getSettings();
     if (executionSettings == null) {
@@ -189,7 +187,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     if(resolverCtx.isPreviewMode()){
       executionSettings.withArgument("-Didea.isPreviewMode=true");
       final Set<Class> previewLightWeightToolingModels = ContainerUtil.set(ExternalProjectPreview.class, GradleBuild.class);
-      projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(previewLightWeightToolingModels));
+      projectImportAction.addProjectImportModelProvider(new ClassSetProjectImportModelProvider(previewLightWeightToolingModels));
     }
     if(resolverCtx.isResolveModulePerSourceSet()) {
       executionSettings.withArgument("-Didea.resolveSourceSetDependencies=true");
@@ -214,10 +212,17 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
       projectImportAction.addTargetTypes(resolverExtension.getTargetTypes());
 
-      if(!resolverCtx.isPreviewMode()){
+      if (!resolverCtx.isPreviewMode()) {
         // register classes of extra gradle project models required for extensions (e.g. com.android.builder.model.AndroidProject)
         try {
-          projectImportAction.addProjectImportExtraModelProvider(resolverExtension.getExtraModelProvider());
+          ProjectImportModelProvider modelProvider = resolverExtension.getModelProvider();
+          if (modelProvider != null) {
+            projectImportAction.addProjectImportModelProvider(modelProvider);
+          }
+          ProjectImportModelProvider projectsLoadedModelProvider = resolverExtension.getProjectsLoadedModelProvider();
+          if (projectsLoadedModelProvider != null) {
+            projectImportAction.addProjectImportModelProvider(projectsLoadedModelProvider, true);
+          }
         }
         catch (Throwable t) {
           LOG.warn(t);
@@ -262,10 +267,16 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     final long startTime = System.currentTimeMillis();
     ProjectImportAction.AllModels allModels;
     try {
-      allModels = buildActionRunner.fetchModels((exception) -> {
-        for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
-          resolver.buildFinished(exception);
-        }
+      allModels = buildActionRunner.fetchModels(
+        models -> {
+          for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
+            resolver.projectsLoaded(models);
+          }
+        },
+        (exception) -> {
+          for (GradleProjectResolverExtension resolver = tracedResolverChain; resolver != null; resolver = resolver.getNext()) {
+            resolver.buildFinished(exception);
+          }
       });
       performanceTrace.addTrace(allModels.getPerformanceTrace());
     }
@@ -504,12 +515,12 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
                                                    @NotNull ProjectResolverContext resolverCtx, boolean useCustomSerialization) {
     resolverCtx.setModels(models);
     final Class<? extends ExternalProject> modelClazz = resolverCtx.isPreviewMode() ? ExternalProjectPreview.class : ExternalProject.class;
-    final ExternalProject externalRootProject = models.getExtraProject((IdeaModule)null, modelClazz);
+    final ExternalProject externalRootProject = models.getModel(modelClazz);
     if (externalRootProject == null) return;
 
     final DefaultExternalProject wrappedExternalRootProject =
       useCustomSerialization ? (DefaultExternalProject)externalRootProject : new DefaultExternalProject(externalRootProject);
-    models.addExtraProject(wrappedExternalRootProject, ExternalProject.class);
+    models.addModel(wrappedExternalRootProject, ExternalProject.class);
     final Map<String, DefaultExternalProject> externalProjectsMap = createExternalProjectsMap(null, wrappedExternalRootProject);
 
     DomainObjectSet<? extends IdeaModule> gradleModules = models.getIdeaProject().getModules();
@@ -517,7 +528,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       for (IdeaModule ideaModule : gradleModules) {
         final ExternalProject externalProject = externalProjectsMap.get(getModuleId(resolverCtx, ideaModule));
         if (externalProject != null) {
-          models.addExtraProject(externalProject, ExternalProject.class, ideaModule.getGradleProject());
+          models.addModel(externalProject, ExternalProject.class, ideaModule.getGradleProject());
         }
       }
     }
@@ -529,7 +540,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       while (gradleProject.getParent() != null) {
         gradleProject = gradleProject.getParent();
       }
-      final ExternalProject externalIncludedRootProject = models.getExtraProject(gradleProject, modelClazz);
+      final ExternalProject externalIncludedRootProject = models.getModel(gradleProject, modelClazz);
       if (externalIncludedRootProject == null) continue;
       final DefaultExternalProject wrappedExternalIncludedRootProject =
         useCustomSerialization ? (DefaultExternalProject)externalIncludedRootProject
@@ -541,7 +552,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
       for (IdeaModule ideaModule : ideaModules) {
         final ExternalProject externalProject = externalIncludedProjectsMap.get(getModuleId(resolverCtx, ideaModule));
         if (externalProject != null) {
-          models.addExtraProject(externalProject, ExternalProject.class, ideaModule.getGradleProject());
+          models.addModel(externalProject, ExternalProject.class, ideaModule.getGradleProject());
         }
       }
     }

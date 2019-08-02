@@ -154,11 +154,9 @@ public abstract class AbstractModelBuilderTest {
     ProjectConnection connection = connector.connect();
 
     try {
-      boolean isGradleProjectDirSupported = _gradleVersion.compareTo(GradleVersion.version("2.4")) >= 0;
-      boolean isCompositeBuildsSupported = isGradleProjectDirSupported && _gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
-      final ProjectImportAction projectImportAction =
-        new ProjectImportAction(false, isGradleProjectDirSupported, isCompositeBuildsSupported, false);
-      projectImportAction.addProjectImportExtraModelProvider(new ClassSetProjectImportExtraModelProvider(getModels()));
+      boolean isCompositeBuildsSupported = _gradleVersion.compareTo(GradleVersion.version("3.1")) >= 0;
+      final ProjectImportAction projectImportAction = new ProjectImportAction(false, isCompositeBuildsSupported, false);
+      projectImportAction.addProjectImportModelProvider(new ClassSetProjectImportModelProvider(getModels()));
       BuildActionExecuter<ProjectImportAction.AllModels> buildActionExecutor = connection.action(projectImportAction);
       File initScript = GradleExecutionHelper.generateInitScript(false, getToolingExtensionClasses());
       assertNotNull(initScript);
@@ -229,7 +227,7 @@ public abstract class AbstractModelBuilderTest {
 
     final String filterKey = "to_filter";
     final Map<String, T> map = ContainerUtil.map2Map(ideaModules, (Function<IdeaModule, Pair<String, T>>)module -> {
-      final T value = allModels.getExtraProject(module, aClass);
+      final T value = allModels.getModel(module, aClass);
       final String key = value != null ? module.getGradleProject().getPath() : filterKey;
       return Pair.create(key, value);
     });

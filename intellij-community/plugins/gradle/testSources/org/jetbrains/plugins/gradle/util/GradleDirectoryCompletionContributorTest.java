@@ -24,6 +24,7 @@ public class GradleDirectoryCompletionContributorTest extends GradleImportingTes
   @Test
   public void testVariants() throws Throwable {
     createProjectSubFile("settings.gradle", "include('submodule')");
+    //createProjectSubFile("gradle.properties", "org.gradle.jvmargs=-agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=5011");
     VirtualFile submoduleBuild = createProjectSubFile("submodule/build.gradle", "apply plugin:'java'");
 
     importProject(

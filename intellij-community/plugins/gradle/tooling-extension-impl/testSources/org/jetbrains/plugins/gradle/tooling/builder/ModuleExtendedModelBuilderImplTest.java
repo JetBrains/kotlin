@@ -38,7 +38,7 @@ public class ModuleExtendedModelBuilderImplTest extends AbstractModelBuilderTest
 
     List<ModuleExtendedModel> models =
       ContainerUtil.mapNotNull(ideaModules, (Function<IdeaModule, ModuleExtendedModel>)module -> {
-        ModuleExtendedModel moduleExtendedModel = allModels.getExtraProject(module, ModuleExtendedModel.class);
+        ModuleExtendedModel moduleExtendedModel = allModels.getModel(module, ModuleExtendedModel.class);
 
         assertNotNull(moduleExtendedModel);
 

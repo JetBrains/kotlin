@@ -2,8 +2,11 @@
 package org.jetbrains.plugins.gradle.service.project
 
 import org.gradle.tooling.*
+import org.gradle.tooling.model.BuildModel
+import org.gradle.tooling.model.ProjectModel
 import org.gradle.tooling.model.idea.BasicIdeaProject
 import org.gradle.tooling.model.idea.IdeaProject
+import org.jetbrains.plugins.gradle.model.ModelsHolder
 import org.jetbrains.plugins.gradle.model.ProjectImportAction
 import org.jetbrains.plugins.gradle.model.ProjectImportAction.AllModels
 import org.jetbrains.plugins.gradle.service.execution.GradleExecutionHelper
@@ -53,17 +56,18 @@ class BuildActionRunner(
   /**
    * Fetches the [AllModels] that have been populated as a result of running the [ProjectImportAction] against the Gradle tooling API.
    *
-   * This method returns as soon as the models have been obtained but possibly before the build has finished. The [buildFinishedCallBack]
-   * will be run when the complete Gradle operation has finished (including any tasks that need to be run).
+   * This method returns as soon as the all models have been obtained.
+   *
+   * The [projectsLoadedCallBack] will be run as soon as the models available when Gradle loaded projects before the build has finished.
+   * The [buildFinishedCallBack] will be run when the complete Gradle operation has finished (including any tasks that need to be run).
    *
    * For Gradle versions below 1.8 we fall back to the old [org.gradle.tooling.ModelBuilder] api, using the [helper] and
    * [settings].
    */
-  fun fetchModels(
-    buildFinishedCallBack: Consumer<GradleConnectionException?>
-  ): AllModels {
+  fun fetchModels(projectsLoadedCallBack: Consumer<ModelsHolder<BuildModel, ProjectModel>>,
+                  buildFinishedCallBack: Consumer<GradleConnectionException?>): AllModels {
     // First try with the phased build executor
-    createPhasedExecuter().run(BuildActionResultHandler(buildFinishedCallBack))
+    createPhasedExecuter(projectsLoadedCallBack).run(BuildActionResultHandler(buildFinishedCallBack))
 
     val phasedResult = takeQueueResultBlocking()
     // If we have a non-unsupported version exception pass the failure up to be dealt with by the ExternalSystem
@@ -98,7 +102,7 @@ class BuildActionRunner(
 
     buildFinishedCallBack.accept(null)
 
-    return ProjectImportAction.AllModels(modelBuilder.get())
+    return AllModels(modelBuilder.get())
   }
 
   private fun takeQueueResultBlocking(): Any {
@@ -116,8 +120,12 @@ class BuildActionRunner(
   /**
    * Creates the [BuildActionExecuter] to be used to run the [ProjectImportAction].
    */
-  private fun createPhasedExecuter(): BuildActionExecuter<Void> {
-    val executer = resolverCtx.connection.action().projectsLoaded(buildAction, modelsHandler).build()
+  private fun createPhasedExecuter(projectsLoadedCallBack: Consumer<ModelsHolder<BuildModel, ProjectModel>>): BuildActionExecuter<Void> {
+    buildAction.prepareForPhasedExecuter()
+    val executer = resolverCtx.connection.action()
+      .projectsLoaded(buildAction, IntermediateResultHandler { projectsLoadedCallBack.accept(it) })
+      .buildFinished(buildAction, modelsHandler)
+      .build()
     executer.prepare()
     executer.setCancellationToken(resolverCtx)
     if (initializeTaskExecution) executer.forTasks(emptyList())
@@ -125,6 +133,7 @@ class BuildActionRunner(
   }
 
   private fun createDefaultExecuter(): BuildActionExecuter<AllModels> {
+    buildAction.prepareForNonPhasedExecuter()
     val executer = resolverCtx.connection.action(buildAction)
     executer.prepare()
     executer.setCancellationToken(resolverCtx)

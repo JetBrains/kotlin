@@ -57,12 +57,12 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
     writeBuildScript(
       """
-       | wrapper { gradleVersion = "4.6" }
+       | wrapper { gradleVersion = "4.8.1" }
       """.trimMargin())
 
     val listener = MyListener()
     runHelpTask(listener)
-    assertTrue("Gradle 4.6 should be started", listener.heard("Welcome to Gradle 4.6"))
+    assertTrue("Gradle 4.6 should be started", listener.heard("Welcome to Gradle 4.8.1"))
   }
 
   @Test
@@ -77,7 +77,7 @@ class GradleTaskManagerTest: UsefulTestCase() {
       VfsUtil.saveText(wrapperProps, """
       distributionBase=GRADLE_USER_HOME
       distributionPath=wrapper/dists
-      distributionUrl=${AbstractModelBuilderTest.DistributionLocator().getDistributionFor(GradleVersion.version("4.4"))}
+      distributionUrl=${AbstractModelBuilderTest.DistributionLocator().getDistributionFor(GradleVersion.version("4.8"))}
       zipStoreBase=GRADLE_USER_HOME
       zipStorePath=wrapper/dists
     """.trimIndent())
@@ -85,15 +85,15 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
     writeBuildScript(
       """
-       | wrapper { gradleVersion = "4.6" }
+       | wrapper { gradleVersion = "4.8.1" }
       """.trimMargin())
 
     val listener = MyListener()
 
     runHelpTask(listener)
 
-    assertTrue("Gradle 4.6 should be started", listener.heard("Welcome to Gradle 4.6"))
-    assertFalse("Gradle 4.4 should never be started", listener.heard("Welcome to Gradle 4.4"))
+    assertTrue("Gradle 4.8.1 should be started", listener.heard("Welcome to Gradle 4.8.1"))
+    assertFalse("Gradle 4.8 should never be started", listener.heard("Welcome to Gradle 4.8"))
   }
 
 

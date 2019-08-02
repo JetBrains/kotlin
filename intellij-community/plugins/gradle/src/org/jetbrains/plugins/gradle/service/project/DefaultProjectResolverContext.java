@@ -166,13 +166,13 @@ public class DefaultProjectResolverContext extends UserDataHolderBase implements
   @Nullable
   @Override
   public <T> T getExtraProject(Class<T> modelClazz) {
-    return myModels.getExtraProject((IdeaModule)null, modelClazz);
+    return myModels.getModel(modelClazz);
   }
 
   @Nullable
   @Override
   public <T> T getExtraProject(@Nullable IdeaModule module, Class<T> modelClazz) {
-    return myModels.getExtraProject(module != null ? module.getGradleProject() : null, modelClazz);
+    return module == null ? myModels.getModel(modelClazz) : myModels.getModel(module, modelClazz);
   }
 
   @Override

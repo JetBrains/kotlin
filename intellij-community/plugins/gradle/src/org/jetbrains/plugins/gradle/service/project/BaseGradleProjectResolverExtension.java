@@ -43,10 +43,7 @@ import com.intellij.util.text.CharArrayUtil;
 import gnu.trove.THash;
 import org.codehaus.groovy.runtime.typehandling.ShortTypeHandling;
 import org.gradle.internal.impldep.com.google.common.collect.Multimap;
-import org.gradle.tooling.model.DomainObjectSet;
-import org.gradle.tooling.model.GradleModuleVersion;
-import org.gradle.tooling.model.GradleTask;
-import org.gradle.tooling.model.UnsupportedMethodException;
+import org.gradle.tooling.model.*;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.gradle.GradleBuild;
 import org.gradle.tooling.model.idea.*;
@@ -273,7 +270,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
     }
 
     ProjectImportAction.AllModels models = resolverCtx.getModels();
-    ExternalTestsModel externalTestsModel = models.getExtraProject(gradleModule, ExternalTestsModel.class);
+    ExternalTestsModel externalTestsModel = models.getModel(gradleModule, ExternalTestsModel.class);
     if (externalTestsModel != null) {
       for (ExternalTestSourceMapping testSourceMapping : externalTestsModel.getTestSourceMappings()) {
         String testName = testSourceMapping.getTestName();
@@ -745,8 +742,8 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
   @NotNull
   @Override
-  public ProjectImportExtraModelProvider getExtraModelProvider() {
-    return new ClassSetProjectImportExtraModelProvider(getExtraProjectModelClasses());
+  public ProjectImportModelProvider getModelProvider() {
+    return new ClassSetProjectImportModelProvider(getExtraProjectModelClasses());
   }
 
   @NotNull

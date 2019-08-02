@@ -25,7 +25,11 @@ import com.intellij.openapi.externalSystem.model.task.TaskData;
 import com.intellij.openapi.externalSystem.service.ParametersEnhancer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.util.Consumer;
+import org.gradle.tooling.BuildActionExecuter;
 import org.gradle.tooling.GradleConnectionException;
+import org.gradle.tooling.IntermediateResultHandler;
+import org.gradle.tooling.model.BuildModel;
+import org.gradle.tooling.model.ProjectModel;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
@@ -33,7 +37,8 @@ import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.GradleManager;
-import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider;
+import org.jetbrains.plugins.gradle.model.ModelsHolder;
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -99,8 +104,23 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
   @NotNull
   Set<Class> getExtraProjectModelClasses();
 
-  @NotNull
-  ProjectImportExtraModelProvider getExtraModelProvider();
+  /**
+   * Allows to request gradle tooling models after "sync" tasks are run
+   *
+   * @see BuildActionExecuter.Builder#buildFinished(org.gradle.tooling.BuildAction, org.gradle.tooling.IntermediateResultHandler)
+   */
+  @Nullable
+  default ProjectImportModelProvider getModelProvider() {return null;}
+
+  /**
+   * Allows to request gradle tooling models after gradle projects are loaded and before "sync" tasks are run.
+   * This can be used to setup "sync" tasks for the import
+   *
+   * @see BuildActionExecuter.Builder#projectsLoaded(org.gradle.tooling.BuildAction, org.gradle.tooling.IntermediateResultHandler)
+   * @see GradleProjectResolverExtension#requiresTaskRunning()
+   */
+  @Nullable
+  default ProjectImportModelProvider getProjectsLoadedModelProvider() {return null;}
 
   /**
    * @return whether or not this resolver requires Gradle task running infrastructure to be initialized, if any of the resolvers which are
@@ -146,6 +166,18 @@ public interface GradleProjectResolverExtension extends ParametersEnhancer {
    * Performs project configuration and other checks before the actual project import (before invocation of gradle tooling API).
    */
   void preImportCheck();
+
+  /**
+   * Called once Gradle has loaded projects but before any tasks execution.
+   * These models do not contain those models which is created when build finished.
+   * <p>
+   * Note: This method is called from a Gradle connection thread, within the {@link IntermediateResultHandler} passed to the
+   * tooling api.
+   *
+   * @param models obtained after projects loaded phase
+   * @see #getProjectsLoadedModelProvider()
+   */
+  default void projectsLoaded(@Nullable ModelsHolder<BuildModel, ProjectModel> models) {}
 
   /**
    * Called once Gradle has finished executing everything, including any tasks that might need to be run. The models are obtained
