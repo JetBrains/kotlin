@@ -96,6 +96,8 @@ public interface ComposeErrors {
             ILLEGAL_ASSIGN_TO_UNIONTYPE = DiagnosticFactory2.create(ERROR);
     DiagnosticFactory0<KtElement>
             CHILDREN_MUST_BE_LAST = DiagnosticFactory0.create(ERROR);
+    DiagnosticFactory0<PsiElement>
+            ILLEGAL_TRY_CATCH_AROUND_COMPOSABLE = DiagnosticFactory0.create(ERROR);
 
     @SuppressWarnings("UnusedDeclaration")
     Object INITIALIZER = new Object() {
