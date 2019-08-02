@@ -81,11 +81,10 @@ fun compile(
     moveBodilessDeclarationsToSeparatePlace(context, moduleFragment)
 
     val exports = ExportGenerator(context)
-
-    jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
-
     val exportedModule = exports.generateExport(moduleFragment)
     val dts = exportedModule.toTypeScript()
+
+    jsPhases.invokeToplevel(phaseConfig, context, moduleFragment)
 
     val transformer = IrModuleToJsTransformer(context, mainFunction, mainArguments)
     val jsProgram = transformer.generateModule(moduleFragment)

@@ -28,27 +28,20 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
 }
 
 class ExportGenerator(val context: JsIrBackendContext) {
-    private fun generateExport(irFile: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = irFile.fqName
-        val exports = irFile.declarations.flatMap { declaration -> exportDeclaration(declaration) }
 
-        if (exports.isNotEmpty()) {
-            if (namespaceFqName.isRoot) {
-                return exports
-            } else {
-                val namespace = ExportedNamespace(namespaceFqName.toString(), exports)
-                return listOf(namespace)
-            }
+    private fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
+        val namespaceFqName = file.fqName
+        val exports = file.declarations.flatMap { declaration -> exportDeclaration(declaration) }
+        return when {
+            exports.isEmpty() -> emptyList()
+            namespaceFqName.isRoot -> exports
+            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
-
-        return exports
     }
 
     fun generateExport(module: IrModuleFragment): ExportedModule {
-        val packageFragments: List<IrPackageFragment> = context.externalPackageFragment.values + module.files
-
-        val declarations = packageFragments.flatMap { generateExport(it) }
-        return ExportedModule(declarations)
+        val files = context.externalPackageFragment.values + module.files
+        return ExportedModule(files.flatMap { generateExport(it) })
     }
 
     private fun exportDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
@@ -66,8 +59,7 @@ class ExportGenerator(val context: JsIrBackendContext) {
         if (declaration is IrFunction && declaration.isInline && declaration.typeParameters.any { it.isReified })
             return emptyList()
 
-
-        val exportedDeclarations = when (declaration) {
+        return when (declaration) {
             is IrSimpleFunction -> exportFunction(declaration)
             is IrProperty -> exportProperty(declaration)
             is IrClass -> exportClass(declaration)
@@ -75,8 +67,6 @@ class ExportGenerator(val context: JsIrBackendContext) {
 
             else -> error("Can't export declaration $declaration")
         }
-
-        return exportedDeclarations
     }
 
     private fun exportFunction(function: IrSimpleFunction): List<ExportedDeclaration> {
@@ -193,21 +183,13 @@ class ExportGenerator(val context: JsIrBackendContext) {
         if (klass.isCompanion) return emptyList()
         if (klass.isInline) return emptyList()
 
-//      // TODO: Exceptions
+        // TODO: Exceptions
         if (klass.fqNameWhenAvailable in setOf(
                 FqName("kotlin.Error"),
                 FqName("kotlin.AssertionError"),
                 FqName("kotlin.NotImplementedError")
             ))
             return emptyList()
-
-        if (klass.modality == Modality.OPEN) {
-            for (declaration in klass.declarations) {
-                if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
-                    1 + 1
-                }
-            }
-        }
 
         val name = klass.getExportedIdentifier()
 
@@ -256,11 +238,12 @@ class ExportGenerator(val context: JsIrBackendContext) {
             ?.let { exportType(it) }
 
         val superInterfaces = klass.superTypes
-            .filter { it.classifierOrFail.isInterface &&
-                    !it.isFunctionOrKFunction() &&
-                    !it.isSuspendFunction() &&
-                    !it.classifierOrFail.isClassWithFqName(FqNameUnsafe("kotlin.io.Serializable")) }
-            .map { exportType(it) }
+            .filter {
+                it.classifierOrFail.isInterface &&
+                !it.isFunctionOrKFunction() &&
+                !it.isSuspendFunction() &&
+                !it.classifierOrFail.isClassWithFqName(FqNameUnsafe("kotlin.io.Serializable"))
+            }.map { exportType(it) }
 
         val exportedClass = ExportedClass(
             name, klass.isInterface, klass.modality == Modality.ABSTRACT, superType, superInterfaces, typeParameters, members
@@ -368,7 +351,8 @@ class ExportGenerator(val context: JsIrBackendContext) {
     }
 }
 
-private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
+private val IrClassifierSymbol.isInterface get() =
+    (owner as? IrClass)?.isInterface == true
 
 
 val reservedWords = setOf(
