@@ -32,6 +32,17 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
 
   @NotNull
   @Override
+  public String getGroupId() {
+    return "inspections";
+  }
+
+  @Override
+  public int getVersion() {
+    return 2;
+  }
+
+  @NotNull
+  @Override
   public Set<MetricEvent> getMetrics(@NotNull final Project project) {
     final Set<MetricEvent> result = new HashSet<>();
     final List<ScopeToolState> tools = InspectionProjectProfileManager.getInstance(project).getCurrentProfile().getAllTools();
@@ -59,19 +70,8 @@ public class InspectionsUsagesCollector extends ProjectUsagesCollector {
     if (info != null) {
       data.addPluginInfo(info);
     }
-    final String id = info != null && info.isSafeToReport() ? state.getTool().getID() : "third.party";
-    return MetricEventFactoryKt.newMetric(id, data);
-  }
-
-  @NotNull
-  @Override
-  public String getGroupId() {
-    return "inspections";
-  }
-
-  @Override
-  public int getVersion() {
-    return 1;
+    data.addData("inspection_id", info != null && info.isSafeToReport() ? state.getTool().getID() : "third.party");
+    return MetricEventFactoryKt.newMetric("not.default.state", data);
   }
 
   public static class InspectionToolValidator extends CustomWhiteListRule {
