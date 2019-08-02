@@ -36,6 +36,10 @@ interface ImplementationViewSession : Disposable {
                                         processor: Processor<in ImplementationViewElement>): List<ImplementationViewElement>
   fun elementRequiresIncludeSelf(): Boolean
   fun needUpdateInBackground(): Boolean
+  @JvmDefault fun createUsage(element: ImplementationViewElement): Usage?{
+      val psiElement = element.elementForShowUsages ?: return null
+      return UsageInfo2UsageAdapter(UsageInfo(psiElement))
+  }
 }
 
 interface ImplementationViewSessionFactory {
