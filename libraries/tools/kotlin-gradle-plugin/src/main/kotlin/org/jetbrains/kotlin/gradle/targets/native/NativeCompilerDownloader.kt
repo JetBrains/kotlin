@@ -6,8 +6,10 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.artifacts.repositories.IvyArtifactRepository
 import org.gradle.api.artifacts.repositories.IvyPatternRepositoryLayout
 import org.gradle.api.file.FileTree
 import org.gradle.api.logging.Logger
@@ -80,9 +82,8 @@ class NativeCompilerDownloader(
     private fun setupRepo(repoUrl: String): ArtifactRepository {
         return project.repositories.ivy { repo ->
             repo.setUrl(repoUrl)
-            repo.layout("pattern") {
-                val layout = it as IvyPatternRepositoryLayout
-                layout.artifact("[artifact]-[revision].[ext]")
+            repo.patternLayoutCompatible {
+                artifact("[artifact]-[revision].[ext]")
             }
             repo.metadataSources {
                 it.artifact()
