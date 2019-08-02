@@ -210,7 +210,9 @@ public class KotlinLineBreakpointType extends JavaLineBreakpointType implements 
     private static SourcePosition createLineSourcePosition(@NotNull XLineBreakpointImpl breakpoint) {
         VirtualFile file = breakpoint.getFile();
         if (file != null) {
-            PsiFile psiFile = PsiManager.getInstance(breakpoint.getProject()).findFile(file);
+
+            PsiManager psiManager = PsiManager.getInstance(breakpoint.getProject());
+            PsiFile psiFile = ReadAction.compute(() -> psiManager.findFile(file));
             if (psiFile != null) {
                 return SourcePosition.createFromLine(psiFile, breakpoint.getLine());
             }
