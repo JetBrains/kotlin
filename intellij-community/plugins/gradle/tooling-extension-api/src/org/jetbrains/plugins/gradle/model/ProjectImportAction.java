@@ -283,6 +283,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
 
     public AllModels(@NotNull IdeaProject ideaProject) {
       super(new IdeaProjectBuildModelAdapter(ideaProject));
+      setIdeaProject(ideaProject);
     }
 
     @NotNull
@@ -290,7 +291,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       return myIdeaProject;
     }
 
-    public void setIdeaProject(@NotNull IdeaProject ideaProject) {
+    private void setIdeaProject(@NotNull IdeaProject ideaProject) {
       myIdeaProject = ideaProject;
     }
 
