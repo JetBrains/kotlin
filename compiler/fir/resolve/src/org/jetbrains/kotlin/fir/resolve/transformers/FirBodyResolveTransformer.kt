@@ -334,11 +334,8 @@ open class FirBodyResolveTransformer(
         fun transform(): FirAnonymousFunction {
             return withScopeCleanup(scopes) {
                 scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
-                val result =
-                    super.transformAnonymousFunction(
-                        anonymousFunction,
-                        lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef
-                    ).single as FirAnonymousFunction
+                val expectedReturnType = lambdaResolution.expectedReturnTypeRef ?: anonymousFunction.returnTypeRef.takeUnless { it is FirImplicitTypeRef }
+                val result = super.transformAnonymousFunction(anonymousFunction, expectedReturnType).single as FirAnonymousFunction
                 val body = result.body
                 if (result.returnTypeRef is FirImplicitTypeRef && body != null) {
                     result.transformReturnTypeRef(this, body.resultType)
