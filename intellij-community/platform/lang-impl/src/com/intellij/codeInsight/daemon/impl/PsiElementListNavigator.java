@@ -2,7 +2,7 @@
 
 package com.intellij.codeInsight.daemon.impl;
 
-import com.intellij.codeInsight.navigation.PsiBackgroundUpdaterTask;
+import com.intellij.codeInsight.navigation.BackgroundUpdaterTask;
 import com.intellij.codeInsight.navigation.ListBackgroundUpdaterTask;
 import com.intellij.find.FindUtil;
 import com.intellij.ide.PsiCopyPasteManager;
@@ -40,7 +40,7 @@ public class PsiElementListNavigator {
   }
 
   public static void openTargets(MouseEvent e, NavigatablePsiElement[] targets, String title, final String findUsagesTitle, ListCellRenderer listRenderer) {
-    openTargets(e, targets, title, findUsagesTitle, listRenderer, (PsiBackgroundUpdaterTask)null);
+    openTargets(e, targets, title, findUsagesTitle, listRenderer, (BackgroundUpdaterTask)null);
   }
 
   public static void openTargets(MouseEvent e,
@@ -48,7 +48,7 @@ public class PsiElementListNavigator {
                                  String title,
                                  final String findUsagesTitle,
                                  ListCellRenderer listRenderer,
-                                 @Nullable PsiBackgroundUpdaterTask listUpdaterTask) {
+                                 @Nullable BackgroundUpdaterTask listUpdaterTask) {
     JBPopup popup = navigateOrCreatePopup(targets, title, findUsagesTitle, listRenderer, listUpdaterTask);
     if (popup != null) {
       RelativePoint point = new RelativePoint(e);
@@ -66,7 +66,7 @@ public class PsiElementListNavigator {
   }
 
   public static void openTargets(Editor e, NavigatablePsiElement[] targets, String title, final String findUsagesTitle,
-                                 ListCellRenderer listRenderer, @Nullable PsiBackgroundUpdaterTask listUpdaterTask) {
+                                 ListCellRenderer listRenderer, @Nullable BackgroundUpdaterTask listUpdaterTask) {
     final JBPopup popup = navigateOrCreatePopup(targets, title, findUsagesTitle, listRenderer, listUpdaterTask);
     if (popup != null) {
       if (listUpdaterTask != null) {
@@ -79,10 +79,10 @@ public class PsiElementListNavigator {
   }
 
   /**
-   * @see #navigateOrCreatePopup(NavigatablePsiElement[], String, String, ListCellRenderer, PsiBackgroundUpdaterTask, Consumer)
+   * @see #navigateOrCreatePopup(NavigatablePsiElement[], String, String, ListCellRenderer, BackgroundUpdaterTask, Consumer)
    */
   private static void runActionAndListUpdaterTask(@NotNull Disposable popup, @NotNull Runnable action,
-                                                  @NotNull PsiBackgroundUpdaterTask listUpdaterTask) {
+                                                  @NotNull BackgroundUpdaterTask listUpdaterTask) {
     Alarm alarm = new Alarm(popup);
     alarm.addRequest(action, 300);
     ProgressManager.getInstance().run(listUpdaterTask);
@@ -93,7 +93,7 @@ public class PsiElementListNavigator {
                                                final String title,
                                                final String findUsagesTitle,
                                                final ListCellRenderer listRenderer,
-                                               @Nullable final PsiBackgroundUpdaterTask listUpdaterTask) {
+                                               @Nullable final BackgroundUpdaterTask listUpdaterTask) {
     return navigateOrCreatePopup(targets, title, findUsagesTitle, listRenderer, listUpdaterTask, selectedElements -> {
       for (Object element : selectedElements) {
         PsiElement selected = (PsiElement)element;
@@ -112,7 +112,7 @@ public class PsiElementListNavigator {
                                               final String title,
                                               final String findUsagesTitle,
                                               final ListCellRenderer listRenderer,
-                                              @Nullable final PsiBackgroundUpdaterTask listUpdaterTask,
+                                              @Nullable final BackgroundUpdaterTask listUpdaterTask,
                                               @NotNull final Consumer<Object[]> consumer) {
     if (targets.length == 0) return null;
     if (targets.length == 1 && (listUpdaterTask == null || listUpdaterTask.isFinished())) {
@@ -195,7 +195,7 @@ public class PsiElementListNavigator {
 
 
   /**
-   * @deprecated use {@link #openTargets(MouseEvent, NavigatablePsiElement[], String, String, ListCellRenderer, PsiBackgroundUpdaterTask)} instead
+   * @deprecated use {@link #openTargets(MouseEvent, NavigatablePsiElement[], String, String, ListCellRenderer, BackgroundUpdaterTask)} instead
    */
   @Deprecated
   public static void openTargets(MouseEvent e,
@@ -204,6 +204,6 @@ public class PsiElementListNavigator {
                                  final String findUsagesTitle,
                                  ListCellRenderer listRenderer,
                                  @Nullable ListBackgroundUpdaterTask listUpdaterTask) {
-    openTargets(e, targets, title, findUsagesTitle, listRenderer, (PsiBackgroundUpdaterTask)listUpdaterTask);
+    openTargets(e, targets, title, findUsagesTitle, listRenderer, (BackgroundUpdaterTask)listUpdaterTask);
   }
 }
