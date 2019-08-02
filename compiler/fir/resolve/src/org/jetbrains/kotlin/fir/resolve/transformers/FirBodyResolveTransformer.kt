@@ -731,13 +731,15 @@ open class FirBodyResolveTransformer(
 
     protected inline fun <T> withScopeCleanup(scopes: MutableList<*>, crossinline l: () -> T): T {
         val sizeBefore = scopes.size
-        val result = l()
-        val size = scopes.size
-        assert(size >= sizeBefore)
-        repeat(size - sizeBefore) {
-            scopes.let { it.removeAt(it.size - 1) }
+        return try {
+            l()
+        } finally {
+            val size = scopes.size
+            assert(size >= sizeBefore)
+            repeat(size - sizeBefore) {
+                scopes.let { it.removeAt(it.size - 1) }
+            }
         }
-        return result
     }
 
     internal fun <T> storeTypeFromCallee(access: T) where T : FirQualifiedAccess, T : FirExpression {
