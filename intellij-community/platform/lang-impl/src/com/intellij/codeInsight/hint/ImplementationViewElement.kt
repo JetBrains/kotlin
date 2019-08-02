@@ -37,7 +37,7 @@ abstract class ImplementationViewElement {
 
   abstract fun navigate(focusEditor: Boolean)
 
-  val usage: Usage?
+  open val usage: Usage?
     get() {
       return UsageInfo2UsageAdapter(UsageInfo(elementForShowUsages ?: return null))
     }
