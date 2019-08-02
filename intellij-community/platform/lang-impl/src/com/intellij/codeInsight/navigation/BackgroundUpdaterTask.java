@@ -16,13 +16,11 @@
 package com.intellij.codeInsight.navigation;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ListComponentUpdater;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Ref;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.UsageInfo2UsageAdapter;
 import com.intellij.usages.UsageView;
@@ -68,16 +66,6 @@ public abstract class BackgroundUpdaterTask extends GenericBackgroundUpdaterTask
     }
 
     return super.updateComponent(element);
-  }
-
-  protected static Comparator<PsiElement> createComparatorWrapper(@NotNull Comparator<? super PsiElement> comparator) {
-    return (o1, o2) -> {
-      int diff = comparator.compare(o1, o2);
-      if (diff == 0) {
-        return ReadAction.compute(() -> PsiUtilCore.compareElementsByPosition(o1, o2));
-      }
-      return diff;
-    };
   }
 }
 
