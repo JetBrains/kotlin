@@ -7,8 +7,7 @@ Goal: support run-time access to types passed to functions, as if they were reif
 A type parameter of a function can be marked as `reified`:
 
 ``` kotlin
-
-inline fun foo<reified T>() {}
+inline fun <reified T> foo() {}
 ```
 
 ## Semantics, Checks and Restrictions
