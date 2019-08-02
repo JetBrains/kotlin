@@ -11,36 +11,36 @@ FILE fqName:<root> fileName:/kt30796.kt
     VALUE_PARAMETER name:value2 index:1 type:T of <root>.test
     BLOCK_BODY
       VAR name:x1 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             GET_VAR 'value: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
       VAR name:x2 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             GET_VAR 'value: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: BLOCK type=kotlin.Any origin=ELVIS
+              then: BLOCK type=kotlin.Any? origin=ELVIS
                 VAR name:<elvis> type:T of <root>.test [val]
                   GET_VAR 'value2: T of <root>.test declared in <root>.test' type=T of <root>.test origin=null
-                WHEN type=kotlin.Any origin=ELVIS
+                WHEN type=kotlin.Any? origin=ELVIS
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                       arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                       arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CONST Int type=kotlin.Any value=42
+                    then: CONST Int type=kotlin.Int value=42
                   BRANCH
                     if: CONST Boolean type=kotlin.Boolean value=true
                     then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/kt30796.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
       VAR name:x3 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             BLOCK type=T of <root>.test origin=ELVIS
               VAR name:<elvis> type:T of <root>.test [val]
@@ -62,17 +62,17 @@ FILE fqName:<root> fileName:/kt30796.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
       VAR name:x4 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             BLOCK type=T of <root>.test origin=ELVIS
               VAR name:<elvis> type:T of <root>.test [val]
@@ -86,31 +86,31 @@ FILE fqName:<root> fileName:/kt30796.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
       VAR name:x5 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Int origin=ELVIS
           VAR name:<elvis> type:kotlin.Nothing [val]
             CALL 'public final fun magic <T> (): T of <root>.magic declared in <root>' type=kotlin.Nothing origin=null
               <T>: <none>
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Int origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.Nothing [val] declared in <root>.test' type=kotlin.Nothing origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: kotlin.Nothing [val] declared in <root>.test' type=kotlin.Nothing origin=null
       VAR name:x6 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             BLOCK type=T of <root>.test origin=ELVIS
               VAR name:<elvis> type:T of <root>.test [val]
@@ -120,22 +120,22 @@ FILE fqName:<root> fileName:/kt30796.kt
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                     arg1: CONST Null type=kotlin.Nothing? value=null
-                  then: CALL 'public final fun magic <T> (): T of <root>.magic declared in <root>' type=kotlin.Nothing origin=null
+                  then: CALL 'public final fun magic <T> (): T of <root>.magic declared in <root>' type=T of <root>.test origin=null
                     <T>: <none>
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
       VAR name:x7 type:kotlin.Any [val]
-        BLOCK type=kotlin.Any origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:T of <root>.test [val]
             BLOCK type=T of <root>.test origin=ELVIS
               VAR name:<elvis> type:kotlin.Nothing [val]
@@ -150,12 +150,12 @@ FILE fqName:<root> fileName:/kt30796.kt
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: GET_VAR 'val <elvis>: kotlin.Nothing [val] declared in <root>.test' type=kotlin.Nothing origin=null
-          WHEN type=kotlin.Any origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null
                 arg1: CONST Null type=kotlin.Nothing? value=null
-              then: CONST Int type=kotlin.Any value=42
+              then: CONST Int type=kotlin.Int value=42
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: GET_VAR 'val <elvis>: T of <root>.test [val] declared in <root>.test' type=T of <root>.test origin=null

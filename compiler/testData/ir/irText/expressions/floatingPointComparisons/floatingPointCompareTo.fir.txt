@@ -19,7 +19,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo, kotlin/Double.compareTo]>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test2d' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test3d' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test2f' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.test3f' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -112,7 +112,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.testFD' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: compareTo>#' type=IrErrorType
                 GET_VAR 'y: kotlin.Any declared in <root>.testDF' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'x: kotlin.Any declared in <root>.test2fr' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false
@@ -174,7 +174,7 @@ FILE fqName:<root> fileName:/floatingPointCompareTo.kt
             then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
               arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo, kotlin/Float.compareTo]>#' type=IrErrorType
                 GET_VAR 'x: kotlin.Any declared in <root>.test3fr' type=kotlin.Any origin=null
-              arg1: CONST Int type=kotlin.Boolean value=0
+              arg1: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Boolean type=kotlin.Boolean value=false

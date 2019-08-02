@@ -27,7 +27,7 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
 
         }
 
-        public final fun unwrap(): R|class error: Unresolved name: meat| {
+        public final fun unwrap(): <ERROR TYPE REF: No type for block> {
             ^unwrap when (this#) {
                 ($subj$ is R|Maybe.Nope|) ->  {
                     throw R|java/lang/Exception.Exception|(String())

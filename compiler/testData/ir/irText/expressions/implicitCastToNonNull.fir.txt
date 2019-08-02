@@ -35,7 +35,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test3
               GET_VAR 'x: kotlin.Any declared in <root>.test3' type=kotlin.Any origin=null
-            then: CONST Int type=IrErrorType value=0
+            then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType
@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/implicitCastToNonNull.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=T of <root>.test4
               GET_VAR 'x: kotlin.Any? declared in <root>.test4' type=kotlin.Any? origin=null
-            then: CONST Int type=IrErrorType value=0
+            then: CONST Int type=kotlin.Int value=0
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: ERROR_CALL 'Unresolved reference: <Unresolved name: length>#' type=IrErrorType

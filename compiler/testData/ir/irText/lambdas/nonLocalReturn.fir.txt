@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo1.<anonymous>' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Unit value=0
+                    arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo1'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
               CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/nonLocalReturn.kt
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'it: kotlin.Int declared in <root>.testLrmFoo2.<anonymous>' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.Unit value=0
+                    arg1: CONST Int type=kotlin.Int value=0
                   then: RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.Int): kotlin.Unit declared in <root>.testLrmFoo2'
                     GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
               CALL 'public final fun print (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null

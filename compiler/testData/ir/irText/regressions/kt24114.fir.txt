@@ -18,9 +18,9 @@ FILE fqName:<root> fileName:/kt24114.kt
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp0_subject: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=1
-              then: BLOCK type=kotlin.Int origin=WHEN
+              then: BLOCK type=kotlin.Nothing origin=WHEN
                 VAR IR_TEMPORARY_VARIABLE name:tmp1_subject type:kotlin.Int [val]
-                WHEN type=kotlin.Int origin=WHEN
+                WHEN type=kotlin.Nothing origin=WHEN
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                       arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.test1' type=kotlin.Int origin=null
@@ -42,9 +42,9 @@ FILE fqName:<root> fileName:/kt24114.kt
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp2_subject: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null
                 arg1: CONST Int type=kotlin.Int value=1
-              then: BLOCK type=kotlin.Int origin=WHEN
+              then: BLOCK type=kotlin.Nothing origin=WHEN
                 VAR IR_TEMPORARY_VARIABLE name:tmp3_subject type:kotlin.Int [val]
-                WHEN type=kotlin.Int origin=WHEN
+                WHEN type=kotlin.Nothing origin=WHEN
                   BRANCH
                     if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                       arg0: GET_VAR 'val tmp3_subject: kotlin.Int [val] declared in <root>.test2' type=kotlin.Int origin=null

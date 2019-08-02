@@ -139,6 +139,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/treeSet.kt");
     }
 
+    @TestMetadata("tryInference.kt")
+    public void testTryInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/tryInference.kt");
+    }
+
     @TestMetadata("TwoDeclarationsInSameFile.kt")
     public void testTwoDeclarationsInSameFile() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/TwoDeclarationsInSameFile.kt");
@@ -167,6 +172,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
     @TestMetadata("typeParameterVsNested.kt")
     public void testTypeParameterVsNested() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
+    }
+
+    @TestMetadata("whenInference.kt")
+    public void testWhenInference() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenInference.kt");
     }
 
     @TestMetadata("compiler/fir/resolve/testData/resolve/arguments")

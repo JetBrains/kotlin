@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test1 <T> (): T of <root>.test1? [inline] declared in <root>'
-        WHEN type=T of <root>.test1? origin=IF
+        WHEN type=kotlin.Any? origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
               ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
@@ -33,7 +33,7 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
       correspondingProperty: PROPERTY name:asT visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-asT> (): T of <uninitialized parent>? declared in <root>'
-          WHEN type=T of <uninitialized parent>? origin=IF
+          WHEN type=IrErrorType origin=IF
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <uninitialized parent>
                 ERROR_CALL 'Unresolved reference: this#' type=IrErrorType

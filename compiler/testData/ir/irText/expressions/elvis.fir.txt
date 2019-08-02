@@ -50,23 +50,23 @@ FILE fqName:<root> fileName:/elvis.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Any?
     VALUE_PARAMETER name:b index:1 type:kotlin.Any?
     BLOCK_BODY
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String
             GET_VAR 'b: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.Any?, b: kotlin.Any?): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
-      WHEN type=kotlin.String origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
           then: RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.Any?, b: kotlin.Any?): kotlin.String declared in <root>'
             CONST String type=kotlin.String value=""
       RETURN type=kotlin.Nothing from='public final fun test3 (a: kotlin.Any?, b: kotlin.Any?): kotlin.String declared in <root>'
-        BLOCK type=kotlin.String origin=ELVIS
+        BLOCK type=kotlin.Any? origin=ELVIS
           VAR name:<elvis> type:kotlin.Any? [val]
             GET_VAR 'a: kotlin.Any? declared in <root>.test3' type=kotlin.Any? origin=null
-          WHEN type=kotlin.String origin=ELVIS
+          WHEN type=kotlin.Any? origin=ELVIS
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val <elvis>: kotlin.Any? [val] declared in <root>.test3' type=kotlin.Any? origin=null

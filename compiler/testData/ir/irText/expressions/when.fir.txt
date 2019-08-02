@@ -98,25 +98,25 @@ FILE fqName:<root> fileName:/when.kt
                         BRANCH
                           if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                            arg1: CONST Int type=kotlin.String value=1
+                            arg1: CONST Int type=kotlin.Int value=1
                           then: CONST Boolean type=kotlin.Boolean value=true
                         BRANCH
                           if: CONST Boolean type=kotlin.Boolean value=true
                           then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                             arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                            arg1: CONST Int type=kotlin.String value=2
+                            arg1: CONST Int type=kotlin.Int value=2
                       then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.String value=3
+                        arg1: CONST Int type=kotlin.Int value=3
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.String value=4
+                    arg1: CONST Int type=kotlin.Int value=4
               then: CONST String type=kotlin.String value="1234"
             BRANCH
               if: WHEN type=kotlin.Boolean origin=null
@@ -125,32 +125,32 @@ FILE fqName:<root> fileName:/when.kt
                     BRANCH
                       if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.String value=5
+                        arg1: CONST Int type=kotlin.Int value=5
                       then: CONST Boolean type=kotlin.Boolean value=true
                     BRANCH
                       if: CONST Boolean type=kotlin.Boolean value=true
                       then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                        arg1: CONST Int type=kotlin.String value=6
+                        arg1: CONST Int type=kotlin.Int value=6
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.String value=7
+                    arg1: CONST Int type=kotlin.Int value=7
               then: CONST String type=kotlin.String value="567"
             BRANCH
               if: WHEN type=kotlin.Boolean origin=null
                 BRANCH
                   if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.String value=8
+                    arg1: CONST Int type=kotlin.Int value=8
                   then: CONST Boolean type=kotlin.Boolean value=true
                 BRANCH
                   if: CONST Boolean type=kotlin.Boolean value=true
                   then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                     arg0: GET_VAR 'val tmp1_subject: kotlin.Int [val] declared in <root>.testComma' type=kotlin.Int origin=null
-                    arg1: CONST Int type=kotlin.String value=9
+                    arg1: CONST Int type=kotlin.Int value=9
               then: CONST String type=kotlin.String value="89"
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true

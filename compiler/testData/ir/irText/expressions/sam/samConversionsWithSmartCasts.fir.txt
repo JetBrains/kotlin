@@ -2,7 +2,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test1 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test1' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -11,7 +11,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test2 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test2' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -20,7 +20,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test3 visibility:public modality:FINAL <> (a:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test3' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
     VALUE_PARAMETER name:a index:0 type:kotlin.Function0<kotlin.Unit>
     VALUE_PARAMETER name:b index:1 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Function0<kotlin.Unit> declared in <root>.test4' type=kotlin.Function0<kotlin.Unit> origin=null
@@ -41,7 +41,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
@@ -50,7 +50,7 @@ FILE fqName:<root> fileName:/samConversionsWithSmartCasts.kt
   FUN name:test5x visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
     VALUE_PARAMETER name:a index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=java.lang.Runnable
             GET_VAR 'a: kotlin.Any declared in <root>.test5x' type=kotlin.Any origin=null

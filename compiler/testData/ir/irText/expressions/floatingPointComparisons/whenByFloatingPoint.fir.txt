@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp0_subject: kotlin.Double [val] declared in <root>.testSimple' type=kotlin.Double origin=null
-                arg1: CONST Double type=kotlin.Int value=0.0
+                arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
   FUN name:testSmartCastInWhenSubject visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Int origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
@@ -31,7 +31,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp1_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenSubject' type=kotlin.Any origin=null
-                arg1: CONST Double type=kotlin.Int value=0.0
+                arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Double
     VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Int origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastInWhenCondition' type=kotlin.Any origin=null
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 arg0: GET_VAR 'val tmp3_subject: kotlin.Any [val] declared in <root>.testSmartCastInWhenConditionInBranch' type=kotlin.Any origin=null
-                arg1: CONST Double type=kotlin.Int value=0.0
+                arg1: CONST Double type=kotlin.Double value=0.0
               then: CONST Int type=kotlin.Int value=0
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
@@ -83,14 +83,14 @@ FILE fqName:<root> fileName:/whenByFloatingPoint.kt
     VALUE_PARAMETER name:x index:0 type:kotlin.Any
     VALUE_PARAMETER name:y index:1 type:kotlin.Any
     BLOCK_BODY
-      WHEN type=kotlin.Int origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
             GET_VAR 'x: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
           then: RETURN type=kotlin.Nothing from='public final fun testSmartCastToDifferentTypes (x: kotlin.Any, y: kotlin.Any): kotlin.Int declared in <root>'
             CALL 'public final fun unaryMinus (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: CONST Int type=kotlin.Int value=1
-      WHEN type=kotlin.Int origin=IF
+      WHEN type=kotlin.Unit origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Float
             GET_VAR 'y: kotlin.Any declared in <root>.testSmartCastToDifferentTypes' type=kotlin.Any origin=null
