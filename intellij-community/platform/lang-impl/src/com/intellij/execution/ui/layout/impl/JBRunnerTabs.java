@@ -10,8 +10,10 @@ import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.JBTabPainter;
 import com.intellij.ui.tabs.JBTabsBorder;
 import com.intellij.ui.tabs.TabInfo;
-import com.intellij.ui.tabs.impl.SingleHeightTabs;
+import com.intellij.ui.tabs.impl.DefaultTabPainterAdapter;
+import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
+import com.intellij.ui.tabs.impl.TabPainterAdapter;
 import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import org.jetbrains.annotations.NotNull;
@@ -24,15 +26,15 @@ import java.util.Map;
 /**
  * @author Dennis.Ushakov
  */
-public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
+public class JBRunnerTabs extends JBEditorTabs implements JBRunnerTabsBase {
   public static JBRunnerTabsBase create(@Nullable Project project, @NotNull Disposable parentDisposable) {
     IdeFocusManager focusManager = project != null ? IdeFocusManager.getInstance(project) : null;
     return new JBRunnerTabs(project, ActionManager.getInstance(), focusManager, parentDisposable);
   }
 
   @Override
-  protected JBTabPainter createTabPainter() {
-    return JBTabPainter.getDEBUGGER();
+  protected TabPainterAdapter createTabPainterAdapter() {
+    return new DefaultTabPainterAdapter(JBTabPainter.getDEBUGGER());
   }
 
   public JBRunnerTabs(@Nullable Project project, @NotNull ActionManager actionManager, IdeFocusManager focusManager, @NotNull Disposable parent) {
@@ -109,7 +111,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   @Override
   protected TabLabel createTabLabel(TabInfo info) {
-    return new SingleHeightLabel(this, info) {
+    return new TabLabel(this, info) {
       @Override
       public void setTabActions(ActionGroup group) {
         super.setTabActions(group);

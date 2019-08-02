@@ -16,8 +16,10 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.tabs.*;
+import com.intellij.ui.tabs.impl.DefaultTabPainterAdapter;
 import com.intellij.ui.tabs.impl.JBEditorTabs;
 import com.intellij.ui.tabs.impl.TabLabel;
+import com.intellij.ui.tabs.impl.TabPainterAdapter;
 import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import com.intellij.util.SmartList;
@@ -445,8 +447,8 @@ public class GridCellImpl implements GridCell {
     private final ViewContextEx myContext;
 
     @Override
-    protected JBTabPainter createTabPainter() {
-      return JBTabPainter.getDEBUGGER();
+    protected TabPainterAdapter createTabPainterAdapter() {
+      return new DefaultTabPainterAdapter(JBTabPainter.getDEBUGGER());
     }
 
     private GridCellTabs(ViewContextEx context, GridImpl container) {
