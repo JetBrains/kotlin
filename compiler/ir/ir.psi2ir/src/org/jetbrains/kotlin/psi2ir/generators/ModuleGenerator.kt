@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IrDeserializer
+import org.jetbrains.kotlin.ir.util.IrProvider
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.lazy.descriptors.findPackageFragmentForFile
@@ -48,6 +49,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
     fun generateUnboundSymbolsAsDependencies(
         irModule: IrModuleFragment,
         deserializer: IrDeserializer? = null,
+        irProviders: List<IrProvider> = emptyList(),
         facadeClassGenerator: (DeserializedContainerSource) -> IrClass? = { null }
     ) {
         ExternalDependenciesGenerator(
@@ -56,6 +58,7 @@ class ModuleGenerator(override val context: GeneratorContext) : Generator {
             context.irBuiltIns,
             context.extensions.externalDeclarationOrigin,
             deserializer,
+            irProviders,
             facadeClassGenerator
         ).generateUnboundSymbolsAsDependencies()
     }

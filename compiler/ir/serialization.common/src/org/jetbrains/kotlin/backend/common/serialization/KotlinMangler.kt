@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
-import org.jetbrains.kotlin.descriptors.Visibilities
-import org.jetbrains.kotlin.descriptors.Visibility
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -22,6 +19,13 @@ interface KotlinMangler {
     fun IrDeclaration.isExported(): Boolean
     val IrFunction.functionName: String
     val IrType.isInlined: Boolean
+    val Long.isSpecial: Boolean
+
+    companion object {
+        private val FUNCTION_PREFIX = "<BUILT-IN-FUNCTION>"
+        fun functionClassSymbolName(name: Name) = "ktype:$FUNCTION_PREFIX$name"
+        fun functionInvokeSymbolName(name: Name) = "kfun:$FUNCTION_PREFIX$name.invoke"
+    }
 }
 
 abstract class KotlinManglerImpl : KotlinMangler {
@@ -177,6 +181,9 @@ abstract class KotlinManglerImpl : KotlinMangler {
             return "$name$signature"
         }
 
+    override val Long.isSpecial: Boolean
+        get() = specialHashes.contains(this)
+
     fun Name.mangleIfInternal(moduleDescriptor: ModuleDescriptor, visibility: Visibility): String =
         if (visibility != Visibilities.INTERNAL) {
             this.asString()
@@ -199,6 +206,8 @@ abstract class KotlinManglerImpl : KotlinMangler {
     val IrClass.typeInfoSymbolName: String
         get() {
             assert(this.isExported())
+            if (isBuiltInFunction(this))
+                return KotlinMangler.functionClassSymbolName(name)
             return "ktype:" + this.fqNameForIrSerialization.toString()
         }
 
@@ -270,6 +279,8 @@ abstract class KotlinManglerImpl : KotlinMangler {
 // In addition functions appearing in fq sequence appear as <full signature>.
     private val IrFunction.uniqFunctionName: String
         get() {
+            if (isBuiltInFunction(this))
+                return KotlinMangler.functionInvokeSymbolName(parentAsClass.name)
             val parent = this.parent
 
             val containingDeclarationPart = parent.fqNameUnique.let {
@@ -279,5 +290,9 @@ abstract class KotlinManglerImpl : KotlinMangler {
             return "kfun:$containingDeclarationPart#$functionName"
         }
 
-
+    private val specialHashes = listOf("Function", "KFunction", "SuspendFunction", "KSuspendFunction")
+        .flatMap { name ->
+            (0..255).map { KotlinMangler.functionClassSymbolName(Name.identifier(name + it)) }
+        }.map { it.hashMangle }
+        .toSet()
 }

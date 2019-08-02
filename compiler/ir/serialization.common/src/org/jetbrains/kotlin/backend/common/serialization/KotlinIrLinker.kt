@@ -414,7 +414,7 @@ abstract class KotlinIrLinker(
         return topLevelDescriptor
     }
 
-    override fun findDeserializedDeclaration(symbol: IrSymbol): IrDeclaration? {
+    override fun getDeclaration(symbol: IrSymbol): IrDeclaration? {
 
         if (!symbol.isBound) {
             findDeserializedDeclarationForDescriptor(symbol.descriptor) ?: return null

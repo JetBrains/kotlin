@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 abstract class DescriptorReferenceDeserializer(
     val currentModule: ModuleDescriptor,
+    val mangler: KotlinMangler,
     val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>
 ) : DescriptorUniqIdAware {
 

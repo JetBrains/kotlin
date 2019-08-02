@@ -8,40 +8,18 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi2ir.findFirstFunction
-import java.util.regex.Pattern
-
-private val functionPattern = Pattern.compile("^K?(Suspend)?Function\\d+$")
-
-private val kotlinFqn = FqName("kotlin")
-
-private val functionalPackages =
-    listOf(kotlinFqn, kotlinFqn.child(Name.identifier("coroutines")), kotlinFqn.child(Name.identifier("reflect")))
 
 internal const val PUBLIC_LOCAL_UNIQ_ID_EDGE = 0x7FFF_FFFF_FFFF_FFFFL + 1L
 internal const val BUILT_IN_FUNCTION_CLASS_COUNT = 4
 internal const val BUILT_IN_FUNCTION_ARITY_COUNT = 256
 internal const val BUILT_IN_UNIQ_ID_GAP = 2 * BUILT_IN_FUNCTION_ARITY_COUNT * BUILT_IN_FUNCTION_CLASS_COUNT
 internal const val BUILT_IN_UNIQ_ID_CLASS_OFFSET = BUILT_IN_FUNCTION_CLASS_COUNT * BUILT_IN_FUNCTION_ARITY_COUNT
-
-internal fun isBuiltInFunction(value: IrDeclaration): Boolean = when (value) {
-    is IrSimpleFunction ->
-        value.name.asString() == "invoke" && (value.parent as? IrClass)?.let { isBuiltInFunction(it) } == true
-    is IrClass ->
-        value.fqNameWhenAvailable?.parent() in functionalPackages &&
-                value.name.asString().let { functionPattern.matcher(it).find() }
-    else -> false
-}
-
 
 private fun builtInOffset(function: IrSimpleFunction): Long {
     val isK = function.parentAsClass.name.asString().startsWith("K")
@@ -61,16 +39,6 @@ internal fun builtInFunctionId(value: IrDeclaration): Long = when (value) {
         BUILT_IN_UNIQ_ID_CLASS_OFFSET + builtInFunctionId(value.declarations.first { it.nameForIrSerialization.asString() == "invoke" })
     }
     else -> error("Only class or function is expected")
-}
-
-
-internal fun isBuiltInFunction(value: DeclarationDescriptor): Boolean = when (value) {
-    is FunctionInvokeDescriptor -> isBuiltInFunction(value.containingDeclaration)
-    is ClassDescriptor -> {
-        val fqn = (value.containingDeclaration as? PackageFragmentDescriptor)?.fqName
-        functionalPackages.any { it == fqn } && value.name.asString().let { functionPattern.matcher(it).find() }
-    }
-    else -> false
 }
 
 private fun builtInOffset(function: FunctionInvokeDescriptor): Long {

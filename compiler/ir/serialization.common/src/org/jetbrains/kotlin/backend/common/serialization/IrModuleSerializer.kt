@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.descriptors.Modality
@@ -1306,11 +1307,12 @@ open class IrModuleSerializer(
         val proto = ProtoModule.newBuilder()
             .setName(serializeName(module.name))
 
-        val topLevelDeclarationsCount = module.files.sumBy { it.declarations.size }
+        val files = module.files.filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }
+        val topLevelDeclarationsCount = files.sumBy { it.declarations.size }
 
         writer = CombinedIrFileWriter(topLevelDeclarationsCount)
 
-        module.files.forEach {
+        files.forEach {
             proto.addFile(serializeIrFile(it))
         }
 

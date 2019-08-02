@@ -29,8 +29,11 @@ import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 
-interface IrDeserializer {
-    fun findDeserializedDeclaration(symbol: IrSymbol): IrDeclaration?
+interface IrProvider {
+    fun getDeclaration(symbol: IrSymbol): IrDeclaration?
+}
+
+interface IrDeserializer : IrProvider {
     fun declareForwardDeclarations()
 }
 

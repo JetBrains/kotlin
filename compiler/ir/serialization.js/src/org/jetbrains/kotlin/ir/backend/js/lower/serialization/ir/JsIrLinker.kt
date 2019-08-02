@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 
 class JsIrLinker(
     currentModule: ModuleDescriptor,
+    mangler: KotlinMangler,
     logger: LoggingContext,
     builtIns: IrBuiltIns,
     symbolTable: SymbolTable
@@ -28,7 +29,7 @@ class JsIrLinker(
         builtIns.getPrimitiveTypeOrNullByDescriptor(symbol.descriptor, hasQuestionMark)
 
     override val descriptorReferenceDeserializer =
-        JsDescriptorReferenceDeserializer(currentModule, builtIns, FUNCTION_INDEX_START)
+        JsDescriptorReferenceDeserializer(currentModule, mangler, builtIns, FUNCTION_INDEX_START)
 
     override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId): ByteArray {
         return moduleDescriptor.kotlinLibrary.irDeclaration(uniqId.index, uniqId.isLocal)
