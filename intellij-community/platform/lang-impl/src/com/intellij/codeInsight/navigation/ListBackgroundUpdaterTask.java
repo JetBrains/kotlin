@@ -29,10 +29,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Comparator;
 
 /**
- * @deprecated please use {@link PsiBackgroundUpdaterTask}
+ * @deprecated please use {@link BackgroundUpdaterTask}
  */
 @Deprecated
-public abstract class ListBackgroundUpdaterTask extends PsiBackgroundUpdaterTask {
+public abstract class ListBackgroundUpdaterTask extends BackgroundUpdaterTask {
 
   protected AbstractPopup myPopup;
 
@@ -49,7 +49,7 @@ public abstract class ListBackgroundUpdaterTask extends PsiBackgroundUpdaterTask
   }
 
   /**
-   * @deprecated please use {@link PsiBackgroundUpdaterTask}
+   * @deprecated please use {@link BackgroundUpdaterTask}
    */
   @Deprecated
   public void init(@NotNull AbstractPopup popup, @NotNull Object component, @NotNull Ref<UsageView> usageView) {
