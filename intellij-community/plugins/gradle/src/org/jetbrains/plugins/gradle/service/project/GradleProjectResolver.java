@@ -96,7 +96,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     if (isPreviewMode) {
       // Create project preview model w/o request to gradle, there are two main reasons for the it:
-      // * Slow project open - even the simplest project info provided by gradle can be gathered too long (mostly because of new gradle distribution download and downloading buildscript dependencies)
+      // * Slow project open - even the simplest project info provided by gradle can be gathered too long (mostly because of new gradle distribution download and downloading build script dependencies)
       // * Ability to open  an invalid projects (e.g. with errors in build scripts)
       String projectName = new File(projectPath).getName();
       ProjectData projectData = new ProjectData(GradleConstants.SYSTEM_ID, projectName, projectPath, projectPath);
@@ -268,7 +268,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
         }
       });
       performanceTrace.addTrace(allModels.getPerformanceTrace());
-    } finally {
+    }
+    finally {
       final long timeInMs = (System.currentTimeMillis() - startTime);
       performanceTrace.logPerformance("Gradle data obtained", timeInMs);
       LOG.debug(String.format("Gradle data obtained in %d ms", timeInMs));
