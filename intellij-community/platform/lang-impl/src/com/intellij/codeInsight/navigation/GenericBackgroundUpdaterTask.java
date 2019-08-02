@@ -3,16 +3,12 @@ package com.intellij.codeInsight.navigation;
 
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
-import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.Task;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.GenericListComponentUpdater;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Ref;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiUtilCore;
-import com.intellij.usageView.UsageInfo;
 import com.intellij.usages.UsageView;
 import com.intellij.util.Alarm;
 import com.intellij.util.containers.ContainerUtil;
@@ -58,16 +54,6 @@ public abstract class GenericBackgroundUpdaterTask<T> extends Task.Backgroundabl
 
   protected void paintBusy(boolean paintBusy) {
     myUpdater.paintBusy(paintBusy);
-  }
-
-  protected static Comparator<PsiElement> createComparatorWrapper(@NotNull Comparator<? super PsiElement> comparator) {
-    return (o1, o2) -> {
-      int diff = comparator.compare(o1, o2);
-      if (diff == 0) {
-        return ReadAction.compute(() -> PsiUtilCore.compareElementsByPosition(o1, o2));
-      }
-      return diff;
-    };
   }
 
   private boolean setCanceled() {
