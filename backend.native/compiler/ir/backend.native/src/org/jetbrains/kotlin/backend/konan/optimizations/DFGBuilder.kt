@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.konan.descriptors.target
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.backend.konan.llvm.functionName
 import org.jetbrains.kotlin.backend.konan.llvm.localHash
-import org.jetbrains.kotlin.backend.konan.llvm.longName
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -410,8 +409,8 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
     private val createUninitializedInstanceSymbol = symbols.createUninitializedInstance
     private val initInstanceSymbol = symbols.initInstance
     private val executeImplSymbol = symbols.executeImpl
-    private val executeImplProducerClassSymbol = symbols.functions[0]
-    private val executeImplProducerInvoke = executeImplProducerClassSymbol.owner.simpleFunctions()
+    private val executeImplProducerClass = symbols.functionN(0).owner
+    private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
     private val reinterpret = symbols.reinterpret
 

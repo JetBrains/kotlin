@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm.objcexport
 
 import llvm.*
+import org.jetbrains.kotlin.backend.common.ir.simpleFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.objcexport.BlockPointerBridge
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
@@ -15,7 +16,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal fun ObjCExportCodeGenerator.generateBlockToKotlinFunctionConverter(
         bridge: BlockPointerBridge
 ): LLVMValueRef {
-    val irInterface = symbols.functions[bridge.numberOfParameters].owner
+    val irInterface = symbols.functionN(bridge.numberOfParameters).owner
     val invokeMethod = irInterface.declarations.filterIsInstance<IrSimpleFunction>()
             .single { it.name == OperatorNameConventions.INVOKE }
 
@@ -231,8 +232,8 @@ internal class BlockAdapterToFunctionGenerator(val objCExportCodeGenerator: ObjC
                 objCReferenceToKotlin(param(index), Lifetime.ARGUMENT)
             }
 
-            val invokeMethod = context.ir.symbols.functions[numberOfParameters].owner.declarations
-                    .filterIsInstance<IrSimpleFunction>().single { it.name == OperatorNameConventions.INVOKE }
+            val invokeMethod = context.ir.symbols.functionN(numberOfParameters).owner.simpleFunctions()
+                    .single { it.name == OperatorNameConventions.INVOKE }
 
             val callee = lookupVirtualImpl(kotlinFunction, invokeMethod)
 

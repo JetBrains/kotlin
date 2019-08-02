@@ -461,15 +461,15 @@ private fun ObjCExportCodeGenerator.emitBoxConverter(
 }
 
 private fun ObjCExportCodeGenerator.emitFunctionConverters() {
-    (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).forEach { numberOfParameters ->
-        val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(numberOfParameters, returnsVoid = false))
-        setObjCExportTypeInfo(symbols.functions[numberOfParameters].owner, constPointer(converter))
+    context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.forEach { functionClass ->
+        val converter = kotlinFunctionToBlockConverter(BlockPointerBridge(functionClass.arity, returnsVoid = false))
+        setObjCExportTypeInfo(functionClass.irClass, constPointer(converter))
     }
 }
 
 private fun ObjCExportCodeGenerator.emitBlockToKotlinFunctionConverters() {
-    val converters = (0 .. ObjCExportMapper.maxFunctionTypeParameterCount).map {
-        val bridge = BlockPointerBridge(numberOfParameters = it, returnsVoid = false)
+    val converters = context.ir.symbols.functionIrClassFactory.builtFunctionNClasses.map {
+        val bridge = BlockPointerBridge(numberOfParameters = it.arity, returnsVoid = false)
         constPointer(blockToKotlinFunctionConverter(bridge))
     }
     val ptr = staticData.placeGlobalArray(

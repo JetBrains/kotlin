@@ -201,10 +201,10 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
             val suspendFunctionClass: IrClass?
             if (isKSuspendFunction) {
                 superTypes += kSuspendFunctionImplSymbol.typeWith(referencedFunction.returnType)
-                functionClass = symbols.functions[numberOfParameters + 1].owner
+                functionClass = symbols.functionN(numberOfParameters + 1).owner
                 val continuationType = continuationClassSymbol.typeWith(referencedFunction.returnType)
                 superTypes += functionClass.typeWith(functionParameterTypes + continuationType + irBuiltIns.anyNType)
-                suspendFunctionClass = symbols.kSuspendFunctions[numberOfParameters].owner
+                suspendFunctionClass = symbols.kSuspendFunctionN(numberOfParameters).owner
                 superTypes += suspendFunctionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
             }
             else {
@@ -212,7 +212,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                     kFunctionImplSymbol.typeWith(referencedFunction.returnType)
                 else
                     irBuiltIns.anyType
-                functionClass = (if (isKFunction) symbols.kFunctions else symbols.functions)[numberOfParameters].owner
+                functionClass = (if (isKFunction) symbols.kFunctionN(numberOfParameters) else symbols.functionN(numberOfParameters)).owner
                 superTypes += functionClass.typeWith(functionParameterTypes + referencedFunction.returnType)
                 val lastParameterType = unboundFunctionParameters.lastOrNull()?.type
                 if (lastParameterType?.classifierOrNull != continuationClassSymbol)
@@ -220,7 +220,7 @@ internal class CallableReferenceLowering(val context: Context): FileLoweringPass
                 else {
                     lastParameterType as IrSimpleType
                     // If the last parameter is Continuation<> inherit from SuspendFunction.
-                    suspendFunctionClass = symbols.suspendFunctions[numberOfParameters - 1].owner
+                    suspendFunctionClass = symbols.suspendFunctionN(numberOfParameters - 1).owner
                     val suspendFunctionClassTypeParameters = functionParameterTypes.dropLast(1) +
                             (lastParameterType.arguments.single().typeOrNull ?: irBuiltIns.anyNType)
                     superTypes += suspendFunctionClass.symbol.typeWith(suspendFunctionClassTypeParameters)

@@ -1,18 +1,20 @@
 package org.jetbrains.kotlin.serialization.konan.impl
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.PackageFragmentProviderImpl
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.DeserializedKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.KonanModuleDescriptorFactory
+import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.impl.KonanLibraryImpl
 import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
@@ -68,7 +70,14 @@ internal class KonanDeserializedModuleDescriptorFactoryImpl(
                 moduleDescriptor,
                 deserializationConfiguration)
 
-        moduleDescriptor.initialize(provider)
+        if (!moduleDescriptor.isKonanStdlib())
+            moduleDescriptor.initialize(provider)
+        else {
+            // [K][Suspend]FunctionN belong to stdlib.
+            val packagePartProviders = mutableListOf(provider)
+            packagePartProviders += functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+            moduleDescriptor.initialize(CompositePackageFragmentProvider(packagePartProviders))
+        }
 
         return moduleDescriptor
     }

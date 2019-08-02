@@ -40,7 +40,12 @@ internal class KonanIr(context: Context, irModule: IrModuleFragment): Ir<Context
     override var symbols: KonanSymbols by Delegates.notNull()
 }
 
-internal class KonanSymbols(context: Context, private val symbolTable: SymbolTable, lazySymbolTable: ReferenceSymbolTable): Symbols<Context>(context, lazySymbolTable) {
+internal class KonanSymbols(
+        context: Context,
+        private val symbolTable: SymbolTable,
+        lazySymbolTable: ReferenceSymbolTable,
+        val functionIrClassFactory: BuiltInFictitiousFunctionIrClassFactory
+): Symbols<Context>(context, lazySymbolTable) {
 
     val entryPoint = findMainEntryPoint(context)?.let { symbolTable.referenceSimpleFunction(it) }
 
@@ -481,23 +486,16 @@ internal class KonanSymbols(context: Context, private val symbolTable: SymbolTab
                     .getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BACKEND) as ClassDescriptor
     )
 
-    val functions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
-            .map { symbolTable.referenceClass(builtIns.getFunction(it)) }
+    override fun functionN(n: Int) = functionIrClassFactory.function(n).symbol
 
-    val kFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
-            .map { symbolTable.referenceClass(context.reflectionTypes.getKFunction(it)) }
+    override fun suspendFunctionN(n: Int) = functionIrClassFactory.suspendFunction(n).symbol
 
-    // Since KSuspendFunctionN inherits Function{N+1} and we only have 0..22 range, skip the last one for now.
-    val kSuspendFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS - 1)
-            .map { symbolTable.referenceClass(context.reflectionTypes.getKSuspendFunction(it)) }
+    fun kFunctionN(n: Int) = functionIrClassFactory.kFunction(n).symbol
 
-    fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>): IrType {
-        val kFunctionClassSymbol = kFunctions[parameterTypes.size]
-        return kFunctionClassSymbol.typeWith(parameterTypes + returnType)
-    }
+    fun kSuspendFunctionN(n: Int) = functionIrClassFactory.kSuspendFunction(n).symbol
 
-    val suspendFunctions = (0 .. KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS)
-            .map { symbolTable.referenceClass(builtIns.getSuspendFunction(it)) }
+    fun getKFunctionType(returnType: IrType, parameterTypes: List<IrType>) =
+            kFunctionN(parameterTypes.size).typeWith(parameterTypes + returnType)
 
     val baseClassSuite   = getKonanTestClass("BaseClassSuite")
     val topLevelSuite    = getKonanTestClass("TopLevelSuite")

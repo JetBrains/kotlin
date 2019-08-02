@@ -10,13 +10,11 @@ import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExport
-import org.jetbrains.kotlin.backend.konan.serialization.KonanDeclarationTable
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrLinker
-import org.jetbrains.kotlin.backend.konan.serialization.KonanIrModuleSerializer
-import org.jetbrains.kotlin.backend.konan.serialization.KonanSerializationUtil
+import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -159,12 +157,19 @@ internal val psiToIrPhase = konanUnitPhase(
                 dependenciesCount = dependencies.size
             }
 
-            val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper)
-            val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), deserializer)
+            val functionIrClassFactory = BuiltInFictitiousFunctionIrClassFactory(
+                    symbolTable, generatorContext.irBuiltIns, reflectionTypes)
+            val symbols = KonanSymbols(this, symbolTable, symbolTable.lazyWrapper, functionIrClassFactory)
+            val module = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(),
+                    deserializer, listOf(functionIrClassFactory))
 
             irModule = module
             irModules = deserializer.modules
             ir.symbols = symbols
+
+            functionIrClassFactory.module =
+                    (listOf(irModule!!) + irModules.values)
+                            .single { it.descriptor.isKonanStdlib() }
         },
         name = "Psi2Ir",
         description = "Psi to IR conversion",
@@ -174,6 +179,7 @@ internal val psiToIrPhase = konanUnitPhase(
 internal val destroySymbolTablePhase = konanUnitPhase(
         op = {
             this.symbolTable = null // TODO: invalidate symbolTable itself.
+            ir.symbols.functionIrClassFactory.symbolTable = null
         },
         name = "DestroySymbolTable",
         description = "Destroy SymbolTable",

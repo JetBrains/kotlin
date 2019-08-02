@@ -710,7 +710,7 @@ private fun KotlinStubs.mapBlockType(
         location: TypeLocation
 ): ObjCBlockPointerValuePassing {
     type as IrSimpleType
-    require(type.classifier == symbols.functions[type.arguments.size - 1])
+    require(type.classifier == symbols.functionN(type.arguments.size - 1))
     val returnTypeArgument = type.arguments.last()
     val valueReturning = when (returnTypeArgument) {
         is IrTypeProjection -> if (returnTypeArgument.variance == Variance.INVARIANT) {

@@ -13,6 +13,8 @@ internal const val NATIVE_PTR_NAME = "NativePtr"
 internal const val NON_NULL_NATIVE_PTR_NAME = "NonNullNativePtr"
 
 object KonanFqNames {
+    val function = FqName("kotlin.Function")
+    val kFunction = FqName("kotlin.reflect.KFunction")
     val packageName = FqName("kotlin.native")
     val internalPackageName = FqName("kotlin.native.internal")
     val nativePtr = internalPackageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
@@ -24,8 +26,3 @@ object KonanFqNames {
     val typedIntrinsic = FqName("kotlin.native.internal.TypedIntrinsic")
     val objCMethod = FqName("kotlinx.cinterop.ObjCMethod")
 }
-
-/**
- * Maximum number of parameters supported in function types (e.g. `FunctionXX`, `KFunctionXX`, `SuspendFunctionXX`).
- */
-internal const val KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS = 22

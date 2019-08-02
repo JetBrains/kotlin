@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.get
 import org.jetbrains.kotlin.context.ModuleContext
 import org.jetbrains.kotlin.context.MutableModuleContextImpl
 import org.jetbrains.kotlin.context.ProjectContext
+import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.konan.CurrentKonanModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
@@ -47,22 +49,26 @@ internal object TopDownAnalyzerFacadeForKonan {
                 config.languageVersionSettings,
                 config.friendModuleFiles)
 
+        val additionalPackages = mutableListOf<PackageFragmentProvider>()
         if (!module.isKonanStdlib()) {
             val dependencies = listOf(module) + resolvedDependencies.moduleDescriptors.resolvedDescriptors + resolvedDependencies.moduleDescriptors.forwardDeclarationsModule
             module.setDependencies(dependencies, resolvedDependencies.friends)
         } else {
             assert (resolvedDependencies.moduleDescriptors.resolvedDescriptors.isEmpty())
             moduleContext.setDependencies(module)
+            // [K][Suspend]FunctionN belong to stdlib.
+            additionalPackages += functionInterfacePackageFragmentProvider(projectContext.storageManager, module)
         }
 
-        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context)
+        return analyzeFilesWithGivenTrace(files, BindingTraceContext(), moduleContext, context, additionalPackages)
     }
 
     fun analyzeFilesWithGivenTrace(
             files: Collection<KtFile>,
             trace: BindingTrace,
             moduleContext: ModuleContext,
-            context: Context
+            context: Context,
+            additionalPackages: List<PackageFragmentProvider> = emptyList()
     ): AnalysisResult {
 
         // we print out each file we compile if frontend phase is verbose
@@ -73,7 +79,8 @@ internal object TopDownAnalyzerFacadeForKonan {
         val analyzerForKonan = createTopDownAnalyzerProviderForKonan(
                 moduleContext, trace,
                 FileBasedDeclarationProviderFactory(moduleContext.storageManager, files),
-                context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!
+                context.config.configuration.get(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS)!!,
+                additionalPackages
         ) {
             initContainer(context.config)
         }.apply {
