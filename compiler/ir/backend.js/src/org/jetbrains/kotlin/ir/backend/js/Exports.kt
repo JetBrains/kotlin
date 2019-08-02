@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-sealed class ExportedDeclaration
+import org.jetbrains.kotlin.ir.declarations.*
 
-class ExportedFile(
-    val name: String,
-    val declarations: List<ExportedDeclaration>
-) : ExportedDeclaration()
+sealed class ExportedDeclaration
 
 class ExportedNamespace(
     val name: String,
@@ -24,7 +21,8 @@ class ExportedFunction(
     val typeParameters: List<String> = emptyList(),
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
-    val isAbstract: Boolean = false
+    val isAbstract: Boolean = false,
+    val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
 class ExportedConstructor(
@@ -37,8 +35,11 @@ class ExportedProperty(
     val type: ExportedType,
     val mutable: Boolean,
     val isMember: Boolean = false,
-    val isStatic: Boolean = false
+    val isStatic: Boolean = false,
+    val ir: IrProperty
 ) : ExportedDeclaration()
+
+class ErrorDeclaration(val message: String) : ExportedDeclaration()
 
 class ExportedClass(
     val name: String,
@@ -47,7 +48,9 @@ class ExportedClass(
     val superClass: ExportedType? = null,
     val superInterfaces: List<ExportedType> = emptyList(),
     val typeParameters: List<String>,
-    val members: List<ExportedDeclaration>
+    val members: List<ExportedDeclaration>,
+    val statics: List<ExportedDeclaration>,
+    val ir: IrClass
 ) : ExportedDeclaration()
 
 class ExportedParameter(
@@ -82,28 +85,29 @@ sealed class ExportedType {
     class Nullable(val baseType: ExportedType) : ExportedType()
     class ErrorType(val comment: String) : ExportedType()
 
-    fun withNullability(nullable: kotlin.Boolean) =
+    fun withNullability(nullable: Boolean) =
         if (nullable) Nullable(this) else this
 }
 
 data class ExportedModule(
+    val name: String,
     val declarations: List<ExportedDeclaration>
 )
 
 fun ExportedModule.toTypeScript(): String {
-    val prefix = "type Nullable<T> = T | null | undefined\n"
-    val body = declarations.joinToString("\n") { "declare " + it.toTypeScript("") }
-    return "$prefix\n$body"
+    val prefix = "    type Nullable<T> = T | null | undefined\n"
+    val body = declarations.joinToString("\n") { it.toTypeScript("    ", "") }
+    return "declare namespace $name {\n$prefix\n$body\n}\n"
 }
-fun List<ExportedDeclaration>.toTypeScript(ident: String): String =
-    joinToString("\n") { it.toTypeScript(ident) }
 
-fun ExportedDeclaration.toTypeScript(ident: String): String = ident + when (this) {
-    is ExportedFile ->
-        "\n// File $name\n\n" + declarations.toTypeScript("")
+fun List<ExportedDeclaration>.toTypeScript(ident: String, exportModifier: String = ""): String =
+    joinToString("\n") { it.toTypeScript(ident, exportModifier) }
+
+fun ExportedDeclaration.toTypeScript(ident: String, exportModifier: String = ""): String = ident + when (this) {
+    is ErrorDeclaration -> "namespace _Error_ { /* $message */ }"
 
     is ExportedNamespace ->
-        "namespace $name {\n" + declarations.toTypeScript("$ident    ") + "$ident}\n"
+        exportModifier + "namespace $name {\n" + declarations.toTypeScript("$ident    ") + "$ident}\n"
 
     is ExportedFunction -> {
         val keyword: String = when {
@@ -125,7 +129,7 @@ fun ExportedDeclaration.toTypeScript(ident: String): String = ident + when (this
 
         val renderedReturnType = returnType.toTypeScript()
 
-        "$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType\n"
+        exportModifier + "$keyword$name$renderedTypeParameters($renderedParameters): $renderedReturnType\n"
     }
     is ExportedConstructor ->
         "constructor(${parameters.joinToString(", ") { it.toTypeScript() }})\n"
@@ -135,7 +139,7 @@ fun ExportedDeclaration.toTypeScript(ident: String): String = ident + when (this
             isMember -> if (!mutable) "readonly " else ""
             else -> if (mutable) "let " else "const "
         }
-        keyword + name + ": " + type.toTypeScript() + ";\n"
+        exportModifier + keyword + name + ": " + type.toTypeScript() + ";\n"
     }
 
     is ExportedClass -> {
@@ -157,7 +161,11 @@ fun ExportedDeclaration.toTypeScript(ident: String): String = ident + when (this
 
         val modifiers = if (isAbstract && !isInterface) "abstract " else ""
 
-        "$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$membersString$ident}\n"
+        val klassExport = exportModifier + "$modifiers$keyword $name$renderedTypeParameters$superClassClause$superInterfacesClause {\n$membersString$ident}\n"
+        val staticsExport = if (statics.isNotEmpty()) {
+            "\n" + exportModifier + ident +  ExportedNamespace(name, statics).toTypeScript(ident)
+        } else ""
+        klassExport + staticsExport
     }
 }
 

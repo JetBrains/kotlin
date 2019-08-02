@@ -201,6 +201,12 @@ abstract class BasicBoxTest(
                 additionalFiles += additionalJsFile
             }
 
+            val additionalMainFiles = mutableListOf<String>()
+            val additionalMainJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + "__main.js"
+            if (File(additionalMainJsFile).exists()) {
+                additionalMainFiles += additionalMainJsFile
+            }
+
             if (needCheckTypescriptDeclarations) {
                 val dtsFilePath = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + ".d.ts"
                 val dtsFile = File(dtsFilePath)
@@ -223,7 +229,7 @@ abstract class BasicBoxTest(
             }
 
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
-                             additionalCommonFiles
+                             additionalCommonFiles + additionalMainFiles
 
             val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 

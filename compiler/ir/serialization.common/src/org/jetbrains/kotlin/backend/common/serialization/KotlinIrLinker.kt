@@ -481,7 +481,7 @@ abstract class KotlinIrLinker(
                 if (exportedDependencies.contains(moduleDescriptor)) {
                     DeserializationStrategy.ALL
                 } else {
-                    DeserializationStrategy.ALL
+                    DeserializationStrategy.EXPLICITLY_EXPORTED
                 }
             deserializeIrModuleHeader(moduleDescriptor, header, deserializationStrategy)
         }

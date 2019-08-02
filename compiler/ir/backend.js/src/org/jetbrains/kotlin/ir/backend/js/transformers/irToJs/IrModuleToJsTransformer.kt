@@ -7,7 +7,12 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.ir.backend.js.CompilerResult
+import org.jetbrains.kotlin.ir.backend.js.ExportedModule
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
+import org.jetbrains.kotlin.ir.backend.js.lower.ExportGenerator
+import org.jetbrains.kotlin.ir.backend.js.lower.StaticMembersLowering
+import org.jetbrains.kotlin.ir.backend.js.toTypeScript
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -58,7 +63,8 @@ class IrModuleToJsTransformer(
     private fun generateExportStatements(
         module: IrModuleFragment,
         context: JsGenerationContext,
-        internalModuleName: JsName
+        internalModuleName: JsName,
+        exportedModule: ExportedModule? = null
     ): List<JsStatement> {
         val exports = mutableListOf<JsExpressionStatement>()
 
@@ -116,13 +122,19 @@ class IrModuleToJsTransformer(
         return JsExpressionStatement(expression)
     }
 
-    fun generateModule(module: IrModuleFragment): JsProgram {
+    fun generateModule(module: IrModuleFragment): CompilerResult {
         val additionalPackages = with(backendContext) {
             externalPackageFragment.values + listOf(
                 bodilessBuiltInsPackageFragment,
                 intrinsics.externalPackageFragment
             ) + packageLevelJsModules
         }
+
+        val exports = ExportGenerator(backendContext)
+        val exportedModule = exports.generateExport(module)
+        val dts = exportedModule.toTypeScript()
+
+        module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
 
         val namer = NameTables(module.files + additionalPackages)
 
@@ -150,7 +162,7 @@ class IrModuleToJsTransformer(
             )
 
         val moduleBody = generateModuleBody(module, rootContext)
-        val exportStatements = generateExportStatements(module, rootContext, internalModuleName)
+        val exportStatements = ExportGenerator(internalModuleName, namer).generateModuleExport(exportedModule)
 
         with(rootFunction) {
             parameters += JsParameter(internalModuleName)
@@ -172,7 +184,7 @@ class IrModuleToJsTransformer(
             kind = moduleKind
         )
 
-        return program
+        return CompilerResult(program.toString(), dts)
     }
 
     private fun generateMainArguments(mainFunction: IrSimpleFunction, rootContext: JsGenerationContext): List<JsExpression> {

@@ -1,11 +1,10 @@
 // TARGET_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
+// RUN_PLAIN_BOX_FUNCTION
 
 @file:JsExport
 
 package foo
-
-fun box(): String = "OK"
 
 val _any: Any = Any()
 
@@ -39,8 +38,8 @@ val _array_float: Array<Float> = emptyArray()
 val _array_double: Array<Double> = emptyArray()
 val _array_string: Array<String> = emptyArray()
 val _array_boolean: Array<Boolean> = emptyArray()
-val _array_array_string: Array<Array<String>> = emptyArray()
-val _array_array_int_array: Array<Array<IntArray>> = emptyArray()
+val _array_array_string: Array<Array<String>> = arrayOf(emptyArray())
+val _array_array_int_array: Array<Array<IntArray>> = arrayOf(arrayOf(intArrayOf()))
 
 val _fun_unit: () -> Unit = { }
 val _fun_int_unit: (Int) -> Unit = { x -> }
@@ -80,7 +79,7 @@ val _n_array_int: Array<Int>? = emptyArray()
 val _array_n_int: Array<Int?> = emptyArray()
 val _n_array_n_int: Array<Int?>? = emptyArray()
 
-val _array_n_array_string: Array<Array<String>?> = emptyArray()
+val _array_n_array_string: Array<Array<String>?> = arrayOf(arrayOf(":)"))
 
 val _fun_n_int_unit: (Int?) -> Unit = { x -> }
 

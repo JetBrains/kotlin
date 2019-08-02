@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isExpect
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.*
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.*
@@ -21,157 +23,97 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.utils.addIfNotNull
 
-class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    init {
-        // println("type Nullable<T> = T | null | undefined\n")
-    }
+class ExportGenerator(val context: JsIrBackendContext) {
 
-    private lateinit var currentNamespace: FqName
-
-    override fun lower(irFile: IrFile) {
-    }
-
-    fun generateExport(irFile: IrPackageFragment): List<ExportedDeclaration> {
-        val namespaceFqName = irFile.fqName
-        currentNamespace = namespaceFqName
-        val exports = irFile.declarations.flatMap { declaration -> exportDeclaration(declaration) }
-
-        if (exports.isNotEmpty()) {
-            // println("// Exports for file ${irFile.name}\n")
-
-            if (namespaceFqName.isRoot) {
-                return exports
-            } else {
-                val namespace = ExportedNamespace(namespaceFqName.toString(), exports)
-                return listOf(namespace)
-            }
+    private fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
+        val namespaceFqName = file.fqName
+        val exports = file.declarations.flatMap { declaration -> listOfNotNull(exportDeclaration(declaration)) }
+        return when {
+            exports.isEmpty() -> emptyList()
+            namespaceFqName.isRoot -> exports
+            else -> listOf(ExportedNamespace(namespaceFqName.toString(), exports))
         }
-
-        return exports
     }
 
-    fun generateExport(module: IrModuleFragment): ExportedModule {
-        val packageFragments: List<IrPackageFragment> = context.externalPackageFragment.values + module.files
+    fun generateExport(module: IrModuleFragment): ExportedModule =
+        ExportedModule(
+            sanitizeName(context.configuration[CommonConfigurationKeys.MODULE_NAME]!!),
+            (context.externalPackageFragment.values + module.files).flatMap {
+                generateExport(it)
+            }
+        )
 
-        val declarations = packageFragments.flatMap { generateExport(it) }
-        return ExportedModule(declarations)
-    }
-
-    private fun exportDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
+    private fun getExportCandidate(declaration: IrDeclaration): IrDeclarationWithName? {
+        // Only actual public declarations with name can be exported
         if (declaration !is IrDeclarationWithVisibility ||
             declaration !is IrDeclarationWithName ||
             declaration.visibility != Visibilities.PUBLIC ||
             declaration.isExpect
         ) {
-            return emptyList()
+            return null
         }
 
-        if (!declaration.isExported())
-            return emptyList()
-
-        if (declaration is IrFunction && declaration.isInline && declaration.typeParameters.any { it.isReified })
-            return emptyList()
-
-        if (declaration.origin == IrDeclarationOrigin.BRIDGE)
-            return emptyList()
-
-        if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
-            return emptyList()
-
-        val exportedDeclarations = when (declaration) {
-            is IrSimpleFunction -> exportFunction(declaration)
-            is IrProperty -> exportProperty(declaration)
-            is IrClass -> exportClass(declaration)
-            is IrField -> emptyList()
-
-            else -> error("Can't export declaration $declaration")
-        }
-
-        return exportedDeclarations
-    }
-
-    private fun exportFunction(function: IrSimpleFunction): List<ExportedDeclaration> {
-//        if (function.overriddenSymbols.isNotEmpty())
-//            return emptyList()
-
-        if (function.isSuspend)
-            return emptyList()
-
-
-        if (function.isFakeOverride) // && function.overriddenSymbols.any { it.owner.isExported() })
-            return emptyList()
-
-        val correspondingProperty = function.correspondingPropertySymbol?.owner
-        if (correspondingProperty != null) {
-            if (correspondingProperty.getter == function) {
-                return exportProperty(correspondingProperty)
-            } else {
-                // TODO: Setter only properties?
-                return emptyList()
+        // Workaround to get property declarations instead of its lowered accessors.
+        if (declaration is IrSimpleFunction) {
+            val property = declaration.correspondingPropertySymbol?.owner
+            if (property != null) {
+                // Return property for getter accessors only to prevent
+                // returning it twice (for getter and setter) in the same scope
+                return if (property.getter == declaration)
+                    property
+                else
+                    null
             }
         }
 
-        if (function.isMethodOfAny())
-            return emptyList()
+        return declaration
+    }
 
-        if (function.name.asString().endsWith("-impl"))
-            return emptyList()
+    private fun exportDeclaration(declaration: IrDeclaration): ExportedDeclaration? {
+        val candidate = getExportCandidate(declaration) ?: return null
+        if (!shouldDeclarationBeExported(candidate)) return null
 
-        // TODO: Fix properties
+        return when (candidate) {
+            is IrSimpleFunction -> exportFunction(candidate)
+            is IrProperty -> exportProperty(candidate)
+            is IrClass -> exportClass(candidate)
+            is IrField -> null
+            else -> error("Can't export declaration $candidate")
+        }
+    }
 
-        val name = function.getExportedIdentifier()
-
-        if (name[0].isUpperCase()) return emptyList()
-
-        if (name in allReservedWords)
-            return emptyList()
-
-        if (function.fqNameWhenAvailable == FqName("kotlin.coroutines.Continuation"))
-            return emptyList()
-
-        if (function.fqNameWhenAvailable == FqName("kotlin.Comparator"))
-            return emptyList()
-
-        val returnType = exportType(function.returnType)
-        val parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) }
-        val typeParameters = function.typeParameters.map { it.name.identifier }
-
-        val parent = function.parent
-
-        val isMember: Boolean
-        val isAbstract: Boolean
-        if (parent is IrClass) {
-            isAbstract = !parent.isInterface && function.modality == Modality.ABSTRACT
-            isMember = true
-        } else {
-            isAbstract = false
-            isMember = false
+    private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? =
+        when (val exportability = functionExportability(function)) {
+            is Exportability.NotNeeded -> null
+            is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
+            is Exportability.Allowed -> {
+                val parent = function.parent
+                ExportedFunction(
+                    function.getExportedIdentifier(),
+                    returnType = exportType(function.returnType),
+                    parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) },
+                    typeParameters = function.typeParameters.map { it.name.identifier },
+                    isMember = parent is IrClass,
+                    isStatic = function.isStaticMethodOfClass,
+                    isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
+                    ir = function
+                )
+            }
         }
 
-        return listOf(
-            ExportedFunction(
-                name,
-                returnType,
-                parameters = parameters,
-                typeParameters = typeParameters,
-                isMember = isMember,
-                isStatic = function.isStaticMethodOfClass,
-                isAbstract = isAbstract
-            )
+    private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
+        if (!constructor.isPrimary) return null
+        val allValueParameters = listOfNotNull(constructor.extensionReceiverParameter) + constructor.valueParameters
+        return ExportedConstructor(
+            parameters = allValueParameters.map { exportParameter(it) },
+            isPrivate = false
         )
     }
 
-    private fun exportConstructor(function: IrConstructor): List<ExportedDeclaration> {
-
-        if (!function.isPrimary)
-            return emptyList()
-
-        val parameters = (listOfNotNull(function.extensionReceiverParameter) + function.valueParameters).map { exportParameter(it) }
-        return listOf(ExportedConstructor(parameters, false))
-    }
-
     private fun exportParameter(parameter: IrValueParameter): ExportedParameter {
+        // Parameter names do not matter in d.ts files. They can be renamed as we like
         var parameterName = sanitizeName(parameter.name.asString())
         if (parameterName in allReservedWords)
             parameterName = "_$parameterName"
@@ -179,72 +121,80 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
         return ExportedParameter(parameterName, exportType(parameter.type))
     }
 
-    private fun exportProperty(property: IrProperty): List<ExportedDeclaration> {
+    private fun exportProperty(property: IrProperty): ExportedDeclaration? {
         for (accessor in listOfNotNull(property.getter, property.setter)) {
             if (accessor.extensionReceiverParameter != null)
-                return emptyList()
+                return null
             if (accessor.isFakeOverride) {
-                return emptyList()
+                return null
             }
         }
 
-        return listOf(
-            ExportedProperty(
-                property.getExportedIdentifier(),
-                exportType(property.getter!!.returnType),
-                mutable = property.isVar,
-                isMember = property.parent is IrClass,
-                isStatic = false
-            )
+        return ExportedProperty(
+            property.getExportedIdentifier(),
+            exportType(property.getter!!.returnType),
+            mutable = property.isVar,
+            isMember = property.parent is IrClass,
+            isStatic = false,
+            ir = property
         )
     }
 
-    private fun exportClass(klass: IrClass): List<ExportedDeclaration> {
-        if (klass.isCompanion) return emptyList()
-        if (klass.isInline) return emptyList()
+    private fun classExportability(klass: IrClass): Exportability {
+        when (klass.kind) {
+            ClassKind.ANNOTATION_CLASS,
+            ClassKind.ENUM_CLASS,
+            ClassKind.ENUM_ENTRY,
+            ClassKind.OBJECT ->
+                return Exportability.Prohibited("Class ${klass.fqNameWhenAvailable} with kind: ${klass.kind}")
 
-//        // TODO: Exceptions
+            ClassKind.CLASS,
+            ClassKind.INTERFACE -> {
+            }
+        }
+
+        if (klass.isInline)
+            return Exportability.Prohibited("Inline class ${klass.fqNameWhenAvailable}")
+
         if (klass.fqNameWhenAvailable in setOf(
                 FqName("kotlin.Error"),
                 FqName("kotlin.AssertionError"),
                 FqName("kotlin.NotImplementedError")
-            ))
-            return emptyList()
+            )
+        ) return Exportability.Prohibited("Unsupported class ${klass.fqNameWhenAvailable}")
 
-        val name = klass.getExportedIdentifier()
+        return Exportability.Allowed
+    }
+
+    private fun exportClass(
+        klass: IrClass
+    ): ExportedDeclaration? {
+        when (val exportability = classExportability(klass)) {
+            is Exportability.Prohibited -> return ErrorDeclaration(exportability.reason)
+            is Exportability.NotNeeded -> return null
+        }
 
         val members = mutableListOf<ExportedDeclaration>()
-        val other = mutableListOf<ExportedDeclaration>()
+        val statics = mutableListOf<ExportedDeclaration>()
 
         for (declaration in klass.declarations) {
-            if (declaration !is IrDeclarationWithVisibility ||
-                declaration !is IrDeclarationWithName ||
-                declaration.visibility != Visibilities.PUBLIC
-            ) {
-                continue
-            }
+            val candidate = getExportCandidate(declaration) ?: continue
+            if (!shouldDeclarationBeExported(candidate)) continue
 
-            if (declaration.origin == IrDeclarationOrigin.BRIDGE)
-                continue
-
-            if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
-                continue
-
-            when (declaration) {
+            when (candidate) {
                 is IrSimpleFunction ->
-                    members += exportFunction(declaration)
+                    members.addIfNotNull(exportFunction(candidate))
 
                 is IrConstructor ->
-                    members += exportConstructor(declaration)
+                    members.addIfNotNull(exportConstructor(candidate))
 
                 is IrProperty ->
-                    members += exportProperty(declaration)
+                    members.addIfNotNull(exportProperty(candidate))
 
                 is IrClass ->
-                    other += exportClass(declaration)
+                    statics.addIfNotNull(exportClass(candidate))
 
                 is IrField -> {
-
                 }
 
                 else -> error("Can't export member declaration $declaration")
@@ -258,19 +208,26 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
             ?.let { exportType(it) }
 
         val superInterfaces = klass.superTypes
-            .filter { it.classifierOrFail.isInterface &&
-                    !it.isFunctionOrKFunction() &&
-                    !it.isSuspendFunction() &&
-                    !it.classifierOrFail.isClassWithFqName(FqNameUnsafe("kotlin.io.Serializable")) }
-            .map { exportType(it) }
+            .filter {
+                it.classifierOrFail.isInterface &&
+                        !it.isFunctionOrKFunction() &&
+                        !it.isSuspendFunction() &&
+                        !it.classifierOrFail.isClassWithFqName(FqNameUnsafe("kotlin.io.Serializable"))
+            }.map { exportType(it) }
 
-        val exportedClass = ExportedClass(
-            name, klass.isInterface, klass.modality == Modality.ABSTRACT, superType, superInterfaces, typeParameters, members
+        val name = klass.getExportedIdentifier()
+
+        return ExportedClass(
+            name = name,
+            isInterface = klass.isInterface,
+            isAbstract = klass.modality == Modality.ABSTRACT,
+            superClass = superType,
+            superInterfaces = superInterfaces,
+            typeParameters = typeParameters,
+            members = members,
+            statics = statics,
+            ir = klass
         )
-
-        val exportedNamespace = if (other.isNotEmpty()) ExportedNamespace(name, other) else null
-
-        return listOfNotNull(exportedClass, exportedNamespace)
     }
 
     private fun exportTypeArgument(type: IrTypeArgument): ExportedType {
@@ -311,7 +268,7 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
             nonNullType.isString() -> ExportedType.Primitive.String
             nonNullType.isThrowable() -> ExportedType.Primitive.Throwable
-            nonNullType.isAny() -> return ExportedType.Primitive.Any
+            nonNullType.isAny() -> ExportedType.Primitive.Any  // TODO: Should we wrap Any in a Nullable type?
             nonNullType.isUnit() -> ExportedType.Primitive.Unit
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
             nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0]))
@@ -320,73 +277,85 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
                 parameterTypes = nonNullType.arguments.dropLast(1).map { exportTypeArgument(it) },
                 returnType = exportTypeArgument(nonNullType.arguments.last())
             )
-            else -> {
-                when (classifier) {
-                    is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
-                    is IrClassSymbol -> {
-                        val klass = classifier.owner
-                        when {
-                            klass.isCompanion -> ExportedType.ErrorType("CompanionObject ${klass.fqNameWhenAvailable}")
-                            klass.isInline -> ExportedType.ErrorType("inline class ${klass.fqNameWhenAvailable}")
-                            else ->
-                                ExportedType.ClassType(
-                                    shortenFqName(klass.fqNameWhenAvailable!!),
-                                    type.arguments.map { exportTypeArgument(it) }
-                                )
-                        }
-                    }
-                    else -> error("Unexpected classifier $classifier")
+
+            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
+
+            classifier is IrClassSymbol -> {
+                val klass = classifier.owner
+                when (val exportability = classExportability(klass)) {
+                    is Exportability.Prohibited -> ExportedType.ErrorType(exportability.reason)
+                    is Exportability.NotNeeded -> error("Not needed classes types cannot be used")
+                    else -> ExportedType.ClassType(
+                        klass.fqNameWhenAvailable!!.asString(),
+                        type.arguments.map { exportTypeArgument(it) }
+                    )
                 }
             }
+
+            else -> error("Unexpected classifier $classifier")
         }
 
         return exportedType.withNullability(isNullable)
     }
 
-    private fun shortenFqName(name: FqName): String {
-        return name.asString()
-        val namespaceSegments = currentNamespace.pathSegments()
-        val nameSegments = name.pathSegments()
-
-        var commonPrefixSize = 0
-
-        for ((index, segment) in name.pathSegments().withIndex()) {
-            if (index < namespaceSegments.size && segment == namespaceSegments[index]) {
-                commonPrefixSize++
-            } else {
-                break
-            }
-        }
-
-        return nameSegments
-            .takeLast(nameSegments.size - commonPrefixSize)
-            .joinToString(".")
-    }
-
     private fun IrDeclarationWithName.getExportedIdentifier(): String =
-        with(name /*getJsNameOrKotlinName()*/) {
+        with(getJsNameOrKotlinName()) {
             if (isSpecial)
                 error("Cannot export special name: ${name.asString()} for declaration $fqNameWhenAvailable")
             else identifier
         }
 
-    private fun IrDeclarationWithName.isExported(): Boolean {
-        if (fqNameWhenAvailable in context.additionalExportedDeclarations)
+    private fun shouldDeclarationBeExported(declaration: IrDeclarationWithName): Boolean {
+        if (declaration.fqNameWhenAvailable in context.additionalExportedDeclarations)
             return true
 
-        if (isJsExport())
+        if (declaration.isJsExport())
             return true
 
-        return when (val parent = parent) {
-            is IrDeclarationWithName -> parent.isExported()
+        return when (val parent = declaration.parent) {
+            is IrDeclarationWithName -> shouldDeclarationBeExported(parent)
             is IrAnnotationContainer -> parent.isJsExport()
             else -> false
         }
     }
+
+    private fun functionExportability(function: IrSimpleFunction): Exportability {
+        if (function.isInline && function.typeParameters.any { it.isReified })
+            return Exportability.Prohibited("Inline reified function")
+        if (function.isSuspend)
+            return Exportability.Prohibited("Suspend function")
+        if (function.isFakeOverride)
+            return Exportability.NotNeeded
+        if (function.origin == IrDeclarationOrigin.BRIDGE ||
+            function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+        ) {
+            return Exportability.NotNeeded
+        }
+
+        if (function.isMethodOfAny())
+            return Exportability.NotNeeded
+        if (function.name.asString().endsWith("-impl"))
+            return Exportability.NotNeeded
+
+        // TODO: Fix properties
+        val name = function.getExportedIdentifier()
+        if (name[0].isUpperCase()) return Exportability.Prohibited("Upper case function")
+        if (name in allReservedWords)
+            return Exportability.Prohibited("Name is a reserved word")
+
+        return Exportability.Allowed
+    }
 }
 
-private val IrClassifierSymbol.isInterface get() = (owner as? IrClass)?.isInterface == true
+sealed class Exportability {
+    object Allowed : Exportability()
+    object NotNeeded : Exportability()
+    class Prohibited(val reason: String) : Exportability()
+}
 
+private val IrClassifierSymbol.isInterface
+    get() = (owner as? IrClass)?.isInterface == true
 
 val reservedWords = setOf(
     "break",

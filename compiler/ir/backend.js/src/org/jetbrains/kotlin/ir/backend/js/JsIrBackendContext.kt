@@ -58,7 +58,7 @@ class JsIrBackendContext(
 
     var previousDtsHash: Int = 0
 
-    var externalPackageFragment = mutableMapOf<FqName, IrPackageFragment>()
+    var externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
     lateinit var bodilessBuiltInsPackageFragment: IrPackageFragment
 
     val externalNestedClasses = mutableListOf<IrClass>()

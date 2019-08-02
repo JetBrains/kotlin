@@ -1,9 +1,8 @@
 // TARGET_BACKEND: JS_IR
 // CHECK_TYPESCRIPT_DECLARATIONS
+// RUN_PLAIN_BOX_FUNCTION
 
 @file:JsExport
-
-fun box(): String = "OK"
 
 internal val internalVal = 10
 internal fun internalFun() = 10

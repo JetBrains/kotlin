@@ -35,15 +35,16 @@ class NameTable<T>(
     }
 
     fun declareStableName(declaration: T, name: String) {
-        if (parent != null) assert(parent.finished)
-        assert(!finished)
+        // if (parent != null) assert(parent.finished)
+        // assert(!finished)
         names[declaration] = name
         reserved.add(name)
     }
 
-    fun declareFreshName(declaration: T, suggestedName: String) {
+    fun declareFreshName(declaration: T, suggestedName: String): String {
         val freshName = findFreshName(sanitizeName(suggestedName))
         declareStableName(declaration, freshName)
+        return freshName
     }
 
     private fun findFreshName(suggestedName: String): String {
@@ -133,9 +134,9 @@ fun functionSignature(declaration: IrFunction): Signature {
 }
 
 class NameTables(packages: List<IrPackageFragment>) {
-    private val globalNames: NameTable<IrDeclaration>
+    val globalNames: NameTable<Any>
     private val memberNames: NameTable<Signature>
-    private val localNames = mutableMapOf<IrDeclaration, NameTable<IrDeclaration>>()
+    private val localNames = mutableMapOf<IrDeclaration, NameTable<Any>>()
     private val loopNames = mutableMapOf<IrLoop, String>()
 
     init {
@@ -151,7 +152,7 @@ class NameTables(packages: List<IrPackageFragment>) {
             }
         }
 
-        globalNames.finished = true
+        // globalNames.finished = true
 
         for (p in packages) {
             for (declaration in p.declarations) {
@@ -222,17 +223,6 @@ class NameTables(packages: List<IrPackageFragment>) {
                 }
             }
         }
-    }
-
-    @Suppress("unused")
-    fun dump(): String {
-        val local = localNames.toList().joinToString("\n") { (decl, table) ->
-            val declRef = (decl as? IrDeclarationWithName)?.fqNameWhenAvailable ?: decl
-            "\nLocal names for $declRef:\n${table.dump()}\n"
-        }
-        return "Global names:\n${globalNames.dump()}" +
-                //   "\nMember names:\n${memberNames.dump()}" +
-                "\nLocal names:\n$local\n"
     }
 
     fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): String {
