@@ -1,10 +1,5 @@
-import org.ajoberstar.grgit.Grgit
-
 plugins {
     kotlin("jvm")
-
-    //git plugin
-    id("org.ajoberstar.grgit") version "3.1.1"
 }
 
 group = "org.jetbrains.kotlin.fir"
@@ -96,17 +91,4 @@ val jmhExec by tasks.creating(JavaExec::class) {
     systemProperty("idea.home.path", project.intellijRootDir().absolutePath)
     systemProperty("idea.max.intellisense.filesize", 5000 * 1024)
     configurations.plusAssign(project.configurations["compile"])
-}
-
-val deleteGitFolder by tasks.creating(Delete::class) {
-    delete("$testDataPath/.git")
-}
-
-val cloneCoroutines by tasks.creating {
-    val url = "https://github.com/Kotlin/kotlinx.coroutines.git"
-    if (!File(testDataPath).exists()) {
-        Grgit.clone(mapOf("dir" to testDataPath,
-                      "uri" to url)).close()
-    }
-    finalizedBy(tasks["deleteGitFolder"])
 }
