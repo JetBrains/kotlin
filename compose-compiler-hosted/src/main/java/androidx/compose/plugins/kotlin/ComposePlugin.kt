@@ -117,6 +117,10 @@ class ComposeComponentRegistrar : ComponentRegistrar {
                 project,
                 UnionAnnotationCheckerProvider()
             )
+            StorageComponentContainerContributor.registerExtension(
+                project,
+                TryCatchComposableChecker()
+            )
             KtxParsingExtension.registerExtension(project,
                 ComposeKtxParsingExtension()
             )
