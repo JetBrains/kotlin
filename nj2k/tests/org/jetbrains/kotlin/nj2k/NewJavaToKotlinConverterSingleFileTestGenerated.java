@@ -4102,6 +4102,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/postProcessing/java8MapForEachWithFullJdk.java");
         }
 
+        @TestMetadata("MapGetOrDefault.java")
+        public void testMapGetOrDefault() throws Exception {
+            runTest("nj2k/testData/newJ2k/postProcessing/MapGetOrDefault.java");
+        }
+
         @TestMetadata("NotIs.java")
         public void testNotIs() throws Exception {
             runTest("nj2k/testData/newJ2k/postProcessing/NotIs.java");

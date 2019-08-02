@@ -1,0 +1,3 @@
+fun test(map: Map<Int, String>) {
+    map<spot>.getOrDefault(1, "foo")</spot>
+}
