@@ -60,6 +60,8 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -869,6 +871,16 @@ public class LookupImpl extends LightweightHint implements LookupEx, Disposable,
           hideLookup(false);
         }
       }));
+
+      AncestorListener ancestorListener = new AncestorListenerAdapter() {
+        @Override
+        public void ancestorMoved(AncestorEvent event) {
+          hideLookup(false);
+        }
+      };
+      editorComponent.addAncestorListener(ancestorListener);
+
+      Disposer.register(this, () -> editorComponent.removeAncestorListener(ancestorListener));
     }
 
     myList.addListSelectionListener(new ListSelectionListener() {
