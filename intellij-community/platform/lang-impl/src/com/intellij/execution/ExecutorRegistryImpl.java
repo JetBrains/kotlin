@@ -19,7 +19,9 @@ import com.intellij.ide.macro.MacroManager;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.PreloadingActivity;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.*;
 import com.intellij.openapi.util.IconLoader;
 import com.intellij.openapi.util.Trinity;
@@ -52,6 +54,13 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
 
   public ExecutorRegistryImpl() {
     init();
+  }
+
+  static class ExecutorRegistryPreload extends PreloadingActivity {
+    @Override
+    public void preload(@NotNull ProgressIndicator indicator) {
+      getInstance();
+    }
   }
 
   synchronized void initExecutor(@NotNull Executor executor) {
