@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
 import com.intellij.ide.util.DirectoryChooser;
 import com.intellij.ide.util.DirectoryUtil;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
@@ -537,7 +538,9 @@ public class MoveKotlinTopLevelDeclarationsDialog extends RefactoringDialog {
             );
             if (ret == Messages.YES) {
                 try {
-                    DirectoryUtil.mkdirs(PsiManager.getInstance(getProject()), targetDirPath.toString());
+                    ApplicationManager.getApplication().runWriteAction(() -> {
+                        DirectoryUtil.mkdirs(PsiManager.getInstance(getProject()), targetDirPath.toString());
+                    });
                 }
                 catch (IncorrectOperationException e) {
                     setErrorText("Failed to create parent directory: " + targetDirPath);
