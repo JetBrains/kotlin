@@ -78,7 +78,7 @@ public class JavaGradleProjectResolver extends AbstractProjectResolverExtension 
     if (buildScriptClasspathModel != null) {
       classpathEntries = ContainerUtil.map(
         buildScriptClasspathModel.getClasspath(),
-        (Function<ClasspathEntryModel, BuildScriptClasspathData.ClasspathEntry>)model -> new BuildScriptClasspathData.ClasspathEntry(model.getClasses(), model.getSources(), model.getJavadoc()));
+        (Function<ClasspathEntryModel, BuildScriptClasspathData.ClasspathEntry>)model -> BuildScriptClasspathData.ClasspathEntry.create(model.getClasses(), model.getSources(), model.getJavadoc()));
     }
     else {
       classpathEntries = ContainerUtil.emptyList();
