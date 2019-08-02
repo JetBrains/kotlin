@@ -31,7 +31,6 @@ import com.intellij.reference.SoftReference;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupPositionManager;
 import com.intellij.ui.popup.PopupUpdateProcessor;
-import com.intellij.usages.Usage;
 import com.intellij.usages.UsageView;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
@@ -215,7 +214,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
     if (!session.needUpdateInBackground()) return;  // already found
     final ImplementationsUpdaterTask task = new ImplementationsUpdaterTask(session, title, component);
-    task.init(popup, new ImplementationViewComponentUpdater(component, session.elementRequiresIncludeSelf() ? 1 : 0), usageView);
+    task.init(popup, new ImplementationViewComponentUpdater(component, session.elementRequiresIncludeSelf() ? 1 : 0));
 
     myTaskRef = new WeakReference<>(task);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
@@ -275,11 +274,6 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     @Override
     public String getCaption(int size) {
       return myCaption;
-    }
-
-    @Override
-    protected Usage createUsage(ImplementationViewElement element) {
-      return mySession.createUsage(element);
     }
 
 

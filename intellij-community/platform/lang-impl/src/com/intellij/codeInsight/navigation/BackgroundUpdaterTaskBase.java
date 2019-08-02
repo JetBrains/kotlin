@@ -9,9 +9,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.GenericListComponentUpdater;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.util.Ref;
-import com.intellij.usages.Usage;
 import com.intellij.usages.UsageView;
-import com.intellij.usages.impl.UsageViewImpl;
 import com.intellij.util.Alarm;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,16 +41,12 @@ public abstract class BackgroundUpdaterTaskBase<T> extends Task.Backgroundable {
     return myUpdater;
   }
 
-  public void init(@NotNull JBPopup popup, @NotNull GenericListComponentUpdater<T> updater, @NotNull Ref<? extends UsageView> usageView) {
+  public void init(@NotNull JBPopup popup, @NotNull GenericListComponentUpdater<T> updater) {
     myPopup = popup;
     myUpdater = updater;
-    myUsageView = usageView;
   }
 
   public abstract String getCaption(int size);
-
-  @Nullable
-  protected abstract Usage createUsage(T element);
 
   protected void replaceModel(@NotNull List<? extends T> data) {
     myUpdater.replaceModel(data);
@@ -77,7 +71,6 @@ public abstract class BackgroundUpdaterTaskBase<T> extends Task.Backgroundable {
    */
   @Deprecated
   public boolean updateComponent(@NotNull T element, @Nullable Comparator comparator) {
-    if (tryAppendUsage(element)) return true;
     if (myCanceled) return false;
 
     if (myPopup.isDisposed()) return false;
@@ -98,21 +91,7 @@ public abstract class BackgroundUpdaterTaskBase<T> extends Task.Backgroundable {
     return true;
   }
 
-  private boolean tryAppendUsage(@NotNull T element) {
-    final UsageView view = myUsageView.get();
-    if (view != null && !((UsageViewImpl)view).isDisposed()) {
-      Usage usage = createUsage(element);
-      if (usage == null)
-        return false;
-      ApplicationManager.getApplication().runReadAction(() -> view.appendUsage(usage));
-      return true;
-    }
-    return false;
-  }
-
   public boolean updateComponent(@NotNull T element) {
-    if (tryAppendUsage(element)) return true;
-
     if (myCanceled) return false;
     if (myPopup.isDisposed()) return false;
 
