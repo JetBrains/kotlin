@@ -37,8 +37,7 @@ import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.referenceExpression
 import java.util.*
 
-class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val targetFile: KtFile) {
-
+class PlainTextPasteImportResolver(private val dataForConversion: DataForConversion, val targetFile: KtFile) {
     private val file = dataForConversion.file
     private val project = targetFile.project
 
@@ -59,8 +58,8 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
 
     private fun canBeImported(descriptor: DeclarationDescriptorWithVisibility?): Boolean {
         return descriptor != null
-               && descriptor.canBeReferencedViaImport()
-               && descriptor.isVisible(targetFile, null, bindingContext, resolutionFacade)
+                && descriptor.canBeReferencedViaImport()
+                && descriptor.isVisible(targetFile, null, bindingContext, resolutionFacade)
     }
 
     private fun addImport(importStatement: PsiImportStatementBase, shouldAddToTarget: Boolean = false) {
@@ -76,46 +75,54 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             val importedReference = importDirective.importedReference
             if (importPath != null && !importPath.hasAlias() && importedReference is KtDotQualifiedExpression) {
                 val receiver = importedReference
-                        .receiverExpression
-                        .referenceExpression()
-                        ?.mainReference
-                        ?.resolve()
+                    .receiverExpression
+                    .referenceExpression()
+                    ?.mainReference
+                    ?.resolve()
                 val selector = importedReference
-                        .selectorExpression
-                        ?.referenceExpression()
-                        ?.mainReference
-                        ?.resolve()
+                    .selectorExpression
+                    ?.referenceExpression()
+                    ?.mainReference
+                    ?.resolve()
 
                 val isPackageReceiver = receiver is PsiPackage
                 val isClassReceiver = receiver is PsiClass
                 val isClassSelector = selector is PsiClass
 
                 if (importPath.isAllUnder) {
-                    if (isClassReceiver)
-                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*"))
-                    else if (isPackageReceiver)
-                        addImport(psiElementFactory.createImportStatementOnDemand((receiver as PsiPackage).qualifiedName))
-                }
-                else {
-                    if (isClassSelector)
-                        addImport(psiElementFactory.createImportStatement(selector as PsiClass))
-                    else if (isClassReceiver)
-                        addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, importPath.importedName!!.asString()))
+                    when {
+                        isClassReceiver ->
+                            addImport(psiElementFactory.createImportStaticStatement(receiver as PsiClass, "*"))
+                        isPackageReceiver ->
+                            addImport(psiElementFactory.createImportStatementOnDemand((receiver as PsiPackage).qualifiedName))
+                    }
+                } else {
+                    when {
+                        isClassSelector ->
+                            addImport(psiElementFactory.createImportStatement(selector as PsiClass))
+                        isClassReceiver ->
+                            addImport(
+                                psiElementFactory.createImportStaticStatement(
+                                    receiver as PsiClass,
+                                    importPath.importedName!!.asString()
+                                )
+                            )
+                    }
                 }
             }
         }
-        if (importList !in dataForConversion.elementsAndTexts.toList())
+        if (importList !in dataForConversion.elementsAndTexts.toList()) {
             runWriteAction {
                 targetFile.importDirectives.forEach(::tryConvertKotlinImport)
             }
+        }
     }
 
     fun tryResolveReferences() {
-
-        val elementsWithUnresolvedRef = PsiTreeUtil.collectElements(file) {
-            it.reference != null
-            && it.reference is PsiQualifiedReference
-            && it.reference?.resolve() == null
+        val elementsWithUnresolvedRef = PsiTreeUtil.collectElements(file) { element ->
+            element.reference != null
+                    && element.reference is PsiQualifiedReference
+                    && element.reference?.resolve() == null
         }
 
         fun tryResolveReference(reference: PsiQualifiedReference): Boolean {
@@ -123,28 +130,27 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
             val referenceName = reference.referenceName ?: return false
             if (referenceName in failedToResolveReferenceNames) return false
             val classes = shortNameCache.getClassesByName(referenceName, scope)
-                    .mapNotNull { psiClass ->
-                        val containingFile = psiClass.containingFile
-                        if (ProjectRootsUtil.isInProjectOrLibraryContent(containingFile)) {
-                            psiClass to psiClass.getJavaMemberDescriptor() as? ClassDescriptor
-                        }
-                        else {
-                            null
-                        }
-                    }
-                    .filter { canBeImported(it.second) }
+                .mapNotNull { psiClass ->
+                    val containingFile = psiClass.containingFile
+                    if (ProjectRootsUtil.isInProjectOrLibraryContent(containingFile)) {
+                        psiClass to psiClass.getJavaMemberDescriptor() as? ClassDescriptor
+                    } else null
+                }.filter { canBeImported(it.second) }
 
-            classes.find { (_, descriptor) -> JavaToKotlinClassMap.mapPlatformClass(descriptor!!).isNotEmpty() }
-                    ?.let { (psiClass, _) -> addImport(psiElementFactory.createImportStatement(psiClass)) }
+            classes.find { (_, descriptor) ->
+                JavaToKotlinClassMap.mapPlatformClass(descriptor!!).isNotEmpty()
+            }?.let { (psiClass, _) ->
+                addImport(psiElementFactory.createImportStatement(psiClass))
+            }
             if (reference.resolve() != null) return true
 
             classes.singleOrNull()?.let { (psiClass, _) ->
                 addImport(psiElementFactory.createImportStatement(psiClass), true)
             }
 
-            if (reference.resolve() != null) return true
-            else {
-                if (classes.isNotEmpty()) {
+            when {
+                reference.resolve() != null -> return true
+                classes.isNotEmpty() -> {
                     ambiguityInResolution = true
                     return false
                 }
@@ -163,14 +169,10 @@ class PlainTextPasteImportResolver(val dataForConversion: DataForConversion, val
                 addImport(psiElementFactory.createImportStaticStatement(psiMember.containingClass!!, psiMember.name!!), true)
             }
 
-            if (reference.resolve() != null) return false
-            else {
-                if (members.isNotEmpty()) {
-                    ambiguityInResolution = true
-                }
-                else {
-                    couldNotResolve = true
-                }
+            when {
+                reference.resolve() != null -> return false
+                members.isNotEmpty() -> ambiguityInResolution = true
+                else -> couldNotResolve = true
             }
             return false
         }

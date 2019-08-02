@@ -26,7 +26,6 @@ data class ContextDeclarations(
     val memberDeclarationsJavaStubs: String
 )
 
-
 class JavaContextDeclarationRenderer {
     private val KtElement.memberDeclarations
         get() = parents()

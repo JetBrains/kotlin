@@ -42,10 +42,10 @@ class ElementAndTextList() {
     fun toList(): List<Any> = elementsAndTexts.toList()
 
     fun process(processor: ElementsAndTextsProcessor) {
-        elementsAndTexts.forEach {
-            when (it) {
-                is PsiElement -> processor.processElement(it)
-                is String -> processor.processText(it)
+        elementsAndTexts.forEach { element ->
+            when (element) {
+                is PsiElement -> processor.processElement(element)
+                is String -> processor.processText(element)
             }
         }
     }
