@@ -215,7 +215,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
     if (!session.needUpdateInBackground()) return;  // already found
     final ImplementationsUpdaterTask task = new ImplementationsUpdaterTask(session, title, component);
-    task.init(popup, new ImplementationViewComponentUpdater(component, session, session.elementRequiresIncludeSelf() ? 1 : 0), usageView);
+    task.init(popup, new ImplementationViewComponentUpdater(component, session.elementRequiresIncludeSelf() ? 1 : 0), usageView);
 
     myTaskRef = new WeakReference<>(task);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
@@ -231,12 +231,10 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
   private static class ImplementationViewComponentUpdater implements ListComponentUpdater {
     private final ImplementationViewComponent myComponent;
-    private final ImplementationViewSession mySession;
     private final int myIncludeSelfIdx;
 
-    ImplementationViewComponentUpdater(ImplementationViewComponent component, ImplementationViewSession session, int includeSelfIdx) {
+    ImplementationViewComponentUpdater(ImplementationViewComponent component, int includeSelfIdx) {
       myComponent = component;
-      mySession = session;
       myIncludeSelfIdx = includeSelfIdx;
     }
 
@@ -253,7 +251,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
       List<ImplementationViewElement> result = new ArrayList<>();
       Collections.addAll(result, elements);
       for (PsiElement element : data.subList(startIdx, data.size())) {
-        result.add(mySession.createImplementationViewElement(element));
+        result.add(new PsiImplementationViewElement(element));
       }
       myComponent.update(result, myComponent.getIndex());
     }
