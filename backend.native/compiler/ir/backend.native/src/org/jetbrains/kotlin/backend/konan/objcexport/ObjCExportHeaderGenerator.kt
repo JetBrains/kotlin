@@ -756,7 +756,7 @@ internal class ObjCExportTranslatorImpl(
 
         val typeMappingMatches = (listOf(kotlinType) + kotlinType.supertypes()).mapNotNull { type ->
             (type.constructor.declarationDescriptor as? ClassDescriptor)?.let { descriptor ->
-                mapper.customTypeMappers[descriptor.classId]?.let { mapper ->
+                mapper.getCustomTypeMapper(descriptor)?.let { mapper ->
                     TypeMappingMatch(type, descriptor, mapper)
                 }
             }

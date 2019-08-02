@@ -31,13 +31,14 @@ internal class ObjCExportMapper(
         val maxFunctionTypeParameterCount get() = KONAN_FUNCTION_INTERFACES_MAX_PARAMETERS
     }
 
-    val customTypeMappers: Map<ClassId, CustomTypeMapper> get() = CustomTypeMappers.byClassId
+    fun getCustomTypeMapper(descriptor: ClassDescriptor): CustomTypeMapper? = CustomTypeMappers.getMapper(descriptor)
+
     val hiddenTypes: Set<ClassId> get() = CustomTypeMappers.hiddenTypes
 
     fun isSpecialMapped(descriptor: ClassDescriptor): Boolean {
         // TODO: this method duplicates some of the [ObjCExportTranslatorImpl.mapReferenceType] logic.
         return KotlinBuiltIns.isAny(descriptor) ||
-                descriptor.getAllSuperClassifiers().any { it.classId in customTypeMappers }
+                descriptor.getAllSuperClassifiers().any { it is ClassDescriptor && CustomTypeMappers.hasMapper(it) }
     }
 
     private val methodBridgeCache = mutableMapOf<FunctionDescriptor, MethodBridge>()
