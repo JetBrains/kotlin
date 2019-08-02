@@ -17,6 +17,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiWhiteSpace
 import com.intellij.psi.impl.compiled.ClsMethodImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
@@ -277,12 +278,12 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
                 return renderKotlinDeclaration(origin, quickNavigation)
             } else if (element is KtValueArgumentList) {
                 val referenceExpression = element.prevSibling as? KtSimpleNameExpression ?: return null
-                val methodElement = referenceExpression.mainReference.resolve()
-                if (methodElement is KtNamedFunction) { // In case of Kotlin function
-                    return renderKotlinDeclaration(methodElement, quickNavigation)
-                } else if (methodElement is ClsMethodImpl) { // In case of java function
-                    val documentationManager = DocumentationManager.getInstance(methodElement.project)
-                    return documentationManager.generateDocumentation(methodElement, referenceExpression, false)
+                val calledElement = referenceExpression.mainReference.resolve()
+                if (calledElement is KtNamedFunction || calledElement is KtConstructor<*>) { // In case of Kotlin function or constructor
+                    return renderKotlinDeclaration(calledElement as KtExpression, quickNavigation)
+                } else if (calledElement is ClsMethodImpl || calledElement is PsiMethod) { // In case of java function or constructor
+                    val documentationManager = DocumentationManager.getInstance(calledElement.project)
+                    return documentationManager.generateDocumentation(calledElement, referenceExpression)
                 }
             } else if (element.isModifier()) {
                 when (element.text) {
