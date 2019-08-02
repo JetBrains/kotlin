@@ -40,6 +40,7 @@ class OperatorToFunctionIntention :
     SelfTargetingIntention<KtExpression>(KtExpression::class.java, "Replace overloaded operator with function call") {
     companion object {
         private fun isApplicableUnary(element: KtUnaryExpression, caretOffset: Int): Boolean {
+            if (element.baseExpression == null) return false
             val opRef = element.operationReference
             if (!opRef.textRange.containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
@@ -63,6 +64,7 @@ class OperatorToFunctionIntention :
         }
 
         private fun isApplicableBinary(element: KtBinaryExpression, caretOffset: Int): Boolean {
+            if (element.left == null || element.right == null) return false
             val opRef = element.operationReference
             if (!opRef.textRange.containsOffset(caretOffset)) return false
             return when (opRef.getReferencedNameElementType()) {
