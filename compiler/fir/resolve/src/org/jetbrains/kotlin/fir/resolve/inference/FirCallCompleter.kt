@@ -122,7 +122,7 @@ class FirCallCompleter(
             replacements[lambdaArgument] =
                 newLambdaExpression.transformSingle(transformer, FirBodyResolveTransformer.LambdaResolution(expectedReturnTypeRef))
 
-            return listOfNotNull(newLambdaExpression.body?.statements?.lastOrNull() as? FirExpression) to InferenceSession.default
+            return (newLambdaExpression.body?.returnExpressions() ?: emptyList()) to InferenceSession.default
         }
     }
 }
