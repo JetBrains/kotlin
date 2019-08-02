@@ -56,7 +56,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
     init();
   }
 
-  static class ExecutorRegistryPreload extends PreloadingActivity {
+  static class ExecutorRegistryPreloader extends PreloadingActivity {
     @Override
     public void preload(@NotNull ProgressIndicator indicator) {
       getInstance();
