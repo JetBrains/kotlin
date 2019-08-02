@@ -220,7 +220,8 @@ private val inspectionLikePostProcessingGroup =
         generalInspectionBasedProcessing(LiftReturnOrAssignmentInspection(skipLongExpressions = false)),
         intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
         generalInspectionBasedProcessing(MayBeConstantInspection()),
-        RemoveForExpressionLoopParameterTypeProcessing()
+        RemoveForExpressionLoopParameterTypeProcessing(),
+        intentionBasedProcessing(ReplaceMapGetOrDefaultIntention())
     )
 
 
