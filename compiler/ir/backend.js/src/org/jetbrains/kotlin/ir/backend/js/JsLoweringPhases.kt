@@ -378,12 +378,6 @@ private val testGenerationPhase = makeJsModulePhase(
     description = "Generate invocations to kotlin.test suite and test functions"
 )
 
-private val jsExportLoweringPhase = makeJsModulePhase(
-    ::ExportLowering,
-    name = "JsExportLowering",
-    description = "Process JS exports"
-)
-
 private val staticMembersLoweringPhase = makeJsModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -406,7 +400,6 @@ val jsPhases = namedIrModulePhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
-            jsExportLoweringPhase then
             testGenerationPhase then
             expectDeclarationsRemovingPhase then
             provisionalFunctionExpressionPhase then

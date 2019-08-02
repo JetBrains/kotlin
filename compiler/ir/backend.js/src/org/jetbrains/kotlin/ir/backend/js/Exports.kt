@@ -40,6 +40,8 @@ class ExportedProperty(
     val isStatic: Boolean = false
 ) : ExportedDeclaration()
 
+class ErrorDeclaration(val message: String) : ExportedDeclaration()
+
 class ExportedClass(
     val name: String,
     val isInterface: Boolean = false,
@@ -99,6 +101,8 @@ fun List<ExportedDeclaration>.toTypeScript(ident: String): String =
     joinToString("\n") { it.toTypeScript(ident) }
 
 fun ExportedDeclaration.toTypeScript(ident: String): String = ident + when (this) {
+    is ErrorDeclaration -> "namespace _Error_ { /* $message */ }"
+
     is ExportedFile ->
         "\n// File $name\n\n" + declarations.toTypeScript("")
 
