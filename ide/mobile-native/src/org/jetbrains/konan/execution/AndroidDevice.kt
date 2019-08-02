@@ -7,7 +7,9 @@ package org.jetbrains.konan.execution
 
 import com.android.ddmlib.IDevice
 
-class AndroidDevice(private val wrapped: IDevice) : Device(wrapped.serialNumber) {
-    override fun getDisplayName(): String =
-        "${wrapped.avdName.replace('_', ' ')} | Android ${wrapped.version.apiString}"
-}
+class AndroidDevice(private val wrapped: IDevice) : Device(
+    wrapped.serialNumber,
+    wrapped.avdName.replace('_', ' '),
+    "Android",
+    wrapped.version.apiString
+)

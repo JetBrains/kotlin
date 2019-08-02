@@ -8,12 +8,16 @@ package org.jetbrains.konan.execution
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 
-abstract class AppleDevice(id: String) : Device(id)
+abstract class AppleDevice(id: String, name: String, osVersion: String) : Device(id, name, "iOS", osVersion)
 
-class ApplePhysicalDevice(private val wrapped: AMDevice) : AppleDevice(wrapped.deviceIdentifier) {
-    override fun getDisplayName(): String = wrapped.name
-}
+class ApplePhysicalDevice(private val wrapped: AMDevice) : AppleDevice(
+    wrapped.deviceIdentifier,
+    wrapped.name,
+    wrapped.productVersion ?: "Unknown"
+)
 
-class AppleSimulator(private val wrapped: SimulatorConfiguration) : AppleDevice(wrapped.udid) {
-    override fun getDisplayName(): String = "${wrapped.name} | iOS ${wrapped.version}"
-}
+class AppleSimulator(private val wrapped: SimulatorConfiguration) : AppleDevice(
+    wrapped.udid,
+    wrapped.name,
+    wrapped.version
+)

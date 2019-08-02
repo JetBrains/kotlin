@@ -7,4 +7,11 @@ package org.jetbrains.konan.execution
 
 import org.jetbrains.konan.gradle.execution.GradleKonanBuildProfileExecutionTarget
 
-abstract class Device(id: String) : GradleKonanBuildProfileExecutionTarget(id)
+abstract class Device(
+    id: String,
+    val name: String,
+    val osName: String,
+    val osVersion: String
+) : GradleKonanBuildProfileExecutionTarget(id) {
+    override fun getDisplayName(): String = "$name | $osName $osVersion"
+}
