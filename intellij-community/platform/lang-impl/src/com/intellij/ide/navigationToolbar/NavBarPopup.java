@@ -80,7 +80,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
       if (o instanceof JComponent) HintUpdateSupply.hideHint((JComponent)o);
     }
     //noinspection unchecked
-    for (Disposable disposable : ((List<Disposable>)getList().getClientProperty(DISPOSED_OBJECTS))) {
+    for (Disposable disposable : (List<? extends Disposable>)getList().getClientProperty(DISPOSED_OBJECTS)) {
       Disposer.dispose(disposable);
     }
     Disposer.dispose(this);
@@ -151,12 +151,18 @@ public class NavBarPopup extends LightweightHint implements Disposable{
     JBList<Object> list = new MyList<>();
     list.setModel(new CollectionListModel<>(siblings));
     HintUpdateSupply.installSimpleHintUpdateSupply(list);
-    List<Disposable> disposables = new ArrayList<>();
-    list.putClientProperty(DISPOSED_OBJECTS, disposables);
+    List<NavBarItem> items = new ArrayList<>();
+    list.putClientProperty(DISPOSED_OBJECTS, items);
     list.installCellRenderer(obj -> {
-      final NavBarItem navBarItem = new NavBarItem(panel, obj, null);
-      disposables.add(navBarItem);
-      return navBarItem;
+      for (NavBarItem item : items) {
+        if (obj == item.getObject()) {
+          item.update();
+          return item;
+        }
+      }
+      NavBarItem item = new NavBarItem(panel, obj, null);
+      items.add(item);
+      return item;
     });
     list.setBorder(JBUI.Borders.empty(5));
     ActionMap map = list.getActionMap();
