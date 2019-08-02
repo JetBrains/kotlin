@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun testGeneric1 (x: kotlin.String): T of <uninitialized parent> declared in <root>'
         CALL 'public abstract fun invoke (): T of <uninitialized parent> declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
-          $this: ERROR_CALL 'Unresolved reference: R?C|/gk|' type=kotlin.Function0<T of <uninitialized parent>>
+          $this: CALL 'public final fun <get-gk> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.String> origin=null
   PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
     FUN name:<get-kt26531Val> visibility:public modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>>
       correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
@@ -28,4 +28,4 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun kt26531 (): T of <uninitialized parent> declared in <root>'
         CALL 'public abstract fun invoke (): T of <uninitialized parent> declared in kotlin.Function0' type=T of <uninitialized parent> origin=null
-          $this: ERROR_CALL 'Unresolved reference: R?C|/kt26531Val|' type=kotlin.Function0<T of <uninitialized parent>>
+          $this: CALL 'public final fun <get-kt26531Val> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>' type=kotlin.Function0<kotlin.Int> origin=null

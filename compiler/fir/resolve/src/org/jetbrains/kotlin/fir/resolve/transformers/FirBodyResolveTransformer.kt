@@ -395,7 +395,7 @@ open class FirBodyResolveTransformer(
                 val resultExplicitReceiver = resultExpression.explicitReceiver
                 if (initialExplicitReceiver !== resultExplicitReceiver && resultExplicitReceiver is FirQualifiedAccess) {
                     // name.invoke() case
-                    callCompleter.completeCall(resultExplicitReceiver, null)
+                    callCompleter.completeCall(resultExplicitReceiver, noExpectedType)
                 }
                 callCompleter.completeCall(resultExpression, expectedTypeRef)
             } catch (e: Throwable) {
