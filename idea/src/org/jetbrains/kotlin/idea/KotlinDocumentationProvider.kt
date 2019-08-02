@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.idea
 
 import com.google.common.html.HtmlEscapers
+import com.intellij.codeInsight.documentation.DocumentationManager
 import com.intellij.codeInsight.documentation.DocumentationManagerUtil
 import com.intellij.codeInsight.javadoc.JavaDocInfoGeneratorFactory
 import com.intellij.lang.documentation.AbstractDocumentationProvider
@@ -13,7 +14,11 @@ import com.intellij.lang.documentation.DocumentationMarkup.*
 import com.intellij.lang.java.JavaDocumentationProvider
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.editor.Editor
-import com.intellij.psi.*
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
+import com.intellij.psi.PsiManager
+import com.intellij.psi.PsiWhiteSpace
+import com.intellij.psi.impl.compiled.ClsMethodImpl
 import org.jetbrains.kotlin.asJava.LightClassUtil
 import org.jetbrains.kotlin.asJava.elements.KtLightDeclaration
 import org.jetbrains.kotlin.descriptors.*
@@ -270,6 +275,15 @@ open class KotlinDocumentationProviderCompatBase : AbstractDocumentationProvider
             } else if (element is KtLightDeclaration<*, *>) {
                 val origin = element.kotlinOrigin ?: return null
                 return renderKotlinDeclaration(origin, quickNavigation)
+            } else if (element is KtValueArgumentList) {
+                val referenceExpression = element.prevSibling as? KtSimpleNameExpression ?: return null
+                val methodElement = referenceExpression.mainReference.resolve()
+                if (methodElement is KtNamedFunction) { // In case of Kotlin function
+                    return renderKotlinDeclaration(methodElement, quickNavigation)
+                } else if (methodElement is ClsMethodImpl) { // In case of java function
+                    val documentationManager = DocumentationManager.getInstance(methodElement.project)
+                    return documentationManager.generateDocumentation(methodElement, referenceExpression, false)
+                }
             } else if (element.isModifier()) {
                 when (element.text) {
                     KtTokens.LATEINIT_KEYWORD.value -> return KotlinBundle.message("quick.doc.text.lateinit")
