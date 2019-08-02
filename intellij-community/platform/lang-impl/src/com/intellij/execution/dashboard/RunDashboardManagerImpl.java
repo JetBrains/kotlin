@@ -654,7 +654,10 @@ public class RunDashboardManagerImpl implements RunDashboardManager, PersistentS
 
   private void doAddServiceContent(@NotNull RunnerAndConfigurationSettings settings, @NotNull Content content) {
     List<RunDashboardServiceImpl> settingsServices = getServices(settings);
-    if (settingsServices == null) return;
+    if (settingsServices == null) {
+      settingsServices = ContainerUtil.newSmartList(new RunDashboardServiceImpl(settings));
+      myServices.add(settingsServices);
+    }
 
     RunDashboardServiceImpl service = settingsServices.get(0);
     RunDashboardServiceImpl newService;
