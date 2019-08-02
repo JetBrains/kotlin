@@ -43,8 +43,8 @@ public class WebConfigurationBuilderImplTest extends AbstractModelBuilderTest {
   public void testDefaultWarModel() {
     DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
 
-    List<WebConfiguration> ideaModule = ContainerUtil.mapNotNull(ideaModules,
-                                                                 (Function<IdeaModule, WebConfiguration>)module -> allModels.getExtraProject(module, WebConfiguration.class));
+    List<WebConfiguration> ideaModule = ContainerUtil.mapNotNull(
+      ideaModules, (Function<IdeaModule, WebConfiguration>)module -> allModels.getModel(module, WebConfiguration.class));
 
     assertEquals(1, ideaModule.size());
     WebConfiguration webConfiguration = ideaModule.get(0);

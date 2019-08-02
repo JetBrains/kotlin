@@ -7,10 +7,9 @@ import com.intellij.util.ThrowableRunnable
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.tooling.BuildController
 import org.gradle.tooling.GradleConnectionException
-import org.gradle.tooling.model.idea.IdeaModule
-import org.gradle.tooling.model.idea.IdeaProject
+import org.gradle.tooling.model.Model
 import org.jetbrains.plugins.gradle.GradleManager
-import org.jetbrains.plugins.gradle.model.ProjectImportExtraModelProvider
+import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
 import org.jetbrains.plugins.gradle.service.project.AbstractProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverExtension
 import org.jetbrains.plugins.gradle.service.project.ProjectResolverContext
@@ -94,17 +93,18 @@ class GradleActionWithImportTest: GradleImportingTestCase() {
   }
 }
 
-class TestExtraModelProvider : ProjectImportExtraModelProvider {
+class TestModelProvider : ProjectImportModelProvider {
 
   override fun populateBuildModels(controller: BuildController,
-                                   project: IdeaProject,
-                                   consumer: ProjectImportExtraModelProvider.BuildModelConsumer) {
+                                   project: Model,
+                                   consumer: ProjectImportModelProvider.BuildModelConsumer) {
     controller.findModel(Object::class.java)
   }
 
   override fun populateProjectModels(controller: BuildController,
-                                     module: IdeaModule?,
-                                     modelConsumer: ProjectImportExtraModelProvider.ProjectModelConsumer) {  }
+                                     module: Model,
+                                     modelConsumer: ProjectImportModelProvider.ProjectModelConsumer) {
+  }
 }
 
 
@@ -120,8 +120,8 @@ class TestProjectResolverExtension : AbstractProjectResolverExtension() {
     buildFinished.complete(true)
   }
 
-  override fun getExtraModelProvider(): ProjectImportExtraModelProvider {
-    return TestExtraModelProvider()
+  override fun getProjectsLoadedModelProvider(): ProjectImportModelProvider {
+    return TestModelProvider()
   }
 
   override fun requiresTaskRunning(): Boolean {

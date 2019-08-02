@@ -15,7 +15,11 @@
  */
 package org.jetbrains.plugins.gradle.model;
 
-import org.gradle.tooling.model.Model;
+import org.gradle.tooling.model.BuildIdentifier;
+import org.gradle.tooling.model.BuildModel;
+import org.gradle.tooling.model.ProjectIdentifier;
+import org.gradle.tooling.model.ProjectModel;
+import org.gradle.tooling.model.idea.IdeaModule;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
@@ -29,13 +33,13 @@ import java.util.Map;
 /**
  * @author Vladislav.Soroka
  */
-public abstract class ModelsHolder<K extends Model, V> implements Serializable {
+public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel> implements Serializable {
 
-  @NotNull private final K myRootModel;
+  @NotNull private final B myRootModel;
   @NotNull private final Map<String, Object> myModelsById = new LinkedHashMap<String, Object>();
   @Nullable private ToolingSerializer mySerializer;
 
-  public ModelsHolder(@NotNull K rootModel) {
+  public ModelsHolder(@NotNull B rootModel) {
     myRootModel = rootModel;
   }
 
@@ -44,23 +48,51 @@ public abstract class ModelsHolder<K extends Model, V> implements Serializable {
   }
 
   @NotNull
-  public K getRootModel() {
+  public B getRootModel() {
     return myRootModel;
   }
 
+  /**
+   * Get model for the root build
+   */
   @Nullable
-  public <T> T getExtraProject(Class<T> modelClazz) {
-    return getExtraProject(null, modelClazz);
+  public <T> T getModel(@NotNull Class<T> modelClazz) {
+    return getModel(getRootModel(), modelClazz);
+  }
+
+  /**
+   * Get model for the specified build
+   */
+  @Nullable
+  public <T> T getModel(@NotNull B build, @NotNull Class<T> modelClazz) {
+    String key = extractMapKey(modelClazz, build.getBuildIdentifier());
+    return getModel(modelClazz, key);
+  }
+
+  /**
+   * Get model for the project
+   */
+  @Nullable
+  public <T> T getModel(@NotNull P project, @NotNull Class<T> modelClazz) {
+    ProjectIdentifier projectIdentifier;
+    if (project instanceof IdeaModule) {
+      // do not use IdeaModule#getProjectIdentifier, it returns project identifier of the root project
+      projectIdentifier = ((IdeaModule)project).getGradleProject().getProjectIdentifier();
+    }
+    else {
+      projectIdentifier = project.getProjectIdentifier();
+    }
+    String key = extractMapKey(modelClazz, projectIdentifier);
+    return getModel(modelClazz, key);
   }
 
   @Nullable
-  public <T> T getExtraProject(@Nullable V model, Class<T> modelClazz) {
-    String key = extractMapKey(modelClazz, model);
-    Object project = myModelsById.get(key);
-    if (project == null) return null;
-    if (modelClazz.isInstance(project)) {
+  private <T> T getModel(@NotNull Class<T> modelClazz, @NotNull String key) {
+    Object model = myModelsById.get(key);
+    if (model == null) return null;
+    if (modelClazz.isInstance(model)) {
       //noinspection unchecked
-      return (T)project;
+      return (T)model;
     }
     else {
       deserializeAllDataOfTheType(modelClazz);
@@ -108,12 +140,16 @@ public abstract class ModelsHolder<K extends Model, V> implements Serializable {
     return false;
   }
 
-  public void addExtraProject(@NotNull Object project, @NotNull Class modelClazz) {
-    myModelsById.put(extractMapKey(modelClazz, null), project);
+  public void addModel(@NotNull Object model, @NotNull Class modelClazz) {
+    addModel(model, modelClazz, getRootModel());
   }
 
-  public void addExtraProject(@NotNull Object project, @NotNull Class modelClazz, @Nullable V subPropject) {
-    myModelsById.put(extractMapKey(modelClazz, subPropject), project);
+  public void addModel(@NotNull Object model, @NotNull Class modelClazz, @NotNull P project) {
+    myModelsById.put(extractMapKey(modelClazz, project.getProjectIdentifier()), model);
+  }
+
+  public void addModel(@NotNull Object model, @NotNull Class modelClazz, @NotNull B build) {
+    myModelsById.put(extractMapKey(modelClazz, build.getBuildIdentifier()), model);
   }
 
   @NotNull
@@ -122,13 +158,26 @@ public abstract class ModelsHolder<K extends Model, V> implements Serializable {
   }
 
   @NotNull
-  protected abstract String extractMapKey(@NotNull Class modelClazz, @Nullable V module);
+  protected String extractMapKey(@NotNull Class modelClazz, @NotNull ProjectIdentifier projectIdentifier) {
+    String prefix = getModelKeyPrefix(modelClazz);
+    BuildIdentifier buildIdentifier = projectIdentifier.getBuildIdentifier();
+    return prefix + '/' + (buildIdentifier.getRootDir().getPath().hashCode() + projectIdentifier.getProjectPath());
+  }
 
+  @NotNull
+  protected String extractMapKey(@NotNull Class modelClazz, @NotNull BuildIdentifier buildIdentifier) {
+    String prefix = getModelKeyPrefix(modelClazz);
+    return prefix + '/' + buildIdentifier.getRootDir().getPath().hashCode() + ":";
+  }
   @Override
   public String toString() {
     return "Models{" +
            "rootModel=" + myRootModel +
            ", myModelsById=" + myModelsById +
            '}';
+  }
+
+  public boolean hasModels() {
+    return !myModelsById.isEmpty();
   }
 }

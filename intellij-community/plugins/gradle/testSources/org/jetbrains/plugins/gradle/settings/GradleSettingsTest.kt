@@ -27,7 +27,7 @@ class GradleSettingsTest : UsefulTestCase() {
     myTestFixture.setUp()
     myProject = myTestFixture.project
 
-    gradleProjectSettings = GradleProjectSettings().apply { externalProjectPath = myProject.guessProjectDir()!!.path }
+    gradleProjectSettings = GradleProjectSettings().apply { externalProjectPath = myProject.basePath }
     GradleSettings.getInstance(myProject).linkProject(gradleProjectSettings)
   }
 

@@ -2,8 +2,7 @@
 package org.jetbrains.plugins.gradle.model;
 
 import org.gradle.tooling.BuildController;
-import org.gradle.tooling.model.idea.IdeaModule;
-import org.gradle.tooling.model.idea.IdeaProject;
+import org.gradle.tooling.model.Model;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,21 +10,21 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-public final class ClassSetProjectImportExtraModelProvider implements ProjectImportExtraModelProvider {
+public final class ClassSetProjectImportModelProvider implements ProjectImportModelProvider {
   @NotNull private final Set<Class> classSet;
 
-  public ClassSetProjectImportExtraModelProvider(@NotNull Collection<Class> classes) {
+  public ClassSetProjectImportModelProvider(@NotNull Collection<Class> classes) {
     classSet = new LinkedHashSet<Class>(classes);
   }
 
   @Override
-  public void populateBuildModels(@NotNull BuildController controller, @NotNull IdeaProject project, @NotNull BuildModelConsumer consumer) {
+  public void populateBuildModels(@NotNull BuildController controller, @NotNull Model project, @NotNull BuildModelConsumer consumer) {
     // Do nothing, this provider only works on the project model level
   }
 
   @Override
   public void populateProjectModels(@NotNull BuildController controller,
-                                    @Nullable IdeaModule module,
+                                    @Nullable Model module,
                                     @NotNull ProjectModelConsumer modelConsumer) {
     for (Class<?> aClass : classSet) {
       Object instance = controller.findModel(module, aClass);

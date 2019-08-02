@@ -43,8 +43,8 @@ public class ScalaModelBuilderImplTest extends AbstractModelBuilderTest {
   public void testScalaModel() {
     DomainObjectSet<? extends IdeaModule> ideaModules = allModels.getIdeaProject().getModules();
 
-    List<ScalaModel> scalaModels = ContainerUtil.mapNotNull(ideaModules,
-                                                            (Function<IdeaModule, ScalaModel>)module -> allModels.getExtraProject(module, ScalaModel.class));
+    List<ScalaModel> scalaModels = ContainerUtil.mapNotNull(
+      ideaModules, (Function<IdeaModule, ScalaModel>)module -> allModels.getModel(module, ScalaModel.class));
 
     assertEquals(1, scalaModels.size());
     ScalaModel scalaModel = scalaModels.get(0);

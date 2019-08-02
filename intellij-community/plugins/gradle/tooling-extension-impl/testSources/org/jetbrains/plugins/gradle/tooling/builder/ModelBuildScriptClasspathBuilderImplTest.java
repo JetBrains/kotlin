@@ -47,7 +47,7 @@ public class ModelBuildScriptClasspathBuilderImplTest extends AbstractModelBuild
 
     List<BuildScriptClasspathModel> ideaModule =
       ContainerUtil.mapNotNull(ideaModules, (Function<IdeaModule, BuildScriptClasspathModel>)module -> {
-        BuildScriptClasspathModel classpathModel = allModels.getExtraProject(module, BuildScriptClasspathModel.class);
+        BuildScriptClasspathModel classpathModel = allModels.getModel(module, BuildScriptClasspathModel.class);
 
         if (module.getName().equals("moduleWithAdditionalClasspath")) {
           assertNotNull(classpathModel);
