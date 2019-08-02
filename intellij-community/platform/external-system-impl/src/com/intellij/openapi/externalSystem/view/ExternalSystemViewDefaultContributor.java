@@ -373,4 +373,14 @@ public class ExternalSystemViewDefaultContributor extends ExternalSystemViewCont
     }
     return StringUtil.notNullize(node.toString());
   }
+
+  @Override
+  public ExternalProjectsStructure.ErrorLevel getErrorLevel(DataNode<?> dataNode) {
+    if (ProjectKeys.LIBRARY_DEPENDENCY.equals(dataNode.getKey())) {
+      if (((LibraryDependencyData)dataNode.getData()).getTarget().isUnresolved()) {
+        return ExternalProjectsStructure.ErrorLevel.ERROR;
+      }
+    }
+    return super.getErrorLevel(dataNode);
+  }
 }

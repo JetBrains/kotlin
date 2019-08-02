@@ -72,6 +72,11 @@ public class ExternalProjectsViewAdapter implements ExternalProjectsView {
   }
 
   @Override
+  public ExternalProjectsStructure.ErrorLevel getErrorLevelRecursively(@NotNull DataNode node) {
+    return delegate.getErrorLevelRecursively(node);
+  }
+
+  @Override
   public Project getProject() {
     return delegate.getProject();
   }

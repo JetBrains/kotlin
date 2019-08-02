@@ -46,4 +46,8 @@ public abstract class ExternalSystemViewContributor {
   public String getDisplayName(@NotNull DataNode node) {
     return null;
   }
+
+  public ExternalProjectsStructure.ErrorLevel getErrorLevel(DataNode<?> dataNode) {
+    return ExternalProjectsStructure.ErrorLevel.NONE;
+  }
 }

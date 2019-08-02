@@ -320,12 +320,16 @@ public abstract class ExternalSystemNode<T> extends SimpleNode implements Compar
   }
 
   public ExternalProjectsStructure.ErrorLevel getChildrenErrorLevel() {
-    ExternalProjectsStructure.ErrorLevel result = ExternalProjectsStructure.ErrorLevel.NONE;
-    for (SimpleNode each : getChildren()) {
-      ExternalProjectsStructure.ErrorLevel eachLevel = ((ExternalSystemNode)each).getTotalErrorLevel();
-      if (eachLevel.compareTo(result) > 0) result = eachLevel;
+    if (myChildren == null && myDataNode != null) {
+      return getExternalProjectsView().getErrorLevelRecursively(myDataNode);
+    } else {
+      ExternalProjectsStructure.ErrorLevel result = ExternalProjectsStructure.ErrorLevel.NONE;
+      for (SimpleNode each : getChildren()) {
+        ExternalProjectsStructure.ErrorLevel eachLevel = ((ExternalSystemNode)each).getTotalErrorLevel();
+        if (eachLevel.compareTo(result) > 0) result = eachLevel;
+      }
+      return result;
     }
-    return result;
   }
 
   public void setErrorLevel(ExternalProjectsStructure.ErrorLevel level, String... errors) {

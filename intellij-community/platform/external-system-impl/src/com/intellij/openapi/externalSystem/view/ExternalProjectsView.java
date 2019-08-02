@@ -44,6 +44,8 @@ public interface ExternalProjectsView {
 
   List<ExternalSystemNode<?>> createNodes(@NotNull ExternalProjectsView externalProjectsView, @Nullable ExternalSystemNode<?> parent, @NotNull DataNode<?> dataNode);
 
+  ExternalProjectsStructure.ErrorLevel getErrorLevelRecursively(@NotNull DataNode node);
+
   Project getProject();
 
   boolean showInheritedTasks();

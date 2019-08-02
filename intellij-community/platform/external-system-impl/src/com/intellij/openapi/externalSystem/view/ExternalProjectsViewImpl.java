@@ -29,6 +29,7 @@ import com.intellij.openapi.externalSystem.util.ExternalSystemUiUtil;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.SimpleToolWindowPanel;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.WriteExternalException;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -417,6 +418,20 @@ public class ExternalProjectsViewImpl extends SimpleToolWindowPanel implements D
     }
 
     return result;
+  }
+
+  @Override
+  public ExternalProjectsStructure.ErrorLevel getErrorLevelRecursively(@NotNull DataNode node) {
+    Ref<ExternalProjectsStructure.ErrorLevel> ref = new Ref<>(ExternalProjectsStructure.ErrorLevel.NONE);
+    ExternalSystemApiUtil.visit(node, currentNode -> {
+      for (ExternalSystemViewContributor contributor : myViewContributors) {
+        ExternalProjectsStructure.ErrorLevel errorLevel = contributor.getErrorLevel(currentNode);
+        if (ref.get() == null || errorLevel.compareTo(ref.get()) > 0) {
+          ref.set(errorLevel);
+        }
+      }
+    });
+    return ref.get();
   }
 
   @Nullable
