@@ -292,7 +292,7 @@ internal fun ElementAndTextList.convertCodeToKotlin(project: Project, targetModu
 
 internal fun isNoConversionPosition(file: KtFile, offset: Int): Boolean {
     if (offset == 0) return false
-    val token = file.findElementAt(offset - 1)!!
+    val token = file.findElementAt(offset - 1) ?: return true
 
     if (token !is PsiWhiteSpace && token.endOffset != offset) return true // pasting into the middle of token
 
