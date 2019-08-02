@@ -74,14 +74,7 @@ public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel>
    */
   @Nullable
   public <T> T getModel(@NotNull P project, @NotNull Class<T> modelClazz) {
-    ProjectIdentifier projectIdentifier;
-    if (project instanceof IdeaModule) {
-      // do not use IdeaModule#getProjectIdentifier, it returns project identifier of the root project
-      projectIdentifier = ((IdeaModule)project).getGradleProject().getProjectIdentifier();
-    }
-    else {
-      projectIdentifier = project.getProjectIdentifier();
-    }
+    ProjectIdentifier projectIdentifier = getProjectIdentifier(project);
     String key = extractMapKey(modelClazz, projectIdentifier);
     return getModel(modelClazz, key);
   }
@@ -145,7 +138,8 @@ public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel>
   }
 
   public void addModel(@NotNull Object model, @NotNull Class modelClazz, @NotNull P project) {
-    myModelsById.put(extractMapKey(modelClazz, project.getProjectIdentifier()), model);
+    ProjectIdentifier projectIdentifier = getProjectIdentifier(project);
+    myModelsById.put(extractMapKey(modelClazz, projectIdentifier), model);
   }
 
   public void addModel(@NotNull Object model, @NotNull Class modelClazz, @NotNull B build) {
@@ -153,22 +147,35 @@ public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel>
   }
 
   @NotNull
-  protected String getModelKeyPrefix(@NotNull Class modelClazz) {
+  private static String getModelKeyPrefix(@NotNull Class modelClazz) {
     return modelClazz.getSimpleName() + modelClazz.getName().hashCode();
   }
 
   @NotNull
-  protected String extractMapKey(@NotNull Class modelClazz, @NotNull ProjectIdentifier projectIdentifier) {
+  private static String extractMapKey(@NotNull Class modelClazz, @NotNull ProjectIdentifier projectIdentifier) {
     String prefix = getModelKeyPrefix(modelClazz);
     BuildIdentifier buildIdentifier = projectIdentifier.getBuildIdentifier();
     return prefix + '/' + (buildIdentifier.getRootDir().getPath().hashCode() + projectIdentifier.getProjectPath());
   }
 
   @NotNull
-  protected String extractMapKey(@NotNull Class modelClazz, @NotNull BuildIdentifier buildIdentifier) {
+  private static String extractMapKey(@NotNull Class modelClazz, @NotNull BuildIdentifier buildIdentifier) {
     String prefix = getModelKeyPrefix(modelClazz);
     return prefix + '/' + buildIdentifier.getRootDir().getPath().hashCode() + ":";
   }
+
+  private ProjectIdentifier getProjectIdentifier(@NotNull P project) {
+    ProjectIdentifier projectIdentifier;
+    if (project instanceof IdeaModule) {
+      // do not use IdeaModule#getProjectIdentifier, it returns project identifier of the root project
+      projectIdentifier = ((IdeaModule)project).getGradleProject().getProjectIdentifier();
+    }
+    else {
+      projectIdentifier = project.getProjectIdentifier();
+    }
+    return projectIdentifier;
+  }
+
   @Override
   public String toString() {
     return "Models{" +
@@ -177,7 +184,7 @@ public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel>
            '}';
   }
 
-  public boolean hasModels() {
+  boolean hasModels() {
     return !myModelsById.isEmpty();
   }
 }
