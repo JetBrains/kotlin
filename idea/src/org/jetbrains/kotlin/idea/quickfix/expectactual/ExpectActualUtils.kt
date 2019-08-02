@@ -11,6 +11,7 @@ import com.intellij.psi.JavaDirectoryService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
+import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
 import org.jetbrains.kotlin.idea.core.findOrCreateDirectoryForPackage
 import org.jetbrains.kotlin.idea.core.getFqNameWithImplicitPrefix
@@ -23,11 +24,8 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.idea.util.hasDeclarationOf
-import org.jetbrains.kotlin.idea.util.hasInlineModifier
-import org.jetbrains.kotlin.idea.util.isEffectivelyActual
-import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -42,6 +40,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): KtFile? {
     val fileName = declaration.name ?: return null
@@ -123,12 +122,13 @@ internal fun KtPsiFactory.generateClassOrObject(
         val superType = context[BindingContext.TYPE, originalEntry.typeReference]
         val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
         if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
+            val entryText = IdeDescriptorRenderers.SOURCE_CODE.renderType(superType) ?: return@forEach
             val newGeneratedEntry = if (generateExpectClass) {
-                createSuperTypeEntry(generatedEntry.typeReference!!.text)
+                createSuperTypeEntry(entryText)
             } else {
-                createSuperTypeCallEntry(generatedEntry.typeReference!!.text + "()")
+                createSuperTypeCallEntry("$entryText()")
             }
-            generatedEntry.replace(newGeneratedEntry)
+            generatedEntry.replace(newGeneratedEntry).safeAs<KtElement>()?.addToBeShortenedDescendantsToWaitingSet()
         }
     }
     if (generatedClass.isAnnotation()) {
