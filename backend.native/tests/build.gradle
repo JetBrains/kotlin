@@ -89,7 +89,8 @@ project.convention.plugins.executor = ExecutorServiceKt.create(project)
 ext.konanNoRun = true
 
 // Enable two-stage compilation if the test_two_stage property is set.
-if (project.hasProperty("test_two_stage")) {
+ext.twoStageEnabled = project.hasProperty("test_two_stage")
+if (twoStageEnabled) {
     tasks.withType(KonanCompileNativeBinary.class) {
         enableTwoStageCompilation = true
     }
@@ -3677,11 +3678,21 @@ standaloneTest("coverage_basic_program") {
     description = "Test that `-Xcoverage` generates correct __llvm_coverage information"
 
     def dir = buildDir.absolutePath
-    
-    flags = ["-Xcoverage-file=$dir/program.profraw", "-Xcoverage", "-entry", "coverage.basic.program.main"]
+    def coverageFile = "$dir/program.profraw"
+
+    flags = ["-Xcoverage-file=$coverageFile", "-Xcoverage", "-entry", "coverage.basic.program.main"]
     source = "$projectDir/coverage/basic/program/main.kt"
 
+    doFirst { file(coverageFile).delete() }
+
     doLast {
+        if (twoStageEnabled) {
+            // If two-stage compilation is enabled, no sources are passed to the compiler when a final binary is generated.
+            // So according to -Xcoverage flag semantics it must provide no coverage info.
+            assert !file(coverageFile).exists()
+            return
+        }
+
         execLlvm("llvm-profdata") {
             args "merge"
             args "$dir/program.profraw"
