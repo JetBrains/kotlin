@@ -109,26 +109,8 @@ internal fun KtPsiFactory.generateClassOrObject(
     project: Project,
     generateExpectClass: Boolean,
     originalClass: KtClassOrObject,
-    outerClasses: List<KtClassOrObject> = emptyList(),
-    // If null, all class declarations are missed (so none from them exists)
-    missedDeclarations: List<KtDeclaration>? = null
+    outerClasses: List<KtClassOrObject> = emptyList()
 ): KtClassOrObject {
-    fun areCompatible(first: KtFunction, second: KtFunction) =
-        first.valueParameters.size == second.valueParameters.size &&
-                first.valueParameters.zip(second.valueParameters).all { (firstParam, secondParam) ->
-                    firstParam.name == secondParam.name && firstParam.typeReference?.text == secondParam.typeReference?.text
-                }
-
-    fun KtDeclaration.exists() =
-        missedDeclarations != null && missedDeclarations.none {
-            name == it.name && when (this) {
-                is KtConstructor<*> -> it is KtConstructor<*> && areCompatible(this, it)
-                is KtNamedFunction -> it is KtNamedFunction && areCompatible(this, it)
-                is KtProperty -> it is KtProperty || it is KtParameter && it.hasValOrVar()
-                else -> this.javaClass == it.javaClass
-            }
-        }
-
     val generatedClass = createClassHeaderCopyByText(originalClass)
     val context = originalClass.analyzeWithContent()
 
@@ -169,7 +151,8 @@ internal fun KtPsiFactory.generateClassOrObject(
             generatedClass.addModifier(KtTokens.ACTUAL_KEYWORD)
         }
     }
-    declLoop@ for (originalDeclaration in originalClass.declarations.filter { !it.exists() }) {
+
+    declLoop@ for (originalDeclaration in originalClass.declarations) {
         val descriptor = originalDeclaration.toDescriptor() ?: continue
         if (generateExpectClass && !originalDeclaration.isEffectivelyActual(false)) continue
         val generatedDeclaration: KtDeclaration = when (originalDeclaration) {
@@ -206,7 +189,6 @@ internal fun KtPsiFactory.generateClassOrObject(
         generatedClass is KtClass
         && originalPrimaryConstructor != null
         && (!generateExpectClass || originalPrimaryConstructor.hasActualModifier())
-        && !originalPrimaryConstructor.exists()
     ) {
         val descriptor = originalPrimaryConstructor.toDescriptor()
         if (descriptor is FunctionDescriptor) {
