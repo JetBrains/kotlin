@@ -644,7 +644,9 @@ object KotlinIntroduceVariableHandler : RefactoringActionHandler {
                     return occurrence.extractableSubstringInfo?.contentRange ?: occurrence.textRange
                 }
             }
-            chooser.showChooser(expression, allOccurrences, callback)
+            ApplicationManager.getApplication().invokeLater {
+                chooser.showChooser(expression, allOccurrences, callback)
+            }
         }
         else {
             callback.pass(OccurrencesChooser.ReplaceChoice.ALL)
