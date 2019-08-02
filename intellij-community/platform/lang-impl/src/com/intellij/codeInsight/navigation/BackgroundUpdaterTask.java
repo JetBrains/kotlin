@@ -47,5 +47,12 @@ public abstract class BackgroundUpdaterTask extends BackgroundUpdaterTaskBase<Ps
   protected Usage createUsage(PsiElement element) {
     return new UsageInfo2UsageAdapter(new UsageInfo(element));
   }
+
+  @Override
+  public boolean updateComponent(@NotNull PsiElement element, @Nullable Comparator comparator) {
+    //Ensures that method with signature `updateComponent(PsiElement, Comparator)` is present in bytecode,
+    //which is necessary for binary compatibility with some external plugins.
+    return super.updateComponent(element, comparator);
+  }
 }
 
