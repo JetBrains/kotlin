@@ -1,12 +1,10 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
-
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.preview;
 
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.EditorFactoryEvent;
 import com.intellij.openapi.editor.event.EditorFactoryListener;
 import com.intellij.openapi.editor.event.EditorMouseEvent;
@@ -34,7 +32,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
-public class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionListener {
+final class ImageOrColorPreviewManager implements Disposable, EditorMouseMotionListener, EditorFactoryListener {
   private static final Logger LOG = Logger.getInstance(ImageOrColorPreviewManager.class);
 
   private static final Key<KeyListener> EDITOR_LISTENER_ADDED = Key.create("previewManagerListenerAdded");
@@ -48,29 +46,24 @@ public class ImageOrColorPreviewManager implements Disposable, EditorMouseMotion
   @Nullable
   private Collection<PsiElement> myElements;
 
-  public ImageOrColorPreviewManager(EditorFactory editorFactory) {
-    // we don't use multicaster because we don't want to serve all editors - only supported
-    editorFactory.addEditorFactoryListener(new EditorFactoryListener() {
-      @Override
-      public void editorCreated(@NotNull EditorFactoryEvent event) {
-        registerListeners(event.getEditor());
-      }
+  @Override
+  public void editorCreated(@NotNull EditorFactoryEvent event) {
+    registerListeners(event.getEditor());
+  }
 
-      @Override
-      public void editorReleased(@NotNull EditorFactoryEvent event) {
-        Editor editor = event.getEditor();
-        if (editor.isOneLineMode()) {
-          return;
-        }
+  @Override
+  public void editorReleased(@NotNull EditorFactoryEvent event) {
+    Editor editor = event.getEditor();
+    if (editor.isOneLineMode()) {
+      return;
+    }
 
-        KeyListener keyListener = EDITOR_LISTENER_ADDED.get(editor);
-        if (keyListener != null) {
-          EDITOR_LISTENER_ADDED.set(editor, null);
-          editor.getContentComponent().removeKeyListener(keyListener);
-          editor.removeEditorMouseMotionListener(ImageOrColorPreviewManager.this);
-        }
-      }
-    }, this);
+    KeyListener keyListener = EDITOR_LISTENER_ADDED.get(editor);
+    if (keyListener != null) {
+      EDITOR_LISTENER_ADDED.set(editor, null);
+      editor.getContentComponent().removeKeyListener(keyListener);
+      editor.removeEditorMouseMotionListener(this);
+    }
   }
 
   private void registerListeners(final Editor editor) {
