@@ -5,7 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.hint.*;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.navigation.GenericBackgroundUpdaterTask;
+import com.intellij.codeInsight.navigation.BackgroundUpdaterTask;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.DataManager;
@@ -20,13 +20,14 @@ import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.GenericListComponentUpdater;
+import com.intellij.openapi.ui.ListComponentUpdater;
 import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiElement;
 import com.intellij.reference.SoftReference;
 import com.intellij.ui.popup.AbstractPopup;
 import com.intellij.ui.popup.PopupPositionManager;
@@ -214,7 +215,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
     if (!session.needUpdateInBackground()) return;  // already found
     final ImplementationsUpdaterTask task = new ImplementationsUpdaterTask(session, title, component);
-    task.init(popup, new ImplementationViewComponentUpdater(component, session.elementRequiresIncludeSelf() ? 1 : 0));
+    task.init(popup, new ImplementationViewComponentUpdater(component, session, session.elementRequiresIncludeSelf() ? 1 : 0), usageView);
 
     myTaskRef = new WeakReference<>(task);
     ProgressManager.getInstance().runProcessWithProgressAsynchronously(task, new BackgroundableProcessIndicator(task));
@@ -228,12 +229,14 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     return false;
   }
 
-  private static class ImplementationViewComponentUpdater implements GenericListComponentUpdater<ImplementationViewElement> {
+  private static class ImplementationViewComponentUpdater implements ListComponentUpdater {
     private final ImplementationViewComponent myComponent;
+    private final ImplementationViewSession mySession;
     private final int myIncludeSelfIdx;
 
-    ImplementationViewComponentUpdater(ImplementationViewComponent component, int includeSelfIdx) {
+    ImplementationViewComponentUpdater(ImplementationViewComponent component, ImplementationViewSession session, int includeSelfIdx) {
       myComponent = component;
+      mySession = session;
       myIncludeSelfIdx = includeSelfIdx;
     }
 
@@ -243,20 +246,20 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     }
 
     @Override
-    public void replaceModel(@NotNull List<? extends ImplementationViewElement> data) {
+    public void replaceModel(@NotNull List<? extends PsiElement> data) {
       final ImplementationViewElement[] elements = myComponent.getElements();
       final int includeSelfIdx = myIncludeSelfIdx;
       final int startIdx = elements.length - includeSelfIdx;
       List<ImplementationViewElement> result = new ArrayList<>();
       Collections.addAll(result, elements);
-      for (ImplementationViewElement element : data.subList(startIdx, data.size())) {
-        result.add(element);
+      for (PsiElement element : data.subList(startIdx, data.size())) {
+        result.add(mySession.createImplementationViewElement(element));
       }
       myComponent.update(result, myComponent.getIndex());
     }
   }
 
-  private static class ImplementationsUpdaterTask extends GenericBackgroundUpdaterTask<ImplementationViewElement> {
+  private static class ImplementationsUpdaterTask extends BackgroundUpdaterTask {
     private final String myCaption;
     private final ImplementationViewSession mySession;
     private final ImplementationViewComponent myComponent;

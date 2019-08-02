@@ -195,7 +195,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
   @NotNull
   @Override
   public List<ImplementationViewElement> searchImplementationsInBackground(@NotNull ProgressIndicator indicator,
-                                                                           @NotNull final Processor<? super ImplementationViewElement> processor) {
+                                                                           @NotNull final Processor<? super PsiElement> processor) {
     final ImplementationSearcher.BackgroundableImplementationSearcher implementationSearcher =
       new ImplementationSearcher.BackgroundableImplementationSearcher() {
         @Override
@@ -205,7 +205,7 @@ public class PsiImplementationViewSession implements ImplementationViewSession {
 
         @Override
         protected void processElement(PsiElement element) {
-          if (!processor.process(new PsiImplementationViewElement(element))) {
+          if (!processor.process(element)) {
             indicator.cancel();
           }
           indicator.checkCanceled();
