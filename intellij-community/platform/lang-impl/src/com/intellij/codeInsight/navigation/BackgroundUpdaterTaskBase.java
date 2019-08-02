@@ -18,7 +18,7 @@ import org.jetbrains.annotations.TestOnly;
 
 import java.util.*;
 
-public abstract class GenericBackgroundUpdaterTask<T> extends Task.Backgroundable {
+public abstract class BackgroundUpdaterTaskBase<T> extends Task.Backgroundable {
   protected JBPopup myPopup;
   private GenericListComponentUpdater<T> myUpdater;
   private Ref<? extends UsageView> myUsageView;
@@ -31,7 +31,7 @@ public abstract class GenericBackgroundUpdaterTask<T> extends Task.Backgroundabl
   private volatile boolean myFinished;
   private volatile ProgressIndicator myIndicator;
 
-  public GenericBackgroundUpdaterTask(@Nullable Project project, @NotNull String title, @Nullable Comparator<T> comparator) {
+  public BackgroundUpdaterTaskBase(@Nullable Project project, @NotNull String title, @Nullable Comparator<T> comparator) {
     super(project, title);
     myData = comparator == null ? ContainerUtil.newSmartList() : new TreeSet<>(comparator);
   }
@@ -67,7 +67,7 @@ public abstract class GenericBackgroundUpdaterTask<T> extends Task.Backgroundabl
   }
 
   /**
-   * @deprecated Use {@link #GenericBackgroundUpdaterTask(Project, String, Comparator)} and {@link #updateComponent(T)} instead
+   * @deprecated Use {@link #BackgroundUpdaterTaskBase(Project, String, Comparator)} and {@link #updateComponent(T)} instead
    */
   @Deprecated
   public boolean updateComponent(@NotNull T element, @Nullable Comparator comparator) {

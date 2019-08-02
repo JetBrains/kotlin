@@ -32,7 +32,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public abstract class BackgroundUpdaterTask extends GenericBackgroundUpdaterTask<PsiElement> {
+public abstract class BackgroundUpdaterTask extends BackgroundUpdaterTaskBase<PsiElement> {
   private Ref<? extends UsageView> myUsageView;
 
   public BackgroundUpdaterTask(@Nullable Project project, @NotNull String title, @Nullable Comparator<PsiElement> comparator) {

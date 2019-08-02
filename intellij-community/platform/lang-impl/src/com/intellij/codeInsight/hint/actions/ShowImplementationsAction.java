@@ -5,7 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.documentation.DocumentationManager;
 import com.intellij.codeInsight.hint.*;
 import com.intellij.codeInsight.lookup.LookupManager;
-import com.intellij.codeInsight.navigation.GenericBackgroundUpdaterTask;
+import com.intellij.codeInsight.navigation.BackgroundUpdaterTaskBase;
 import com.intellij.codeInsight.navigation.ImplementationSearcher;
 import com.intellij.featureStatistics.FeatureUsageTracker;
 import com.intellij.ide.DataManager;
@@ -256,7 +256,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     }
   }
 
-  private static class ImplementationsUpdaterTask extends GenericBackgroundUpdaterTask<ImplementationViewElement> {
+  private static class ImplementationsUpdaterTask extends BackgroundUpdaterTaskBase<ImplementationViewElement> {
     private final String myCaption;
     private final ImplementationViewSession mySession;
     private final ImplementationViewComponent myComponent;
