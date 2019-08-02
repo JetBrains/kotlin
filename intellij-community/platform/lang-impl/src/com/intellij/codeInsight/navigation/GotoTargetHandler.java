@@ -152,7 +152,7 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
       withHintUpdateSupply().
       setMovable(true).
       setCancelCallback(() -> {
-        final BackgroundUpdaterTask task = gotoData.listUpdaterTask;
+        final PsiBackgroundUpdaterTask task = gotoData.listUpdaterTask;
         if (task != null) {
           task.cancelTask();
         }
@@ -276,7 +276,7 @@ public abstract class GotoTargetHandler implements CodeInsightActionHandler {
     public final List<AdditionalAction> additionalActions;
 
     private boolean hasDifferentNames;
-    public BackgroundUpdaterTask listUpdaterTask;
+    public PsiBackgroundUpdaterTask listUpdaterTask;
     protected final Set<String> myNames;
     public Map<Object, PsiElementListCellRenderer> renderers = new HashMap<>();
 
