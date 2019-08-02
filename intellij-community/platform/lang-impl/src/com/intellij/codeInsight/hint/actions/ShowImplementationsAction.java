@@ -279,7 +279,7 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
 
     @Override
     protected Usage createUsage(ImplementationViewElement element) {
-      return mySession.createUsage(element);
+      return element.getUsage();
     }
 
 
