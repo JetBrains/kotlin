@@ -249,9 +249,11 @@ public class ProjectJdkTableImpl extends ProjectJdkTable implements ExportableCo
   public Element getState() {
     Element element = new Element("state");
     for (Sdk jdk : mySdks) {
-      Element e = new Element(ELEMENT_JDK);
-      ((ProjectJdkImpl)jdk).writeExternal(e);
-      element.addContent(e);
+      if (jdk instanceof ProjectJdkImpl) {
+        Element e = new Element(ELEMENT_JDK);
+        ((ProjectJdkImpl)jdk).writeExternal(e);
+        element.addContent(e);
+      }
     }
     return element;
   }
