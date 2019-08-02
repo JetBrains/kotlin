@@ -1303,6 +1303,8 @@ class NewMultiplatformIT : BaseGradleIT() {
             build("tasks") {
                 assertSuccessful()
                 assertTrue(output.contains("Kotlin/Native distribution: "))
+                // Check for KT-30258.
+                assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
 
             build("tasks", "-Pkotlin.native.restrictedDistribution=true") {
@@ -1346,6 +1348,17 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertContainsRegex("Kotlin/Native distribution: .*kotlin-native-(macos|linux|windows)-1\\.3-eap-10779".toRegex())
                 assertContains("Project property 'org.jetbrains.kotlin.native.version' is deprecated")
+            }
+        }
+
+        // Gradle 5.0 introduced a new API for Ivy repository layouts.
+        // MPP plugin uses this API to download K/N if Gradle version is >= 5.0.
+        // Check this too (see KT-30258).
+        with(Project("new-mpp-native-libraries", GradleVersionRequired.AtLeast("5.0"))) {
+            build("tasks", "-Pkotlin.native.version=1.3.50-eap-11606") {
+                assertSuccessful()
+                assertTrue(output.contains("Kotlin/Native distribution: "))
+                assertFalse(output.contains("Deprecated Gradle features were used in this build, making it incompatible with Gradle 6.0."))
             }
         }
     }
