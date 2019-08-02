@@ -36,10 +36,9 @@ private fun validationCallback(context: JsIrBackendContext, module: IrModuleFrag
 val validationAction = makeVerifyAction(::validationCallback)
 
 fun dumpDts(actionState: ActionState, data: IrModuleFragment, context: JsIrBackendContext): String? {
-    val exports = ExportLowering(context)
+    val exports = ExportGenerator(context)
     val exportedModule = exports.generateExport(data)
-    val prefix = "type Nullable<T> = T | null | undefined\n"
-    val content = prefix + exportedModule.toTypeScript()
+    val content = exportedModule.toTypeScript()
     val contentHash = content.hashCode()
     if (contentHash == context.previousDtsHash) return null
     context.previousDtsHash = contentHash
@@ -91,14 +90,6 @@ private val validateIrAfterLowering = makeCustomJsModulePhase(
     { context, module -> validationCallback(context, module) },
     name = "ValidateIrAfterLowering",
     description = "Validate IR after lowering"
-)
-
-private val moveBodilessDeclarationsToSeparatePlacePhase = makeCustomJsModulePhase(
-    { context, module ->
-        moveBodilessDeclarationsToSeparatePlace(context, module)
-    },
-    name = "MoveBodilessDeclarationsToSeparatePlace",
-    description = "Move `external` and `built-in` declarations into separate place to make the following lowerings do not care about them"
 )
 
 private val expectDeclarationsRemovingPhase = makeJsModulePhase(
@@ -434,7 +425,6 @@ val jsPhases = namedIrModulePhase(
             primaryConstructorLoweringPhase then
             initializersLoweringPhase then
             // Common prefix ends
-            moveBodilessDeclarationsToSeparatePlacePhase then
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then

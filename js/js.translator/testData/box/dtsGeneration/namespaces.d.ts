@@ -1,5 +1,8 @@
 type Nullable<T> = T | null | undefined
 
+declare interface C3 {
+}
+
 declare namespace foo.bar.baz {
     function box(): string
 
@@ -16,9 +19,6 @@ declare namespace a.b {
     }
 
     function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): void
-}
-
-declare interface C3 {
 }
 
 declare function f(x1: foo.bar.baz.C1, x2: a.b.C2, x3: C3): void

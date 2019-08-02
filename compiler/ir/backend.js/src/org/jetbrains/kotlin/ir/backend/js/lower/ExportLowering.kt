@@ -23,23 +23,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 
 class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
-    init {
-        // println("type Nullable<T> = T | null | undefined\n")
-    }
-
-    private lateinit var currentNamespace: FqName
-
     override fun lower(irFile: IrFile) {
     }
+}
 
-    fun generateExport(irFile: IrPackageFragment): List<ExportedDeclaration> {
+class ExportGenerator(val context: JsIrBackendContext) {
+    private fun generateExport(irFile: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = irFile.fqName
-        currentNamespace = namespaceFqName
         val exports = irFile.declarations.flatMap { declaration -> exportDeclaration(declaration) }
 
         if (exports.isNotEmpty()) {
-            // println("// Exports for file ${irFile.name}\n")
-
             if (namespaceFqName.isRoot) {
                 return exports
             } else {
@@ -73,11 +66,6 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
         if (declaration is IrFunction && declaration.isInline && declaration.typeParameters.any { it.isReified })
             return emptyList()
 
-        if (declaration.origin == IrDeclarationOrigin.BRIDGE)
-            return emptyList()
-
-        if (declaration.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER)
-            return emptyList()
 
         val exportedDeclarations = when (declaration) {
             is IrSimpleFunction -> exportFunction(declaration)
@@ -92,15 +80,17 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
     }
 
     private fun exportFunction(function: IrSimpleFunction): List<ExportedDeclaration> {
-//        if (function.overriddenSymbols.isNotEmpty())
-//            return emptyList()
-
         if (function.isSuspend)
             return emptyList()
-
-
-        if (function.isFakeOverride) // && function.overriddenSymbols.any { it.owner.isExported() })
+        if (function.isFakeOverride)
             return emptyList()
+
+        if (function.origin == IrDeclarationOrigin.BRIDGE ||
+            function.origin == JsLoweredDeclarationOrigin.BRIDGE_TO_EXTERNAL_FUNCTION ||
+            function.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+        ) {
+            return emptyList()
+        }
 
         val correspondingProperty = function.correspondingPropertySymbol?.owner
         if (correspondingProperty != null) {
@@ -203,13 +193,21 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
         if (klass.isCompanion) return emptyList()
         if (klass.isInline) return emptyList()
 
-//        // TODO: Exceptions
+//      // TODO: Exceptions
         if (klass.fqNameWhenAvailable in setOf(
                 FqName("kotlin.Error"),
                 FqName("kotlin.AssertionError"),
                 FqName("kotlin.NotImplementedError")
             ))
             return emptyList()
+
+        if (klass.modality == Modality.OPEN) {
+            for (declaration in klass.declarations) {
+                if (declaration is IrSimpleFunction && declaration.modality == Modality.ABSTRACT) {
+                    1 + 1
+                }
+            }
+        }
 
         val name = klass.getExportedIdentifier()
 
@@ -330,7 +328,7 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
                             klass.isInline -> ExportedType.ErrorType("inline class ${klass.fqNameWhenAvailable}")
                             else ->
                                 ExportedType.ClassType(
-                                    shortenFqName(klass.fqNameWhenAvailable!!),
+                                    klass.fqNameWhenAvailable!!.asString(),
                                     type.arguments.map { exportTypeArgument(it) }
                                 )
                         }
@@ -341,26 +339,6 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
         }
 
         return exportedType.withNullability(isNullable)
-    }
-
-    private fun shortenFqName(name: FqName): String {
-        return name.asString()
-        val namespaceSegments = currentNamespace.pathSegments()
-        val nameSegments = name.pathSegments()
-
-        var commonPrefixSize = 0
-
-        for ((index, segment) in name.pathSegments().withIndex()) {
-            if (index < namespaceSegments.size && segment == namespaceSegments[index]) {
-                commonPrefixSize++
-            } else {
-                break
-            }
-        }
-
-        return nameSegments
-            .takeLast(nameSegments.size - commonPrefixSize)
-            .joinToString(".")
     }
 
     private fun IrDeclarationWithName.getExportedIdentifier(): String =
@@ -376,6 +354,11 @@ class ExportLowering(val context: JsIrBackendContext) : FileLoweringPass {
 
         if (isJsExport())
             return true
+
+        if (this is IrSimpleFunction) {
+            if (correspondingPropertySymbol?.owner?.isJsExport() == true)
+                return true
+        }
 
         return when (val parent = parent) {
             is IrDeclarationWithName -> parent.isExported()

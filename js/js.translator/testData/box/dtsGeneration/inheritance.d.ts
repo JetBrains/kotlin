@@ -1,8 +1,6 @@
 type Nullable<T> = T | null | undefined
 
 declare namespace foo {
-    function box(): string
-
     interface I<T, S, U> {
         x: T;
 
@@ -18,6 +16,10 @@ declare namespace foo {
 
         z(z: number): void
     }
+}
+
+declare namespace foo {
+    function box(): string
 
     abstract class AC implements foo.I2 {
         constructor()

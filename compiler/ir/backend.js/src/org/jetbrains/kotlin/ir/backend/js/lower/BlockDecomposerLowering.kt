@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.isElseBranch
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
@@ -15,7 +16,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
+import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
@@ -60,7 +64,7 @@ class BlockDecomposerLowering(context: JsIrBackendContext) : DeclarationContaine
                 irField.name.asString() + "\$init\$",
                 expression.type,
                 container,
-                irField.visibility
+                Visibilities.INTERNAL
             )
 
             val newBody = toBlockBody(initFunction)

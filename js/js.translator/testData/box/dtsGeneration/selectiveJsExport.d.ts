@@ -1,6 +1,16 @@
 type Nullable<T> = T | null | undefined
 
 declare namespace foo {
+    interface ExportedInternalInterface {
+    }
+}
+
+declare namespace foo {
+    interface FileLevelExportedExternalInterface {
+    }
+}
+
+declare namespace foo {
     function box(): string
 
     const exportedVal: number;
@@ -9,9 +19,6 @@ declare namespace foo {
 
     class ExportedClass {
         constructor()
-    }
-
-    interface ExportedInternalInterface {
     }
 }
 
@@ -22,8 +29,5 @@ declare namespace foo {
 
     class FileLevelExportedClass {
         constructor()
-    }
-
-    interface FileLevelExportedExternalInterface {
     }
 }
