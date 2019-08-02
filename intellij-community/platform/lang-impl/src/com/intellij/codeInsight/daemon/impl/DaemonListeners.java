@@ -319,11 +319,14 @@ public class DaemonListeners implements Disposable {
       }
     }, this);
 
-    ModalityStateListener modalityStateListener = __ -> {
-      // before showing dialog we are in non-modal context yet, and before closing dialog we are still in modal context
-      boolean inModalContext = Registry.is("ide.perProjectModality") || LaterInvocator.isInModalContext();
-      stopDaemon(inModalContext, "Modality change. Was modal: " + inModalContext);
-      myDaemonCodeAnalyzer.setUpdateByTimerEnabled(inModalContext);
+    ModalityStateListener modalityStateListener = new ModalityStateListener() {
+      @Override
+      public void beforeModalityStateChanged(boolean __) {
+        // before showing dialog we are in non-modal context yet, and before closing dialog we are still in modal context
+        boolean inModalContext = Registry.is("ide.perProjectModality") || LaterInvocator.isInModalContext();
+        DaemonListeners.this.stopDaemon(inModalContext, "Modality change. Was modal: " + inModalContext);
+        myDaemonCodeAnalyzer.setUpdateByTimerEnabled(inModalContext);
+      }
     };
     LaterInvocator.addModalityStateListener(modalityStateListener,this);
 
