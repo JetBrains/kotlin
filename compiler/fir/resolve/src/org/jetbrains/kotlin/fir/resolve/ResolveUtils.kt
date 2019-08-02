@@ -199,17 +199,27 @@ fun FirFunction.constructFunctionalTypeRef(session: FirSession): FirResolvedType
         is FirAnonymousFunction -> receiverTypeRef
         else -> null
     }
-    val receiverType = receiverTypeRef?.coneTypeUnsafe<ConeKotlinType>()
     val parameters = valueParameters.map {
         it.returnTypeRef.coneTypeSafe<ConeKotlinType>() ?: ConeKotlinErrorType("No type for parameter")
     }
     val rawReturnType = (this as FirTypedDeclaration).returnTypeRef.coneTypeUnsafe<ConeKotlinType>()
+
+    val functionalType = createFunctionalType(session, parameters, receiverTypeRef?.coneTypeUnsafe(), rawReturnType)
+
+    return FirResolvedTypeRefImpl(psi, functionalType)
+}
+
+fun createFunctionalType(
+    session: FirSession,
+    parameters: List<ConeKotlinType>,
+    receiverType: ConeKotlinType?,
+    rawReturnType: ConeKotlinType
+): ConeLookupTagBasedType {
     val receiverAndParameterTypes = listOfNotNull(receiverType) + parameters + listOf(rawReturnType)
 
     val functionalTypeId = StandardClassIds.byName("Function${receiverAndParameterTypes.size - 1}")
     val functionalType = functionalTypeId(session.service()).constructType(receiverAndParameterTypes.toTypedArray(), isNullable = false)
-
-    return FirResolvedTypeRefImpl(psi, functionalType)
+    return functionalType
 }
 
 fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifier): FirTypeRef {
