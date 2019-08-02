@@ -5,13 +5,10 @@
 
 package org.jetbrains.kotlin.fir.expressions
 
-import org.jetbrains.kotlin.fir.FirReference
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
-interface FirQualifiedAccess : FirStatement {
-    val calleeReference: FirReference
-
+interface FirQualifiedAccess : FirResolvable {
     val safe: Boolean get() = false
 
     val explicitReceiver: FirExpression? get() = null

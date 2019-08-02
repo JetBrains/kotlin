@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzer
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -48,7 +47,7 @@ fun PostponedArgumentsAnalyzer.Context.addSubsystemFromExpression(expression: Fi
     }
 }
 
-internal fun FirQualifiedAccess.candidate(): Candidate? {
+internal fun FirResolvable.candidate(): Candidate? {
     return when (val callee = this.calleeReference) {
         is FirNamedReferenceWithCandidate -> return callee.candidate
         else -> null

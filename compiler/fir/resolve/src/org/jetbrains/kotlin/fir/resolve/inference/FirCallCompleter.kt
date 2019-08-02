@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.impl.FirValueParameterImpl
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -35,7 +36,7 @@ class FirCallCompleter(
     private val transformer: FirBodyResolveTransformer,
     private val inferenceComponents: InferenceComponents
 ) : BodyResolveComponents by transformer {
-    fun <T : FirQualifiedAccess> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
+    fun <T : FirResolvable> completeCall(call: T, expectedTypeRef: FirTypeRef?): T {
         val typeRef = typeFromCallee(call)
         if (typeRef.type is ConeKotlinErrorType) {
             if (call is FirExpression) {
@@ -47,6 +48,10 @@ class FirCallCompleter(
         val initialSubstitutor = candidate.substitutor
 
         val initialType = initialSubstitutor.substituteOrSelf(typeRef.type)
+
+        if (call is FirExpression) {
+            call.resultType = typeRef.resolvedTypeFromPrototype(initialType)
+        }
 
         if (expectedTypeRef is FirResolvedTypeRef) {
             candidate.system.addSubtypeConstraint(initialType, expectedTypeRef.type, SimpleConstraintSystemConstraintPosition)

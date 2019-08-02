@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.resolve.inference.returnExpressions
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.types.*
@@ -71,14 +71,14 @@ fun resolveArgumentExpression(
 
 fun resolveSubCallArgument(
     csBuilder: ConstraintSystemBuilder,
-    argument: FirFunctionCall,
+    argument: FirResolvable,
     expectedType: ConeKotlinType,
     sink: CheckerSink,
     isReceiver: Boolean,
     isSafeCall: Boolean,
     typeProvider: (FirExpression) -> FirTypeRef?
 ) {
-    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument, expectedType, sink, isReceiver, isSafeCall, typeProvider)
+    val candidate = argument.candidate() ?: return resolvePlainExpressionArgument(csBuilder, argument as FirExpression, expectedType, sink, isReceiver, isSafeCall, typeProvider)
     val type = sink.components.returnTypeCalculator.tryCalculateReturnType(candidate.symbol.firUnsafe()).coneTypeUnsafe<ConeKotlinType>()
     val argumentType = candidate.substitutor.substituteOrSelf(type)
     resolvePlainArgumentType(csBuilder, argumentType, expectedType, sink, isReceiver, isSafeCall)
