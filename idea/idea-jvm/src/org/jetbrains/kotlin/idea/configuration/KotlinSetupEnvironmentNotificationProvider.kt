@@ -5,18 +5,14 @@
 
 package org.jetbrains.kotlin.idea.configuration
 
-import com.intellij.ProjectTopics
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectBundle
-import com.intellij.openapi.roots.ModuleRootEvent
-import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.ModuleRootManager
 import com.intellij.openapi.roots.ModuleRootModificationUtil
 import com.intellij.openapi.roots.ui.configuration.ProjectSettingsService
-import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.ListPopup
 import com.intellij.openapi.ui.popup.PopupStep
@@ -39,18 +35,7 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.psi.KtFile
 
 // Code is partially copied from com.intellij.codeInsight.daemon.impl.SetupSDKNotificationProvider
-class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project) : EditorNotifications.Provider<EditorNotificationPanel>(),
-    StartupActivity {
-
-    override fun runActivity(project: Project) {
-        val notifications = EditorNotifications.getInstance(project)
-        project.messageBus.connect(project).subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                notifications.updateAllNotifications()
-            }
-        })
-    }
-
+class KotlinSetupEnvironmentNotificationProvider(private val myProject: Project) : EditorNotifications.Provider<EditorNotificationPanel>() {
     override fun getKey(): Key<EditorNotificationPanel> = KEY
 
     override fun createNotificationPanel(file: VirtualFile, fileEditor: FileEditor): EditorNotificationPanel? {

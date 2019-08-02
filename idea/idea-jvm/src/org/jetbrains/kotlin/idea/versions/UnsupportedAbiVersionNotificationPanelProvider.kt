@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.versions
 
-import com.intellij.ProjectTopics
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.compiler.CompilerManager
@@ -18,10 +17,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.DumbService
 import com.intellij.openapi.project.IndexNotReadyException
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.roots.ModuleRootEvent
-import com.intellij.openapi.roots.ModuleRootListener
 import com.intellij.openapi.roots.libraries.Library
-import com.intellij.openapi.startup.StartupActivity
 import com.intellij.openapi.ui.popup.JBPopupFactory
 import com.intellij.openapi.ui.popup.PopupStep
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep
@@ -50,24 +46,7 @@ import javax.swing.JLabel
 import javax.swing.event.HyperlinkEvent
 
 class UnsupportedAbiVersionNotificationPanelProvider(private val project: Project) :
-    EditorNotifications.Provider<EditorNotificationPanel>(), StartupActivity {
-
-    override fun runActivity(project: Project) {
-        val connection = project.messageBus.connect(project)
-        connection.subscribe(ProjectTopics.PROJECT_ROOTS, object : ModuleRootListener {
-            override fun rootsChanged(event: ModuleRootEvent) {
-                updateNotifications()
-            }
-        })
-        connection.subscribe(DumbService.DUMB_MODE, object : DumbService.DumbModeListener {
-            override fun enteredDumbMode() {
-            }
-
-            override fun exitDumbMode() {
-                updateNotifications()
-            }
-        })
-    }
+    EditorNotifications.Provider<EditorNotificationPanel>() {
 
     private fun doCreate(module: Module, badVersionedRoots: Collection<BinaryVersionedFile<BinaryVersion>>): EditorNotificationPanel {
         val answer = ErrorNotificationPanel()

@@ -127,12 +127,11 @@
         <multipleRunLocationsProvider implementation="org.jetbrains.kotlin.idea.run.multiplatform.KotlinMultiplatformRunLocationsProvider"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
-        <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.KotlinSetupEnvironmentNotificationProvider"/>
+        <postStartupActivity implementation="org.jetbrains.kotlin.idea.configuration.JvmStartupActivity"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.debugger.KotlinAlternativeSourceNotificationProvider"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.inspections.JavaOutsideModuleDetector"/>
-        <postStartupActivity implementation="org.jetbrains.kotlin.idea.inspections.JavaOutsideModuleDetector"/>
 
         <consoleFilterProvider implementation="org.jetbrains.kotlin.idea.run.KotlinConsoleFilterProvider"/>
 
@@ -144,7 +143,6 @@
                                  implementationClass="org.jetbrains.kotlin.idea.debugger.evaluate.surroundWith.KotlinDebuggerExpressionSurroundDescriptor"/>
 
         <editorNotificationProvider implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
-        <postStartupActivity implementation="org.jetbrains.kotlin.idea.versions.UnsupportedAbiVersionNotificationPanelProvider"/>
 
         <scratch.creationHelper language="kotlin"
                                 implementationClass="org.jetbrains.kotlin.idea.scratch.KtScratchFileCreationHelper"/>
