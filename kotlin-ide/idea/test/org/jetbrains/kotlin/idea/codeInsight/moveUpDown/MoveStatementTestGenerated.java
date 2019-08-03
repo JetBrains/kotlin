@@ -973,6 +973,71 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("testData/codeInsight/moveUpDown/expressions/lambda3.kt");
         }
 
+        @TestMetadata("lambdaInDoWhile.kt")
+        public void testLambdaInDoWhile() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInDoWhile.kt");
+        }
+
+        @TestMetadata("lambdaInDoWhile2.kt")
+        public void testLambdaInDoWhile2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInDoWhile2.kt");
+        }
+
+        @TestMetadata("lambdaInFor.kt")
+        public void testLambdaInFor() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInFor.kt");
+        }
+
+        @TestMetadata("lambdaInFor2.kt")
+        public void testLambdaInFor2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInFor2.kt");
+        }
+
+        @TestMetadata("lambdaInIf.kt")
+        public void testLambdaInIf() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInIf.kt");
+        }
+
+        @TestMetadata("lambdaInIf2.kt")
+        public void testLambdaInIf2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInIf2.kt");
+        }
+
+        @TestMetadata("lambdaInTry.kt")
+        public void testLambdaInTry() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInTry.kt");
+        }
+
+        @TestMetadata("lambdaInTry2.kt")
+        public void testLambdaInTry2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInTry2.kt");
+        }
+
+        @TestMetadata("lambdaInTry3.kt")
+        public void testLambdaInTry3() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInTry3.kt");
+        }
+
+        @TestMetadata("lambdaInWhen.kt")
+        public void testLambdaInWhen() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInWhen.kt");
+        }
+
+        @TestMetadata("lambdaInWhen2.kt")
+        public void testLambdaInWhen2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInWhen2.kt");
+        }
+
+        @TestMetadata("lambdaInWhile.kt")
+        public void testLambdaInWhile() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInWhile.kt");
+        }
+
+        @TestMetadata("lambdaInWhile2.kt")
+        public void testLambdaInWhile2() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInWhile2.kt");
+        }
+
         @TestMetadata("multilineComment1.kt")
         public void testMultilineComment1() throws Exception {
             runTest("testData/codeInsight/moveUpDown/expressions/multilineComment1.kt");
