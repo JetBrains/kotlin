@@ -51,12 +51,12 @@ if (hasProperty("kotlinProjectPath")) {
     include ':runtime:generator'
     includeBuild(kotlinProjectPath) {
         dependencySubstitution {
-            substitute module('org.jetbrains.kotlin:kotlin-compiler') with project(':include:kotlin-compiler')
+            substitute module("org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion") with project(':include:kotlin-compiler')
             substitute module("org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinStdlibVersion") with project(':include:kotlin-stdlib-common-sources')
             substitute module("org.jetbrains.kotlin:kotlin-stdlib-gen:$kotlinStdlibVersion") with project(':tools:kotlin-stdlib-gen')
-            substitute module("org.jetbrains.kotlin:kotlin-util-io") with project(':kotlin-util-io')
-            substitute module("org.jetbrains.kotlin:kotlin-util-klib") with project(':kotlin-util-klib')
-            substitute module("org.jetbrains.kotlin:kotlin-native-utils") with project(':kotlin-native:kotlin-native-utils')
+            substitute module("org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion") with project(':kotlin-util-io')
+            substitute module("org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion") with project(':kotlin-util-klib')
+            substitute module("org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion") with project(':kotlin-native:kotlin-native-utils')
         }
     }
 }
