@@ -155,6 +155,11 @@ private inline fun <R> generateFunctionBody(
     functionGenerationContext.resetDebugLocation()
 }
 
+internal fun FunctionGenerationContext.initBridgeDebugInfo() {
+    val location = setupBridgeDebugInfo(context, function) ?: return
+    debugLocation(location, location)
+}
+
 /**
  * There're cases when we don't need end position or it is meaningless.
  */

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.konan.llvm
 
 import kotlinx.cinterop.allocArrayOf
 import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.reinterpret
 import llvm.*
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.ir.SourceManager.FileEntry
@@ -81,6 +82,10 @@ internal class DebugInfo internal constructor(override val context: Context):Con
     val otherLlvmType = LLVMPointerType(LLVMInt64Type(), 0)!!
     val otherTypeSize = LLVMSizeOfTypeInBits(llvmTargetData, otherLlvmType)
     val otherTypeAlignment = LLVMPreferredAlignmentOfType(llvmTargetData, otherLlvmType)
+
+    val compilerGeneratedFile by lazy {
+        DICreateFile(builder, "<compiler-generated>", "")!!
+    }
 }
 
 /**
@@ -250,3 +255,29 @@ internal fun subroutineType(context: Context, llvmTargetData: LLVMTargetDataRef,
 @Suppress("UNCHECKED_CAST")
 private fun dwarfPointerType(context: Context, type: DITypeOpaqueRef) =
         DICreatePointerType(context.debugInfo.builder, type) as DITypeOpaqueRef
+
+internal fun setupBridgeDebugInfo(context: Context, function: LLVMValueRef): LocationInfo? {
+    if (!context.shouldContainLocationDebugInfo()) {
+        return null
+    }
+
+    val file = context.debugInfo.compilerGeneratedFile
+
+    // TODO: can we share the scope among all bridges?
+    val scope: DIScopeOpaqueRef = DICreateFunction(
+            builder = context.debugInfo.builder,
+            scope = file.reinterpret(),
+            name = function.name,
+            linkageName = function.name,
+            file = file,
+            lineNo = 0,
+            type = subroutineType(context, context.llvm.runtime.targetData, emptyList()), // TODO: use proper type.
+            isLocal = 0,
+            isDefinition = 1,
+            scopeLine = 0
+    )!!.also {
+        DIFunctionAddSubprogram(function, it)
+    }.reinterpret()
+
+    return LocationInfo(scope, 1, 0)
+}

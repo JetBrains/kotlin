@@ -535,7 +535,7 @@ private inline fun ObjCExportCodeGenerator.generateObjCImpBy(
         genBody()
     }
 
-    LLVMSetLinkage(result, LLVMLinkage.LLVMPrivateLinkage)
+    LLVMSetLinkage(result, LLVMLinkage.LLVMInternalLinkage)
     return result
 }
 
@@ -555,7 +555,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 ) = if (target == null) {
     generateAbstractObjCImp(methodBridge)
 } else {
-    generateObjCImp(methodBridge) { args, resultLifetime, exceptionHandler ->
+    generateObjCImp(methodBridge, isDirect = !isVirtual) { args, resultLifetime, exceptionHandler ->
         val llvmTarget = if (!isVirtual) {
             codegen.llvmFunction(target)
         } else {
@@ -568,12 +568,19 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 
 private fun ObjCExportCodeGenerator.generateObjCImp(
         methodBridge: MethodBridge,
+        isDirect: Boolean,
         callKotlin: FunctionGenerationContext.(
                 args: List<LLVMValueRef>,
                 resultLifetime: Lifetime,
                 exceptionHandler: ExceptionHandler
         ) -> LLVMValueRef?
 ): LLVMValueRef = generateObjCImpBy(methodBridge) {
+    if (isDirect) {
+        // Consider this call inlinable. If it is inlined into a bridge with no debug information,
+        // lldb will not decode the inlined frame even if the callee has debug information.
+        initBridgeDebugInfo()
+        // TODO: consider adding debug info to other bridges.
+    }
 
     val returnType = methodBridge.returnBridge
 
@@ -674,7 +681,7 @@ private fun ObjCExportCodeGenerator.generateObjCImp(
 private fun ObjCExportCodeGenerator.generateObjCImpForArrayConstructor(
         target: IrConstructor,
         methodBridge: MethodBridge
-): LLVMValueRef = generateObjCImp(methodBridge) { args, resultLifetime, exceptionHandler ->
+): LLVMValueRef = generateObjCImp(methodBridge, isDirect = true) { args, resultLifetime, exceptionHandler ->
     val arrayInstance = callFromBridge(
             context.llvm.allocArrayFunction,
             listOf(target.constructedClass.llvmTypeInfoPtr, args.first()),
