@@ -1436,6 +1436,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams1.kt");
         }
 
+        @TestMetadata("funParams10.kt")
+        public void testFunParams10() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams10.kt");
+        }
+
         @TestMetadata("funParams2.kt")
         public void testFunParams2() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams2.kt");
@@ -1469,6 +1474,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
         @TestMetadata("funParams8.kt")
         public void testFunParams8() throws Exception {
             runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams8.kt");
+        }
+
+        @TestMetadata("funParams9.kt")
+        public void testFunParams9() throws Exception {
+            runTest("idea/testData/codeInsight/moveUpDown/parametersAndArguments/funParams9.kt");
         }
     }
 
