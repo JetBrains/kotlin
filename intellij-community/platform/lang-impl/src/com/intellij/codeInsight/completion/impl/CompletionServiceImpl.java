@@ -20,7 +20,6 @@ import com.intellij.util.Consumer;
 import com.intellij.util.ExceptionUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
 
 import java.util.ArrayList;
 
@@ -99,11 +98,6 @@ public final class CompletionServiceImpl extends CompletionService {
   protected CompletionResultSet createResultSet(CompletionParameters parameters, Consumer<? super CompletionResult> consumer,
                                                 @NotNull CompletionContributor contributor, PrefixMatcher matcher) {
     return new CompletionResultSetImpl(consumer, matcher, contributor, parameters, defaultSorter(parameters, matcher), null);
-  }
-
-  @TestOnly
-  public static CompletionResultSet createResultSetForTest(Consumer<? super CompletionResult> consumer) {
-    return new CompletionResultSetImpl(consumer, PrefixMatcher.ALWAYS_TRUE, null, null, new CompletionSorterImpl(new ArrayList<>()), null);
   }
 
   @Override
