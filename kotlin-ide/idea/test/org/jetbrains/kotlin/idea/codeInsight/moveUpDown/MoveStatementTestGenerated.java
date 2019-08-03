@@ -1003,6 +1003,11 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             runTest("testData/codeInsight/moveUpDown/expressions/lambdaInIf2.kt");
         }
 
+        @TestMetadata("lambdaInQualifiedExpression.kt")
+        public void testLambdaInQualifiedExpression() throws Exception {
+            runTest("testData/codeInsight/moveUpDown/expressions/lambdaInQualifiedExpression.kt");
+        }
+
         @TestMetadata("lambdaInTry.kt")
         public void testLambdaInTry() throws Exception {
             runTest("testData/codeInsight/moveUpDown/expressions/lambdaInTry.kt");
