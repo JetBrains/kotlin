@@ -282,6 +282,15 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
             element: PsiElement,
             down: Boolean
         ): KtBlockExpression? {
+            if (element is KtIfExpression ||
+                element is KtWhenExpression ||
+                element is KtWhenEntry ||
+                element is KtTryExpression ||
+                element is KtFinallySection ||
+                element is KtCatchClause ||
+                element is KtLoopExpression
+            ) return null
+
             val callExpression =
                 KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION) as KtCallExpression? ?: return null
             val functionLiterals = callExpression.lambdaArguments
