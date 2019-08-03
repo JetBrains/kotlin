@@ -291,6 +291,10 @@ class KotlinExpressionMover : AbstractKotlinUpDownMover() {
                 element is KtLoopExpression
             ) return null
 
+            (element as? KtQualifiedExpression)?.selectorExpression?.let {
+                return getDSLLambdaBlock(editor, it, down)
+            }
+
             val callExpression =
                 KtPsiUtil.getOutermostDescendantElement(element, down, IS_CALL_EXPRESSION) as KtCallExpression? ?: return null
             val functionLiterals = callExpression.lambdaArguments
