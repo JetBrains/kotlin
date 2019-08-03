@@ -1,0 +1,9 @@
+// MOVE: down
+fun test() {
+    try {
+        <caret>println()
+        run {
+        }
+    } finally {
+    }
+}
