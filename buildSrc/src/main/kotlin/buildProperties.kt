@@ -81,6 +81,8 @@ class KotlinBuildProperties(
     val proguard: Boolean get() = postProcessing && getBoolean("kotlin.build.proguard", isTeamcityBuild)
 
     val jsIrDist: Boolean get() = getBoolean("kotlin.stdlib.js.ir.dist")
+
+    val jarCompression: Boolean get() = getBoolean("kotlin.build.jar.compression", isTeamcityBuild)
 }
 
 private const val extensionName = "kotlinBuildProperties"

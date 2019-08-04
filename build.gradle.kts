@@ -417,13 +417,13 @@ gradle.taskGraph.whenReady {
         }
     } else {
         logger.warn("Local build profile is active (IC is on, proguard is off). Use -Pteamcity=true to reproduce TC build")
-        for (task in allTasks) {
-            when (task) {
-                // todo: remove when Gradle 4.10+ is used (Java IC on by default)
-                is JavaCompile -> task.options.isIncremental = true
-                is org.gradle.jvm.tasks.Jar -> task.entryCompression = ZipEntryCompression.STORED
-            }
-        }
+    }
+
+    allTasks.filterIsInstance<org.gradle.jvm.tasks.Jar>().forEach { task ->
+        task.entryCompression = if (kotlinBuildProperties.jarCompression)
+            ZipEntryCompression.DEFLATED
+        else
+            ZipEntryCompression.STORED
     }
 }
 
