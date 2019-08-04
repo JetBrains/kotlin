@@ -48,7 +48,7 @@ interface KotlinTarget : Named, HasAttributes {
     fun mavenPublication(action: Closure<Unit>)
     fun mavenPublication(action: Action<MavenPublication>)
 
-    fun attributes(configure: AttributeContainer.() -> Unit) = configure(attributes)
+    fun attributes(configure: AttributeContainer.() -> Unit) = attributes.configure()
     fun attributes(configure: Closure<*>) = attributes { ConfigureUtil.configure(configure, this) }
 
     val preset: KotlinTargetPreset<out KotlinTarget>?
