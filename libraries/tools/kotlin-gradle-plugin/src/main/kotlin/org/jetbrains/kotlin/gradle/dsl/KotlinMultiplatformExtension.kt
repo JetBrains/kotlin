@@ -78,8 +78,8 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
             throw InvalidUserCodeException(
                 "The target '$targetName' already exists, but it was not created with the '${targetPreset.name}' preset. " +
                         "To configure it, access it by name in `kotlin.targets`" +
-                        " or use the preset function '${existingTarget.preset?.name}'"
-                            .takeIf { existingTarget.preset != null }
+                        " or use the preset function '${existingTarget.preset?.name}'."
+                            .takeIf { existingTarget.preset != null } ?: "."
             )
         }
     }
