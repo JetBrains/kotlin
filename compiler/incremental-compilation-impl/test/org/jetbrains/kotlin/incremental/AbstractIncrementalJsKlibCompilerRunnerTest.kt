@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import java.io.File
 
 abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncrementalJsCompilerRunnerTest() {
@@ -16,4 +17,7 @@ abstract class AbstractIncrementalJsKlibCompilerRunnerTest : AbstractIncremental
     override fun rebuildAndCompareOutput(sourceRoots: List<File>, testDir: File, buildLogSteps: List<BuildStep>, outDir: File) {
         // todo fix
     }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = super.buildLogFinder.copy(isJsIrEnabled = true)
 }
