@@ -101,7 +101,7 @@ open class ExportSettingsAction : AnAction(), DumbAware {
 
 fun exportSettings(exportFiles: Set<Path>, out: OutputStream, configPath: String) {
   val filter = THashSet<String>()
-  Compressor.Zip(out).filter { path, isDir -> isDir || filter.add(path) }.use { zip ->
+  Compressor.Zip(out).filter { entryName, _ -> filter.add(entryName) }.use { zip ->
     for (file in exportFiles) {
       val fileInfo = file.basicAttributesIfExists() ?: continue
       val relativePath = FileUtil.getRelativePath(configPath, file.toAbsolutePath().systemIndependentPath, '/')!!
