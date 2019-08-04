@@ -104,7 +104,11 @@ val nodeJSPlugin by configurations.creating
  */
 val intellijRuntimeAnnotations = "intellij-runtime-annotations"
 
-val customDepsRepoDir = rootProject.rootDir.parentFile.resolve("dependencies/repo")
+val dependenciesDir = (findProperty("kotlin.build.dependencies.dir") as String?)?.let(::File)
+    ?: rootProject.rootDir.parentFile.resolve("dependencies")
+
+val customDepsRepoDir = dependenciesDir.resolve("repo")
+
 val customDepsOrg: String by rootProject.extra
 val customDepsRevision = intellijVersion
 val repoDir = File(customDepsRepoDir, customDepsOrg)
