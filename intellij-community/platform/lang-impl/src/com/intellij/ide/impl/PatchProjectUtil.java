@@ -112,7 +112,7 @@ public class PatchProjectUtil {
         final VirtualFile contentRoot = contentEntry.getFile();
         if (contentRoot == null) continue;
         final Set<VirtualFile> included = new HashSet<>();
-        VfsUtilCore.visitChildrenRecursively(contentRoot, new VirtualFileVisitor() {
+        VfsUtilCore.visitChildrenRecursively(contentRoot, new VirtualFileVisitor<Void>() {
           @NotNull
           @Override
           public Result visitFileEx(@NotNull VirtualFile fileOrDir) {

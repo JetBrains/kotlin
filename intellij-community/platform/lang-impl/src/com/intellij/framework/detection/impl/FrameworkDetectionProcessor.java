@@ -80,7 +80,7 @@ public class FrameworkDetectionProcessor {
 
   private void collectSuitableFiles(@NotNull VirtualFile file) {
     try {
-      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
           // Since this code is invoked from New Project Wizard it's very possible that VFS isn't loaded to memory yet, so we need to do it
@@ -91,7 +91,7 @@ public class FrameworkDetectionProcessor {
       });
       file.refresh(false, true);
 
-      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+      VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
           myProgressIndicator.checkCanceled();

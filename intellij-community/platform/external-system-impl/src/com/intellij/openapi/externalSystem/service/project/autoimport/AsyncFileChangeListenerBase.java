@@ -75,7 +75,7 @@ public abstract class AsyncFileChangeListenerBase implements AsyncFileListener {
   }
 
   private void deleteRecursively(VirtualFile f) {
-    VfsUtilCore.visitChildrenRecursively(f, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(f, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile f) {
         if (isRelevant(f.getPath())) {

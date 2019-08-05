@@ -66,7 +66,7 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
       return;
     }
 
-    VfsUtilCore.visitChildrenRecursively(fromFile, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(fromFile, new VirtualFileVisitor<Void>() {
       @NotNull @Override
       public Result visitFileEx(@NotNull VirtualFile file) {
         ProgressManager.checkCanceled();
@@ -162,7 +162,7 @@ public class TranslatingCompilerFilesMonitor implements AsyncFileListener {
         if (parent != null) {
           final String root = parent.getPath() + "/" + oldName;
           if (eventFile.isDirectory()) {
-            VfsUtilCore.visitChildrenRecursively(eventFile, new VirtualFileVisitor() {
+            VfsUtilCore.visitChildrenRecursively(eventFile, new VirtualFileVisitor<Void>() {
               private final StringBuilder filePath = new StringBuilder(root);
 
               @Override

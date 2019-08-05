@@ -71,7 +71,7 @@ abstract class IndexedFilesListener implements AsyncFileListener {
   protected abstract void iterateIndexableFiles(@NotNull VirtualFile file, @NotNull ContentIterator iterator);
 
   void invalidateIndicesRecursively(@NotNull VirtualFile file, boolean contentChange, @NotNull VfsEventsMerger eventMerger) {
-    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
         return invalidateIndicesForFile(file, contentChange, eventMerger);

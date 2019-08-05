@@ -149,7 +149,7 @@ public class ModuleChunkSourcePath extends CompositeGenerator{
     final FileTypeManager fileTypeManager = FileTypeManager.getInstance();
     final ModuleRootManager moduleRootManager = ModuleRootManager.getInstance(module);
 
-    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(dir, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile dir) {
         if (!dir.isDirectory() || fileTypeManager.isFileIgnored(dir)) {

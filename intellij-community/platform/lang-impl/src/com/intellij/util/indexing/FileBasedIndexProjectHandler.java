@@ -97,7 +97,7 @@ public class FileBasedIndexProjectHandler implements IndexableFileSet, Disposabl
 
   @Override
   public void iterateIndexableFilesIn(@NotNull final VirtualFile file, @NotNull final ContentIterator iterator) {
-    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor() {
+    VfsUtilCore.visitChildrenRecursively(file, new VirtualFileVisitor<Void>() {
       @Override
       public boolean visitFile(@NotNull VirtualFile file) {
 
