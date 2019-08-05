@@ -54,5 +54,12 @@ public abstract class BackgroundUpdaterTask extends BackgroundUpdaterTaskBase<Ps
     //which is necessary for binary compatibility with some external plugins.
     return super.updateComponent(element, comparator);
   }
+
+  @Override
+  public boolean updateComponent(@NotNull PsiElement element) {
+    //Ensures that method with signature `updateComponent(PsiElement)` is present in bytecode,
+    //which is necessary for binary compatibility with some external plugins.
+    return super.updateComponent(element);
+  }
 }
 
