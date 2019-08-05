@@ -251,7 +251,7 @@ public class FormatterUtil {
   public static boolean containsWhiteSpacesOnly(@Nullable ASTNode node) {
     if (node == null) return false;
 
-    Queue<ASTNode> queue = new ArrayDeque<>(10);
+    ArrayDeque<ASTNode> queue = new ArrayDeque<>();
     queue.offer(node);
     while (!queue.isEmpty()) {
       TreeElement each = (TreeElement)queue.poll();
