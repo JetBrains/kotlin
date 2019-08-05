@@ -66,6 +66,9 @@ class GradleOutputDispatcherFactory : ExternalSystemOutputDispatcherFactory {
       lineProcessor = object : LineProcessor() {
         override fun process(line: String) {
           val cleanLine = removeLoggerPrefix(line)
+          // skip Gradle test runner output
+          if (cleanLine.startsWith("<ijLog>")) return
+
           if (cleanLine.startsWith("> Task :")) {
             isBuildException = false
             val taskName = cleanLine.removePrefix("> Task ").substringBefore(' ')
