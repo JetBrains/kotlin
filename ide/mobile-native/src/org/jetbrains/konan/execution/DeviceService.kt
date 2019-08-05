@@ -23,11 +23,14 @@ class DeviceService {
         SimulatorsRegistry.getInstance().configurations.map(::AppleSimulator)
 
     private fun getAndroidDevices(): List<AndroidDevice> =
-        adb.devices.map(::AndroidDevice)
+        adb?.devices?.map(::AndroidDevice)
+            ?: emptyList()
 
     private val adb by lazy {
-        AndroidDebugBridge.init(true)
-        AndroidDebugBridge.createBridge(AndroidToolkit.adb!!.absolutePath, false)
+        AndroidToolkit.adb?.let { adbBinary ->
+            AndroidDebugBridge.init(true)
+            AndroidDebugBridge.createBridge(adbBinary.absolutePath, false)
+        }
     }
 
     companion object {
