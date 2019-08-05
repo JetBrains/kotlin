@@ -25,6 +25,10 @@ val clionCocoaCommonPluginDir: File by rootProject.extra
 
 val cidrPlugin: Configuration by configurations.creating
 
+repositories {
+    maven("https://maven.google.com")
+}
+
 dependencies {
     cidrPlugin(project(":kotlin-ultimate:prepare:cidr-plugin"))
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
@@ -42,13 +46,13 @@ val preparePluginXmlTask: Task = preparePluginXml(
         true
 )
 
+val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
+
 val copyNativeDeps: Task by task<Copy> {
     from(clionCocoaCommonPluginDir)
     into(mobilePluginDir)
     include("native/**")
 }
-
-val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask, copyNativeDeps))
 
 val mobilePluginTask: Task = packageCidrPlugin(
         project,
@@ -56,6 +60,7 @@ val mobilePluginTask: Task = packageCidrPlugin(
         mobilePluginDir,
         listOf(pluginJarTask)
 )
+mobilePluginTask.dependsOn(copyNativeDeps)
 
 val zipMobilePluginTask: Task = zipCidrPlugin(project, mobilePluginTask, mobilePluginZipPath)
 
