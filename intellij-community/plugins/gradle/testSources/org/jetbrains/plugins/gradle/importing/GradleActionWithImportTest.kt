@@ -7,6 +7,7 @@ import com.intellij.util.ThrowableRunnable
 import org.assertj.core.api.Assertions.assertThat
 import org.gradle.tooling.BuildController
 import org.gradle.tooling.GradleConnectionException
+import org.gradle.tooling.model.BuildModel
 import org.gradle.tooling.model.Model
 import org.jetbrains.plugins.gradle.GradleManager
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider
@@ -94,10 +95,9 @@ class GradleActionWithImportTest: GradleImportingTestCase() {
 }
 
 class TestModelProvider : ProjectImportModelProvider {
-
-  override fun populateBuildModels(controller: BuildController,
-                                   project: Model,
-                                   consumer: ProjectImportModelProvider.BuildModelConsumer) {
+  override fun <T> populateBuildModels(controller: BuildController,
+                                       buildModel: T,
+                                       consumer: ProjectImportModelProvider.BuildModelConsumer) where T : Model?, T : BuildModel? {
     controller.findModel(Object::class.java)
   }
 
