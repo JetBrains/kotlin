@@ -2,6 +2,7 @@
 <caret>class B {
 
 }
+
 // MOVE: up
 // class A
 class A {

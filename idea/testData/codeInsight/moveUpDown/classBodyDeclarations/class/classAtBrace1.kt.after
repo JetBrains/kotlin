@@ -5,6 +5,7 @@ class A {
     val x = ""
 
 }
+
 // class B
 <caret>class B {
 

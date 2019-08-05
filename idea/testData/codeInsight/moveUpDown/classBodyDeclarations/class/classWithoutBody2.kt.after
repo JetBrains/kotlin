@@ -3,7 +3,6 @@
 class D {
     // class A
     <caret>class A
-
 }
 
 // class C
