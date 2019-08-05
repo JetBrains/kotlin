@@ -143,7 +143,7 @@ class DirectoryPathMatcher {
     Set<VirtualFile> visited = new HashSet<>(roots.size());
     GlobalSearchScope scope = GlobalSearchScope.allScope(myModel.getProject());
     for (VirtualFile root : roots) {
-      VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Object>() {
+      VfsUtilCore.visitChildrenRecursively(root, new VirtualFileVisitor<Void>() {
 
         @Override
         public boolean visitFile(@NotNull VirtualFile file) {
