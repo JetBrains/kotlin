@@ -29,6 +29,8 @@ fun KtCallExpression.replaceOrCreateTypeArgumentList(newTypeArgumentList: KtType
 
 fun KtModifierListOwner.hasInlineModifier() = hasModifier(KtTokens.INLINE_KEYWORD)
 
+fun KtModifierListOwner.hasPrivateModifier() = hasModifier(KtTokens.PRIVATE_KEYWORD)
+
 fun KtPrimaryConstructor.allowedValOrVar(): Boolean = containingClass()?.let {
     it.isAnnotation() || it.hasInlineModifier()
 } ?: false

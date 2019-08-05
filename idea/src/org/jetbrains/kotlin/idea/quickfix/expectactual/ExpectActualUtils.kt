@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
+import org.jetbrains.kotlin.idea.caches.project.isTestModule
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -24,6 +26,8 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
+import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
+import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
@@ -36,6 +40,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.AbbreviatedType
@@ -122,7 +127,7 @@ internal fun KtPsiFactory.generateClassOrObject(
         val superType = context[BindingContext.TYPE, originalEntry.typeReference]
         val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
         if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
-            val entryText = IdeDescriptorRenderers.SOURCE_CODE.renderType(superType) ?: return@forEach
+            val entryText = IdeDescriptorRenderers.SOURCE_CODE.renderType(superType)
             val newGeneratedEntry = if (generateExpectClass) {
                 createSuperTypeEntry(entryText)
             } else {
@@ -152,20 +157,22 @@ internal fun KtPsiFactory.generateClassOrObject(
         }
     }
 
+    val existingClasses = originalClass.declarations.asSequence().filterIsInstance<KtClassOrObject>().filter {
+        it.isEffectivelyActual(false)
+    }.toList() + generatedClass + outerClasses
+
     declLoop@ for (originalDeclaration in originalClass.declarations) {
         val descriptor = originalDeclaration.toDescriptor() ?: continue
         if (generateExpectClass && !originalDeclaration.isEffectivelyActual(false)) continue
         val generatedDeclaration: KtDeclaration = when (originalDeclaration) {
-            is KtClassOrObject -> {
-                generateClassOrObject(project, generateExpectClass, originalDeclaration, outerClasses + generatedClass)
-            }
+            is KtClassOrObject -> generateClassOrObject(project, generateExpectClass, originalDeclaration, existingClasses)
             is KtCallableDeclaration -> {
                 when (originalDeclaration) {
                     is KtFunction -> generateFunction(
-                        project, generateExpectClass, originalDeclaration, descriptor as FunctionDescriptor, generatedClass, outerClasses
+                        project, generateExpectClass, originalDeclaration, descriptor as FunctionDescriptor, generatedClass, existingClasses
                     )
                     is KtProperty -> generateProperty(
-                        project, generateExpectClass, originalDeclaration, descriptor as PropertyDescriptor, generatedClass, outerClasses
+                        project, generateExpectClass, originalDeclaration, descriptor as PropertyDescriptor, generatedClass, existingClasses
                     )
                     else -> continue@declLoop
                 }
@@ -309,4 +316,29 @@ private fun KotlinType.checkAccessibility(accessibleClasses: List<KtClassOrObjec
 class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
     override val message: String
         get() = "Type ${type.getJetTypeFqName(true)} is not accessible from common code"
+}
+
+fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existedClasses: Set<String> = emptySet()): Boolean {
+    if (hasPrivateModifier()) return false
+    val types = when (this) {
+        is KtClassOrObject -> return fqName?.canFindClassInModule(project, module, existedClasses) == true
+        is KtCallableDeclaration -> {
+            val descriptor = descriptor?.safeAs<CallableDescriptor>() ?: return false
+            val returnType = descriptor.returnType ?: return false
+            (listOfNotNull(descriptor.extensionReceiverParameter) + descriptor.valueParameters).map { it.type } + returnType
+        }
+        else -> return false
+    }
+
+    val project = project
+    return types.all { it.fqName?.canFindClassInModule(project, module, existedClasses) ?: false }
+}
+
+val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()
+
+private fun FqName.canFindClassInModule(project: Project, module: Module, existedClasses: Set<String>): Boolean {
+    val name = asString()
+    return name in existedClasses || KotlinFullClassNameIndex.getInstance()[
+            name, project, GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, module.isTestModule)
+    ].isNotEmpty()
 }
