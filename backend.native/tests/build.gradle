@@ -206,8 +206,11 @@ task sanity {
             update_external_tests()
         }
     }
-    dependsOn(tasksOf(KonanTest.class, { (it instanceof KonanLocalTest || it instanceof KonanStandaloneTest) &&
-            !it.getDependsOn().contains(':distPlatformLibs') }))
+    dependsOn(tasksOf(KonanTest.class) {
+        (it instanceof KonanLocalTest || it instanceof KonanStandaloneTest) &&
+        !it.getDependsOn().contains(':distPlatformLibs') && 
+        it.name != "library_mismatch" // This test requires the wasm32 stdlib which is unavailable during a sanity run.
+    })
     dependsOn(tasksOf(KonanTest.class, { it instanceof KonanGTest }))
 }
 
@@ -3542,7 +3545,7 @@ dynamicTest("produce_dynamic") {
 
 task library_mismatch(type: KonanDriverTest) {
     // Does not work for cross targets yet.
-    enabled = !(project.testTarget != null && project.testTarget != project.hostName)
+    enabled = !(project.testTarget != null && project.target.name != project.hostName)
 
     def dir = buildDir.absolutePath
     def lib = "$projectDir/link/versioning/empty.kt"
@@ -3551,7 +3554,9 @@ task library_mismatch(type: KonanDriverTest) {
     def someOtherTarget = (project.testTarget == 'wasm32' ? project.hostName : 'wasm32')
 
     if (!useCustomDist) {
-        dependsOn ':wasm32CrossDistRuntime' // we actually need any target other than the current one.
+        // we actually need any target other than the current one.
+        dependsOn ':wasm32CrossDistRuntime'
+        dependsOn ':wasm32CrossDistEndorsedLibraries'
     }
 
     doBefore {
