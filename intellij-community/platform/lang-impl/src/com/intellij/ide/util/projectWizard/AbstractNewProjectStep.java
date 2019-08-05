@@ -201,7 +201,7 @@ public abstract class AbstractNewProjectStep<T> extends DefaultActionGroup imple
       ((TemplateProjectDirectoryGenerator)generator).generateProject(baseDir.getName(), locationString);
     }
     else if (generator != null) {
-      options.setCallback((p, module) -> generator.generateProject(p, baseDir, settings, module));
+      options.callback = (p, module) -> generator.generateProject(p, baseDir, settings, module);
     }
     return PlatformProjectOpenProcessor.doOpenProject(location, options, -1);
   }
