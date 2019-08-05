@@ -20,6 +20,7 @@ import com.intellij.openapi.module.ModuleUtilCore;
 import com.intellij.openapi.project.DumbUnawareHider;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.TextRange;
+import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -89,8 +90,8 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
               showEmptyScopes ? new LocalSearchScope(PsiElement.EMPTY_ARRAY, IdeBundle.message("scope.open.files")) : null);
 
     Editor selectedTextEditor = ApplicationManager.getApplication().isDispatchThread()
-                                      ? FileEditorManager.getInstance(project).getSelectedTextEditor()
-                                      : null;
+                                ? FileEditorManager.getInstance(project).getSelectedTextEditor()
+                                : null;
     PsiFile psiFile = selectedTextEditor == null ? null : PsiDocumentManager.getInstance(project).getPsiFile(selectedTextEditor.getDocument());
     PsiFile currentFile = psiFile;
 
@@ -214,7 +215,7 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
       }
     }
 
-    ContainerUtil.addIfNotNull(result, getSelectedFilesScope(project, dataContext));
+    ContainerUtil.addIfNotNull(result, getSelectedFilesScope(project, dataContext, currentFile));
 
     return new ArrayList<>(result);
   }
@@ -252,15 +253,14 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
   }
 
   @Nullable
-  private static SearchScope getSelectedFilesScope(final Project project, @Nullable DataContext dataContext) {
-    final VirtualFile[] filesOrDirs = dataContext == null ? null : CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
-    if (filesOrDirs != null) {
-      final List<VirtualFile> selectedFiles = ContainerUtil.filter(filesOrDirs, file -> !file.isDirectory());
-      if (!selectedFiles.isEmpty()) {
-        return GlobalSearchScope.filesScope(project, selectedFiles, "Selected Files");
-      }
+  private static SearchScope getSelectedFilesScope(final Project project,
+                                                   @Nullable DataContext dataContext,
+                                                   @Nullable PsiFile currentFile) {
+    final VirtualFile[] filesOrDirs = (dataContext == null) ? null : CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
+    if (filesOrDirs == null || filesOrDirs.length == 1 && currentFile != null && filesOrDirs[0].equals(currentFile.getVirtualFile())) {
+      return null;
     }
-    return null;
+    return new SelectedFilesScope(project, filesOrDirs);
   }
 
   @NotNull
@@ -282,5 +282,58 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
       }
     }
     return files;
+  }
+
+  static class SelectedFilesScope extends GlobalSearchScope {
+
+    private final Set<VirtualFile> myFiles = new THashSet<>();
+    private final Set<VirtualFile> myDirectories = new THashSet<>();
+
+    SelectedFilesScope(Project project, VirtualFile... filesOrDirs) {
+      super(project);
+      if (filesOrDirs.length == 0) {
+        throw new IllegalArgumentException("array is empty");
+      }
+      for (VirtualFile fileOrDir : filesOrDirs) {
+        if (fileOrDir.isDirectory()) {
+          myDirectories.add(fileOrDir);
+        }
+        else {
+          myFiles.add(fileOrDir);
+        }
+      }
+    }
+
+    @Override
+    public boolean isSearchInModuleContent(@NotNull Module aModule) {
+      return true;
+    }
+
+    @Override
+    public boolean isSearchInLibraries() {
+      return true;
+    }
+
+    @Override
+    public boolean contains(@NotNull VirtualFile file) {
+      for (VirtualFile virtualFile : myFiles) {
+        if (virtualFile.equals(file)) {
+          return true;
+        }
+      }
+      return VfsUtilCore.isUnder(file, myDirectories);
+    }
+
+    @NotNull
+    @Override
+    public String getDisplayName() {
+      if (myFiles.isEmpty()) {
+        return IdeBundle.message("scope.selected.directories", myDirectories.size());
+      }
+      if (myDirectories.isEmpty()) {
+        return IdeBundle.message("scope.selected.files", myFiles.size());
+      }
+      return IdeBundle.message("scope.selected.files.and.directories", myFiles.size(), myDirectories.size());
+    }
   }
 }
