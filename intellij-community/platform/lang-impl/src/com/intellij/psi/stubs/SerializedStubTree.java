@@ -53,6 +53,12 @@ public class SerializedStubTree {
   final int myIndexedStubByteLength;
   private Map<StubIndexKey, Map<Object, StubIdList>> myIndexedStubs;
 
+  private volatile SerializationManagerEx mySerializationManager;
+
+  public void setSerializationManager(SerializationManagerEx serializationManager) {
+    mySerializationManager = serializationManager;
+  }
+
   public SerializedStubTree(@NotNull byte[] treeBytes, int treeByteLength, @Nullable Stub stubElement,
                             @NotNull byte[] indexedStubBytes, int indexedStubByteLength, @Nullable Map<StubIndexKey, Map<Object, StubIdList>> indexedStubs) {
     myTreeBytes = treeBytes;
@@ -116,14 +122,18 @@ public class SerializedStubTree {
   }
 
   @NotNull
-  Map<StubIndexKey, Map<Object, StubIdList>> getStubIndicesValueMap() {
+  public Map<StubIndexKey, Map<Object, StubIdList>> getStubIndicesValueMap() {
     return myIndexedStubs;
   }
 
   // willIndexStub is one time optimization hint, once can safely pass false
   @NotNull
   public Stub getStub(boolean willIndexStub) throws SerializerNotFoundException {
-    return getStub(willIndexStub, SerializationManagerEx.getInstanceEx());
+    SerializationManagerEx manager = mySerializationManager;
+    if (manager == null) {
+      manager = SerializationManagerEx.getInstanceEx();
+    }
+    return getStub(willIndexStub, manager);
   }
 
   @NotNull

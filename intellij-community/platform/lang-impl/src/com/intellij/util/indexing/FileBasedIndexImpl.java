@@ -64,6 +64,8 @@ import com.intellij.util.gist.GistManager;
 import com.intellij.util.indexing.hash.FileContentHashIndex;
 import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
+import com.intellij.util.indexing.provided.ProvidedIndexExtension;
+import com.intellij.util.indexing.provided.ProvidedIndexExtensionLocator;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
 import com.intellij.util.io.storage.HeavyProcessLatch;
@@ -401,8 +403,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           addedTypes = null;
         }
 
+        UpdatableIndex<K, V, FileContent> index = createIndex(extension, new MemoryIndexStorage<>(storage, name));
+
+        ProvidedIndexExtension<K, V> providedExtension = ProvidedIndexExtensionLocator.findProvidedIndexExtensionFor(extension);
+        if (providedExtension != null) {
+          index = ProvidedIndexExtension.wrapWithProvidedIndex(providedExtension, extension, index);
+        }
+
         state.registerIndex(name,
-                            createIndex(extension, new MemoryIndexStorage<>(storage, name)),
+                            index,
                             file -> file instanceof VirtualFileWithId && inputFilter.acceptInput(file) &&
                                     !GlobalIndexFilter.isExcludedFromIndexViaFilters(file, name),
                             version + GlobalIndexFilter.getFiltersVersion(name),
