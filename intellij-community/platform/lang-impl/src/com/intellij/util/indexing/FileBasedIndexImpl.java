@@ -61,6 +61,8 @@ import com.intellij.util.concurrency.SequentialTaskExecutor;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.containers.IntObjectMap;
 import com.intellij.util.gist.GistManager;
+import com.intellij.util.indexing.hash.FileContentHashIndex;
+import com.intellij.util.indexing.hash.FileContentHashIndexExtension;
 import com.intellij.util.indexing.impl.InvertedIndexValueIterator;
 import com.intellij.util.io.DataOutputStream;
 import com.intellij.util.io.IOUtil;
@@ -2550,6 +2552,19 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         UIUtil.dispatchAllInvocationEvents();
       }
     }
+  }
+
+  public synchronized FileContentHashIndex getFileContentHashIndex(@NotNull File enumeratorPath) {
+    UpdatableIndex<Integer, Void, FileContent> index = getState().getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
+    if (index == null) {
+      try {
+        registerIndexer(FileContentHashIndexExtension.create(enumeratorPath, this), myState);
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    } else return (FileContentHashIndex)index;
+    return (FileContentHashIndex)getState().getIndex(FileContentHashIndexExtension.HASH_INDEX_ID);
   }
 
   private static final boolean INDICES_ARE_PSI_DEPENDENT_BY_DEFAULT = SystemProperties.getBooleanProperty("idea.indices.psi.dependent.default", true);

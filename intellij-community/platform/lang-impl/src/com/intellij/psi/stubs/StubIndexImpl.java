@@ -553,7 +553,7 @@ public class StubIndexImpl extends StubIndex implements PersistentStateComponent
       if (index == null) return;
       final ThrowableComputable<InputDataDiffBuilder<K, StubIdList>, IOException>
         oldMapGetter = () -> new MapInputDataDiffBuilder<>(fileId, oldValues);
-      index.updateWithMap(new UpdateData<>(newValues, oldMapGetter, key, null));
+      index.updateWithMap(new UpdateData<>(fileId, newValues, oldMapGetter, key, null));
     }
     catch (StorageException e) {
       LOG.info(e);
