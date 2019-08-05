@@ -35,11 +35,11 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
         if (!completionStarted) return
 
         val timestamp = System.currentTimeMillis()
+        deferredLog.log()
         val mlTimeContribution = CompletionUtil.getMLTimeContribution(lookup)
         val items = lookup.items
         val currentItem = lookup.currentItem
         if (currentItem == null) {
-            deferredLog.clear()
             logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
             logger.completionCancelled(timestamp)
             return
@@ -48,11 +48,9 @@ class CompletionActionsTracker(private val lookup: LookupImpl,
         val prefix = lookup.itemPattern(currentItem)
         val wasTyped = items.firstOrNull()?.lookupString?.equals(prefix) ?: false
         if (wasTyped || selectedByDotTyping) {
-            deferredLog.log()
             logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
             logger.itemSelectedByTyping(lookup, timestamp)
         } else {
-            deferredLog.clear()
             logPerformance(TOTAL_CONTRIBUTION_KEY, mlTimeContribution, timestamp - 1)
             logger.completionCancelled(timestamp)
         }
