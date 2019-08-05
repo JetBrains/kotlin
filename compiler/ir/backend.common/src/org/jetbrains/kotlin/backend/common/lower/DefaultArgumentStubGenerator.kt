@@ -6,21 +6,21 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.*
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
+import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
+import org.jetbrains.kotlin.backend.common.descriptors.wrappedSimpleFunctionDescriptorBasedOn
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrConstructorImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
-import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrConstructorSymbolImpl
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // TODO: fix expect/actual default parameters
 
@@ -347,11 +346,7 @@ open class DefaultParameterInjector(
                 maskValues[maskIndex] = maskValues[maskIndex] or (1 shl (argIndex % 32))
             }
             val valueParameterDeclaration = realFunction.valueParameters[argIndex]
-            val defaultValueArgument = if (valueParameterDeclaration.varargElementType != null) {
-                null
-            } else {
-                nullConst(expression, realFunction.valueParameters[argIndex].type)
-            }
+            val defaultValueArgument = nullConst(expression.startOffset, expression.endOffset, valueParameterDeclaration)
             valueParameterDeclaration to (valueArgument ?: defaultValueArgument)
         }
 
@@ -387,16 +382,23 @@ open class DefaultParameterInjector(
         return result
     }
 
-    protected open fun nullConst(expression: IrElement, type: IrType): IrExpression = when {
-        type.isFloat() -> IrConstImpl.float(expression.startOffset, expression.endOffset, type, 0.0F)
-        type.isDouble() -> IrConstImpl.double(expression.startOffset, expression.endOffset, type, 0.0)
-        type.isBoolean() -> IrConstImpl.boolean(expression.startOffset, expression.endOffset, type, false)
-        type.isByte() -> IrConstImpl.byte(expression.startOffset, expression.endOffset, type, 0)
-        type.isChar() -> IrConstImpl.char(expression.startOffset, expression.endOffset, type, 0.toChar())
-        type.isShort() -> IrConstImpl.short(expression.startOffset, expression.endOffset, type, 0)
-        type.isInt() -> IrConstImpl.int(expression.startOffset, expression.endOffset, type, 0)
-        type.isLong() -> IrConstImpl.long(expression.startOffset, expression.endOffset, type, 0)
-        else -> IrConstImpl.constNull(expression.startOffset, expression.endOffset, context.irBuiltIns.nothingNType)
+    protected open fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
+        if (irParameter.varargElementType != null) {
+            null
+        } else {
+            nullConst(startOffset, endOffset, irParameter.type)
+        }
+
+    protected open fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression = when {
+        type.isFloat() -> IrConstImpl.float(startOffset, endOffset, type, 0.0F)
+        type.isDouble() -> IrConstImpl.double(startOffset, endOffset, type, 0.0)
+        type.isBoolean() -> IrConstImpl.boolean(startOffset, endOffset, type, false)
+        type.isByte() -> IrConstImpl.byte(startOffset, endOffset, type, 0)
+        type.isChar() -> IrConstImpl.char(startOffset, endOffset, type, 0.toChar())
+        type.isShort() -> IrConstImpl.short(startOffset, endOffset, type, 0)
+        type.isInt() -> IrConstImpl.int(startOffset, endOffset, type, 0)
+        type.isLong() -> IrConstImpl.long(startOffset, endOffset, type, 0)
+        else -> IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
     }
 
     private fun log(msg: () -> String) = context.log { "DEFAULT-INJECTOR: ${msg()}" }
@@ -449,7 +451,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
     }
 
     newFunction.copyTypeParametersFrom(this)
-    val newValueParameters = valueParameters.map { it.copyMaybeNullableTo(newFunction, context.irBuiltIns) } + syntheticParameters
+    val newValueParameters = valueParameters.map { it.copyMaybeNullableTo(newFunction, context) } + syntheticParameters
     newValueParameters.forEach {
         it.defaultValue = null
     }
@@ -559,10 +561,10 @@ internal val kConstructorMarkerName = "marker".synthesizedName
 
 private fun parameterMaskName(number: Int) = "mask$number".synthesizedName
 
-private fun IrValueParameter.copyMaybeNullableTo(irFunction: IrFunction, irBuiltIns: IrBuiltIns): IrValueParameter {
+private fun IrValueParameter.copyMaybeNullableTo(irFunction: IrFunction, context: CommonBackendContext): IrValueParameter {
     if (defaultValue == null) return copyTo(irFunction)
-    val underlyingType = type.classOrNull?.owner?.underlyingType() ?: type
-    if (underlyingType in irBuiltIns.primitiveIrTypes) return copyTo(irFunction)
+    val underlyingType = context.ir.unfoldInlineClassType(type) ?: type
+    if (underlyingType in context.irBuiltIns.primitiveIrTypes) return copyTo(irFunction)
 
     val newType = type.remapTypeParameters(
         (parent as IrTypeParametersContainer).classIfConstructor,
