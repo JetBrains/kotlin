@@ -9,6 +9,7 @@ import com.intellij.openapi.extensions.ExtensionPointName;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.ColoredItem;
 import com.intellij.openapi.util.Comparing;
+import com.intellij.openapi.util.Condition;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.AppUIUtil;
@@ -85,6 +86,16 @@ class ServiceModel implements Disposable, InvokerSupplier {
       .withRoots(myRoots)
       .traverse(TreeTraversal.PLAIN_BFS)
       .filter(node -> node.getValue().equals(value));
+  }
+
+  @Nullable
+  ServiceViewItem findItem(Condition<? super ServiceViewItem> condition, Condition<? super ServiceViewItem> visitChildrenCondition) {
+    return JBTreeTraverser.from((Function<ServiceViewItem, List<ServiceViewItem>>)node ->
+      visitChildrenCondition.value(node) ? new ArrayList<>(node.getChildren()) : null)
+      .withRoots(myRoots)
+      .traverse(TreeTraversal.PLAIN_BFS)
+      .filter(condition)
+      .first();
   }
 
   @Nullable

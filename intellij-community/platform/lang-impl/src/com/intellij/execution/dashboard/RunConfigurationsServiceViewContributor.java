@@ -12,10 +12,7 @@ import com.intellij.execution.dashboard.tree.RunConfigurationNode;
 import com.intellij.execution.dashboard.tree.RunDashboardGroupImpl;
 import com.intellij.execution.impl.RunManagerImpl;
 import com.intellij.execution.runners.FakeRerunAction;
-import com.intellij.execution.services.ServiceViewDescriptor;
-import com.intellij.execution.services.ServiceViewGroupingContributor;
-import com.intellij.execution.services.ServiceViewProvidingContributor;
-import com.intellij.execution.services.SimpleServiceViewDescriptor;
+import com.intellij.execution.services.*;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.layout.impl.RunnerLayoutUiImpl;
 import com.intellij.icons.AllIcons;
@@ -28,10 +25,14 @@ import com.intellij.navigation.ItemPresentation;
 import com.intellij.openapi.actionSystem.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.pom.Navigatable;
+import com.intellij.psi.PsiElement;
+import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
+import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,7 +134,7 @@ public class RunConfigurationsServiceViewContributor
     return actions;
   }
 
-  private static class RunConfigurationServiceViewDescriptor implements ServiceViewDescriptor {
+  private static class RunConfigurationServiceViewDescriptor implements ServiceViewDescriptor, ServiceViewLocatableDescriptor {
     private final RunConfigurationNode node;
 
     RunConfigurationServiceViewDescriptor(RunConfigurationNode node) {
@@ -220,9 +221,36 @@ public class RunConfigurationsServiceViewContributor
     @Override
     public Navigatable getNavigatable() {
       for (RunDashboardCustomizer customizer : node.getCustomizers()) {
-        Navigatable navigatable = customizer.getNavigatable(node);
-        if (navigatable != null) {
-          return navigatable;
+        PsiElement psiElement = customizer.getPsiElement(node);
+        if (psiElement != null) {
+          return new Navigatable() {
+            @Override
+            public void navigate(boolean requestFocus) {
+              PsiNavigateUtil.navigate(psiElement, requestFocus);
+            }
+
+            @Override
+            public boolean canNavigate() {
+              return true;
+            }
+
+            @Override
+            public boolean canNavigateToSource() {
+              return true;
+            }
+          };
+        }
+      }
+      return null;
+    }
+
+    @Nullable
+    @Override
+    public VirtualFile getVirtualFile() {
+      for (RunDashboardCustomizer customizer : node.getCustomizers()) {
+        PsiElement psiElement = customizer.getPsiElement(node);
+        if (psiElement != null) {
+          return PsiUtilCore.getVirtualFile(psiElement);
         }
       }
       return null;

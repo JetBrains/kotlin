@@ -25,6 +25,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ToolWindowAnchor;
 import com.intellij.openapi.wm.ToolWindowId;
@@ -317,6 +318,27 @@ public final class ServiceViewManagerImpl implements ServiceViewManager, Persist
           result.setError(e);
         }
       });
+  }
+
+  @NotNull
+  Promise<Void> select(@NotNull VirtualFile virtualFile) {
+    AsyncPromise<Void> result = new AsyncPromise<>();
+    myModel.getInvoker().runOrInvokeLater(() -> {
+      ServiceViewItem fileItem = myModel.findItem(
+        item -> {
+          ServiceViewDescriptor descriptor = item.getViewDescriptor();
+          return descriptor instanceof ServiceViewLocatableDescriptor &&
+                 virtualFile.equals(((ServiceViewLocatableDescriptor)descriptor).getVirtualFile());
+        },
+        item -> !(item instanceof ServiceModel.ServiceNode) ||
+                item.getViewDescriptor() instanceof ServiceViewLocatableDescriptor
+      );
+      if (fileItem != null) {
+        Promise<Void> promise = select(fileItem.getValue(), fileItem.getRootContributor().getClass(), true, true);
+        promise.onSuccess(o -> result.setResult(null)).onError(t -> result.setError(t));
+      }
+    });
+    return result;
   }
 
   void extract(@NotNull ServiceViewDragBean dragBean) {

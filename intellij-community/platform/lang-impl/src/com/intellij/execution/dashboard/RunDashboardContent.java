@@ -38,12 +38,13 @@ import com.intellij.openapi.ui.Splitter;
 import com.intellij.openapi.util.Comparing;
 import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.wm.IdeFocusManager;
-import com.intellij.pom.Navigatable;
+import com.intellij.psi.PsiElement;
 import com.intellij.ui.*;
 import com.intellij.ui.components.JBPanelWithEmptyText;
 import com.intellij.ui.content.*;
 import com.intellij.ui.treeStructure.Tree;
 import com.intellij.util.ObjectUtils;
+import com.intellij.util.PsiNavigateUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeModelAdapter;
@@ -221,9 +222,9 @@ public class RunDashboardContent extends JPanel implements TreeContent, Disposab
         if (myLastSelection instanceof RunDashboardRunConfigurationNode && myLastSelection.getChildren().isEmpty()) {
           RunDashboardRunConfigurationNode node = (RunDashboardRunConfigurationNode)myLastSelection;
           for (RunDashboardCustomizer customizer : node.getCustomizers()) {
-            Navigatable navigatable = customizer.getNavigatable(node);
-            if (navigatable != null && navigatable.canNavigateToSource()) {
-              navigatable.navigate(true);
+            PsiElement psiElement = customizer.getPsiElement(node);
+            if (psiElement != null) {
+              PsiNavigateUtil.navigate(psiElement, true);
               return true;
             }
           }

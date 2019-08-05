@@ -9,14 +9,20 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
+import com.intellij.openapi.fileEditor.ex.FileEditorManagerEx;
 import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.ex.ToolWindowEx;
 import com.intellij.ui.AutoScrollFromSourceHandler;
 import com.intellij.ui.AutoScrollToSourceHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.concurrency.Promise;
+import org.jetbrains.concurrency.Promises;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 class ServiceViewSourceScrollHelper {
@@ -28,7 +34,7 @@ class ServiceViewSourceScrollHelper {
     return new ServiceViewAutoScrollToSourceHandler(project);
   }
 
-  static AutoScrollToSourceHandler installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow,
+  static void installAutoScrollSupport(@NotNull Project project, @NotNull ToolWindowEx toolWindow,
                                                             @NotNull AutoScrollToSourceHandler toSourceHandler) {
     ServiceViewAutoScrollFromSourceHandler fromSourceHandler = new ServiceViewAutoScrollFromSourceHandler(project, toolWindow);
     fromSourceHandler.install();
@@ -41,7 +47,6 @@ class ServiceViewSourceScrollHelper {
     }
     toolWindow.setAdditionalGearActions(additionalGearActions);
     toolWindow.setTitleActions(new ScrollFromEditorAction(fromSourceHandler));
-    return toSourceHandler;
   }
 
   private static boolean isAutoScrollFromSourceEnabled(@NotNull Project project) {
@@ -86,23 +91,12 @@ class ServiceViewSourceScrollHelper {
       select(editor);
     }
 
-    private boolean select(@NotNull FileEditor editor) {
-      for (ServiceViewContributor extension : ServiceModel.getContributors()) {
-        if (!(extension instanceof ServiceViewFileEditorContributor)) continue;
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)extension, extension.getClass())) return true;
+    private Promise<Void> select(@NotNull FileEditor editor) {
+      VirtualFile virtualFile = FileEditorManagerEx.getInstanceEx(myProject).getFile(editor);
+      if (virtualFile == null) {
+        return Promises.rejectedPromise("Virtual file is null");
       }
-      return false;
-    }
-
-    private boolean selectContributorNode(@NotNull FileEditor editor, @NotNull ServiceViewFileEditorContributor extension,
-                                          @NotNull Class<?> contributorClass) {
-      Object service = extension.findService(myProject, editor);
-      if (service == null) return false;
-      if (service instanceof ServiceViewFileEditorContributor) {
-        if (selectContributorNode(editor, (ServiceViewFileEditorContributor)service, contributorClass)) return true;
-      }
-      ServiceViewManager.getInstance(myProject).select(service, contributorClass, true, true);
-      return true;
+      return ((ServiceViewManagerImpl)ServiceViewManager.getInstance(myProject)).select(virtualFile);
     }
   }
 
@@ -128,12 +122,17 @@ class ServiceViewSourceScrollHelper {
     public void actionPerformed(@NotNull AnActionEvent e) {
       Project project = e.getProject();
       if (project == null) return;
+
       FileEditorManager manager = FileEditorManager.getInstance(project);
       FileEditor[] editors = manager.getSelectedEditors();
-      if (editors.length == 0) return;
-      for (FileEditor editor : editors) {
-        if (myScrollFromHandler.select(editor)) return;
-      }
+      select(Arrays.asList(editors).iterator());
+    }
+
+    private void select(Iterator<FileEditor> editors) {
+      if (!editors.hasNext()) return;
+
+      FileEditor editor = editors.next();
+      myScrollFromHandler.select(editor).onError(r -> select(editors));
     }
   }
 }
