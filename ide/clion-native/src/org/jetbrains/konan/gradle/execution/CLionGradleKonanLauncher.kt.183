@@ -35,10 +35,10 @@ import com.jetbrains.cidr.execution.RunParameters
 import com.jetbrains.cidr.execution.TrivialInstaller
 import com.jetbrains.cidr.execution.debugger.CidrCustomDebuggerProvider
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
+import com.jetbrains.konan.debugger.KonanLocalDebugProcess
 import java.io.File
 
 class CLionGradleKonanLauncher(
@@ -149,7 +149,7 @@ class CLionGradleKonanLauncher(
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
-        val process = CidrLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
+        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
         CidrLauncher.configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       process.processHandler,

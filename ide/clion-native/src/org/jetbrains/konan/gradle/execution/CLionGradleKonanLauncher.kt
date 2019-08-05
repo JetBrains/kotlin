@@ -25,20 +25,13 @@ import com.jetbrains.cidr.cpp.CPPLog
 import com.jetbrains.cidr.cpp.execution.CLionRunParameters
 import com.jetbrains.cidr.cpp.toolchains.CPPEnvironment
 import com.jetbrains.cidr.cpp.toolchains.CPPToolchains
-import com.jetbrains.cidr.execution.BuildConfigurationProblems
-import com.jetbrains.cidr.execution.CidrCommandLineConfigurator
-import com.jetbrains.cidr.execution.CidrConsoleBuilder
-import com.jetbrains.cidr.execution.CidrDebugConsoleFilterProvider
-import com.jetbrains.cidr.execution.CidrRunConfigurationExtensionsManager
-import com.jetbrains.cidr.execution.ConfigurationExtensionContext
-import com.jetbrains.cidr.execution.RunParameters
-import com.jetbrains.cidr.execution.TrivialInstaller
+import com.jetbrains.cidr.execution.*
 import com.jetbrains.cidr.execution.debugger.CidrCustomDebuggerProvider
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.debugger.CidrLocalDebugProcess
 import com.jetbrains.cidr.execution.testing.CidrLauncher
 import com.jetbrains.cidr.lang.toolchains.CidrToolEnvironment
 import com.jetbrains.cidr.toolchains.EnvironmentProblems
+import com.jetbrains.konan.debugger.KonanLocalDebugProcess
 import java.io.File
 
 class CLionGradleKonanLauncher(
@@ -149,7 +142,7 @@ class CLionGradleKonanLauncher(
         myExtensionsManager.patchCommandLineState(myConfiguration, runnerSettings, environment, projectBaseDir, state, runnerId, context)
         val backendFilterProvider = CidrDebugConsoleFilterProvider(environment, projectBaseDir)
         val parameters = getDebugParameters(environment, cl)
-        val process = CidrLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
+        val process = KonanLocalDebugProcess(parameters, session, state.consoleBuilder, backendFilterProvider)
         CidrLauncher.configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
         myExtensionsManager.attachExtensionsToProcess(myConfiguration,
                                                       process.processHandler,
