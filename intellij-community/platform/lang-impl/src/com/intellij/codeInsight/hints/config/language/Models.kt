@@ -37,10 +37,10 @@ class ParameterInlayProviderSettingsModel(
   val language: Language
 ) : InlayProviderSettingsModel(isParameterHintsEnabledForLanguage(language), "parameter.hints.old") {
   override val mainCheckBoxLabel: String
-    get() = "Show parameter hints"
+    get() = provider.mainCheckboxText
 
   override val name: String
-    get() = provider.mainCheckboxText
+    get() = "Parameter hints"
   override val previewText: String?
     get() = null
   override val component by lazy {
