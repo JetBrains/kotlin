@@ -5,10 +5,15 @@
 
 package org.jetbrains.konan
 
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.util.EnvironmentUtil
 import java.io.File
 
 object AndroidToolkit {
     val home: File? = EnvironmentUtil.getValue("ANDROID_HOME")?.let { File(it) }
-    val adb: File? = home?.let { File(File(it, "platform-tools"), "adb") }
+    val adb: File? = home?.let { File(File(it, "platform-tools"), "adb".exe()) }
+
+    private fun String.exe() =
+        if (SystemInfo.isWindows) "$this.exe"
+        else this
 }
