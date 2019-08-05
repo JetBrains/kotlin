@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.daemon.common.PackageMetadata
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderImpl
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.js.test.interop.ScriptEngineV8Lazy
 import org.jetbrains.kotlin.js.test.utils.*
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.metadata.DebugProtoBuf
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
@@ -200,8 +198,14 @@ abstract class BasicBoxTest(
                 additionalFiles += additionalJsFile
             }
 
+            val additionalMainFiles = mutableListOf<String>()
+            val additionalMainJsFile = filePath.removeSuffix("." + KotlinFileType.EXTENSION) + "__main.js"
+            if (File(additionalMainJsFile).exists()) {
+                additionalMainFiles += additionalMainJsFile
+            }
+
             val allJsFiles = additionalFiles + inputJsFiles + generatedJsFiles.map { it.first } + globalCommonFiles + localCommonFiles +
-                             additionalCommonFiles
+                             additionalCommonFiles + additionalMainFiles
 
             val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(targetBackend, file)
 
@@ -217,7 +221,7 @@ abstract class BasicBoxTest(
             }
 
             performAdditionalChecks(generatedJsFiles.map { it.first }, outputPrefixFile, outputPostfixFile)
-
+            performAdditionalChecks(file, File(mainModule.outputFileName(outputDir)))
             val expectedReachableNodesMatcher = EXPECTED_REACHABLE_NODES.matcher(fileContent)
             val expectedReachableNodesFound = expectedReachableNodesMatcher.find()
 
@@ -277,6 +281,7 @@ abstract class BasicBoxTest(
     }
 
     protected open fun performAdditionalChecks(generatedJsFiles: List<String>, outputPrefixFile: File?, outputPostfixFile: File?) {}
+    protected open fun performAdditionalChecks(inputFile: File, outputFile: File) {}
 
     private fun generateNodeRunner(
             files: Collection<String>,

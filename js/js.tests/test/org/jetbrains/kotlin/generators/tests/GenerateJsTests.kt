@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.tests.generator.testGroup
 import org.jetbrains.kotlin.js.test.AbstractDceTest
+import org.jetbrains.kotlin.js.test.AbstractIrJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
@@ -26,6 +27,10 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrBoxJsTest> {
             model("box/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrJsTypeScriptExportTest> {
+            model("typescript-export/", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.JS_IR)
         }
 
         testClass<AbstractSourceMapGenerationSmokeTest> {

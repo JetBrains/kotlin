@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class NameTable<T>(
-    val parent: NameTable<T>? = null,
+    val parent: NameTable<*>? = null,
     private val reserved: MutableSet<String> = mutableSetOf(),
     val sanitizer: (String) -> String = ::sanitizeName
 ) {
@@ -135,7 +135,7 @@ fun functionSignature(declaration: IrFunction): Signature {
 }
 
 class NameTables(packages: List<IrPackageFragment>) {
-    private val globalNames: NameTable<IrDeclaration>
+    val globalNames: NameTable<IrDeclaration>
     private val memberNames: NameTable<Signature>
     private val localNames = mutableMapOf<IrDeclaration, NameTable<IrDeclaration>>()
     private val loopNames = mutableMapOf<IrLoop, String>()
@@ -297,7 +297,7 @@ class NameTables(packages: List<IrPackageFragment>) {
     }
 
     inner class LocalNameGenerator(parentDeclaration: IrDeclaration) : IrElementVisitorVoid {
-        val table = NameTable(globalNames)
+        val table = NameTable<IrDeclaration>(globalNames)
 
         init {
             localNames[parentDeclaration] = table

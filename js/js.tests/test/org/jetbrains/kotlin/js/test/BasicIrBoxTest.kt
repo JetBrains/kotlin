@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.js.facade.MainCallParameters
 import org.jetbrains.kotlin.js.facade.TranslationUnit
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
 import java.io.File
+import java.lang.Boolean.getBoolean
 
 private val fullRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/fullRuntime/klib")
 private val defaultRuntimeKlib = loadKlib("compiler/ir/serialization.js/build/reducedRuntime/klib")
@@ -26,7 +28,7 @@ private val kotlinTestKLib = loadKlib("compiler/ir/serialization.js/build/kotlin
 abstract class BasicIrBoxTest(
     pathToTestDir: String,
     testGroupOutputDirPrefix: String,
-    pathToRootOutputDir: String = BasicBoxTest.TEST_DATA_DIR_PATH,
+    pathToRootOutputDir: String = TEST_DATA_DIR_PATH,
     generateSourceMap: Boolean = false,
     generateNodeJsRunner: Boolean = false
 ) : BasicBoxTest(
@@ -38,6 +40,7 @@ abstract class BasicIrBoxTest(
     generateNodeJsRunner = generateNodeJsRunner,
     targetBackend = TargetBackend.JS_IR
 ) {
+    open val generateDts = false
 
     override val skipMinification = true
 
@@ -53,6 +56,7 @@ abstract class BasicIrBoxTest(
 
     override val testChecker get() = if (runTestInNashorn) NashornIrJsTestChecker() else V8IrJsTestChecker
 
+    @Suppress("ConstantConditionIf")
     override fun translateFiles(
         units: List<TranslationUnit>,
         outputFile: File,
@@ -70,7 +74,7 @@ abstract class BasicIrBoxTest(
         val filesToCompile = units
             .map { (it as TranslationUnit.SourceFile).file }
             // TODO: split input files to some parts (global common, local common, test)
-            .filterNot { it.virtualFilePath.contains(BasicBoxTest.COMMON_FILES_DIR_PATH) }
+            .filterNot { it.virtualFilePath.contains(COMMON_FILES_DIR_PATH) }
 
         val runtimeKlibs = if (needsFullIrRuntime) listOf(fullRuntimeKlib, kotlinTestKLib) else listOf(defaultRuntimeKlib)
 
@@ -85,7 +89,7 @@ abstract class BasicIrBoxTest(
         }
 
         if (isMainModule) {
-            val debugMode = false
+            val debugMode = getBoolean("kotlin.js.debugMode")
 
             val phaseConfig = if (debugMode) {
                 val allPhasesSet = jsPhases.toPhaseMap().values.toSet()
@@ -102,7 +106,7 @@ abstract class BasicIrBoxTest(
                 PhaseConfig(jsPhases)
             }
 
-            val jsCode = compile(
+            val compiledModule = compile(
                 project = config.project,
                 files = filesToCompile,
                 configuration = config.configuration,
@@ -113,8 +117,13 @@ abstract class BasicIrBoxTest(
                 exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, testFunction)))
             )
 
-            val wrappedCode = wrapWithModuleEmulationMarkers(jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
+            val wrappedCode = wrapWithModuleEmulationMarkers(compiledModule.jsCode, moduleId = config.moduleId, moduleKind = config.moduleKind)
             outputFile.write(wrappedCode)
+
+            if (generateDts) {
+                val dtsFile = outputFile.withReplacedExtensionOrNull("_v5.js", ".d.ts")
+                dtsFile?.write(compiledModule.tsDefinitions ?: error("No ts definitions"))
+            }
 
         } else {
             generateKLib(
@@ -142,7 +151,7 @@ abstract class BasicIrBoxTest(
         // TODO: should we do anything special for module systems?
         // TODO: return list of js from translateFiles and provide then to this function with other js files
 
-        testChecker.check(jsFiles, testModuleName, null, testFunction, expectedResult, withModuleSystem)
+        testChecker.check(jsFiles, testModuleName, testPackage, testFunction, expectedResult, withModuleSystem)
     }
 }
 

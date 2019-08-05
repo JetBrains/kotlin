@@ -78,14 +78,6 @@ private val validateIrAfterLowering = makeCustomJsModulePhase(
     description = "Validate IR after lowering"
 )
 
-private val moveBodilessDeclarationsToSeparatePlacePhase = makeCustomJsModulePhase(
-    { context, module ->
-        moveBodilessDeclarationsToSeparatePlace(context, module)
-    },
-    name = "MoveBodilessDeclarationsToSeparatePlace",
-    description = "Move `external` and `built-in` declarations into separate place to make the following lowerings do not care about them"
-)
-
 private val expectDeclarationsRemovingPhase = makeJsModulePhase(
     ::ExpectDeclarationsRemoveLowering,
     name = "ExpectDeclarationsRemoving",
@@ -419,7 +411,6 @@ val jsPhases = namedIrModulePhase(
             primaryConstructorLoweringPhase then
             initializersLoweringPhase then
             // Common prefix ends
-            moveBodilessDeclarationsToSeparatePlacePhase then
             enumClassLoweringPhase then
             enumUsageLoweringPhase then
             suspendFunctionsLoweringPhase then
@@ -447,6 +438,5 @@ val jsPhases = namedIrModulePhase(
             objectDeclarationLoweringPhase then
             objectUsageLoweringPhase then
             callsLoweringPhase then
-            staticMembersLoweringPhase then
             validateIrAfterLowering
 )

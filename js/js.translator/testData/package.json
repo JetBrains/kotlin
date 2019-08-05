@@ -1,14 +1,16 @@
 {
-  "dependencies" : {
+  "dependencies": {
     "require-from-string": "1.2.0"
   },
-  "devDependencies" : {
+  "devDependencies": {
     "mocha": "3.2.0",
-    "mocha-teamcity-reporter": "1.1.1"
+    "mocha-teamcity-reporter": "1.1.1",
+    "typescript": "^3.5.3"
   },
   "scripts": {
     "runOnTeamcity": "mocha --reporter mocha-teamcity-reporter",
     "test": "mocha",
-    "runIrTestInNode" : "node $NODE_DEBUG_OPTION runIrTestInNode.js"
+    "runIrTestInNode": "node $NODE_DEBUG_OPTION runIrTestInNode.js",
+    "generateTypeScriptTests": "tsc --build typescript-export/*/"
   }
 }

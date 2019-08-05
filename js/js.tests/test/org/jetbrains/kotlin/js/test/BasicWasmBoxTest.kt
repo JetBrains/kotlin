@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import java.io.Closeable
 import java.io.File
+import java.lang.Boolean.getBoolean
 
 private val wasmRuntimeKlib =
     loadKlib("compiler/ir/serialization.js/build/wasmRuntime/klib")
@@ -88,7 +89,7 @@ abstract class BasicWasmBoxTest(
         testFunction: String
     ) {
         val filesToCompile = units.map { (it as TranslationUnit.SourceFile).file }
-        val debugMode = false
+        val debugMode = getBoolean("kotlin.js.debugMode")
 
         val phaseConfig = if (debugMode) {
             val allPhasesSet = wasmPhases.toPhaseMap().values.toSet()

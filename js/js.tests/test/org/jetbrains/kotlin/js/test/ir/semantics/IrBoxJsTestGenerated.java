@@ -6425,11 +6425,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
             runTest("js/js.translator/testData/box/propertyAccess/accessToInstanceProperty.kt");
         }
 
-        @TestMetadata("accessorsWithJsName.kt")
-        public void testAccessorsWithJsName() throws Exception {
-            runTest("js/js.translator/testData/box/propertyAccess/accessorsWithJsName.kt");
-        }
-
         public void testAllFilesPresentInPropertyAccess() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("js/js.translator/testData/box/propertyAccess"), Pattern.compile("^([^_](.+))\\.kt$"), TargetBackend.JS_IR, true);
         }
@@ -6447,11 +6442,6 @@ public class IrBoxJsTestGenerated extends AbstractIrBoxJsTest {
         @TestMetadata("customSetter.kt")
         public void testCustomSetter() throws Exception {
             runTest("js/js.translator/testData/box/propertyAccess/customSetter.kt");
-        }
-
-        @TestMetadata("defaultAccessorsWithJsName.kt")
-        public void testDefaultAccessorsWithJsName() throws Exception {
-            runTest("js/js.translator/testData/box/propertyAccess/defaultAccessorsWithJsName.kt");
         }
 
         @TestMetadata("enumerable.kt")
