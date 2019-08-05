@@ -29,3 +29,6 @@ FILE fqName:<root> fileName:/typeAliasesWithAnnotations.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:TestTypeAlias visibility:public expandedType:kotlin.String
+    annotations:
+      TestAnn(x = 'TestTypeAlias')

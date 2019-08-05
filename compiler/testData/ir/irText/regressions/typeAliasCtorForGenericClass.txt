@@ -31,13 +31,17 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  TYPEALIAS name:B visibility:public expandedType:<root>.A<X of <root>.B>
+    TYPE_PARAMETER name:X index:0 variance: superTypes:[kotlin.Any?]
+  TYPEALIAS name:B2 visibility:public expandedType:<root>.A<<root>.A<T of <root>.B2>>
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?]
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      VAR name:b type:<root>.A<kotlin.Int> [val]
+      VAR name:b type:<root>.A<kotlin.Int>{ <root>.B<kotlin.Int> } [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<kotlin.Int> origin=null
           <class: Q>: kotlin.Int
           q: CONST Int type=kotlin.Int value=2
-      VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>> [val]
+      VAR name:b2 type:<root>.A<<root>.A<kotlin.Int>>{ <root>.B2<kotlin.Int> } [val]
         CONSTRUCTOR_CALL 'public constructor <init> (q: Q of <root>.A) [primary] declared in <root>.A' type=<root>.A<<root>.A<kotlin.Int>> origin=null
           <class: Q>: <root>.A<kotlin.Int>
-          q: GET_VAR 'val b: <root>.A<kotlin.Int> [val] declared in <root>.bar' type=<root>.A<kotlin.Int> origin=null
+          q: GET_VAR 'val b: <root>.A<kotlin.Int>{ <root>.B<kotlin.Int> } [val] declared in <root>.bar' type=<root>.A<kotlin.Int>{ <root>.B<kotlin.Int> } origin=null
