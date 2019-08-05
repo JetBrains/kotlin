@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
@@ -17,7 +18,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.annotations.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.annotations.SYNCHRONIZED_ANNOTATION_FQ_NAME
@@ -50,9 +50,14 @@ open class FunctionCodegen(
         val flags = calculateMethodFlags(irFunction.isStatic)
         var methodVisitor = createMethod(flags, signature)
 
-        generateParameterNames(irFunction, methodVisitor, signature, state, flags.and(Opcodes.ACC_SYNTHETIC) != 0)
+        val hasSyntheticFlag = flags.and(Opcodes.ACC_SYNTHETIC) != 0
+        generateParameterNames(irFunction, methodVisitor, signature, state, hasSyntheticFlag)
 
-        if (irFunction.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) {
+        if (!hasSyntheticFlag ||
+            irFunction.origin == JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS ||
+            //TODO: investigate this case: annotation here is generated twice in lowered function and in interface method overload
+            irFunction.origin == JvmLoweredDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
+        ) {
             AnnotationCodegen(classCodegen, state, methodVisitor::visitAnnotation).genAnnotations(
                 irFunction,
                 signature.asmMethod.returnType
@@ -137,7 +142,7 @@ open class FunctionCodegen(
             irFunction.OtherOrigin,
             flags,
             signature.asmMethod.name, signature.asmMethod.descriptor,
-            if (irFunction.origin == IrDeclarationOrigin.BRIDGE) null else signature.genericsSignature,
+            if (flags.and(Opcodes.ACC_SYNTHETIC) != 0) null else signature.genericsSignature,
             exceptions
         )
     }
