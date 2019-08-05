@@ -5,18 +5,17 @@
 
 package org.jetbrains.kotlin.serialization.konan.impl
 
+import org.jetbrains.kotlin.builtins.functions.functionInterfacePackageFragmentProvider
 import org.jetbrains.kotlin.contracts.ContractDeserializerImpl
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.ClassDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.konan.library.KonanLibrary
-import org.jetbrains.kotlin.konan.library.exportForwardDeclarations
-import org.jetbrains.kotlin.konan.library.isInterop
-import org.jetbrains.kotlin.konan.library.packageFqName
+import org.jetbrains.kotlin.konan.library.*
 import org.jetbrains.kotlin.konan.library.resolver.PackageAccessedHandler
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -96,7 +95,7 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
             library, deserializedPackageFragments, moduleDescriptor
         )
 
-        val provider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
+        val packageFragmentProvider = PackageFragmentProviderImpl(deserializedPackageFragments + syntheticPackageFragments)
 
         val notFoundClasses = NotFoundClasses(storageManager, moduleDescriptor)
 
@@ -110,9 +109,9 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
             storageManager,
             moduleDescriptor,
             configuration,
-            DeserializedClassDataFinder(provider),
+            DeserializedClassDataFinder(packageFragmentProvider),
             annotationAndConstantLoader,
-            provider,
+            packageFragmentProvider,
             LocalClassifierTypeSettings.Default,
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
@@ -127,7 +126,15 @@ internal object KonanDeserializedPackageFragmentsFactoryImpl : KonanDeserialized
             packageFragment.initialize(components)
         }
 
-        return provider
+        return if (library.uniqueName == KONAN_STDLIB_NAME)
+            CompositePackageFragmentProvider(
+                listOf(
+                    packageFragmentProvider,
+                    functionInterfacePackageFragmentProvider(storageManager, moduleDescriptor)
+                )
+            )
+        else
+            packageFragmentProvider
     }
 
     override fun createForwardDeclarationHackPackagePartProvider(
