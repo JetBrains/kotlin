@@ -40,7 +40,7 @@ class ParameterInlayProviderSettingsModel(
     get() = "Show parameter hints"
 
   override val name: String
-    get() = "Parameter hints"
+    get() = provider.mainCheckboxText
   override val previewText: String?
     get() = null
   override val component by lazy {
