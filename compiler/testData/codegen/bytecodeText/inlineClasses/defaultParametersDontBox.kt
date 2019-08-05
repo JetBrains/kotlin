@@ -1,5 +1,4 @@
 // LANGUAGE: +InlineClasses
-// IGNORE_BACKEND: JVM_IR
 // FILE: classes.kt
 
 inline class A(val i: Int)

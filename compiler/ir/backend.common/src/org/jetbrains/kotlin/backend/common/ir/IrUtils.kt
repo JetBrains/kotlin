@@ -565,7 +565,3 @@ fun copyBodyToStatic(oldFunction: IrFunction, staticFunction: IrFunction) {
             ?.transform(VariableRemapper(mapping), null)
             ?.patchDeclarationParents(staticFunction)
 }
-
-fun IrClass.underlyingType() = if (isInline)
-    constructors.single { it.isPrimary }.valueParameters[0].type
-else defaultType
