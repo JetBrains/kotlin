@@ -178,6 +178,41 @@ public class MoveStatementTestGenerated extends AbstractMoveStatementTest {
             public void testClassWithoutBody4() throws Exception {
                 runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/classWithoutBody4.kt");
             }
+
+            @TestMetadata("kt-14946-1.kt")
+            public void testKt_14946_1() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-1.kt");
+            }
+
+            @TestMetadata("kt-14946-2.kt")
+            public void testKt_14946_2() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-2.kt");
+            }
+
+            @TestMetadata("kt-14946-3.kt")
+            public void testKt_14946_3() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-3.kt");
+            }
+
+            @TestMetadata("kt-14946-4.kt")
+            public void testKt_14946_4() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-4.kt");
+            }
+
+            @TestMetadata("kt-14946-5.kt")
+            public void testKt_14946_5() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-5.kt");
+            }
+
+            @TestMetadata("kt-14946-6.kt")
+            public void testKt_14946_6() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-6.kt");
+            }
+
+            @TestMetadata("kt-14946-7.kt")
+            public void testKt_14946_7() throws Exception {
+                runTest("testData/codeInsight/moveUpDown/classBodyDeclarations/class/kt-14946-7.kt");
+            }
         }
 
         @RunWith(JUnit3RunnerWithInners.class)

@@ -5,6 +5,7 @@ class A {
     val x = ""
 
 }
+
 // fun foo
 <caret>fun foo() {
 

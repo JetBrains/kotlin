@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.idea.codeInsight.upDownMover;
 
 import com.intellij.codeInsight.editorActions.moveUpDown.LineRange;
+import com.intellij.openapi.editor.CaretModel;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.util.Pair;
@@ -36,6 +37,8 @@ import java.util.List;
 public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
 
     private boolean moveEnumConstant = false;
+    private boolean moveOutOfBlock = false;
+    private boolean moveIntoBlock = false;
 
     private static int findNearestNonWhitespace(@NotNull CharSequence sequence, int index) {
         char ch = sequence.charAt(--index);
@@ -48,8 +51,8 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
     @Override
     public void afterMove(@NotNull Editor editor, @NotNull PsiFile file, @NotNull MoveInfo info, boolean down) {
         super.afterMove(editor, file, info, down);
+        Document document = editor.getDocument();
         if (moveEnumConstant) {
-            Document document = editor.getDocument();
             CharSequence cs = document.getCharsSequence();
             int end1 = findNearestNonWhitespace(cs, info.range1.getEndOffset());
             char c1 = cs.charAt(end1);
@@ -70,6 +73,27 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
                 // Move comma from the end of range2 to the end of range1
                 document.deleteString(end2, end2 + 1);
                 document.insertString(end1 + 1, ",");
+            }
+        }
+        if (moveIntoBlock || moveOutOfBlock) {
+            if (down) {
+                if (moveIntoBlock) {
+                    document.deleteString(info.range1.getEndOffset(), info.range2.getStartOffset());
+                }
+                else {
+                    int offset = info.range1.getEndOffset();
+                    document.insertString(offset, "\n");
+                    CaretModel caretModel = editor.getCaretModel();
+                    if (document.getCharsSequence().charAt(caretModel.getOffset() - 1) == '\n') caretModel.moveToOffset(offset + 1);
+                }
+            }
+            else {
+                if (moveIntoBlock) {
+                    document.deleteString(info.range2.getEndOffset(), info.range1.getStartOffset());
+                }
+                else {
+                    document.insertString(info.range2.getEndOffset(), "\n");
+                }
             }
         }
     }
@@ -228,7 +252,7 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         PsiElement nextParent = null;
 
         // moving out of code block
-        if (sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE)) {
+        if (isMovingOutOfBlock(sibling, down)) {
             // elements which aren't immediately placed in class body can't leave the block
             PsiElement parent = sibling.getParent();
             if (!(parent instanceof KtClassBody)) return null;
@@ -246,18 +270,14 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         // moving into code block
         // element may move only into class body
         else {
-            if (sibling instanceof KtClassOrObject) {
-                KtClassOrObject ktClassOrObject = (KtClassOrObject) sibling;
-                KtClassBody classBody = ktClassOrObject.getBody();
-
-                // confined elements can't leave their block
-                if (classBody != null) {
-                    nextParent = classBody;
-                    if (!down) {
-                        start = classBody.getRBrace();
-                    }
-                    end = down ? classBody.getLBrace() : classBody.getRBrace();
+            KtClassBody classBody = getClassBody(sibling);
+            // confined elements can't leave their block
+            if (classBody != null) {
+                nextParent = classBody;
+                if (!down) {
+                    start = classBody.getRBrace();
                 }
+                end = down ? classBody.getLBrace() : classBody.getRBrace();
             }
         }
 
@@ -277,6 +297,19 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
         if (target instanceof KtPropertyAccessor && !(sibling instanceof KtPropertyAccessor)) return null;
 
         return start != null && end != null ? new LineRange(start, end, editor.getDocument()) : null;
+    }
+
+    private static boolean isMovingOutOfBlock(@NotNull PsiElement sibling, boolean down) {
+        return sibling.getNode().getElementType() == (down ? KtTokens.RBRACE : KtTokens.LBRACE);
+    }
+
+    @Nullable
+    private static KtClassBody getClassBody(PsiElement element) {
+        if (element instanceof KtClassOrObject) {
+            return ((KtClassOrObject) element).getBody();
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -306,6 +339,8 @@ public class KotlinDeclarationMover extends AbstractKotlinUpDownMover {
             info.toMove2 = null;
             return true;
         }
+        moveOutOfBlock = isMovingOutOfBlock(sibling, down);
+        moveIntoBlock = getClassBody(sibling) != null;
 
         info.toMove = sourceRange;
         info.toMove2 = getTargetRange(editor, sibling, down, sourceRange.firstElement);
