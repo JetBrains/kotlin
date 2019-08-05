@@ -34,7 +34,7 @@ dependencies {
     embedded(project(":kotlin-ultimate:ide:common-native")) { isTransitive = false }
     embedded(project(":kotlin-ultimate:ide:mobile-native")) { isTransitive = false }
     embedded(fileTree(File(clionCocoaCommonPluginDir, "lib")) { include("*.jar") })
-    embedded("com.android.tools.ddms:ddmlib:26.0.0")
+    runtime("com.android.tools.ddms:ddmlib:26.0.0")
 }
 
 val preparePluginXmlTask: Task = preparePluginXml(
@@ -54,13 +54,21 @@ val copyNativeDeps: Task by task<Copy> {
     include("native/**")
 }
 
+val copyRuntimeDeps: Task by task<Copy> {
+    from(configurations.runtime)
+    into(File(mobilePluginDir, "lib"))
+}
+
 val mobilePluginTask: Task = packageCidrPlugin(
         project,
         ":kotlin-ultimate:ide:mobile-native",
         mobilePluginDir,
         listOf(pluginJarTask)
 )
-mobilePluginTask.dependsOn(copyNativeDeps)
+mobilePluginTask.dependsOn(
+    copyNativeDeps,
+    copyRuntimeDeps
+)
 
 val zipMobilePluginTask: Task = zipCidrPlugin(project, mobilePluginTask, mobilePluginZipPath)
 
