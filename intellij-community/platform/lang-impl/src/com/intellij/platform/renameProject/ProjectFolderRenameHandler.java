@@ -1,3 +1,4 @@
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.platform.renameProject;
 
 import com.intellij.ide.TitledHandler;
@@ -9,15 +10,10 @@ import org.jetbrains.annotations.NotNull;
 /**
  * @author lene
  */
-public class ProjectFolderRenameHandler extends PsiElementRenameHandler implements TitledHandler {
+public final class ProjectFolderRenameHandler extends PsiElementRenameHandler implements TitledHandler {
   @Override
   public boolean isAvailableOnDataContext(@NotNull DataContext dataContext) {
     return RenameProjectHandler.isAvailable(dataContext) && super.isAvailableOnDataContext(dataContext);
-  }
-
-  @Override
-  public boolean isRenaming(@NotNull DataContext dataContext) {
-    return RenameProjectHandler.isAvailable(dataContext) && super.isRenaming(dataContext);
   }
 
   @Override
