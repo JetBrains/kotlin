@@ -10219,6 +10219,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/operationsOnIntegerValueTypes.kt");
                 }
 
+                @TestMetadata("recursiveJavaTypeWithStarProjection.kt")
+                public void testRecursiveJavaTypeWithStarProjection() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/constraints/recursiveJavaTypeWithStarProjection.kt");
+                }
+
                 @TestMetadata("returnLambdaFromLambda.kt")
                 public void testReturnLambdaFromLambda() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/constraints/returnLambdaFromLambda.kt");
