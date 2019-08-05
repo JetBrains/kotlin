@@ -164,9 +164,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
       .finishOnUiThread(ModalityState.NON_MODAL,
                         manager -> {
                           manager.addListener(this);
-                          Disposer.register(this, () -> {
-                            if (!project.isDisposed()) CodeStyleSettingsManager.removeListener(project, this);
-                          });
+                          Disposer.register(this, () -> CodeStyleSettingsManager.removeListener(project, this));
                         }
       ).submit(NonUrgentExecutor.getInstance());
   }
