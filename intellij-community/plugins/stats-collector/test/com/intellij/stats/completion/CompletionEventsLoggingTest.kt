@@ -75,6 +75,7 @@ class CompletionEventsLoggingTest : CompletionLoggingTestBase() {
           COMPLETION_STARTED,
           TYPE,
           TYPE,
+          TYPE,
           COMPLETION_CANCELED
         )
     }
