@@ -118,7 +118,7 @@ class MLSorter : CompletionFinalSorter() {
     SessionFactorsUtils.updateSessionFactors(lookup, items)
     for (element in items) {
       val position = positionsBefore.getValue(element)
-      val relevanceMap = buildRelevanceMap(element, relevanceObjects.getValue(element), prefixLength, position, parameters)
+      val relevanceMap = buildRelevanceMap(element, relevanceObjects.getOrDefault(element, emptyList()), prefixLength, position, parameters)
       val score = calculateElementScore(ranker, element, position, relevanceMap, userFactors, prefixLength)
       element2score[element] = score
 
