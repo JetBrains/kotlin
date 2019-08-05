@@ -20,6 +20,9 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) :
 
     override val context: JvmBackendContext get() = super.context as JvmBackendContext
 
+    override fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
+        nullConst(startOffset, endOffset, irParameter.type)
+
     override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
         if (type !is IrSimpleType || type.hasQuestionMark || type.classOrNull?.owner?.isInline != true)
             return super.nullConst(startOffset, endOffset, type)
