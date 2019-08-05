@@ -87,7 +87,7 @@ private fun KotlinToCCallBuilder.addArgument(
         variadic: Boolean,
         parameter: IrValueParameter?
 ) {
-    val argumentPassing = mapParameter(type, variadic, parameter, argument)
+    val argumentPassing = mapCalleeFunctionParameter(type, variadic, parameter, argument)
     addArgument(argument, argumentPassing, variadic)
 }
 
@@ -96,7 +96,7 @@ private fun KotlinToCCallBuilder.addArgument(
         argumentPassing: KotlinToCArgumentPassing,
         variadic: Boolean
 ) {
-    val cArgument = with(argumentPassing) { passValue(argument) }
+    val cArgument = with(argumentPassing) { passValue(argument) } ?: return
     cCallBuilder.arguments += cArgument.expression
     if (!variadic) cFunctionBuilder.addParameter(cArgument.type)
 }
@@ -413,7 +413,7 @@ private fun CCallbackBuilder.addParameter(it: IrValueParameter, functionParamete
         })
     }
 
-    val valuePassing = stubs.mapType(
+    val valuePassing = stubs.mapFunctionParameterType(
             it.type,
             retained = it.isConsumed(),
             variadic = false,
@@ -615,7 +615,7 @@ private fun cBoolType(target: KonanTarget): CType? = when (target.family) {
     else -> CTypes.signedChar
 }
 
-private fun KotlinToCCallBuilder.mapParameter(
+private fun KotlinToCCallBuilder.mapCalleeFunctionParameter(
         type: IrType,
         variadic: Boolean,
         parameter: IrValueParameter?,
@@ -638,13 +638,23 @@ private fun KotlinToCCallBuilder.mapParameter(
         classifier == symbols.string && parameter?.isWCStringParameter() == true ->
             WCStringArgumentPassing()
 
-        else -> stubs.mapType(
+        else -> stubs.mapFunctionParameterType(
                 type,
                 retained = parameter?.isConsumed() ?: false,
                 variadic = variadic,
                 location = TypeLocation.FunctionArgument(argument)
         )
     }
+}
+
+private fun KotlinStubs.mapFunctionParameterType(
+        type: IrType,
+        retained: Boolean,
+        variadic: Boolean,
+        location: TypeLocation
+): ArgumentPassing = when {
+    type.isUnit() && !variadic -> IgnoredUnitArgumentPassing
+    else -> mapType(type, retained = retained, variadic = variadic, location = location)
 }
 
 private sealed class TypeLocation(val element: IrElement) {
@@ -797,7 +807,7 @@ private fun KotlinStubs.isObjCReferenceType(type: IrType): Boolean {
 private class CExpression(val expression: String, val type: CType)
 
 private interface KotlinToCArgumentPassing {
-    fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression
+    fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression?
 }
 
 private interface ValueReturning {
@@ -807,9 +817,11 @@ private interface ValueReturning {
     fun CCallbackBuilder.returnValue(expression: IrExpression)
 }
 
-private interface ValuePassing : KotlinToCArgumentPassing, ValueReturning {
+private interface ArgumentPassing : KotlinToCArgumentPassing {
     fun CCallbackBuilder.receiveValue(): IrExpression
 }
+
+private interface ValuePassing : ArgumentPassing, ValueReturning
 
 private abstract class SimpleValuePassing : ValuePassing {
     abstract val kotlinBridgeType: IrType
@@ -1407,6 +1419,23 @@ private object VoidReturning : ValueReturning {
         cFunctionBuilder.setReturnType(CTypes.void)
         kotlinBridgeStatements += bridgeBuilder.kotlinIrBuilder.irReturn(expression)
         cBodyLines += "${buildCBridgeCall()};"
+    }
+}
+
+private object IgnoredUnitArgumentPassing : ArgumentPassing {
+    override fun KotlinToCCallBuilder.passValue(expression: IrExpression): CExpression? {
+        // Note: it is not correct to just drop the expression (due to possible side effects),
+        // so (in lack of other options) evaluate the expression and pass ignored value to the bridge:
+        val bridgeArgument = irBuilder.irBlock {
+            +expression
+            +irInt(0)
+        }
+        passThroughBridge(bridgeArgument, irBuilder.context.irBuiltIns.intType, CTypes.int).name
+        return null
+    }
+
+    override fun CCallbackBuilder.receiveValue(): IrExpression {
+        return bridgeBuilder.kotlinIrBuilder.irGetObject(irBuiltIns.unitClass)
     }
 }
 

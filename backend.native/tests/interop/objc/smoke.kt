@@ -25,6 +25,7 @@ fun run() {
     testOverrideInit()
     testMultipleInheritanceClash()
     testClashingWithAny()
+    testInitWithCustomSelector()
 
     assertEquals(2, ForwardDeclaredEnum.TWO.value)
 
@@ -372,6 +373,28 @@ fun testClashingWithAny() {
     assertEquals(4, TestClashingWithAny3().hashCode(3))
     assertFalse(TestClashingWithAny3().equals(TestClashingWithAny3()))
     assertTrue(TestClashingWithAny3().equals())
+}
+
+fun testInitWithCustomSelector() {
+    assertFalse(TestInitWithCustomSelector().custom)
+    assertTrue(TestInitWithCustomSelector(custom = Unit).custom)
+
+    val customSubclass: TestInitWithCustomSelector = TestInitWithCustomSelectorSubclass.createCustom()
+    assertTrue(customSubclass is TestInitWithCustomSelectorSubclass)
+    assertTrue(customSubclass.custom)
+
+    // Test side effect:
+    var ok = false
+    assertTrue(TestInitWithCustomSelector(run { ok = true }).custom)
+    assertTrue(ok)
+}
+
+private class TestInitWithCustomSelectorSubclass : TestInitWithCustomSelector {
+    @OverrideInit constructor(custom: Unit) : super(custom) {
+        assertSame(Unit, custom)
+    }
+
+    companion object : TestInitWithCustomSelectorMeta()
 }
 
 fun nsArrayOf(vararg elements: Any): NSArray = NSMutableArray().apply {

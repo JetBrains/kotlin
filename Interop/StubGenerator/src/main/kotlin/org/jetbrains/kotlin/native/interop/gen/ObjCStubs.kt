@@ -68,6 +68,13 @@ private fun ObjCMethod.getKotlinParameters(
         stubIrBuilder: StubsBuildingContext,
         forConstructorOrFactory: Boolean
 ): List<FunctionParameterStub> {
+    if (this.isInit && this.parameters.isEmpty() && this.selector != "init") {
+        // Create synthetic Unit parameter, just like Swift does in this case:
+        val parameterName = this.selector.removePrefix("init").removePrefix("With").decapitalize()
+        return listOf(FunctionParameterStub(parameterName, WrapperStubType(KotlinTypes.unit)))
+        // Note: this parameter is explicitly handled in compiler.
+    }
+
     val names = getKotlinParameterNames(forConstructorOrFactory) // TODO: consider refactoring.
     val result = mutableListOf<FunctionParameterStub>()
 
