@@ -246,13 +246,10 @@ public class ShowImplementationsAction extends DumbAwareAction implements PopupA
     @Override
     public void replaceModel(@NotNull List<? extends ImplementationViewElement> data) {
       final ImplementationViewElement[] elements = myComponent.getElements();
-      final int includeSelfIdx = myIncludeSelfIdx;
-      final int startIdx = elements.length - includeSelfIdx;
+      final int startIdx = elements.length - myIncludeSelfIdx;
       List<ImplementationViewElement> result = new ArrayList<>();
       Collections.addAll(result, elements);
-      for (ImplementationViewElement element : data.subList(startIdx, data.size())) {
-        result.add(element);
-      }
+      result.addAll(data.subList(startIdx, data.size()));
       myComponent.update(result, myComponent.getIndex());
     }
   }
