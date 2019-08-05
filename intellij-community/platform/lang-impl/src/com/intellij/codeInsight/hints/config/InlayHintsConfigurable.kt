@@ -3,6 +3,7 @@ package com.intellij.codeInsight.hints.config
 
 import com.intellij.codeInsight.CodeInsightBundle
 import com.intellij.codeInsight.hints.HintUtils
+import com.intellij.codeInsight.hints.config.language.SingleLanguageInlayHintsConfigurable
 import com.intellij.ide.DataManager
 import com.intellij.lang.Language
 import com.intellij.openapi.options.Configurable
@@ -70,7 +71,7 @@ class InlayHintsConfigurable(val project: Project) : Configurable, Configurable.
 
   fun loadFromSettings() {
     for (configurable in configurables) {
-      configurable.loadFromSettings()
+      configurable.reset()
     }
   }
 

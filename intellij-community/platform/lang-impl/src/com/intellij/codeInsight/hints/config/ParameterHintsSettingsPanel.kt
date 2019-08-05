@@ -12,23 +12,34 @@ import javax.swing.border.EmptyBorder
 
 class ParameterHintsSettingsPanel(val language: Language,
                                   options: List<Option>,
-                                  blackListSupported: Boolean) : JPanel() {
+                                  blackListSupported: Boolean,
+                                  val onDeactivated: (() -> Unit)?) : JPanel() {
   private val options = mutableListOf<OptionWithCheckBox>()
 
   init {
     layout = BoxLayout(this, BoxLayout.Y_AXIS)
-    border = JBUI.Borders.empty(5)
     val panel = JPanel()
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     if (options.isNotEmpty()) {
-      add(JLabel("Show hints:"))
       panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-      panel.border = JBUI.Borders.empty(10, 20, 0, 0)
+      panel.border = JBUI.Borders.empty(0, 10, 0, 0)
+      val checkBoxes = mutableListOf<JCheckBox>()
       for (option in options) {
         val checkBox = JCheckBox(option.name, option.get())
         checkBox.border = EmptyBorder(1, 1, 0, 0)
+        checkBoxes.add(checkBox)
         panel.add(checkBox)
         this.options.add(OptionWithCheckBox(option, checkBox))
+      }
+      val onDeactivationCallback = onDeactivated
+      if (onDeactivationCallback != null) {
+        for (checkBox in checkBoxes) {
+          checkBox.addChangeListener {
+            if (checkBoxes.none {it.isSelected}) {
+              onDeactivationCallback()
+            }
+          }
+        }
       }
     }
     if (blackListSupported) {
@@ -51,6 +62,12 @@ class ParameterHintsSettingsPanel(val language: Language,
       if (option.get() != checkBox.isSelected) {
         option.set(checkBox.isSelected)
       }
+    }
+  }
+
+  fun reset() {
+    for ((option, checkBox) in options) {
+      checkBox.isSelected = option.isEnabled()
     }
   }
 

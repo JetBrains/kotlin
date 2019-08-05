@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.hints
 
-import com.intellij.codeInsight.hints.config.SettingsWrapper
 import com.intellij.codeInsight.hints.presentation.InlayPresentation
 import com.intellij.configurationStore.deserializeInto
 import com.intellij.configurationStore.serialize
@@ -16,7 +15,7 @@ import java.awt.Rectangle
 
 class ProviderWithSettings<T: Any>(
   val info: ProviderInfo<T>,
-  val settings: T
+  var settings: T
 ) {
   val configurable by lazy { provider.createConfigurable(settings) }
 
@@ -29,10 +28,6 @@ class ProviderWithSettings<T: Any>(
 fun <T : Any> ProviderWithSettings<T>.withSettingsCopy(): ProviderWithSettings<T> {
   val settingsCopy = copySettings(settings, provider)
   return ProviderWithSettings(info, settingsCopy)
-}
-
-internal fun <T : Any> ProviderWithSettings<T>.toSettingsWrapper(config: InlayHintsSettings, language: Language) : SettingsWrapper<T> {
-  return SettingsWrapper(this, config, language)
 }
 
 fun <T : Any> ProviderWithSettings<T>.getCollectorWrapperFor(file: PsiFile, editor: Editor, language: Language): CollectorWithSettings<T>? {
