@@ -16,6 +16,9 @@ if (!isStandaloneBuild) {
         maven("https://jetbrains.bintray.com/markdown")
     }
 }
+repositories {
+    maven("https://maven.google.com")
+}
 
 dependencies {
     compile(project(":kotlin-ultimate:ide:cidr-native"))
