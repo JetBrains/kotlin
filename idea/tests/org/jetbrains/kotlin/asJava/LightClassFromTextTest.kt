@@ -10,6 +10,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiClassType
 import com.intellij.psi.PsiType
 import com.intellij.testFramework.LightProjectDescriptor
+import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -102,6 +103,27 @@ class LightClassFromTextTest : KotlinLightCodeInsightFixtureTestCase() {
 
         val f = syntheticClass.findMethodsByName("f", false).single()
         assertEquals(exampleClass, (f.returnType as PsiClassType).resolve())
+    }
+
+    // KT-32969
+    fun testDataClassWhichExtendsAbstractWithFinalToString() {
+        myFixture.configureByText(
+            "A.kt",
+            """
+            abstract class A {
+                final override fun toString() = "nya"
+            }
+            """.trimIndent()
+        ) as KtFile
+        val dataClass = classesFromText("data class D(val x: Int): A()").single()
+
+        for (method in dataClass.methods) {
+            if (method is KtLightMethod) {
+                // LazyLightClassMemberMatchingError$WrongMatch will be thrown
+                // if memberIndex conflict will be found
+                method.clsDelegate
+            }
+        }
     }
 
     fun testHeaderDeclarations() {
