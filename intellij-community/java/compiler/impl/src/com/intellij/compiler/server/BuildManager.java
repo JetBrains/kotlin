@@ -27,6 +27,7 @@ import com.intellij.openapi.compiler.CompilationStatusListener;
 import com.intellij.openapi.compiler.CompileContext;
 import com.intellij.openapi.compiler.CompilerPaths;
 import com.intellij.openapi.compiler.CompilerTopics;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.EditorFactory;
@@ -372,7 +373,7 @@ public class BuildManager implements Disposable {
   }
 
   public static BuildManager getInstance() {
-    return ApplicationManager.getApplication().getComponent(BuildManager.class);
+    return ServiceManager.getService(BuildManager.class);
   }
 
   public void notifyFilesChanged(final Collection<? extends File> paths) {
