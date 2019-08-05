@@ -92,6 +92,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isInt;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
@@ -1031,7 +1032,7 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     }
 
     @NotNull
-    public StackValue putClosureInstanceOnStack(
+    private StackValue putClosureInstanceOnStack(
             @NotNull ClosureCodegen closureCodegen,
             @Nullable StackValue functionReferenceReceiver
     ) {
@@ -4839,16 +4840,16 @@ The "returned" value of try expression with no finally is either the last expres
         putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, null);
     }
 
-    public static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
+    private static void putReifiedOperationMarkerIfTypeIsReifiedParameter(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @NotNull BaseExpressionCodegen codegen
+            @NotNull ExpressionCodegen codegen
     ) {
         putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(type, operationKind, v, codegen);
     }
 
     private static void putReifiedOperationMarkerIfTypeIsReifiedParameterImpl(
             @NotNull KotlinType type, @NotNull ReifiedTypeInliner.OperationKind operationKind, @NotNull InstructionAdapter v,
-            @Nullable BaseExpressionCodegen codegen
+            @Nullable ExpressionCodegen codegen
     ) {
         Pair<TypeParameterDescriptor, ReificationArgument> typeParameterAndReificationArgument = extractReificationArgument(type);
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.getFirst().isReified()) {
@@ -4862,7 +4863,11 @@ The "returned" value of try expression with no finally is either the last expres
 
     @Override
     public void propagateChildReifiedTypeParametersUsages(@NotNull ReifiedTypeParametersUsages usages) {
-        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(usages, context);
+        parentCodegen.getReifiedTypeParametersUsages().propagateChildUsagesWithinContext(
+                usages,
+                () -> context.getContextDescriptor().getTypeParameters().stream().filter(TypeParameterDescriptor::isReified).map(
+                        it -> it.getName().asString()).collect(Collectors.toSet())
+        );
     }
 
     @Override
@@ -5079,8 +5084,7 @@ The "returned" value of try expression with no finally is either the last expres
         return v;
     }
 
-    @Override
-    public void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
+    private void consumeReifiedOperationMarker(@NotNull TypeParameterDescriptor typeParameterDescriptor) {
         if (typeParameterDescriptor.getContainingDeclaration() != context.getContextDescriptor()) {
             parentCodegen.getReifiedTypeParametersUsages().
                     addUsedReifiedParameter(typeParameterDescriptor.getName().asString());

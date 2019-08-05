@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.codegen.inline
 
-import org.jetbrains.kotlin.codegen.context.MethodContext
 import org.jetbrains.kotlin.codegen.generateAsCast
 import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
@@ -349,18 +348,14 @@ class ReifiedTypeParametersUsages {
         usedTypeParameters.add(name)
     }
 
-    fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, context: MethodContext) {
+    fun propagateChildUsagesWithinContext(child: ReifiedTypeParametersUsages, reifiedTypeParameterNamesInContext: () -> Set<String>) {
         if (!child.wereUsedReifiedParameters()) return
         // used for propagating reified TP usages from children member codegen to parent's
         // mark enclosing object-literal/lambda as needed reification iff
         // 1. at least one of it's method contains operations to reify
         // 2. reified type parameter of these operations is not from current method signature
         // i.e. from outer scope
-        child.usedTypeParameters.filterNot { name ->
-            context.contextDescriptor.typeParameters.any { typeParameter ->
-                typeParameter.isReified && typeParameter.name.asString() == name
-            }
-        }.forEach { usedTypeParameters.add(it) }
+        usedTypeParameters.addAll(child.usedTypeParameters - reifiedTypeParameterNamesInContext())
     }
 
     fun mergeAll(other: ReifiedTypeParametersUsages) {

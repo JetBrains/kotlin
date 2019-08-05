@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.*
 import org.jetbrains.kotlin.codegen.coroutines.INVOKE_SUSPEND_METHOD_NAME
 import org.jetbrains.kotlin.codegen.inline.*
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.Companion.putNeedClassReificationMarker
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.AS
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner.OperationKind.SAFE_AS
 import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -119,6 +119,8 @@ class ExpressionCodegen(
     override val inlineNameGenerator: NameGenerator = NameGenerator("${classCodegen.type.internalName}\$todo") // TODO
 
     override var lastLineNumber: Int = -1
+
+    private val closureReifiedMarkers = hashMapOf<IrClass, ReifiedTypeParametersUsages>()
 
     private val IrType.asmType: Type
         get() = typeMapper.mapType(this)
@@ -322,6 +324,13 @@ class ExpressionCodegen(
 
         when {
             expression is IrConstructorCall -> {
+                closureReifiedMarkers[expression.symbol.owner.parentAsClass]?.let {
+                    if (it.wereUsedReifiedParameters()) {
+                        putNeedClassReificationMarker(v)
+                        propagateChildReifiedTypeParametersUsages(it)
+                    }
+                }
+
                 // IR constructors have no receiver and return the new instance, but on JVM they are void-returning
                 // instance methods named <init>.
                 mv.anew(asmType)
@@ -562,7 +571,9 @@ class ExpressionCodegen(
 
     // TODO maybe remove?
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration)
+        classCodegen.generateLocalClass(declaration).also {
+            closureReifiedMarkers[declaration] = it
+        }
         return immaterialUnitValue
     }
 
@@ -1128,12 +1139,16 @@ class ExpressionCodegen(
         return IrInlineCodegen(this, state, original.descriptor, mappings, IrSourceCompilerForInline(state, element, this, data))
     }
 
-    override fun consumeReifiedOperationMarker(typeParameterDescriptor: TypeParameterDescriptor) {
-        //TODO
+    private fun consumeReifiedOperationMarker(typeParameter: IrTypeParameter) {
+        if (typeParameter.parent != irFunction) {
+            classCodegen.reifiedTypeParametersUsages.addUsedReifiedParameter(typeParameter.name.asString())
+        }
     }
 
     override fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages) {
-        //TODO
+        classCodegen.reifiedTypeParametersUsages.propagateChildUsagesWithinContext(reifiedTypeParametersUsages) {
+            irFunction.typeParameters.filter { it.isReified }.map { it.name.asString() }.toSet()
+        }
     }
 
     override fun pushClosureOnStack(
@@ -1208,12 +1223,12 @@ class ExpressionCodegen(
     /* From ExpressionCodegen.java */
     private fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
         type: IrType, operationKind: ReifiedTypeInliner.OperationKind, v: InstructionAdapter,
-        codegen: BaseExpressionCodegen?
+        codegen: ExpressionCodegen?
     ) {
         val typeParameterAndReificationArgument = extractReificationArgumentWithParameter(type)
         if (typeParameterAndReificationArgument != null && typeParameterAndReificationArgument.first.isReified) {
             val irTypeParameter = typeParameterAndReificationArgument.first
-            codegen?.consumeReifiedOperationMarker(irTypeParameter.descriptor)
+            codegen?.consumeReifiedOperationMarker(irTypeParameter)
             ReifiedTypeInliner.putReifiedOperationMarker(
                 operationKind, typeParameterAndReificationArgument.second.toReificationArgument(), v
             )

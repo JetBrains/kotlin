@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.lower.constantValue
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.inline.DefaultSourceMapper
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.codegen.inline.SourceMapper
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializerExtension
@@ -54,6 +55,8 @@ open class ClassCodegen protected constructor(
 
     val visitor: ClassBuilder = createClassBuilder()
 
+    val reifiedTypeParametersUsages = ReifiedTypeParametersUsages()
+
     open fun createClassBuilder() = state.factory.newVisitor(
         OtherOrigin(descriptor.psiElement, descriptor),
         type,
@@ -70,7 +73,7 @@ open class ClassCodegen protected constructor(
             else -> null
         }
 
-    fun generate() {
+    fun generate(): ReifiedTypeParametersUsages {
         val superClassInfo = irClass.getSuperClassInfo(typeMapper)
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
@@ -121,6 +124,7 @@ open class ClassCodegen protected constructor(
         } else {
             done()
         }
+        return reifiedTypeParametersUsages
     }
 
     private fun generateKotlinMetadataAnnotation() {
@@ -228,8 +232,8 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateLocalClass(klass: IrClass) {
-        ClassCodegen(klass, context, this).generate()
+    fun generateLocalClass(klass: IrClass): ReifiedTypeParametersUsages {
+        return ClassCodegen(klass, context, this).generate()
     }
 
     private fun generateField(field: IrField) {

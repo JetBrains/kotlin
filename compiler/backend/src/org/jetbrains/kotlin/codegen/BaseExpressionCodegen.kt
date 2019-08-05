@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.codegen
 import org.jetbrains.kotlin.codegen.inline.NameGenerator
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 interface BaseExpressionCodegen {
@@ -31,8 +30,6 @@ interface BaseExpressionCodegen {
     val inlineNameGenerator: NameGenerator
 
     val lastLineNumber: Int
-
-    fun consumeReifiedOperationMarker(typeParameterDescriptor: TypeParameterDescriptor)
 
     fun propagateChildReifiedTypeParametersUsages(reifiedTypeParametersUsages: ReifiedTypeParametersUsages)
 
