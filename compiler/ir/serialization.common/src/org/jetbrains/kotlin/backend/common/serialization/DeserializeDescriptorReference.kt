@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
+import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -17,16 +17,30 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
+// This is all information needed to find a descriptor in the
+// tree of deserialized descriptors. Think of it as base + offset.
+// packageFqName + classFqName + index allow to localize some deserialized descriptor.
+// Then the rest of the fields allow to find the needed descriptor relative to the one with index.
 abstract class DescriptorReferenceDeserializer(
     val currentModule: ModuleDescriptor,
     val mangler: KotlinMangler,
+    val builtIns: IrBuiltIns,
     val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>
 ) : DescriptorUniqIdAware {
 
+    protected open fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
 
-    protected abstract fun resolveSpecialDescriptor(fqn: FqName): DeclarationDescriptor
-    protected abstract fun checkIfSpecialDescriptorId(id: Long): Boolean
-    protected abstract fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor): Long?
+    protected open fun checkIfSpecialDescriptorId(id: Long) = with(mangler) { id.isSpecial }
+
+    protected open fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =
+        if (isBuiltInFunction(descriptor)) {
+            val uniqName = when (descriptor) {
+                is FunctionClassDescriptor -> KotlinMangler.functionClassSymbolName(descriptor.name)
+                is FunctionInvokeDescriptor -> KotlinMangler.functionInvokeSymbolName(descriptor.containingDeclaration.name)
+                else -> error("Unexpected descriptor type: $descriptor")
+            }
+            with(mangler) { uniqName.hashMangle }
+        } else null
 
     protected fun getContributedDescriptors(packageFqNameString: String, name: String): Collection<DeclarationDescriptor> {
         val packageFqName = packageFqNameString.let {
