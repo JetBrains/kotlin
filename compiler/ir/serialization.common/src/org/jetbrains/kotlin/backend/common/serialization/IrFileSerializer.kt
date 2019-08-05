@@ -123,7 +123,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.TypeArguments as 
 import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as ProtoVisibility
 import org.jetbrains.kotlin.backend.common.serialization.proto.FqName as ProtoFqName
 
-open class IrModuleSerializer(
+open class IrFileSerializer(
     val logger: LoggingContext,
     val declarationTable: DeclarationTable,
     val mangler: KotlinMangler,
@@ -137,13 +137,11 @@ open class IrModuleSerializer(
     // The same symbol can be used multiple times in a module
     // so use this index to store symbol data only once.
     var protoSymbolMap = mutableMapOf<IrSymbol, Int>()
-//    var protoSymbolMap = mutableMapOf<IrSymbol, Pair<UniqId, ProtoSymbolData>>()
     var protoSymbolArray = arrayListOf<ProtoSymbolData>()
 
     // The same type can be used multiple times in a module
     // so use this index to store type data only once.
     var protoTypeMap = mutableMapOf<IrTypeKey, Int>()
-//    val protoTypeMap = mutableMapOf<IrTypeKey, Pair<Long, ProtoType>>()
     var protoTypeArray = arrayListOf<ProtoType>()
 
     var protoStringMap = mutableMapOf<String, Int>()
@@ -167,8 +165,6 @@ open class IrModuleSerializer(
             override fun toProtoExpression() = proto
         }
     }
-
-
 
     private fun serializeIrExpressionBody(expression: IrExpression): ProtoBodyIndex {
         val proto = ProtoBodyIndex.newBuilder()
@@ -1371,9 +1367,5 @@ open class IrModuleSerializer(
             protoBodyArray.map { it.toByteArray() },
             topLevelDeclarations
         )
-    }
-
-    fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
-        return SerializedIrModule(module.files.filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }.map { serializeIrFile(it) })
     }
 }
