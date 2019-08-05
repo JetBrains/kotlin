@@ -22,7 +22,7 @@ class ParameterHintsSettingsPanel(val language: Language,
     panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
     if (options.isNotEmpty()) {
       panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-      panel.border = JBUI.Borders.empty(0, 10, 0, 0)
+      panel.border = JBUI.Borders.empty(0, 20, 0, 0)
       val checkBoxes = mutableListOf<JCheckBox>()
       for (option in options) {
         val checkBox = JCheckBox(option.name, option.get())
