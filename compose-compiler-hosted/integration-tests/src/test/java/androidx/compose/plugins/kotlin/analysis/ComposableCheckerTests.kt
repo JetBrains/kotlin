@@ -871,13 +871,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import android.widget.TextView;
 
             @Composable
-            fun CraneWrapperComposable(@Children children: () -> Unit) {
+            fun CraneWrapperComposable(children: @Composable() () -> Unit) {
                 <MyCraneWrapper>
                     <children />
                 </MyCraneWrapper>
             }
 
-            class MyCraneWrapper(@Children var children: () -> Unit) : Component() {
+            class MyCraneWrapper(var children: @Composable() () -> Unit) : Component() {
                 override fun compose() { }
             }
         """)
@@ -889,16 +889,16 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             import androidx.compose.*
             import android.widget.TextView;
 
-            typealias UNIT_LAMBDA = () -> Unit
+            typealias COMPOSABLE_UNIT_LAMBDA = @Composable() () -> Unit
 
             @Composable
-            fun CraneWrapperComposable(@Children children: UNIT_LAMBDA) {
+            fun CraneWrapperComposable(children: COMPOSABLE_UNIT_LAMBDA) {
                 <MyCraneWrapper>
                     <children />
                 </MyCraneWrapper>
             }
 
-            class MyCraneWrapper(@Children var children: UNIT_LAMBDA) : Component() {
+            class MyCraneWrapper(var children: COMPOSABLE_UNIT_LAMBDA) : Component() {
                 override fun compose() { }
             }
         """)
