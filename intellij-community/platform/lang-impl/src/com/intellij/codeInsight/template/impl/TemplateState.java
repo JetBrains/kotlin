@@ -10,6 +10,7 @@ import com.intellij.diagnostic.AttachmentFactory;
 import com.intellij.idea.ActionsBundle;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.Disposable;
+import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandEvent;
@@ -36,6 +37,7 @@ import com.intellij.openapi.editor.markup.RangeHighlighter;
 import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.impl.EditorWindow;
 import com.intellij.openapi.fileEditor.impl.text.AsyncEditorLoader;
+import com.intellij.openapi.keymap.KeymapUtil;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
@@ -669,6 +671,12 @@ public class TemplateState implements Disposable {
 
     if (advertisingText != null) {
       lookup.addAdvertisement(advertisingText, null);
+    }
+    else {
+      ActionManager am = ActionManager.getInstance();
+      String enterShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM));
+      String tabShortcut = KeymapUtil.getFirstKeyboardShortcutText(am.getAction(IdeActions.ACTION_CHOOSE_LOOKUP_ITEM_REPLACE));
+      lookup.addAdvertisement("Press " + enterShortcut + " or " + tabShortcut + " to replace", null);
     }
     lookup.refreshUi(true, true);
     ourLookupShown = true;
