@@ -219,7 +219,8 @@ class EnableCustomHintsOption: IntentionAction, HighPriorityAction {
   override fun getFamilyName(): String = presentableFamilyName
 
   override fun isAvailable(project: Project, editor: Editor, file: PsiFile): Boolean {
-    if (!EditorSettingsExternalizable.getInstance().isShowParameterNameHints) return false
+    val language = file.language
+    if(!isParameterHintsEnabledForLanguage(language)) return false
     if (editor !is EditorImpl) return false
     
     InlayParameterHintsExtension.forLanguage(file.language) ?: return false
@@ -269,16 +270,18 @@ class ToggleInlineHintsAction : AnAction() {
       e.presentation.isEnabledAndVisible = false
       return
     }
-    
-    val isHintsShownNow = EditorSettingsExternalizable.getInstance().isShowParameterNameHints
+
+    val file = CommonDataKeys.PSI_FILE.getData(e.dataContext) ?: return
+    val isHintsShownNow = isParameterHintsEnabledForLanguage(file.language)
     e.presentation.text = if (isHintsShownNow) disableText else enableText
     e.presentation.isEnabledAndVisible = true
   }
 
   override fun actionPerformed(e: AnActionEvent) {
-    val settings = EditorSettingsExternalizable.getInstance()
-    val before = settings.isShowParameterNameHints
-    settings.isShowParameterNameHints = !before
+    val file = CommonDataKeys.PSI_FILE.getData(e.dataContext) ?: return
+    val language = file.language
+    val before = isParameterHintsEnabledForLanguage(language)
+    setShowParameterHintsForLanguage(!before, language)
 
     refreshAllOpenEditors()
   }
