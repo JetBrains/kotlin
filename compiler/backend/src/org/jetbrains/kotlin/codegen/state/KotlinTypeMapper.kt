@@ -55,7 +55,10 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.*
 import org.jetbrains.kotlin.resolve.calls.model.DefaultValueArgument
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VarargValueArgument
-import org.jetbrains.kotlin.resolve.descriptorUtil.*
+import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
+import org.jetbrains.kotlin.resolve.descriptorUtil.classId
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.DEFAULT_CONSTRUCTOR_MARKER
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
@@ -967,47 +970,13 @@ class KotlinTypeMapper @JvmOverloads constructor(
     fun writeFormalTypeParameters(typeParameters: List<TypeParameterDescriptor>, sw: JvmSignatureWriter) {
         if (sw.skipGenericSignature()) return
         for (typeParameter in typeParameters) {
-            writeFormalTypeParameter(typeParameter, sw)
-        }
-    }
-
-    private fun writeFormalTypeParameter(typeParameterDescriptor: TypeParameterDescriptor, sw: JvmSignatureWriter) {
-        if (!classBuilderMode.generateBodies && typeParameterDescriptor.name.isSpecial) {
-            // If a type parameter has no name, the code below fails, but it should recover in case of light classes
-            return
-        }
-
-        sw.writeFormalTypeParameter(typeParameterDescriptor.name.asString())
-
-        sw.writeClassBound()
-
-        for (type in typeParameterDescriptor.upperBounds) {
-            if (type.constructor.declarationDescriptor is ClassDescriptor && !isJvmInterface(type)) {
-                mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                break
+            if (!classBuilderMode.generateBodies && typeParameter.name.isSpecial) {
+                // If a type parameter has no name, the code below fails, but it should recover in case of light classes
+                continue
             }
-        }
 
-        // "extends Object" is optional according to ClassFileFormat-Java5.pdf
-        // but javac complaints to signature:
-        // <P:>Ljava/lang/Object;
-        // TODO: avoid writing java/lang/Object if interface list is not empty
-
-        sw.writeClassBoundEnd()
-
-        for (type in typeParameterDescriptor.upperBounds) {
-            when (val classifier = type.constructor.declarationDescriptor) {
-                is ClassDescriptor -> if (isJvmInterface(type)) {
-                    sw.writeInterfaceBound()
-                    mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                    sw.writeInterfaceBoundEnd()
-                }
-                is TypeParameterDescriptor -> {
-                    sw.writeInterfaceBound()
-                    mapType(type, sw, TypeMappingMode.GENERIC_ARGUMENT)
-                    sw.writeInterfaceBoundEnd()
-                }
-                else -> throw UnsupportedOperationException("Unknown classifier: $classifier")
+            SimpleClassicTypeSystemContext.writeFormalTypeParameter(typeParameter, sw) { type, mode ->
+                mapType(type as KotlinType, sw, mode)
             }
         }
     }
@@ -1660,6 +1629,41 @@ class KotlinTypeMapper @JvmOverloads constructor(
             sw.writeParameterType(kind)
             sw.writeAsmType(type)
             sw.writeParameterTypeEnd()
+        }
+
+        @JvmStatic
+        fun TypeSystemCommonBackendContext.writeFormalTypeParameter(
+            typeParameter: TypeParameterMarker,
+            sw: JvmSignatureWriter,
+            mapType: (KotlinTypeMarker, TypeMappingMode) -> Type
+        ) {
+            sw.writeFormalTypeParameter(typeParameter.getName().asString())
+
+            sw.writeClassBound()
+
+            for (i in 0 until typeParameter.upperBoundCount()) {
+                val type = typeParameter.getUpperBound(i)
+                if (type.typeConstructor().getTypeParameterClassifier() == null && !type.isInterfaceOrAnnotationClass()) {
+                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    break
+                }
+            }
+
+            // "extends Object" is optional according to ClassFileFormat-Java5.pdf
+            // but javac complaints to signature:
+            // <P:>Ljava/lang/Object;
+            // TODO: avoid writing java/lang/Object if interface list is not empty
+
+            sw.writeClassBoundEnd()
+
+            for (i in 0 until typeParameter.upperBoundCount()) {
+                val type = typeParameter.getUpperBound(i)
+                if (type.typeConstructor().getTypeParameterClassifier() != null || type.isInterfaceOrAnnotationClass()) {
+                    sw.writeInterfaceBound()
+                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    sw.writeInterfaceBoundEnd()
+                }
+            }
         }
     }
 }

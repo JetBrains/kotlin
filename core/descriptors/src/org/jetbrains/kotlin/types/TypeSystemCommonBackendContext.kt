@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.types
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.*
 
 interface TypeSystemCommonBackendContext : TypeSystemContext {
@@ -41,4 +42,8 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun TypeConstructorMarker.isUnderKotlinPackage(): Boolean
     fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe?
+
+    fun TypeParameterMarker.getName(): Name
+
+    fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 }

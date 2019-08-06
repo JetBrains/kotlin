@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
@@ -325,6 +326,14 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? =
         (this as IrClassSymbol).owner.fqNameWhenAvailable?.toUnsafe()
+
+    override fun TypeParameterMarker.getName(): Name =
+        (this as IrTypeParameterSymbol).owner.name
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        val irClass = (this as IrType).classOrNull?.owner
+        return irClass != null && (irClass.isInterface || irClass.isAnnotationClass)
+    }
 }
 
 fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {

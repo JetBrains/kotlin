@@ -42,8 +42,16 @@ class IrTypeMapper(private val context: JvmBackendContext) {
         context.getLocalClassInfo(irClass)?.internalName
             ?: JvmCodegenUtil.sanitizeNameIfNeeded(computeInternalName(irClass), context.state.languageVersionSettings)
 
-    fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) =
-        kotlinTypeMapper.writeFormalTypeParameters(irParameters.map { it.descriptor }, sw)
+    fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) {
+        if (sw.skipGenericSignature()) return
+        with(KotlinTypeMapper) {
+            for (typeParameter in irParameters) {
+                typeSystem.writeFormalTypeParameter(typeParameter.symbol, sw) { type, mode ->
+                    mapType(type as IrType, mode, sw)
+                }
+            }
+        }
+    }
 
     fun boxType(irType: IrType): Type =
         AsmUtil.boxType(mapType(irType), irType.toKotlinType(), kotlinTypeMapper)
