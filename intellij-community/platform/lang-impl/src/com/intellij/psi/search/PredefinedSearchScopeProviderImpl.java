@@ -257,7 +257,8 @@ public class PredefinedSearchScopeProviderImpl extends PredefinedSearchScopeProv
                                                    @Nullable DataContext dataContext,
                                                    @Nullable PsiFile currentFile) {
     final VirtualFile[] filesOrDirs = (dataContext == null) ? null : CommonDataKeys.VIRTUAL_FILE_ARRAY.getData(dataContext);
-    if (filesOrDirs == null || filesOrDirs.length == 1 && currentFile != null && filesOrDirs[0].equals(currentFile.getVirtualFile())) {
+    if (filesOrDirs == null || filesOrDirs.length == 0 ||
+        filesOrDirs.length == 1 && currentFile != null && filesOrDirs[0].equals(currentFile.getVirtualFile())) {
       return null;
     }
     return new SelectedFilesScope(project, filesOrDirs);
