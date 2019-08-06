@@ -352,27 +352,27 @@ class ExpressionCodegen(
             }
             expression.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
-            callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() -> addInlineMarker(mv, isStartNotEnd = true)
+            callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() ->
+                addInlineMarker(mv, isStartNotEnd = true)
         }
 
-        val receiver = expression.dispatchReceiver
-        receiver?.apply {
+        expression.dispatchReceiver?.let { receiver ->
             callGenerator.genValueAndPut(
                 callee.dispatchReceiverParameter!!,
-                this,
+                receiver,
                 if (isSuperCall) receiver.asmType else callable.dispatchReceiverType
                     ?: throw AssertionError("No dispatch receiver type: ${expression.render()}"),
-                this@ExpressionCodegen,
+                this,
                 data
             )
         }
 
-        expression.extensionReceiver?.apply {
+        expression.extensionReceiver?.let { receiver ->
             callGenerator.genValueAndPut(
                 callee.extensionReceiverParameter!!,
-                this,
+                receiver,
                 callable.extensionReceiverType!!,
-                this@ExpressionCodegen,
+                this,
                 data
             )
         }
@@ -381,25 +381,8 @@ class ExpressionCodegen(
         expression.symbol.owner.valueParameters.forEachIndexed { i, irParameter ->
             val arg = expression.getValueArgument(i)
             val parameterType = callable.valueParameterTypes[i]
-            when {
-                arg != null -> {
-                    callGenerator.genValueAndPut(irParameter, arg, parameterType, this@ExpressionCodegen, data)
-                }
-                else -> {
-                    assert(irParameter.varargElementType != null)
-                    val type = typeMapper.mapType(
-                        irParameter.type.substitute(typeSubstitutionMap)
-                    )
-                    callGenerator.putValueIfNeeded(
-                        parameterType,
-                        StackValue.operation(type) {
-                            it.aconst(0)
-                            it.newarray(correctElementType(type))
-                        },
-                        ValueKind.GENERAL_VARARG, i, this@ExpressionCodegen
-                    )
-                }
-            }
+            require(arg != null) { "Null argument in ExpressionCodegen for parameter ${irParameter.render()}" }
+            callGenerator.genValueAndPut(irParameter, arg, parameterType, this, data)
         }
 
         expression.markLineNumber(true)
@@ -409,19 +392,14 @@ class ExpressionCodegen(
             addSuspendMarker(mv, isStartNotEnd = true)
         }
 
-        callGenerator.genCall(
-            callable,
-            this,
-            expression
-        )
-
-        val returnType = callee.returnType
+        callGenerator.genCall(callable, this, expression)
 
         if (callee.isSuspend && !irFunction.isInvokeSuspendInContinuation()) {
             addSuspendMarker(mv, isStartNotEnd = false)
             addInlineMarker(mv, isStartNotEnd = false)
         }
 
+        val returnType = callee.returnType
         return when {
             returnType.substitute(expression.typeSubstitutionMap).isNothing() -> {
                 mv.aconst(null)
@@ -579,101 +557,6 @@ class ExpressionCodegen(
             closureReifiedMarkers[declaration] = it
         }
         return immaterialUnitValue
-    }
-
-    override fun visitVararg(expression: IrVararg, data: BlockInfo): PromisedValue {
-        expression.markLineNumber(startOffset = true)
-        val outType = expression.type
-        val type = expression.asmType
-        assert(type.sort == Type.ARRAY)
-        val elementType = correctElementType(type)
-        val arguments = expression.elements
-        val size = arguments.size
-
-        val hasSpread = arguments.firstIsInstanceOrNull<IrSpreadElement>() != null
-
-        if (hasSpread) {
-            val arrayOfReferences = outType.makeNotNull().isArray()
-            if (size == 1) {
-                // Arrays.copyOf(receiverValue, newLength)
-                val argument = (arguments[0] as IrSpreadElement).expression
-                val arrayType = if (arrayOfReferences)
-                    Type.getType("[Ljava/lang/Object;")
-                else
-                    Type.getType("[" + elementType.descriptor)
-                argument.accept(this, data).coerce(type, argument.type).materialize()
-                mv.dup()
-                mv.arraylength()
-                mv.invokestatic("java/util/Arrays", "copyOf", Type.getMethodDescriptor(arrayType, arrayType, Type.INT_TYPE), false)
-                if (arrayOfReferences) {
-                    mv.checkcast(type)
-                }
-            } else {
-                val owner: String
-                val addDescriptor: String
-                val toArrayDescriptor: String
-                if (arrayOfReferences) {
-                    owner = "kotlin/jvm/internal/SpreadBuilder"
-                    addDescriptor = "(Ljava/lang/Object;)V"
-                    toArrayDescriptor = "([Ljava/lang/Object;)[Ljava/lang/Object;"
-                } else {
-                    val spreadBuilderClassName =
-                        asmPrimitiveTypeToLangPrimitiveType(elementType)!!.typeName.identifier + "SpreadBuilder"
-                    owner = "kotlin/jvm/internal/$spreadBuilderClassName"
-                    addDescriptor = "(" + elementType.descriptor + ")V"
-                    toArrayDescriptor = "()" + type.descriptor
-                }
-                mv.anew(Type.getObjectType(owner))
-                mv.dup()
-                mv.iconst(size)
-                mv.invokespecial(owner, "<init>", "(I)V", false)
-                for (i in 0 until size) {
-                    mv.dup()
-                    val argument = arguments[i]
-                    if (argument is IrSpreadElement) {
-                        argument.expression.accept(this, data).coerce(OBJECT_TYPE, argument.expression.type).materialize()
-                        mv.invokevirtual(owner, "addSpread", "(Ljava/lang/Object;)V", false)
-                    } else {
-                        argument.accept(this, data).coerce(elementType, expression.varargElementType).materialize()
-                        mv.invokevirtual(owner, "add", addDescriptor, false)
-                    }
-                }
-                if (arrayOfReferences) {
-                    mv.dup()
-                    mv.invokevirtual(owner, "size", "()I", false)
-                    newArrayInstruction(outType)
-                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
-                    mv.checkcast(type)
-                } else {
-                    mv.invokevirtual(owner, "toArray", toArrayDescriptor, false)
-                }
-            }
-        } else {
-            mv.iconst(size)
-            newArrayInstruction(expression.type)
-            for ((i, element) in expression.elements.withIndex()) {
-                mv.dup()
-                mv.iconst(i)
-                element.accept(this, data).coerce(elementType, expression.varargElementType).materialize()
-                mv.astore(elementType)
-            }
-        }
-        return expression.onStack
-    }
-
-    fun newArrayInstruction(arrayType: IrType) {
-        if (arrayType.isArray()) {
-            val elementIrType = arrayType.safeAs<IrSimpleType>()!!.arguments[0].safeAs<IrTypeProjection>()!!.type
-            putReifiedOperationMarkerIfTypeIsReifiedParameter(
-                elementIrType,
-                ReifiedTypeInliner.OperationKind.NEW_ARRAY,
-                mv,
-                this
-            )
-            mv.newarray(typeMapper.boxType(elementIrType))
-        } else {
-            mv.newarray(correctElementType(arrayType.asmType))
-        }
     }
 
     override fun visitReturn(expression: IrReturn, data: BlockInfo): PromisedValue {
@@ -1224,7 +1107,7 @@ class ExpressionCodegen(
     }
 
     /* From ExpressionCodegen.java */
-    private fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
+    fun putReifiedOperationMarkerIfTypeIsReifiedParameter(
         type: IrType, operationKind: ReifiedTypeInliner.OperationKind, v: InstructionAdapter,
         codegen: ExpressionCodegen?
     ) {
