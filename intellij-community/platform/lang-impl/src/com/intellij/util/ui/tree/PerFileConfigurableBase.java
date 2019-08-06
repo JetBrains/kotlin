@@ -65,7 +65,6 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
   protected static final Key<String> EMPTY_TEXT = KeyWithDefaultValue.create("EMPTY_TEXT", "New Mapping $addShortcut");
   protected static final Key<String> OVERRIDE_QUESTION = Key.create("OVERRIDE_QUESTION");
   protected static final Key<String> OVERRIDE_TITLE = Key.create("OVERRIDE_TITLE");
-  protected static final Key<String> CLEAR_TEXT = KeyWithDefaultValue.create("CLEAR_TEXT", "<Clear>");
   protected static final Key<String> NULL_TEXT = KeyWithDefaultValue.create("NULL_TEXT", "<None>");
   protected static final Key<Boolean> ADD_PROJECT_MAPPING = KeyWithDefaultValue.create("ADD_PROJECT_MAPPING", Boolean.TRUE);
   protected static final Key<Boolean> ONLY_DIRECTORIES = KeyWithDefaultValue.create("ONLY_DIRECTORIES", Boolean.FALSE);
@@ -716,7 +715,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
 
   @Nullable
   protected String getClearValueText(@Nullable Object target) {
-    return target == null ? getNullValueText(null) : param(CLEAR_TEXT);
+    return target == null ? getNullValueText(null) : null;
   }
 
   @Nullable
