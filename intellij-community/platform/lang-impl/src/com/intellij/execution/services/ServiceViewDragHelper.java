@@ -2,6 +2,7 @@
 package com.intellij.execution.services;
 
 import com.intellij.execution.services.ServiceModel.ServiceViewItem;
+import com.intellij.execution.services.ServiceViewDnDDescriptor.Position;
 import com.intellij.ide.dnd.*;
 import com.intellij.ide.projectView.PresentationData;
 import com.intellij.ide.util.treeView.PresentableNodeDescriptor;
@@ -14,6 +15,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.wm.ToolWindow;
 import com.intellij.openapi.wm.impl.InternalDecorator;
 import com.intellij.ui.SimpleColoredComponent;
+import com.intellij.ui.awt.RelativeRectangle;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentFactory;
 import com.intellij.ui.content.ContentManager;
@@ -23,15 +25,22 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 
+import static com.intellij.execution.services.ServiceViewDnDDescriptor.Position.*;
+
 class ServiceViewDragHelper {
   static DnDSource createSource(@NotNull ServiceView serviceView) {
     return new ServiceViewDnDSource(serviceView);
+  }
+
+  static DnDTarget createTarget(@NotNull JTree tree) {
+    return new ServiceViewDnDTarget(tree);
   }
 
   static void installDnDSupport(@NotNull Project project, @NotNull InternalDecorator decorator, @NotNull ContentManager contentManager) {
@@ -237,6 +246,95 @@ class ServiceViewDragHelper {
       c.paint(g);
       g.dispose();
       return Pair.create(image, new Point(0, 0));
+    }
+  }
+
+  private static class ServiceViewDnDTarget implements DnDTarget {
+    private final JTree myTree;
+
+    ServiceViewDnDTarget(@NotNull JTree tree) {
+      myTree = tree;
+    }
+
+    @Override
+    public void cleanUpOnLeave() {
+    }
+
+    @Override
+    public void updateDraggedImage(Image image, Point dropPoint, Point imageOffset) {
+    }
+
+    @Override
+    public void drop(DnDEvent event) {
+      EventContext eventContext = getEventContext(event.getPoint());
+      if (eventContext == null) return;
+
+      if (eventContext.descriptor.canDrop(event, INTO)) {
+        eventContext.descriptor.drop(event, INTO);
+      }
+      else {
+        eventContext.descriptor.drop(event, eventContext.getPosition());
+      }
+      event.hideHighlighter();
+    }
+
+    @Override
+    public boolean update(DnDEvent event) {
+      event.setDropPossible(false);
+      EventContext eventContext = getEventContext(event.getPoint());
+      if (eventContext == null) return true;
+
+      if (eventContext.descriptor.canDrop(event, INTO)) {
+        event.setDropPossible(true);
+        RelativeRectangle rectangle = new RelativeRectangle(myTree, eventContext.cellBounds);
+        event.setHighlighting(rectangle, DnDEvent.DropTargetHighlightingType.RECTANGLE);
+        return false;
+      }
+
+      Position position = eventContext.getPosition();
+      if (eventContext.descriptor.canDrop(event, position)) {
+        event.setDropPossible(true);
+        if (position != ABOVE) {
+          eventContext.cellBounds.y += eventContext.cellBounds.height - 2;
+        }
+        RelativeRectangle rectangle = new RelativeRectangle(myTree, eventContext.cellBounds);
+        rectangle.getDimension().height = 2;
+        event.setHighlighting(rectangle, DnDEvent.DropTargetHighlightingType.FILLED_RECTANGLE);
+        return false;
+      }
+
+      event.hideHighlighter();
+      return false;
+    }
+
+    private EventContext getEventContext(Point point) {
+      TreePath path = myTree.getPathForLocation(point.x, point.y);
+      if (path == null || !(path.getLastPathComponent() instanceof ServiceViewItem)) return null;
+
+      Rectangle cellBounds = myTree.getPathBounds(path);
+      if (cellBounds == null) return null;
+
+      ServiceViewItem item = (ServiceViewItem)path.getLastPathComponent();
+      ServiceViewDescriptor viewDescriptor = item.getViewDescriptor();
+      if (!(viewDescriptor instanceof ServiceViewDnDDescriptor)) return null;
+
+      return new EventContext(point, cellBounds, (ServiceViewDnDDescriptor)viewDescriptor);
+    }
+
+    private static class EventContext {
+      final Point point;
+      final Rectangle cellBounds;
+      final ServiceViewDnDDescriptor descriptor;
+
+      private EventContext(Point point, Rectangle cellBounds, ServiceViewDnDDescriptor descriptor) {
+        this.point = point;
+        this.cellBounds = cellBounds;
+        this.descriptor = descriptor;
+      }
+
+      Position getPosition() {
+        return point.y < cellBounds.y + cellBounds.height / 2 ? ABOVE : BELOW;
+      }
     }
   }
 }

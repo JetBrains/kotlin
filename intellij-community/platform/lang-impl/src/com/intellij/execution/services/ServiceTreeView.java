@@ -52,7 +52,11 @@ class ServiceTreeView extends ServiceView {
     ServiceViewActionProvider actionProvider = ServiceViewActionProvider.getInstance();
     ui.setServiceToolbar(actionProvider);
     ui.setMasterComponent(myTree, actionProvider);
+
+    myTree.setDragEnabled(true);
     DnDManager.getInstance().registerSource(ServiceViewDragHelper.createSource(this), myTree);
+    DnDManager.getInstance().registerTarget(ServiceViewDragHelper.createTarget(myTree), myTree);
+
     add(myUi.getComponent(), BorderLayout.CENTER);
 
     myTree.addTreeSelectionListener(new RestoreSelectionListener());

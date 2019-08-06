@@ -54,10 +54,6 @@ class ServiceViewTree extends Tree {
                ((ServiceViewItem)lastComponent).getViewDescriptor().handleDoubleClick(e);
       }
     }.installOn(this);
-
-    // DnD
-    //RowsDnDSupport.install(myTree, myTreeModel);
-    setDragEnabled(true);
   }
 
   private static class ServiceViewTreeCellRenderer extends ServiceViewTreeCellRendererBase {
