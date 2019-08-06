@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KarmaConfig.CoverageReporter.Reporter
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.slf4j.Logger
 import java.io.File
@@ -108,19 +108,22 @@ class KotlinKarma(override val compilation: KotlinJsCompilation) : KotlinJsTestF
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(versions.webpack)
 
+        val webpackConfigWriter = KotlinWebpackConfig(
+            configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
+            sourceMaps = true,
+            export = false,
+            progressReporter = true,
+            progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
+        )
+        requiredDependencies.addAll(webpackConfigWriter.getRequiredDependencies(versions))
+
         addPreprocessor("webpack")
         confJsWriters.add {
             it.appendln()
             it.appendln("// webpack config")
             it.appendln("function createWebpackConfig() {")
 
-            KotlinWebpackConfigWriter(
-                configDirectory = project.projectDir.resolve("webpack.config.d").takeIf { it.isDirectory },
-                sourceMaps = true,
-                export = false,
-                progressReporter = true,
-                progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
-            ).appendTo(it)
+            webpackConfigWriter.appendTo(it)
 
             it.appendln("   return config;")
             it.appendln("}")
