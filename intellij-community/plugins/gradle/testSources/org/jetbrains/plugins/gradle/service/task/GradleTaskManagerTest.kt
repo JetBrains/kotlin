@@ -62,7 +62,7 @@ class GradleTaskManagerTest: UsefulTestCase() {
 
     val listener = MyListener()
     runHelpTask(listener)
-    assertTrue("Gradle 4.6 should be started", listener.heard("Welcome to Gradle 4.8.1"))
+    assertTrue("Gradle 4.8.1 should be started", listener.heard("Welcome to Gradle 4.8.1"))
   }
 
   @Test
