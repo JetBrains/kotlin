@@ -15,8 +15,8 @@ import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
-import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.components.*
+import com.intellij.openapi.components.impl.ComponentManagerImpl
 import com.intellij.openapi.extensions.PluginDescriptor
 import com.intellij.openapi.options.OptionsBundle
 import com.intellij.openapi.options.SchemeManagerFactory
@@ -159,7 +159,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
     }
   }
 
-  val app = ApplicationManager.getApplication() as ApplicationImpl
+  val app = ApplicationManager.getApplication() as ComponentManagerImpl
 
   @Suppress("DEPRECATION")
   app.getComponents(ExportableApplicationComponent::class.java).forEach(processor)
@@ -188,7 +188,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
 
   val fileToContent = THashMap<Path, String>()
 
-  com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(app) { aClass, pluginDescriptor ->
+  ServiceManagerImpl.processAllImplementationClasses(app) { aClass, pluginDescriptor ->
     val stateAnnotation = getStateSpec(aClass)
     @Suppress("DEPRECATION")
     if (stateAnnotation == null || stateAnnotation.name.isEmpty() || ExportableComponent::class.java.isAssignableFrom(aClass)) {

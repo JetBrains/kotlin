@@ -36,5 +36,6 @@
     <orderEntry type="library" name="jna" level="project" />
     <orderEntry type="library" name="lz4-java" level="project" />
     <orderEntry type="module" module-name="intellij.platform.util" />
+    <orderEntry type="module" module-name="intellij.platform.serviceContainer" />
   </component>
 </module>

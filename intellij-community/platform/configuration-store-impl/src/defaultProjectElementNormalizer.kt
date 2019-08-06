@@ -111,7 +111,7 @@ internal fun moveComponentConfiguration(defaultProject: Project, element: Elemen
     processComponents(it.javaClass)
   }
 
-  com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(defaultProject) { aClass, _ ->
+  ServiceManagerImpl.processAllImplementationClasses(defaultProject) { aClass, _ ->
     processComponents(aClass)
     true
   }

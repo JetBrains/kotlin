@@ -11,7 +11,8 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.application.TransactionGuard;
-import com.intellij.openapi.application.impl.ApplicationImpl;
+import com.intellij.openapi.application.ex.ApplicationEx;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.command.UndoConfirmationPolicy;
 import com.intellij.openapi.command.undo.BasicUndoableAction;
@@ -492,7 +493,7 @@ public abstract class BaseRefactoringProcessor implements Runnable {
           }
         }
       };
-      ApplicationImpl app = (ApplicationImpl)ApplicationManager.getApplication();
+      ApplicationEx app = ApplicationManagerEx.getApplicationEx();
       if (Registry.is("run.refactorings.under.progress")) {
         app.runWriteActionWithNonCancellableProgressInDispatchThread(commandName, myProject, null, indicator -> performRefactoringRunnable.run());
       }

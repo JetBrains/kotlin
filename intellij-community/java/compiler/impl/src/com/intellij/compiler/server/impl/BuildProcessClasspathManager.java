@@ -4,7 +4,6 @@ package com.intellij.compiler.server.impl;
 import com.intellij.compiler.server.BuildProcessParametersProvider;
 import com.intellij.compiler.server.CompileServerPlugin;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.PluginPathManager;
 import com.intellij.openapi.diagnostic.Logger;
@@ -56,7 +55,7 @@ public class BuildProcessClasspathManager {
 
     for (CompileServerPlugin serverPlugin : CompileServerPlugin.EP_NAME.getExtensions()) {
       final PluginId pluginId = serverPlugin.getPluginDescriptor().getPluginId();
-      final IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+      final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
       LOG.assertTrue(plugin != null, pluginId);
 
       final File baseFile = plugin.getPath();
