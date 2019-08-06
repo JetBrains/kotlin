@@ -339,7 +339,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
         if (myHelper.isReplaceState()) {
           rootPane.setDefaultButton(myReplaceSelectedButton);
         }
-        rootPane.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("ctrl pressed ENTER"), "openInFindWindow");
+        rootPane.getInputMap(WHEN_IN_FOCUSED_WINDOW).put(ENTER_WITH_MODIFIERS, "openInFindWindow");
         rootPane.getActionMap().put("openInFindWindow", new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
