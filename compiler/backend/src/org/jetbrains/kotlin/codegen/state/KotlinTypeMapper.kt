@@ -819,6 +819,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                     receiverTypeAndTypeParameters.receiverType
                 }
                 !isIrBackend && kind == OwnerKind.ERASED_INLINE_CLASS -> {
+                    writeFormalTypeParameters(directMember.typeParameters, sw)
                     (directMember.containingDeclaration as ClassDescriptor).defaultType
                 }
                 else -> {
