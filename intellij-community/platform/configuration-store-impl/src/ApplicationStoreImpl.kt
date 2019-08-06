@@ -3,6 +3,7 @@ package com.intellij.configurationStore
 
 import com.intellij.configurationStore.schemeManager.ROOT_CONFIG
 import com.intellij.openapi.application.Application
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.PathManager
 import com.intellij.openapi.application.appSystemDir
 import com.intellij.openapi.components.*
@@ -15,11 +16,16 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import org.jetbrains.jps.model.serialization.JpsGlobalLoader
 
-private class ApplicationPathMacroManager : PathMacroManager(null)
+internal class ApplicationPathMacroManager : PathMacroManager(null)
 
 const val APP_CONFIG = "\$APP_CONFIG$"
 
-class ApplicationStoreImpl(private val application: Application, pathMacroManager: PathMacroManager? = null) : ComponentStoreWithExtraComponents() {
+class ApplicationStoreImpl(pathMacroManager: PathMacroManager?) : ComponentStoreWithExtraComponents() {
+  private val application = ApplicationManager.getApplication()
+
+  @Suppress("unused")
+  constructor() : this(PathMacroManager.getInstance(ApplicationManager.getApplication()))
+
   override val storageManager = ApplicationStorageManager(application, pathMacroManager)
 
   // number of app components require some state, so, we load default state in test mode

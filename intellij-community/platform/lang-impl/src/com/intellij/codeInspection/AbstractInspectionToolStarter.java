@@ -3,9 +3,11 @@ package com.intellij.codeInspection;
 
 import com.intellij.execution.configurations.ParametersList;
 import com.intellij.openapi.application.ApplicationStarter;
-import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.ArrayUtilRt;
 import com.sampullara.cli.Args;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 /**
  * @author Roman.Chernyatchik
@@ -18,10 +20,10 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
   protected abstract AbstractInspectionCmdlineOptions createCmdlineOptions();
 
   @Override
-  public void premain(String[] args) {
+  public void premain(@NotNull List<String> args) {
     myOptions = createCmdlineOptions();
     try {
-      Args.parse(myOptions, args);
+      Args.parse(myOptions, ArrayUtilRt.toStringArray(args));
     }
     catch (Exception e) {
       printHelpAndExit(args, myOptions);
@@ -80,17 +82,16 @@ public abstract class AbstractInspectionToolStarter implements ApplicationStarte
     return opts.getVerboseLevelProperty() > 0;
   }
 
-  protected void printArgs(String[] args, StringBuilder buff) {
-    if (args.length < 2) {
+  protected void printArgs(@NotNull List<String> args, @NotNull StringBuilder buff) {
+    if (args.size() < 2) {
       buff.append(" no arguments");
     }
     else {
-      final String argString = ParametersList.join(ContainerUtil.newArrayList(args, 1, args.length));
-      buff.append(argString);
+      buff.append(ParametersList.join(args.subList(1, args.size())));
     }
   }
 
-  protected void printHelpAndExit(final String[] args, final InspectionToolCmdlineOptions opts) {
+  protected void printHelpAndExit(@NotNull List<String> args, final InspectionToolCmdlineOptions opts) {
     final StringBuilder buff = new StringBuilder();
     buff.append("\n");
     buff.append("Invalid options or syntax:");

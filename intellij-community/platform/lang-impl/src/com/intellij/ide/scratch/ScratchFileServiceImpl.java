@@ -187,7 +187,7 @@ public class ScratchFileServiceImpl extends ScratchFileService implements Persis
       Language language = rootType.substituteLanguage(project, file);
       Language adjusted = language != null ? language : getLanguageByFileName(file);
       return adjusted != null && adjusted != ScratchFileType.INSTANCE.getLanguage() ?
-             LanguageSubstitutors.INSTANCE.substituteLanguage(adjusted, file, project) : adjusted;
+             LanguageSubstitutors.getInstance().substituteLanguage(adjusted, file, project) : adjusted;
     }
   }
 

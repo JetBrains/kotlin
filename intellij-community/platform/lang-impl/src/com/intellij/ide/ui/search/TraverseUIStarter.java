@@ -68,9 +68,9 @@ public class TraverseUIStarter implements ApplicationStarter {
   }
 
   @Override
-  public void premain(String[] args) {
-    OUTPUT_PATH = args[1];
-    SPLIT_BY_RESOURCE_PATH = args.length > 2 && Boolean.valueOf(args[2]);
+  public void premain(@NotNull List<String> args) {
+    OUTPUT_PATH = args.get(1);
+    SPLIT_BY_RESOURCE_PATH = args.size() > 2 && Boolean.valueOf(args.get(2));
   }
 
   @Override

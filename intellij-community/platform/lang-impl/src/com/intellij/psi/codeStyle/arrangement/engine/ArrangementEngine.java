@@ -5,6 +5,8 @@ import com.intellij.application.options.CodeStyle;
 import com.intellij.codeInsight.actions.FormatChangedTextUtil;
 import com.intellij.lang.Language;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.components.Service;
+import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.DocumentEx;
@@ -41,11 +43,14 @@ import static com.intellij.psi.codeStyle.arrangement.std.StdArrangementTokens.Se
  * <p/>
  * I.e. the general idea is to have a language-specific rules hidden by generic arrangement API and common arrangement
  * engine which works on top of that API and performs the arrangement.
- *
- * @author Denis Zhdanov
  */
-public class ArrangementEngine {
+@Service
+public final class ArrangementEngine {
   private boolean myCodeChanged;
+
+  public static ArrangementEngine getInstance() {
+    return ServiceManager.getService(ArrangementEngine.class);
+  }
 
   @Nullable
   public String getUserNotificationInfo() {

@@ -1,18 +1,4 @@
-/*
- * Copyright 2000-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.psi.impl.source.tree.injected;
 
@@ -370,7 +356,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     resultReferences.add(Pair.create(injector, place));
     clear();
   }
-  
+
   // returns true if shreds were set, false if old ones were reused
   private static boolean cacheEverything(@NotNull Place place,
                                          @NotNull DocumentWindowImpl documentWindow,
@@ -532,7 +518,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
    * and corresponding injected {@code oldInjectedPsi} (along with {@code oldDocumentWindow} and {@code oldInjectedVirtualFile}) were created.
    * Then the user came along and changed the host document in {@code hostVirtualFile}.
    * Document commit started and produced PSI diff {@code oldRoot} -> {@code newRoot} in the host PSI.
-   * 
+   *
    * Now we try to produce similar diff for the injected fragment PSI.
    * To do that, we:
    * <pre>
@@ -665,7 +651,7 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                    @NotNull StringBuilder decodedChars,
                                    @NotNull String fileName, @NotNull PsiDocumentManagerBase documentManager) {
     VirtualFileWindowImpl virtualFile = new VirtualFileWindowImpl(fileName, hostVirtualFile, documentWindow, language, decodedChars);
-    Language finalLanguage = forcedLanguage == null ? LanguageSubstitutors.INSTANCE.substituteLanguage(language, virtualFile, project) : forcedLanguage;
+    Language finalLanguage = forcedLanguage == null ? LanguageSubstitutors.getInstance().substituteLanguage(language, virtualFile, project) : forcedLanguage;
     InjectedFileViewProvider viewProvider = new InjectedFileViewProvider(PsiManager.getInstance(project), virtualFile, documentWindow, finalLanguage);
     ParserDefinition parserDefinition = LanguageParserDefinitions.INSTANCE.forLanguage(finalLanguage);
     assert parserDefinition != null : "Parser definition for language " + finalLanguage + " is null";

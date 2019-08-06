@@ -5,10 +5,9 @@ import com.intellij.openapi.application.ApplicationStarter;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
-/**
- * @author max
- */
-public class GenerateAntMain implements ApplicationStarter {
+import java.util.List;
+
+final class GenerateAntMain implements ApplicationStarter {
   private GenerateAntApplication myApplication;
 
   @Override
@@ -18,12 +17,12 @@ public class GenerateAntMain implements ApplicationStarter {
   }
 
   @Override
-  public void premain(String[] args) {
+  public void premain(@NotNull List<String> args) {
     System.setProperty("idea.load.plugins", "false");
     myApplication = new GenerateAntApplication();
 
-    myApplication.myProjectPath = args[1];
-    myApplication.myOutPath = args[2];
+    myApplication.myProjectPath = args.get(1);
+    myApplication.myOutPath = args.get(2);
   }
 
   @Override

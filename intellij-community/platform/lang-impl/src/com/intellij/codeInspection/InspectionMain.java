@@ -4,7 +4,7 @@ package com.intellij.codeInspection;
 import com.intellij.openapi.application.ApplicationStarter;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class InspectionMain implements ApplicationStarter {
   private InspectionApplication myApplication;
@@ -16,9 +16,9 @@ public class InspectionMain implements ApplicationStarter {
 
   @Override
   @SuppressWarnings({"HardCodedStringLiteral"})
-  public void premain(String[] args) {
-    if (args.length < 4) {
-      System.err.println("invalid args:" + Arrays.toString(args));
+  public void premain(@NotNull List<String> args) {
+    if (args.size() < 4) {
+      System.err.println("invalid args:" + args);
       printHelp();
     }
 
@@ -31,9 +31,9 @@ public class InspectionMain implements ApplicationStarter {
         printHelp();
       }
     };
-    myApplication.myProjectPath = args[1];
-    myApplication.myStubProfile = args[2];
-    myApplication.myOutPath = args[3];
+    myApplication.myProjectPath = args.get(1);
+    myApplication.myStubProfile = args.get(2);
+    myApplication.myOutPath = args.get(3);
 
     if (myApplication.myProjectPath == null
         || myApplication.myOutPath == null
@@ -43,16 +43,16 @@ public class InspectionMain implements ApplicationStarter {
     }
 
     try {
-      for (int i = 4; i < args.length; i++) {
-        String arg = args[i];
+      for (int i = 4; i < args.size(); i++) {
+        String arg = args.get(i);
         if ("-profileName".equals(arg)) {
-          myApplication.myProfileName = args[++i];
+          myApplication.myProfileName = args.get(++i);
         }
         else if ("-profilePath".equals(arg)) {
-          myApplication.myProfilePath = args[++i];
+          myApplication.myProfilePath = args.get(++i);
         }
         else if ("-d".equals(arg)) {
-          myApplication.mySourceDirectory = args[++i];
+          myApplication.mySourceDirectory = args.get(++i);
         }
         else if ("-v0".equals(arg)) {
           myApplication.setVerboseLevel(0);
