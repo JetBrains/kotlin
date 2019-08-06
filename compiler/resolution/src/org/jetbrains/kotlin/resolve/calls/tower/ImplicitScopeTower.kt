@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.ResolutionCandidateApplicability
 import org.jetbrains.kotlin.resolve.scopes.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeApproximator
 
 interface ImplicitScopeTower {
     val lexicalScope: LexicalScope
@@ -42,6 +43,8 @@ interface ImplicitScopeTower {
     val isDebuggerContext: Boolean
 
     val isNewInferenceEnabled: Boolean
+
+    val typeApproximator: TypeApproximator
 }
 
 interface ScopeTowerLevel {

@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.resolve.scopes.utils.canBeResolvedWithoutDeprecation
 import org.jetbrains.kotlin.types.DeferredType
 import org.jetbrains.kotlin.types.ErrorUtils
+import org.jetbrains.kotlin.types.TypeApproximator
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.isDynamic
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -72,7 +73,8 @@ class NewResolutionOldInference(
     private val syntheticScopes: SyntheticScopes,
     private val languageVersionSettings: LanguageVersionSettings,
     private val coroutineInferenceSupport: CoroutineInferenceSupport,
-    private val deprecationResolver: DeprecationResolver
+    private val deprecationResolver: DeprecationResolver,
+    private val typeApproximator: TypeApproximator
 ) {
     sealed class ResolutionKind {
         abstract internal fun createTowerProcessor(
@@ -170,7 +172,9 @@ class NewResolutionOldInference(
         }
 
         val dynamicScope = dynamicCallableDescriptors.createDynamicDescriptorScope(context.call, context.scope.ownerDescriptor)
-        val scopeTower = ImplicitScopeTowerImpl(context, dynamicScope, syntheticScopes, context.call.createLookupLocation())
+        val scopeTower = ImplicitScopeTowerImpl(
+            context, dynamicScope, syntheticScopes, context.call.createLookupLocation(), typeApproximator
+        )
 
         val shouldUseOperatorRem = languageVersionSettings.supportsFeature(LanguageFeature.OperatorRem)
         val isBinaryRemOperator = isBinaryRemOperator(context.call)
@@ -353,7 +357,8 @@ class NewResolutionOldInference(
         val resolutionContext: ResolutionContext<*>,
         override val dynamicScope: MemberScope,
         override val syntheticScopes: SyntheticScopes,
-        override val location: LookupLocation
+        override val location: LookupLocation,
+        override val typeApproximator: TypeApproximator
     ) : ImplicitScopeTower {
         private val cache = HashMap<ReceiverValue, ReceiverValueWithSmartCastInfo>()
 

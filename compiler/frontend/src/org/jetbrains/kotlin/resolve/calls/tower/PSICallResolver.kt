@@ -375,6 +375,7 @@ class PSICallResolver(
         override val isDebuggerContext: Boolean get() = context.isDebuggerContext
         override val isNewInferenceEnabled: Boolean get() = context.languageVersionSettings.supportsFeature(LanguageFeature.NewInference)
         override val lexicalScope: LexicalScope get() = context.scope
+        override val typeApproximator: TypeApproximator get() = this@PSICallResolver.typeApproximator
         private val cache = HashMap<ReceiverParameterDescriptor, ReceiverValueWithSmartCastInfo>()
 
         override fun getImplicitReceiver(scope: LexicalScope): ReceiverValueWithSmartCastInfo? {
