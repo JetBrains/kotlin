@@ -43,6 +43,13 @@ public data class Pair<out A, out B>(
 public infix fun <A, B> A.to(that: B): Pair<A, B> = Pair(this, that)
 
 /**
+ * Creates a tuple of type [Triple] from this and [that].
+ *
+ * This can be useful for creating [Triple] literals with less noise, for example:
+ */
+public infix fun <A, B, C> Pair<A, B>.to(that: C): Triple<A, B, C> = Triple(this.first, this.second, that)
+
+/**
  * Converts this pair into a list.
  * @sample samples.misc.Tuples.pairToList
  */

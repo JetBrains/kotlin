@@ -70,6 +70,13 @@ class TripleTest {
         assertEquals(0.07, c)
     }
 
+    @Test fun tripleFromPairTo() {
+        val (a, b, c) = 1 to "a" to 0.07
+        assertEquals(1, a)
+        assertEquals("a", b)
+        assertEquals(0.07, c)
+    }
+
     @Test fun tripleToString() {
         assertEquals("(1, a, 0.07)", t.toString())
     }
