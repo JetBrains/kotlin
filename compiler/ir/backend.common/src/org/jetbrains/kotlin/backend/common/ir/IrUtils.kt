@@ -487,7 +487,7 @@ fun IrClass.addFakeOverrides() {
                 IrSimpleFunctionSymbolImpl(descriptor),
                 irFunction.name,
                 Visibilities.INHERITED,
-                Modality.OPEN,
+                irFunction.modality,
                 irFunction.returnType,
                 irFunction.isInline,
                 irFunction.isExternal,
