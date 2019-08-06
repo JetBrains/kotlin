@@ -244,7 +244,7 @@ public abstract class PerFileConfigurableBase<T> implements SearchableConfigurab
     Set<Object> set = myModel.data.stream().map(o -> o.first).collect(Collectors.toSet());
     for (VirtualFile file : chosen) {
       if (!set.add(file)) continue;
-      myModel.data.add(Pair.create(file, null));
+      myModel.data.add(Pair.create(file, getNewMapping(file)));
     }
     myModel.fireTableDataChanged();
     TIntArrayList rowList = new TIntArrayList();
