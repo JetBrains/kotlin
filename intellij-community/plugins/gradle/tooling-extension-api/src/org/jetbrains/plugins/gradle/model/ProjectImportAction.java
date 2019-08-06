@@ -21,15 +21,14 @@ import org.gradle.tooling.BuildController;
 import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter;
 import org.gradle.tooling.internal.adapter.TargetTypeProvider;
 import org.gradle.tooling.internal.gradle.DefaultBuildIdentifier;
+import org.gradle.tooling.internal.gradle.DefaultProjectIdentifier;
 import org.gradle.tooling.model.BuildIdentifier;
 import org.gradle.tooling.model.BuildModel;
-import org.gradle.tooling.model.DomainObjectSet;
+import org.gradle.tooling.model.ProjectIdentifier;
 import org.gradle.tooling.model.ProjectModel;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.gradle.BasicGradleProject;
 import org.gradle.tooling.model.gradle.GradleBuild;
-import org.gradle.tooling.model.idea.BasicIdeaProject;
-import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -104,22 +103,13 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     if (isProjectsLoadedAction || !myUseProjectsLoadedPhase) {
       long startTime = System.currentTimeMillis();
       myGradleBuild = controller.getBuildModel();
-      AllModels allModels = new AllModels(new DefaultBuildModel(myGradleBuild.getBuildIdentifier().getRootDir()));
+      AllModels allModels = new AllModels(convert(myGradleBuild));
       allModels.logPerformance("Get model GradleBuild", System.currentTimeMillis() - startTime);
       long startTimeBuildEnv = System.currentTimeMillis();
       BuildEnvironment buildEnvironment = controller.findModel(BuildEnvironment.class);
       allModels.setBuildEnvironment(buildEnvironment);
       allModels.logPerformance("Get model BuildEnvironment", System.currentTimeMillis() - startTimeBuildEnv);
       myAllModels = allModels;
-    }
-    if (!isProjectsLoadedAction) {
-      long startTimeIdeaProject = System.currentTimeMillis();
-      final IdeaProject ideaProject = myIsPreviewMode ?
-                                      controller.getModel(BasicIdeaProject.class) : controller.getModel(IdeaProject.class);
-      assert ideaProject != null && !ideaProject.getModules().isEmpty();
-      myAllModels.logPerformance("Get model IdeaProject" + (myIsPreviewMode ? " (preview mode)" : ""),
-                                 System.currentTimeMillis() - startTimeIdeaProject);
-      myAllModels.setIdeaProject(ideaProject);
     }
 
     assert myGradleBuild != null;
@@ -132,10 +122,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     if (myIsCompositeBuildsSupported) {
       for (GradleBuild includedBuild : myGradleBuild.getIncludedBuilds()) {
         if (!isProjectsLoadedAction) {
-          IdeaProject ideaIncludedProject = myIsPreviewMode
-                                            ? controller.findModel(includedBuild, BasicIdeaProject.class)
-                                            : controller.findModel(includedBuild, IdeaProject.class);
-          myAllModels.getIncludedBuilds().add(ideaIncludedProject);
+          myAllModels.getIncludedBuilds().add(convert(includedBuild));
         }
         for (BasicGradleProject project : includedBuild.getProjects()) {
           addProjectModels(serializerHolder, controller, myAllModels, project, isProjectsLoadedAction);
@@ -145,6 +132,15 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
 
     return isProjectsLoadedAction && myAllModels.hasModels() ? null : myAllModels;
+  }
+
+  @NotNull
+  private static Build convert(@NotNull GradleBuild build) {
+    DefaultBuild rootProject = new DefaultBuild(build.getBuildIdentifier().getRootDir());
+    for (BasicGradleProject project : build.getProjects()) {
+      rootProject.addProject(project.getProjectIdentifier());
+    }
+    return rootProject;
   }
 
   private void configureAdditionalTypes(BuildController controller) {
@@ -283,29 +279,32 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   }
 
   public static class AllModels extends ModelsHolder<BuildModel, ProjectModel> {
-    private final List<IdeaProject> includedBuilds = new ArrayList<IdeaProject>();
+    @NotNull private final List<Build> includedBuilds = new ArrayList<Build>();
     private final Map<String, Long> performanceTrace = new LinkedHashMap<String, Long>();
-    private IdeaProject myIdeaProject;
 
-    public AllModels(@NotNull BuildModel rootProjectModel) {
-      super(rootProjectModel);
+    public AllModels(@NotNull Build mainBuild) {
+      super(mainBuild);
     }
 
     public AllModels(@NotNull IdeaProject ideaProject) {
-      super(new IdeaProjectBuildModelAdapter(ideaProject));
-      setIdeaProject(ideaProject);
+      super(new LegacyIdeaProjectModelAdapter(ideaProject));
+      addModel(ideaProject, IdeaProject.class);
     }
 
     @NotNull
     public IdeaProject getIdeaProject() {
-      return myIdeaProject;
+      IdeaProject ideaProject = getModel(IdeaProject.class);
+      assert ideaProject != null;
+      return ideaProject;
     }
 
-    private void setIdeaProject(@NotNull IdeaProject ideaProject) {
-      myIdeaProject = ideaProject;
+    @NotNull
+    public Build getMainBuild() {
+      return (Build)getRootModel();
     }
 
-    public List<IdeaProject> getIncludedBuilds() {
+    @NotNull
+    public List<Build> getIncludedBuilds() {
       return includedBuilds;
     }
 
@@ -326,22 +325,6 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
 
     public Map<String, Long> getPerformanceTrace() {
       return performanceTrace;
-    }
-
-    private static class IdeaProjectBuildModelAdapter implements BuildModel {
-      private final BuildIdentifier myBuildIdentifier;
-
-      private IdeaProjectBuildModelAdapter(@NotNull IdeaProject ideaProject) {
-        DomainObjectSet<? extends IdeaModule> ideaModules = ideaProject.getChildren();
-        assert !ideaModules.isEmpty();
-        IdeaModule ideaModule = ideaModules.getAt(0);
-        myBuildIdentifier = ideaModule.getGradleProject().getProjectIdentifier().getBuildIdentifier();
-      }
-
-      @Override
-      public BuildIdentifier getBuildIdentifier() {
-        return myBuildIdentifier;
-      }
     }
   }
 
@@ -396,14 +379,40 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
   }
 
-  private final static class DefaultBuildModel implements BuildModel, Serializable {
-    private final File myRootDir;
+  private final static class DefaultBuild implements Build, Serializable {
+    private final DefaultBuildIdentifier myBuildIdentifier;
+    private final Collection<ProjectModel> myProjects = new ArrayList<ProjectModel>(0);
 
-    private DefaultBuildModel(File rootDir) {myRootDir = rootDir;}
+    private DefaultBuild(File rootDir) {myBuildIdentifier = new DefaultBuildIdentifier(rootDir);}
 
     @Override
     public BuildIdentifier getBuildIdentifier() {
-      return new DefaultBuildIdentifier(myRootDir);
+      return myBuildIdentifier;
+    }
+
+    @Override
+    public Collection<ProjectModel> getProjects() {
+      return myProjects;
+    }
+
+    private void addProject(final ProjectIdentifier projectIdentifier) {
+      final String projectPath = projectIdentifier.getProjectPath();
+      File rootDir = myBuildIdentifier.getRootDir();
+      assert rootDir.getPath().equals(projectIdentifier.getBuildIdentifier().getRootDir().getPath());
+      myProjects.add(new DefaultProjectModel(rootDir, projectPath));
+    }
+
+    private final static class DefaultProjectModel implements ProjectModel, Serializable {
+      private final DefaultProjectIdentifier myProjectIdentifier;
+
+      private DefaultProjectModel(@NotNull File rootDir, @NotNull String projectPath) {
+        myProjectIdentifier = new DefaultProjectIdentifier(rootDir, projectPath);
+      }
+
+      @Override
+      public ProjectIdentifier getProjectIdentifier() {
+        return myProjectIdentifier;
+      }
     }
   }
 }

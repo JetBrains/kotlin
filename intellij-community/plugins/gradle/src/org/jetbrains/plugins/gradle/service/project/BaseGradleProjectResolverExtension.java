@@ -675,7 +675,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
     String rootProjectPath = ideProject.getData().getLinkedExternalProjectPath();
     try {
-      File rootDir = resolverCtx.getModels().getRootModel().getBuildIdentifier().getRootDir();
+      File rootDir = resolverCtx.getModels().getMainBuild().getBuildIdentifier().getRootDir();
       rootProjectPath = ExternalSystemApiUtil.toCanonicalPath(rootDir.getCanonicalPath());
     }
     catch (IOException e) {
@@ -747,7 +747,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   @NotNull
   @Override
   public ProjectImportModelProvider getModelProvider() {
-    return new ClassSetImportModelProvider(getExtraProjectModelClasses(), set(ExternalProject.class));
+    return new ClassSetImportModelProvider(getExtraProjectModelClasses(), set(ExternalProject.class, IdeaProject.class));
   }
 
   @NotNull

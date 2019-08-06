@@ -48,7 +48,7 @@ public abstract class ModelsHolder<B extends BuildModel, P extends ProjectModel>
   }
 
   @NotNull
-  public B getRootModel() {
+  protected B getRootModel() {
     return myRootModel;
   }
 
