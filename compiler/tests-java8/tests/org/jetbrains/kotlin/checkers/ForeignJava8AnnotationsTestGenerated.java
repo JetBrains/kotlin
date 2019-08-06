@@ -43,6 +43,24 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
         runTest("compiler/testData/foreignAnnotationsJava8/tests/typeUseOnObject.kt");
     }
 
+    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jspecify")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Jspecify extends AbstractForeignJava8AnnotationsTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInJspecify() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @TestMetadata("simple.kt")
+        public void testSimple() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/simple.kt");
+        }
+    }
+
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jsr305")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

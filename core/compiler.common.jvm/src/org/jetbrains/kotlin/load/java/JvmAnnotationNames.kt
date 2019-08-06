@@ -18,7 +18,15 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.FqName
 
-val NULLABLE_ANNOTATIONS: List<FqName> = listOf(
+val JSPECIFY_NULLABLE = FqName("jspecify.annotations.Nullable")
+val JSPECIFY_NOT_NULL = FqName("jspecify.annotations.NotNull")
+val JSPECIFY_NULLNESS_UNKNOWN = FqName("jspecify.annotations.NullnessUnknown")
+
+val JSPECIFY_DEFAULT_NULLABLE = FqName("jspecify.annotations.DefaultNullable")
+val JSPECIFY_DEFAULT_NOT_NULL = FqName("jspecify.annotations.DefaultNotNull")
+val JSPECIFY_DEFAULT_NULLNESS_UNKNOWN = FqName("jspecify.annotations.DefaultNullnessUnknown")
+
+val NULLABLE_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
     FqName("androidx.annotation.Nullable"),
     FqName("android.support.annotation.Nullable"),
@@ -31,13 +39,14 @@ val NULLABLE_ANNOTATIONS: List<FqName> = listOf(
     FqName("edu.umd.cs.findbugs.annotations.CheckForNull"),
     FqName("edu.umd.cs.findbugs.annotations.Nullable"),
     FqName("edu.umd.cs.findbugs.annotations.PossiblyNull"),
-    FqName("io.reactivex.annotations.Nullable")
+    FqName("io.reactivex.annotations.Nullable"),
+    JSPECIFY_NULLABLE
 )
 
-val JAVAX_NONNULL_ANNOTATION: FqName = FqName("javax.annotation.Nonnull")
-val JAVAX_CHECKFORNULL_ANNOTATION: FqName = FqName("javax.annotation.CheckForNull")
+val JAVAX_NONNULL_ANNOTATION = FqName("javax.annotation.Nonnull")
+val JAVAX_CHECKFORNULL_ANNOTATION = FqName("javax.annotation.CheckForNull")
 
-val NOT_NULL_ANNOTATIONS: List<FqName> = listOf(
+val NOT_NULL_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
     FqName("edu.umd.cs.findbugs.annotations.NonNull"),
     FqName("androidx.annotation.NonNull"),
@@ -47,30 +56,37 @@ val NOT_NULL_ANNOTATIONS: List<FqName> = listOf(
     FqName("org.eclipse.jdt.annotation.NonNull"),
     FqName("org.checkerframework.checker.nullness.qual.NonNull"),
     FqName("lombok.NonNull"),
-    FqName("io.reactivex.annotations.NonNull")
+    FqName("io.reactivex.annotations.NonNull"),
+    JSPECIFY_NOT_NULL
 )
 
-val COMPATQUAL_NULLABLE_ANNOTATION: FqName = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
-val COMPATQUAL_NONNULL_ANNOTATION: FqName = FqName("org.checkerframework.checker.nullness.compatqual.NonNullDecl")
+val COMPATQUAL_NULLABLE_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NullableDecl")
+val COMPATQUAL_NONNULL_ANNOTATION = FqName("org.checkerframework.checker.nullness.compatqual.NonNullDecl")
 
-val ANDROIDX_RECENTLY_NULLABLE_ANNOTATION: FqName = FqName("androidx.annotation.RecentlyNullable")
-val ANDROIDX_RECENTLY_NON_NULL_ANNOTATION: FqName = FqName("androidx.annotation.RecentlyNonNull")
+val ANDROIDX_RECENTLY_NULLABLE_ANNOTATION = FqName("androidx.annotation.RecentlyNullable")
+val ANDROIDX_RECENTLY_NON_NULL_ANNOTATION = FqName("androidx.annotation.RecentlyNonNull")
 
-val NULLABILITY_ANNOTATIONS: Set<FqName> = mutableSetOf<FqName>() +
+val NULLABILITY_ANNOTATIONS = mutableSetOf<FqName>() +
         NULLABLE_ANNOTATIONS +
         JAVAX_NONNULL_ANNOTATION +
         NOT_NULL_ANNOTATIONS +
         COMPATQUAL_NULLABLE_ANNOTATION +
         COMPATQUAL_NONNULL_ANNOTATION +
         ANDROIDX_RECENTLY_NULLABLE_ANNOTATION +
-        ANDROIDX_RECENTLY_NON_NULL_ANNOTATION
+        ANDROIDX_RECENTLY_NON_NULL_ANNOTATION +
+        JSPECIFY_NULLABLE +
+        JSPECIFY_NOT_NULL +
+        JSPECIFY_NULLNESS_UNKNOWN +
+        JSPECIFY_DEFAULT_NULLABLE +
+        JSPECIFY_DEFAULT_NOT_NULL +
+        JSPECIFY_DEFAULT_NULLNESS_UNKNOWN
 
-val READ_ONLY_ANNOTATIONS: List<FqName> = listOf(
+val READ_ONLY_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION,
     JvmAnnotationNames.READONLY_ANNOTATION
 )
 
-val MUTABLE_ANNOTATIONS: List<FqName> = listOf(
+val MUTABLE_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION,
     JvmAnnotationNames.MUTABLE_ANNOTATION
 )
