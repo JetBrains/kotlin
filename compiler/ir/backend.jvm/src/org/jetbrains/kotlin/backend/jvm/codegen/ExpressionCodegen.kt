@@ -207,7 +207,10 @@ class ExpressionCodegen(
         if (!param.type.unboxInlineClass().isNullable() && !isPrimitive(asmType)) {
             mv.load(findLocalIndex(param.symbol), asmType)
             mv.aconst(param.name.asString())
-            mv.invokestatic("kotlin/jvm/internal/Intrinsics", "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+            val methodName =
+                if (state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "checkNotNullParameter"
+                else "checkParameterIsNotNull"
+            mv.invokestatic("kotlin/jvm/internal/Intrinsics", methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
         }
     }
 

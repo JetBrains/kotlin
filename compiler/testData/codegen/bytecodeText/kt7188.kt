@@ -32,12 +32,16 @@ class TestAccessor {
 
 // @TestMethod.class:
 // 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull \(Ljava/lang/Object;Ljava/lang/String;\)V
+// 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter \(Ljava/lang/Object;Ljava/lang/String;\)V
 
 // @TestMethodOverloads.class:
 // 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull \(Ljava/lang/Object;Ljava/lang/String;\)V
+// 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter \(Ljava/lang/Object;Ljava/lang/String;\)V
 
 // @TestProperty.class:
 // 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull \(Ljava/lang/Object;Ljava/lang/String;\)V
+// 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter \(Ljava/lang/Object;Ljava/lang/String;\)V
 
 // @TestAccessor.class:
 // 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull \(Ljava/lang/Object;Ljava/lang/String;\)V
+// 0 INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkNotNullParameter \(Ljava/lang/Object;Ljava/lang/String;\)V

@@ -126,9 +126,9 @@ public class Intrinsics {
         }
     }
 
-    public static void checkNotNullParameter(Object value, String message) {
+    public static void checkNotNullParameter(Object value, String paramName) {
         if (value == null) {
-            throw sanitizeStackTrace(new IllegalArgumentException(message));
+            throw sanitizeStackTrace(new NullPointerException(paramName));
         }
     }
 

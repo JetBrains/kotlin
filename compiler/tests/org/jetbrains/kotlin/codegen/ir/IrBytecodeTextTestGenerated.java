@@ -3133,6 +3133,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/notNullAssertions/assertionForNotNullTypeParam.kt");
         }
 
+        @TestMetadata("assertionForNotNullTypeParam_1_4.kt")
+        public void testAssertionForNotNullTypeParam_1_4() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/notNullAssertions/assertionForNotNullTypeParam_1_4.kt");
+        }
+
         @TestMetadata("doNotGenerateParamAssertions.kt")
         public void testDoNotGenerateParamAssertions() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/notNullAssertions/doNotGenerateParamAssertions.kt");
@@ -3264,6 +3269,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("redundantSafeCall.kt")
         public void testRedundantSafeCall() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall.kt");
+        }
+
+        @TestMetadata("redundantSafeCall_1_4.kt")
+        public void testRedundantSafeCall_1_4() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/redundantSafeCall_1_4.kt");
         }
 
         @TestMetadata("reifiedIs.kt")

@@ -954,7 +954,7 @@ public class AsmUtil {
                 ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
                 if (receiverParameter != null) {
                     String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
-                    genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
+                    genParamAssertion(v, state, frameMap, receiverParameter, name, descriptor);
                 }
             }
             return;
@@ -963,17 +963,17 @@ public class AsmUtil {
         ReceiverParameterDescriptor receiverParameter = descriptor.getExtensionReceiverParameter();
         if (receiverParameter != null) {
             String name = getNameForReceiverParameter(descriptor, state.getBindingContext(), state.getLanguageVersionSettings());
-            genParamAssertion(v, state.getTypeMapper(), frameMap, receiverParameter, name, descriptor);
+            genParamAssertion(v, state, frameMap, receiverParameter, name, descriptor);
         }
 
         for (ValueParameterDescriptor parameter : descriptor.getValueParameters()) {
-            genParamAssertion(v, state.getTypeMapper(), frameMap, parameter, parameter.getName().asString(), descriptor);
+            genParamAssertion(v, state, frameMap, parameter, parameter.getName().asString(), descriptor);
         }
     }
 
     private static void genParamAssertion(
             @NotNull InstructionAdapter v,
-            @NotNull KotlinTypeMapper typeMapper,
+            @NotNull GenerationState state,
             @NotNull FrameMap frameMap,
             @NotNull ParameterDescriptor parameter,
             @NotNull String name,
@@ -982,7 +982,7 @@ public class AsmUtil {
         KotlinType type = parameter.getType();
         if (isNullableType(type) || InlineClassesUtilsKt.isNullableUnderlyingType(type)) return;
 
-        Type asmType = typeMapper.mapType(type);
+        Type asmType = state.getTypeMapper().mapType(type);
         if (asmType.getSort() == Type.OBJECT || asmType.getSort() == Type.ARRAY) {
             StackValue value;
             if (JvmCodegenUtil.isDeclarationOfBigArityFunctionInvoke(containingDeclaration) ||
@@ -998,9 +998,10 @@ public class AsmUtil {
             }
             value.put(asmType, v);
             v.visitLdcInsn(name);
-            v.invokestatic(
-                    IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkParameterIsNotNull", "(Ljava/lang/Object;Ljava/lang/String;)V", false
-            );
+            String methodName = state.getLanguageVersionSettings().getApiVersion().compareTo(ApiVersion.KOTLIN_1_4) >= 0
+                                ? "checkNotNullParameter"
+                                : "checkParameterIsNotNull";
+            v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false);
         }
     }
 

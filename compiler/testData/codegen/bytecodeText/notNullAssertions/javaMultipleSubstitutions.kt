@@ -37,3 +37,4 @@ internal fun bar(a: A<String, Int>, b: B<String>, c: C) {
 // 3 checkExpressionValueIsNotNull
 // 0 checkNotNullExpressionValue
 // 3 checkParameterIsNotNull
+// 0 checkNotNullParameter
