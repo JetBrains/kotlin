@@ -67,6 +67,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 // This class is copied from com.intellij.debugger.ui.breakpoints.MethodBreakpoint.
 // Changed parts are marked with '// MODIFICATION: ' comments.
@@ -165,7 +166,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
         DebuggerManagerThreadImpl.assertIsManagerThread();
         RequestManagerImpl requestsManager = debugProcess.getRequestsManager();
         ClassPrepareRequest request = requestsManager.createClassPrepareRequest((debuggerProcess, referenceType) -> {
-            if (DebuggerUtilsImpl.instanceOf(referenceType, baseType)) {
+            if (instanceOf(referenceType, baseType)) {
                 createRequestForPreparedClassEmulated(breakpoint, debugProcess, referenceType, false);
             }
         }, null);
@@ -204,7 +205,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             }
         };
 
-        debugProcess.getProject().getMessageBus().connect(indicator).subscribe(XBreakpointListener.TOPIC, listener);
+        BreakpointListenerConnector.subscribe(debugProcess, indicator, listener);
         ProgressManager.getInstance().executeProcessUnderProgress(
                 () -> processPreparedSubTypes(baseType,
                                               (subType, classesByName) ->
@@ -688,7 +689,7 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
                 ReferenceType type = allTypes.get(i);
                 if (type.isPrepared()) {
                     try {
-                        DebuggerUtilsImpl.supertypes(type).forEach(st -> inheritance.putValue(st, type));
+                        supertypes(type).forEach(st -> inheritance.putValue(st, type));
                     }
                     catch (ObjectCollectedException ignored) {
                     }
@@ -720,4 +721,25 @@ public class KotlinFunctionBreakpoint extends BreakpointWithHighlighter<JavaMeth
             progressIndicator.stop();
         }
     }
+
+    // MODIFICATION: Add utilities absent in older platform versions
+    private static boolean instanceOf(@Nullable ReferenceType type, @NotNull ReferenceType superType) {
+        if (type == null) {
+            return false;
+        }
+        if (superType.equals(type)) {
+            return true;
+        }
+        return supertypes(type).anyMatch(t -> instanceOf(t, superType));
+    }
+
+    private static Stream<? extends ReferenceType> supertypes(ReferenceType type) {
+        if (type instanceof InterfaceType) {
+            return ((InterfaceType)type).superinterfaces().stream();
+        } else if (type instanceof ClassType) {
+            return StreamEx.<ReferenceType>ofNullable(((ClassType)type).superclass()).prepend(((ClassType)type).interfaces());
+        }
+        return StreamEx.empty();
+    }
+    // MODIFICATION: End
 }
