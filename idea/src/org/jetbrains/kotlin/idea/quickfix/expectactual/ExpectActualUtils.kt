@@ -9,6 +9,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.backend.common.descriptors.allParameters
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.isTestModule
@@ -45,6 +46,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): KtFile? {
@@ -318,20 +320,34 @@ class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
         get() = "Type ${type.getJetTypeFqName(true)} is not accessible from common code"
 }
 
-fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existedClasses: Set<String> = emptySet()): Boolean {
-    if (hasPrivateModifier()) return false
-    val types = when (this) {
-        is KtClassOrObject -> return fqName?.canFindClassInModule(project, module, existedClasses) == true
-        is KtCallableDeclaration -> {
-            val descriptor = descriptor?.safeAs<CallableDescriptor>() ?: return false
-            val returnType = descriptor.returnType ?: return false
-            (listOfNotNull(descriptor.extensionReceiverParameter) + descriptor.valueParameters).map { it.type } + returnType
-        }
-        else -> return false
-    }
+fun DeclarationDescriptor.checkTypeAccessibilityInModule(
+    project: Project,
+    module: Module,
+    existedClasses: Set<String> = emptySet()
+): Boolean = collectAllTypes().all { it?.canFindClassInModule(project, module, existedClasses) == true }
 
-    val project = project
-    return types.all { it.fqName?.canFindClassInModule(project, module, existedClasses) ?: false }
+private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
+    return when (this) {
+        is ClassDescriptor -> declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
+        is CallableDescriptor -> {
+            val returnType = returnType ?: return sequenceOf(null)
+            returnType.collectAllTypes() + allParameters.asSequence().map { it.type }.flatMap(KotlinType::collectAllTypes)
+        }
+        is TypeParameterDescriptor -> {
+            val upperBounds = upperBounds
+            if (upperBounds.isEmpty()) sequenceOf(fqNameOrNull())
+            else upperBounds.asSequence().flatMap(KotlinType::collectAllTypes)
+        }
+        else -> emptySequence()
+    }
+}
+
+private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName) + arguments.asSequence()
+    .map(TypeProjection::getType)
+    .flatMap(KotlinType::collectAllTypes)
+
+fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existedClasses: Set<String> = emptySet()): Boolean {
+    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existedClasses) == true
 }
 
 val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()

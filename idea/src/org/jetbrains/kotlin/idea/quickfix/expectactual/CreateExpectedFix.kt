@@ -133,7 +133,7 @@ class CreateExpectedClassFix(
             chooseMembers(project, members, prefix) ?: return@block null
         }
     }.let { selectedElements ->
-        val selectedClasses = findClasses(selectedElements)
+        val selectedClasses = findClasses(selectedElements + klass)
         if (selectedClasses != existingClasses) {
             val (resultDeclarations, withErrors) = selectedElements.partition {
                 it.checkTypeAccessibilityInModule(commonModule, selectedClasses)
