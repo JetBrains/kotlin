@@ -118,6 +118,10 @@ class CreateExpectedClassFix(
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
     val originalElements = element.collectDeclarations(false).toList()
     val existingClasses = findClasses(originalElements + klass)
+    if (!element.checkTypeAccessibilityInModule(commonModule, existingClasses)) {
+        showUnknownTypesError(element)
+        return@block null
+    }
 
     val (members, declarationsWithNonExistentClasses) = originalElements.filterNot(KtNamedDeclaration::isAlwaysActual).partition {
         it.checkTypeAccessibilityInModule(commonModule, existingClasses)
@@ -135,6 +139,11 @@ class CreateExpectedClassFix(
     }.let { selectedElements ->
         val selectedClasses = findClasses(selectedElements + klass)
         if (selectedClasses != existingClasses) {
+            if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
+                showUnknownTypesError(element)
+                return@block null
+            }
+
             val (resultDeclarations, withErrors) = selectedElements.partition {
                 it.checkTypeAccessibilityInModule(commonModule, selectedClasses)
             }

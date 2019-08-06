@@ -323,8 +323,14 @@ class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
 fun DeclarationDescriptor.checkTypeAccessibilityInModule(
     project: Project,
     module: Module,
-    existedClasses: Set<String> = emptySet()
-): Boolean = collectAllTypes().all { it?.canFindClassInModule(project, module, existedClasses) == true }
+    existingClasses: Set<String> = emptySet()
+): Boolean {
+    val existingClassesWithTypeParameters = if (this is ClassifierDescriptorWithTypeParameters)
+        existingClasses + declaredTypeParameters.map { it.fqNameOrNull()?.asString() ?: return false }.toSet()
+    else
+        existingClasses
+    return collectAllTypes().all { it?.canFindClassInModule(project, module, existingClassesWithTypeParameters) == true }
+}
 
 private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
     return when (this) {
@@ -346,8 +352,8 @@ private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName)
     .map(TypeProjection::getType)
     .flatMap(KotlinType::collectAllTypes)
 
-fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existedClasses: Set<String> = emptySet()): Boolean {
-    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existedClasses) == true
+fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existingClasses: Set<String> = emptySet()): Boolean {
+    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existingClasses) == true
 }
 
 val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()
