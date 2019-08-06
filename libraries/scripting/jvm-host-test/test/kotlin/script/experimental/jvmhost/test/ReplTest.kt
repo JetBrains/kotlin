@@ -56,6 +56,20 @@ class ReplTest : TestCase() {
     }
 
     @Test
+    fun testEvalWithIfResult() {
+        chechEvaluateInRepl(
+            simpleScriptompilationConfiguration,
+            simpleScriptEvaluationConfiguration,
+            sequenceOf(
+                "val x = 5",
+                "x + 6",
+                "if (x < 10) res1 * 2 else x"
+            ),
+            sequenceOf(null, 11, 22)
+        )
+    }
+
+    @Test
     fun testImplicitReceiver() {
         val receiver = TestReceiver()
         chechEvaluateInRepl(
