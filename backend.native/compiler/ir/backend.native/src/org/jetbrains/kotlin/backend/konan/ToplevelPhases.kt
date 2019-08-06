@@ -244,6 +244,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
         name = "IrLowering",
         description = "IR Lowering",
         lower = removeExpectDeclarationsPhase then
+                stripTypeAliasDeclarationsPhase then
                 lowerBeforeInlinePhase then
                 arrayConstructorPhase then
                 inlinePhase then

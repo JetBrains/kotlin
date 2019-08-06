@@ -67,6 +67,12 @@ internal val removeExpectDeclarationsPhase = makeKonanModuleLoweringPhase(
         description = "Expect declarations removing"
 )
 
+internal val stripTypeAliasDeclarationsPhase = makeKonanModuleLoweringPhase(
+        { StripTypeAliasDeclarationsLowering() },
+        name = "StripTypeAliasDeclarations",
+        description = "Strip typealias declarations"
+)
+
 internal val lowerBeforeInlinePhase = makeKonanModuleLoweringPhase(
         ::PreInlineLowering,
         name = "LowerBeforeInline",

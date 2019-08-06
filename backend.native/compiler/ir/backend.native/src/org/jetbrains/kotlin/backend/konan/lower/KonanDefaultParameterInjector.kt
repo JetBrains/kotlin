@@ -16,11 +16,8 @@ import org.jetbrains.kotlin.ir.util.irCall
 internal class KonanDefaultParameterInjector(private val konanContext: KonanBackendContext)
     : DefaultParameterInjector(konanContext, skipInline = false) {
 
-    override fun nullConst(expression: IrElement, type: IrType): IrExpression {
+    override fun nullConst(startOffset: Int, endOffset: Int, type: IrType): IrExpression {
         val symbols = konanContext.ir.symbols
-
-        val startOffset = expression.startOffset
-        val endOffset = expression.endOffset
 
         val nullConstOfEquivalentType = when (type.computePrimitiveBinaryTypeOrNull()) {
             null -> IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)

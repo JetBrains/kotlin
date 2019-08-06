@@ -60,6 +60,11 @@ extend ValueParameter {
     optional DescriptorUniqId value_param_uniq_id = 171;
 }
 
+extend TypeAlias {
+    // TODO repeated org.jetbrains.kotlin.metadata.Annotation type_alias_annotation = 130;
+    optional DescriptorUniqId type_alias_uniq_id = 131;
+}
+
 extend Type {
     repeated Annotation type_annotation = 170;
 }

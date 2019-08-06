@@ -19,6 +19,7 @@ object KonanDescriptorUniqIdAware: DescriptorUniqIdAware {
         is DeserializedPropertyDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.propertyUniqId)
         is DeserializedClassConstructorDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.constructorUniqId)
         is DeserializedTypeParameterDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.typeParamUniqId)
+        is DeserializedTypeAliasDescriptor -> this.proto.tryGetExtension(KonanProtoBuf.typeAliasUniqId)
         else -> null
     }?.index
 }

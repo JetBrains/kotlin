@@ -65,10 +65,11 @@ internal class KonanSerializerExtension(val context: Context, override val metad
 
 
     override fun serializeFunction(descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder,
+                                   versionRequirementTable: MutableVersionRequirementTable?,
                                    childSerializer: DescriptorSerializer) {
         proto.setExtension(KonanProtoBuf.functionFile, sourceFileMap.assign(descriptor.source.containingFile))
         uniqId(descriptor) ?. let { proto.setExtension(KonanProtoBuf.functionUniqId, it) }
-        super.serializeFunction(descriptor, proto, childSerializer)
+        super.serializeFunction(descriptor, proto, versionRequirementTable, childSerializer)
     }
 
     override fun serializeProperty(descriptor: PropertyDescriptor, proto: ProtoBuf.Property.Builder,
@@ -77,6 +78,11 @@ internal class KonanSerializerExtension(val context: Context, override val metad
         proto.setExtension(KonanProtoBuf.propertyFile, sourceFileMap.assign(descriptor.source.containingFile))
         uniqId(descriptor) ?.let { proto.setExtension(KonanProtoBuf.propertyUniqId, it) }
         super.serializeProperty(descriptor, proto, versionRequirementTable, childSerializer)
+    }
+
+    override fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
+        uniqId(typeAlias)?.let { proto.setExtension(KonanProtoBuf.typeAliasUniqId, it) }
+        super.serializeTypeAlias(typeAlias, proto)
     }
 
     override fun releaseCoroutines(): Boolean =

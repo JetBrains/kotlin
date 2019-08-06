@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.defaultOrNullableType
 import org.jetbrains.kotlin.ir.util.isNullConst
@@ -50,13 +49,20 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
-        val descriptor = expression.descriptor
 
-        if (descriptor is IrBuiltinOperatorDescriptor) {
-            return transformBuiltinOperator(expression)
+        return when (expression.symbol) {
+            irBuiltins.eqeqSymbol, in ieee754EqualsSymbols() -> lowerEqeq(expression)
+
+            irBuiltins.eqeqeqSymbol -> lowerEqeqeq(expression)
+
+            irBuiltins.checkNotNullSymbol -> lowerCheckNotNull(expression)
+
+            irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl(expression.startOffset, expression.endOffset,
+                    context.ir.symbols.ThrowNoWhenBranchMatchedException.owner.returnType,
+                    context.ir.symbols.ThrowNoWhenBranchMatchedException)
+
+            else -> expression
         }
-
-        return expression
     }
 
     override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
@@ -69,22 +75,6 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
     private fun ieee754EqualsSymbols(): List<IrSimpleFunctionSymbol> =
             irBuiltins.ieee754equalsFunByOperandType.values.toList()
-
-    private fun transformBuiltinOperator(expression: IrCall): IrExpression = when (expression.symbol) {
-        irBuiltins.eqeqSymbol, in ieee754EqualsSymbols() -> lowerEqeq(expression)
-
-        irBuiltins.eqeqeqSymbol -> lowerEqeqeq(expression)
-
-        irBuiltins.throwNpeSymbol -> IrCallImpl(expression.startOffset, expression.endOffset,
-                context.ir.symbols.ThrowNullPointerException.owner.returnType,
-                context.ir.symbols.ThrowNullPointerException)
-
-        irBuiltins.noWhenBranchMatchedExceptionSymbol -> IrCallImpl(expression.startOffset, expression.endOffset,
-                context.ir.symbols.ThrowNoWhenBranchMatchedException.owner.returnType,
-                context.ir.symbols.ThrowNoWhenBranchMatchedException)
-
-        else -> expression
-    }
 
     private fun lowerEqeqeq(expression: IrCall): IrExpression {
         val lhs = expression.getValueArgument(0)!!
@@ -184,15 +174,20 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
 
     private fun IrBuilderWithScope.irEqeqNull(expression: IrExpression): IrExpression {
         val type = expression.type.makeNullable()
-        val primitiveBinaryTypeOrNull = type.computePrimitiveBinaryTypeOrNull()
-        return when (primitiveBinaryTypeOrNull) {
+        return when (val primitiveBinaryTypeOrNull = type.computePrimitiveBinaryTypeOrNull()) {
             null -> irEqeqeq(reinterpret(expression, type, irBuiltins.anyNType), irNull())
             PrimitiveBinaryType.POINTER -> irCall(symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!.owner).apply {
                 putValueArgument(0, reinterpret(expression, type, symbols.nativePtrType))
                 putValueArgument(1, reinterpret(irNull(), type, symbols.nativePtrType))
             }
-            else -> error("Nullable type ${type.toKotlinType()} is $primitiveBinaryTypeOrNull")
+            else -> error("Nullable type ${type.render()} is $primitiveBinaryTypeOrNull")
         }
+    }
+
+    private fun lowerCheckNotNull(expression: IrCall) = builder.at(expression).irBlock {
+        val temp = irTemporary(expression.getValueArgument(0)!!)
+        +irIfThen(context.irBuiltIns.unitType, irEqeqNull(irGet(temp)), irCall(symbols.ThrowNullPointerException))
+        +irGet(temp)
     }
 
     private fun IrBuilderWithScope.irLogicalAnd(lhs: IrExpression, rhs: IrExpression) = context.andand(lhs, rhs)
