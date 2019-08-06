@@ -15,6 +15,7 @@ import org.gradle.api.tasks.InputFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.disambiguateName
 import org.jetbrains.kotlin.gradle.plugin.usesPlatformOf
 import org.jetbrains.kotlin.gradle.targets.js.dukat.DukatCompilationResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmDependency
@@ -87,7 +88,7 @@ internal class KotlinCompilationNpmResolver(
     }
 
     private fun createAggregatedConfiguration(): Configuration {
-        val all = project.configurations.create("${compilation.name}Npm")
+        val all = project.configurations.create(compilation.disambiguateName("npm"))
 
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
@@ -114,7 +115,7 @@ internal class KotlinCompilationNpmResolver(
         val taskRequirements = projectResolver.taskRequirements.getTaskRequirements(compilation)
         if (taskRequirements.isEmpty()) return null
 
-        val toolsConfiguration = project.configurations.create("${compilation.name}NpmTools")
+        val toolsConfiguration = project.configurations.create(compilation.disambiguateName("npmTools"))
 
         toolsConfiguration.isVisible = false
         toolsConfiguration.isCanBeConsumed = false
