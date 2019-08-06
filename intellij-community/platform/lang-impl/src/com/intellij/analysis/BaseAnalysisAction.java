@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.analysis;
 
 import com.intellij.codeInspection.ui.InspectionResultsView;
@@ -38,7 +38,7 @@ public abstract class BaseAnalysisAction extends AnAction {
     AnalysisScope scope = getInspectionScope(dataContext, project);
     if (scope == null) return;
 
-    String title = AnalysisScopeBundle.message("specify.analysis.scope", myTitle);
+    String title = getDialogTitle();
     String noon = AnalysisScopeBundle.message("analysis.scope.title", myAnalysisNoon);
     Module module = getModuleFromContext(dataContext);
     boolean rememberScope = ActionPlaces.isMainMenuOrActionSearch(e.getPlace());
@@ -75,6 +75,10 @@ public abstract class BaseAnalysisAction extends AnAction {
 
     FileDocumentManager.getInstance().saveAllDocuments();
     analyze(project, scope);
+  }
+
+  protected @NotNull String getDialogTitle() {
+    return AnalysisScopeBundle.message("specify.analysis.scope", myTitle);
   }
 
   protected String getHelpTopic() {
