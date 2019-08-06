@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.optimization.common.asSequence
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
@@ -98,16 +101,16 @@ fun generateAsCast(
     kotlinType: KotlinType,
     asmType: Type,
     isSafe: Boolean,
-    isReleaseCoroutines: Boolean
+    languageVersionSettings: LanguageVersionSettings
 ) {
     if (!isSafe) {
         if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType)
+            generateNullCheckForNonSafeAs(v, kotlinType, languageVersionSettings)
         }
     } else {
         with(v) {
             dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType, isReleaseCoroutines)
+            TypeIntrinsics.instanceOf(v, kotlinType, asmType, languageVersionSettings.isReleaseCoroutines())
             val ok = Label()
             ifne(ok)
             pop()
@@ -121,15 +124,19 @@ fun generateAsCast(
 
 private fun generateNullCheckForNonSafeAs(
     v: InstructionAdapter,
-    type: KotlinType
+    type: KotlinType,
+    languageVersionSettings: LanguageVersionSettings
 ) {
     with(v) {
         dup()
         val nonnull = Label()
         ifnonnull(nonnull)
+        val exceptionClass =
+            if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "java/lang/NullPointerException"
+            else "kotlin/TypeCastException"
         AsmUtil.genThrow(
             v,
-            "kotlin/TypeCastException",
+            exceptionClass,
             "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
         )
         mark(nonnull)

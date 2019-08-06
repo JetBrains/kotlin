@@ -4773,8 +4773,7 @@ The "returned" value of try expression with no finally is either the last expres
                 return Unit.INSTANCE;
             }
 
-            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs,
-                                         state.getLanguageVersionSettings().supportsFeature(LanguageFeature.ReleaseCoroutines));
+            CodegenUtilKt.generateAsCast(v, rightKotlinType, boxedRightType, safeAs, state.getLanguageVersionSettings());
 
             return Unit.INSTANCE;
         });

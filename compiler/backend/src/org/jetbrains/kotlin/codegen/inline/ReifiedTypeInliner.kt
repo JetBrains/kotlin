@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.codegen.generateIsCheck
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.codegen.optimization.common.intConstant
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
+import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.config.isReleaseCoroutines
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
@@ -65,7 +67,7 @@ class ReificationArgument(
 class ReifiedTypeInliner(
     private val parametersMapping: TypeParameterMappings?,
     private val typeMapper: KotlinTypeMapper,
-    private val isReleaseCoroutines: Boolean
+    private val languageVersionSettings: LanguageVersionSettings
 ) {
     enum class OperationKind {
         NEW_ARRAY, AS, SAFE_AS, IS, JAVA_CLASS, ENUM_REIFIED, TYPE_OF;
@@ -188,7 +190,7 @@ class ReifiedTypeInliner(
         if (stubCheckcast !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, isReleaseCoroutines)
+        generateAsCast(InstructionAdapter(newMethodNode), kotlinType, asmType, safe, languageVersionSettings)
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubCheckcast)
@@ -208,7 +210,7 @@ class ReifiedTypeInliner(
         if (stubInstanceOf !is TypeInsnNode) return false
 
         val newMethodNode = MethodNode(Opcodes.API_VERSION)
-        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, isReleaseCoroutines)
+        generateIsCheck(InstructionAdapter(newMethodNode), kotlinType, asmType, languageVersionSettings.isReleaseCoroutines())
 
         instructions.insert(insn, newMethodNode.instructions)
         instructions.remove(stubInstanceOf)

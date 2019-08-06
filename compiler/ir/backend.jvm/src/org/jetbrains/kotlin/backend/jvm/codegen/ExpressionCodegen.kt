@@ -782,8 +782,7 @@ class ExpressionCodegen(
                     v.checkcast(boxedRightType)
                 } else {
                     generateAsCast(
-                        mv, kotlinType, boxedRightType, expression.operator == IrTypeOperator.SAFE_CAST,
-                        state.languageVersionSettings.isReleaseCoroutines()
+                        mv, kotlinType, boxedRightType, expression.operator == IrTypeOperator.SAFE_CAST, state.languageVersionSettings
                     )
                 }
                 MaterialValue(this, boxedRightType, expression.type).coerce(expression.type)

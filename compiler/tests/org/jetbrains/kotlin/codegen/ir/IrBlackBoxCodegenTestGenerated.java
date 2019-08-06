@@ -2676,6 +2676,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/casts/asSafeForConstants.kt");
         }
 
+        @TestMetadata("asThrowsNpe_1_4.kt")
+        public void testAsThrowsNpe_1_4() throws Exception {
+            runTest("compiler/testData/codegen/box/casts/asThrowsNpe_1_4.kt");
+        }
+
         @TestMetadata("asUnit.kt")
         public void testAsUnit() throws Exception {
             runTest("compiler/testData/codegen/box/casts/asUnit.kt");

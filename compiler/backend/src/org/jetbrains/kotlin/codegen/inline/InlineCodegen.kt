@@ -74,7 +74,7 @@ abstract class InlineCodegen<out T : BaseExpressionCodegen>(
     private val initialFrameSize = codegen.frameMap.currentSize
 
     private val reifiedTypeInliner =
-        ReifiedTypeInliner(typeParameterMappings, state.typeMapper, state.languageVersionSettings.isReleaseCoroutines())
+        ReifiedTypeInliner(typeParameterMappings, state.typeMapper, state.languageVersionSettings)
 
     protected val functionDescriptor: FunctionDescriptor =
         if (InlineUtil.isArrayConstructorWithLambda(function))
