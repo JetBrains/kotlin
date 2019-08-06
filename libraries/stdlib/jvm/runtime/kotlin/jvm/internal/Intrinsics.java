@@ -88,9 +88,9 @@ public class Intrinsics {
         }
     }
 
-    public static void checkNotNullExpressionValue(Object value, String message) {
+    public static void checkNotNullExpressionValue(Object value, String expression) {
         if (value == null) {
-            throw sanitizeStackTrace(new IllegalStateException(message));
+            throw sanitizeStackTrace(new NullPointerException(expression + " must not be null"));
         }
     }
 

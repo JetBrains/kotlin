@@ -1,3 +1,4 @@
+// !API_VERSION: LATEST
 // IGNORE_BACKEND: JVM_IR
 // FILE: j/J.java
 
@@ -20,6 +21,4 @@ fun test() {
 }
 
 // @KKt.class:
-// 1 LDC "a"
-// 1 checkExpressionValueIsNotNull
-// 0 checkNotNullExpressionValue
+// 1 checkNotNullExpressionValue

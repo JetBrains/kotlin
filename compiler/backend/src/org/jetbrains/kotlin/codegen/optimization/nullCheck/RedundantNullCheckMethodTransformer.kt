@@ -311,7 +311,7 @@ class RedundantNullCheckMethodTransformer(private val generationState: Generatio
                 //  ALOAD v
                 //  DUP
                 //  LDC *
-                //  INVOKESTATIC checkExpressionValueIsNotNull
+                //  INVOKESTATIC checkExpressionValueIsNotNull/checkNotNullExpressionValue
                 //  <...>   -- v is not null here (otherwise an exception was thrown)
 
                 methodNode.instructions.insert(insn, listOfSynthetics {
@@ -440,7 +440,7 @@ internal fun AbstractInsnNode.isCheckParameterIsNotNull() =
 internal fun AbstractInsnNode.isCheckExpressionValueIsNotNull() =
     isInsn<MethodInsnNode>(Opcodes.INVOKESTATIC) {
         owner == IntrinsicMethods.INTRINSICS_CLASS_NAME &&
-                name == "checkExpressionValueIsNotNull" &&
+                (name == "checkExpressionValueIsNotNull" || name == "checkNotNullExpressionValue") &&
                 desc == "(Ljava/lang/Object;Ljava/lang/String;)V"
     }
 

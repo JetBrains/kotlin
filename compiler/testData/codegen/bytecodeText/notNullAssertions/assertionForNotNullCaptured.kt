@@ -10,3 +10,4 @@ public fun <R : Any> foo(x: MutableCollection<in R>, block: java.util.AbstractLi
 }
 
 // 1 checkExpressionValueIsNotNull
+// 0 checkNotNullExpressionValue

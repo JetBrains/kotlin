@@ -11,4 +11,5 @@ fun bar(a: ArrayList<String>) {
 }
 
 // 1 checkExpressionValueIsNotNull
+// 0 checkNotNullExpressionValue
 // 1 checkParameterIsNotNull
