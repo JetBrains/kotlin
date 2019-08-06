@@ -130,14 +130,14 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
 
     @Input
     @Optional
-    var devServer: KotlinWebpackConfigWriter.DevServer? = null
+    var devServer: KotlinWebpackConfig.DevServer? = null
 
     private fun createRunner() = KotlinWebpackRunner(
         compilation.npmProject,
         configFile,
         execHandleFactory,
         bin,
-        KotlinWebpackConfigWriter(
+        KotlinWebpackConfig(
             entry = entry,
             reportEvaluatedConfigFile = if (saveEvaluatedConfigFile) evaluatedConfigFile else null,
             outputPath = destinationDirectory,
@@ -154,23 +154,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
         @Internal get() = true
 
     override val requiredNpmDependencies: Collection<NpmPackageVersion>
-        @Internal get() = mutableListOf<NpmPackageVersion>().also {
-            it.add(versions.webpack)
-            it.add(versions.webpackCli)
-
-            if (report) {
-                it.add(versions.webpackBundleAnalyzer)
-            }
-
-            if (sourceMaps) {
-                it.add(versions.sourceMapLoader)
-                it.add(versions.sourceMapSupport)
-            }
-
-            if (devServer != null) {
-                it.add(versions.webpackDevServer)
-            }
-        }
+        @Internal get() = createRunner().config.getRequiredDependencies(versions)
 
     @TaskAction
     fun doExecute() {
@@ -188,7 +172,7 @@ open class KotlinWebpack : DefaultTask(), RequiresNpmDependencies {
             }
         } else {
             runner.copy(
-                configWriter = runner.configWriter.copy(
+                config = runner.config.copy(
                     progressReporter = true,
                     progressReporterPathFilter = nodeJs.rootPackageDir.absolutePath
                 )

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfigWriter
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 
 class KotlinBrowserJs(target: KotlinJsTarget) :
@@ -67,7 +67,7 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.compilation = compilation
             it.description = "start webpack dev server"
 
-            it.devServer = KotlinWebpackConfigWriter.DevServer(
+            it.devServer = KotlinWebpackConfig.DevServer(
                 open = true,
                 contentBase = listOf(compilation.output.resourcesDir.canonicalPath)
             )

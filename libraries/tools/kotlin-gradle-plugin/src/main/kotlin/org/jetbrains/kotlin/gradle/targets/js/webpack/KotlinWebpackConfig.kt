@@ -9,13 +9,15 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import com.google.gson.GsonBuilder
 import com.google.gson.stream.JsonWriter
+import org.jetbrains.kotlin.gradle.targets.js.NpmPackageVersion
+import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.appendConfigsFromDir
 import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 
 @Suppress("MemberVisibilityCanBePrivate")
-data class KotlinWebpackConfigWriter(
+data class KotlinWebpackConfig(
     val mode: Mode = Mode.DEVELOPMENT,
     val entry: File? = null,
     val outputPath: File? = null,
@@ -31,6 +33,24 @@ data class KotlinWebpackConfigWriter(
     val progressReporter: Boolean = false,
     val progressReporterPathFilter: String? = null
 ) {
+    fun getRequiredDependencies(versions: NpmVersions) = mutableListOf<NpmPackageVersion>().also {
+        it.add(versions.webpack)
+        it.add(versions.webpackCli)
+
+        if (bundleAnalyzerReportDir != null) {
+            it.add(versions.webpackBundleAnalyzer)
+        }
+
+        if (sourceMaps) {
+            it.add(versions.sourceMapLoader)
+            it.add(versions.sourceMapSupport)
+        }
+
+        if (devServer != null) {
+            it.add(versions.webpackDevServer)
+        }
+    }
+
     enum class Mode(val code: String) {
         DEVELOPMENT("development"),
         PRODUCTION("production")
