@@ -49,7 +49,7 @@ internal class KotlinProjectNpmResolver(
 
         when (kotlin) {
             is KotlinSingleTargetExtension -> addTargetListeners(kotlin.target)
-            is KotlinMultiplatformExtension -> kotlin.targets.forEach {
+            is KotlinMultiplatformExtension -> kotlin.targets.all {
                 addTargetListeners(it)
             }
             else -> error("Unsupported kotlin model: $kotlin")
@@ -60,7 +60,7 @@ internal class KotlinProjectNpmResolver(
         check(!closed) { resolver.alreadyResolvedMessage("add target $target") }
 
         if (target.platformType == KotlinPlatformType.js) {
-            target.compilations.forEach { compilation ->
+            target.compilations.all { compilation ->
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
                     addCompilation(compilation)
