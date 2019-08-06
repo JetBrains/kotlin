@@ -19,7 +19,7 @@ sourceSets {
 }
 
 dependencies {
-    compile DependenciesKt.kotlinBuiltins(project)
+    compileOnly DependenciesKt.kotlinBuiltins(project)
 }
 
 artifacts {
