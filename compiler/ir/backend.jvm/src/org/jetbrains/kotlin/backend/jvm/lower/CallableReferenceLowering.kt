@@ -131,13 +131,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
         private val parameterTypes = (irFunctionReference.type as IrSimpleType).arguments.map { (it as IrTypeProjection).type }
         private val argumentTypes = parameterTypes.dropLast(1)
 
-        private val typeParameters = if (callee is IrConstructor)
-            callee.parentAsClass.typeParameters + callee.typeParameters
-        else
-            callee.typeParameters
-        private val typeArgumentsMap = typeParameters.associate { typeParam ->
-            typeParam.symbol to irFunctionReference.getTypeArgument(typeParam.index)!!
-        }
+        private val typeArgumentsMap = irFunctionReference.typeSubstitutionMap
 
         private val functionReferenceClass = buildClass {
             setSourceRange(irFunctionReference)

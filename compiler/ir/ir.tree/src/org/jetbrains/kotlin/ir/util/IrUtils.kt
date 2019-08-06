@@ -590,3 +590,20 @@ val IrDeclaration.file: IrFile
             else -> TODO("Unexpected declaration parent")
         }
     }
+
+val IrFunction.allTypeParameters: List<IrTypeParameter>
+    get() = if (this is IrConstructor)
+        parentAsClass.typeParameters + typeParameters
+    else
+        typeParameters
+
+fun IrMemberAccessExpression.getTypeSubstitutionMap(irFunction: IrFunction): Map<IrTypeParameterSymbol, IrType> =
+    irFunction.allTypeParameters.withIndex().associate {
+        it.value.symbol to getTypeArgument(it.index)!!
+    }
+
+val IrFunctionReference.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
+    get() = getTypeSubstitutionMap(symbol.owner)
+
+val IrFunctionAccessExpression.typeSubstitutionMap: Map<IrTypeParameterSymbol, IrType>
+    get() = getTypeSubstitutionMap(symbol.owner)
