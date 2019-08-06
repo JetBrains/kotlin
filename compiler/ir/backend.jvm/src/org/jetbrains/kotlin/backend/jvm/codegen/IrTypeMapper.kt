@@ -35,9 +35,6 @@ class IrTypeMapper(private val context: JvmBackendContext) {
     val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
     private val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
 
-    val classBuilderMode: ClassBuilderMode
-        get() = kotlinTypeMapper.classBuilderMode
-
     fun classInternalName(irClass: IrClass): String =
         context.getLocalClassInfo(irClass)?.internalName
             ?: JvmCodegenUtil.sanitizeNameIfNeeded(computeInternalName(irClass), context.state.languageVersionSettings)
@@ -53,8 +50,14 @@ class IrTypeMapper(private val context: JvmBackendContext) {
         }
     }
 
-    fun boxType(irType: IrType): Type =
-        AsmUtil.boxType(mapType(irType), irType.toKotlinType(), kotlinTypeMapper)
+    fun boxType(irType: IrType): Type {
+        val irClass = irType.classOrNull?.owner
+        if (irClass != null && irClass.isInline) {
+            return mapTypeAsDeclaration(irType)
+        }
+        val type = mapType(irType)
+        return AsmUtil.boxPrimitiveType(type) ?: type
+    }
 
     fun mapType(
         type: IrType,

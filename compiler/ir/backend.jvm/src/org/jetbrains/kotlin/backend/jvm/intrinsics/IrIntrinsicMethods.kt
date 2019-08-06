@@ -245,7 +245,10 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
 
 
-        private fun primitiveComparisonIntrinsics(typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>, operator: KtSingleValueToken) =
+        private fun primitiveComparisonIntrinsics(
+            typeToIrFun: Map<SimpleType, IrSimpleFunctionSymbol>,
+            operator: KtSingleValueToken
+        ): List<Pair<Key, PrimitiveComparison>> =
             typeToIrFun.map { (type, irFunSymbol) ->
                 irFunSymbol.toKey()!! to PrimitiveComparison(type, operator)
             }

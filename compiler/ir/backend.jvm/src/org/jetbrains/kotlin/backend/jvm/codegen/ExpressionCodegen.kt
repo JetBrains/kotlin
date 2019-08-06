@@ -237,7 +237,7 @@ class ExpressionCodegen(
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || isReceiver) {
             getNameForReceiverParameter(
                 irFunction.descriptor,
-                typeMapper.kotlinTypeMapper.bindingContext,
+                state.bindingContext,
                 context.configuration.languageVersionSettings
             )
         } else {

@@ -236,7 +236,7 @@ public class AsmUtil {
     }
 
     @Nullable
-    private static Type boxPrimitiveType(@NotNull Type type) {
+    public static Type boxPrimitiveType(@NotNull Type type) {
         JvmPrimitiveType jvmPrimitiveType = primitiveTypeByAsmSort.get(type.getSort());
         return jvmPrimitiveType != null ? asmTypeByFqNameWithoutInnerClasses(jvmPrimitiveType.getWrapperFqName()) : null;
     }

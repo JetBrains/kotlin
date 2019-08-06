@@ -13,7 +13,10 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.resolve.calls.components.isVararg
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.dump
+import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.org.objectweb.asm.Type
@@ -65,27 +68,26 @@ open class IrIntrinsicFunction(
         return StackValue.onStack(genInvokeInstructionWithResult(v))
     }
 
-    fun loadArguments(
-        codegen: ExpressionCodegen,
-        data: BlockInfo
-    ) {
+    private fun loadArguments(codegen: ExpressionCodegen, data: BlockInfo) {
         var offset = 0
         expression.dispatchReceiver?.let { genArg(it, codegen, offset++, data) }
         expression.extensionReceiver?.let { genArg(it, codegen, offset++, data) }
-        for ((i, descriptor) in expression.descriptor.valueParameters.withIndex()) {
+        for ((i, valueParameter) in expression.symbol.owner.valueParameters.withIndex()) {
             val argument = expression.getValueArgument(i)
             when {
                 argument != null ->
                     genArg(argument, codegen, i + offset, data)
-                descriptor.isVararg -> {
-                    val parameterType = codegen.typeMapper.kotlinTypeMapper.mapType(descriptor.type)
-                    StackValue.operation(parameterType) {
+                valueParameter.isVararg -> {
+                    // TODO: is there an easier way to get the substituted type of an empty vararg argument?
+                    val arrayType = codegen.typeMapper.mapType(
+                        valueParameter.type.substitute(expression.symbol.owner.typeParameters, expression.typeArguments)
+                    )
+                    StackValue.operation(arrayType) {
                         it.aconst(0)
-                        it.newarray(AsmUtil.correctElementType(parameterType))
-                    }.put(parameterType, codegen.mv)
+                        it.newarray(AsmUtil.correctElementType(arrayType))
+                    }.put(arrayType, codegen.mv)
                 }
-                else ->
-                    error("Unknown parameter: $descriptor in $expression")
+                else -> error("Unknown parameter ${valueParameter.name} in: ${expression.dump()}")
             }
         }
     }
@@ -93,6 +95,9 @@ open class IrIntrinsicFunction(
     private fun genArg(expression: IrExpression, codegen: ExpressionCodegen, index: Int, data: BlockInfo) {
         codegen.gen(expression, argsTypes[index], expression.type, data)
     }
+
+    private val IrFunctionAccessExpression.typeArguments: List<IrType>
+        get() = (0 until typeArgumentsCount).map { getTypeArgument(it)!! }
 
     companion object {
         fun create(
