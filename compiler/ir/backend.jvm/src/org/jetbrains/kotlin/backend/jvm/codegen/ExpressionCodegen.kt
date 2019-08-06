@@ -336,9 +336,16 @@ class ExpressionCodegen(
                 mv.anew(asmType)
                 mv.dup()
             }
-            expression is IrDelegatingConstructorCall ->
+            expression is IrDelegatingConstructorCall -> {
                 // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
                 mv.load(0, OBJECT_TYPE)
+
+                for (argumentIndex in 0 until expression.typeArgumentsCount) {
+                    expression.getTypeArgument(argumentIndex)?.getTypeParameterOrNull()?.takeIf { it.isReified }?.let {
+                        consumeReifiedOperationMarker(it)
+                    }
+                }
+            }
             expression.descriptor is ConstructorDescriptor ->
                 throw AssertionError("IrCall with ConstructorDescriptor: ${expression.javaClass.simpleName}")
             callee.isSuspend && !irFunction.isInvokeSuspendInContinuation() -> addInlineMarker(mv, isStartNotEnd = true)
