@@ -10,10 +10,10 @@ import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.application.impl.coroutineDispatchingContext
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.impl.ComponentManagerImpl
-import com.intellij.openapi.components.impl.ServiceManagerImpl
 import com.intellij.openapi.components.stateStore
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.impl.ProjectImpl
+import com.intellij.serviceContainer.ServiceManagerImpl
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.TemporaryDirectory
 import com.intellij.testFramework.assertions.Assertions.assertThat
@@ -66,7 +66,7 @@ internal class DoNotSaveDefaultsTest {
     // wake up (edt, some configurables want read action)
     withContext(AppUIExecutor.onUiThread().coroutineDispatchingContext()) {
       val picoContainer = componentManager.picoContainer
-      ServiceManagerImpl.processAllImplementationClasses(componentManager) { clazz, _ ->
+      com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(componentManager) { clazz, _ ->
         val className = clazz.name
         // CvsTabbedWindow calls invokeLater in constructor
         if (className != "com.intellij.cvsSupport2.ui.CvsTabbedWindow"

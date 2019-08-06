@@ -5,8 +5,8 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.impl.ApplicationImpl
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.impl.ComponentManagerImpl
-import com.intellij.openapi.components.impl.ServiceManagerImpl
 import com.intellij.openapi.extensions.PluginDescriptor
+import com.intellij.serviceContainer.ServiceManagerImpl
 import com.intellij.testFramework.ProjectRule
 import com.intellij.util.xmlb.XmlSerializerUtil
 import org.jdom.Attribute
@@ -47,9 +47,9 @@ class DoNotStorePasswordTest {
     }
 
     val app = ApplicationManager.getApplication() as ApplicationImpl
-    ServiceManagerImpl.processAllImplementationClasses(app, processor)
+    com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(app, processor)
     // yes, we don't use default project here to be sure
-    ServiceManagerImpl.processAllImplementationClasses(projectRule.project, processor)
+    com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(projectRule.project, processor)
 
     @Suppress("DEPRECATION")
     for (c in app.getComponentInstancesOfType(PersistentStateComponent::class.java)) {

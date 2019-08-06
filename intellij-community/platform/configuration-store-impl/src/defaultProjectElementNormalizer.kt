@@ -3,11 +3,11 @@ package com.intellij.configurationStore
 
 import com.intellij.openapi.components.PersistentStateComponent
 import com.intellij.openapi.components.StoragePathMacros
-import com.intellij.openapi.components.impl.ServiceManagerImpl
 import com.intellij.openapi.module.impl.ModuleManagerImpl
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.io.FileUtil
+import com.intellij.serviceContainer.ServiceManagerImpl
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
 import com.intellij.util.containers.forEachGuaranteed
@@ -111,7 +111,7 @@ internal fun moveComponentConfiguration(defaultProject: Project, element: Elemen
     processComponents(it.javaClass)
   }
 
-  ServiceManagerImpl.processAllImplementationClasses(defaultProject) { aClass, _ ->
+  com.intellij.serviceContainer.ServiceManagerImpl.processAllImplementationClasses(defaultProject) { aClass, _ ->
     processComponents(aClass)
     true
   }
