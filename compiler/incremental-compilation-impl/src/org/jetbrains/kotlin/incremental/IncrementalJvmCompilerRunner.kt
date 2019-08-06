@@ -25,7 +25,6 @@ import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
-import org.jetbrains.kotlin.build.JvmSourceRoot
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -47,14 +46,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import java.io.File
-import java.io.ObjectOutputStream
 
 fun makeIncrementally(
-        cachesDir: File,
-        sourceRoots: Iterable<File>,
-        args: K2JVMCompilerArguments,
-        messageCollector: MessageCollector = MessageCollector.NONE,
-        reporter: ICReporter = EmptyICReporter
+    cachesDir: File,
+    sourceRoots: Iterable<File>,
+    args: K2JVMCompilerArguments,
+    messageCollector: MessageCollector = MessageCollector.NONE,
+    reporter: ICReporter = EmptyICReporter
 ) {
     val kotlinExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
     val allExtensions = kotlinExtensions + "java"
@@ -90,14 +88,13 @@ object EmptyICReporter : ICReporterBase() {
     }
 }
 
-inline fun <R> withIC(enabled: Boolean = true, fn: ()->R): R {
+inline fun <R> withIC(enabled: Boolean = true, fn: () -> R): R {
     val isEnabledBackup = IncrementalCompilation.isEnabledForJvm()
     IncrementalCompilation.setIsEnabledForJvm(enabled)
 
     try {
         return fn()
-    }
-    finally {
+    } finally {
         IncrementalCompilation.setIsEnabledForJvm(isEnabledBackup)
     }
 }
@@ -118,15 +115,15 @@ class IncrementalJvmCompilerRunner(
     buildHistoryFile = buildHistoryFile
 ) {
     override fun isICEnabled(): Boolean =
-            IncrementalCompilation.isEnabledForJvm()
+        IncrementalCompilation.isEnabledForJvm()
 
     override fun createCacheManager(args: K2JVMCompilerArguments): IncrementalJvmCachesManager =
-            IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)
+        IncrementalJvmCachesManager(cacheDirectory, File(args.destination), reporter)
 
     override fun destinationDir(args: K2JVMCompilerArguments): File =
-            args.destinationAsFile
+        args.destinationAsFile
 
-    private var dirtyClasspathChanges: Collection<FqName> = emptySet<FqName>()
+    private var dirtyClasspathChanges: Collection<FqName> = emptySet()
 
     private val psiFileFactory: PsiFileFactory by lazy {
         val rootDisposable = Disposer.newDisposable()
@@ -139,10 +136,10 @@ class IncrementalJvmCompilerRunner(
     private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
 
     private var javaFilesProcessor =
-            if (!usePreciseJavaTracking)
-                ChangedJavaFilesProcessor(reporter) { it.psiFile() }
-            else
-                null
+        if (!usePreciseJavaTracking)
+            ChangedJavaFilesProcessor(reporter) { it.psiFile() }
+        else
+            null
 
     override fun calculateSourcesToCompile(
         caches: IncrementalJvmCachesManager,
@@ -227,7 +224,7 @@ class IncrementalJvmCompilerRunner(
     }
 
     private fun File.psiFile(): PsiFile? =
-            psiFileFactory.createFileFromText(nameWithoutExtension, JavaLanguage.INSTANCE, readText())
+        psiFileFactory.createFileFromText(nameWithoutExtension, JavaLanguage.INSTANCE, readText())
 
     private fun processChangedUntrackedJavaClass(psiClass: PsiClass, classId: ClassId) {
         changedUntrackedJavaClasses.add(classId)
@@ -259,23 +256,23 @@ class IncrementalJvmCompilerRunner(
     override fun postCompilationHook(exitCode: ExitCode) {}
 
     override fun updateCaches(
-            services: Services,
-            caches: IncrementalJvmCachesManager,
-            generatedFiles: List<GeneratedFile>,
-            changesCollector: ChangesCollector
+        services: Services,
+        caches: IncrementalJvmCachesManager,
+        generatedFiles: List<GeneratedFile>,
+        changesCollector: ChangesCollector
     ) {
         updateIncrementalCache(
-                generatedFiles, caches.platformCache, changesCollector,
-                services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
+            generatedFiles, caches.platformCache, changesCollector,
+            services[JavaClassesTracker::class.java] as? JavaClassesTrackerImpl
         )
     }
 
     override fun runWithNoDirtyKotlinSources(caches: IncrementalJvmCachesManager): Boolean =
-            caches.platformCache.getObsoleteJavaClasses().isNotEmpty() || changedUntrackedJavaClasses.isNotEmpty()
+        caches.platformCache.getObsoleteJavaClasses().isNotEmpty() || changedUntrackedJavaClasses.isNotEmpty()
 
     override fun additionalDirtyFiles(
-            caches: IncrementalJvmCachesManager,
-            generatedFiles: List<GeneratedFile>
+        caches: IncrementalJvmCachesManager,
+        generatedFiles: List<GeneratedFile>
     ): Iterable<File> {
         val cache = caches.platformCache
         val result = HashSet<File>()
@@ -314,14 +311,14 @@ class IncrementalJvmCompilerRunner(
     }
 
     override fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-            javaFilesProcessor?.allChangedSymbols ?: emptyList()
+        javaFilesProcessor?.allChangedSymbols ?: emptyList()
 
     override fun makeServices(
-            args: K2JVMCompilerArguments,
-            lookupTracker: LookupTracker,
-            expectActualTracker: ExpectActualTracker,
-            caches: IncrementalJvmCachesManager,
-            compilationMode: CompilationMode
+        args: K2JVMCompilerArguments,
+        lookupTracker: LookupTracker,
+        expectActualTracker: ExpectActualTracker,
+        caches: IncrementalJvmCachesManager,
+        compilationMode: CompilationMode
     ): Services.Builder =
         super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
             val targetId = TargetId(args.moduleName!!, "java-production")
@@ -336,11 +333,11 @@ class IncrementalJvmCompilerRunner(
         }
 
     override fun runCompiler(
-            sourcesToCompile: Set<File>,
-            args: K2JVMCompilerArguments,
-            caches: IncrementalJvmCachesManager,
-            services: Services,
-            messageCollector: MessageCollector
+        sourcesToCompile: Set<File>,
+        args: K2JVMCompilerArguments,
+        caches: IncrementalJvmCachesManager,
+        services: Services,
+        messageCollector: MessageCollector
     ): ExitCode {
         val compiler = K2JVMCompiler()
         val freeArgsBackup = args.freeArgs.toList()
@@ -353,9 +350,13 @@ class IncrementalJvmCompilerRunner(
 }
 
 var K2JVMCompilerArguments.destinationAsFile: File
-        get() = File(destination)
-        set(value) { destination = value.path }
+    get() = File(destination)
+    set(value) {
+        destination = value.path
+    }
 
 var K2JVMCompilerArguments.classpathAsList: List<File>
     get() = classpath.orEmpty().split(File.pathSeparator).map(::File)
-    set(value) { classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path }) }
+    set(value) {
+        classpath = value.joinToString(separator = File.pathSeparator, transform = { it.path })
+    }

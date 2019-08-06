@@ -20,9 +20,9 @@ import java.io.File
 import java.util.*
 
 class FileSnapshot(
-        val file: File,
-        val length: Long,
-        val hash: ByteArray
+    val file: File,
+    val length: Long,
+    val hash: ByteArray
 ) {
     init {
         assert(!file.isDirectory)

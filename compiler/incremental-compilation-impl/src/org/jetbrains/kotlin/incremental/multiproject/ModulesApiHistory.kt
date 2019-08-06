@@ -192,7 +192,7 @@ class ModulesApiHistoryAndroid(modulesInfo: IncrementalModuleInfo) : ModulesApiH
 
     private fun getHistoryForModuleNames(path: Path, moduleNames: Iterable<String>): Either<Set<File>> {
         val possibleModules =
-            moduleNames.flatMapTo(HashSet<IncrementalModuleEntry>()) { modulesInfo.nameToModules[it] ?: emptySet() }
+            moduleNames.flatMapTo(HashSet()) { modulesInfo.nameToModules[it] ?: emptySet() }
         val modules = possibleModules.filter { Paths.get(it.buildDir.absolutePath).isParentOf(path) }
         if (modules.isEmpty()) return Either.Error("Unknown module for $path (candidates: ${possibleModules.joinToString()})")
 
