@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
 import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 abstract class KotlinJsSubTarget(
     val target: KotlinJsTarget,
@@ -43,20 +43,8 @@ abstract class KotlinJsSubTarget(
         }
     }
 
-    private fun disambiguate(name: String): MutableList<String> {
-        val components = mutableListOf<String>()
-
-        components.addIfNotNull(target.disambiguationClassifier)
-        components.add(disambiguationClassifier)
-        components.add(name)
-        return components
-    }
-
-    protected fun disambiguateCamelCased(name: String): String {
-        val components = disambiguate(name)
-
-        return components.first() + components.drop(1).joinToString("") { it.capitalize() }
-    }
+    protected fun disambiguateCamelCased(name: String): String =
+        lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, name)
 
     private fun configureTests() {
         target.compilations.all { compilation ->
