@@ -8,13 +8,26 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
 import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
+import org.jetbrains.kotlin.backend.jvm.ir.getArrayElementType
+import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.org.objectweb.asm.Type
 
 object NewArray : IntrinsicMethod() {
     override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue? {
         codegen.gen(expression.getValueArgument(0)!!, Type.INT_TYPE, codegen.context.irBuiltIns.intType, data)
-        codegen.newArrayInstruction(expression.type)
-        return with(codegen) { expression.onStack }
+        return with(codegen) {
+            val elementIrType = expression.type.getArrayElementType(context.irBuiltIns)
+            if (expression.type.isArray()) {
+                putReifiedOperationMarkerIfTypeIsReifiedParameter(
+                    elementIrType, ReifiedTypeInliner.OperationKind.NEW_ARRAY, mv, this
+                )
+                mv.newarray(typeMapper.boxType(elementIrType))
+            } else {
+                mv.newarray(typeMapper.mapType(elementIrType))
+            }
+            expression.onStack
+        }
     }
 }

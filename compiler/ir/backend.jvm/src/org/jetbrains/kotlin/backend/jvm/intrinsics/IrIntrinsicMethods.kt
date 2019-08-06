@@ -70,7 +70,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     "isArrayOf",
                     emptyList()
                 ) to IsArrayOf,
-                symbols.arrayOf.toKey() to ArrayOf,
                 Key(
                     KotlinBuiltIns.BUILT_INS_PACKAGE_FQ_NAME,
                     KotlinBuiltIns.FQ_NAMES.any.toSafe(),
@@ -113,7 +112,6 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     unaryFunForPrimitives("hashCode", HashCode) +
                     unaryFunForPrimitives("toString", ToString) +
                     binaryFunForPrimitives("equals", EQUALS, irBuiltIns.anyClass) +
-                    symbols.primitiveArrayOfByType.values.map { it.toKey() to ArrayOf } +
                     binaryFunForPrimitivesAcrossPrimitives("rangeTo", RangeTo) +
                     binaryOp("plus", IADD) +
                     binaryOp("minus", ISUB) +
