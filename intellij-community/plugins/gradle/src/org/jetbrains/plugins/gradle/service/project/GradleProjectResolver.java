@@ -28,7 +28,6 @@ import org.gradle.tooling.ProjectConnection;
 import org.gradle.tooling.model.DomainObjectSet;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.build.BuildEnvironment;
-import org.gradle.tooling.model.gradle.GradleBuild;
 import org.gradle.tooling.model.idea.IdeaModule;
 import org.gradle.tooling.model.idea.IdeaProject;
 import org.gradle.util.GradleVersion;
@@ -184,10 +183,10 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     }
 
     executionSettings.withArgument("-Didea.sync.active=true");
-    if(resolverCtx.isPreviewMode()){
+    if (resolverCtx.isPreviewMode()) {
       executionSettings.withArgument("-Didea.isPreviewMode=true");
-      final Set<Class> previewLightWeightToolingModels = ContainerUtil.set(ExternalProjectPreview.class, GradleBuild.class);
-      projectImportAction.addProjectImportModelProvider(new ClassSetProjectImportModelProvider(previewLightWeightToolingModels));
+      final Set<Class> previewLightWeightToolingModels = ContainerUtil.set(ExternalProjectPreview.class);
+      projectImportAction.addProjectImportModelProvider(new ClassSetBuildImportModelProvider(previewLightWeightToolingModels));
     }
     if(resolverCtx.isResolveModulePerSourceSet()) {
       executionSettings.withArgument("-Didea.resolveSourceSetDependencies=true");
@@ -512,7 +511,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
   }
 
   private static void extractExternalProjectModels(@NotNull ProjectImportAction.AllModels models,
-                                                   @NotNull ProjectResolverContext resolverCtx, boolean useCustomSerialization) {
+                                                   @NotNull ProjectResolverContext resolverCtx,
+                                                   boolean useCustomSerialization) {
     resolverCtx.setModels(models);
     final Class<? extends ExternalProject> modelClazz = resolverCtx.isPreviewMode() ? ExternalProjectPreview.class : ExternalProject.class;
     final ExternalProject externalRootProject = models.getModel(modelClazz);

@@ -20,6 +20,7 @@ import org.gradle.tooling.BuildAction;
 import org.gradle.tooling.BuildController;
 import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter;
 import org.gradle.tooling.internal.adapter.TargetTypeProvider;
+import org.gradle.tooling.internal.gradle.DefaultBuildIdentifier;
 import org.gradle.tooling.model.BuildIdentifier;
 import org.gradle.tooling.model.BuildModel;
 import org.gradle.tooling.model.DomainObjectSet;
@@ -36,6 +37,7 @@ import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider.BuildModelC
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider.ProjectModelConsumer;
 import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -54,6 +56,8 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   private final boolean myUseCustomSerialization;
   private boolean myUseProjectsLoadedPhase;
   private AllModels myAllModels = null;
+  @Nullable
+  private transient GradleBuild myGradleBuild;
 
   public ProjectImportAction(boolean isPreviewMode) {
     this(isPreviewMode, false, false);
@@ -99,8 +103,8 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     boolean isProjectsLoadedAction = myAllModels == null && myUseProjectsLoadedPhase;
     if (isProjectsLoadedAction || !myUseProjectsLoadedPhase) {
       long startTime = System.currentTimeMillis();
-      GradleBuild gradleBuild = controller.getBuildModel();
-      AllModels allModels = new AllModels(gradleBuild);
+      myGradleBuild = controller.getBuildModel();
+      AllModels allModels = new AllModels(new DefaultBuildModel(myGradleBuild.getBuildIdentifier().getRootDir()));
       allModels.logPerformance("Get model GradleBuild", System.currentTimeMillis() - startTime);
       long startTimeBuildEnv = System.currentTimeMillis();
       BuildEnvironment buildEnvironment = controller.findModel(BuildEnvironment.class);
@@ -118,15 +122,15 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       myAllModels.setIdeaProject(ideaProject);
     }
 
-    GradleBuild gradleBuild = (GradleBuild)myAllModels.getRootModel();
+    assert myGradleBuild != null;
     ToolingSerializerAdapter serializerHolder = new ToolingSerializerAdapter();
-    for (BasicGradleProject gradleProject : gradleBuild.getProjects()) {
+    for (BasicGradleProject gradleProject : myGradleBuild.getProjects()) {
       addProjectModels(serializerHolder, controller, myAllModels, gradleProject, isProjectsLoadedAction);
     }
-    addBuildModels(controller, myAllModels, gradleBuild, isProjectsLoadedAction);
+    addBuildModels(serializerHolder, controller, myAllModels, myGradleBuild, isProjectsLoadedAction);
 
     if (myIsCompositeBuildsSupported) {
-      for (GradleBuild includedBuild : gradleBuild.getIncludedBuilds()) {
+      for (GradleBuild includedBuild : myGradleBuild.getIncludedBuilds()) {
         if (!isProjectsLoadedAction) {
           IdeaProject ideaIncludedProject = myIsPreviewMode
                                             ? controller.findModel(includedBuild, BasicIdeaProject.class)
@@ -136,7 +140,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         for (BasicGradleProject project : includedBuild.getProjects()) {
           addProjectModels(serializerHolder, controller, myAllModels, project, isProjectsLoadedAction);
         }
-        addBuildModels(controller, myAllModels, includedBuild, isProjectsLoadedAction);
+        addBuildModels(serializerHolder, controller, myAllModels, includedBuild, isProjectsLoadedAction);
       }
     }
 
@@ -144,6 +148,8 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   }
 
   private void configureAdditionalTypes(BuildController controller) {
+    if (myTargetTypes.isEmpty()) return;
+
     try {
       Field adapterField;
       try {
@@ -214,7 +220,8 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
   }
 
-  private void addBuildModels(@NotNull BuildController controller,
+  private void addBuildModels(@NotNull final ToolingSerializerAdapter serializerAdapter,
+                              @NotNull BuildController controller,
                               @NotNull final AllModels allModels,
                               @NotNull final GradleBuild buildModel,
                               boolean isProjectsLoadedAction) {
@@ -226,6 +233,9 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         BuildModelConsumer modelConsumer = new BuildModelConsumer() {
           @Override
           public void consume(@NotNull BuildModel buildModel, @NotNull Object object, @NotNull Class clazz) {
+            if (myUseCustomSerialization) {
+              object = serializerAdapter.serialize(object);
+            }
             allModels.addModel(object, clazz, buildModel);
             obtainedModels.add(clazz.getName());
           }
@@ -383,6 +393,17 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
         System.err.println(e.getMessage());
       }
       return object;
+    }
+  }
+
+  private final static class DefaultBuildModel implements BuildModel, Serializable {
+    private final File myRootDir;
+
+    private DefaultBuildModel(File rootDir) {myRootDir = rootDir;}
+
+    @Override
+    public BuildIdentifier getBuildIdentifier() {
+      return new DefaultBuildIdentifier(myRootDir);
     }
   }
 }
