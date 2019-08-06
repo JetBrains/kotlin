@@ -21,7 +21,7 @@ open class KotlinAndroid32GradleIT : KotlinAndroid3GradleIT() {
         get() = AGPVersion.v3_2_0
 
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.6")
+        get() = GradleVersionRequired.None
 
     @Test
     fun testAndroidWithNewMppApp() = with(Project("new-mpp-android", GradleVersionRequired.AtLeast("5.0"))) {
@@ -399,10 +399,7 @@ class KotlinAndroid30GradleIT : KotlinAndroid3GradleIT() {
         get() = GradleVersionRequired.Until("4.10.2")
 
     @Test
-    fun testOmittedStdlibVersion() = Project(
-        "AndroidProject",
-        defaultGradleVersion.maxVersion?.let { GradleVersionRequired.InRange("4.4", it) } ?: GradleVersionRequired.AtLeast("4.4")
-    ).run {
+    fun testOmittedStdlibVersion() = Project("AndroidProject").run {
         setupWorkingDir()
 
         gradleBuildScript("Lib").modify {

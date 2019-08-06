@@ -94,9 +94,6 @@ open class KotlinAndroidTarget(
 
     // Capture the type parameter T for `AbstractAndroidProjectHandler`
     private fun <T> AbstractAndroidProjectHandler<T>.doCreateComponents(): Set<KotlinTargetComponent> {
-        if (!isGradleVersionAtLeast(4, 7))
-            return emptySet()
-
         val publishableVariants = mutableListOf<T>()
             .apply { forEachVariant(project) { add(it) } }
             .toList() // Defensive copy against unlikely modification by the lambda that captures the list above in forEachVariant { }

@@ -93,12 +93,13 @@ abstract class KotlinJsSubTarget(
             testJs.configureConventions()
         }
 
-        testRun.executionTask = testJs.getTaskOrProvider() as TaskProvider<KotlinJsTest>
+        testRun.executionTask = testJs
 
         target.testRuns.matching { it.name == testRun.name }.all { parentTestRun ->
             target.project.kotlinTestRegistry.registerTestTask(
+                project,
                 testJs,
-                parentTestRun.executionTask.get()
+                parentTestRun.executionTask
             )
         }
 

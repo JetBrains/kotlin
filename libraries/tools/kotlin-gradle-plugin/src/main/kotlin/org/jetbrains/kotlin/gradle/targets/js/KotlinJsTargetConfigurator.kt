@@ -40,8 +40,7 @@ open class KotlinJsTargetConfigurator(kotlinPluginVersion: String) :
             }
         }
 
-        @Suppress("UNCHECKED_CAST")
-        result.executionTask = testTask.getTaskOrProvider() as TaskProvider<KotlinTestReport>
+        result.executionTask = testTask
 
         return result
     }

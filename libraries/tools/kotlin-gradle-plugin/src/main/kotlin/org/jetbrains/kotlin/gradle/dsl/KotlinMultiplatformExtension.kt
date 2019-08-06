@@ -47,11 +47,7 @@ open class KotlinMultiplatformExtension : KotlinProjectExtension(), KotlinTarget
     fun targetFromPreset(preset: KotlinTargetPreset<*>, configure: Closure<*>) = targetFromPreset(preset, preset.name, configure)
 
     internal val rootSoftwareComponent: KotlinSoftwareComponent by lazy {
-        if (isGradleVersionAtLeast(4, 7)) {
-            KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
-        } else {
-            KotlinSoftwareComponent("kotlin", targets)
-        }
+        KotlinSoftwareComponentWithCoordinatesAndPublication("kotlin", targets)
     }
 }
 

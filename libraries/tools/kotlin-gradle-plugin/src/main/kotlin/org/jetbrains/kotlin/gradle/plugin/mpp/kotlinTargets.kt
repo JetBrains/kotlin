@@ -67,11 +67,7 @@ abstract class AbstractKotlinTarget(
                 targetName
             else PRIMARY_SINGLE_COMPONENT_NAME
 
-        val result = if (isGradleVersionAtLeast(4, 7)) {
-            createKotlinVariant(componentName, mainCompilation, usageContexts)
-        } else {
-            KotlinVariant(mainCompilation, usageContexts)
-        }
+        val result = createKotlinVariant(componentName, mainCompilation, usageContexts)
 
         result.sourcesArtifacts = setOf(
             sourcesJarArtifact(mainCompilation, componentName, dashSeparatedName(targetName.toLowerCase()))

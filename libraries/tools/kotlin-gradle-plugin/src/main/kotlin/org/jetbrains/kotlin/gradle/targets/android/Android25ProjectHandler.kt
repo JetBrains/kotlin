@@ -129,12 +129,12 @@ class Android25ProjectHandler(
     }
 
     // TODO the return type is actually `AbstractArchiveTask | TaskProvider<out AbstractArchiveTask>`;
-    //      change the signature once the Gradle versions that don't support task providers (< 4.8) are dropped
+    //      change the signature once the Android Gradle plugin versions that don't support task providers are dropped
     override fun getLibraryOutputTask(variant: BaseVariant): Any? {
         val getPackageLibraryProvider = variant.javaClass.methods
             .find { it.name == "getPackageLibraryProvider" && it.parameterCount == 0 }
 
-        return if (getPackageLibraryProvider != null && isGradleVersionAtLeast(4, 8)) {
+        return if (getPackageLibraryProvider != null) {
             @Suppress("UNCHECKED_CAST")
             getPackageLibraryProvider(variant) as TaskProvider<out AbstractArchiveTask>
         } else {

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Companion.runTaskNameSuffix
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -30,7 +31,7 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
         internal set
 
     val testTaskName get() = testRuns.getByName(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME).testTaskName
-    val testTask: TaskHolder<KotlinTestReport>
+    val testTask: TaskProvider<KotlinTestReport>
         get() = checkNotNull(project.locateTask(testTaskName))
 
     val runTaskName get() = lowerCamelCaseName(disambiguationClassifier, runTaskNameSuffix)

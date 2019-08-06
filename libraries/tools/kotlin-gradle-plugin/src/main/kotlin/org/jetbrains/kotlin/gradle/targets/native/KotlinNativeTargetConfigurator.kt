@@ -412,11 +412,10 @@ class KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion: String)
                 testTask.configureConventions()
             }
 
-            @Suppress("UNCHECKED_CAST")
-            executionTask = testTaskOrProvider.getTaskOrProvider() as TaskProvider<KotlinNativeTest>
+            executionTask = testTaskOrProvider
 
             setExecutionSourceFrom(target.binaries.getTest(NativeBuildType.DEBUG))
 
-            project.kotlinTestRegistry.registerTestTask(testTaskOrProvider)
+            project.kotlinTestRegistry.registerTestTask(project, testTaskOrProvider)
         }
 }

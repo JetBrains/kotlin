@@ -366,7 +366,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testOmittedStdlibVersion() {
-        val project = Project("kotlinProject", GradleVersionRequired.AtLeast("4.4"))
+        val project = Project("kotlinProject")
         project.setupWorkingDir()
         File(project.projectDir, "build.gradle").modify {
             it.replace("kotlin-stdlib:\$kotlin_version", "kotlin-stdlib").apply { check(!equals(it)) } + "\n" + """
@@ -739,7 +739,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testDefaultKotlinVersionIsNotAffectedByTransitiveDependencies() =
-        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+        with(Project("simpleProject")) {
             setupWorkingDir()
             // Add a dependency with an explicit lower Kotlin version that has a kotlin-stdlib transitive dependency:
             gradleBuildScript().appendText("\ndependencies { compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.71' }")
@@ -753,7 +753,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testKotlinJvmProjectPublishesKotlinApiDependenciesAsCompile() =
-        with(Project("simpleProject", GradleVersionRequired.AtLeast("4.4"))) {
+        with(Project("simpleProject")) {
             setupWorkingDir()
             gradleBuildScript().appendText(
                 "\n" + """
@@ -786,11 +786,10 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testNoTaskConfigurationForcing() {
-        val gradleVersionRequirement = GradleVersionRequired.AtLeast("4.9")
         val projects = listOf(
-            Project("simpleProject", gradleVersionRequirement),
-            Project("kotlin2JsNoOutputFileProject", gradleVersionRequirement),
-            Project("sample-app", gradleVersionRequirement, "new-mpp-lib-and-app")
+            Project("simpleProject"),
+            Project("kotlin2JsNoOutputFileProject"),
+            Project("sample-app", directoryPrefix = "new-mpp-lib-and-app")
         )
 
         projects.forEach {
@@ -925,7 +924,7 @@ class KotlinGradleIT : BaseGradleIT() {
 
     @Test
     fun testUserDefinedAttributesInSinglePlatformProject() =
-        with(Project("multiprojectWithDependency", GradleVersionRequired.AtLeast("4.7"))) {
+        with(Project("multiprojectWithDependency")) {
             setupWorkingDir()
             gradleBuildScript("projA").appendText(
                 "\n" + """

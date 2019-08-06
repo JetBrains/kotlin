@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.targets.js.nodejs
 import org.gradle.api.tasks.AbstractExecTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
-import org.jetbrains.kotlin.gradle.plugin.TaskHolder
+import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
@@ -53,7 +53,7 @@ open class NodeJsExec : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), Re
             compilation: KotlinJsCompilation,
             name: String,
             configuration: NodeJsExec.() -> Unit = {}
-        ): TaskHolder<NodeJsExec> {
+        ): TaskProvider<NodeJsExec> {
             val target = compilation.target
             val project = target.project
             val nodeJs = NodeJsRootPlugin.apply(project.rootProject)

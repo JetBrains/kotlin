@@ -32,7 +32,7 @@ internal class DukatCompilationResolverPlugin(
             it.dependsOn(nodeJs.npmInstallTask, npmProject.packageJsonTask)
         }
 
-        compilation.compileKotlinTask.dependsOn(task.getTaskOrProvider())
+        compilation.compileKotlinTask.dependsOn(task)
     }
 
     override fun hookDependencies(

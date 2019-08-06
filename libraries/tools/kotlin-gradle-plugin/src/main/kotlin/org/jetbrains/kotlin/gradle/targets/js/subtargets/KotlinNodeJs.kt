@@ -28,6 +28,6 @@ class KotlinNodeJs(target: KotlinJsTarget) :
 
     override fun configureRun(compilation: KotlinJsCompilation) {
         val runTaskHolder = NodeJsExec.create(compilation, disambiguateCamelCased("run"))
-        target.runTask.dependsOn(runTaskHolder.getTaskOrProvider())
+        target.runTask.dependsOn(runTaskHolder)
     }
 }

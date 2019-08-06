@@ -22,10 +22,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.api.tasks.CompileClasspathNormalizer
-import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.SourceSet
-import org.gradle.api.tasks.Upload
+import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.tasks.Jar
@@ -65,7 +62,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
 
     protected val sourceSetName: String = kotlinCompilation.compilationName
 
-    protected val kotlinTask: TaskHolder<out T> = registerKotlinCompileTask()
+    protected val kotlinTask: TaskProvider<out T> = registerKotlinCompileTask()
 
     protected val javaSourceSet: SourceSet? = (kotlinCompilation as? KotlinWithJavaCompilation<*>)?.javaSourceSet
 
@@ -80,7 +77,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
             return File(project.buildDir, "classes/kotlin/$targetSubDirectory${kotlinCompilation.compilationName}")
         }
 
-    private fun registerKotlinCompileTask(): TaskHolder<out T> {
+    private fun registerKotlinCompileTask(): TaskProvider<out T> {
         val name = kotlinCompilation.compileKotlinTaskName
         logger.kotlinDebug("Creating kotlin compile task $name")
 
@@ -91,7 +88,7 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         return doRegisterTask(project, name) {
             it.description = taskDescription
             it.mapClasspath { kotlinCompilation.compileDependencyFiles }
-            kotlinCompilation.output.addClassesDir { project.files(kotlinTask.doGetTask().destinationDir).builtBy(kotlinTask.doGetTask()) }
+            kotlinCompilation.output.addClassesDir { project.files(kotlinTask.get().destinationDir).builtBy(kotlinTask.get()) }
         }
     }
 
@@ -142,24 +139,20 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         val expectedClassesTaskName = "${kotlinCompilation.defaultSourceSetName}Classes"
         project.tasks.run {
             var shouldCreateTask = false
-            if (useLazyTaskConfiguration) {
-                try {
-                    named(expectedClassesTaskName)
-                } catch (e: Exception) {
-                    shouldCreateTask = true
-                }
-            } else {
-                shouldCreateTask = findByName(expectedClassesTaskName) == null
+            try {
+                named(expectedClassesTaskName)
+            } catch (e: UnknownDomainObjectException) {
+                shouldCreateTask = true
             }
             if (shouldCreateTask) {
-                registerTask(project, expectedClassesTaskName, IDEClassesTask::class.java) {
+                project.createOrRegisterTask(expectedClassesTaskName, IDEClassesTask::class.java) {
                     it.dependsOn(getByName(kotlinCompilation.compileAllTaskName))
                 }
             }
         }
     }
 
-    protected abstract fun doRegisterTask(project: Project, taskName: String, configureAction: (T) -> (Unit)): TaskHolder<out T>
+    protected abstract fun doRegisterTask(project: Project, taskName: String, configureAction: (T) -> (Unit)): TaskProvider<out T>
 }
 
 internal class Kotlin2JvmSourceSetProcessor(
@@ -170,7 +163,11 @@ internal class Kotlin2JvmSourceSetProcessor(
 ) : KotlinSourceSetProcessor<KotlinCompile>(
     project, tasksProvider, "Compiles the $kotlinCompilation.", kotlinCompilation
 ) {
-    override fun doRegisterTask(project: Project, taskName: String, configureAction: (KotlinCompile)->(Unit)): TaskHolder<out KotlinCompile> =
+    override fun doRegisterTask(
+        project: Project,
+        taskName: String,
+        configureAction: (KotlinCompile) -> (Unit)
+    ): TaskProvider<out KotlinCompile> =
         tasksProvider.registerKotlinJVMTask(project, taskName, kotlinCompilation, configureAction)
 
     override fun doTargetSpecificProcessing() {
@@ -181,7 +178,7 @@ internal class Kotlin2JvmSourceSetProcessor(
         ScriptingGradleSubplugin.configureForSourceSet(project, kotlinCompilation.compilationName)
 
         project.runOnceAfterEvaluated("Kotlin2JvmSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
-            val kotlinTaskInstance = kotlinTask.doGetTask()
+            val kotlinTaskInstance = kotlinTask.get()
             val javaTask = javaSourceSet?.let { project.tasks.findByName(it.compileJavaTaskName) as JavaCompile }
 
             val subpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
@@ -249,11 +246,13 @@ internal class Kotlin2JsSourceSetProcessor(
         project: Project,
         taskName: String,
         configureAction: (Kotlin2JsCompile) -> (Unit)
-    ): TaskHolder<out Kotlin2JsCompile> =
+    ): TaskProvider<out Kotlin2JsCompile> =
         tasksProvider.registerKotlinJSTask(project, taskName, kotlinCompilation, configureAction)
 
     override fun doTargetSpecificProcessing() {
-        project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask.getTaskOrProvider())
+        project.tasks.named(kotlinCompilation.compileAllTaskName).configure {
+            it.dependsOn(kotlinTask)
+        }
 
         registerCleanSourceMapTask()
 
@@ -263,7 +262,7 @@ internal class Kotlin2JsSourceSetProcessor(
 
         // outputFile can be set later during the configuration phase, get it only after the phase:
         project.runOnceAfterEvaluated("Kotlin2JsSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
-            val kotlinTaskInstance = kotlinTask.doGetTask()
+            val kotlinTaskInstance = kotlinTask.get()
             kotlinTaskInstance.kotlinOptions.outputFile = kotlinTaskInstance.outputFile.absolutePath
             val outputDir = kotlinTaskInstance.outputFile.parentFile
 
@@ -291,9 +290,9 @@ internal class Kotlin2JsSourceSetProcessor(
     private fun registerCleanSourceMapTask() {
         val taskName = kotlinCompilation.composeName("clean", "sourceMap")
         registerTask(project, taskName, Delete::class.java) {
-            it.onlyIf { kotlinTask.doGetTask().kotlinOptions.sourceMap }
+            it.onlyIf { kotlinTask.get().kotlinOptions.sourceMap }
             it.delete(object : Closure<String>(this) {
-                override fun call(): String? = (kotlinTask.doGetTask().property("outputFile") as File).canonicalPath + ".map"
+                override fun call(): String? = (kotlinTask.get().property("outputFile") as File).canonicalPath + ".map"
             })
         }
         project.tasks.findByName("clean")?.dependsOn(taskName)
@@ -310,14 +309,14 @@ internal class KotlinCommonSourceSetProcessor(
     kotlinCompilation = compilation
 ) {
     override fun doTargetSpecificProcessing() {
-        project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask.getTaskOrProvider())
+        project.tasks.findByName(kotlinCompilation.compileAllTaskName)!!.dependsOn(kotlinTask)
         // can be missing (e.g. in case of tests)
         if (kotlinCompilation.compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
-            project.tasks.findByName(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask.getTaskOrProvider())
+            project.tasks.findByName(kotlinCompilation.target.artifactsTaskName)?.dependsOn(kotlinTask)
         }
 
         project.runOnceAfterEvaluated("KotlinCommonSourceSetProcessor.doTargetSpecificProcessing", kotlinTask) {
-            val kotlinTaskInstance = kotlinTask.doGetTask()
+            val kotlinTaskInstance = kotlinTask.get()
             val subpluginEnvironment: SubpluginEnvironment = SubpluginEnvironment.loadSubplugins(project, kotlinPluginVersion)
             val appliedPlugins = subpluginEnvironment.addSubpluginOptions(
                 project, kotlinTaskInstance, null, null, null, kotlinCompilation
@@ -329,7 +328,11 @@ internal class KotlinCommonSourceSetProcessor(
     }
 
     // protected abstract fun doRegisterTask(project: Project, taskName: String, configureAction: (T) -> (Unit)): TaskHolder<out T>
-    override fun doRegisterTask(project: Project, taskName: String, configureAction: (KotlinCompileCommon) -> (Unit)): TaskHolder<out KotlinCompileCommon> =
+    override fun doRegisterTask(
+        project: Project,
+        taskName: String,
+        configureAction: (KotlinCompileCommon) -> (Unit)
+    ): TaskProvider<out KotlinCompileCommon> =
         tasksProvider.registerKotlinCommonTask(project, taskName, kotlinCompilation, configureAction)
 }
 
@@ -430,7 +433,7 @@ internal abstract class AbstractKotlinPlugin(
                 it.jarTask = jarTask
                 it.dependsOn(classesTask)
             }
-            jarTask.dependsOn(inspectTask.getTaskOrProvider())
+            jarTask.dependsOn(inspectTask)
         }
 
         internal fun setUpJavaSourceSets(
@@ -532,30 +535,21 @@ internal abstract class AbstractKotlinPlugin(
 
 internal fun configureDefaultVersionsResolutionStrategy(project: Project, kotlinPluginVersion: String) {
     project.configurations.all { configuration ->
-        if (isGradleVersionAtLeast(4, 4)) {
-            fun MutableVersionConstraint.chooseVersion(version: String) {
-                if (isGradleVersionAtLeast(5, 0)) {
-                    // In Gradle 5.0, the semantics of 'prefer' has changed to be much less imperative, and now it's 'require' that we need:
-                    val requireMethod = javaClass.getMethod("require", String::class.java)
-                    requireMethod(this, version)
-                } else {
-                    prefer(version)
-                }
+        fun MutableVersionConstraint.chooseVersion(version: String) {
+            if (isGradleVersionAtLeast(5, 0)) {
+                // In Gradle 5.0, the semantics of 'prefer' has changed to be much less imperative, and now it's 'require' that we need:
+                val requireMethod = javaClass.getMethod("require", String::class.java)
+                requireMethod(this, version)
+            } else {
+                prefer(version)
             }
+        }
 
-            // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
-            configuration.withDependencies { dependencySet ->
-                dependencySet.filterIsInstance<ExternalDependency>()
-                    .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
-                    .forEach { it.version { constraint -> constraint.chooseVersion(kotlinPluginVersion) } }
-            }
-        } else {
-            configuration.resolutionStrategy.eachDependency { details ->
-                val requested = details.requested
-                if (requested.group == "org.jetbrains.kotlin" && requested.version.isNullOrEmpty()) {
-                    details.useVersion(kotlinPluginVersion)
-                }
-            }
+        // Use the API introduced in Gradle 4.4 to modify the dependencies directly before they are resolved:
+        configuration.withDependencies { dependencySet ->
+            dependencySet.filterIsInstance<ExternalDependency>()
+                .filter { it.group == "org.jetbrains.kotlin" && it.version.isNullOrEmpty() }
+                .forEach { it.version { constraint -> constraint.chooseVersion(kotlinPluginVersion) } }
         }
     }
 }
@@ -995,13 +989,9 @@ internal fun configureJavaTask(kotlinTask: KotlinCompile, javaTask: AbstractComp
 
     // Make Gradle check if the javaTask is up-to-date based on the Kotlin classes
     javaTask.inputsCompatible.run {
-        if (isBuildCacheSupported()) {
-            dir(kotlinTask.destinationDir)
-                .withNormalizer(CompileClasspathNormalizer::class.java)
-                .withPropertyName("${kotlinTask.name}OutputClasses")
-        } else {
-            dirCompatible(kotlinTask.destinationDir)
-        }
+        dir(kotlinTask.destinationDir)
+            .withNormalizer(CompileClasspathNormalizer::class.java)
+            .withPropertyName("${kotlinTask.name}OutputClasses")
     }
     // Also, use kapt1 annotations file for up-to-date check since annotation processing is done with javac
     javaTask.dependsOn(kotlinTask)

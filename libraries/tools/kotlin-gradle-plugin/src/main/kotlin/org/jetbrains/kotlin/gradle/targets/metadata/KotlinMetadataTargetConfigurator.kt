@@ -11,6 +11,7 @@ import org.gradle.api.attributes.Usage
 import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.component.SoftwareComponentInternal
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
@@ -132,7 +133,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             }
 
         sourceSetsWithMetadataCompilations.forEach { (sourceSet, metadataCompilation) ->
-            val compileMetadataTransformationTasksForHierarchy = mutableSetOf<TaskHolder<TransformKotlinGranularMetadata>>()
+            val compileMetadataTransformationTasksForHierarchy = mutableSetOf<TaskProvider<TransformKotlinGranularMetadata>>()
 
             // Adjust metadata compilation to support source set hierarchies, i.e. use both the outputs of dependsOn source set compilation
             // and their dependencies metadata transformed for compilation:
@@ -156,8 +157,8 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
         val generateMetadata = createGenerateProjectStructureMetadataTask()
 
         allMetadataJar.from(project.files(Callable {
-            generateMetadata.doGetTask().resultXmlFile
-        }).builtBy(generateMetadata.getTaskOrProvider())) { spec ->
+            generateMetadata.get().resultXmlFile
+        }).builtBy(generateMetadata)) { spec ->
             spec.into("META-INF").rename { MULTIPLATFORM_PROJECT_METADATA_FILE_NAME }
         }
     }
@@ -286,13 +287,13 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
     private fun createTransformedMetadataClasspath(
         fromFiles: Iterable<File>,
         project: Project,
-        transformationTaskHolders: Set<TaskHolder<TransformKotlinGranularMetadata>>
+        transformationTaskHolders: Set<TaskProvider<TransformKotlinGranularMetadata>>
     ): FileCollection {
         return project.files(Callable {
             val allResolutionsByArtifactFile: Map<File, Iterable<MetadataDependencyResolution>> =
                 mutableMapOf<File, MutableList<MetadataDependencyResolution>>().apply {
                     transformationTaskHolders.forEach {
-                        val resolutions = it.doGetTask().metadataDependencyResolutions
+                        val resolutions = it.get().metadataDependencyResolutions
 
                         resolutions.forEach { resolution ->
                             val artifacts = resolution.dependency.moduleArtifacts.map { it.file }
@@ -305,7 +306,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                 }
 
             val transformedFilesByResolution: Map<MetadataDependencyResolution, FileCollection> =
-                transformationTaskHolders.flatMap { it.doGetTask().filesByResolution.toList() }.toMap()
+                transformationTaskHolders.flatMap { it.get().filesByResolution.toList() }.toMap()
 
             mutableSetOf<Any /* File | FileCollection */>().apply {
                 fromFiles.forEach { file ->
@@ -324,7 +325,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
                     }
                 }
             }
-        }).builtBy(transformationTaskHolders.map { it.getTaskOrProvider() })
+        }).builtBy(transformationTaskHolders)
     }
 
     private fun getPublishedCommonSourceSets(project: Project): Set<KotlinSourceSet> {
@@ -346,7 +347,7 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
             .keys
     }
 
-    private fun Project.createGenerateProjectStructureMetadataTask(): TaskHolder<GenerateProjectStructureMetadata> =
+    private fun Project.createGenerateProjectStructureMetadataTask(): TaskProvider<GenerateProjectStructureMetadata> =
         project.createOrRegisterTask("generateProjectStructureMetadata") { task ->
             task.lazyKotlinProjectStructureMetadata = lazy { checkNotNull(buildKotlinProjectStructureMetadata(project)) }
         }

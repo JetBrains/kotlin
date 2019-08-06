@@ -29,12 +29,9 @@ open class KotlinNativeTarget(
         attributes.attribute(konanTargetAttribute, konanTarget.name)
     }
 
-    val binaries = if(isGradleVersionAtLeast(4, 2)) {
+    val binaries =
         // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
         project.objects.newInstance(KotlinNativeBinaryContainer::class.java, this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
-    } else {
-        KotlinNativeBinaryContainer(this, WrapUtil.toDomainObjectSet(NativeBinary::class.java))
-    }
 
     fun binaries(configure: KotlinNativeBinaryContainer.() -> Unit) {
         binaries.configure()

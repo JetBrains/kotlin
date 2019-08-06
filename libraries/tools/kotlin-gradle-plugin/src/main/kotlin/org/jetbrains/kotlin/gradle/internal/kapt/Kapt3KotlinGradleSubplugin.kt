@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.tasks.CompilerPluginOptions
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.gradle.tasks.isWorkerAPISupported
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -121,7 +120,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         }
 
         fun Project.isUseWorkerApi(): Boolean {
-            return isWorkerAPISupported() && hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "true"
+            return hasProperty(USE_WORKER_API) && property(USE_WORKER_API) == "true"
         }
 
         fun Project.isIncrementalKapt(): Boolean {
@@ -302,12 +301,9 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val androidOptions = kaptVariantData?.annotationProcessorOptions ?: emptyMap()
 
         val apOptionsFromProviders =
-            if (isGradleVersionAtLeast(4, 6))
-                kaptVariantData?.annotationProcessorOptionProviders
-                    ?.flatMap { (it as CommandLineArgumentProvider).asArguments() }
-                    .orEmpty()
-            else
-                emptyList()
+            kaptVariantData?.annotationProcessorOptionProviders
+                ?.flatMap { (it as CommandLineArgumentProvider).asArguments() }
+                .orEmpty()
 
         val subluginOptionsFromProvidedApOptions = apOptionsFromProviders.map {
             // Use the internal subplugin option type to exclude them from Gradle input/output checks, as their providers are already
@@ -394,11 +390,7 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         kaptTask.isIncremental = project.isIncrementalKapt()
         if (kaptTask.isIncremental) {
             kaptTask.incAptCache = getKaptIncrementalAnnotationProcessingCache()
-            if (isGradleVersionAtLeast(4, 3)) {
-                kaptTask.localState.register(kaptTask.incAptCache)
-            } else {
-                kaptTask.outputs.files(kaptTask.incAptCache).withPropertyName("incrementalAptCache")
-            }
+            kaptTask.localState.register(kaptTask.incAptCache)
 
             maybeRegisterTransform(project)
             val classStructure = project.configurations.create("_classStructure${taskName}")
@@ -522,13 +514,11 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
             @Suppress("UNCHECKED_CAST")
             options.compilerArgs = newCompilerArgs as List<String>
 
-            if (isGradleVersionAtLeast(4, 6)) {
-                // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
-                // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
-                // javaCompile more granular as it does not perform annotation processing:
-                if (kaptVariantData != null) {
-                    options.compilerArgumentProviders.removeAll(kaptVariantData.annotationProcessorOptionProviders)
-                }
+            // Filter out the argument providers that are related to annotation processing and therefore already used by Kapt.
+            // This is done to avoid outputs intersections between Kapt and and javaCompile and make the up-to-date check for
+            // javaCompile more granular as it does not perform annotation processing:
+            if (kaptVariantData != null) {
+                options.compilerArgumentProviders.removeAll(kaptVariantData.annotationProcessorOptionProviders)
             }
         }
     }

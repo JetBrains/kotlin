@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.Test
 
 class VariantAwareDependenciesIT : BaseGradleIT() {
-    private val gradleVersion = GradleVersionRequired.AtLeast("4.8")
+    private val gradleVersion = GradleVersionRequired.None
 
     @Test
     fun testJvmKtAppResolvesMppLib() {
@@ -245,7 +245,7 @@ class VariantAwareDependenciesIT : BaseGradleIT() {
 
     @Test
     fun testJvmWithJavaProjectCanBeResolvedInAllConfigurations() =
-        with(Project("new-mpp-jvm-with-java-multi-module", GradleVersionRequired.AtLeast("4.7"))) {
+        with(Project("new-mpp-jvm-with-java-multi-module")) {
             testResolveAllConfigurations("app")
         }
 

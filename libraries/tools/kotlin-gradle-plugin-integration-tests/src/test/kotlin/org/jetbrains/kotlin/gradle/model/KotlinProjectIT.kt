@@ -17,7 +17,7 @@ import kotlin.test.assertTrue
 
 class KotlinProjectIT : BaseGradleIT() {
     override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.AtLeast("4.4")
+        get() = GradleVersionRequired.None
 
     override fun defaultBuildOptions(): BuildOptions {
         return super.defaultBuildOptions().copy(

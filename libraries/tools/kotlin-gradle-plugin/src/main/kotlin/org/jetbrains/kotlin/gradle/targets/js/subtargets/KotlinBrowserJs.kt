@@ -75,6 +75,6 @@ class KotlinBrowserJs(target: KotlinJsTarget) :
             it.outputs.upToDateWhen { false }
         }
 
-        target.runTask.dependsOn(run.getTaskOrProvider())
+        target.runTask.dependsOn(run)
     }
 }

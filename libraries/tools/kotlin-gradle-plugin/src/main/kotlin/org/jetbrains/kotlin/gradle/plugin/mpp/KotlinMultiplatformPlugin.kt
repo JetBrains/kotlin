@@ -161,10 +161,6 @@ class KotlinMultiplatformPlugin(
             SingleWarningPerBuild.show(project, GRADLE_NO_METADATA_WARNING)
         }
 
-        if (!isGradleVersionAtLeast(4, 8) && project.multiplatformExtension.isGradleMetadataAvailable) {
-            SingleWarningPerBuild.show(project, GRADLE_OLD_METADATA_WARNING)
-        }
-
         val targets = project.multiplatformExtension.targets
         val kotlinSoftwareComponent = project.multiplatformExtension.rootSoftwareComponent
 
@@ -178,7 +174,7 @@ class KotlinMultiplatformPlugin(
             }
 
             // Publish the root publication only if Gradle metadata publishing is enabled:
-            project.tasks.withType(AbstractPublishToMaven::class.java).all { publishTask ->
+            project.tasks.withType(AbstractPublishToMaven::class.java).configureEach { publishTask ->
                 publishTask.onlyIf { publishTask.publication != rootPublication || project.multiplatformExtension.isGradleMetadataAvailable }
             }
 

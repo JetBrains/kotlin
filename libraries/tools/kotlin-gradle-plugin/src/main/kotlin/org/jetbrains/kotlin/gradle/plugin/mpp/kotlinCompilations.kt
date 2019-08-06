@@ -10,6 +10,7 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -47,7 +48,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val compileKotlinTask: KotlinCompile<T>
         get() = (target.project.tasks.getByName(compileKotlinTaskName) as KotlinCompile<T>)
 
-    val compileKotlinTaskHolder: TaskHolder<KotlinCompile<T>>
+    val compileKotlinTaskHolder: TaskProvider<KotlinCompile<T>>
         get() = target.project.locateTask(compileKotlinTaskName)!!
 
     // Don't declare this property in the constructor to avoid NPE

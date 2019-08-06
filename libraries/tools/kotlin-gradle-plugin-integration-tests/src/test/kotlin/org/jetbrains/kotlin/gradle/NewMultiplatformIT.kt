@@ -52,7 +52,7 @@ fun configure(): NativeTargets {
 }
 
 class NewMultiplatformIT : BaseGradleIT() {
-    val gradleVersion = GradleVersionRequired.AtLeast("4.7")
+    val gradleVersion = GradleVersionRequired.None
 
     val nativeHostTargetName = configure().current
     val supportedNativeTargets = configure().supported
@@ -70,17 +70,15 @@ class NewMultiplatformIT : BaseGradleIT() {
     @Test
     fun testLibAndAppWithGradleKotlinDsl() = doTestLibAndApp(
         "sample-lib-gradle-kotlin-dsl",
-        "sample-app-gradle-kotlin-dsl",
-        GradleVersionRequired.AtLeast("4.9") // earlier Gradle versions fail at accessors codegen
+        "sample-app-gradle-kotlin-dsl"
     )
 
     private fun doTestLibAndApp(
-        libProjectName: String, appProjectName: String,
-        gradleVersionRequired: GradleVersionRequired = gradleVersion
+        libProjectName: String, appProjectName: String
     ) {
-        val libProject = transformProjectWithPluginsDsl(libProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
-        val appProject = transformProjectWithPluginsDsl(appProjectName, gradleVersionRequired, "new-mpp-lib-and-app")
-        val oldStyleAppProject = Project("sample-old-style-app", gradleVersionRequired, "new-mpp-lib-and-app")
+        val libProject = transformProjectWithPluginsDsl(libProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val appProject = transformProjectWithPluginsDsl(appProjectName, directoryPrefix = "new-mpp-lib-and-app")
+        val oldStyleAppProject = Project("sample-old-style-app", directoryPrefix = "new-mpp-lib-and-app")
 
         val compileTasksNames =
             listOf("Jvm6", "NodeJs", "Metadata", "Wasm32", nativeHostTargetName.capitalize()).map { ":compileKotlin$it" }
@@ -2017,7 +2015,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testSuggestionToEnableMetadata() = with(Project("sample-lib", GradleVersionRequired.AtLeast("4.7"), "new-mpp-lib-and-app")) {
+    fun testSuggestionToEnableMetadata() = with(Project("sample-lib", directoryPrefix = "new-mpp-lib-and-app")) {
         build {
             assertNotContains(GRADLE_NO_METADATA_WARNING)
 
