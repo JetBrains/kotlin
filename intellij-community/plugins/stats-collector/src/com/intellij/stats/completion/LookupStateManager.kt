@@ -83,7 +83,7 @@ class LookupStateManager {
         val result = mutableMapOf<LookupElement, Map<String, String>>()
         if (lookupStorage != null) {
             for (item in items) {
-                val factors = lookupStorage.getItemStorage(item.idString()).getLastUsedFactors()?.mapValues(Any::toString)
+                val factors = lookupStorage.getItemStorage(item.idString()).getLastUsedFactors()?.mapValues { it.value.toString() }
                 if (factors != null) {
                     result[item] = factors
                 }
