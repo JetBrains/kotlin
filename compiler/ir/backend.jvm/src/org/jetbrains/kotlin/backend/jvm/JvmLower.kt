@@ -75,7 +75,7 @@ private val propertiesPhase = makeIrFilePhase<JvmBackendContext>(
             val baseName =
                 if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
                     property.getter?.let { getter ->
-                        context.typeMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
+                        context.methodSignatureMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
                     } ?: JvmAbi.getterName(property.name.asString())
                 } else {
                     property.name.asString()

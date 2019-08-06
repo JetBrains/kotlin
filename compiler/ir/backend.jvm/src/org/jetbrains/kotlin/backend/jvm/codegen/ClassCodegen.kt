@@ -49,6 +49,7 @@ open class ClassCodegen protected constructor(
     val state = context.state
 
     val typeMapper = context.typeMapper
+    val methodSignatureMapper = context.methodSignatureMapper
 
     val descriptor = irClass.descriptor
 
@@ -246,7 +247,7 @@ open class ClassCodegen protected constructor(
         val fieldType = typeMapper.mapType(field)
         val fieldSignature =
             if (field.origin == IrDeclarationOrigin.DELEGATE) null
-            else typeMapper.mapFieldSignature(field)
+            else methodSignatureMapper.mapFieldSignature(field)
         val fieldName = field.name.asString()
         // The ConstantValue attribute makes the initializer part of the ABI, which is why since 1.4
         // it is no longer set unless the property is explicitly `const`.
@@ -342,7 +343,7 @@ open class ClassCodegen protected constructor(
             // in the source.
             val containingDeclaration = irClass.symbol.owner.parent
             if (containingDeclaration is IrFunction) {
-                val method = typeMapper.mapAsmMethod(containingDeclaration)
+                val method = methodSignatureMapper.mapAsmMethod(containingDeclaration)
                 visitor.visitOuterClass(outerClassName, method.name, method.descriptor)
             } else if (irClass.isAnonymousObject) {
                 visitor.visitOuterClass(outerClassName, null, null)

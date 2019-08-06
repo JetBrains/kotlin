@@ -55,8 +55,7 @@ class IrSourceCompilerForInline(
     override val inlineCallSiteInfo: InlineCallSiteInfo
         get() {
             //TODO: support nested inline calls
-            val typeMapper = codegen.typeMapper
-            val signature = typeMapper.mapSignatureSkipGeneric(codegen.irFunction)
+            val signature = codegen.methodSignatureMapper.mapSignatureSkipGeneric(codegen.irFunction)
             return InlineCallSiteInfo(
                 codegen.classCodegen.type.internalName,
                 signature.asmMethod.name,

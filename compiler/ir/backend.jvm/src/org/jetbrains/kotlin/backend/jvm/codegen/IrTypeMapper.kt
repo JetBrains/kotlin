@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionTy
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
-import org.jetbrains.kotlin.codegen.OwnerKind
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.originalKotlinType
@@ -27,11 +28,8 @@ import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.Method
 
 class IrTypeMapper(private val context: JvmBackendContext) {
     val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
@@ -43,34 +41,6 @@ class IrTypeMapper(private val context: JvmBackendContext) {
     fun classInternalName(irClass: IrClass): String =
         context.getLocalClassInfo(irClass)?.internalName
             ?: JvmCodegenUtil.sanitizeNameIfNeeded(computeInternalName(irClass), context.state.languageVersionSettings)
-
-    fun mapAsmMethod(irFunction: IrFunction): Method =
-        kotlinTypeMapper.mapAsmMethod(irFunction.descriptor)
-
-    fun mapFieldSignature(irField: IrField) =
-        kotlinTypeMapper.mapFieldSignature(irField.type.toKotlinType(), irField.descriptor)
-
-    fun mapFunctionName(irFunction: IrFunction, ownerKind: OwnerKind): String =
-        kotlinTypeMapper.mapFunctionName(irFunction.descriptor, ownerKind)
-
-    fun mapImplementationOwner(irDeclaration: IrDeclaration): Type =
-        kotlinTypeMapper.mapImplementationOwner(irDeclaration.descriptor)
-
-    fun mapReturnType(irFunction: IrFunction): Type =
-        kotlinTypeMapper.mapReturnType(irFunction.descriptor)
-
-    fun mapSignatureSkipGeneric(f: IrFunction, kind: OwnerKind = OwnerKind.IMPLEMENTATION): JvmMethodSignature =
-        kotlinTypeMapper.mapSignatureSkipGeneric(f.descriptor, kind)
-
-    fun mapSignatureWithGeneric(f: IrFunction, kind: OwnerKind): JvmMethodGenericSignature =
-        kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, kind)
-
-    fun mapToCallableMethod(f: IrFunction, superCall: Boolean): IrCallableMethod =
-        with(kotlinTypeMapper.mapToCallableMethod(f.descriptor, superCall)) {
-            IrCallableMethod(
-                owner, valueParameterTypes, invokeOpcode, getAsmMethod(), dispatchReceiverType, extensionReceiverType, isInterfaceMethod
-            )
-        }
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) =
         kotlinTypeMapper.writeFormalTypeParameters(irParameters.map { it.descriptor }, sw)
