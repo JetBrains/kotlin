@@ -1855,6 +1855,11 @@ task eqeq(type: KonanLocalTest) {
     source = "codegen/function/eqeq.kt"
 }
 
+task function_referenceBigArity(type: KonanLocalTest) {
+    goldValue = "528\n"
+    source = "codegen/function/referenceBigArity"
+}
+
 task cycle(type: KonanLocalTest) {
     source = "codegen/cycles/cycle.kt"
 }
