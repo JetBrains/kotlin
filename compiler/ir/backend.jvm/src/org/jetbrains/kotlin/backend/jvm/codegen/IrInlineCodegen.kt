@@ -98,7 +98,7 @@ class IrInlineCodegen(
     }
 
     override fun genCall(
-        callableMethod: Callable,
+        callableMethod: IrCallableMethod,
         codegen: ExpressionCodegen,
         expression: IrFunctionAccessExpression
     ) {

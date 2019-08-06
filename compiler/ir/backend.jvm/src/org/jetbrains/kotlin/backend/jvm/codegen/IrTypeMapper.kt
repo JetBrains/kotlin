@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.load.kotlin.computeExpandedTypeForInlineClass
 import org.jetbrains.kotlin.load.kotlin.mapBuiltInType
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
@@ -66,8 +65,12 @@ class IrTypeMapper(private val context: JvmBackendContext) {
     fun mapSignatureWithGeneric(f: IrFunction, kind: OwnerKind): JvmMethodGenericSignature =
         kotlinTypeMapper.mapSignatureWithGeneric(f.descriptor, kind)
 
-    fun mapToCallableMethod(f: IrFunction, superCall: Boolean, kind: OwnerKind? = null, resolvedCall: ResolvedCall<*>? = null) =
-        kotlinTypeMapper.mapToCallableMethod(f.descriptor, superCall, kind, resolvedCall)
+    fun mapToCallableMethod(f: IrFunction, superCall: Boolean): IrCallableMethod =
+        with(kotlinTypeMapper.mapToCallableMethod(f.descriptor, superCall)) {
+            IrCallableMethod(
+                owner, valueParameterTypes, invokeOpcode, getAsmMethod(), dispatchReceiverType, extensionReceiverType, isInterfaceMethod
+            )
+        }
 
     fun writeFormalTypeParameters(irParameters: List<IrTypeParameter>, sw: JvmSignatureWriter) =
         kotlinTypeMapper.writeFormalTypeParameters(irParameters.map { it.descriptor }, sw)
