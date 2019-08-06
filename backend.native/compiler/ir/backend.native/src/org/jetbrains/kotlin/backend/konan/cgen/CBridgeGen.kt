@@ -287,6 +287,10 @@ private fun KotlinToCCallBuilder.buildCall(
     returnValue(cCallBuilder.build(targetFunctionName))
 }
 
+internal sealed class ObjCCallReceiver {
+    class Regular(val rawPtr: IrExpression) : ObjCCallReceiver()
+    class Retained(val rawPtr: IrExpression) : ObjCCallReceiver()
+}
 
 internal fun KotlinStubs.generateObjCCall(
         builder: IrBuilderWithScope,
@@ -295,7 +299,7 @@ internal fun KotlinStubs.generateObjCCall(
         selector: String,
         call: IrFunctionAccessExpression,
         superQualifier: IrClassSymbol?,
-        receiver: IrExpression,
+        receiver: ObjCCallReceiver,
         arguments: List<IrExpression?>
 ) = builder.irBlock {
     val callBuilder = KotlinToCCallBuilder(builder, this@generateObjCCall, isObjCMethod = true)
@@ -320,11 +324,31 @@ internal fun KotlinStubs.generateObjCCall(
     val targetFunctionName = "targetPtr"
 
     val preparedReceiver = if (method.consumesReceiver()) {
-        irCall(symbols.interopObjCRetain.owner).apply {
-            putValueArgument(0, receiver)
+        when (receiver) {
+            is ObjCCallReceiver.Regular -> irCall(symbols.interopObjCRetain.owner).apply {
+                putValueArgument(0, receiver.rawPtr)
+            }
+
+            is ObjCCallReceiver.Retained -> receiver.rawPtr
         }
     } else {
-        receiver
+        when (receiver) {
+            is ObjCCallReceiver.Regular -> receiver.rawPtr
+
+            is ObjCCallReceiver.Retained -> {
+                // Note: shall not happen: Retained is used only for alloc result currently,
+                // which is used only as receiver for init methods, which are always receiver-consuming.
+                // Can't even add a test for the code below.
+                val rawPtrVar = scope.createTemporaryVariable(receiver.rawPtr)
+                callBuilder.bridgeCallBuilder.prepare += rawPtrVar
+                callBuilder.bridgeCallBuilder.cleanup += {
+                    irCall(symbols.interopObjCRelease).apply {
+                        putValueArgument(0, irGet(rawPtrVar)) // Balance retained pointer.
+                    }
+                }
+                irGet(rawPtrVar)
+            }
+        }
     }
 
     val receiverOrSuper = if (superQualifier != null) {

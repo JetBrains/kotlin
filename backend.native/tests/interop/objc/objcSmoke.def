@@ -1,3 +1,3 @@
 language = Objective-C
-headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
-headerFilter = **/smoke.h Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h
+headers = Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h
+headerFilter = **/smoke.h Foundation/NSArray.h Foundation/NSValue.h Foundation/NSString.h Foundation/NSStream.h

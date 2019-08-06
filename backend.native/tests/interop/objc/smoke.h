@@ -220,3 +220,7 @@ Protocol* getPrinterProtocol() {
 
 +(instancetype _Nonnull)createCustom;
 @end;
+
+@interface TestAllocNoRetain : NSObject
+@property BOOL ok;
+@end;

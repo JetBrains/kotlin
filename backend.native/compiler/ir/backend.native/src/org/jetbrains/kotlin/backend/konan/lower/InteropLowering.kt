@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -547,7 +546,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             val initCall = builder.genLoweredObjCMethodCall(
                     initMethodInfo,
                     superQualifier = delegatingCallConstructingClass.symbol,
-                    receiver = builder.getRawPtr(builder.irGet(constructedClass.thisReceiver!!)),
+                    receiver = builder.irGet(constructedClass.thisReceiver!!),
                     arguments = initMethod.valueParameters.map { expression.getValueArgument(it.index) },
                     call = expression,
                     method = initMethod
@@ -581,6 +580,22 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             info: ObjCMethodInfo,
             superQualifier: IrClassSymbol?,
             receiver: IrExpression,
+            arguments: List<IrExpression?>,
+            call: IrFunctionAccessExpression,
+            method: IrSimpleFunction
+    ): IrExpression = genLoweredObjCMethodCall(
+            info = info,
+            superQualifier = superQualifier,
+            receiver = ObjCCallReceiver.Regular(rawPtr = getRawPtr(receiver)),
+            arguments = arguments,
+            call = call,
+            method = method
+    )
+
+    private fun IrBuilderWithScope.genLoweredObjCMethodCall(
+            info: ObjCMethodInfo,
+            superQualifier: IrClassSymbol?,
+            receiver: ObjCCallReceiver,
             arguments: List<IrExpression?>,
             call: IrFunctionAccessExpression,
             method: IrSimpleFunction
@@ -669,7 +684,7 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
                 return builder.genLoweredObjCMethodCall(
                         methodInfo,
                         superQualifier = expression.superQualifierSymbol,
-                        receiver = builder.getRawPtr(expression.dispatchReceiver ?: expression.extensionReceiver!!),
+                        receiver = expression.dispatchReceiver ?: expression.extensionReceiver!!,
                         arguments = arguments,
                         call = expression,
                         method = callee as IrSimpleFunction
@@ -736,25 +751,14 @@ internal class InteropLoweringPart1(val context: Context) : BaseInteropIrTransfo
             arguments: List<IrExpression?>,
             call: IrFunctionAccessExpression,
             initMethod: IrSimpleFunction
-    ): IrExpression = irBlock(startOffset, endOffset) {
-        val allocated = irTemporaryVar(callAlloc(classPtr))
-
-        val initCall = genLoweredObjCMethodCall(
-                initMethodInfo,
-                superQualifier = null,
-                receiver = irGet(allocated),
-                arguments = arguments,
-                call = call,
-                method = initMethod
-        )
-
-        +IrTryImpl(startOffset, endOffset, initCall.type).apply {
-            tryResult = initCall
-            finallyExpression = irCall(symbols.interopObjCRelease).apply {
-                putValueArgument(0, irGet(allocated)) // Balance pointer retained by alloc.
-            }
-        }
-    }
+    ): IrExpression = genLoweredObjCMethodCall(
+            initMethodInfo,
+            superQualifier = null,
+            receiver = ObjCCallReceiver.Retained(rawPtr = callAlloc(classPtr)),
+            arguments = arguments,
+            call = call,
+            method = initMethod
+    )
 
     private fun IrBuilderWithScope.getRawPtr(receiver: IrExpression) =
             irCall(symbols.interopObjCObjectRawValueGetter).apply {
