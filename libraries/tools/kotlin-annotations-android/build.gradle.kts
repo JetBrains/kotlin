@@ -29,7 +29,7 @@ sourceSets {
 }
 
 dependencies {
-    compile(kotlinBuiltins())
+    compileOnly(kotlinBuiltins())
 }
 
 publish()
