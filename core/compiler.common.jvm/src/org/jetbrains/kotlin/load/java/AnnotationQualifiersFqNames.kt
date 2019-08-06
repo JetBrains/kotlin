@@ -15,6 +15,12 @@ val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierD
 
 val MIGRATION_ANNOTATION_FQNAME = FqName("kotlin.annotations.jvm.UnderMigration")
 
+val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
+    AnnotationQualifierApplicabilityType.FIELD,
+    AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
+    AnnotationQualifierApplicabilityType.VALUE_PARAMETER
+)
+
 val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
     FqName("javax.annotation.ParametersAreNullableByDefault") to
             NullabilityQualifierWithApplicability(
@@ -25,7 +31,20 @@ val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
             NullabilityQualifierWithApplicability(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
                 listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
-            )
+            ),
+
+    JSPECIFY_DEFAULT_NULLABLE to NullabilityQualifierWithApplicability(
+        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
+        DEFAULT_JSPECIFY_APPLICABILITY
+    ),
+    JSPECIFY_DEFAULT_NOT_NULL to NullabilityQualifierWithApplicability(
+        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+        DEFAULT_JSPECIFY_APPLICABILITY
+    ),
+    JSPECIFY_DEFAULT_NULLNESS_UNKNOWN to NullabilityQualifierWithApplicability(
+        NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY),
+        DEFAULT_JSPECIFY_APPLICABILITY
+    )
 )
 
 val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)

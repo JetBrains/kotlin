@@ -1,0 +1,16 @@
+package
+
+public fun main(/*0*/ a: A): kotlin.Unit
+
+@jspecify.annotations.DefaultNotNull public open class A {
+    public constructor A()
+    public final var defaultField: kotlin.String
+    @jspecify.annotations.Nullable public final var field: kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun everythingNotNullable(/*0*/ x: kotlin.String): kotlin.String
+    @jspecify.annotations.DefaultNullable public open fun everythingNullable(/*0*/ x: kotlin.String?): kotlin.String?
+    @jspecify.annotations.DefaultNullnessUnknown public open fun everythingUnknown(/*0*/ x: kotlin.String!): kotlin.String!
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @jspecify.annotations.DefaultNullable public open fun mixed(/*0*/ @jspecify.annotations.NotNull x: kotlin.String): kotlin.String?
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
