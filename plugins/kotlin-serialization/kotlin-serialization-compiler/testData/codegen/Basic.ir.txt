@@ -621,6 +621,7 @@ public final class OptionalUser : java/lang/Object {
         LABEL (L0)
           ALOAD (0)
           ACONST_NULL
+          CHECKCAST
           ICONST_1
           ACONST_NULL
           INVOKESPECIAL (OptionalUser, <init>, (LUser;ILkotlin/jvm/internal/DefaultConstructorMarker;)V)
