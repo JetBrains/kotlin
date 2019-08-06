@@ -78,7 +78,7 @@ open class TypeApproximatorConfiguration {
         override fun capturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
             type.captureStatus(ctx) != approximatedCapturedStatus
 
-        override val intersection get() = IntersectionStrategy.ALLOWED
+        override val intersection get() = ALLOWED
         override val typeVariable: (TypeVariableTypeConstructorMarker) -> Boolean get() = { true }
     }
 
@@ -220,11 +220,11 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
                     return if (conf.rawType) null else type.bound()
                 }
 
-                // TODO: Restore check
-//                // TODO: currently we can lose information about enhancement, should be fixed later
-//                assert(type is FlexibleTypeImpl || type is FlexibleTypeWithEnhancement) {
-//                    "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
-//                }
+//              TODO: Restore check
+//              TODO: currently we can lose information about enhancement, should be fixed later
+//              assert(type is FlexibleTypeImpl || type is FlexibleTypeWithEnhancement) {
+//                  "Unexpected subclass of FlexibleType: ${type::class.java.canonicalName}, type = $type"
+//              }
 
                 if (conf.flexible) {
                     /**
@@ -454,8 +454,6 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
         depth: Int
     ): SimpleTypeMarker? {
         val typeConstructor = type.typeConstructor()
-//        val parameters = type.typeConstructor().parameters
-//        val arguments = type.arguments
         if (typeConstructor.parametersCount() != type.argumentsCount()) {
             return if (conf.errorType) {
                 createErrorType("Inconsistent type: $type (parameters.size = ${typeConstructor.parametersCount()}, arguments.size = ${type.argumentsCount()})")
@@ -470,9 +468,8 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
 
             if (argument.isStarProjection()) continue
 
-            val argumentType = argument.getType()//.unwrap()
-            val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
-            when (effectiveVariance) {
+            val argumentType = argument.getType()
+            when (val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())) {
                 null -> {
                     return if (conf.errorType) {
                         createErrorType(
@@ -576,19 +573,3 @@ abstract class AbstractTypeApproximator(val ctx: TypeSystemInferenceExtensionCon
     // Nothing or Nothing!
     private fun KotlinTypeMarker.isTrivialSub() = lowerBoundIfFlexible().isNothing()
 }
-//
-//internal fun KotlinTypeMarker.typeDepth() =
-//    when (this) {
-//        is SimpleTypeMarker -> typeDepth()
-//        is FlexibleType -> Math.max(lowerBound.typeDepth(), upperBound.typeDepth())
-//    }
-//
-//internal fun SimpleTypeMarker.typeDepth(): Int {
-//    if (this is TypeUtils.SpecialType) return 0
-//
-//    val maxInArguments = arguments.asSequence().map {
-//        if (it.isStarProjection) 1 else it.type.unwrap().typeDepth()
-//    }.max() ?: 0
-//
-//    return maxInArguments + 1
-//}
