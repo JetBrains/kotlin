@@ -170,44 +170,44 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
     protected fun getCompiledSources() = listOfNotNull(kotlinCompileTask.destinationDir, kotlinCompileTask.javaOutputDir)
 
     protected fun getIncrementalChanges(inputs: IncrementalTaskInputs): KaptIncrementalChanges {
-        if (!isIncremental) {
+        return if (isIncremental) {
+            findClasspathChanges(inputs)
+        } else {
             clearLocalState()
-            return KaptIncrementalChanges.Unknown
-        }
-        val allDataFiles = classpathStructure!!.files
-        if (!inputs.isIncremental) {
-            clearLocalState()
-            findClasspathChanges(allDataFiles, allDataFiles)
-            return KaptIncrementalChanges.Unknown
-        }
-
-        val changedFiles = with(mutableSetOf<File>()) {
-            inputs.outOfDate { this.add(it.file) }
-            inputs.removed { this.add(it.file) }
-            return@with this
-        }
-
-        val changedDataFiles = allDataFiles.filterTo(HashSet<File>()) { it in changedFiles }
-        val classpathStatus = findClasspathChanges(allDataFiles, changedDataFiles)
-        return when (classpathStatus) {
-            is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
-            is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
-                changedFiles.filter { it.extension == "java" }.toSet(), classpathStatus.names
-            )
+            KaptIncrementalChanges.Unknown
         }
     }
 
-    private fun findClasspathChanges(allDataFile: Set<File>, changedDataFiles: Set<File>): KaptClasspathChanges {
+    private fun findClasspathChanges(inputs: IncrementalTaskInputs): KaptIncrementalChanges {
         val incAptCacheDir = incAptCache!!
         incAptCacheDir.mkdirs()
 
+        val allDataFiles = classpathStructure!!.files
+        val changedFiles = if (inputs.isIncremental) {
+            with(mutableSetOf<File>()) {
+                inputs.outOfDate { this.add(it.file) }
+                inputs.removed { this.add(it.file) }
+                return@with this
+            }
+        } else {
+            allDataFiles
+        }
+
         val startTime = System.currentTimeMillis()
 
-        val previousSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
+        val previousSnapshot = if (inputs.isIncremental) {
+            ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
+        } else {
+            ClasspathSnapshot.ClasspathSnapshotFactory.getEmptySnapshot()
+        }
         val currentSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCacheDir, classpath.files.toList(), allDataFile)
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCacheDir, classpath.files.toList(), allDataFiles)
 
-        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedDataFiles)
+        val classpathChanges = currentSnapshot.diff(previousSnapshot, changedFiles)
+        if (classpathChanges == KaptClasspathChanges.Unknown) {
+            // We are unable to determine classpath changes, so clean the local state as we will run non-incrementally
+            clearLocalState()
+        }
         currentSnapshot.writeToCache()
 
         if (logger.isInfoEnabled) {
@@ -223,7 +223,12 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
                 }
             }
         }
-        return classpathChanges
+        return when (classpathChanges) {
+            is KaptClasspathChanges.Unknown -> KaptIncrementalChanges.Unknown
+            is KaptClasspathChanges.Known -> KaptIncrementalChanges.Known(
+                changedFiles.filter { it.extension == "java" }.toSet(), classpathChanges.names
+            )
+        }
     }
 
     private fun hasAnnotationProcessors(file: File): Boolean {
