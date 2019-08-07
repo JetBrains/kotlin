@@ -95,6 +95,7 @@ class KotlinLineMarkerProvider : LineMarkerProviderDescriptor() {
 
         for (leaf in elements) {
             ProgressManager.checkCanceled()
+            if (leaf !is PsiIdentifier && leaf.firstChild != null) continue
             val element = leaf.parent as? KtNamedDeclaration ?: continue
             if (!declarations.add(element)) continue
 
