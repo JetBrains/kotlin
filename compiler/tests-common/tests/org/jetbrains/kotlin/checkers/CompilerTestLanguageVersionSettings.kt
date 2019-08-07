@@ -76,8 +76,11 @@ fun parseLanguageVersionSettings(directives: Map<String, String>): CompilerTestL
         return null
     }
 
-    val apiVersion = (if (apiVersionString != null) ApiVersion.parse(apiVersionString) else ApiVersion.LATEST_STABLE)
-        ?: error("Unknown API version: $apiVersionString")
+    val apiVersion = when (apiVersionString) {
+        null -> ApiVersion.LATEST_STABLE
+        "LATEST" -> ApiVersion.LATEST
+        else -> ApiVersion.parse(apiVersionString) ?: error("Unknown API version: $apiVersionString")
+    }
 
     val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
 
