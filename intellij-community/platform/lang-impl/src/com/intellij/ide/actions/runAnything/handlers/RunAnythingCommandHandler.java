@@ -27,6 +27,15 @@ public abstract class RunAnythingCommandHandler {
   }
 
   /**
+   * Provides custom output to be printed in console on the process terminated.
+   * E.g. command execution time could be reported on a command execution terminating.
+   */
+  @Nullable
+  public String getProcessTerminatedCustomOutput() {
+    return null;
+  }
+
+  /**
    * Creates console builder for matched command
    */
   public abstract TextConsoleBuilder getConsoleBuilder(@NotNull Project project);

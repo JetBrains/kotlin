@@ -54,7 +54,20 @@ public class RunAnythingRunProfileState extends CommandLineState {
       @Override
       protected void notifyProcessTerminated(int exitCode) {
         print(IdeBundle.message("run.anything.console.process.finished", exitCode), ConsoleViewContentType.SYSTEM_OUTPUT);
+        printCustomCommandOutput();
+
         super.notifyProcessTerminated(exitCode);
+      }
+
+      private void printCustomCommandOutput() {
+        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(originalCommand);
+        if (handler != null) {
+          String customOutput = handler.getProcessTerminatedCustomOutput();
+          if (customOutput != null) {
+            print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
+            print(customOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
+          }
+        }
       }
 
       @Override
