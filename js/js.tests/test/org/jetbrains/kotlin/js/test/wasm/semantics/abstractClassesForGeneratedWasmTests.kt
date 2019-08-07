@@ -6,5 +6,6 @@
 package org.jetbrains.kotlin.js.test.wasm.semantics
 
 import org.jetbrains.kotlin.js.test.BasicBoxTest
+import org.jetbrains.kotlin.js.test.BasicWasmBoxTest
 
 abstract class AbstractIrBoxWasmTest : BasicWasmBoxTest(BasicBoxTest.TEST_DATA_DIR_PATH + "box/wasm", "wasmBox/")

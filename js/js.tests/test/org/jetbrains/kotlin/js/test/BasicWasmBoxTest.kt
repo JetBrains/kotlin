@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.js.test.wasm.semantics
+package org.jetbrains.kotlin.js.test
 
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -20,16 +20,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.loadKlib
 import org.jetbrains.kotlin.js.config.JsConfig
 import org.jetbrains.kotlin.js.facade.TranslationUnit
-import org.jetbrains.kotlin.js.test.NashornJsTestChecker
-import org.jetbrains.kotlin.js.test.V8JsTestChecker
+import org.jetbrains.kotlin.js.test.engines.SpiderMonkeyEngine
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
-import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
-import org.jetbrains.kotlin.test.TargetBackend
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -44,7 +41,7 @@ open class BasicWasmBoxTest(
 ) : KotlinTestWithEnvironment() {
     private val testGroupOutputDirForCompilation = File(pathToRootOutputDir + "out/" + testGroupOutputDirPrefix)
 
-    private val testChecker get() = if (runTestInNashorn) NashornJsTestChecker else V8JsTestChecker
+    private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
     fun doTest(filePath: String) {
         val file = File(filePath)
@@ -64,17 +61,7 @@ open class BasicWasmBoxTest(
                 testPackage, TEST_FUNCTION
             )
 
-            val dontRunGeneratedCode = InTextDirectivesUtils.dontRunGeneratedCode(TargetBackend.JS, file)
-            if (!dontRunGeneratedCode) {
-                testChecker.check(
-                    files = listOf(outputFileName),
-                    testModuleName = null,
-                    testPackageName = null,
-                    testFunctionName = TEST_FUNCTION,
-                    expectedResult = 42,
-                    withModuleSystem = false
-                )
-            }
+            spiderMonkey.runWatBoxTest(outputFileName, "box", "42")
         }
     }
 

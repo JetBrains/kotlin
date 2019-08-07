@@ -10,6 +10,7 @@ plugins {
 
 node {
     download = true
+    version = "10.16.2"
 }
 
 val antLauncherJar by configurations.creating
@@ -120,10 +121,6 @@ projectTest("jsIrTest", true) {
     setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
 }
 
-projectTest("wasmIrTest", true) {
-    setUpBoxTests(jsEnabled = false, jsIrEnabled = false, wasmEnabled = true)
-}
-
 projectTest("quickTest", true) {
     setUpBoxTests(jsEnabled = true, jsIrEnabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
@@ -152,4 +149,45 @@ val runMocha by task<NpmTask> {
 
     val check by tasks
     check.dependsOn(this)
+}
+
+fun jsvuOs(): String {
+    val os = OperatingSystem.current()
+    val arch = System.getProperty("sun.arch.data.model")
+    return when {
+        os.isMacOsX -> "mac64"
+        os.isWindows -> "win$arch"
+        os.isLinux-> "linux$arch"
+        else -> "unknown"
+    }
+}
+
+
+fun jsvuDir(): String {
+    return File(System.getProperty("user.home"), ".jsvu").canonicalPath
+}
+
+fun installJsvuEngine(engineName: String, engineVersion: String) =
+    tasks.register<NpmTask>("jsvu_install_$engineName@$engineVersion") {
+        setWorkingDir(testDataDir)
+        dependsOn(npmInstall)
+        setNpmCommand("run", "jsvu", "--", "--os=${jsvuOs()}", "$engineName@$engineVersion")
+
+        val userHome = System.getProperty("user.home")
+        val installedEnginePath = file("$userHome/.jsvu/$engineName-$engineVersion").absolutePath
+        extra["installedEnginePath"] = installedEnginePath
+        doLast {
+            if (!file(installedEnginePath).exists()) {
+                throw GradleException("FAIL: Can't find installed jsvu $engineName@$engineVersion engine at $installedEnginePath")
+            }
+            println("JSVU: $engineName@$engineVersion engine installed at $installedEnginePath")
+        }
+    }
+
+val spiderMonkey: TaskProvider<NpmTask> = installJsvuEngine("spidermonkey", "69.0b11")
+
+projectTest("wasmIrTest", true) {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = false, wasmEnabled = true)
+    dependsOn(spiderMonkey)
+    systemProperty("javascript.engine.path.SpiderMonkey", tasks[spiderMonkey.name].extra["installedEnginePath"]!!)
 }
