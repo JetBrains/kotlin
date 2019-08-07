@@ -10,18 +10,21 @@ import java.util.*
 import kotlin.collections.HashMap
 
 private const val CLASSPATH_ENTRIES_FILE = "classpath-entries.bin"
+private const val ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE = "ap-classpath-entries.bin"
 private const val CLASSPATH_STRUCTURE_FILE = "classpath-structure.bin"
 
 open class ClasspathSnapshot protected constructor(
     private val cacheDir: File,
     private val classpath: List<File>,
+    private val annotationProcessorClasspath: List<File>,
     private val dataForFiles: MutableMap<File, ClasspathEntryData?>
 ) {
     object ClasspathSnapshotFactory {
         fun loadFrom(cacheDir: File): ClasspathSnapshot {
             val classpathEntries = cacheDir.resolve(CLASSPATH_ENTRIES_FILE)
             val classpathStructureData = cacheDir.resolve(CLASSPATH_STRUCTURE_FILE)
-            if (!classpathEntries.exists() || !classpathStructureData.exists()) {
+            val annotationProcessorClasspathEntries= cacheDir.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
+            if (!classpathEntries.exists() || !classpathStructureData.exists() || !annotationProcessorClasspathEntries.exists()) {
                 return UnknownSnapshot
             }
 
@@ -30,25 +33,34 @@ open class ClasspathSnapshot protected constructor(
                 it.readObject() as List<File>
             }
 
+            val annotationProcessorClasspathFiles =
+                ObjectInputStream(BufferedInputStream(annotationProcessorClasspathEntries.inputStream())).use {
+                    @Suppress("UNCHECKED_CAST")
+                    it.readObject() as List<File>
+                }
+
             val dataForFiles =
                 ObjectInputStream(BufferedInputStream(classpathStructureData.inputStream())).use {
                     @Suppress("UNCHECKED_CAST")
                     it.readObject() as MutableMap<File, ClasspathEntryData?>
                 }
-            return ClasspathSnapshot(cacheDir, classpathFiles, dataForFiles)
+            return ClasspathSnapshot(cacheDir, classpathFiles, annotationProcessorClasspathFiles, dataForFiles)
         }
 
-        fun createCurrent(cacheDir: File, classpath: List<File>, allStructureData: Set<File>): ClasspathSnapshot {
+        fun createCurrent(cacheDir: File, classpath: List<File>, annotationProcessorClasspath: List<File>, allStructureData: Set<File>): ClasspathSnapshot {
             val data = allStructureData.associateTo(HashMap<File, ClasspathEntryData?>(allStructureData.size)) { it to null }
 
-            return ClasspathSnapshot(cacheDir, classpath, data)
+            return ClasspathSnapshot(cacheDir, classpath, annotationProcessorClasspath, data)
         }
 
         fun getEmptySnapshot() = UnknownSnapshot
     }
 
     private fun isCompatible(snapshot: ClasspathSnapshot) =
-        this != UnknownSnapshot && snapshot != UnknownSnapshot && classpath == snapshot.classpath
+        this != UnknownSnapshot
+                && snapshot != UnknownSnapshot
+                && classpath == snapshot.classpath
+                && annotationProcessorClasspath == snapshot.annotationProcessorClasspath
 
     /** Compare this snapshot with the specified one only for the specified files. */
     fun diff(previousSnapshot: ClasspathSnapshot, changedFiles: Set<File>): KaptClasspathChanges {
@@ -128,6 +140,11 @@ open class ClasspathSnapshot protected constructor(
             it.writeObject(classpath)
         }
 
+        val annotationProcessorClasspathEntries = cacheDir.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
+        ObjectOutputStream(BufferedOutputStream(annotationProcessorClasspathEntries.outputStream())).use {
+            it.writeObject(annotationProcessorClasspath)
+        }
+
         val classpathStructureData = cacheDir.resolve(CLASSPATH_STRUCTURE_FILE)
         ObjectOutputStream(BufferedOutputStream(classpathStructureData.outputStream())).use {
             it.writeObject(dataForFiles)
@@ -179,7 +196,7 @@ open class ClasspathSnapshot protected constructor(
     }
 }
 
-object UnknownSnapshot : ClasspathSnapshot(File(""), emptyList(), mutableMapOf())
+object UnknownSnapshot : ClasspathSnapshot(File(""), emptyList(), emptyList(), mutableMapOf())
 
 sealed class KaptIncrementalChanges {
     object Unknown : KaptIncrementalChanges()

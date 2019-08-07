@@ -201,7 +201,12 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
             ClasspathSnapshot.ClasspathSnapshotFactory.getEmptySnapshot()
         }
         val currentSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCacheDir, classpath.files.toList(), allDataFiles)
+            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+                incAptCacheDir,
+                classpath.files.toList(),
+                kaptClasspath.files.toList(),
+                allDataFiles
+            )
 
         val classpathChanges = currentSnapshot.diff(previousSnapshot, changedFiles)
         if (classpathChanges == KaptClasspathChanges.Unknown) {
