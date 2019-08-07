@@ -71,8 +71,6 @@ import com.intellij.util.Alarm;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ContainerUtil;
-import com.intellij.util.diff.Diff;
-import com.intellij.util.diff.FilesTooBigForDiffException;
 import com.intellij.util.text.DateFormatUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -831,27 +829,12 @@ public class DocumentationManager extends DockablePopupManager<DocumentationComp
           callback.setDone();
           return;
         }
-        PsiManager psiManager = PsiManager.getInstance(myProject);
         String currentText = component.getText();
-        PsiElement currentElement = component.getElement();
         if (finalText == null) {
           component.setText(CodeInsightBundle.message("no.documentation.found"), element, collector.provider);
         }
         else if (finalText.isEmpty()) {
           component.setText(currentText, element, collector.provider);
-        }
-        else if (currentElement != null && psiManager.areElementsEquivalent(currentElement, element)) {
-          Diff.Change change = null;
-          try {
-            change = Diff.buildChanges(currentText, finalText);
-          }
-          catch (FilesTooBigForDiffException ignore) { }
-          if (change == null || change.line0 > 10) {
-            component.replaceText(finalText, element);
-          }
-          else {
-            component.setData(element, finalText, collector.effectiveUrl, collector.ref, collector.provider);
-          }
         }
         else {
           component.setData(element, finalText, collector.effectiveUrl, collector.ref, collector.provider);
