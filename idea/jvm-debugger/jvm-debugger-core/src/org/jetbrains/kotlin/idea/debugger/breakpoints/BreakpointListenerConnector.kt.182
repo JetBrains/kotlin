@@ -12,6 +12,7 @@ import com.intellij.xdebugger.breakpoints.XBreakpoint
 import com.intellij.xdebugger.breakpoints.XBreakpointListener
 
 object BreakpointListenerConnector {
+    @JvmStatic
     fun subscribe(debugProcess: DebugProcessImpl, indicator: ProgressWindow, listener: XBreakpointListener<XBreakpoint<*>>) {
         XDebuggerManager.getInstance(debugProcess.project).breakpointManager.addBreakpointListener(listener, indicator)
     }
