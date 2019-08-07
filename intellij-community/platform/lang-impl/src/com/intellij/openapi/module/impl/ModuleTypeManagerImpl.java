@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.openapi.module.impl;
 
 import com.intellij.diagnostic.PluginException;
@@ -12,7 +12,7 @@ import java.util.List;
 public class ModuleTypeManagerImpl extends ModuleTypeManager {
   private static final Logger LOG = Logger.getInstance("#com.intellij.openapi.module.impl.ModuleTypeManagerImpl");
 
-  private final LinkedHashMap<ModuleType, Boolean> myModuleTypes = new LinkedHashMap<>();
+  private final LinkedHashMap<ModuleType<?>, Boolean> myModuleTypes = new LinkedHashMap<>();
 
   public ModuleTypeManagerImpl() {
     registerModuleType(getDefaultModuleType(), true);
@@ -30,7 +30,7 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
 
   @Override
   public void registerModuleType(ModuleType type, boolean classpathProvider) {
-    for (ModuleType oldType : myModuleTypes.keySet()) {
+    for (ModuleType<?> oldType : myModuleTypes.keySet()) {
       if (oldType.getId().equals(type.getId())) {
         PluginException.logPluginError(LOG, "Trying to register a module type that clashes with existing one. Old=" + oldType + ", new = " + type, null, type.getClass());
         return;
@@ -41,10 +41,10 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
-  public ModuleType[] getRegisteredTypes() {
-    List<ModuleType> result = new ArrayList<>(myModuleTypes.keySet());
+  public ModuleType<?>[] getRegisteredTypes() {
+    List<ModuleType<?>> result = new ArrayList<>(myModuleTypes.keySet());
     for (ModuleTypeEP moduleTypeEP : ModuleTypeEP.EP_NAME.getExtensionList()) {
-      ModuleType moduleType = moduleTypeEP.getModuleType();
+      ModuleType<?> moduleType = moduleTypeEP.getModuleType();
       if (!myModuleTypes.containsKey(moduleType)) {
         result.add(moduleType);
       }
@@ -53,9 +53,9 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
-  public ModuleType findByID(String moduleTypeID) {
+  public ModuleType<?> findByID(String moduleTypeID) {
     if (moduleTypeID == null) return getDefaultModuleType();
-    for (ModuleType type : myModuleTypes.keySet()) {
+    for (ModuleType<?> type : myModuleTypes.keySet()) {
       if (type.getId().equals(moduleTypeID)) {
         return type;
       }
@@ -82,7 +82,7 @@ public class ModuleTypeManagerImpl extends ModuleTypeManager {
   }
 
   @Override
-  public ModuleType getDefaultModuleType() {
+  public ModuleType<?> getDefaultModuleType() {
     return EmptyModuleType.getInstance();
   }
 }
