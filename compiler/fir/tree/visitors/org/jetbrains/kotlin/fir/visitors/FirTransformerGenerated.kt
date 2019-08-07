@@ -456,7 +456,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformTypeRefWithNullability(userTypeRef, data)
     }
 
-    open fun <E : FirElement> transformWhenBranch(whenBranch: E, data: D): CompositeTransformResult<E> {
+    open fun transformWhenBranch(whenBranch: FirWhenBranch, data: D): CompositeTransformResult<FirWhenBranch> {
         return transformElement(whenBranch, data)
     }
 
