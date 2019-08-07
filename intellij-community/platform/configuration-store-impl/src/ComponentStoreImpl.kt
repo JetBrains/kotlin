@@ -349,9 +349,15 @@ abstract class ComponentStoreImpl : IComponentStore {
   }
 
   private fun initComponent(info: ComponentInfo, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
+    @Suppress("UNCHECKED_CAST")
+    val component = info.component as PersistentStateComponent<Any>
     return when {
-      loadPolicy == StateLoadPolicy.NOT_LOAD -> false
-      doInitComponent(info, changedStorages, reloadData) -> {
+      loadPolicy == StateLoadPolicy.NOT_LOAD -> {
+        @Suppress("UNCHECKED_CAST")
+        component.noStateLoaded()
+        false
+      }
+      doInitComponent(info, component, changedStorages, reloadData) -> {
         // if component was initialized, update lastModificationCount
         info.updateModificationCount()
         true
@@ -360,10 +366,9 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
   }
 
-  private fun doInitComponent(info: ComponentInfo, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
+  private fun doInitComponent(info: ComponentInfo, component: PersistentStateComponent<Any>, changedStorages: Set<StateStorage>?, reloadData: ThreeState): Boolean {
     val stateSpec = info.stateSpec!!
-    @Suppress("UNCHECKED_CAST")
-    val component = info.component as PersistentStateComponent<Any>
+
     val name = stateSpec.name
     @Suppress("UNCHECKED_CAST")
     val stateClass: Class<Any> = when (component) {
