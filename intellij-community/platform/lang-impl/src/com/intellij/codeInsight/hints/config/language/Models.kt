@@ -59,8 +59,8 @@ class ParameterInlayProviderSettingsModel(
   override fun toString(): String = name
 
   override fun apply() {
-    component.saveOptions()
     setShowParameterHintsForLanguage(isEnabled, language)
+    component.saveOptions()
   }
 
   override fun isModified(): Boolean {

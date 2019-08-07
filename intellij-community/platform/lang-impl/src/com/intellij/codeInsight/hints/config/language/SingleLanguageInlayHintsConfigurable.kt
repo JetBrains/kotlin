@@ -29,6 +29,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
 
   override fun apply() {
     panel.apply()
+    ParameterHintsPassFactory.forceHintsUpdateOnNextPass()
     InlayHintsPassFactory.forceHintsUpdateOnNextPass()
   }
 
