@@ -35,6 +35,7 @@ import com.intellij.openapi.project.IndexNotReadyException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.Computable;
+import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.openapi.util.ThrowableComputable;
 import com.intellij.pom.Navigatable;
@@ -78,27 +79,29 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     DumbService.getInstance(project).setAlternativeResolveEnabled(true);
     try {
       int offset = editor.getCaretModel().getOffset();
-      PsiElement[] elements = underModalProgress(project, "Resolving Reference...", () -> findAllTargetElements(project, editor, offset));
+      Pair<PsiElement[], PsiElement> pair = underModalProgress(project, "Resolving Reference...", () -> doSelectCandidate(project, editor, offset));
       FeatureUsageTracker.getInstance().triggerFeatureUsed("navigation.goto.declaration");
 
-      if (elements.length != 1) {
-        if (elements.length == 0 && suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()) {
-          PsiElement element = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
+      PsiElement[] elements = pair.first;
+      PsiElement usage = pair.second;
 
-          if (element != null) {
-            startFindUsages(editor, project, element);
+      if (elements.length != 1) {
+        if (elements.length == 0) {
+          if (usage != null) {
+            startFindUsages(editor, project, usage);
             return;
           }
-
-          //disable 'no declaration found' notification for keywords
-          if (isKeywordUnderCaret(project, file, offset)) return;
         }
+
+        //disable 'no declaration found' notification for keywords
+        if (isKeywordUnderCaret(project, file, offset)) return;
+
         chooseAmbiguousTarget(editor, offset, elements, file);
         return;
       }
 
       PsiElement element = elements[0];
-      if (element == findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset())) {
+      if (element == usage) {
         startFindUsages(editor, project, element);
         return;
       }
@@ -115,6 +118,21 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     finally {
       DumbService.getInstance(project).setAlternativeResolveEnabled(false);
     }
+  }
+
+  @NotNull
+  private static Pair<PsiElement[], PsiElement> doSelectCandidate(@NotNull Project project, @NotNull Editor editor, int offset) {
+    PsiElement[] elements = findAllTargetElements(project, editor, offset);
+    PsiElement usage = null;
+    if (elements.length != 1) {
+      if (elements.length == 0 && suggestCandidates(TargetElementUtil.findReference(editor, offset)).isEmpty()) {
+        usage = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
+      }
+      return new Pair<>(elements, usage);
+    }
+
+    usage = findElementToShowUsagesOf(editor, editor.getCaretModel().getOffset());
+    return new Pair<>(elements, usage);
   }
 
   public static void startFindUsages(@NotNull Editor editor, @NotNull Project project, @NotNull PsiElement element) {
