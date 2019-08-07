@@ -17,8 +17,10 @@ import com.intellij.execution.ui.RunContentManager;
 import com.intellij.ide.IdeBundle;
 import com.intellij.ide.actions.runAnything.RunAnythingUtil;
 import com.intellij.ide.actions.runAnything.handlers.RunAnythingCommandHandler;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Key;
 import com.intellij.openapi.util.Pair;
+import com.intellij.openapi.util.Ref;
 import com.intellij.openapi.util.text.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -29,9 +31,10 @@ public class RunAnythingRunProfileState extends CommandLineState {
   public RunAnythingRunProfileState(@NotNull ExecutionEnvironment environment, @NotNull String originalCommand) {
     super(environment);
 
-    RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(originalCommand);
+    Project project = environment.getProject();
+    RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(project, originalCommand);
     if (handler != null) {
-      setConsoleBuilder(handler.getConsoleBuilder(environment.getProject()));
+      setConsoleBuilder(handler.getConsoleBuilder(project));
     }
   }
 
@@ -51,6 +54,14 @@ public class RunAnythingRunProfileState extends CommandLineState {
     GeneralCommandLine commandLine = runProfile.getCommandLine();
     String originalCommand = runProfile.getOriginalCommand();
     KillableColoredProcessHandler processHandler = new KillableColoredProcessHandler(commandLine) {
+      long creationTime;
+      
+      @Override
+      public void startNotify() {
+        creationTime = System.currentTimeMillis();
+        super.startNotify();
+      }
+      
       @Override
       protected void notifyProcessTerminated(int exitCode) {
         print(IdeBundle.message("run.anything.console.process.finished", exitCode), ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -60,9 +71,9 @@ public class RunAnythingRunProfileState extends CommandLineState {
       }
 
       private void printCustomCommandOutput() {
-        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(originalCommand);
+        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(getEnvironment().getProject(), originalCommand);
         if (handler != null) {
-          String customOutput = handler.getProcessTerminatedCustomOutput();
+          String customOutput = handler.getProcessTerminatedCustomOutput(creationTime);
           if (customOutput != null) {
             print("\n", ConsoleViewContentType.SYSTEM_OUTPUT);
             print(customOutput, ConsoleViewContentType.SYSTEM_OUTPUT);
@@ -72,7 +83,7 @@ public class RunAnythingRunProfileState extends CommandLineState {
 
       @Override
       public final boolean shouldKillProcessSoftly() {
-        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(originalCommand);
+        RunAnythingCommandHandler handler = RunAnythingCommandHandler.getMatchedHandler(getEnvironment().getProject(), originalCommand);
         return handler != null ? handler.shouldKillProcessSoftly() : super.shouldKillProcessSoftly();
       }
 

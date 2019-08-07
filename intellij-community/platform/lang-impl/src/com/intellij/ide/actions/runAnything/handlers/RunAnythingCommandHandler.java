@@ -17,7 +17,7 @@ public abstract class RunAnythingCommandHandler {
   public static final ExtensionPointName<RunAnythingCommandHandler> EP_NAME =
     ExtensionPointName.create("com.intellij.runAnything.commandHandler");
 
-  public abstract boolean isMatched(@NotNull String commandLine);
+  public abstract boolean isMatched(@NotNull Project project, @NotNull String commandLine);
 
   /**
    * See {@link KillableProcessHandler#shouldKillProcessSoftly()} for details.
@@ -29,9 +29,11 @@ public abstract class RunAnythingCommandHandler {
   /**
    * Provides custom output to be printed in console on the process terminated.
    * E.g. command execution time could be reported on a command execution terminating.
+   *
+   * @param creationTime time of process created and started to execute
    */
   @Nullable
-  public String getProcessTerminatedCustomOutput() {
+  public String getProcessTerminatedCustomOutput(long creationTime) {
     return null;
   }
 
@@ -41,7 +43,7 @@ public abstract class RunAnythingCommandHandler {
   public abstract TextConsoleBuilder getConsoleBuilder(@NotNull Project project);
 
   @Nullable
-  public static RunAnythingCommandHandler getMatchedHandler(@NotNull String commandLine) {
-    return Arrays.stream(EP_NAME.getExtensions()).filter(handler -> handler.isMatched(commandLine)).findFirst().orElse(null);
+  public static RunAnythingCommandHandler getMatchedHandler(@NotNull Project project, @NotNull String commandLine) {
+    return Arrays.stream(EP_NAME.getExtensions()).filter(handler -> handler.isMatched(project, commandLine)).findFirst().orElse(null);
   }
 }
