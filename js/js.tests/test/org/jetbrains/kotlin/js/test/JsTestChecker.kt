@@ -18,12 +18,12 @@ fun ScriptEngine.overrideAsserter() {
     evalVoid("this['kotlin-test'].kotlin.test.overrideAsserter_wbnzx$(this['kotlin-test'].kotlin.test.DefaultAsserter);")
 }
 
-fun ScriptEngine.runTestFunction(
+fun <ResultType> ScriptEngine.runTestFunction(
     testModuleName: String?,
     testPackageName: String?,
     testFunctionName: String,
     withModuleSystem: Boolean
-): String? {
+): ResultType {
     var script = when {
         withModuleSystem -> BasicBoxTest.KOTLIN_TEST_INTERNAL + ".require('" + testModuleName!! + "')"
         testModuleName === null -> "this"
@@ -35,32 +35,32 @@ fun ScriptEngine.runTestFunction(
     }
 
     val testPackage = eval<Any>(script)
-    return callMethod<String?>(testPackage, testFunctionName).also {
+    return callMethod<ResultType>(testPackage, testFunctionName).also {
         releaseObject(testPackage)
     }
 }
 
 abstract class AbstractJsTestChecker {
-    fun check(
+    fun <ResultType> check(
         files: List<String>,
         testModuleName: String?,
         testPackageName: String?,
         testFunctionName: String,
-        expectedResult: String,
+        expectedResult: ResultType,
         withModuleSystem: Boolean
     ) {
-        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
+        val actualResult = run<ResultType>(files, testModuleName, testPackageName, testFunctionName, withModuleSystem)
         Assert.assertEquals(expectedResult, actualResult)
     }
 
-    private fun run(
+    private fun <ResultType> run(
         files: List<String>,
         testModuleName: String?,
         testPackageName: String?,
         testFunctionName: String,
         withModuleSystem: Boolean
     ) = run(files) {
-        runTestFunction(testModuleName, testPackageName, testFunctionName, withModuleSystem)
+        runTestFunction<ResultType>(testModuleName, testPackageName, testFunctionName, withModuleSystem)
     }
 
 

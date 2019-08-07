@@ -27,6 +27,7 @@ dependencies {
     testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
     testCompileOnly(intellijDep()) { includeJars("openapi", "idea", "idea_rt", "util") }
     testCompile(project(":compiler:backend.js"))
+    testCompile(project(":compiler:backend.wasm"))
     testCompile(projectTests(":compiler:ir.serialization.js"))
     testCompile(project(":js:js.translator"))
     testCompile(project(":js:js.serializer"))
@@ -65,7 +66,7 @@ sourceSets {
 }
 
 
-fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
+fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, wasmEnabled: Boolean = false) {
     dependsOn(":dist")
     if (jsEnabled) dependsOn(testJsRuntime)
     if (jsIrEnabled) {
@@ -73,9 +74,21 @@ fun Test.setUpBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean) {
         dependsOn(":compiler:ir.serialization.js:generateReducedRuntimeKLib")
         dependsOn(":compiler:ir.serialization.js:generateKotlinTestKLib")
     }
+    if (wasmEnabled) {
+        dependsOn(":compiler:ir.serialization.js:generateWasmRuntimeKLib")
+    }
 
-    if (jsEnabled && !jsIrEnabled) exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
-    if (!jsEnabled && jsIrEnabled) include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    if (jsEnabled && !jsIrEnabled) {
+        exclude("org/jetbrains/kotlin/js/test/ir/semantics/*")
+        exclude("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+
+    }
+    if (!jsEnabled && jsIrEnabled) {
+        include("org/jetbrains/kotlin/js/test/ir/semantics/*")
+    }
+    if (wasmEnabled) {
+        include("org/jetbrains/kotlin/js/test/wasm/semantics/*")
+    }
 
     jvmArgs("-da:jdk.nashorn.internal.runtime.RecompilableScriptFunctionData") // Disable assertion which fails due to a bug in nashorn (KT-23637)
     workingDir = rootDir
@@ -105,6 +118,10 @@ projectTest("jsTest", true) {
 
 projectTest("jsIrTest", true) {
     setUpBoxTests(jsEnabled = false, jsIrEnabled = true)
+}
+
+projectTest("wasmIrTest", true) {
+    setUpBoxTests(jsEnabled = false, jsIrEnabled = false, wasmEnabled = true)
 }
 
 projectTest("quickTest", true) {

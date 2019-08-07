@@ -57,6 +57,7 @@ include ":kotlin-build-common",
         ":compiler:ir.serialization.common",
         ":compiler:ir.serialization.js",
         ":compiler:backend.js",
+        ":compiler:backend.wasm",
         ":compiler:backend.jvm",
         ":compiler:backend-common",
         ":compiler:backend",
@@ -323,6 +324,7 @@ project(':compiler:ir.psi2ir').projectDir = "$rootDir/compiler/ir/ir.psi2ir" as 
 project(':compiler:ir.ir2cfg').projectDir = "$rootDir/compiler/ir/ir.ir2cfg" as File
 project(':compiler:ir.backend.common').projectDir = "$rootDir/compiler/ir/backend.common" as File
 project(':compiler:backend.js').projectDir = "$rootDir/compiler/ir/backend.js" as File
+project(':compiler:backend.wasm').projectDir = "$rootDir/compiler/ir/backend.wasm" as File
 project(':compiler:backend.jvm').projectDir = "$rootDir/compiler/ir/backend.jvm" as File
 project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
