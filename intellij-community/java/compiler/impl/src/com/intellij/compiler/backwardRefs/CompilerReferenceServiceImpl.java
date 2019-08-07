@@ -13,6 +13,7 @@ import com.intellij.compiler.server.CustomBuilderMessageHandler;
 import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.compiler.CompilationStatusListener;
 import com.intellij.openapi.compiler.CompileContext;
+import com.intellij.openapi.compiler.CompileScope;
 import com.intellij.openapi.compiler.CompilerTopics;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
@@ -71,12 +72,13 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
           compilationFinished(compileContext);
         }
 
-        private void compilationFinished(CompileContext context) {
+        private void compilationFinished(@NotNull CompileContext context) {
           if (context.getProject() == myProject) {
             Runnable compilationFinished = () -> {
               final Module[] compilationModules = ReadAction.compute(() -> {
                 if (myProject.isDisposed()) return null;
-                return context.getCompileScope().getAffectedModules();
+                CompileScope scope = context.getCompileScope();
+                return scope == null ? null : scope.getAffectedModules();
               });
               if (compilationModules == null) return;
               openReaderIfNeeded(IndexOpenReason.COMPILATION_FINISHED);
