@@ -93,7 +93,7 @@ public class FindUsagesAction extends AnAction {
     }
     else {
       int offset = editor.getCaretModel().getOffset();
-      boolean chosen = GotoDeclarationAction.chooseAmbiguousTarget(editor, offset, processor, FindBundle.message("find.usages.ambiguous.title"), null);
+      boolean chosen = GotoDeclarationAction.chooseAmbiguousTarget(project, editor, offset, processor, FindBundle.message("find.usages.ambiguous.title"), null);
       if (!chosen) {
         ApplicationManager.getApplication().invokeLater(() -> {
           if (editor.isDisposed() || !editor.getComponent().isShowing()) return;

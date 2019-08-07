@@ -128,8 +128,11 @@ public class GotoImplementationHandler extends GotoTargetHandler {
       }
       return true;
     };
+    Project project = editor.getProject();
+    if (project == null) return;
+
     GotoDeclarationAction
-      .chooseAmbiguousTarget(editor, offset, navigateProcessor, CodeInsightBundle.message("declaration.navigation.title"), null);
+      .chooseAmbiguousTarget(project, editor, offset, navigateProcessor, CodeInsightBundle.message("declaration.navigation.title"), null);
   }
 
   private static PsiElement getContainer(PsiElement refElement) {
