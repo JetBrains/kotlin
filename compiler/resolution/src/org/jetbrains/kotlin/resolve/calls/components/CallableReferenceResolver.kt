@@ -93,6 +93,7 @@ class CallableReferenceResolver(
                 )
             }
             diagnosticsHolder.addDiagnosticIfNotNull(diagnostic)
+            chosenCandidate.diagnostics.forEach { diagnosticsHolder.addDiagnostic(it) }
             chosenCandidate.freshSubstitutor = toFreshSubstitutor
         } else {
             if (candidates.isEmpty()) {

@@ -1,4 +1,4 @@
-// !LANGUAGE: +NewInference
+// !LANGUAGE: +NewInference +FunctionReferenceWithDefaultValueAsOtherType
 // IGNORE_BACKEND: JS
 
 fun foo(x: Int, s: Int, vararg y: CharSequence = arrayOf("Aaa")): String =

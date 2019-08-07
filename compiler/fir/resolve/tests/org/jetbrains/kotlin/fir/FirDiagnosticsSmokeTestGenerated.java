@@ -1707,6 +1707,16 @@ public class FirDiagnosticsSmokeTestGenerated extends AbstractFirDiagnosticsSmok
             runTest("compiler/testData/diagnostics/tests/callableReference/expectedTypeAsSubtypeOfFunctionType.kt");
         }
 
+        @TestMetadata("functionReferenceWithDefaultValueAsOtherFunctionType.kt")
+        public void testFunctionReferenceWithDefaultValueAsOtherFunctionType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/functionReferenceWithDefaultValueAsOtherFunctionType.kt");
+        }
+
+        @TestMetadata("functionReferenceWithDefaultValueAsOtherFunctionType_enabled.kt")
+        public void testFunctionReferenceWithDefaultValueAsOtherFunctionType_enabled() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/callableReference/functionReferenceWithDefaultValueAsOtherFunctionType_enabled.kt");
+        }
+
         @TestMetadata("kt15439_completeCall.kt")
         public void testKt15439_completeCall() throws Exception {
             runTest("compiler/testData/diagnostics/tests/callableReference/kt15439_completeCall.kt");
