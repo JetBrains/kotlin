@@ -20,7 +20,7 @@ object HintUtils {
   }
 
   fun getHintProvidersForLanguage(language: Language, project: Project): List<ProviderWithSettings<out Any>> {
-    val config = ServiceManager.getService(InlayHintsSettings::class.java)
+    val config = InlayHintsSettings.instance()
     return getAllMetaProviders()
       .flatMap { it.getProvidersInfo(project) }
       .filter { language.isKindOf(it.language) && it.provider.isLanguageSupported(language) }

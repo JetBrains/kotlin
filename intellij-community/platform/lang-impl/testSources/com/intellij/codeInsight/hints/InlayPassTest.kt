@@ -65,7 +65,7 @@ class InlayPassTest : BasePlatformTestCase() {
   }
 
   private fun createPass(collectors: List<CollectorWithSettings<NoSettings>>): InlayHintsPass {
-    return InlayHintsPass(myFixture.file, collectors, myFixture.editor, ServiceManager.getService(InlayHintsSettings::class.java))
+    return InlayHintsPass(myFixture.file, collectors, myFixture.editor, InlayHintsSettings.instance())
   }
 
   private val blockElements: MarkList<Inlay<*>>

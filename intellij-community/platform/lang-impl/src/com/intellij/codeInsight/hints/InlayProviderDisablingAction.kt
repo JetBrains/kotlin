@@ -15,7 +15,7 @@ class InlayProviderDisablingAction(
   val key: SettingsKey<*>
 ) : AnAction("Disable '$name' hints type") {
   override fun actionPerformed(e: AnActionEvent) {
-    val settings = ServiceManager.getService(InlayHintsSettings::class.java)
+    val settings = InlayHintsSettings.instance()
     settings.changeHintTypeStatus(key, language, false)
     InlayHintsPassFactory.forceHintsUpdateOnNextPass()
     InlayHintsConfigurable.updateInlayHintsUI()

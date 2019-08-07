@@ -46,7 +46,7 @@ class SingleLanguageInlayHintsConfigurable(project: Project, val language: Langu
         models += ParameterInlayProviderSettingsModel(parameterHintsProvider, language)
       }
 
-      val config = ServiceManager.getService(InlayHintsSettings::class.java)
+      val config = InlayHintsSettings.instance()
       HintUtils.getHintProvidersForLanguage(language, project).mapTo(models) {
         NewInlayProviderSettingsModel(it.withSettingsCopy(), config)
       }

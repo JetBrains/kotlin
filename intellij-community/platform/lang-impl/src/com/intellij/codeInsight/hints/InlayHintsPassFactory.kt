@@ -19,7 +19,7 @@ class InlayHintsPassFactory : TextEditorHighlightingPassFactory, TextEditorHighl
 
   override fun createHighlightingPass(file: PsiFile, editor: Editor): TextEditorHighlightingPass? {
     if (editor.isOneLineMode) return null
-    val settings = ServiceManager.getService(InlayHintsSettings::class.java)
+    val settings = InlayHintsSettings.instance()
     val language = file.language
     val collectors = HintUtils.getHintProvidersForLanguage(language, file.project)
       .mapNotNull { it.getCollectorWrapperFor(file, editor, language) }

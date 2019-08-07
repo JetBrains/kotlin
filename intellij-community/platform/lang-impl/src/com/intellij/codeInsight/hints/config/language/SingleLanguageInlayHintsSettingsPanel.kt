@@ -37,7 +37,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myLanguage: Language,
   private val myProject: Project
 ) : JPanel() {
-  private val config = ServiceManager.getService(InlayHintsSettings::class.java)
+  private val config = InlayHintsSettings.instance()
   private val myProviderList = createList()
   private var myCurrentProvider = selectLastViewedProvider()
   private val myEditorTextField = createEditor()
