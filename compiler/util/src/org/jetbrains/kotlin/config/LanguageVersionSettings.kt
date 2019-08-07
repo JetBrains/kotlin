@@ -123,15 +123,14 @@ enum class LanguageFeature(
     MultiPlatformProjects(sinceVersion = null, defaultState = State.DISABLED),
 
     NewInference(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
-    // This feature can be enabled only along with new inference, see KT-26357 for details
-    BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
-
+    // In the next block, features can be enabled only along with new inference
+    BooleanElvisBoundSmartCasts(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED), // see KT-26357 for details
     SamConversionForKotlinFunctions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
-
     SamConversionPerArgument(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
-
-    // can be used only with NewInference feature
     NewDataFlowForTryExpressions(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+    FunctionReferenceWithDefaultValueAsOtherType(sinceVersion = KOTLIN_1_3, defaultState = State.DISABLED),
+    // ------
+    // Next features can be enabled regardless of new inference
 
     InlineClasses(sinceVersion = KOTLIN_1_3, defaultState = State.ENABLED_WITH_WARNING, kind = UNSTABLE_FEATURE),
 

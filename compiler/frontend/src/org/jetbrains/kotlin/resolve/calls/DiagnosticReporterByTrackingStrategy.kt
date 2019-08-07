@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.INVOKE_ON_FUNCTION_TYPE
@@ -147,6 +147,21 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(TYPE_MISMATCH.on(it, diagnostic.expectedType, diagnostic.actualType))
                     }
                 }
+            }
+
+            CallableReferencesDefaultArgumentUsed::class.java -> {
+                require(diagnostic is CallableReferencesDefaultArgumentUsed) {
+                    "diagnostic ($diagnostic) should have type CallableReferencesDefaultArgumentUsed"
+                }
+
+                diagnostic.argument.psiExpression?.let {
+                    trace.report(
+                        UNSUPPORTED_FEATURE.on(
+                            it, LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to context.languageVersionSettings
+                        )
+                    )
+                }
+
             }
         }
     }

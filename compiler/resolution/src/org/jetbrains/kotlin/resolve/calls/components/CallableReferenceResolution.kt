@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.components
 
 import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.resolve.calls.components.CreateFreshVariablesSubstitutor.createToFreshVariableSubstitutorAndAddInitialConstraints
@@ -180,7 +181,9 @@ class CallableReferencesCandidateFactory(
             expectedType
         )
 
-        if (defaults != 0) {
+        if (defaults != 0 &&
+            !callComponents.languageVersionSettings.supportsFeature(LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType)
+        ) {
             diagnostics.add(CallableReferencesDefaultArgumentUsed(argument, candidateDescriptor, defaults))
         }
 
