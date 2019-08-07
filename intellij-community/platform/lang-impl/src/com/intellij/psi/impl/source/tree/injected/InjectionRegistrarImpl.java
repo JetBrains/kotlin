@@ -35,7 +35,6 @@ import com.intellij.psi.util.PsiUtilCore;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.PathUtil;
 import com.intellij.util.SmartList;
-import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -71,13 +70,6 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     myHostVirtualFile = viewProvider.getVirtualFile();
     myDocumentManagerBase = (PsiDocumentManagerBase)docManager;
     myHostDocument = (DocumentEx)viewProvider.getDocument();
-  }
-
-  @Override
-  @Nullable("null means nobody cared to call .doneInjecting()")
-  @Deprecated
-  public List<Pair<Place, PsiFile>> getResult() {
-    return resultFiles == null ? null : ContainerUtil.map(resultFiles, file -> Pair.create(InjectedLanguageUtil.getShreds(file), file));
   }
 
   @Nullable

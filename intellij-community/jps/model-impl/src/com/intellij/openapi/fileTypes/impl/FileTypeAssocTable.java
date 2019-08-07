@@ -153,7 +153,7 @@ public class FileTypeAssocTable<T> {
 
   @Deprecated
   @NotNull
-  public String[] getAssociatedExtensions(@NotNull T type) {
+  String[] getAssociatedExtensions(@NotNull T type) {
     List<String> exts = new ArrayList<>();
     for (Map.Entry<CharSequence, T> entry : myExtensionMappings.entrySet()) {
       if (entry.getValue() == type) {

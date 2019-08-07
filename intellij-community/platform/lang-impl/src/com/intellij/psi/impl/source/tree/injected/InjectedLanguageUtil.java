@@ -34,6 +34,7 @@ import com.intellij.psi.tree.IElementType;
 import com.intellij.psi.util.*;
 import com.intellij.reference.SoftReference;
 import com.intellij.testFramework.LightVirtualFile;
+import com.intellij.util.DeprecatedMethodException;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.containers.ConcurrentList;
 import com.intellij.util.containers.ContainerUtil;
@@ -752,7 +753,7 @@ public class InjectedLanguageUtil {
    */
   @Deprecated
   public static <T> void putInjectedFileUserData(MultiHostRegistrar registrar, Key<T> key, T value) {
-    LOG.warn("use #putInjectedFileUserData(com.intellij.psi.PsiElement, com.intellij.lang.Language, com.intellij.openapi.util.Key, java.lang.Object)} instead");
+    DeprecatedMethodException.report("use #putInjectedFileUserData(com.intellij.psi.PsiElement, com.intellij.lang.Language, com.intellij.openapi.util.Key, java.lang.Object)} instead");
     InjectionResult result = ((InjectionRegistrarImpl)registrar).getInjectedResult();
     if (result != null && result.files != null) {
       List<? extends PsiFile> files = result.files;
