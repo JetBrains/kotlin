@@ -3,6 +3,7 @@ package com.intellij.configurationStore
 
 import com.intellij.notification.Notifications
 import com.intellij.notification.NotificationsManager
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.impl.stores.SaveSessionAndFile
 import com.intellij.openapi.project.Project
@@ -80,8 +81,8 @@ internal class ProjectSaveSessionProducerManager(private val project: Project) :
   }
 
   private fun getUnableToSaveNotifications(): Array<out UnableToSaveProjectNotification> {
-    return NotificationsManager.getNotificationsManager()
-      .getNotificationsOfType(UnableToSaveProjectNotification::class.java, project)
+    val notificationManager = ApplicationManager.getApplication().getService(NotificationsManager::class.java, false) ?: return emptyArray()
+    return notificationManager.getNotificationsOfType(UnableToSaveProjectNotification::class.java, project)
   }
 }
 
