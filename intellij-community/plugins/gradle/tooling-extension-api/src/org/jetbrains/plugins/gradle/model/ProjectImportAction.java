@@ -16,16 +16,16 @@
 package org.jetbrains.plugins.gradle.model;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
+import org.gradle.api.Action;
 import org.gradle.tooling.BuildAction;
 import org.gradle.tooling.BuildController;
+import org.gradle.tooling.UnknownModelException;
+import org.gradle.tooling.UnsupportedVersionException;
 import org.gradle.tooling.internal.adapter.ProtocolToModelAdapter;
 import org.gradle.tooling.internal.adapter.TargetTypeProvider;
 import org.gradle.tooling.internal.gradle.DefaultBuildIdentifier;
 import org.gradle.tooling.internal.gradle.DefaultProjectIdentifier;
-import org.gradle.tooling.model.BuildIdentifier;
-import org.gradle.tooling.model.BuildModel;
-import org.gradle.tooling.model.ProjectIdentifier;
-import org.gradle.tooling.model.ProjectModel;
+import org.gradle.tooling.model.*;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.gradle.BasicGradleProject;
 import org.gradle.tooling.model.gradle.GradleBuild;
@@ -97,7 +97,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
 
   @Nullable
   @Override
-  public AllModels execute(final BuildController controller) {
+  public AllModels execute(BuildController controller) {
     configureAdditionalTypes(controller);
     boolean isProjectsLoadedAction = myAllModels == null && myUseProjectsLoadedPhase;
     if (isProjectsLoadedAction || !myUseProjectsLoadedPhase) {
@@ -113,6 +113,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     }
 
     assert myGradleBuild != null;
+    controller = new MyBuildController(controller, myGradleBuild);
     ToolingSerializerAdapter serializerHolder = new ToolingSerializerAdapter();
     for (BasicGradleProject gradleProject : myGradleBuild.getProjects()) {
       addProjectModels(serializerHolder, controller, myAllModels, gradleProject, isProjectsLoadedAction);
@@ -413,6 +414,95 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       public ProjectIdentifier getProjectIdentifier() {
         return myProjectIdentifier;
       }
+    }
+  }
+
+  private final static class MyBuildController implements BuildController {
+    private final BuildController myDelegate;
+    private final GradleBuild myMainGradleBuild;
+
+    private MyBuildController(@NotNull BuildController buildController, @NotNull GradleBuild mainGradleBuild) {
+      myDelegate = buildController;
+      myMainGradleBuild = mainGradleBuild;
+    }
+
+    @Override
+    public <T> T getModel(Class<T> aClass) throws UnknownModelException {
+      if (aClass == GradleBuild.class) {
+        //noinspection unchecked
+        return (T)myMainGradleBuild;
+      }
+      return myDelegate.getModel(aClass);
+    }
+
+    @Override
+    public <T> T findModel(Class<T> aClass) {
+      if (aClass == GradleBuild.class) {
+        //noinspection unchecked
+        return (T)myMainGradleBuild;
+      }
+      return myDelegate.findModel(aClass);
+    }
+
+    @Override
+    public GradleBuild getBuildModel() {
+      return myMainGradleBuild;
+    }
+
+    @Override
+    public <T> T getModel(Model model, Class<T> aClass) throws UnknownModelException {
+      if (isMainBuild(model)) {
+        return getModel(aClass);
+      }
+      else {
+        return myDelegate.getModel(model, aClass);
+      }
+    }
+
+    @Override
+    public <T> T findModel(Model model, Class<T> aClass) {
+      if (isMainBuild(model)) {
+        return findModel(aClass);
+      }
+      else {
+        return myDelegate.findModel(model, aClass);
+      }
+    }
+
+    @Override
+    public <T, P> T getModel(Class<T> aClass, Class<P> aClass1, Action<? super P> action)
+      throws UnsupportedVersionException {
+      return myDelegate.getModel(aClass, aClass1, action);
+    }
+
+    @Override
+    public <T, P> T findModel(Class<T> aClass, Class<P> aClass1, Action<? super P> action) {
+      return myDelegate.findModel(aClass, aClass1, action);
+    }
+
+    @Override
+    public <T, P> T getModel(Model model, Class<T> aClass, Class<P> aClass1, Action<? super P> action)
+      throws UnsupportedVersionException {
+      if (isMainBuild(model)) {
+        return getModel(aClass, aClass1, action);
+      }
+      else {
+        return myDelegate.getModel(model, aClass, aClass1, action);
+      }
+    }
+
+    @Override
+    public <T, P> T findModel(Model model, Class<T> aClass, Class<P> aClass1, Action<? super P> action) {
+      if (isMainBuild(model)) {
+        return findModel(aClass, aClass1, action);
+      }
+      else {
+        return myDelegate.findModel(model, aClass, aClass1, action);
+      }
+    }
+
+    private boolean isMainBuild(Model model) {
+      return model == null || model == myMainGradleBuild;
     }
   }
 }
