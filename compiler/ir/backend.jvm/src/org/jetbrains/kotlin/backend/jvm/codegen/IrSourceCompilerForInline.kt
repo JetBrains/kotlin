@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -38,13 +39,12 @@ class IrSourceCompilerForInline(
     private val data: BlockInfo
 ) : SourceCompilerForInline {
 
-    //TODO
+    //TODO: KotlinLookupLocation(callElement)
     override val lookupLocation: LookupLocation
         get() = NoLookupLocation.FROM_BACKEND
 
-    //TODO
     override val callElementText: String
-        get() = callElement.toString()
+        get() = ir2string(callElement)
 
     override val callsiteFile: PsiFile?
         get() = codegen.context.psiSourceManager.getKtFile(codegen.irFunction.fileParent)
@@ -53,7 +53,19 @@ class IrSourceCompilerForInline(
         get() = OwnerKind.getMemberOwnerKind(callElement.descriptor.containingDeclaration)
 
     override val inlineCallSiteInfo: InlineCallSiteInfo
-        get() = InlineCallSiteInfo("TODO", null, null, false, false)
+        get() {
+            //TODO: support nested inline calls
+            val typeMapper = codegen.typeMapper
+            val signature = typeMapper.mapSignatureSkipGeneric(codegen.irFunction)
+            return InlineCallSiteInfo(
+                codegen.classCodegen.type.internalName,
+                signature.asmMethod.name,
+                signature.asmMethod.descriptor,
+                //compilationContextFunctionDescriptor.isInlineOrInsideInline()
+                false,
+                compilationContextFunctionDescriptor.isSuspend
+            )
+        }
 
     override val lazySourceMapper: DefaultSourceMapper
         get() = codegen.classCodegen.getOrCreateSourceMapper()
