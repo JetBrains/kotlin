@@ -43,6 +43,8 @@ open class ClasspathSnapshot protected constructor(
 
             return ClasspathSnapshot(cacheDir, classpath, data)
         }
+
+        fun getEmptySnapshot() = UnknownSnapshot
     }
 
     private fun isCompatible(snapshot: ClasspathSnapshot) =
