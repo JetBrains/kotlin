@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring
@@ -32,11 +21,14 @@ fun KtElement.renderTrimmed(): String {
             return builder.toString()
         }
 
-        private fun <T: PsiElement> Iterable<T>.join(separator: CharSequence = ", ", prefix: CharSequence = "", postfix: CharSequence = "") {
+        private fun <T : PsiElement> Iterable<T>.join(
+            separator: CharSequence = ", ",
+            prefix: CharSequence = "",
+            postfix: CharSequence = ""
+        ) {
             builder.append(prefix)
-            var count = 0
-            for (element in this) {
-                if (++count > 1) builder.append(separator)
+            for ((count, element) in withIndex()) {
+                if (count > 0) builder.append(separator)
                 element.accept(this@Renderer)
             }
             builder.append(postfix)
@@ -111,7 +103,7 @@ fun KtElement.renderTrimmed(): String {
         override fun visitCallExpression(expression: KtCallExpression) {
             expression.calleeExpression?.accept(this)
             expression.valueArgumentList?.accept(this)
-            expression.lambdaArguments.forEach { builder.append("{...}") }
+            repeat(expression.lambdaArguments.size) { builder.append("{...}") }
         }
 
         override fun visitValueArgumentList(list: KtValueArgumentList) {
@@ -166,8 +158,7 @@ fun KtElement.renderTrimmed(): String {
         override fun visitBlockExpression(expression: KtBlockExpression) {
             if (expression.parent is KtFunctionLiteral) {
                 super.visitBlockExpression(expression)
-            }
-            else {
+            } else {
                 builder.append("{...}")
             }
         }
@@ -248,7 +239,7 @@ fun KtElement.renderTrimmed(): String {
         }
 
         override fun visitPropertyAccessor(accessor: KtPropertyAccessor) {
-            builder.append(if(accessor.isGetter) "get" else "set")
+            builder.append(if (accessor.isGetter) "get" else "set")
             builder.append("()")
             accessor.equalsToken?.let { builder.append(" = ") }
             accessor.bodyExpression?.accept(this)
@@ -274,7 +265,7 @@ fun KtElement.renderTrimmed(): String {
 
             classOrObject.name?.let { builder.append(" $it") }
             classOrObject.getSuperTypeList()?.accept(this)
-            classOrObject.getBody()?.let { builder.append(" {...}") }
+            classOrObject.body?.let { builder.append(" {...}") }
         }
 
         override fun visitSuperTypeList(list: KtSuperTypeList) {
@@ -303,8 +294,7 @@ fun KtElement.renderTrimmed(): String {
         override fun visitElement(element: PsiElement) {
             if (element is LeafPsiElement) {
                 builder.append(element.text)
-            }
-            else {
+            } else {
                 super.visitElement(element)
             }
         }
