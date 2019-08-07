@@ -4,5 +4,5 @@
 // DISABLE-ERRORS
 actual class <caret>F {
     actual val b: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 }

@@ -2,6 +2,6 @@ package foo
 
 class Impl: B {
     override fun foo(r: Runnable?) {
-        <selection><caret>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+        <selection><caret>TODO("Not yet implemented")</selection>
     }
 }

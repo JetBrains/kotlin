@@ -11,19 +11,19 @@ interface T {
 
 class C : T {
     override val a1: Byte
-        get() = <selection><caret>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+        get() = <selection><caret>TODO("Not yet implemented")</selection>
     override val a2: Short
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a3: Int
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a4: Long
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a5: Float
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a6: Double
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a7: Char
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
     override val a8: Boolean
-        get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+        get() = TODO("Not yet implemented")
 }

@@ -5,5 +5,5 @@ class Owner {
 }
 
 var Owner.p: Int
-    get() = <caret><selection>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+    get() = <caret><selection>TODO("Not yet implemented")</selection>
     set(v) {}

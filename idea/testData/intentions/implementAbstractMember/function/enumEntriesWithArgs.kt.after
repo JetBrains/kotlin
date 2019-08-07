@@ -3,15 +3,15 @@
 enum class E(n: Int) {
     A(1) {
         override fun foo(x: Int): Int {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            TODO("Not yet implemented")
         }
     }, B(2) {
         override fun foo(x: Int): Int {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            TODO("Not yet implemented")
         }
     }, C(3) {
         override fun foo(x: Int): Int {
-            <caret><selection>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+            <caret><selection>TODO("Not yet implemented")</selection>
         }
     };
 

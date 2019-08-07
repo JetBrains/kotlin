@@ -1,7 +1,7 @@
 // WithNested: to be implemented
 actual class WithNested {
     actual fun foo(): Int {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        TODO("Not yet implemented")
     }
 
     actual class Nested {

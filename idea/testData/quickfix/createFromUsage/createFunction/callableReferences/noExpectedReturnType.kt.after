@@ -3,7 +3,7 @@ fun <T, U> T.map(f: (T) -> U) = f(this)
 
 fun test() {
     fun foo(i: Int): Any {
-        <selection>TODO("not implemented") //To change body of created functions use File | Settings | File Templates.</selection>
+        <selection>TODO("Not yet implemented")</selection>
     }
     1.map(::foo)
 }

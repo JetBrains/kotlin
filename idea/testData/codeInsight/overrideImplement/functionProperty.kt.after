@@ -6,7 +6,7 @@ interface A {
 fun some() : A {
     return object : A {
         override val method: () -> Unit?
-            get() = <selection><caret>TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.</selection>
+            get() = <selection><caret>TODO("Not yet implemented")</selection>
     }
 }
 

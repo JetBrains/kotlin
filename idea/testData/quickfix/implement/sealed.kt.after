@@ -6,7 +6,7 @@ sealed class Base {
     abstract fun foo(): Int
     class BaseImpl : Base() {
         override fun foo(): Int {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            TODO("Not yet implemented")
         }
     }
 }
