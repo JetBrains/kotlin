@@ -810,7 +810,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     SwingUtilities.invokeLater(() -> {
       myEditorPane.scrollRectToVisible(viewRectToUse); // if ref is defined but is not found in document, this provides a default location
       if (refToUse != null) {
-        myEditorPane.scrollToReference(refToUse);
+        UIUtil.scrollToReference(myEditorPane, refToUse);
       }
       else if (ScreenReader.isActive()) {
         myEditorPane.setCaretPosition(0);
