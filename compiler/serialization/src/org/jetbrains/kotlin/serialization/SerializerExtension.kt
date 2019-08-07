@@ -56,6 +56,7 @@ abstract class SerializerExtension {
     open fun serializeFunction(
         descriptor: FunctionDescriptor,
         proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: DescriptorSerializer
     ) {
     }

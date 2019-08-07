@@ -55,10 +55,13 @@ class JavaClassesSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeri
         }
     }
 
-    override fun serializeFunction(descriptor: FunctionDescriptor,
-                                   proto: ProtoBuf.Function.Builder,
-                                   childSerializer: DescriptorSerializer) {
-        super.serializeFunction(descriptor, proto, childSerializer)
+    override fun serializeFunction(
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
+    ) {
+        super.serializeFunction(descriptor, proto, versionRequirementTable, childSerializer)
         if (descriptor.visibility == JavaVisibilities.PACKAGE_VISIBILITY) {
             proto.setExtension(JavaClassProtoBuf.isPackagePrivateMethod, true)
         }

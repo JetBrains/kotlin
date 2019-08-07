@@ -40,7 +40,10 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
                     languageVersionSettings = LanguageVersionSettingsImpl(
                         languageVersion,
                         ApiVersion.createByLanguageVersion(languageVersion),
-                        mapOf(JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE),
+                        mapOf(
+                            JvmAnalysisFlags.jvmDefaultMode to JvmDefaultMode.ENABLE,
+                            AnalysisFlags.explicitApiVersion to true
+                        ),
                         emptyMap()
                     )
                 },
@@ -71,6 +74,18 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
         doTest(
             VersionRequirement.Version(1, 2, 70), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
             fqNames = listOf("test.Base.Companion.foo")
+        )
+    }
+
+    fun testInlineParameterNullCheck() {
+        doTest(
+            VersionRequirement.Version(1, 3, 50), DeprecationLevel.ERROR, null, COMPILER_VERSION, null,
+            fqNames = listOf(
+                "test.doRun",
+                "test.lambdaVarProperty",
+                "test.extensionProperty"
+            ),
+            customLanguageVersion = LanguageVersion.KOTLIN_1_4
         )
     }
 }

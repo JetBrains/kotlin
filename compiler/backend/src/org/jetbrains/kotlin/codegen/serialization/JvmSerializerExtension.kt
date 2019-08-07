@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.codegen.serialization
 
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.createFreeFakeLocalPropertyDescriptor
 import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -45,7 +47,8 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     private val useTypeTable = state.useTypeTableInSerializer
     private val moduleName = state.moduleName
     private val classBuilderMode = state.classBuilderMode
-    private val isReleaseCoroutines = state.languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
+    private val languageVersionSettings = state.languageVersionSettings
+    private val isParamAssertionsDisabled = state.isParamAssertionsDisabled
     override val metadataVersion = state.metadataVersion
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
@@ -165,7 +168,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun serializeFunction(
-        descriptor: FunctionDescriptor, proto: ProtoBuf.Function.Builder, childSerializer: DescriptorSerializer
+        descriptor: FunctionDescriptor,
+        proto: ProtoBuf.Function.Builder,
+        versionRequirementTable: MutableVersionRequirementTable?,
+        childSerializer: DescriptorSerializer
     ) {
         val method = getBinding(METHOD_FOR_FUNCTION, descriptor)
         if (method != null) {
@@ -174,7 +180,24 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
                 proto.setExtension(JvmProtoBuf.methodSignature, signature)
             }
         }
+
+        if (descriptor.needsInlineParameterNullCheckRequirement()) {
+            versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
+        }
     }
+
+    private fun MutableVersionRequirementTable.writeInlineParameterNullCheckRequirement(add: (Int) -> Unit) {
+        if (languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) {
+            // Since Kotlin 1.4, we generate a call to Intrinsics.checkNotNullParameter in inline functions which causes older compilers
+            // (earlier than 1.3.50) to crash because a functional parameter in this position can't be inlined
+            add(writeVersionRequirement(1, 3, 50, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, this))
+        }
+    }
+
+    private fun FunctionDescriptor.needsInlineParameterNullCheckRequirement(): Boolean =
+        isInline && !isSuspend && !isParamAssertionsDisabled &&
+                !Visibilities.isPrivate(visibility) &&
+                (valueParameters.any { it.type.isFunctionType } || extensionReceiverParameter?.type?.isFunctionType == true)
 
     override fun serializeProperty(
         descriptor: PropertyDescriptor,
@@ -211,6 +234,10 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
             proto.addVersionRequirement(
                 writeVersionRequirement(1, 2, 70, ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, versionRequirementTable)
             )
+        }
+
+        if (getter?.needsInlineParameterNullCheckRequirement() == true || setter?.needsInlineParameterNullCheckRequirement() == true) {
+            versionRequirementTable?.writeInlineParameterNullCheckRequirement(proto::addVersionRequirement)
         }
     }
 
@@ -329,6 +356,6 @@ class JvmSerializerExtension(private val bindings: JvmSerializationBindings, sta
     }
 
     override fun releaseCoroutines(): Boolean {
-        return isReleaseCoroutines
+        return languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)
     }
 }

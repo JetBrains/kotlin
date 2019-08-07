@@ -353,7 +353,7 @@ class DescriptorSerializer private constructor(
 
         contractSerializer.serializeContractOfFunctionIfAny(descriptor, builder, this)
 
-        extension.serializeFunction(descriptor, builder, local)
+        extension.serializeFunction(descriptor, builder, versionRequirementTable, local)
 
         return builder
     }
