@@ -59,6 +59,15 @@ fun KtElement.renderTrimmed(): String {
             builder.append(')')
         }
 
+        override fun visitParameterList(list: KtParameterList) {
+            list.parameters.join(prefix = "(", postfix = ")")
+        }
+
+        override fun visitParameter(parameter: KtParameter) {
+            builder.append("${parameter.name}: ")
+            parameter.typeReference?.accept(this)
+        }
+
         override fun visitLabeledExpression(expression: KtLabeledExpression) {
             expression.baseExpression?.accept(this)
         }
@@ -114,6 +123,10 @@ fun KtElement.renderTrimmed(): String {
             expression.receiverExpression.accept(this)
             builder.append(expression.operationTokenNode.text)
             expression.selectorExpression?.accept(this)
+        }
+
+        override fun visitTypeReference(typeReference: KtTypeReference) {
+            builder.append(typeReference.text)
         }
 
         override fun visitThisExpression(expression: KtThisExpression) {
@@ -233,7 +246,7 @@ fun KtElement.renderTrimmed(): String {
                 it.accept(this)
             }
             function.name?.let { builder.append(" $it") }
-            function.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            function.valueParameterList?.accept(this)
             function.equalsToken?.let { builder.append(" = ") }
             function.bodyExpression?.accept(this)
         }
@@ -246,12 +259,12 @@ fun KtElement.renderTrimmed(): String {
         }
 
         override fun visitPrimaryConstructor(constructor: KtPrimaryConstructor) {
-            constructor.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            constructor.valueParameterList?.accept(this)
         }
 
         override fun visitSecondaryConstructor(constructor: KtSecondaryConstructor) {
             builder.append("constructor")
-            constructor.valueParameters.asSequence().mapNotNull { it.typeReference }.joinTo(builder, prefix = "(", postfix = ")")
+            constructor.valueParameterList?.accept(this)
             constructor.bodyExpression?.accept(this)
         }
 

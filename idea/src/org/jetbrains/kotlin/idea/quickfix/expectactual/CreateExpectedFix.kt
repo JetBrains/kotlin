@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.core.util.DescriptorMemberChooserObject
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
+import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
-import org.jetbrains.kotlin.idea.refactoring.renderTrimmed
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
@@ -176,9 +176,11 @@ private tailrec fun findClasses(elements: List<KtNamedDeclaration>, module: Modu
 private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: List<KtNamedDeclaration>): Boolean =
     declarationsWithNonExistentClasses.isEmpty() || showOkNoDialog(
         "Unknown types",
-        declarationsWithNonExistentClasses.joinToString(prefix = "These declarations cannot be transformed:\n", separator = "\n") {
-            it.renderTrimmed()
-        },
+        declarationsWithNonExistentClasses.joinToString(
+            prefix = "These declarations cannot be transformed:\n",
+            separator = "\n",
+            transform = ::getExpressionShortText
+        ),
         project
     )
 
@@ -187,7 +189,7 @@ private fun showUnknownTypesError(element: KtNamedDeclaration) {
         showErrorHint(
             element.project,
             editor,
-            "You cannot create the expect declaration from:\n${element.renderTrimmed()}",
+            "You cannot create the expect declaration from:\n${getExpressionShortText(element)}",
             "Unknown types"
         )
     }
