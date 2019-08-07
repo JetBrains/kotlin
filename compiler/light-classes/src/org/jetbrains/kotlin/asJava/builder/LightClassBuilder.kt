@@ -91,20 +91,6 @@ private fun createJavaFileStub(project: Project, packageFqName: FqName, files: C
 
         override fun isPhysical() = false
 
-        override fun appendMirrorText(indentLevel: Int, buffer: StringBuilder) {
-            if (files.size == 1) {
-                LOG.error("Mirror text should never be calculated for light classes generated from a single file")
-            }
-            super.appendMirrorText(indentLevel, buffer)
-        }
-
-        override fun getMirror(): PsiElement {
-            if (files.size == 1) {
-                LOG.error("Mirror element should never be calculated for light classes generated from a single file")
-            }
-            return super.getMirror()
-        }
-
         override fun getText(): String {
             return files.singleOrNull()?.text ?: super.getText()
         }
