@@ -39,14 +39,14 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
     VALUE_PARAMETER name:s index:0 type:kotlin.String
     BLOCK_BODY
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:private [final,static]
       EXPRESSION_BODY
         CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-p> visibility:public modality:FINAL <> () returnType:<root>.A
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): <root>.A declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:private [final,static]' type=<root>.A origin=null
   FUN name:testVariable visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:a type:<root>.A [val]

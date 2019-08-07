@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/enum.kt
           <E>: <root>.TestEnum2
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum2 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum2>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.TestEnum2.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum2) returnType:kotlin.Int
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum2 declared in <root>.TestEnum2.<get-x>' type=<root>.TestEnum2 origin=null
     ENUM_ENTRY name:TEST1
       init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum2'
@@ -254,7 +254,7 @@ FILE fqName:<root> fileName:/enum.kt
           <E>: <root>.TestEnum4
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum4 modality:ABSTRACT visibility:public superTypes:[kotlin.Enum<<root>.TestEnum4>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.TestEnum4.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum4) returnType:kotlin.Int
@@ -262,7 +262,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum4 declared in <root>.TestEnum4.<get-x>' type=<root>.TestEnum4 origin=null
     ENUM_ENTRY name:TEST1
       init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.TestEnum4.TEST1'
@@ -319,9 +319,6 @@ FILE fqName:<root> fileName:/enum.kt
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
-          FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public [final]
-            overridden:
-              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
           FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum4) returnType:kotlin.Int
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
             overridden:
@@ -341,17 +338,17 @@ FILE fqName:<root> fileName:/enum.kt
               x: CONST Int type=kotlin.Int value=2
             INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_ENTRY name:TEST2 modality:FINAL visibility:public superTypes:[<root>.TestEnum4]'
         PROPERTY name:z visibility:public modality:FINAL [val]
-          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public [final]
+          FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:<root>.TestEnum4.TEST2) returnType:kotlin.Int
             correspondingProperty: PROPERTY name:z visibility:public modality:FINAL [val]
             $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Int declared in <root>.TestEnum4.TEST2'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2.<get-z>' type=<root>.TestEnum4.TEST2 origin=null
         ANONYMOUS_INITIALIZER isStatic=false
           BLOCK_BODY
-            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:public [final]' type=kotlin.Unit origin=null
+            SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
               value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum4.TEST2' type=kotlin.Int origin=GET_PROPERTY
                 $this: GET_VAR '<this>: <root>.TestEnum4.TEST2 declared in <root>.TestEnum4.TEST2' type=<root>.TestEnum4.TEST2 origin=null
@@ -401,9 +398,6 @@ FILE fqName:<root> fileName:/enum.kt
               public final fun <get-ordinal> (): kotlin.Int declared in <root>.TestEnum4
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<<root>.TestEnum4>
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
-          FIELD FAKE_OVERRIDE name:x type:kotlin.Int visibility:public [final]
-            overridden:
-              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
           FUN FAKE_OVERRIDE name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum4) returnType:kotlin.Int
             correspondingProperty: PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [val]
             overridden:
@@ -473,7 +467,7 @@ FILE fqName:<root> fileName:/enum.kt
           <E>: <root>.TestEnum5
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:TestEnum5 modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.TestEnum5>]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.TestEnum5.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestEnum5) returnType:kotlin.Int
@@ -481,7 +475,7 @@ FILE fqName:<root> fileName:/enum.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum5
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestEnum5'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestEnum5 declared in <root>.TestEnum5.<get-x>' type=<root>.TestEnum5 origin=null
     ENUM_ENTRY name:TEST1
       init: ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.TestEnum5'

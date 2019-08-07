@@ -35,14 +35,14 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   PROPERTY name:NON_CONST visibility:public modality:FINAL [val]
     annotations:
       ImplicitIntegerCoercion
-    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=255
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-NON_CONST> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:NON_CONST visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-NON_CONST> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:NON_CONST type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:BIGGER_THAN_UBYTE visibility:public modality:FINAL [const,val]
     annotations:
       ImplicitIntegerCoercion

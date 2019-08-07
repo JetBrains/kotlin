@@ -1,6 +1,5 @@
 // !DUMP_DEPENDENCIES
 // FILE: javaSyntheticProperty.kt
-// FIR_IDENTICAL
 val test = J().foo
 
 // FILE: J.java

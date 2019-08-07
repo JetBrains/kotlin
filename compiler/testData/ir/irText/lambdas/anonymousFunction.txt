@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/anonymousFunction.kt
   PROPERTY name:anonymous visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=ANONYMOUS_FUNCTION
           FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -10,4 +10,4 @@ FILE fqName:<root> fileName:/anonymousFunction.kt
       correspondingProperty: PROPERTY name:anonymous visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-anonymous> (): kotlin.Function0<kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:public [final,static]' type=kotlin.Function0<kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:anonymous type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]' type=kotlin.Function0<kotlin.Unit> origin=null

@@ -73,9 +73,8 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
 
         if (declaration.isInline) {
             val irConstructor = declaration.primaryConstructor!!
-            declaration.declarations.removeIf {
-                (it is IrConstructor && it.isPrimary) || (it is IrFunction && it.isInlineClassFieldGetter)
-            }
+            // The field getter is used by reflection and cannot be removed here.
+            declaration.declarations.remove(irConstructor)
             buildPrimaryInlineClassConstructor(declaration, irConstructor)
             buildBoxFunction(declaration)
             buildUnboxFunction(declaration)

@@ -1,6 +1,5 @@
 // !LANGUAGE: +UseGetterNameForPropertyAnnotationsMethodOnJvm
 // WITH_RUNTIME
-// IGNORE_BACKEND: JVM_IR
 class Foo {
     annotation class Anno
 

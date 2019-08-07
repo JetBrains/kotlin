@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
       $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
       BLOCK_BODY
     PROPERTY name:bar visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.A<T of <root>.A>) returnType:kotlin.Int
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A<T of <root>.A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A<T of <root>.A> declared in <root>.A.<get-bar>' type=<root>.A<T of <root>.A> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -34,20 +34,20 @@ FILE fqName:<root> fileName:/callableRefToGenericMember.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:public [final,static]' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction1<<root>.A<kotlin.String>, kotlin.Unit> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         PROPERTY_REFERENCE 'public final bar: kotlin.Int [val]' field=null getter='public final fun <get-bar> (): kotlin.Int declared in <root>.A' setter=null type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int>
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:public [final,static]' type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KProperty1<<root>.A<kotlin.String>, kotlin.Int> origin=null

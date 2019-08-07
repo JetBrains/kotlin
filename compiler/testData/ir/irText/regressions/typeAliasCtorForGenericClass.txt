@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:q visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'q: Q of <root>.A declared in <root>.A.<init>' type=Q of <root>.A origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-q> visibility:public modality:FINAL <> ($this:<root>.A<Q of <root>.A>) returnType:Q of <root>.A
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/typeAliasCtorForGenericClass.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A<Q of <root>.A>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-q> (): Q of <root>.A declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:public [final]' type=Q of <root>.A origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:q type:Q of <root>.A visibility:private [final]' type=Q of <root>.A origin=null
               receiver: GET_VAR '<this>: <root>.A<Q of <root>.A> declared in <root>.A.<get-q>' type=<root>.A<Q of <root>.A> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

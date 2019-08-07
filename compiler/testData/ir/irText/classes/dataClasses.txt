@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Int declared in <root>.Test1.<init>' type=kotlin.Int origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
@@ -17,10 +17,10 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-x>' type=<root>.Test1 origin=null
     PROPERTY name:y visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'y: kotlin.String declared in <root>.Test1.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String
@@ -28,10 +28,10 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.String declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-y>' type=<root>.Test1 origin=null
     PROPERTY name:z visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'z: kotlin.Any declared in <root>.Test1.<init>' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-z> visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any
@@ -39,7 +39,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Any declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:public [final]' type=kotlin.Any origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-z>' type=<root>.Test1 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
@@ -190,7 +190,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Any? declared in <root>.Test2.<init>' type=kotlin.Any? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Any?
@@ -198,7 +198,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Test2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:public [final]' type=kotlin.Any? origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Any?
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
@@ -297,7 +297,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:d visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'd: kotlin.Double declared in <root>.Test3.<init>' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double
@@ -305,10 +305,10 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-d> (): kotlin.Double declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:public [final]' type=kotlin.Double origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-d>' type=<root>.Test3 origin=null
     PROPERTY name:dn visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'dn: kotlin.Double? declared in <root>.Test3.<init>' type=kotlin.Double? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-dn> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double?
@@ -316,10 +316,10 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-dn> (): kotlin.Double? declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:public [final]' type=kotlin.Double? origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-dn>' type=<root>.Test3 origin=null
     PROPERTY name:f visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'f: kotlin.Float declared in <root>.Test3.<init>' type=kotlin.Float origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-f> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float
@@ -327,10 +327,10 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-f> (): kotlin.Float declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:public [final]' type=kotlin.Float origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-f>' type=<root>.Test3 origin=null
     PROPERTY name:df visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'df: kotlin.Float? declared in <root>.Test3.<init>' type=kotlin.Float? origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-df> visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float?
@@ -338,7 +338,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-df> (): kotlin.Float? declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:public [final]' type=kotlin.Float? origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-df>' type=<root>.Test3 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3

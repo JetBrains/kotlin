@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/topLevel.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Delegate modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'value: kotlin.String declared in <root>.Delegate.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.Delegate) returnType:kotlin.String
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/topLevel.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.String declared in <root>.Delegate'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.<get-value>' type=<root>.Delegate origin=null
     FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Delegate, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:kotlin.String
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/topLevel.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:DelegateProvider modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'value: kotlin.String declared in <root>.DelegateProvider.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.DelegateProvider) returnType:kotlin.String
@@ -54,7 +54,7 @@ FILE fqName:<root> fileName:/topLevel.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.DelegateProvider
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.String declared in <root>.DelegateProvider'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.DelegateProvider declared in <root>.DelegateProvider.<get-value>' type=<root>.DelegateProvider origin=null
     FUN name:provideDelegate visibility:public modality:FINAL <> ($this:<root>.DelegateProvider, thisRef:kotlin.Any?, property:kotlin.Any?) returnType:<root>.Delegate
       $this: VALUE_PARAMETER name:<this> type:<root>.DelegateProvider

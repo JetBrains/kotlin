@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
   CLASS CLASS name:TestProperty modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestProperty
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestProperty) returnType:kotlin.Int
@@ -29,7 +29,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
         $this: VALUE_PARAMETER name:<this> type:<root>.TestProperty
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestProperty'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestProperty declared in <root>.TestProperty.<get-x>' type=<root>.TestProperty origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestProperty
       BLOCK_BODY
@@ -51,17 +51,17 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
   CLASS CLASS name:TestInitBlock modality:FINAL visibility:public superTypes:[<root>.Base]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.TestInitBlock
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestInitBlock) returnType:kotlin.Int
         correspondingProperty: PROPERTY name:x visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.TestInitBlock
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Int declared in <root>.TestInitBlock'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.TestInitBlock declared in <root>.TestInitBlock.<get-x>' type=<root>.TestInitBlock origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.TestInitBlock declared in <root>.TestInitBlock' type=<root>.TestInitBlock origin=null
           value: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitBlock

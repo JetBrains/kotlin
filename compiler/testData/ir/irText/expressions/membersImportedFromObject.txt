@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
         RETURN type=kotlin.Nothing from='public final fun fooExt (): kotlin.Int declared in <root>.A'
           CONST Int type=kotlin.Int value=2
     PROPERTY name:bar visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-bar> visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int
@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-bar> (): kotlin.Int declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:bar type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-bar>' type=<root>.A origin=null
     PROPERTY name:barExt visibility:public modality:FINAL [val]
       FUN name:<get-barExt> visibility:public modality:FINAL <> ($this:<root>.A, $receiver:kotlin.Int) returnType:kotlin.Int
@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun foo (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -57,9 +57,9 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun <get-bar> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -67,9 +67,9 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun fooExt (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=null
           $this: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -78,9 +78,9 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun <get-barExt> (): kotlin.Int declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
           $this: GET_OBJECT 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=<root>.A
@@ -89,4 +89,4 @@ FILE fqName:<root> fileName:/membersImportedFromObject.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null

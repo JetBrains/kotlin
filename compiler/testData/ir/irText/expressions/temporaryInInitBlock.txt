@@ -7,17 +7,17 @@ FILE fqName:<root> fileName:/temporaryInInitBlock.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-s> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.String?
         correspondingProperty: PROPERTY name:s visibility:public modality:FINAL [val]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String? declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:public [final]' type=kotlin.String? origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]' type=kotlin.String? origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-s>' type=<root>.C origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:public [final]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String? visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
           value: BLOCK type=kotlin.String? origin=SAFE_CALL
             VAR IR_TEMPORARY_VARIABLE name:tmp0_safe_receiver type:kotlin.Any? [val]

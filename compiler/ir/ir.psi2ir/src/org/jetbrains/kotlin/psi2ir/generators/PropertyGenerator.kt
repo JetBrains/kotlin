@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
@@ -86,7 +87,8 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         context.symbolTable.declareField(
             ktPropertyElement.startOffsetSkippingComments, ktPropertyElement.endOffset,
             IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-            propertyDescriptor, propertyDescriptor.type.toIrType()
+            propertyDescriptor, propertyDescriptor.type.toIrType(),
+            propertyDescriptor.fieldVisibility
         ).also {
             it.initializer = generateInitializer(it)
         }
@@ -137,7 +139,7 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val endOffset = ktElement.pureEndOffsetOrUndefined
 
         val backingField =
-            if (propertyDescriptor.hasBackingField(context.bindingContext))
+            if (propertyDescriptor.hasBackingField(context.bindingContext) && propertyDescriptor.fieldVisibility.admitsFakeOverride)
                 context.symbolTable.declareFieldWithOverrides(
                     startOffset, endOffset, IrDeclarationOrigin.FAKE_OVERRIDE,
                     propertyDescriptor, propertyDescriptor.type.toIrType()
@@ -171,5 +173,16 @@ class PropertyGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         val variableDescriptor = getOrFail(BindingContext.VARIABLE, ktProperty)
         return variableDescriptor as? PropertyDescriptor ?: TODO("not a property: $variableDescriptor")
     }
+
+    private val Visibility.admitsFakeOverride: Boolean
+        get() = !Visibilities.isPrivate(this) && this != Visibilities.INVISIBLE_FAKE
+
+    private val PropertyDescriptor.fieldVisibility: Visibility
+        get() = declarationGenerator.context.extensions.computeFieldVisibility(this)
+            ?: when {
+                isLateInit -> setter?.visibility ?: visibility
+                isConst -> visibility
+                else -> Visibilities.PRIVATE
+            }
 }
 

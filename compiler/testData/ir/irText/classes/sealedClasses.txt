@@ -13,7 +13,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Expr'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Const modality:FINAL visibility:public superTypes:[<root>.Expr]'
       PROPERTY name:number visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'number: kotlin.Double declared in <root>.Expr.Const.<init>' type=kotlin.Double origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-number> visibility:public modality:FINAL <> ($this:<root>.Expr.Const) returnType:kotlin.Double
@@ -21,7 +21,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Expr.Const
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-number> (): kotlin.Double declared in <root>.Expr.Const'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:public [final]' type=kotlin.Double origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:number type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
                 receiver: GET_VAR '<this>: <root>.Expr.Const declared in <root>.Expr.Const.<get-number>' type=<root>.Expr.Const origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
@@ -45,7 +45,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> () [primary] declared in <root>.Expr'
           INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Sum modality:FINAL visibility:public superTypes:[<root>.Expr]'
       PROPERTY name:e1 visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:e1 type:<root>.Expr visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:e1 type:<root>.Expr visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'e1: <root>.Expr declared in <root>.Expr.Sum.<init>' type=<root>.Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e1> visibility:public modality:FINAL <> ($this:<root>.Expr.Sum) returnType:<root>.Expr
@@ -53,10 +53,10 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Expr.Sum
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-e1> (): <root>.Expr declared in <root>.Expr.Sum'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e1 type:<root>.Expr visibility:public [final]' type=<root>.Expr origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e1 type:<root>.Expr visibility:private [final]' type=<root>.Expr origin=null
                 receiver: GET_VAR '<this>: <root>.Expr.Sum declared in <root>.Expr.Sum.<get-e1>' type=<root>.Expr.Sum origin=null
       PROPERTY name:e2 visibility:public modality:FINAL [val]
-        FIELD PROPERTY_BACKING_FIELD name:e2 type:<root>.Expr visibility:public [final]
+        FIELD PROPERTY_BACKING_FIELD name:e2 type:<root>.Expr visibility:private [final]
           EXPRESSION_BODY
             GET_VAR 'e2: <root>.Expr declared in <root>.Expr.Sum.<init>' type=<root>.Expr origin=INITIALIZE_PROPERTY_FROM_PARAMETER
         FUN DEFAULT_PROPERTY_ACCESSOR name:<get-e2> visibility:public modality:FINAL <> ($this:<root>.Expr.Sum) returnType:<root>.Expr
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/sealedClasses.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.Expr.Sum
           BLOCK_BODY
             RETURN type=kotlin.Nothing from='public final fun <get-e2> (): <root>.Expr declared in <root>.Expr.Sum'
-              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e2 type:<root>.Expr visibility:public [final]' type=<root>.Expr origin=null
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:e2 type:<root>.Expr visibility:private [final]' type=<root>.Expr origin=null
                 receiver: GET_VAR '<this>: <root>.Expr.Sum declared in <root>.Expr.Sum.<get-e2>' type=<root>.Expr.Sum origin=null
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:

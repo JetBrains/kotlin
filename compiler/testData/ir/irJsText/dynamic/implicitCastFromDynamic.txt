@@ -1,15 +1,15 @@
 FILE fqName:<root> fileName:/implicitCastFromDynamic.kt
   PROPERTY name:d visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:d type:dynamic visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:d type:dynamic visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-d> visibility:public modality:FINAL <> () returnType:dynamic
       correspondingProperty: PROPERTY name:d visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-d> (): dynamic declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:dynamic visibility:public [final,static]' type=dynamic origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:dynamic visibility:private [final,static]' type=dynamic origin=null
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         TYPE_OP type=kotlin.Int origin=IMPLICIT_DYNAMIC_CAST typeOperand=kotlin.Int
           CALL 'public final fun <get-d> (): dynamic declared in <root>' type=dynamic origin=GET_PROPERTY
@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/implicitCastFromDynamic.kt
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   FUN name:test1 visibility:public modality:FINAL <> (d:dynamic) returnType:kotlin.Int
     VALUE_PARAMETER name:d index:0 type:dynamic
     BLOCK_BODY

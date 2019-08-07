@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
                 INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IOther]'
             PROPERTY name:x visibility:public modality:OPEN [val]
-              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]
+              FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
                 EXPRESSION_BODY
                   GET_VAR 'x0: kotlin.String declared in <root>.otherImpl' type=kotlin.String origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.String
@@ -127,10 +127,10 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public open fun <get-x> (): kotlin.String declared in <root>.otherImpl.<no name provided>'
-                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-x>' type=<root>.otherImpl.<no name provided> origin=null
             PROPERTY name:y visibility:public modality:OPEN [var]
-              FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public
+              FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private
                 EXPRESSION_BODY
                   GET_VAR 'y0: kotlin.Int declared in <root>.otherImpl' type=kotlin.Int origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<get-y> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>) returnType:kotlin.Int
@@ -140,7 +140,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 BLOCK_BODY
                   RETURN type=kotlin.Nothing from='public open fun <get-y> (): kotlin.Int declared in <root>.otherImpl.<no name provided>'
-                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+                    GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                       receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<get-y>' type=<root>.otherImpl.<no name provided> origin=null
               FUN DEFAULT_PROPERTY_ACCESSOR name:<set-y> visibility:public modality:OPEN <> ($this:<root>.otherImpl.<no name provided>, <set-?>:kotlin.Int) returnType:kotlin.Unit
                 correspondingProperty: PROPERTY name:y visibility:public modality:OPEN [var]
@@ -149,7 +149,7 @@ FILE fqName:<root> fileName:/delegatedImplementation.kt
                 $this: VALUE_PARAMETER name:<this> type:<root>.otherImpl.<no name provided>
                 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
                 BLOCK_BODY
-                  SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+                  SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                     receiver: GET_VAR '<this>: <root>.otherImpl.<no name provided> declared in <root>.otherImpl.<no name provided>.<set-y>' type=<root>.otherImpl.<no name provided> origin=null
                     value: GET_VAR '<set-?>: kotlin.Int declared in <root>.otherImpl.<no name provided>.<set-y>' type=kotlin.Int origin=null
             PROPERTY name:z1 visibility:public modality:OPEN [val]
