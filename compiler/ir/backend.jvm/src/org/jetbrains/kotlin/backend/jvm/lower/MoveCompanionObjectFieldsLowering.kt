@@ -69,21 +69,27 @@ private class MoveOrCopyCompanionObjectFieldsLowering(val context: CommonBackend
         val companion = irClass.declarations.find {
             it is IrClass && it.isCompanion
         } as IrClass? ?: return
-        if ((irClass.isInterface || irClass.isAnnotationClass) && !companion.allFieldsAreJvmField()) return
-        companion.declarations.forEach {
+
+        // We don't move fields to interfaces unless all fields are annotated with @JvmField.
+        // It is an error to annotate only some of the fields of an interface companion with @JvmField.
+        val newParent = if (irClass.isJvmInterface && !companion.allFieldsAreJvmField()) companion else irClass
+
+        val newDeclarations = companion.declarations.mapNotNull {
             when (it) {
-                is IrProperty -> {
-                    val newField = movePropertyFieldToStaticParent(it, companion, irClass, fieldReplacementMap)
-                    if (newField != null) irClass.declarations.add(newField)
-                }
-                is IrAnonymousInitializer -> {
-                    val newInitializer = moveAnonymousInitializerToStaticParent(it, companion, irClass)
-                    irClass.declarations.add(newInitializer)
-                }
-                else -> Unit
+                is IrProperty ->
+                    movePropertyFieldToStaticParent(it, companion, newParent, fieldReplacementMap)
+                is IrAnonymousInitializer ->
+                    moveAnonymousInitializerToStaticParent(it, companion, newParent)
+                else ->
+                    null
             }
         }
-        companion.declarations.removeAll { it is IrAnonymousInitializer }
+
+        // Move declarations to parent if required
+        if (newParent !== companion) {
+            companion.declarations.removeAll { it is IrAnonymousInitializer }
+            newParent.declarations += newDeclarations
+        }
     }
 
     private fun copyConsts(irClass: IrClass) {
