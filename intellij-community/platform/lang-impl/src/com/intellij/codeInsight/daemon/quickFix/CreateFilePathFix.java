@@ -18,8 +18,6 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.util.ArrayUtilRt;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
@@ -87,7 +85,8 @@ public class CreateFilePathFix extends AbstractCreateFileFix {
           return;
         }
 
-        directory = new PsiDirectoryImpl((PsiManagerImpl)currentDirectory.getManager(), vfsDir);
+        directory = currentDirectory.getManager().findDirectory(vfsDir);
+        if (directory == null) throw new IOException("Couldn't create directory '" + newDirectories + "'");
       }
       catch (IOException e) {
         throw new IncorrectOperationException(e.getMessage());

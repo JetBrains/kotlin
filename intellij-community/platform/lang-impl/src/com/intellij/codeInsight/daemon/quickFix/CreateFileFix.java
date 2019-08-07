@@ -19,9 +19,7 @@ import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
-import com.intellij.util.ArrayUtilRt;
+import com.intellij.util.ArrayUtil;
 import com.intellij.util.IncorrectOperationException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -143,8 +141,9 @@ public class CreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
           try {
             VfsUtil.createDirectoryIfMissing(myDirectory.getVirtualFile(), newDirectories);
             VirtualFile vfsDir = VfsUtil.findRelativeFile(myDirectory.getVirtualFile(),
-                                                          ArrayUtilRt.toStringArray(StringUtil.split(newDirectories, "/")));
-            directory = new PsiDirectoryImpl((PsiManagerImpl)myDirectory.getManager(), vfsDir);
+                                                          ArrayUtil.toStringArray(StringUtil.split(newDirectories, "/")));
+            directory = vfsDir == null ? null : myDirectory.getManager().findDirectory(vfsDir);
+            if (directory == null) throw new IOException("Couldn't create directory '" + newDirectories + "'");
           }
           catch (IOException e) {
             throw new IncorrectOperationException(e.getMessage());

@@ -15,12 +15,8 @@ import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiFile;
-import com.intellij.psi.PsiManager;
-import com.intellij.psi.SmartPsiElementPointer;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.PsiManagerImpl;
-import com.intellij.psi.impl.file.PsiDirectoryImpl;
 import com.intellij.util.ArrayUtil;
 import com.intellij.util.ArrayUtilRt;
 import org.jetbrains.annotations.NotNull;
@@ -163,7 +159,9 @@ public class FavoritesTreeStructure extends ProjectTreeStructure {
         for (VirtualFile file : virtualFiles) {
           AbstractTreeNode child;
           if (file.isDirectory()) {
-            child = new PsiDirectoryNode(myProject, new PsiDirectoryImpl(psiManager, file), settings);
+            PsiDirectory directory = psiManager.findDirectory(file);
+            if (directory == null) continue;
+            child = new PsiDirectoryNode(myProject, directory, settings);
           }
           else {
             PsiFile psiFile = psiManager.findFile(file);
