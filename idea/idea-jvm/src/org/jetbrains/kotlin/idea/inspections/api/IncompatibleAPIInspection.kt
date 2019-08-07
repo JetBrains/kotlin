@@ -190,7 +190,10 @@ internal fun findProblem(
 internal fun getQualifiedNameFromProviders(element: PsiElement): String? {
     DumbService.getInstance(element.project).isAlternativeResolveEnabled = true
     try {
-        for (provider in Extensions.getExtensions(QualifiedNameProvider.EP_NAME)) {
+        @Suppress("DEPRECATION")
+        val extensions = Extensions.getExtensions(QualifiedNameProvider.EP_NAME)
+
+        for (provider in extensions) {
             val result = provider.getQualifiedName(element)
             if (result != null) return result
         }

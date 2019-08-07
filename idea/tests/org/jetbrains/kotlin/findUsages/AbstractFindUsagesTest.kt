@@ -162,7 +162,9 @@ abstract class AbstractFindUsagesTest : KotlinLightCodeInsightFixtureTestCase() 
                 return UsageType.COMMENT_USAGE
             }
 
+            @Suppress("DEPRECATION")
             val providers = Extensions.getExtensions(UsageTypeProvider.EP_NAME)
+
             return providers
                 .mapNotNull {
                     it.getUsageType(element)

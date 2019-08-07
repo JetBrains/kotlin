@@ -179,6 +179,7 @@ public class DebuggerSteppingHelper {
                 }
             }
         }
+        //noinspection deprecation
         for (DebuggerClassFilterProvider provider : Extensions.getExtensions(DebuggerClassFilterProvider.EP_NAME)) {
             for (ClassFilter filter : provider.getFilters()) {
                 if (filter.isEnabled()) {

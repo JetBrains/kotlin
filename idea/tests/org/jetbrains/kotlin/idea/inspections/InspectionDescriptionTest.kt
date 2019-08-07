@@ -67,7 +67,9 @@ class InspectionDescriptionTest : LightPlatformTestCase() {
     fun testExtensionPoints() {
         val shortNames = THashMap<String, LocalInspectionEP>()
 
+        @Suppress("DEPRECATION")
         val inspectionEPs = Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION)
+
         val tools = inspectionEPs.size
         val errors = StringBuilder()
         for (ep in inspectionEPs) {

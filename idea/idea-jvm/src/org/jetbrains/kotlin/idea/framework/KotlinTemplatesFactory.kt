@@ -56,6 +56,8 @@ class KotlinTemplatesFactory : ProjectTemplatesFactory() {
                 )
             )
         )
+
+        @Suppress("DEPRECATION")
         result.addAll(Extensions.getExtensions(EP_NAME).map { BuilderBasedTemplate(it) })
         return result.toTypedArray()
     }

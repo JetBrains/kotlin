@@ -180,7 +180,10 @@ fun getConfiguratorByName(name: String): KotlinProjectConfigurator? {
     return allConfigurators().firstOrNull { it.name == name }
 }
 
-fun allConfigurators() = Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
+fun allConfigurators(): Array<KotlinProjectConfigurator> {
+    @Suppress("DEPRECATION")
+    return Extensions.getExtensions(KotlinProjectConfigurator.EP_NAME)
+}
 
 fun getCanBeConfiguredModules(project: Project, configurator: KotlinProjectConfigurator): List<Module> {
     return ModuleSourceRootMap(project).groupByBaseModules(project.allModules())
@@ -224,6 +227,7 @@ fun getConfigurationPossibilitiesForConfigureNotification(
                     runnableConfigurators.add(configurator)
                 }
                 ConfigureKotlinStatus.CONFIGURED -> moduleAlreadyConfigured = true
+                else -> {}
             }
         }
         if (moduleCanBeConfigured && !moduleAlreadyConfigured && !SuppressNotificationState.isKotlinNotConfiguredSuppressed(
@@ -271,7 +275,7 @@ fun hasKotlinCommonRuntimeInScope(scope: GlobalSearchScope): Boolean {
 
 class LibraryKindSearchScope(
     val module: Module,
-    val baseScope: GlobalSearchScope,
+    baseScope: GlobalSearchScope,
     val libraryKind: PersistentLibraryKind<*>
 ) : DelegatingGlobalSearchScope(baseScope) {
     override fun contains(file: VirtualFile): Boolean {

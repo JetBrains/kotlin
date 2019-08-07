@@ -52,7 +52,10 @@ fun DataNode<*>.getResolvedVersionByModuleData(groupId: String, libraryIds: List
 }
 
 fun getDependencyModules(moduleData: DataNode<ModuleData>, gradleIdeaProject: IdeaProject): Collection<DataNode<ModuleData>> {
-    for (modelFacade in Extensions.getExtensions(KotlinGradleModelFacade.EP_NAME)) {
+    @Suppress("DEPRECATION")
+    val extensions = Extensions.getExtensions(KotlinGradleModelFacade.EP_NAME)
+
+    for (modelFacade in extensions) {
         val dependencies = modelFacade.getDependencyModules(moduleData, gradleIdeaProject)
         if (dependencies.isNotEmpty()) {
             return dependencies
@@ -61,9 +64,10 @@ fun getDependencyModules(moduleData: DataNode<ModuleData>, gradleIdeaProject: Id
     return emptyList()
 }
 
+// Removing the 'gradleIdeaProject' parameter, removing it breaks importer for some reason
 fun findModulesByNames(
     dependencyModuleNames: Set<String>,
-    gradleIdeaProject: IdeaProject,
+    @Suppress("UNUSED_PARAMETER") gradleIdeaProject: IdeaProject,
     ideProject: DataNode<ProjectData>
 ): LinkedHashSet<DataNode<ModuleData>> {
     val modules = ExternalSystemApiUtil.getChildren(ideProject, ProjectKeys.MODULE)

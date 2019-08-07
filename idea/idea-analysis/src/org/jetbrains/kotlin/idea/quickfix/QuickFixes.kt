@@ -29,6 +29,7 @@ class QuickFixes {
     private val actions: Multimap<DiagnosticFactory<*>, IntentionAction> = HashMultimap.create<DiagnosticFactory<*>, IntentionAction>()
 
     init {
+        @Suppress("DEPRECATION")
         Extensions.getExtensions(QuickFixContributor.EP_NAME).forEach { it.registerQuickFixes(this) }
     }
 

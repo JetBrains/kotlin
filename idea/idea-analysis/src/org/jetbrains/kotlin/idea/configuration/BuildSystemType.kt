@@ -22,6 +22,7 @@ interface BuildSystemTypeDetector {
 }
 
 fun Module.getBuildSystemType(): BuildSystemType {
+    @Suppress("DEPRECATION")
     for (extension in Extensions.getExtensions(BuildSystemTypeDetector.EP_NAME)) {
         val result = extension.detectBuildSystemType(this)
         if (result != null) {

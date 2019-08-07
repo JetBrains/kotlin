@@ -66,11 +66,17 @@ abstract class AbstractQuickFixMultiFileTest : KotlinLightCodeInsightFixtureTest
 
     private fun enableInspectionTools(klass: Class<*>) {
         val eps = ContainerUtil.newArrayList<InspectionEP>()
-        ContainerUtil.addAll(eps, *Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
-        ContainerUtil.addAll(eps, *Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
+        ContainerUtil.addAll<InspectionEP, LocalInspectionEP, List<InspectionEP>>(
+            eps,
+            *(@Suppress("DEPRECATION") Extensions.getExtensions(LocalInspectionEP.LOCAL_INSPECTION))
+        )
+        ContainerUtil.addAll<InspectionEP, InspectionEP, List<InspectionEP>>(
+            eps,
+            *(@Suppress("DEPRECATION") Extensions.getExtensions(InspectionEP.GLOBAL_INSPECTION))
+        )
 
         val tool = eps.firstOrNull { it.implementationClass == klass.name }?.instantiateTool()
-                   ?: error("Could not find inspection tool for class: $klass")
+            ?: error("Could not find inspection tool for class: $klass")
 
         myFixture.enableInspections(tool)
     }

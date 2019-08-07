@@ -50,6 +50,7 @@ class JSLibraryType : LibraryType<DummyLibraryProperties>(JSLibraryKind) {
     override fun getIcon(properties: DummyLibraryProperties?) = KotlinIcons.JS
 
     companion object {
+        @Suppress("DEPRECATION")
         fun getInstance() = Extensions.findExtension(EP_NAME, JSLibraryType::class.java)
     }
 

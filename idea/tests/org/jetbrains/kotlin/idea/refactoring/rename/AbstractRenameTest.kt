@@ -416,10 +416,11 @@ fun runRenameProcessor(
 
     val processor = createProcessor()
 
-    if (renameParamsObject["overloadRenamer.onlyPrimaryElement"]?.asBoolean ?: false) {
+    if (renameParamsObject["overloadRenamer.onlyPrimaryElement"]?.asBoolean == true) {
         with(AutomaticOverloadsRenamer) { substitution.elementFilter = { false } }
     }
     if (processor is RenameProcessor) {
+        @Suppress("DEPRECATION")
         Extensions.getExtensions(AutomaticRenamerFactory.EP_NAME).forEach { processor.addRenamerFactory(it) }
     }
     processor.run()
