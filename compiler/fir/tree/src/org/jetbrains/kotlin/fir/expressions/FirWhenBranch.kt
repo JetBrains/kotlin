@@ -29,4 +29,6 @@ interface FirWhenBranch : FirElement {
     }
 
     fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch
+
+    fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch
 }

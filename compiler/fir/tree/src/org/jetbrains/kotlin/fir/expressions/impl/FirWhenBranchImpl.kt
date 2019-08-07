@@ -21,12 +21,17 @@ class FirWhenBranchImpl(
 ) : FirAbstractElement(psi), FirWhenBranch {
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         transformCondition(transformer, data)
-        result = result.transformSingle(transformer, data)
+        transformResult(transformer, data)
         return this
     }
 
     override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirWhenBranch {
         condition = condition.transformSingle(transformer, data)
+        return this
+    }
+
+    override fun <D> transformResult(transformer: FirTransformer<D>, data: D): FirWhenBranch {
+        result = result.transformSingle(transformer, data)
         return this
     }
 }
