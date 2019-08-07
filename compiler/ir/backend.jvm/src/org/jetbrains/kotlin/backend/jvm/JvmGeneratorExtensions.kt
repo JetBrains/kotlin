@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
@@ -14,8 +16,11 @@ import org.jetbrains.kotlin.load.java.sam.SamAdapterDescriptor
 import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
+import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmFieldAnnotation
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
-import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 
 object JvmGeneratorExtensions : GeneratorExtensions() {
     override val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = { descriptor ->
@@ -54,4 +59,10 @@ object JvmGeneratorExtensions : GeneratorExtensions() {
 
         companion object Instance : JvmSamConversion()
     }
+
+    override fun computeFieldVisibility(descriptor: PropertyDescriptor): Visibility? =
+        if (descriptor.hasJvmFieldAnnotation() || descriptor is JavaCallableMemberDescriptor)
+            descriptor.visibility
+        else
+            null
 }
