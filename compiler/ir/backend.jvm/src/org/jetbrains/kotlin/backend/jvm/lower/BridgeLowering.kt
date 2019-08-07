@@ -51,10 +51,7 @@ internal val bridgePhase = makeIrFilePhase(
 )
 
 private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass {
-
-    private val state = context.state
-
-    private val typeMapper = state.typeMapper
+    private val methodSignatureMapper = context.methodSignatureMapper
 
     private val specialBridgeMethods = SpecialBridgeMethods(context)
 
@@ -383,8 +380,8 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         return findConcreteSuperDeclaration(FunctionHandleForIrFunction(this))?.irFunction
     }
 
-    private fun IrFunction.getJvmSignature() = typeMapper.mapAsmMethod(descriptor)
-    private fun IrFunction.getJvmName() = getJvmSignature().name
+    private fun IrFunction.getJvmSignature(): Method = methodSignatureMapper.mapAsmMethod(this)
+    private fun IrFunction.getJvmName(): String = getJvmSignature().name
 }
 
 private data class SignatureWithSource(val signature: Method, val source: IrSimpleFunction) {

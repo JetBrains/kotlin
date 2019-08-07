@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.irBlockBody
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -33,10 +36,7 @@ internal val collectionStubMethodLowering = makeIrFilePhase(
 )
 
 private class CollectionStubMethodLowering(val context: JvmBackendContext) : ClassLoweringPass {
-
-    private val state = context.state
-
-    private val typeMapper = state.typeMapper
+    private val methodSignatureMapper = context.methodSignatureMapper
 
     override fun lower(irClass: IrClass) {
         if (irClass.isInterface) {
@@ -65,10 +65,11 @@ private class CollectionStubMethodLowering(val context: JvmBackendContext) : Cla
         }
     }
 
-    //TODO: replace with new typeMapper using no descriptor
-    private fun IrSimpleFunction.toSignature() = typeMapper.mapAsmMethod(this.descriptor).toString()
+    private fun IrSimpleFunction.toSignature(): String = methodSignatureMapper.mapAsmMethod(this).toString()
 
-    private fun createStubMethod(function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrSimpleFunction {
+    private fun createStubMethod(
+        function: IrSimpleFunction, irClass: IrClass, substitutionMap: Map<IrTypeParameterSymbol, IrType>
+    ): IrSimpleFunction {
         return buildFun {
             name = function.name
             returnType = function.returnType.substitute(substitutionMap)

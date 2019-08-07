@@ -32,8 +32,8 @@ object IrEnumValueOf : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val enumType = context.state.typeMapper.mapType(expression.descriptor.returnType!!)
-        val newSignature = context.state.typeMapper.mapSignatureSkipGeneric(expression.descriptor, OwnerKind.IMPLEMENTATION)
+        val enumType = context.typeMapper.mapType(expression.type)
+        val newSignature = context.methodSignatureMapper.mapSignatureSkipGeneric(expression.symbol.owner, OwnerKind.IMPLEMENTATION)
         val stringType = AsmTypes.JAVA_STRING_TYPE
 
         return object : IrIntrinsicFunction(expression, newSignature, context, listOf(stringType)) {

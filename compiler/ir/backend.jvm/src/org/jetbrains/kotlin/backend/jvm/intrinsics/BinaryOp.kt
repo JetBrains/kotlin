@@ -20,23 +20,25 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
 class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
     private fun shift(): Boolean =
-            opcode == ISHL || opcode == ISHR || opcode == IUSHR
+        opcode == ISHL || opcode == ISHR || opcode == IUSHR
 
-    override fun toCallable(expression: IrFunctionAccessExpression, signature: JvmMethodSignature, context: JvmBackendContext): IrIntrinsicFunction {
-        val owner = context.state.typeMapper.mapOwner(expression.descriptor)
+    override fun toCallable(
+        expression: IrFunctionAccessExpression,
+        signature: JvmMethodSignature,
+        context: JvmBackendContext
+    ): IrIntrinsicFunction {
+        val owner = context.methodSignatureMapper.mapImplementationOwner(expression.symbol.owner)
         val returnType = signature.returnType
-        val intermediateResultType: Type = numberFunctionOperandType(returnType)
+        val intermediateResultType = numberFunctionOperandType(returnType)
         val argTypes = if (owner != Type.CHAR_TYPE) {
             listOf(intermediateResultType, if (shift()) Type.INT_TYPE else intermediateResultType)
-        }
-        else {
+        } else {
             listOf(Type.CHAR_TYPE, signature.valueParameters[0].asmType)
         }
 

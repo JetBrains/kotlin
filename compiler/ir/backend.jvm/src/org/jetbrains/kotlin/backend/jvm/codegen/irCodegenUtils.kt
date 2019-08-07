@@ -19,7 +19,10 @@ import org.jetbrains.kotlin.codegen.signature.BothSignatureWriter
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
+import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -94,7 +97,7 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): DefaultSourceMapper
     return DefaultSourceMapper(
         SourceInfo.createInfoForIr(
             endLineNumber + 1,
-            this.state.typeMapper.mapType(declaration.descriptor).internalName,
+            typeMapper.mapClass(declaration).internalName,
             declaration.fileParent.name
         )
     )

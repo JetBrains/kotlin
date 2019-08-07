@@ -50,8 +50,7 @@ internal val additionalClassAnnotationPhase = makeIrFilePhase(
 )
 
 private class AdditionalClassAnnotationLowering(private val context: JvmBackendContext) : ClassLoweringPass {
-
-    val typeMapper = context.state.typeMapper
+    private val jvmTarget = context.state.target
 
     // TODO: import IR structures from the library?
 
@@ -210,8 +209,8 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
 
     private fun generateTargetAnnotation(irClass: IrClass) {
         if (irClass.hasAnnotation(FqName("java.lang.annotation.Target"))) return
-        val annotationTargetMap = annotationTargetMaps[typeMapper.jvmTarget]
-            ?: throw AssertionError("No annotation target map for JVM target ${typeMapper.jvmTarget}")
+        val annotationTargetMap = annotationTargetMaps[jvmTarget]
+            ?: throw AssertionError("No annotation target map for JVM target $jvmTarget")
 
         val targets = irClass.applicableTargetSet() ?: return
         val javaTargets = targets.mapNotNull { annotationTargetMap[it] }

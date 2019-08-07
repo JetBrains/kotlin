@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.jvm.codegen.PromisedValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
@@ -35,11 +34,11 @@ abstract class IntrinsicMethod {
 
     companion object {
         fun calcReceiverType(call: IrMemberAccessExpression, context: JvmBackendContext): Type {
-            return context.state.typeMapper.mapType((call.dispatchReceiver?.type ?: call.extensionReceiver!!.type).toKotlinType())
+            return context.typeMapper.mapType(call.dispatchReceiver?.type ?: call.extensionReceiver!!.type)
         }
 
         fun expressionType(expression: IrExpression, context: JvmBackendContext): Type {
-            return context.state.typeMapper.mapType(expression.type.toKotlinType())
+            return context.typeMapper.mapType(expression.type)
         }
 
         fun JvmMethodSignature.newReturnType(type: Type): JvmMethodSignature {

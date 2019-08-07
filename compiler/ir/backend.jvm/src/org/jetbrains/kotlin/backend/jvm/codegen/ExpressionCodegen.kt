@@ -321,7 +321,7 @@ class ExpressionCodegen(
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.type) }
 
         val isSuperCall = (expression as? IrCall)?.superQualifier != null
-        val callable = resolveToCallable(expression, isSuperCall)
+        val callable = methodSignatureMapper.mapToCallableMethod(expression, isSuperCall)
         val callee = expression.symbol.owner
         val callGenerator = getOrCreateCallGenerator(expression, data)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
@@ -985,7 +985,7 @@ class ExpressionCodegen(
     }
 
     private fun resolveToCallable(irCall: IrFunctionAccessExpression, isSuper: Boolean): IrCallableMethod =
-        methodSignatureMapper.mapToCallableMethod(irCall.symbol.owner, isSuper)
+        methodSignatureMapper.mapToCallableMethod(irCall, isSuper)
 
     private fun getOrCreateCallGenerator(element: IrFunctionAccessExpression, data: BlockInfo): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||

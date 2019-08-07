@@ -107,7 +107,7 @@ class IrSourceCompilerForInline(
 
                 irClass.declarations.filterIsInstance<IrFunction>().single {
                     it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
-                            state.typeMapper.mapSignatureSkipGeneric(callableDescriptor).asmMethod.descriptor.startsWith(
+                            codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(callElement.symbol.owner).asmMethod.descriptor.startsWith(
                                 jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
                             )
                 }

@@ -41,11 +41,11 @@ class JvmBackendContext(
     private val firMode: Boolean
 ) : CommonBackendContext {
     override val builtIns = state.module.builtIns
-    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(state)
-    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
-
     val typeMapper = IrTypeMapper(this)
     val methodSignatureMapper = MethodSignatureMapper(this)
+
+    override val declarationFactory: JvmDeclarationFactory = JvmDeclarationFactory(methodSignatureMapper)
+    override val sharedVariablesManager = JvmSharedVariablesManager(state.module, builtIns, irBuiltIns)
 
     private val symbolTable = symbolTable.lazyWrapper
     override val ir = JvmIr(irModuleFragment, this.symbolTable)

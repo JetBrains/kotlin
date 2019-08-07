@@ -416,10 +416,7 @@ private class SyntheticAccessorLowering(val context: JvmBackendContext) : IrElem
     private var nameCounter = 0
 
     private fun IrFunction.accessorName(): Name {
-        val jvmName = context.state.typeMapper.mapFunctionName(
-            descriptor,
-            OwnerKind.getMemberOwnerKind(parentAsClass.descriptor)
-        )
+        val jvmName = context.methodSignatureMapper.mapFunctionName(this, OwnerKind.IMPLEMENTATION)
         return Name.identifier("access\$$jvmName\$${nameCounter++}")
     }
 

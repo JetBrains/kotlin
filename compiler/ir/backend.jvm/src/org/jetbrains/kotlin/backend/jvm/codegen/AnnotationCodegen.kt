@@ -19,16 +19,19 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import org.jetbrains.annotations.NotNull
 import org.jetbrains.annotations.Nullable
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.isMarkedNullable
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
@@ -42,11 +45,11 @@ import java.lang.annotation.RetentionPolicy
 
 class AnnotationCodegen(
     private val innerClassConsumer: InnerClassConsumer,
-    state: GenerationState,
+    context: JvmBackendContext,
     private val visitAnnotation: (descriptor: String, visible: Boolean) -> AnnotationVisitor
 ) {
-
-    private val typeMapper = state.typeMapper
+    private val typeMapper = context.typeMapper
+    private val methodSignatureMapper = context.methodSignatureMapper
 
     /**
      * @param returnType can be null if not applicable (e.g. [annotated] is a class)
@@ -153,15 +156,13 @@ class AnnotationCodegen(
 
     private fun genAnnotation(annotation: IrConstructorCall): String? {
         val annotationClass = annotation.annotationClass
-        val rp = getRetentionPolicy(annotationClass)
-        if (rp == RetentionPolicy.SOURCE && !typeMapper.classBuilderMode.generateSourceRetentionAnnotations) {
-            return null
-        }
+        val retentionPolicy = getRetentionPolicy(annotationClass)
+        if (retentionPolicy == RetentionPolicy.SOURCE) return null
 
         innerClassConsumer.addInnerClassInfoFromAnnotation(annotationClass)
 
-        val asmTypeDescriptor = typeMapper.mapType(annotation.type.toKotlinType()).descriptor
-        val annotationVisitor = visitAnnotation(asmTypeDescriptor, rp == RetentionPolicy.RUNTIME)
+        val asmTypeDescriptor = typeMapper.mapType(annotation.type).descriptor
+        val annotationVisitor = visitAnnotation(asmTypeDescriptor, retentionPolicy == RetentionPolicy.RUNTIME)
 
         genAnnotationArguments(annotation, annotationVisitor)
         annotationVisitor.visitEnd()
@@ -188,7 +189,7 @@ class AnnotationCodegen(
             annotationClass.declarations.filterIsInstance<IrField>().singleOrNull { it.name == parameterName }
                 ?: return parameterName.asString()
 
-        return typeMapper.mapAnnotationParameterName(field.descriptor)
+        return methodSignatureMapper.mapAnnotationParameterName(field)
     }
 
     private fun genCompileTimeValue(
@@ -196,20 +197,13 @@ class AnnotationCodegen(
         value: IrExpression,
         annotationVisitor: AnnotationVisitor
     ) {
-        fun visitUnsupportedValue(value: IrExpression) {
-            val mode = typeMapper.classBuilderMode
-            if (mode.generateBodies) {
-                throw IllegalStateException("Don't know how to compile annotation value ${ir2string(value)}")
-            }
-        }
-
         when (value) {
             is IrConst<*> -> annotationVisitor.visit(name, value.value)
             is IrConstructorCall -> {
                 val callee = value.symbol.owner
                 when {
                     callee.parentAsClass.isAnnotationClass -> {
-                        val internalAnnName = typeMapper.mapType(callee.returnType.toKotlinType()).descriptor
+                        val internalAnnName = typeMapper.mapType(callee.returnType).descriptor
                         val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
                         genAnnotationArguments(value, visitor)
                         visitor.visitEnd()
@@ -218,7 +212,7 @@ class AnnotationCodegen(
                 }
             }
             is IrGetEnumValue -> {
-                val enumClassInternalName = typeMapper.mapClass(value.symbol.owner.parentAsClass.descriptor).descriptor
+                val enumClassInternalName = typeMapper.mapClass(value.symbol.owner.parentAsClass).descriptor
                 val enumEntryName = value.symbol.owner.name
                 annotationVisitor.visitEnum(name, enumClassInternalName, enumEntryName.asString())
             }
@@ -230,10 +224,10 @@ class AnnotationCodegen(
                 visitor.visitEnd()
             }
             is IrClassReference -> {
-                annotationVisitor.visit(name, typeMapper.mapType(value.classType.toKotlinType()))
+                annotationVisitor.visit(name, typeMapper.mapType(value.classType))
             }
-            is IrErrorExpression -> visitUnsupportedValue(value)
-            else -> error("Unsupported compiletime value ${ir2string(value)}")
+            is IrErrorExpression -> error("Don't know how to compile annotation value ${ir2string(value)}")
+            else -> error("Unsupported compile-time value ${ir2string(value)}")
         }
     }
 

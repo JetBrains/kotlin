@@ -138,10 +138,10 @@ open class IrIntrinsicFunction(
 }
 
 fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
-    val callableMethod = context.state.typeMapper.mapToCallableMethod(descriptor, false)
+    val callableMethod = context.methodSignatureMapper.mapToCallableMethod(this, false)
     return arrayListOf<Type>().apply {
         callableMethod.dispatchReceiverType?.let { add(it) }
-        addAll(callableMethod.getAsmMethod().argumentTypes)
+        addAll(callableMethod.asmMethod.argumentTypes)
     }
 }
 

@@ -190,7 +190,7 @@ private class ToArrayLowering(private val context: JvmBackendContext) : ClassLow
 
     private fun IrDeclaration.isGenericToArray(): Boolean {
         if (this !is IrSimpleFunction) return false
-        val signature = context.state.typeMapper.mapAsmMethod(descriptor)
+        val signature = context.methodSignatureMapper.mapAsmMethod(this)
         return signature.toString() == "toArray([Ljava/lang/Object;)[Ljava/lang/Object;"
     }
 
