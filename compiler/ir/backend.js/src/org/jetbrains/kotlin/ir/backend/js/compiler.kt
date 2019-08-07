@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.DFS
 
-private fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
+fun sortDependencies(dependencies: Collection<IrModuleFragment>): Collection<IrModuleFragment> {
     val mapping = dependencies.map { it.descriptor to it }.toMap()
 
     return DFS.topologicalOrder(dependencies) { m ->

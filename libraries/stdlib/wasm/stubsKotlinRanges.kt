@@ -1,4 +1,4 @@
-@file:ExcludedFromCodegen
+@file:kotlin.wasm.internal.ExcludedFromCodegen
 
 package kotlin.ranges
 

@@ -15,6 +15,11 @@ abstract class AbstractIrJsCodegenBoxTest : BasicIrBoxTest(
     "codegen/irBox/"
 )
 
+abstract class AbstractIrWasmBoxJsTest : BasicIrBoxTest(
+    BasicBoxTest.TEST_DATA_DIR_PATH + "wasmBox/",
+    "irWasmBox/"
+)
+
 abstract class BorrowedIrInlineTest(relativePath: String) : BasicIrBoxTest(
     "compiler/testData/codegen/boxInline/$relativePath",
     "codegen/irBoxInline/$relativePath"

@@ -3,15 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress(
-    "NON_ABSTRACT_FUNCTION_WITH_NO_BODY",
-    "MUST_BE_INITIALIZED_OR_BE_ABSTRACT",
-    "EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE",
-    "PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED",
-    "WRONG_MODIFIER_TARGET"
-)
+@file:Suppress("OVERRIDE_BY_INLINE", "NOTHING_TO_INLINE")
 
 package kotlin
+
+import kotlin.wasm.internal.ExcludedFromCodegen
+import kotlin.wasm.internal.WasmInstruction
+import kotlin.wasm.internal.implementedAsIntrinsic
+import kotlin.wasm.internal.wasm_i32_compareTo
 
 /**
  * Represents a 16-bit Unicode character.
@@ -25,39 +24,56 @@ public class Char private constructor() : Comparable<Char> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
-    public override fun compareTo(other: Char): Int
+    public override inline fun compareTo(other: Char): Int =
+        wasm_i32_compareTo(this.toInt(), other.toInt())
 
     /** Adds the other Int value to this value resulting a Char. */
-    public operator fun plus(other: Int): Char
+    public inline operator fun plus(other: Int): Char =
+        (this.toInt() + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
-    public operator fun minus(other: Char): Int
+    public inline operator fun minus(other: Char): Int =
+        (this.toInt() - other.toInt())
+
     /** Subtracts the other Int value from this value resulting a Char. */
-    public operator fun minus(other: Int): Char
+    public inline operator fun minus(other: Int): Char =
+        (this.toInt() - other).toChar()
 
     /** Increments this value. */
-    public operator fun inc(): Char
+    public inline operator fun inc(): Char =
+        (this.toInt() + 1).toChar()
+
     /** Decrements this value. */
-    public operator fun dec(): Char
+    public inline operator fun dec(): Char =
+        (this.toInt() - 1).toChar()
 
 //    /** Creates a range from this value to the specified [other] value. */
 //    public operator fun rangeTo(other: Char): CharRange
 
     /** Returns the value of this character as a `Byte`. */
-    public fun toByte(): Byte
+    public inline fun toByte(): Byte =
+        this.toInt().toByte()
     /** Returns the value of this character as a `Char`. */
-    public fun toChar(): Char
+    public inline fun toChar(): Char =
+        this
     /** Returns the value of this character as a `Short`. */
-    public fun toShort(): Short
+    public inline fun toShort(): Short =
+        this.toInt().toShort()
     /** Returns the value of this character as a `Int`. */
-    public fun toInt(): Int
+    @WasmInstruction(WasmInstruction.NOP)
+    public fun toInt(): Int =
+        implementedAsIntrinsic
     /** Returns the value of this character as a `Long`. */
-    public fun toLong(): Long
+    public inline fun toLong(): Long =
+        this.toInt().toLong()
     /** Returns the value of this character as a `Float`. */
-    public fun toFloat(): Float
+    public inline fun toFloat(): Float =
+        this.toInt().toFloat()
     /** Returns the value of this character as a `Double`. */
-    public fun toDouble(): Double
+    public inline fun toDouble(): Double =
+        this.toInt().toDouble()
 
+    @ExcludedFromCodegen
     companion object {
         /**
          * The minimum value of a character code unit.

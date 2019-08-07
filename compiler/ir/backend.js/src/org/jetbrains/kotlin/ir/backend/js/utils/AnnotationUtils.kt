@@ -23,7 +23,7 @@ object JsAnnotations {
 }
 
 @Suppress("UNCHECKED_CAST")
-private fun IrConstructorCall.getSingleConstStringArgument() =
+fun IrConstructorCall.getSingleConstStringArgument() =
     (getValueArgument(0) as IrConst<String>).value
 
 fun IrAnnotationContainer.getJsModule(): String? =

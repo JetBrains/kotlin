@@ -23,7 +23,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 class NameTable<T>(
     val parent: NameTable<T>? = null,
-    private val reserved: MutableSet<String> = mutableSetOf()
+    private val reserved: MutableSet<String> = mutableSetOf(),
+    val sanitizer: (String) -> String = ::sanitizeName
 ) {
     var finished = false
     val names = mutableMapOf<T, String>()
@@ -41,9 +42,10 @@ class NameTable<T>(
         reserved.add(name)
     }
 
-    fun declareFreshName(declaration: T, suggestedName: String) {
-        val freshName = findFreshName(sanitizeName(suggestedName))
+    fun declareFreshName(declaration: T, suggestedName: String): String {
+        val freshName = findFreshName(sanitizer(suggestedName))
         declareStableName(declaration, freshName)
+        return freshName
     }
 
     private fun findFreshName(suggestedName: String): String {

@@ -23,28 +23,14 @@
   </component>
   <component name="IdProvider" IDEtalkID="71A301FF1940049D6D82F12C40F1E1D5" />
   <component name="JavadocGenerationManager">
-    <option name="OUTPUT_DIRECTORY" />
-    <option name="OPTION_SCOPE" value="protected" />
-    <option name="OPTION_HIERARCHY" value="true" />
-    <option name="OPTION_NAVIGATOR" value="true" />
-    <option name="OPTION_INDEX" value="true" />
-    <option name="OPTION_SEPARATE_INDEX" value="true" />
-    <option name="OPTION_DOCUMENT_TAG_USE" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_AUTHOR" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_VERSION" value="false" />
-    <option name="OPTION_DOCUMENT_TAG_DEPRECATED" value="true" />
-    <option name="OPTION_DEPRECATED_LIST" value="true" />
     <option name="OTHER_OPTIONS" value="" />
-    <option name="HEAP_SIZE" />
-    <option name="LOCALE" />
-    <option name="OPEN_IN_BROWSER" value="true" />
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="org.jetbrains.annotations.NotNull" />
     <option name="myNullables">
       <value>
-        <list size="9">
+        <list size="11">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.Nullable" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nullable" />
           <item index="2" class="java.lang.String" itemvalue="javax.annotation.CheckForNull" />
@@ -54,12 +40,14 @@
           <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.Nullable" />
           <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableDecl" />
           <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NullableType" />
+          <item index="9" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNullable" />
+          <item index="10" class="java.lang.String" itemvalue="com.android.annotations.Nullable" />
         </list>
       </value>
     </option>
     <option name="myNotNulls">
       <value>
-        <list size="9">
+        <list size="11">
           <item index="0" class="java.lang.String" itemvalue="org.jetbrains.annotations.NotNull" />
           <item index="1" class="java.lang.String" itemvalue="javax.annotation.Nonnull" />
           <item index="2" class="java.lang.String" itemvalue="javax.validation.constraints.NotNull" />
@@ -69,6 +57,8 @@
           <item index="6" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.qual.NonNull" />
           <item index="7" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullDecl" />
           <item index="8" class="java.lang.String" itemvalue="org.checkerframework.checker.nullness.compatqual.NonNullType" />
+          <item index="9" class="java.lang.String" itemvalue="androidx.annotation.RecentlyNonNull" />
+          <item index="10" class="java.lang.String" itemvalue="com.android.annotations.NonNull" />
         </list>
       </value>
     </option>

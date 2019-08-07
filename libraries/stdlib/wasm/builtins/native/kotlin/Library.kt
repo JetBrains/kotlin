@@ -6,7 +6,7 @@
     "NON_MEMBER_FUNCTION_NO_BODY",
     "REIFIED_TYPE_PARAMETER_NO_INLINE"
 )
-@file:ExcludedFromCodegen
+@file:kotlin.wasm.internal.ExcludedFromCodegen
 
 package kotlin
 

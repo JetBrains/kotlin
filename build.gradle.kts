@@ -3,7 +3,6 @@ import org.gradle.plugins.ide.idea.model.IdeaModel
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import proguard.gradle.ProGuardTask
-import org.gradle.kotlin.dsl.*
 
 buildscript {
     extra["defaultSnapshotVersion"] = "1.3-SNAPSHOT"
@@ -212,6 +211,7 @@ extra["compilerModules"] = arrayOf(
     ":compiler:ir.backend.common",
     ":compiler:backend.jvm",
     ":compiler:backend.js",
+    ":compiler:backend.wasm",
     ":compiler:ir.serialization.common",
     ":compiler:ir.serialization.js",
     ":kotlin-util-io",
@@ -506,6 +506,10 @@ tasks {
         dependsOn(":js:js.tests:runMocha")
     }
 
+    register("wasmCompilerTest") {
+        dependsOn(":js:js.tests:wasmTest")
+    }
+
     register("firCompilerTest") {
         dependsOn(":compiler:fir:psi2fir:test")
         dependsOn(":compiler:fir:resolve:test")
@@ -527,6 +531,7 @@ tasks {
     register("compilerTest") {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
+        dependsOn("wasmCompilerTest")
         dependsOn("firCompilerTest")
 
         dependsOn("scriptingTest")
