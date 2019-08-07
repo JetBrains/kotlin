@@ -204,8 +204,9 @@ abstract class KaptTask : ConventionTask(), TaskWithLocalState {
         val startTime = System.currentTimeMillis()
 
         val previousSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.loadFrom(incAptCacheDir)
-        val currentSnapshot =
-            ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(incAptCacheDir, classpath.files.toList(), allDataFile)
+        val currentSnapshot = ClasspathSnapshot.ClasspathSnapshotFactory.createCurrent(
+            incAptCacheDir, classpath.files.toList(), kaptClasspath.files.toList(), allDataFile
+        )
 
         val classpathChanges = currentSnapshot.diff(previousSnapshot, changedDataFiles)
         currentSnapshot.writeToCache()
