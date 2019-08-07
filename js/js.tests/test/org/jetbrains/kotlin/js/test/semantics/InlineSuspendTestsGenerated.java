@@ -588,5 +588,15 @@ public class InlineSuspendTestsGenerated extends AbstractInlineSuspendTests {
         public void testPassParameter_1_3() throws Exception {
             runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/passParameter.kt", "kotlin.coroutines");
         }
+
+        @TestMetadata("unreachableSuspendMarker.kt")
+        public void testUnreachableSuspendMarker_1_2() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/unreachableSuspendMarker.kt", "kotlin.coroutines.experimental");
+        }
+
+        @TestMetadata("unreachableSuspendMarker.kt")
+        public void testUnreachableSuspendMarker_1_3() throws Exception {
+            runTestWithPackageReplacement("compiler/testData/codegen/boxInline/suspend/stateMachine/unreachableSuspendMarker.kt", "kotlin.coroutines");
+        }
     }
 }
