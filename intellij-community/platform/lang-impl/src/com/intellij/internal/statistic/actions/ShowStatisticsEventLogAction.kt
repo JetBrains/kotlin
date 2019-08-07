@@ -2,6 +2,7 @@
 package com.intellij.internal.statistic.actions
 
 import com.intellij.ide.impl.ContentManagerWatcher
+import com.intellij.internal.statistic.eventLog.validator.rules.impl.TestModeValidationRule
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.project.Project
@@ -23,6 +24,11 @@ class ShowStatisticsEventLogAction : DumbAwareAction() {
       ContentManagerWatcher(toolWindow, contentManager)
     }
     toolWindow.activate(null)
+  }
+
+  override fun update(event: AnActionEvent) {
+    super.update(event)
+    event.presentation.isEnabled = TestModeValidationRule.isTestModeEnabled()
   }
 
   private fun getToolWindow(project: Project): ToolWindow {
