@@ -31,7 +31,7 @@ fun KtModifierListOwner.hasInlineModifier() = hasModifier(KtTokens.INLINE_KEYWOR
 
 fun KtModifierListOwner.hasPrivateModifier() = hasModifier(KtTokens.PRIVATE_KEYWORD)
 
-fun KtPrimaryConstructor.allowedValOrVar(): Boolean = containingClass()?.let {
+fun KtPrimaryConstructor.mustHaveValOrVar(): Boolean = containingClass()?.let {
     it.isAnnotation() || it.hasInlineModifier()
 } ?: false
 

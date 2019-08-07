@@ -325,19 +325,32 @@ fun DeclarationDescriptor.checkTypeAccessibilityInModule(
     module: Module,
     existingClasses: Set<String> = emptySet()
 ): Boolean {
-    val existingClassesWithTypeParameters = if (this is ClassifierDescriptorWithTypeParameters)
-        existingClasses + declaredTypeParameters.map { it.fqNameOrNull()?.asString() ?: return false }.toSet()
-    else
-        existingClasses
+    val existingClassesWithTypeParameters = additionalClasses(existingClasses)
     return collectAllTypes().all { it?.canFindClassInModule(project, module, existingClassesWithTypeParameters) == true }
+}
+
+private tailrec fun DeclarationDescriptor.additionalClasses(existingClasses: Set<String> = emptySet()): Set<String> = when (this) {
+    is ClassifierDescriptorWithTypeParameters -> {
+        val myParameters = existingClasses + declaredTypeParameters.map { it.fqNameOrNull()?.asString() ?: return emptySet() }
+        val containingDeclaration = containingDeclaration
+        if (isInner) containingDeclaration.additionalClasses(myParameters) else myParameters
+    }
+    is CallableDescriptor -> containingDeclaration.additionalClasses(existingClasses + typeParameters.map {
+        it.fqNameOrNull()?.asString() ?: return emptySet()
+    })
+    else ->
+        existingClasses
 }
 
 private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
     return when (this) {
-        is ClassDescriptor -> declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
+        is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
+        is ClassDescriptor -> if (isInline) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
+            emptySequence()
+        } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
         is CallableDescriptor -> {
             val returnType = returnType ?: return sequenceOf(null)
-            returnType.collectAllTypes() + allParameters.asSequence().map { it.type }.flatMap(KotlinType::collectAllTypes)
+            returnType.collectAllTypes() + allParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
         }
         is TypeParameterDescriptor -> {
             val upperBounds = upperBounds
@@ -351,6 +364,9 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
 private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName) + arguments.asSequence()
     .map(TypeProjection::getType)
     .flatMap(KotlinType::collectAllTypes)
+
+fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
+    ?.mustHaveValOrVar() ?: false
 
 fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existingClasses: Set<String> = emptySet()): Boolean {
     return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existingClasses) == true

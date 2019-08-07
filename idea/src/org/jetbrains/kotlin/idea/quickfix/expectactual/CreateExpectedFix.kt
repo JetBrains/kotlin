@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.quickfix.KotlinIntentionActionsFactory
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.refactoring.renderTrimmed
-import org.jetbrains.kotlin.idea.util.allowedValOrVar
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
@@ -38,6 +37,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 
 sealed class CreateExpectedFix<D : KtNamedDeclaration>(
@@ -116,28 +116,29 @@ class CreateExpectedClassFix(
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
-    val originalElements = element.collectDeclarations(false).toList()
-    val existingClasses = findClasses(originalElements + klass)
+    val originalElements = element.collectDeclarations(withSelf = false).toList()
+    val existingClasses = findClasses(originalElements + klass, commonModule)
     if (!element.checkTypeAccessibilityInModule(commonModule, existingClasses)) {
         showUnknownTypesError(element)
         return@block null
     }
 
-    val (members, declarationsWithNonExistentClasses) = originalElements.filterNot(KtNamedDeclaration::isAlwaysActual).partition {
+    val (members, declarationsWithNonExistentClasses) = originalElements.partition {
         it.checkTypeAccessibilityInModule(commonModule, existingClasses)
     }
 
     if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
 
+    val membersForSelection = members.filterNot(KtNamedDeclaration::isAlwaysActual)
     val selectedElements = when {
-        members.all(KtDeclaration::hasActualModifier) -> originalElements - declarationsWithNonExistentClasses
-        ApplicationManager.getApplication().isUnitTestMode -> members.filter(KtDeclaration::hasActualModifier)
+        membersForSelection.all(KtDeclaration::hasActualModifier) -> membersForSelection
+        ApplicationManager.getApplication().isUnitTestMode -> membersForSelection.filter(KtDeclaration::hasActualModifier)
         else -> {
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
-            chooseMembers(project, members, prefix) ?: return@block null
+            chooseMembers(project, membersForSelection, prefix) ?: return@block null
         }
-    }.let { selectedElements ->
-        val selectedClasses = findClasses(selectedElements + klass)
+    }.plus(members.filter(KtNamedDeclaration::isAlwaysActual)).let { selectedElements ->
+        val selectedClasses = findClasses(selectedElements + klass, commonModule)
         if (selectedClasses != existingClasses) {
             if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
                 showUnknownTypesError(element)
@@ -157,15 +158,19 @@ class CreateExpectedClassFix(
 
     if (originalElements.isNotEmpty()) {
         project.executeWriteCommand("Repair actual members") {
-            repairActualModifiers(originalElements, selectedElements)
+            repairActualModifiers(originalElements, selectedElements.toSet())
         }
     }
 
     generateClassOrObject(project, true, element, listOfNotNull(outerExpectedClass))
 })
 
-private fun findClasses(elements: List<KtNamedDeclaration>): HashSet<String> {
-    return elements.filterIsInstance<KtClassOrObject>().mapNotNull { it.fqName?.asString() }.toHashSet()
+private tailrec fun findClasses(elements: List<KtNamedDeclaration>, module: Module): HashSet<String> {
+    val classes = elements.filterIsInstance<KtClassOrObject>()
+    val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
+    val newExistingClasses = classes.filter { it.checkTypeAccessibilityInModule(module, existingNames) }
+    return if (classes.size == newExistingClasses.size) existingNames
+    else findClasses(newExistingClasses, module)
 }
 
 private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: List<KtNamedDeclaration>): Boolean =
@@ -258,7 +263,7 @@ private fun repairActualModifiers(
         }
     else
         for (original in originalElements) {
-            if (original.isAlwaysActual() || original in selectedElements)
+            if (original in selectedElements)
                 original.makeActualWithParents()
             else
                 original.makeNotActual()
@@ -267,14 +272,9 @@ private fun repairActualModifiers(
 
 private tailrec fun KtDeclaration.makeActualWithParents() {
     makeActual()
+    safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()?.takeUnless(KtDeclaration::hasActualModifier)?.makeActual()
     containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.makeActualWithParents()
 }
-
-private fun KtNamedDeclaration.isAlwaysActual(): Boolean = when (this) {
-    is KtPrimaryConstructor -> this
-    is KtParameter -> (parent as? KtParameterList)?.parent as? KtPrimaryConstructor
-    else -> null
-}?.allowedValOrVar() ?: false
 
 class CreateExpectedPropertyFix(
     property: KtNamedDeclaration,
