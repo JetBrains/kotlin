@@ -13,7 +13,8 @@ class GradleExtensionsImportingTest : GradleImportingTestCase() {
 
   @Test
   fun testJavaProject() {
-    importProject("apply plugin: 'java'")
+    importProject("apply plugin: 'java'\n" +
+                  "apply plugin: 'idea'")
 
     assertModules("project", "project.main", "project.test")
 
