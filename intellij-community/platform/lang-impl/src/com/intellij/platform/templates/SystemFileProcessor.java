@@ -26,10 +26,7 @@ import java.util.List;
 
 import static com.intellij.configurationStore.StoreUtilKt.getStateSpec;
 
-/**
- * @author Dmitry Avdeev
- */
-public class SystemFileProcessor extends ProjectTemplateFileProcessor {
+final class SystemFileProcessor extends ProjectTemplateFileProcessor {
   private static final String[] COMPONENT_NAMES = new String[] {
     FileEditorManager.class.getName(),
     "org.jetbrains.idea.maven.project.MavenWorkspaceSettingsComponent"

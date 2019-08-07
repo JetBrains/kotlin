@@ -162,7 +162,7 @@ fun getExportableComponentsMap(isOnlyExisting: Boolean,
   val app = ApplicationManager.getApplication() as ComponentManagerImpl
 
   @Suppress("DEPRECATION")
-  app.getComponents(ExportableApplicationComponent::class.java).forEach(processor)
+  app.getComponentInstancesOfType(ExportableApplicationComponent::class.java).forEach(processor)
   @Suppress("DEPRECATION")
   ServiceBean.loadServicesFromBeans(ExportableComponent.EXTENSION_POINT, ExportableComponent::class.java).forEach(processor)
 
