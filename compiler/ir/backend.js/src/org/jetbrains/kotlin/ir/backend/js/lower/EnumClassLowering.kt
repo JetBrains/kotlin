@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
+import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationContainerLoweringPass
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
@@ -101,7 +102,7 @@ private fun createEntryAccessorName(enumName: String, enumEntry: IrEnumEntry) =
 
 private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irClass).defaultType
 
-class EnumClassConstructorLowering(val context: JsIrBackendContext) : DeclarationContainerLoweringPass {
+class EnumClassConstructorLowering(val context: CommonBackendContext) : DeclarationContainerLoweringPass {
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.transformDeclarationsFlat { declaration ->
             if (declaration is IrClass && declaration.isEnumClass &&
@@ -113,7 +114,7 @@ class EnumClassConstructorLowering(val context: JsIrBackendContext) : Declaratio
     }
 }
 
-class EnumClassConstructorTransformer(val context: JsIrBackendContext, private val irClass: IrClass) {
+class EnumClassConstructorTransformer(val context: CommonBackendContext, private val irClass: IrClass) {
     private val builder = context.createIrBuilder(irClass.symbol)
     private val enumEntries = irClass.declarations.filterIsInstance<IrEnumEntry>()
     private val loweredEnumConstructors = HashMap<IrConstructorSymbol, IrConstructor>()

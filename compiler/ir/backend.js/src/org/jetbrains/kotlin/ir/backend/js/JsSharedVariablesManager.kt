@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.name.Name
 
-class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrFile) : SharedVariablesManager {
+class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclarationsFile: IrPackageFragment) : SharedVariablesManager {
 
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         val valueType = originalDeclaration.type
