@@ -85,7 +85,7 @@ class AutoboxingTransformer(val context: JsIrBackendContext) : AbstractValueUsag
         if (actualType.isUnit() && !expectedType.isUnit()) {
             // Don't materialize Unit if value is known to be proper Unit on runtime
             if (!this.isGetUnit()) {
-                val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.symbolTable.referenceClass(context.builtIns.unit))
+                val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.irBuiltIns.unitClass)
                 return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
             }
         }
