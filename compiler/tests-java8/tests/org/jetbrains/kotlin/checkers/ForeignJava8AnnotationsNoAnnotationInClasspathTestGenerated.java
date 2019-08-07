@@ -43,24 +43,6 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends
         runTest("compiler/testData/foreignAnnotationsJava8/tests/typeUseOnObject.kt");
     }
 
-    @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis")
-    @TestDataPath("$PROJECT_ROOT")
-    @RunWith(JUnit3RunnerWithInners.class)
-    public static class Codeanalysis extends AbstractForeignJava8AnnotationsNoAnnotationInClasspathTest {
-        private void runTest(String testDataFilePath) throws Exception {
-            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
-        }
-
-        public void testAllFilesPresentInCodeanalysis() throws Exception {
-            KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis"), Pattern.compile("^(.+)\\.kt$"), null, true);
-        }
-
-        @TestMetadata("defaults.kt")
-        public void testDefaults() throws Exception {
-            runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/defaults.kt");
-        }
-    }
-
     @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/jspecify")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -73,9 +55,19 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends
             KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/jspecify"), Pattern.compile("^(.+)\\.kt$"), null, true);
         }
 
+        @TestMetadata("defaults.kt")
+        public void testDefaults() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/defaults.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/simple.kt");
+        }
+
+        @TestMetadata("typeParameterBounds.kt")
+        public void testTypeParameterBounds() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/typeParameterBounds.kt");
         }
     }
 

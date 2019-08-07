@@ -18,7 +18,8 @@ val MIGRATION_ANNOTATION_FQNAME = FqName("kotlin.annotations.jvm.UnderMigration"
 val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
     AnnotationQualifierApplicabilityType.FIELD,
     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
-    AnnotationQualifierApplicabilityType.VALUE_PARAMETER
+    AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
+    AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
 )
 
 val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(

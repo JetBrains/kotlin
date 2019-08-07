@@ -38,8 +38,15 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
         operator fun component1() = typeQualifier
         operator fun component2() = AnnotationQualifierApplicabilityType.values().filter(this::isApplicableTo)
 
-        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType) =
-            isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) || isApplicableConsideringMask(elementType)
+        private fun isApplicableTo(elementType: AnnotationQualifierApplicabilityType): Boolean {
+            if (isApplicableConsideringMask(elementType)) return true
+
+            // We explicitly state that while JSR-305 TYPE_USE annotations effectively should be applied to every type
+            // they are not applicable for type parameter bounds because it would be a breaking change otherwise.
+            // Only defaulting annotations from jspecify are applicable
+            return isApplicableConsideringMask(AnnotationQualifierApplicabilityType.TYPE_USE) &&
+                    elementType != AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+        }
 
         private fun isApplicableConsideringMask(elementType: AnnotationQualifierApplicabilityType) =
             (applicability and (1 shl elementType.ordinal)) != 0

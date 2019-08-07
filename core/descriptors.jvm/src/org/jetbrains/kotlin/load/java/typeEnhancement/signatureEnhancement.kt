@@ -62,8 +62,11 @@ class SignatureEnhancement(
         }
     }
 
-    fun extractNullability(annotationDescriptor: AnnotationDescriptor): NullabilityQualifierWithMigrationStatus? {
-        extractNullabilityFromKnownAnnotations(annotationDescriptor)?.let { return it }
+    fun extractNullability(
+        annotationDescriptor: AnnotationDescriptor,
+        onlyForJspecify: Boolean
+    ): NullabilityQualifierWithMigrationStatus? {
+        extractNullabilityFromKnownAnnotations(annotationDescriptor, onlyForJspecify)?.let { return it }
 
         val typeQualifierAnnotation =
             annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(annotationDescriptor)
@@ -72,42 +75,63 @@ class SignatureEnhancement(
         val jsr305State = annotationTypeQualifierResolver.resolveJsr305AnnotationState(annotationDescriptor)
         if (jsr305State.isIgnore) return null
 
-        return extractNullabilityFromKnownAnnotations(typeQualifierAnnotation)?.copy(isForWarningOnly = jsr305State.isWarning)
+        return extractNullabilityFromKnownAnnotations(
+            typeQualifierAnnotation, onlyForJspecify
+        )?.copy(isForWarningOnly = jsr305State.isWarning)
     }
 
     private fun extractNullabilityFromKnownAnnotations(
-        annotationDescriptor: AnnotationDescriptor
+        annotationDescriptor: AnnotationDescriptor,
+        onlyForJspecify: Boolean
     ): NullabilityQualifierWithMigrationStatus? {
         val annotationFqName = annotationDescriptor.fqName ?: return null
 
-        return when {
-            annotationFqName in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
-            annotationFqName in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-            annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
+        val migrationStatus =
+            jspecifyMigrationStatus(annotationFqName)
+                ?: (if (!onlyForJspecify) commonMigrationStatus(annotationFqName, annotationDescriptor) else null)
+                ?: return null
 
-            annotationFqName == COMPATQUAL_NULLABLE_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+        return if (!migrationStatus.isForWarningOnly
+            && annotationDescriptor is PossiblyExternalAnnotationDescriptor
+            && annotationDescriptor.isIdeExternalAnnotation
+        )
+            migrationStatus.copy(isForWarningOnly = true)
+        else migrationStatus
+    }
 
-            annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+    private fun jspecifyMigrationStatus(
+        annotationFqName: FqName
+    ): NullabilityQualifierWithMigrationStatus? = when (annotationFqName) {
+        JSPECIFY_NOT_NULL -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        JSPECIFY_NULLABLE -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+        JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY)
+        else -> null
+    }
 
-            annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
-                NullabilityQualifier.NOT_NULL,
-                isForWarningOnly = true
-            )
+    private fun commonMigrationStatus(
+        annotationFqName: FqName,
+        annotationDescriptor: AnnotationDescriptor
+    ): NullabilityQualifierWithMigrationStatus? = when {
+        annotationFqName in NULLABLE_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+        annotationFqName in NOT_NULL_ANNOTATIONS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+        annotationFqName == JAVAX_NONNULL_ANNOTATION -> annotationDescriptor.extractNullabilityTypeFromArgument()
 
-            annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
-                NullabilityQualifier.NULLABLE,
-                isForWarningOnly = true
-            )
-            else -> null
-        }?.let { migrationStatus ->
-            if (!migrationStatus.isForWarningOnly
-                    && annotationDescriptor is PossiblyExternalAnnotationDescriptor
-                    && annotationDescriptor.isIdeExternalAnnotation)
-                migrationStatus.copy(isForWarningOnly = true)
-            else migrationStatus
-        }
+        annotationFqName == COMPATQUAL_NULLABLE_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+            NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
+
+        annotationFqName == COMPATQUAL_NONNULL_ANNOTATION && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+            NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
+
+        annotationFqName == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+            NullabilityQualifier.NOT_NULL,
+            isForWarningOnly = true
+        )
+
+        annotationFqName == ANDROIDX_RECENTLY_NULLABLE_ANNOTATION -> NullabilityQualifierWithMigrationStatus(
+            NullabilityQualifier.NULLABLE,
+            isForWarningOnly = true
+        )
+        else -> null
     }
 
     fun <D : CallableMemberDescriptor> enhanceSignatures(c: LazyJavaResolverContext, platformSignatures: Collection<D>): Collection<D> {
@@ -204,6 +228,20 @@ class SignatureEnhancement(
         return this
     }
 
+    fun enhanceTypeParameterBounds(
+        typeParameter: TypeParameterDescriptor,
+        bounds: List<KotlinType>,
+        context: LazyJavaResolverContext
+    ): List<KotlinType> {
+        return bounds.map { bound ->
+            SignatureParts(
+                typeParameter, bound, emptyList(), false, context,
+                AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
+                typeParameterBounds = true
+            ).enhance().type
+        }
+    }
+
     private fun ValueParameterDescriptor.hasDefaultValueInAnnotation(type: KotlinType): Boolean {
         val defaultValue = getDefaultValueFromAnnotation()
 
@@ -220,7 +258,8 @@ class SignatureEnhancement(
         private val fromOverridden: Collection<KotlinType>,
         private val isCovariant: Boolean,
         private val containerContext: LazyJavaResolverContext,
-        private val containerApplicabilityType: AnnotationQualifierApplicabilityType
+        private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
+        private val typeParameterBounds: Boolean = false
     ) {
 
         private val isForVarargParameter get() = typeContainer.safeAs<ValueParameterDescriptor>()?.varargElementType != null
@@ -316,7 +355,7 @@ class SignatureEnhancement(
         }
 
         private fun Annotations.extractNullability(): NullabilityQualifierWithMigrationStatus? =
-            this.firstNotNullResult(this@SignatureEnhancement::extractNullability)
+            this.firstNotNullResult { extractNullability(it, onlyForJspecify = typeParameterBounds) }
 
         private fun computeIndexedQualifiersForOverride(): (Int) -> JavaTypeQualifiers {
 
@@ -356,7 +395,12 @@ class SignatureEnhancement(
                     TypeAndDefaultQualifiers(
                         type,
                         c.defaultTypeQualifiers
-                            ?.get(AnnotationQualifierApplicabilityType.TYPE_USE)
+                            ?.get(
+                                if (typeParameterBounds)
+                                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+                                else
+                                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE
+                            )
                     )
                 )
 

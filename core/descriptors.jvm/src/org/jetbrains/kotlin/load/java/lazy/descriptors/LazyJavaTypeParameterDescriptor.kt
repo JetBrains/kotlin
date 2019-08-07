@@ -45,6 +45,10 @@ class LazyJavaTypeParameterDescriptor(
     override val annotations = LazyJavaAnnotations(c, javaTypeParameter)
 
     override fun resolveUpperBounds(): List<KotlinType> {
+        return computeNotEnhancedBounds().let { c.components.signatureEnhancement.enhanceTypeParameterBounds(this, it, c) }
+    }
+
+    private fun computeNotEnhancedBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds
         if (bounds.isEmpty()) {
             return listOf(
