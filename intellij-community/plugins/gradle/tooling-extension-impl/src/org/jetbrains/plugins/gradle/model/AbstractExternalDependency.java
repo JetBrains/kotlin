@@ -8,6 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
+import org.jetbrains.plugins.gradle.util.BooleanBiFunction;
+import org.jetbrains.plugins.gradle.util.ContainerUtil;
 
 import java.util.*;
 
@@ -159,17 +161,12 @@ public abstract class AbstractExternalDependency implements ExternalDependency {
                                @NotNull Collection<ExternalDependency> dependencies2) {
     DependenciesIterator iterator1 = new DependenciesIterator(dependencies1);
     DependenciesIterator iterator2 = new DependenciesIterator(dependencies2);
-    while (iterator2.hasNext()) {
-      if (!iterator1.hasNext()) {
-        return false;
+    return ContainerUtil.match(iterator1, iterator2, new BooleanBiFunction<AbstractExternalDependency, AbstractExternalDependency>() {
+      @Override
+      public Boolean fun(AbstractExternalDependency o1, AbstractExternalDependency o2) {
+        return Objects.equal(o1.myId, o2.myId) && Objects.equal(o1.myScope, o2.myScope);
       }
-      AbstractExternalDependency d1 = iterator1.next();
-      AbstractExternalDependency d2 = iterator2.next();
-      if (!Objects.equal(d1.myId, d2.myId) || !Objects.equal(d1.myScope, d2.myScope)) {
-        return false;
-      }
-    }
-    return !iterator1.hasNext();
+    });
   }
 
   @Override

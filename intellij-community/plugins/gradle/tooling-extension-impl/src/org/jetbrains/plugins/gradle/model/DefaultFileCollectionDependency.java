@@ -4,13 +4,15 @@ package org.jetbrains.plugins.gradle.model;
 import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
+import org.jetbrains.plugins.gradle.util.BooleanBiFunction;
+import org.jetbrains.plugins.gradle.util.ContainerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.intellij.util.containers.ContainerUtilRt.map2List;
-import static org.jetbrains.plugins.gradle.tooling.util.FunctionUtils.FILE_TO_PATH;
+import static org.jetbrains.plugins.gradle.util.FunctionUtils.FILE_TO_PATH;
 
 public final class DefaultFileCollectionDependency extends AbstractExternalDependency implements FileCollectionDependency {
   private static final long serialVersionUID = 1L;
@@ -43,7 +45,12 @@ public final class DefaultFileCollectionDependency extends AbstractExternalDepen
     if (!(o instanceof DefaultFileCollectionDependency)) return false;
     if (!super.equals(o)) return false;
     DefaultFileCollectionDependency that = (DefaultFileCollectionDependency)o;
-    return map2List(files, FILE_TO_PATH).equals(map2List(that.files, FILE_TO_PATH));
+    return ContainerUtil.match(files.iterator(), that.files.iterator(), new BooleanBiFunction<File, File>() {
+      @Override
+      public Boolean fun(File o1, File o2) {
+        return Objects.equal(o1.getPath(), o2.getPath());
+      }
+    });
   }
 
   @Override
