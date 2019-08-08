@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.impl.IrAnonymousInitializerImpl
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 class DescriptorTable {
     private val descriptors = mutableMapOf<DeclarationDescriptor, Long>()
@@ -20,38 +18,51 @@ class DescriptorTable {
 }
 
 // TODO: We don't manage id clashes anyhow now.
-abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: DescriptorTable, mangler: KotlinMangler) : KotlinMangler by mangler {
-
-    private val builtInsTable = mutableMapOf<IrSymbol, UniqId>()
+abstract class GlobalDeclarationTable(private val mangler: KotlinMangler) {
     private val table = mutableMapOf<IrDeclaration, UniqId>()
-    val descriptors = descriptorTable
-    protected abstract var currentIndex: Long
 
-    open fun loadKnownBuiltins(): Long {
+    protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
+        var index = startIndex
         builtIns.knownBuiltins.forEach {
-            builtInsTable[it] = UniqId(currentIndex++, false)
+            table[it.owner] = UniqId(index++, false)
         }
-        return currentIndex
-    }
-
-    fun uniqIdByDeclaration(value: IrDeclaration) = (value as? IrSymbolOwner)?.let { builtInsTable[it.symbol] } ?: table.getOrPut(value) {
-        computeUniqIdByDeclaration(value)
-    }
-
-    open protected fun computeUniqIdByDeclaration(value: IrDeclaration): UniqId {
-        val index = if (value.origin == IrDeclarationOrigin.FAKE_OVERRIDE ||
-            !value.isExported()
-            || value is IrVariable
-            || value is IrValueParameter
-            || value is IrAnonymousInitializer
-            || value is IrLocalDelegatedProperty
-        ) {
-            UniqId(currentIndex++, true)
-        } else {
-            UniqId(value.hashedMangle, false)
-        }
-
         return index
+    }
+
+    open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
+        return table.getOrPut(declaration) {
+            UniqId(mangler.hashedMangleImpl(declaration), false)
+        }
+    }
+
+    fun isExportedDeclaration(declaration: IrDeclaration): Boolean = mangler.isExportedImpl(declaration)
+}
+
+class DeclarationTable(
+    private val descriptorTable: DescriptorTable,
+    private val globalDeclarationTable: GlobalDeclarationTable,
+    startIndex: Long
+) {
+    private val table = mutableMapOf<IrDeclaration, UniqId>()
+
+    private fun IrDeclaration.isLocalDeclaration(): Boolean {
+        return origin == IrDeclarationOrigin.FAKE_OVERRIDE || !isExportedDeclaration(this) || this is IrVariable || this is IrValueParameter || this is IrAnonymousInitializer || this is IrLocalDelegatedProperty
+    }
+
+    private var localIndex = startIndex
+
+    fun isExportedDeclaration(declaration: IrDeclaration) = globalDeclarationTable.isExportedDeclaration(declaration)
+
+    private fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
+        return if (declaration.isLocalDeclaration()) {
+            table.getOrPut(declaration) { UniqId(localIndex++, true) }
+        } else globalDeclarationTable.computeUniqIdByDeclaration(declaration)
+    }
+
+    fun uniqIdByDeclaration(declaration: IrDeclaration): UniqId {
+        val uniqId = computeUniqIdByDeclaration(declaration)
+        descriptorTable.put(declaration.descriptor, uniqId)
+        return uniqId
     }
 }
 

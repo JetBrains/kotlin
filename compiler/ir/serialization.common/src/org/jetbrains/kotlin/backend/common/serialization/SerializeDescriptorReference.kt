@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 open class DescriptorReferenceSerializer(
     val declarationTable: DeclarationTable,
     val serializeString: (String) -> ProtoString,
-    val serializeFqName: (FqName) -> ProtoFqName,
-    mangler: KotlinMangler): KotlinMangler by mangler {
+    val serializeFqName: (FqName) -> ProtoFqName
+) {
 
     private fun isEnumSpecialMember(descriptor: DeclarationDescriptor): Boolean {
         if (descriptor !is SimpleFunctionDescriptor) return false
@@ -54,7 +54,7 @@ open class DescriptorReferenceSerializer(
 
         val descriptor = declaration.descriptor
 
-        if (!declaration.isExported() &&
+        if (!declarationTable.isExportedDeclaration(declaration) &&
             !((declaration as? IrDeclarationWithVisibility)?.visibility == Visibilities.INVISIBLE_FAKE)) {
             return null
         }
@@ -111,7 +111,6 @@ open class DescriptorReferenceSerializer(
         } else descriptor.name.toString()
 
         val uniqId = discoverableDescriptorsDeclaration?.let { declarationTable.uniqIdByDeclaration(it) }
-        uniqId?.let { declarationTable.descriptors.put(discoverableDescriptorsDeclaration.descriptor, it) }
 
         val proto = ProtoDescriptorReference.newBuilder()
             .setPackageFqName(serializeFqName(packageFqName))

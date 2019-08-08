@@ -13,4 +13,4 @@ class JsIrFileSerializer(
     logger: LoggingContext,
     declarationTable: DeclarationTable,
     bodiesOnlyForInlines: Boolean = false
-) : IrFileSerializer(logger, declarationTable, JsMangler, bodiesOnlyForInlines)
+) : IrFileSerializer(logger, declarationTable, bodiesOnlyForInlines)

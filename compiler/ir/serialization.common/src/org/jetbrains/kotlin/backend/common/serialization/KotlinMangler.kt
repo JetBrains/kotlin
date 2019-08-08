@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.name.Name
 interface KotlinMangler {
     val String.hashMangle: Long
     val IrDeclaration.hashedMangle: Long
+    fun hashedMangleImpl(declaration: IrDeclaration): Long
     fun IrDeclaration.isExported(): Boolean
+    fun isExportedImpl(declaration: IrDeclaration): Boolean
     val IrFunction.functionName: String
     val IrType.isInlined: Boolean
     val Long.isSpecial: Boolean
@@ -31,13 +33,19 @@ interface KotlinMangler {
 abstract class KotlinManglerImpl : KotlinMangler {
     override val String.hashMangle get() = this.cityHash64()
 
+    override fun hashedMangleImpl(declaration: IrDeclaration): Long {
+        return declaration.uniqSymbolName().hashMangle
+    }
+
     override val IrDeclaration.hashedMangle: Long
-        get() = this.uniqSymbolName().hashMangle
+        get() = hashedMangleImpl(this)
 
 
     // We can't call "with (super) { this.isExported() }" in children.
     // So provide a hook.
     protected open fun IrDeclaration.isPlatformSpecificExported(): Boolean = false
+
+    override fun IrDeclaration.isExported(): Boolean = isExportedImpl(this)
 
     /**
      * Defines whether the declaration is exported, i.e. visible from other modules.
@@ -46,27 +54,27 @@ abstract class KotlinManglerImpl : KotlinMangler {
      * that doesn't depend on any internal transformations (e.g. IR lowering),
      * and so should be computable from the descriptor itself without checking a backend state.
      */
-    override tailrec fun IrDeclaration.isExported(): Boolean {
+    tailrec override fun isExportedImpl(declaration: IrDeclaration): Boolean {
         // TODO: revise
-        val descriptorAnnotations = this.descriptor.annotations
+        val descriptorAnnotations = declaration.descriptor.annotations
 
-        if (this.isPlatformSpecificExported()) return true
+        if (declaration.isPlatformSpecificExported()) return true
 
         if (descriptorAnnotations.hasAnnotation(publishedApiAnnotation)) {
             return true
         }
 
-        if (this.isAnonymousObject)
+        if (declaration.isAnonymousObject)
             return false
 
-        if (this is IrConstructor && constructedClass.kind.isSingleton) {
+        if (declaration is IrConstructor && declaration.constructedClass.kind.isSingleton) {
             // Currently code generator can access the constructor of the singleton,
             // so ignore visibility of the constructor itself.
-            return constructedClass.isExported()
+            return isExportedImpl(declaration.constructedClass)
         }
 
-        if (this is IrFunction) {
-            val descriptor = this.descriptor
+        if (declaration is IrFunction) {
+            val descriptor = declaration.descriptor
             // TODO: this code is required because accessor doesn't have a reference to property.
             if (descriptor is PropertyAccessorDescriptor) {
                 val property = descriptor.correspondingProperty
@@ -74,12 +82,12 @@ abstract class KotlinManglerImpl : KotlinMangler {
             }
         }
 
-        val visibility = when (this) {
-            is IrClass -> this.visibility
-            is IrFunction -> this.visibility
-            is IrProperty -> this.visibility
-            is IrField -> this.visibility
-            is IrTypeAlias -> this.visibility
+        val visibility = when (declaration) {
+            is IrClass -> declaration.visibility
+            is IrFunction -> declaration.visibility
+            is IrProperty -> declaration.visibility
+            is IrField -> declaration.visibility
+            is IrTypeAlias -> declaration.visibility
             else -> null
         }
 
@@ -92,9 +100,9 @@ abstract class KotlinManglerImpl : KotlinMangler {
             return false
         }
 
-        val parent = this.parent
+        val parent = declaration.parent
         if (parent is IrDeclaration) {
-            return parent.isExported()
+            return isExportedImpl(parent)
         }
 
         return true
@@ -205,7 +213,7 @@ abstract class KotlinManglerImpl : KotlinMangler {
 
     val IrClass.typeInfoSymbolName: String
         get() {
-            assert(this.isExported())
+            assert(isExportedImpl(this))
             if (isBuiltInFunction(this))
                 return KotlinMangler.functionClassSymbolName(name)
             return "ktype:" + this.fqNameForIrSerialization.toString()

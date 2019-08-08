@@ -125,7 +125,6 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.Visibility as Pro
 open class IrFileSerializer(
     val logger: LoggingContext,
     private val declarationTable: DeclarationTable,
-    mangler: KotlinMangler,
     private val bodiesOnlyForInlines: Boolean = false
 ) {
 
@@ -148,7 +147,7 @@ open class IrFileSerializer(
     private val protoBodyArray = mutableListOf<XStatementOrExpression>()
 
     private val descriptorReferenceSerializer =
-        DescriptorReferenceSerializer(declarationTable, { serializeString(it) }, { serializeFqName(it) }, mangler)
+        DescriptorReferenceSerializer(declarationTable, { serializeString(it) }, { serializeFqName(it) })
 
     sealed class XStatementOrExpression {
         abstract fun toByteArray(): ByteArray

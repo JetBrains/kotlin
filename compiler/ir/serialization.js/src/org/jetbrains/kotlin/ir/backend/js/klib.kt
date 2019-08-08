@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -291,8 +294,6 @@ fun serializeModuleIntoKlib(
     moduleFragment: IrModuleFragment,
     nopack: Boolean
 ) {
-    val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable())
-
     val descriptorTable = DescriptorTable()
 
     val serializedIr = JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable).serializedIrModule(moduleFragment)
