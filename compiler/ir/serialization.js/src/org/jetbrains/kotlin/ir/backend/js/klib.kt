@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
+import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 
@@ -110,6 +111,15 @@ data class IrModuleInfo(
     val deserializer: JsIrLinker
 )
 
+private fun sortDependencies(dependencies: List<KotlinLibrary>, mapping: Map<KotlinLibrary, ModuleDescriptor>): Collection<KotlinLibrary> {
+    val m2l = mapping.map { it.value to it.key }.toMap()
+
+    return DFS.topologicalOrder(dependencies) { m ->
+        val descriptor = mapping[m] ?: error("No descriptor found for library ${m.libraryName}")
+        descriptor.allDependencyModules.filter { it != descriptor }.map { m2l[it] }
+    }.reversed()
+}
+
 fun loadIr(
     project: Project,
     files: List<KtFile>,
@@ -127,7 +137,7 @@ fun loadIr(
 
     val deserializer = JsIrLinker(moduleDescriptor, JsMangler, emptyLoggingContext, irBuiltIns, symbolTable)
 
-    val deserializedModuleFragments = allDependencies.map {
+    val deserializedModuleFragments = sortDependencies(allDependencies, depsDescriptors.descriptors).map {
         deserializer.deserializeIrModuleHeader(depsDescriptors.getModuleDescriptor(it))!!
     }
 
@@ -244,7 +254,7 @@ private class ModulesStructure(
     private val storageManager: LockBasedStorageManager = LockBasedStorageManager("ModulesStructure")
     private var runtimeModule: ModuleDescriptorImpl? = null
 
-    private val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
+    val descriptors = mutableMapOf<KotlinLibrary, ModuleDescriptorImpl>()
 
     fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl = descriptors.getOrPut(current) {
         val parts = loadKlibMetadataParts(current)

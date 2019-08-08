@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.phaser.invokeToplevel
 import org.jetbrains.kotlin.backend.wasm.codegen.IrModuleToWasm
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.loadIr
-import org.jetbrains.kotlin.ir.backend.js.sortDependencies
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -45,8 +44,7 @@ fun compileWasm(
         ).generateUnboundSymbolsAsDependencies()
     }
 
-    // Since modules should be initialized in the correct topological order we sort them
-    val irFiles = sortDependencies(dependencyModules).flatMap { it.files } + moduleFragment.files
+    val irFiles = dependencyModules.flatMap { it.files } + moduleFragment.files
 
     moduleFragment.files.clear()
     moduleFragment.files += irFiles
