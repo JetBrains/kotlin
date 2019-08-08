@@ -13,6 +13,7 @@ import com.intellij.codeInsight.hint.TooltipGroup;
 import com.intellij.codeInsight.hint.TooltipRenderer;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
+import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.Service;
 import com.intellij.openapi.components.ServiceManager;
@@ -59,7 +60,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
 @Service
-public final class EditorMouseHoverPopupManager {
+public final class EditorMouseHoverPopupManager implements Disposable {
   private static final Logger LOG = Logger.getInstance(EditorMouseHoverPopupManager.class);
   private static final Key<Boolean> DISABLE_BINDING = Key.create("EditorMouseHoverPopupManager.disable.binding");
   private static final TooltipGroup EDITOR_INFO_GROUP = new TooltipGroup("EDITOR_INFO_GROUP", 0);
@@ -86,17 +87,14 @@ public final class EditorMouseHoverPopupManager {
           DocumentationManager.getInstance(editor.getProject()).setAllowContentUpdateFromContext(true);
         }
       }
-    });
-    multicaster.addVisibleAreaListener(new VisibleAreaListener() {
-      @Override
-      public void visibleAreaChanged(@NotNull VisibleAreaEvent e) {
-        if (!Registry.is("editor.new.mouse.hover.popups")) {
-          return;
-        }
-
-        cancelCurrentProcessing();
+    }, this);
+    multicaster.addVisibleAreaListener(e -> {
+      if (!Registry.is("editor.new.mouse.hover.popups")) {
+        return;
       }
-    });
+
+      cancelCurrentProcessing();
+    }, this);
 
     EditorMouseHoverPopupControl.getInstance().addListener(() -> {
       if (!Registry.is("editor.new.mouse.hover.popups")) {
@@ -110,6 +108,11 @@ public final class EditorMouseHoverPopupManager {
     });
 
     IdeEventQueue.getInstance().addActivityListener(this::onActivity, ApplicationManager.getApplication());
+  }
+
+  @Override
+  public void dispose() {
+
   }
 
   private void handleMouseMoved(@NotNull EditorMouseEvent e) {
