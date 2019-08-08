@@ -36,7 +36,7 @@ import com.intellij.profile.codeInspection.InspectionProfileManager;
 import com.intellij.psi.codeStyle.CodeStyleScheme;
 import com.intellij.psi.codeStyle.CodeStyleSchemes;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
-import com.intellij.testFramework.PlatformTestUtil;
+import com.intellij.testFramework.ExtensionTestUtil;
 import org.intellij.lang.annotations.Language;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
@@ -170,7 +170,7 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
   }
 
   private void maskRunImporter(@NotNull RunConfigurationImporter testExtension) {
-    PlatformTestUtil.maskExtensions(RunConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(RunConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
   }
 
   @Test
@@ -281,7 +281,9 @@ public class GradleSettingsImportingTest extends GradleSettingsImportingTestCase
   @Test
   public void testFacetSettingsImport() throws Exception {
     TestFacetConfigurationImporter testExtension = new TestFacetConfigurationImporter("spring");
-    PlatformTestUtil.maskExtensions(FacetConfigurationImporter.EP_NAME, Collections.singletonList(testExtension), getTestRootDisposable());
+    ExtensionTestUtil
+      .maskExtensions(FacetConfigurationImporter.EP_NAME, Collections.<FacetConfigurationImporter>singletonList(testExtension),
+                      getTestRootDisposable());
     importProject(
       withGradleIdeaExtPlugin(
         "import org.jetbrains.gradle.ext.*\n" +

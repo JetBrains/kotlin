@@ -9,7 +9,7 @@ import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.vfs.refreshVfs
 import com.intellij.testFramework.ApplicationRule
 import com.intellij.testFramework.DisposableRule
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.TemporaryDirectory
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.io.lastModified
@@ -302,7 +302,7 @@ internal class ApplicationStoreTest {
     val obsoleteStorageBean = ObsoleteStorageBean()
     obsoleteStorageBean.file = "i_do_not_want_to_be_deleted_but.xml"
     obsoleteStorageBean.components.addAll(listOf("loser1", "loser2", "lucky"))
-    PlatformTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
+    ExtensionTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
 
     @State(name = "loser1", storages = [(Storage(value = "i_do_not_want_to_be_deleted_but.xml"))])
     class AOther : A()
@@ -361,7 +361,7 @@ internal class ApplicationStoreTest {
     val obsoleteStorageBean = ObsoleteStorageBean()
     obsoleteStorageBean.file = "i_will_be_not_deleted.xml"
     obsoleteStorageBean.components.addAll(listOf("Loser"))
-    PlatformTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
+    ExtensionTestUtil.maskExtensions(OBSOLETE_STORAGE_EP, listOf(obsoleteStorageBean), disposableRule.disposable)
 
     testAppConfig.resolve(obsoleteStorageBean.file).write("""
       <application>

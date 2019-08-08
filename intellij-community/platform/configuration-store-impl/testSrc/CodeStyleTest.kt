@@ -6,7 +6,7 @@ import com.intellij.psi.codeStyle.CodeStyleSettings
 import com.intellij.psi.codeStyle.CodeStyleSettingsProvider
 import com.intellij.psi.codeStyle.CustomCodeStyleSettings
 import com.intellij.testFramework.DisposableRule
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.ProjectRule
 import com.intellij.testFramework.assertions.Assertions.assertThat
 import com.intellij.util.containers.ContainerUtil
@@ -121,7 +121,7 @@ internal class CodeStyleTest {
       }
     }
 
-    PlatformTestUtil.maskExtensions(CodeStyleSettingsProvider.EXTENSION_POINT_NAME, listOf(newProvider), disposableRule.disposable)
+    ExtensionTestUtil.maskExtensions(CodeStyleSettingsProvider.EXTENSION_POINT_NAME, listOf(newProvider), disposableRule.disposable)
     val settings = CodeStyleSettings()
     fun text(param: String): String {
       return """

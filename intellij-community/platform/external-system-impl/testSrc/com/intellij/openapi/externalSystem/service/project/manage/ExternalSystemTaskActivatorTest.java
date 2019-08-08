@@ -26,20 +26,20 @@ import com.intellij.openapi.util.KeyWithDefaultValue;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.task.*;
+import com.intellij.testFramework.ExtensionTestUtil;
 import com.intellij.testFramework.HeavyPlatformTestCase;
-import com.intellij.testFramework.PlatformTestUtil;
 import com.intellij.util.concurrency.Semaphore;
 import one.util.streamex.StreamEx;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.intellij.openapi.externalSystem.service.project.manage.ExternalSystemTaskActivator.Phase.*;
 import static com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil.TEST_EXTERNAL_SYSTEM_ID;
 import static com.intellij.openapi.externalSystem.util.ExternalSystemConstants.USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX;
 import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
 
 public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
 
@@ -52,11 +52,10 @@ public class ExternalSystemTaskActivatorTest extends HeavyPlatformTestCase {
     TestExternalSystemManager testExternalSystemManager = new MyTestExternalSystemManager();
     List<ExternalSystemManager<?, ?, ?, ?, ?>> externalSystemManagers =
       StreamEx.of(ExternalSystemManager.EP_NAME.extensions()).append(testExternalSystemManager).toList();
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, getTestRootDisposable());
-    PlatformTestUtil.maskExtensions(ConfigurationType.CONFIGURATION_TYPE_EP,
-                                    singletonList(new TestTaskConfigurationType()),
-                                    getTestRootDisposable());
-    PlatformTestUtil.maskExtensions(ProjectTaskRunner.EP_NAME, emptyList(), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, externalSystemManagers, getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(ConfigurationType.CONFIGURATION_TYPE_EP,
+                                     Collections.<ConfigurationType>singletonList(new TestTaskConfigurationType()), getTestRootDisposable());
+    ExtensionTestUtil.maskExtensions(ProjectTaskRunner.EP_NAME, emptyList(), getTestRootDisposable());
     Registry.addKey(TEST_EXTERNAL_SYSTEM_ID.getId() + USE_IN_PROCESS_COMMUNICATION_REGISTRY_KEY_SUFFIX, "", true, false);
 
     String projectPath = "/project/path";
