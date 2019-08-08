@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin
 
+import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecResult
@@ -296,6 +297,14 @@ class RunExternalTestGroup extends OldKonanTest {
      * overrides [KonanTest::inDevelopersRun] used in [:backend.native:tests:sanity]
      */
     public def inDevelopersRun = false
+
+    /**
+     * If true, the test executable will be built in two stages:
+     * 1. Build a klibrary from sources.
+     * 2. Build a final executable from this klibrary.
+     */
+    @Input
+    public def enableTwoStageCompilation = false
 
     def groupDirectory = "."
     def outputSourceSetName = "testOutputExternal"
@@ -608,7 +617,16 @@ fun runTest() {
             compileList.add(project.file("testUtils.kt").absolutePath)
             compileList.add(project.file("helpers.kt").absolutePath)
             try {
-                runCompiler(compileList, buildExePath(), flags)
+                def exePath = buildExePath()
+                if (enableTwoStageCompilation) {
+                    // Two-stage compilation.
+                    def klibPath = "${exePath}.klib"
+                    runCompiler(compileList, klibPath, flags + ["-p", "library"])
+                    runCompiler([], exePath, flags + ["-l", klibPath, "-Xsource-library=$klibPath"])
+                } else {
+                    // Regular compilation.
+                    runCompiler(compileList, exePath, flags)
+                }
             } catch (Exception ex) {
                 project.logger.quiet("ERROR: Compilation failed for test suite: $name with exception", ex)
                 project.logger.quiet("The following files were unable to compile:")
