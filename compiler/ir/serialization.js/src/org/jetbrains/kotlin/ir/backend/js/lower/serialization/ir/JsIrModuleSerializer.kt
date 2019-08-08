@@ -6,13 +6,14 @@
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.backend.common.serialization.IrModuleSerializer
-import org.jetbrains.kotlin.backend.common.serialization.KotlinMangler
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
-class JsIrModuleSerializer(logger: LoggingContext, declarationTable: JsDeclarationTable) :
-    IrModuleSerializer<JsIrFileSerializer>(logger, JsMangler, declarationTable) {
+class JsIrModuleSerializer(logger: LoggingContext, private val irBuiltIns: IrBuiltIns, private val descriptorTable: DescriptorTable) :
+    IrModuleSerializer<JsIrFileSerializer>(logger, JsMangler) {
 
-
-    override fun createSerializerForFile(file: IrFile): JsIrFileSerializer = JsIrFileSerializer(logger, declarationTable)
+    override fun createSerializerForFile(file: IrFile): JsIrFileSerializer =
+        JsIrFileSerializer(logger, JsDeclarationTable(irBuiltIns, descriptorTable))
 }

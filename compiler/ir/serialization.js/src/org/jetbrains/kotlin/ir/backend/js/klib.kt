@@ -283,7 +283,9 @@ fun serializeModuleIntoKlib(
 ) {
     val declarationTable = JsDeclarationTable(moduleFragment.irBuiltins, DescriptorTable())
 
-    val serializedIr = JsIrModuleSerializer(emptyLoggingContext, declarationTable).serializedIrModule(moduleFragment)
+    val descriptorTable = DescriptorTable()
+
+    val serializedIr = JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable).serializedIrModule(moduleFragment)
     val serializer = JsKlibMetadataSerializationUtil
 
     val moduleDescription =
@@ -294,7 +296,7 @@ fun serializeModuleIntoKlib(
         languageVersionSettings,
         metadataVersion
     ) { declarationDescriptor ->
-        val index = declarationTable.descriptorTable.get(declarationDescriptor)
+        val index = descriptorTable.get(declarationDescriptor)
         index?.let { newJsDescriptorUniqId(it) }
     }
 
