@@ -120,8 +120,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xexport-library",
             valueDescription = "<path>",
-            description = "Path to the library to be included into produced framework API\n" +
-                    "Must be the path of a library passed with '-library'",
+            description = "A library to be included into produced framework API.\n" +
+                    "Must be one of libraries passed with '-library'",
             delimiter = ""
     )
     var exportedLibraries: Array<String>? = null
@@ -157,12 +157,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xruntime", deprecatedName = "--runtime", valueDescription = "<path>", description = "Override standard 'runtime.bc' location")
     var runtimeFile: String? = null
 
-    // TODO: Rename?
-    // TODO: Improve description
     @Argument(
         value = SOURCE_LIBRARY_ARG,
         valueDescription = "<path>",
-        description = "Produce an output binary from a klibrary instead of source files"
+        description = "A library to be processed in the same manner as source files (test processing, ObjC export etc).\n" +
+                "Must be one of libraries passed with '-library'"
     )
     var sourceLibraries: Array<String>? = null
 
@@ -194,7 +193,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xlibrary-to-cover",
             valueDescription = "<path>",
-            description = "Path to library that should be covered.",
+            description = "A library that should be covered.\n" +
+                    "Must be one of libraries passed with '-library'",
             delimiter = ""
     )
     var coveredLibraries: Array<String>? = null
