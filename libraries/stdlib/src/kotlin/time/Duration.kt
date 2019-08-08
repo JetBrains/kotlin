@@ -75,6 +75,9 @@ public inline class Duration internal constructor(internal val value: Double) : 
     /** Returns true, if the duration value is less than zero. */
     public fun isNegative(): Boolean = value < 0
 
+    /** Returns true, if the duration value is greater than zero. */
+    public fun isPositive(): Boolean = value > 0
+
     /** Returns true, if the duration value is infinite. */
     public fun isInfinite(): Boolean = value.isInfinite()
 
