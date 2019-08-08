@@ -41,7 +41,8 @@ import java.io.File
 open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
-    private val parentClassCodegen: ClassCodegen? = null
+    private val parentClassCodegen: ClassCodegen? = null,
+    private val withinInline: Boolean = false
 ) : InnerClassConsumer {
     private val innerClasses = mutableListOf<IrClass>()
 
@@ -74,6 +75,9 @@ open class ClassCodegen protected constructor(
         }
 
     fun generate(): ReifiedTypeParametersUsages {
+        if (withinInline) {
+            getOrCreateSourceMapper() //initialize default mapping that would be later written in class file
+        }
         val superClassInfo = irClass.getSuperClassInfo(typeMapper)
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
 
@@ -232,8 +236,8 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateLocalClass(klass: IrClass): ReifiedTypeParametersUsages {
-        return ClassCodegen(klass, context, this).generate()
+    fun generateLocalClass(klass: IrClass, withinInline: Boolean): ReifiedTypeParametersUsages {
+        return ClassCodegen(klass, context, this, withinInline = withinInline || this.withinInline).generate()
     }
 
     private fun generateField(field: IrField) {

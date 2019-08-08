@@ -576,9 +576,8 @@ class ExpressionCodegen(
                     "is not implemented, or it should have been lowered: ${element.render()}"
         )
 
-    // TODO maybe remove?
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration).also {
+        classCodegen.generateLocalClass(declaration, irFunction.isInline).also {
             closureReifiedMarkers[declaration] = it
         }
         return immaterialUnitValue
