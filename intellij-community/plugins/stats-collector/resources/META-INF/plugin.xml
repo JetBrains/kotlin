@@ -70,7 +70,7 @@
     <registryKey key="completion.stats.enable.session.factors" defaultValue="true"
                  description="Use inside single session factors"/>
 
-    <preloadingActivity implementation="com.intellij.stats.sender.SenderComponent"/>
+    <preloadingActivity implementation="com.intellij.stats.sender.SenderPreloadingActivity"/>
   </extensions>
 
   <application-components>

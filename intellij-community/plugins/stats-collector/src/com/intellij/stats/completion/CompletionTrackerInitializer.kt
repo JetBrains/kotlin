@@ -7,7 +7,6 @@ import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.lang.Language
-import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
@@ -25,7 +24,7 @@ import com.intellij.stats.storage.factors.MutableLookupStorage
 import java.beans.PropertyChangeListener
 import kotlin.random.Random
 
-class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposable {
+class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
   companion object {
     var isEnabledInTests: Boolean = false
     private val LOGGED_SESSIONS_RATIO: Map<String, Double> = mapOf(
@@ -123,9 +122,11 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
   }
 
   private fun initComponent() {
-    if (!shouldInitialize()) return
+    if (!shouldInitialize()) {
+      return
+    }
 
-    val busConnection = ApplicationManager.getApplication().messageBus.connect(this)
+    val busConnection = ApplicationManager.getApplication().messageBus.connect()
     busConnection.subscribe(AnActionListener.TOPIC, actionListener)
     busConnection.subscribe(ProjectManager.TOPIC, object : ProjectManagerListener {
       override fun projectOpened(project: Project) {
@@ -138,8 +139,5 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) : Disposa
         lookupManager.removePropertyChangeListener(lookupTrackerInitializer)
       }
     })
-  }
-
-  override fun dispose() {
   }
 }

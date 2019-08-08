@@ -10,7 +10,7 @@ import com.intellij.stats.experiment.WebServiceStatus
 import com.intellij.util.Alarm
 import com.intellij.util.Time
 
-internal class SenderComponent : PreloadingActivity() {
+internal class SenderPreloadingActivity : PreloadingActivity() {
   private val alarm = Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication())
   private val sendInterval = 5 * Time.MINUTE
 
