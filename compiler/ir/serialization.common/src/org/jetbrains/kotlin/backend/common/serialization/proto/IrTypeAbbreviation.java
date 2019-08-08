@@ -67,11 +67,11 @@ public final class IrTypeAbbreviation extends
             break;
           }
           case 18: {
-            org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder subBuilder = null;
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder subBuilder = null;
             if (((bitField0_ & 0x00000002) == 0x00000002)) {
               subBuilder = typeAlias_.toBuilder();
             }
-            typeAlias_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.PARSER, extensionRegistry);
+            typeAlias_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.PARSER, extensionRegistry);
             if (subBuilder != null) {
               subBuilder.mergeFrom(typeAlias_);
               typeAlias_ = subBuilder.buildPartial();
@@ -145,17 +145,17 @@ public final class IrTypeAbbreviation extends
   }
 
   public static final int TYPE_ALIAS_FIELD_NUMBER = 2;
-  private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol typeAlias_;
+  private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex typeAlias_;
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
    */
   public boolean hasTypeAlias() {
     return ((bitField0_ & 0x00000002) == 0x00000002);
   }
   /**
-   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+   * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
    */
-  public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getTypeAlias() {
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getTypeAlias() {
     return typeAlias_;
   }
 
@@ -211,7 +211,7 @@ public final class IrTypeAbbreviation extends
 
   private void initFields() {
     annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
-    typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     hasQuestionMark_ = false;
     argument_ = java.util.Collections.emptyList();
   }
@@ -387,7 +387,7 @@ public final class IrTypeAbbreviation extends
       super.clear();
       annotations_ = org.jetbrains.kotlin.backend.common.serialization.proto.Annotations.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000001);
-      typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
       bitField0_ = (bitField0_ & ~0x00000002);
       hasQuestionMark_ = false;
       bitField0_ = (bitField0_ & ~0x00000004);
@@ -572,23 +572,23 @@ public final class IrTypeAbbreviation extends
       return this;
     }
 
-    private org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+    private org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
     public boolean hasTypeAlias() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
-    public org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol getTypeAlias() {
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex getTypeAlias() {
       return typeAlias_;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
-    public Builder setTypeAlias(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder setTypeAlias(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (value == null) {
         throw new NullPointerException();
       }
@@ -598,23 +598,23 @@ public final class IrTypeAbbreviation extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
     public Builder setTypeAlias(
-        org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.Builder builderForValue) {
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.Builder builderForValue) {
       typeAlias_ = builderForValue.build();
 
       bitField0_ |= 0x00000002;
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
-    public Builder mergeTypeAlias(org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol value) {
+    public Builder mergeTypeAlias(org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex value) {
       if (((bitField0_ & 0x00000002) == 0x00000002) &&
-          typeAlias_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance()) {
+          typeAlias_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance()) {
         typeAlias_ =
-          org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.newBuilder(typeAlias_).mergeFrom(value).buildPartial();
+          org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.newBuilder(typeAlias_).mergeFrom(value).buildPartial();
       } else {
         typeAlias_ = value;
       }
@@ -623,10 +623,10 @@ public final class IrTypeAbbreviation extends
       return this;
     }
     /**
-     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol type_alias = 2;</code>
+     * <code>required .org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex type_alias = 2;</code>
      */
     public Builder clearTypeAlias() {
-      typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrSymbol.getDefaultInstance();
+      typeAlias_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrDataIndex.getDefaultInstance();
 
       bitField0_ = (bitField0_ & ~0x00000002);
       return this;

@@ -108,18 +108,10 @@ public interface DescriptorReferenceOrBuilder extends
 
   /**
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   *
-   * <pre>
-   * TODO optional bool is_type_alias = 13 [default = false];
-   * </pre>
    */
   boolean hasIsTypeParameter();
   /**
    * <code>optional bool is_type_parameter = 12 [default = false];</code>
-   *
-   * <pre>
-   * TODO optional bool is_type_alias = 13 [default = false];
-   * </pre>
    */
   boolean getIsTypeParameter();
 }

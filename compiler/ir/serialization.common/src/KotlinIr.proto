@@ -188,7 +188,7 @@ message IrSimpleType {
 
 message IrTypeAbbreviation {
   required Annotations annotations = 1;
-  required IrSymbol type_alias = 2;
+  required IrDataIndex type_alias = 2;
   required bool has_question_mark = 3;
   repeated IrTypeArgument argument = 4;
 }
@@ -677,10 +677,10 @@ message IrClass {
 
 message IrTypeAlias {
   required IrDeclarationBase base = 1;
-  required String name = 2;
+  required IrDataIndex name = 2;
   required Visibility visibility = 3;
   required IrTypeParameterContainer type_parameters = 4;
-  required IrTypeIndex expanded_type = 5;
+  required IrDataIndex expanded_type = 5;
   required bool is_actual = 6;
 }
 
