@@ -15,7 +15,7 @@ import com.intellij.openapi.externalSystem.test.ExternalSystemTestUtil.TEST_EXTE
 import com.intellij.openapi.externalSystem.test.TestExternalSystemExecutionSettings
 import com.intellij.openapi.externalSystem.test.TestExternalSystemManager
 import com.intellij.openapi.project.Project
-import com.intellij.testFramework.PlatformTestUtil
+import com.intellij.testFramework.ExtensionTestUtil
 import com.intellij.testFramework.RunAll
 import com.intellij.testFramework.UsefulTestCase
 import com.intellij.testFramework.fixtures.IdeaProjectTestFixture
@@ -47,7 +47,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
   }
 
   fun `test remote resolve project info`() {
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(SimpleTestExternalSystemManager(project)), testRootDisposable)
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME, listOf(SimpleTestExternalSystemManager(project)), testRootDisposable)
 
     val facadeManager: ExternalSystemFacadeManager = ServiceManager.getService(ExternalSystemFacadeManager::class.java)
     TestCase.assertNotNull(facadeManager)
@@ -79,7 +79,7 @@ class ExternalSystemFacadeManagerTest : UsefulTestCase() {
 
     val testExternalSystemManager = CustomClassLoadingTestExternalSystemManager(project)
 
-    PlatformTestUtil.maskExtensions(ExternalSystemManager.EP_NAME,
+    ExtensionTestUtil.maskExtensions(ExternalSystemManager.EP_NAME,
                                     listOf(testExternalSystemManager, fakeExternalSystemManager),
                                     testRootDisposable)
 
