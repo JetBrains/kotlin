@@ -53,6 +53,17 @@ internal fun getSourceLibraries(
     FeaturedLibrariesReporter.forSourceLibraries(configuration)
 )
 
+internal fun getCoveredLibraries(
+    configuration: CompilerConfiguration,
+    resolvedLibraries: KonanLibraryResolveResult,
+    resolver: SearchPathResolver
+): List<KonanLibrary> = getFeaturedLibraries(
+    configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
+    resolvedLibraries,
+    resolver,
+    FeaturedLibrariesReporter.forCoveredLibraries(configuration)
+)
+
 private sealed class FeaturedLibrariesReporter {
 
     abstract fun reportIllegalKind(library: KonanLibrary)
@@ -94,7 +105,6 @@ private sealed class FeaturedLibrariesReporter {
             "Following libraries are specified to be exported with -Xexport-library, but not included to the build:"
     }
 
-    // TODO: Reformulate?
     private class SourceLibrariesReporter(configuration: CompilerConfiguration) : BaseReporter(configuration) {
         override fun illegalKindMessage(kind: String, libraryName: String): String =
             "$kind library $libraryName can't be used as a source library"
@@ -103,9 +113,18 @@ private sealed class FeaturedLibrariesReporter {
             "Following libraries are declared as source libraries with -Xsource-library, but not included to the build:"
     }
 
+    private class CoveredLibraryReporter(configuration: CompilerConfiguration): BaseReporter(configuration) {
+        override fun illegalKindMessage(kind: String, libraryName: String): String =
+            "$kind library $libraryName can't be covered"
+
+        override fun notIncludedLibraryMessageTitle(): String =
+            "Following libraries are specified to be covered with -Xlibrary-to-cover, but not included to the build:"
+    }
+
     companion object {
         fun forExportedLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter = ExportedLibrariesReporter(configuration)
         fun forSourceLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter = SourceLibrariesReporter(configuration)
+        fun forCoveredLibraries(configuration: CompilerConfiguration): FeaturedLibrariesReporter = CoveredLibraryReporter(configuration)
     }
 }
 

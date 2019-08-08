@@ -27,9 +27,7 @@ internal class CoverageManager(val context: Context) {
             context.config.configuration.getBoolean(KonanConfigKeys.COVERAGE)
 
     private val librariesToCover: Set<String> =
-            context.config.configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER)
-                    .map { File(it).absolutePath.removeSuffixIfPresent(".klib") }
-                    .toSet()
+            context.config.coveredLibraries.map { it.libraryName }.toSet()
 
     private val llvmProfileFilenameGlobal = "__llvm_profile_filename"
 
