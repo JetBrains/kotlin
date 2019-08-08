@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinQuickFixAction
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
+import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
@@ -55,9 +56,10 @@ class AddActualFix(
             ShortenReferences.DEFAULT.process(codeStyleManager.reformat(this) as KtElement)
         }
 
+        val module = element.module ?: return
         for (missedDeclaration in missedDeclarationPointers.mapNotNull { it.element }) {
             val actualDeclaration = when (missedDeclaration) {
-                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, outerClasses = listOf(element))
+                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, module, listOf(element))
                 is KtFunction -> missedDeclaration.toDescriptor()?.safeAs<FunctionDescriptor>()?.let {
                     generateFunction(project, false, missedDeclaration, it, element)
                 }

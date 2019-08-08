@@ -117,13 +117,13 @@ internal fun KtPsiFactory.generateClassOrObject(
     project: Project,
     generateExpectClass: Boolean,
     originalClass: KtClassOrObject,
-    targetModule: Module? = null,
+    targetModule: Module,
     outerClasses: List<KtClassOrObject> = emptyList(),
     existingFqNames: Set<String> = emptySet()
 ): KtClassOrObject {
     val generatedClass = createClassHeaderCopyByText(originalClass)
     val context = originalClass.analyzeWithContent()
-    repairSuperTypeList(
+    val superNames = repairSuperTypeList(
         generatedClass,
         originalClass,
         generateExpectClass,
@@ -179,7 +179,7 @@ internal fun KtPsiFactory.generateClassOrObject(
                         descriptor as FunctionDescriptor,
                         generatedClass,
                         existingClasses,
-                        existingFqNames
+                        existingFqNames + superNames
                     )
                     is KtProperty -> generateProperty(
                         project,
@@ -188,7 +188,7 @@ internal fun KtPsiFactory.generateClassOrObject(
                         descriptor as PropertyDescriptor,
                         generatedClass,
                         existingClasses,
-                        existingFqNames
+                        existingFqNames + superNames
                     )
                     else -> continue@declLoop
                 }
@@ -208,7 +208,7 @@ internal fun KtPsiFactory.generateClassOrObject(
                 descriptor,
                 generatedClass,
                 outerClasses,
-                existingFqNames
+                existingFqNames + superNames
             )
             generatedClass.addDeclaration(generatedProperty)
         }
@@ -228,7 +228,7 @@ internal fun KtPsiFactory.generateClassOrObject(
                 descriptor,
                 generatedClass,
                 outerClasses,
-                existingFqNames
+                existingFqNames + superNames
             )
             generatedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
         }
@@ -245,7 +245,8 @@ private fun KtPsiFactory.repairSuperTypeList(
     targetModule: Module?,
     existingFqNames: Set<String>,
     context: BindingContext
-) {
+): Collection<String> {
+    val superNames = linkedSetOf<String>()
     generated.superTypeListEntries.zip(original.superTypeListEntries).forEach { (generatedEntry, originalEntry) ->
         val superType = context[BindingContext.TYPE, originalEntry.typeReference]
         val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
@@ -257,6 +258,7 @@ private fun KtPsiFactory.repairSuperTypeList(
             return@forEach
         }
 
+        superType.fqName?.shortName()?.asString()?.let { superNames += it }
         if (generateExpectClass) {
             if (generatedEntry !is KtSuperTypeCallEntry) return@forEach
         } else {
@@ -275,6 +277,7 @@ private fun KtPsiFactory.repairSuperTypeList(
     }
 
     if (generated.superTypeListEntries.isEmpty()) generated.getSuperTypeList()?.delete()
+    return superNames
 }
 
 private val forbiddenAnnotationFqNames = setOf(
@@ -290,7 +293,7 @@ internal fun generateFunction(
     descriptor: FunctionDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Set<String> = emptySet()
+    existingFqNames: Collection<String> = emptySet()
 ): KtFunction {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -309,7 +312,7 @@ internal fun generateFunction(
         copyDoc = true,
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
-    ) as KtFunction
+    ).also { if (generatedClass != null) it.repairOverride(descriptor, existingFqNames) } as KtFunction
 }
 
 internal fun generateProperty(
@@ -319,7 +322,7 @@ internal fun generateProperty(
     descriptor: PropertyDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Set<String> = emptySet()
+    existingFqNames: Collection<String> = emptySet()
 ): KtProperty {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -335,7 +338,16 @@ internal fun generateProperty(
         copyDoc = true,
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
-    ) as KtProperty
+    ).also { if (generatedClass != null) it.repairOverride(descriptor, existingFqNames) } as KtProperty
+}
+
+private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, existingFqNames: Collection<String>) {
+    if (!hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
+
+    val superDescriptor = descriptor.overriddenDescriptors.firstOrNull()?.containingDeclaration
+    if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in existingFqNames) {
+        removeModifier(KtTokens.OVERRIDE_KEYWORD)
+    }
 }
 
 private fun CallableMemberDescriptor.checkTypeParameterBoundsAccessibility(accessibleClasses: List<KtClassOrObject>) {
@@ -427,11 +439,11 @@ private tailrec fun DeclarationDescriptor.additionalClasses(existingClasses: Set
 }
 
 private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
-    return sequenceOf(fqNameOrNull()) + when (this) {
+    return when (this) {
         is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
         is ClassDescriptor -> if (isInline) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
             emptySequence()
-        } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
+        } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes) + sequenceOf(fqNameOrNull())
         is CallableDescriptor -> {
             val returnType = returnType ?: return sequenceOf(null)
             returnType.collectAllTypes() + explicitParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)

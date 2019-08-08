@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.idea.caches.project.ModuleSourceInfo
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.quickfix.KotlinSingleIntentionActionFactory
 import org.jetbrains.kotlin.idea.util.actualsForExpected
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
-import org.jetbrains.kotlin.platform.TargetPlatform
 
 sealed class CreateActualFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -87,7 +87,7 @@ class CreateActualClassFix(
     actualModule: Module,
     actualPlatform: TargetPlatform
 ) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
-    generateClassOrObject(project, false, element)
+    generateClassOrObject(project, false, element, targetModule = actualModule)
 })
 
 class CreateActualPropertyFix(

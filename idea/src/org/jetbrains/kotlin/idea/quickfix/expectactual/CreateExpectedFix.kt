@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
@@ -286,7 +287,16 @@ class CreateExpectedPropertyFix(
         return@block null
     }
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, true, element, descriptor, targetExpectedClass) }
+    descriptor?.let {
+        generateProperty(
+            project,
+            true,
+            element,
+            descriptor,
+            targetExpectedClass,
+            existingFqNames = targetExpectedClass?.getSuperNames().orEmpty()
+        )
+    }
 })
 
 class CreateExpectedFunctionFix(
@@ -299,6 +309,15 @@ class CreateExpectedFunctionFix(
         return@block null
     }
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, true, element, descriptor, targetExpectedClass) }
+    descriptor?.let {
+        generateFunction(
+            project,
+            true,
+            element,
+            descriptor,
+            targetExpectedClass,
+            existingFqNames = targetExpectedClass?.getSuperNames().orEmpty()
+        )
+    }
 })
 
