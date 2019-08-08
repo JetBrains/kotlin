@@ -173,7 +173,7 @@ public class ConsoleViewImpl extends JPanel implements ConsoleView, ObservableCo
     myPsiDisposedCheck = new DisposedPsiManagerCheck(project);
     myProject = project;
 
-    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? ConsoleFilterProvider.computeConsoleFilters(project, this, searchScope)
+    myFilters = new CompositeFilter(project, usePredefinedMessageFilter ? ConsoleViewUtil.computeConsoleFilters(project, this, searchScope)
                                                                         : Collections.emptyList());
     myFilters.setForceUseAllFilters(true);
 
