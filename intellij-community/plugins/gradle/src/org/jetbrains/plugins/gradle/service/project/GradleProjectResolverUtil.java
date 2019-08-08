@@ -47,8 +47,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS;
-
 /**
  * @author Vladislav.Soroka
  */
@@ -426,30 +424,6 @@ public class GradleProjectResolverUtil {
     catch (IOException | InvalidPathException e) {
       LOG.debug(e);
     }
-  }
-
-  @Deprecated
-  @SuppressWarnings("unchecked")
-  public static Collection<DependencyData> getIdeDependencies(@NotNull ProjectResolverContext resolverCtx,
-                                                              @NotNull DataNode<? extends ModuleData> moduleDataNode,
-                                                              @NotNull Collection<ExternalDependency> dependencies)
-    throws IllegalStateException {
-
-    final DataNode<ProjectData> ideProject = ExternalSystemApiUtil.findParent(moduleDataNode, ProjectKeys.PROJECT);
-    assert ideProject != null;
-
-    final Map<String, Pair<DataNode<GradleSourceSetData>, ExternalSourceSet>> sourceSetMap =
-      ideProject.getUserData(GradleProjectResolver.RESOLVED_SOURCE_SETS);
-    assert sourceSetMap != null;
-
-    final Map<String, String> artifactsMap = ideProject.getUserData(CONFIGURATION_ARTIFACTS);
-    assert artifactsMap != null;
-
-    DataNode fakeNode = new DataNode(CONTAINER_KEY, moduleDataNode.getData(), null);
-    buildDependencies(resolverCtx, sourceSetMap, artifactsMap, fakeNode, dependencies, null);
-    final Collection<DataNode<?>> dataNodes =
-      ExternalSystemApiUtil.findAllRecursively(fakeNode, node -> node.getData() instanceof DependencyData);
-    return ContainerUtil.map(dataNodes, node -> (DependencyData)node.getData());
   }
 
   public static void buildDependencies(@NotNull ProjectResolverContext resolverCtx,

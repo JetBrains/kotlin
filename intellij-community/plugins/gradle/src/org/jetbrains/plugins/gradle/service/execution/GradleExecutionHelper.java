@@ -574,14 +574,6 @@ public class GradleExecutionHelper {
     }
   }
 
-  @Deprecated // use the method with the cancellationTokenSource provided
-  @Nullable
-  public static GradleVersion getGradleVersion(@NotNull ProjectConnection connection,
-                                               @NotNull ExternalSystemTaskId taskId,
-                                               @NotNull ExternalSystemTaskNotificationListener listener) {
-    return getGradleVersion(connection, taskId, listener, null);
-  }
-
   @Nullable
   public static GradleVersion getGradleVersion(@NotNull ProjectConnection connection,
                                                @NotNull ExternalSystemTaskId taskId,
@@ -594,14 +586,6 @@ public class GradleExecutionHelper {
       gradleVersion = GradleVersion.version(buildEnvironment.getGradle().getGradleVersion());
     }
     return gradleVersion;
-  }
-
-  @Deprecated // use the method with the cancellationTokenSource provided
-  @Nullable
-  public static BuildEnvironment getBuildEnvironment(@NotNull ProjectConnection connection,
-                                                     @NotNull ExternalSystemTaskId taskId,
-                                                     @NotNull ExternalSystemTaskNotificationListener listener) {
-    return getBuildEnvironment(connection, taskId, listener, null);
   }
 
   @Nullable
@@ -743,40 +727,6 @@ public class GradleExecutionHelper {
 
   /* deprecated methods to be removed in future version */
 
-  /**
-   * @deprecated {@link #getModelBuilder(Class, ExternalSystemTaskId, GradleExecutionSettings, ProjectConnection, ExternalSystemTaskNotificationListener)}
-   */
-  @Deprecated
-  @ApiStatus.ScheduledForRemoval
-  @NotNull
-  public <T> ModelBuilder<T> getModelBuilder(@NotNull Class<T> modelType,
-                                             @NotNull final ExternalSystemTaskId id,
-                                             @Nullable GradleExecutionSettings settings,
-                                             @NotNull ProjectConnection connection,
-                                             @NotNull ExternalSystemTaskNotificationListener listener,
-                                             @NotNull List<String> extraJvmArgs) {
-    ModelBuilder<T> result = connection.model(modelType);
-    prepare(result, id, settings, listener, extraJvmArgs, new ArrayList<>(), connection);
-    return result;
-  }
-
-
-  /**
-   * @deprecated {@link #getBuildLauncher(ExternalSystemTaskId, ProjectConnection, GradleExecutionSettings, ExternalSystemTaskNotificationListener)}
-   */
-  @Deprecated
-  @NotNull
-  public BuildLauncher getBuildLauncher(@NotNull final ExternalSystemTaskId id,
-                                        @NotNull ProjectConnection connection,
-                                        @Nullable GradleExecutionSettings settings,
-                                        @NotNull ExternalSystemTaskNotificationListener listener,
-                                        @NotNull final List<String> vmOptions,
-                                        @NotNull final List<String> commandLineArgs) {
-    BuildLauncher result = connection.newBuild();
-    prepare(result, id, settings, listener, vmOptions, commandLineArgs, connection);
-    return result;
-  }
-
   @NotNull
   static List<String> obfuscatePasswordParameters(@NotNull List<String> commandLineArguments) {
     List<String> replaced = new ArrayList<>(commandLineArguments.size());
@@ -794,55 +744,6 @@ public class GradleExecutionHelper {
       }
     }
     return replaced;
-  }
-
-  /**
-   * @deprecated to be removed in future version
-   */
-  @ApiStatus.ScheduledForRemoval
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @Nullable GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull ProjectConnection connection) {
-    if (settings == null) return;
-    settings.withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, new OutputWrapper(listener, id, true), new OutputWrapper(listener, id, false));
-  }
-
-  /**
-   * @deprecated use {@link #prepare(LongRunningOperation, ExternalSystemTaskId, GradleExecutionSettings, ExternalSystemTaskNotificationListener, ProjectConnection)}
-   */
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @Nullable GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull List<String> commandLineArgs,
-                             @NotNull ProjectConnection connection) {
-    if (settings == null) return;
-    settings.withArguments(commandLineArgs).withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, new OutputWrapper(listener, id, true), new OutputWrapper(listener, id, false));
-  }
-
-  /**
-   * @deprecated use {@link #prepare(LongRunningOperation, ExternalSystemTaskId, GradleExecutionSettings, ExternalSystemTaskNotificationListener, ProjectConnection, OutputStream, OutputStream)}
-   */
-  @Deprecated
-  public static void prepare(@NotNull LongRunningOperation operation,
-                             @NotNull final ExternalSystemTaskId id,
-                             @NotNull GradleExecutionSettings settings,
-                             @NotNull final ExternalSystemTaskNotificationListener listener,
-                             @NotNull List<String> extraJvmArgs,
-                             @NotNull List<String> commandLineArgs,
-                             @NotNull ProjectConnection connection,
-                             @NotNull final OutputStream standardOutput,
-                             @NotNull final OutputStream standardError) {
-    settings.withArguments(commandLineArgs).withVmOptions(extraJvmArgs);
-    prepare(operation, id, settings, listener, connection, standardOutput, standardError);
   }
 
   private static String getIdeaVersion() {

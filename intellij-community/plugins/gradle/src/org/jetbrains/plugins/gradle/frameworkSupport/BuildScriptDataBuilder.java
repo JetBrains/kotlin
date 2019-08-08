@@ -48,14 +48,6 @@ public class BuildScriptDataBuilder {
     return myGradleVersion;
   }
 
-  /**
-   * @deprecated use {@link #buildMainPart()} and {@link #buildConfigurationPart()} instead
-   */
-  @Deprecated
-  public String build() {
-    return buildMainPart();
-  }
-
   public String buildImports() {
     if (!imports.isEmpty()) {
       return StringUtil.join(imports, "\n") + "\n";

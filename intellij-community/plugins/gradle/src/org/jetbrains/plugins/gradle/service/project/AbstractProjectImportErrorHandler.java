@@ -16,7 +16,6 @@
 package org.jetbrains.plugins.gradle.service.project;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
-import com.intellij.openapi.util.Pair;
 import org.gradle.tooling.model.build.BuildEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -51,23 +50,5 @@ public abstract class AbstractProjectImportErrorHandler {
   public String parseMissingMethod(@NotNull String rootCauseText) {
     Matcher matcher = GradleExecutionErrorHandler.MISSING_METHOD_PATTERN.matcher(rootCauseText);
     return matcher.find() ? matcher.group(1) : "";
-  }
-
-  /**
-   * @deprecated use {@link GradleExecutionErrorHandler#getRootCauseAndLocation(Throwable)}
-   */
-  @Deprecated
-  @NotNull
-  public Pair<Throwable, String> getRootCauseAndLocation(@NotNull Throwable error) {
-    return GradleExecutionErrorHandler.getRootCauseAndLocation(error);
-  }
-
-  /**
-   * @deprecated use {@link GradleExecutionErrorHandler#getLocationFrom(Throwable)}
-   */
-  @Deprecated
-  @Nullable
-  public String getLocationFrom(@NotNull Throwable error) {
-    return GradleExecutionErrorHandler.getLocationFrom(error);
   }
 }
