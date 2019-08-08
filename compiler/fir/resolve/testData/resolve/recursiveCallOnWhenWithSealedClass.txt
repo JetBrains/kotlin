@@ -35,6 +35,8 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
                 ($subj$ is R|Maybe.Yeah|) ->  {
                     <Unresolved name: meat>#
                 }
+                else ->  {
+                }
             }
 
         }
