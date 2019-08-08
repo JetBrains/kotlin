@@ -279,7 +279,6 @@ class ControlFlowInformationProvider private constructor(
     private fun reportUnreachableCode(unreachableCode: UnreachableCode) {
         for (element in unreachableCode.elements) {
             trace.report(Errors.UNREACHABLE_CODE.on(element, unreachableCode.getUnreachableTextRanges(element)))
-            trace.record(BindingContext.UNREACHABLE_CODE, element, true)
         }
     }
 
