@@ -178,6 +178,11 @@ class LineBreakpointExpressionVisitor private constructor(
             return Lines.EMPTY
         }
 
+        val maxOffset = document.textLength
+        if (startOffset > maxOffset || endOffset > maxOffset) {
+            return Lines.EMPTY
+        }
+
         val startLine = document.getLineNumber(startOffset)
         val endLine = document.getLineNumber(endOffset)
         return Lines(startLine, endLine)
