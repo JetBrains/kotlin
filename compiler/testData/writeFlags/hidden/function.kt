@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class MyClass() {
     @Deprecated("hidden", level = DeprecationLevel.HIDDEN)
     fun test() {}
