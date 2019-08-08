@@ -40,7 +40,7 @@ public abstract class MoveHandlerDelegate {
   }
 
   /**
-   * @deprecated Please overload the method with 'reference' parameter instead
+   * @deprecated Please overload {@link #canMove(PsiElement[], PsiElement, PsiReference)} instead.
    */
   @Deprecated
   public boolean canMove(PsiElement[] elements, @Nullable final PsiElement targetContainer) {
