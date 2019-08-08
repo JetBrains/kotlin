@@ -165,13 +165,13 @@ abstract class IrFileDeserializer(
         return result
     }
 
-    fun deserializeIrTypeVariance(variance: ProtoTypeVariance) = when (variance) {
+    private fun deserializeIrTypeVariance(variance: ProtoTypeVariance) = when (variance) {
         ProtoTypeVariance.IN -> Variance.IN_VARIANCE
         ProtoTypeVariance.OUT -> Variance.OUT_VARIANCE
         ProtoTypeVariance.INV -> Variance.INVARIANT
     }
 
-    fun deserializeIrTypeArgument(proto: ProtoTypeArgument) = when (proto.kindCase) {
+    private fun deserializeIrTypeArgument(proto: ProtoTypeArgument) = when (proto.kindCase) {
         STAR -> IrStarProjectionImpl
         TYPE -> makeTypeProjection(
             deserializeIrType(proto.type.type), deserializeIrTypeVariance(proto.type.variance)
@@ -186,31 +186,28 @@ abstract class IrFileDeserializer(
         }
     }
 
-    open fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean): IrSimpleType? = null
-
-    fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
+    private fun deserializeSimpleType(proto: ProtoSimpleType): IrSimpleType {
         val symbol = deserializeIrSymbol(proto.classifier) as? IrClassifierSymbol
             ?: error("could not convert sym to ClassifierSymbol")
         logger.log { "deserializeSimpleType: symbol=$symbol" }
 
-        val result = getPrimitiveTypeOrNull(symbol, proto.hasQuestionMark) ?: run {
-            val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
-            val annotations = deserializeAnnotations(proto.annotations)
-            IrSimpleTypeImpl(
-                null,
-                symbol,
-                proto.hasQuestionMark,
-                arguments,
-                annotations,
-                if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
-            )
-        }
+        val arguments = proto.argumentList.map { deserializeIrTypeArgument(it) }
+        val annotations = deserializeAnnotations(proto.annotations)
+
+        val result: IrSimpleType = IrSimpleTypeImpl(
+            null,
+            symbol,
+            proto.hasQuestionMark,
+            arguments,
+            annotations,
+            if (proto.hasAbbreviation()) deserializeTypeAbbreviation(proto.abbreviation) else null
+        )
         logger.log { "ir_type = $result; render = ${result.render()}" }
         return result
 
     }
 
-    fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
+    private fun deserializeTypeAbbreviation(proto: ProtoTypeAbbreviation): IrTypeAbbreviation =
         IrTypeAbbreviationImpl(
             deserializeIrSymbol(proto.typeAlias).let {
                 it as? IrTypeAliasSymbol
@@ -221,12 +218,12 @@ abstract class IrFileDeserializer(
             deserializeAnnotations(proto.annotations)
         )
 
-    fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
+    private fun deserializeDynamicType(proto: ProtoDynamicType): IrDynamicType {
         val annotations = deserializeAnnotations(proto.annotations)
         return IrDynamicTypeImpl(null, annotations, Variance.INVARIANT)
     }
 
-    fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
+    private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
         val annotations = deserializeAnnotations(proto.annotations)
         return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
     }
