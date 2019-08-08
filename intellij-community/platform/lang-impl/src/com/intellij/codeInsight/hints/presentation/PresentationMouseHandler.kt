@@ -9,9 +9,7 @@ import com.intellij.openapi.editor.event.EditorMouseListener
 import com.intellij.openapi.editor.event.EditorMouseMotionListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.StartupActivity
-import java.awt.Component
 import java.awt.Point
-import java.awt.event.MouseEvent
 
 /**
  * Global mouse listener, that provide events to inlay hints at mouse coordinates.
@@ -33,14 +31,11 @@ class PresentationMouseHandler : StartupActivity {
         val event = e.mouseEvent
         if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) return
         val point = event.point
-        val inlay = editor.inlayModel.getElementAt(point) ?: return
+        val inlay = editor.inlayModel.getElementAt(point, PresentationRenderer::class.java) ?: return
         val bounds = inlay.bounds ?: return
         val inlayPoint = Point(bounds.x, bounds.y)
-        val renderer = inlay.renderer
-        if (renderer !is PresentationRenderer) return
-
         val translated = Point(event.x - inlayPoint.x, event.y - inlayPoint.y)
-        renderer.presentation.mouseClicked(event, translated)
+        inlay.renderer.presentation.mouseClicked(event, translated)
       }
     }
   }
@@ -51,12 +46,12 @@ class PresentationMouseHandler : StartupActivity {
         val editor = e.editor
         val event = e.mouseEvent
         // TODO here also may be handling of ESC key
-        val inlay = editor.inlayModel.getElementAt(event.point)
         if (editor.getMouseEventArea(event) != EditorMouseEventArea.EDITING_AREA) {
           activePresentation?.mouseExited()
           return
         }
-        val presentation = (inlay?.renderer as? PresentationRenderer)?.presentation
+        val inlay = editor.inlayModel.getElementAt(event.point, PresentationRenderer::class.java)
+        val presentation = inlay?.renderer?.presentation
         if (activePresentation != presentation) {
           activePresentation?.mouseExited()
           activePresentation = presentation
