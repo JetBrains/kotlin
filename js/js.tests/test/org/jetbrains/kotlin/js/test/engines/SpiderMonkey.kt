@@ -40,7 +40,7 @@ class SpiderMonkeyEngine(
 
     fun runWatBoxTest(watFile: String, function: String, result: String) {
         jsShell.run(
-            "-e", "file=\"$watFile\"; fun=\"$function\"; res=$result;",
+            "-e", "file=String.raw`$watFile`; fun=\"$function\"; res=$result;",
             "-f", "$TEST_RUNNERS/watBox.js"
         )
     }

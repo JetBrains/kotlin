@@ -174,7 +174,9 @@ fun installJsvuEngine(engineName: String, engineVersion: String) =
         setNpmCommand("run", "jsvu", "--", "--os=${jsvuOs()}", "$engineName@$engineVersion")
 
         val userHome = System.getProperty("user.home")
-        val installedEnginePath = file("$userHome/.jsvu/$engineName-$engineVersion").absolutePath
+
+        val extension = if (OperatingSystem.current().isWindows()) ".cmd" else ""
+        val installedEnginePath = file("$userHome/.jsvu/$engineName-$engineVersion$extension").absolutePath
         extra["installedEnginePath"] = installedEnginePath
         doLast {
             if (!file(installedEnginePath).exists()) {
