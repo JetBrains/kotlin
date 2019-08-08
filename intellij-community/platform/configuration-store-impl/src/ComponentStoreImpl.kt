@@ -19,6 +19,7 @@ import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.InvalidDataException
+import com.intellij.openapi.util.JDOMExternalizable
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.openapi.vfs.newvfs.impl.VfsRootAccess
@@ -107,6 +108,15 @@ abstract class ComponentStoreImpl : IComponentStore {
     catch (e: Exception) {
       PluginException.logPluginError(LOG, "Cannot init $componentName component state", e, component.javaClass)
     }
+  }
+
+  override fun unloadComponent(component: Any) {
+    val name = when (component) {
+      is PersistentStateComponent<*> -> getStateSpec(component).name
+      is JDOMExternalizable -> ComponentManagerImpl.getComponentName(component)
+      else -> null
+    }
+    name?.let { removeComponent(it) }
   }
 
   override fun initPersistencePlainComponent(component: Any, key: String) {
@@ -560,7 +570,6 @@ abstract class ComponentStoreImpl : IComponentStore {
     }
   }
 
-  @TestOnly
   fun removeComponent(name: String) {
     components.remove(name)
   }
