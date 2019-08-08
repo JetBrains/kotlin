@@ -65,7 +65,7 @@ val Module.implementedModules: List<Module>
         if (isNewMPPModule) {
             rootManager.dependencies.filter {
                 // TODO: remove additional android check
-                        it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && (isAndroidModule() || it.isTestModule == isTestModule)
+                it.isNewMPPModule && it.platform.isCommon() && it.externalProjectId == externalProjectId && (isAndroidModule() || it.isTestModule == isTestModule)
             }
         } else {
             val modelsProvider = IdeModelsProviderImpl(project)
@@ -111,6 +111,8 @@ val ModuleDescriptor.implementedDescriptors: List<ModuleDescriptor>
 
         return moduleSourceInfo.expectedBy.mapNotNull { it.toDescriptor() }
     }
+
+fun Module.toDescriptor() = (productionSourceInfo() ?: testSourceInfo())?.toDescriptor()
 
 fun ModuleSourceInfo.toDescriptor() = KotlinCacheService.getInstance(module.project)
     .getResolutionFacadeByModuleInfo(this, platform)?.moduleDescriptor
