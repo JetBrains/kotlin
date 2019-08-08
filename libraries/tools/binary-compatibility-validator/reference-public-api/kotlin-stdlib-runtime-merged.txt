@@ -5315,6 +5315,7 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun isFinite-impl (D)Z
 	public static final fun isInfinite-impl (D)Z
 	public static final fun isNegative-impl (D)Z
+	public static final fun isPositive-impl (D)Z
 	public static final fun minus-LRDsOJo (DD)D
 	public static final fun plus-LRDsOJo (DD)D
 	public static final fun times-impl (DD)D
