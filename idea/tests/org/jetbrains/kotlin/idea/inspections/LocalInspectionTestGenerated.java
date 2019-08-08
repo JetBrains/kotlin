@@ -1472,6 +1472,21 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/inspectionsLocal/collections/simplifiableCall"), Pattern.compile("^([\\w\\-_]+)\\.(kt|kts)$"), TargetBackend.ANY, true);
             }
 
+            @TestMetadata("arrayFlatMap.kt")
+            public void testArrayFlatMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap.kt");
+            }
+
+            @TestMetadata("arrayFlatMap2.kt")
+            public void testArrayFlatMap2() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap2.kt");
+            }
+
+            @TestMetadata("arrayFlatMap3.kt")
+            public void testArrayFlatMap3() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/arrayFlatMap3.kt");
+            }
+
             @TestMetadata("explicitLambdaParameter.kt")
             public void testExplicitLambdaParameter() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/explicitLambdaParameter.kt");
@@ -1545,6 +1560,11 @@ public class LocalInspectionTestGenerated extends AbstractLocalInspectionTest {
             @TestMetadata("notOnlyReference.kt")
             public void testNotOnlyReference() throws Exception {
                 runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/notOnlyReference.kt");
+            }
+
+            @TestMetadata("primitiveArrayFlatMap.kt")
+            public void testPrimitiveArrayFlatMap() throws Exception {
+                runTest("idea/testData/inspectionsLocal/collections/simplifiableCall/primitiveArrayFlatMap.kt");
             }
 
             @TestMetadata("set.kt")

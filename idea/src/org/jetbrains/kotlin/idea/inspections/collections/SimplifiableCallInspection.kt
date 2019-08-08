@@ -11,8 +11,10 @@ import com.intellij.codeInspection.ProblemHighlightType
 import com.intellij.codeInspection.ProblemsHolder
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.debugger.sequence.psi.receiverType
 import org.jetbrains.kotlin.idea.inspections.AbstractKotlinInspection
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -87,6 +89,11 @@ class SimplifiableCallInspection : AbstractKotlinInspection() {
                 val reference = lambdaExpression.singleStatement() ?: return null
                 val lambdaParameterName = lambdaExpression.singleLambdaParameterName() ?: return null
                 if (!reference.isNameReferenceTo(lambdaParameterName)) return null
+                val receiverType = callExpression.receiverType() ?: return null
+                if (KotlinBuiltIns.isPrimitiveArray(receiverType)) return null
+                if (KotlinBuiltIns.isArray(receiverType)
+                    && receiverType.arguments.firstOrNull()?.type?.let { KotlinBuiltIns.isArray(it) } != true
+                ) return null
                 return "flatten()"
             }),
 
