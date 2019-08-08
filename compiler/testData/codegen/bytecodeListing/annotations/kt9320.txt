@@ -18,7 +18,7 @@ public final class Kt9320Kt$foo$v$1 {
 
 @kotlin.Metadata
 final class Kt9320Kt$foo$w$1 {
-    public final static field INSTANCE: Kt9320Kt$foo$w$1
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: Kt9320Kt$foo$w$1
     inner class Kt9320Kt$foo$w$1
     static method <clinit>(): void
     method <init>(): void

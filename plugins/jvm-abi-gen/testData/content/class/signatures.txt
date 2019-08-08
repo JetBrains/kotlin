@@ -30,7 +30,7 @@ final class test/Class$NestedInnerClass {
 }
 @kotlin.Metadata
 final class test/Class$classPublicMethod$publicMethodLambda$1 {
-    public final static field INSTANCE: test.Class$classPublicMethod$publicMethodLambda$1
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: test.Class$classPublicMethod$publicMethodLambda$1
     inner class test/Class$classPublicMethod$publicMethodLambda$1
     method <init>(): void
     public final method invoke(p0: int): int

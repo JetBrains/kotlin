@@ -135,6 +135,7 @@ public final class Foo {
 
         @kotlin.Metadata()
         public static final class Zoo {
+            @org.jetbrains.annotations.NotNull()
             public static final Foo.Bar.Zoo INSTANCE = null;
 
             private Zoo() {

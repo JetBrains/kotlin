@@ -32,6 +32,7 @@ public final class NonExistentType {
     public static error.NonExistentClass coocoo3;
     @org.jetbrains.annotations.NotNull()
     public static error.NonExistentClass coocoo31;
+    @org.jetbrains.annotations.NotNull()
     public static final NonExistentType INSTANCE = null;
 
     @org.jetbrains.annotations.Nullable()

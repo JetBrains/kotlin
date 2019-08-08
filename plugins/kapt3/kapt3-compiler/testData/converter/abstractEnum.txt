@@ -15,6 +15,7 @@ public enum E {
 
     @kotlin.Metadata()
     public static final class Obj {
+        @org.jetbrains.annotations.NotNull()
         public static final E.Obj INSTANCE = null;
 
         private Obj() {
