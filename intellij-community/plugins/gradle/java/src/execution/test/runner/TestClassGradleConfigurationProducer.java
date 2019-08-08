@@ -180,15 +180,4 @@ public class TestClassGradleConfigurationProducer extends GradleTestRunConfigura
         performRunnable.run();
     });
   }
-
-  @Deprecated
-  public static String getRuntimeQualifiedName(PsiClass psiClass) {
-    PsiElement parent = psiClass.getParent();
-    if (parent instanceof PsiClass) {
-      return getRuntimeQualifiedName((PsiClass)parent) + "$" + psiClass.getName();
-    }
-    else {
-      return psiClass.getQualifiedName();
-    }
-  }
 }

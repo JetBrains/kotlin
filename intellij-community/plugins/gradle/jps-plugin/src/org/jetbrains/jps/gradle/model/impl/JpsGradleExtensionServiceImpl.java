@@ -21,7 +21,6 @@ import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.util.containers.ConcurrentFactoryMap;
 import com.intellij.util.xmlb.XmlSerializer;
 import gnu.trove.THashMap;
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
@@ -64,12 +63,6 @@ public class JpsGradleExtensionServiceImpl extends JpsGradleExtensionService {
   @Override
   public JpsGradleModuleExtension getExtension(@NotNull JpsModule module) {
     return module.getContainer().getChild(JpsGradleModuleExtensionImpl.ROLE);
-  }
-
-  @NotNull
-  @Override
-  public JpsGradleModuleExtension getOrCreateExtension(@NotNull JpsModule module, Element rootElement) {
-    return getOrCreateExtension(module, rootElement.getAttributeValue("external.system.module.type"));
   }
 
   @Override

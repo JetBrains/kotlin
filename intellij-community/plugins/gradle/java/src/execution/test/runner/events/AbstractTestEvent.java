@@ -64,11 +64,6 @@ public abstract class AbstractTestEvent implements TestEvent {
            : JavaTestLocator.TEST_PROTOCOL + SCHEME_SEPARATOR + StringUtil.getQualifiedName(fqClassName, StringUtil.trimEnd(name, "()"));
   }
 
-  @Deprecated // SMTestProxy stateful actions must be handled in testing thread
-  protected void addToInvokeLater(final Runnable runnable) {
-    ExternalSystemApiUtil.addToInvokeLater(runnable);
-  }
-
   @Nullable
   protected SMTestProxy findTestProxy(final String proxyId) {
     return getExecutionConsole().getTestsMap().get(proxyId);

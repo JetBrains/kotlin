@@ -15,7 +15,6 @@
  */
 package org.jetbrains.jps.gradle.model;
 
-import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.jps.builders.storage.BuildDataPaths;
@@ -42,13 +41,6 @@ public abstract class JpsGradleExtensionService {
 
   @Nullable
   public abstract JpsGradleModuleExtension getExtension(@NotNull JpsModule module);
-
-  /**
-   * @deprecated use {@link #getOrCreateExtension(JpsModule, String)} instead
-   */
-  @Deprecated
-  @NotNull
-  public abstract JpsGradleModuleExtension getOrCreateExtension(@NotNull JpsModule module, Element rootElement);
 
   @NotNull
   public abstract JpsGradleModuleExtension getOrCreateExtension(@NotNull JpsModule module, @Nullable String moduleType);
