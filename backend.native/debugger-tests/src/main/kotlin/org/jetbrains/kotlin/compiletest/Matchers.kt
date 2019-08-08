@@ -76,34 +76,6 @@ fun lldbTest(@Language("kotlin") programText: String, lldbSession: String) {
     lldbSessionSpec.match(result)
 }
 
-
-private fun findMismatch(patterns: List<String>, actualLines: List<String>): String? {
-    val indices = mutableListOf<Int>()
-    for (pattern in patterns) {
-        val idx = actualLines.indexOfFirst { match(pattern, it) }
-        if (idx == -1) {
-            return pattern
-        }
-        indices += idx
-    }
-    check(indices == indices.sorted())
-    return null
-}
-
-private fun match(pattern: String, line: String): Boolean {
-    val chunks = pattern.split("""\s*\[\.\.]\s*""".toRegex())
-            .filter { it.isNotBlank() }
-            .map { it.trim() }
-    check(chunks.isNotEmpty())
-    val trimmedLine = line.trim()
-
-    val indices = chunks.map { trimmedLine.indexOf(it) }
-    if (indices.any { it == -1 } || indices != indices.sorted()) return false
-    if (!(trimmedLine.startsWith(chunks.first()) || pattern.startsWith("[..]"))) return false
-    if (!(trimmedLine.endsWith(chunks.last()) || pattern.endsWith("[..]"))) return false
-    return true
-}
-
 private val haveLldb: Boolean by lazy {
     val lldbVersion = try {
         subprocess(DistProperties.lldb, "-version")
@@ -128,9 +100,11 @@ private class LldbSessionSpecification private constructor(
 ) {
 
     fun match(output: String) {
-        val blocks = output.split("""(?=\(lldb\))""".toRegex())
-        check(blocks[0].startsWith("(lldb) target create"))
-        check(blocks[1].startsWith("(lldb) command script import"))
+        val blocks = output.split("""(?=\(lldb\))""".toRegex()).filterNot(String::isEmpty)
+        check(blocks[0].startsWith("(lldb) target create")) { "Missing block \"target create\". Got: ${blocks[0]}" }
+        check(blocks[1].startsWith("(lldb) command script import")) {
+            "Missing block \"command script import\". Got: ${blocks[0]}"
+        }
         val responses = blocks.drop(2)
         val executedCommands = responses.map { it.lines().first() }
         val bodies = responses.map { it.lines().drop(1) }
@@ -139,14 +113,14 @@ private class LldbSessionSpecification private constructor(
 
         if (!responsesMatch) {
             val message = """
-Responses do not match commands.
-
-COMMANDS: $commands
-RESPONSES: $executedCommands
-
-FULL SESSION:
-$output
-"""
+                |Responses do not match commands.
+                |
+                |COMMANDS: |$commands
+                |RESPONSES: |$executedCommands
+                |
+                |FULL SESSION:
+                |$output
+            """.trimMargin()
             fail(message)
         }
 
@@ -155,27 +129,55 @@ $output
             val mismatch = findMismatch(pattern, body)
             if (mismatch != null) {
                 val message = """
-Wrong LLDB output.
-
-COMMAND: $command
-PATTERN: $mismatch
-OUTPUT:
-${body.joinToString("\n")}
-
-FULL SESSION:
-$output
-""".trimStart()
-
+                    |Wrong LLDB output.
+                    |
+                    |COMMAND: $command
+                    |PATTERN: $mismatch
+                    |OUTPUT:
+                    |${body.joinToString("\n")}
+                    |
+                    |FULL SESSION:
+                    |$output
+                """.trimMargin()
                 fail(message)
             }
         }
     }
 
+    private fun findMismatch(patterns: List<String>, actualLines: List<String>): String? {
+        val indices = mutableListOf<Int>()
+        for (pattern in patterns) {
+            val idx = actualLines.indexOfFirst { match(pattern, it) }
+            if (idx == -1) {
+                return pattern
+            }
+            indices += idx
+        }
+        check(indices == indices.sorted())
+        return null
+    }
+
+    private fun match(pattern: String, line: String): Boolean {
+        val chunks = pattern.split("""\s*\[\.\.]\s*""".toRegex())
+                .filter { it.isNotBlank() }
+                .map { it.trim() }
+        check(chunks.isNotEmpty())
+        val trimmedLine = line.trim()
+
+        val indices = chunks.map { trimmedLine.indexOf(it) }
+        if (indices.any { it == -1 } || indices != indices.sorted()) return false
+        if (!(trimmedLine.startsWith(chunks.first()) || pattern.startsWith("[..]"))) return false
+        if (!(trimmedLine.endsWith(chunks.last()) || pattern.endsWith("[..]"))) return false
+        return true
+    }
+
     companion object {
         fun parse(spec: String): LldbSessionSpecification {
-            val blocks = spec.trimIndent().split("(?=^>)".toRegex(RegexOption.MULTILINE))
+            val blocks = spec.trimIndent()
+                    .split("(?=^>)".toRegex(RegexOption.MULTILINE))
+                    .filterNot(String::isEmpty)
             for (cmd in blocks) {
-                check(cmd.startsWith(">")) { "Invalid lldb session specification" }
+                check(cmd.startsWith(">")) { "Invalid lldb session specification: $cmd" }
             }
             val commands = blocks.map { it.lines().first().substring(1).trim() }
             val patterns = blocks.map { it.lines().drop(1).filter { it.isNotBlank() } }

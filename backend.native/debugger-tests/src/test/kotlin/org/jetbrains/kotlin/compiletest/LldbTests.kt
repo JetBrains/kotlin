@@ -22,22 +22,22 @@ class LldbTests {
         > r
         Process [..] stopped
         [..] stop reason = breakpoint 1.1
-        [..] at main.kt:2
+        [..] at main.kt:2[..]
 
         > n
         Process [..] stopped
         [..] stop reason = step over
-        [..] at main.kt:3
+        [..] at main.kt:3[..]
 
         > n
         Process [..] stopped
         [..] stop reason = step over
-        [..] at main.kt:4
+        [..] at main.kt:4[..]
 
         > n
         Process [..] stopped
         [..] stop reason = step over
-        [..] at main.kt:5
+        [..] at main.kt:5[..]
     """)
 
     @Test
@@ -57,7 +57,7 @@ class LldbTests {
             (char) a = '\x01'
             (int) b = 2
             (long) c = -3
-            (unsigned char) d = 'c'
+            (char) d = 'c'
             (bool) e = true
     """)
 
