@@ -54,7 +54,7 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val elementAtOffset = position.elementAt ?: return emptyList()
 
         val element = CodeInsightUtils.getTopmostElementAtOffset(elementAtOffset, elementAtOffset.textRange.startOffset) as? KtElement
-                ?: return emptyList()
+            ?: return emptyList()
 
         val elementTextRange = element.textRange ?: return emptyList()
 

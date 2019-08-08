@@ -259,7 +259,7 @@ private fun findCallsOnPosition(sourcePosition: SourcePosition, filter: (KtCallE
     return allFilteredCalls.filter {
         val shouldInclude = it.getLineNumber() in linesRange
         if (shouldInclude) {
-            linesRange = min(linesRange.start, it.getLineNumber())..max(linesRange.endInclusive, it.getLineNumber(false))
+            linesRange = min(linesRange.first, it.getLineNumber())..max(linesRange.last, it.getLineNumber(false))
         }
         shouldInclude
     }
@@ -269,17 +269,17 @@ sealed class Action(
     val position: XSourcePositionImpl? = null,
     val stepOverInlineData: StepOverFilterData? = null
 ) {
-    class STEP_OVER : Action() {
+    class StepOver : Action() {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
             debugProcess.createStepOverCommand(suspendContext, ignoreBreakpoints).contextAction(suspendContext)
     }
 
-    class STEP_OUT : Action() {
+    class StepOut : Action() {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) =
             debugProcess.createStepOutCommand(suspendContext).contextAction(suspendContext)
     }
 
-    class RUN_TO_CURSOR(position: XSourcePositionImpl) : Action(position) {
+    class RunToCursor(position: XSourcePositionImpl) : Action(position) {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
             return runReadAction {
                 debugProcess.createRunToCursorCommand(suspendContext, position!!, ignoreBreakpoints)
@@ -287,7 +287,7 @@ sealed class Action(
         }
     }
 
-    class STEP_OVER_INLINED(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData) {
+    class StepOverInlined(stepOverInlineData: StepOverFilterData) : Action(stepOverInlineData = stepOverInlineData) {
         override fun apply(debugProcess: DebugProcessImpl, suspendContext: SuspendContextImpl, ignoreBreakpoints: Boolean) {
             return KotlinStepActionFactory(debugProcess).createKotlinStepOverInlineAction(
                 KotlinStepOverInlineFilter(debugProcess.project, stepOverInlineData!!)
@@ -326,13 +326,13 @@ fun getStepOverAction(
     frameProxy: StackFrameProxyImpl,
     isDexDebug: Boolean
 ): Action {
-    location.declaringType() ?: return Action.STEP_OVER()
+    location.declaringType() ?: return Action.StepOver()
 
     val project = sourceFile.project
 
     val methodLocations = location.method().safeAllLineLocations()
     if (methodLocations.isEmpty()) {
-        return Action.STEP_OVER()
+        return Action.StepOver()
     }
 
     val locationsLineAndFile = methodLocations.keysToMap { ktLocationInfo(it, isDexDebug, project, true) }
@@ -354,15 +354,16 @@ fun getStepOverAction(
             return false
         }
 
-        try {
-            return nextLocation.ktFileName() == sourceFile.name
+        return try {
+            nextLocation.ktFileName() == sourceFile.name
         } catch (e: AbsentInformationException) {
-            return true
+            true
         }
     }
 
     fun isBackEdgeLocation(): Boolean {
         val previousSuitableLocation = methodLocations.reversed()
+            .asSequence()
             .dropWhile { it != location }
             .drop(1)
             .filter(::isThisMethodLocation)
@@ -409,8 +410,8 @@ fun getStepOverAction(
             !isThisMethodLocation(loc) || lambdaArgumentRanges.any { loc.ktLineNumber() in it } || loc.ktLineNumber() == patchedLineNumber
         }
 
-    if (!stepOverLocations.isEmpty()) {
-        // Some Kotlin inlined methods with 'for' (and maybe others) generates bytecode that after dexing have a strange artifact.
+    if (stepOverLocations.isNotEmpty()) {
+        // Some Kotlin inlined methods with 'for' (and maybe others) generates bytecode that, being dex-processed, have a strange artifact.
         // GOTO instructions are moved to the end of method and as they don't have proper line, line is obtained from the previous
         // instruction. It might be method return or previous GOTO from the inlining. Simple stepping over such function is really
         // terrible. On each iteration position jumps to the method end or some previous inline call and then returns back. To prevent
@@ -425,7 +426,7 @@ fun getStepOverAction(
             }
         } else -1L
 
-        return Action.STEP_OVER_INLINED(
+        return Action.StepOverInlined(
             StepOverFilterData(
                 patchedLineNumber,
                 stepOverLocations.map { it.ktLineNumber() }.toSet(),
@@ -436,7 +437,7 @@ fun getStepOverAction(
         )
     }
 
-    return Action.STEP_OVER()
+    return Action.StepOver()
 }
 
 fun getStepOutAction(
@@ -445,7 +446,7 @@ fun getStepOutAction(
     inlineFunctions: List<KtNamedFunction>,
     inlinedArgument: KtFunctionLiteral?
 ): Action {
-    val computedReferenceType = location.declaringType() ?: return Action.STEP_OUT()
+    val computedReferenceType = location.declaringType() ?: return Action.StepOut()
 
     val locations = computedReferenceType.safeAllLineLocations()
     val nextLineLocations = locations
@@ -456,15 +457,15 @@ fun getStepOutAction(
 
     if (inlineFunctions.isNotEmpty()) {
         val position = suspendContext.getXPositionForStepOutFromInlineFunction(nextLineLocations, inlineFunctions)
-        return position?.let { Action.RUN_TO_CURSOR(it) } ?: Action.STEP_OVER()
+        return position?.let { Action.RunToCursor(it) } ?: Action.StepOver()
     }
 
     if (inlinedArgument != null) {
         val position = suspendContext.getXPositionForStepOutFromInlinedArgument(nextLineLocations, inlinedArgument)
-        return position?.let { Action.RUN_TO_CURSOR(it) } ?: Action.STEP_OVER()
+        return position?.let { Action.RunToCursor(it) } ?: Action.StepOver()
     }
 
-    return Action.STEP_OVER()
+    return Action.StepOver()
 }
 
 private fun SuspendContextImpl.getXPositionForStepOutFromInlineFunction(
@@ -578,11 +579,11 @@ private fun findReturnFromDexBytecode(method: Method): Long {
 }
 
 object DexBytecode {
-    val RETURN_VOID = 0x0e
-    val RETURN = 0x0f
-    val RETURN_WIDE = 0x10
-    val RETURN_OBJECT = 0x11
+    const val RETURN_VOID = 0x0e
+    const val RETURN = 0x0f
+    const val RETURN_WIDE = 0x10
+    const val RETURN_OBJECT = 0x11
 
-    val GOTO = 0x28
-    val MOVE = 0x01
+    const val GOTO = 0x28
+    const val MOVE = 0x01
 }

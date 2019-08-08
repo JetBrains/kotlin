@@ -30,8 +30,7 @@ class KotlinSimpleGetterProvider : SimplePropertyGetterProvider {
 
         val accessor = PsiTreeUtil.getParentOfType(element, KtPropertyAccessor::class.java)
         if (accessor != null && accessor.isGetter) {
-            val body = accessor.bodyExpression
-            return when (body) {
+            return when (val body = accessor.bodyExpression) {
                 is KtBlockExpression -> {
                     // val a: Int get() { return field }
                     val returnedExpression = (body.statements.singleOrNull() as? KtReturnExpression)?.returnedExpression ?: return false
