@@ -6,13 +6,9 @@
 package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedClassConstructorDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedValueParameterDescriptor
-import org.jetbrains.kotlin.backend.common.descriptors.synthesizedName
-import org.jetbrains.kotlin.backend.common.descriptors.wrappedSimpleFunctionDescriptorBasedOn
+import org.jetbrains.kotlin.backend.common.descriptors.*
 import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -31,6 +27,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 // TODO: fix expect/actual default parameters
 
@@ -484,7 +482,7 @@ private fun IrFunction.generateDefaultsFunctionImpl(
 private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarationOrigin): IrFunction {
     when (irFunction) {
         is IrConstructor -> {
-            val descriptor = WrappedClassConstructorDescriptor(irFunction.descriptor.annotations, irFunction.descriptor.source)
+            val descriptor = WrappedClassConstructorDescriptor()
             return IrConstructorImpl(
                 irFunction.startOffset,
                 irFunction.endOffset,
@@ -502,7 +500,9 @@ private fun buildFunctionDeclaration(irFunction: IrFunction, origin: IrDeclarati
             }
         }
         is IrSimpleFunction -> {
-            val descriptor = wrappedSimpleFunctionDescriptorBasedOn(irFunction.descriptor as SimpleFunctionDescriptor)
+            val descriptor = irFunction.descriptor.safeAs<DescriptorWithContainerSource>()?.let {
+                WrappedFunctionDescriptorWithContainerSource(it.containerSource)
+            } ?: WrappedSimpleFunctionDescriptor()
             val name = Name.identifier("${irFunction.name}\$default")
 
             return IrFunctionImpl(

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil.LABELED_THIS_PARAMETER
@@ -24,12 +25,14 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithSource
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaVisibilities
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -46,7 +49,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
-    private val typeMap = mutableMapOf<IrSymbol,Type>()
+    private val typeMap = mutableMapOf<IrSymbol, Type>()
 
     override fun enter(descriptor: IrSymbol, type: Type): Int {
         typeMap[descriptor] = type
@@ -175,7 +178,8 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 //        return ACC_PUBLIC
 //    }
     if (this is IrClass && Visibilities.isPrivate(visibility) &&
-            parent.safeAs<IrClass>()?.isInterface ?: false) { // TODO: non-intrinsic
+        parent.safeAs<IrClass>()?.isInterface ?: false
+    ) { // TODO: non-intrinsic
         return Opcodes.ACC_PUBLIC
     }
 
@@ -448,13 +452,8 @@ fun generateParameterNames(
     irFunction: IrFunction,
     mv: MethodVisitor,
     jvmSignature: JvmMethodSignature,
-    state: GenerationState,
-    isSynthetic: Boolean
+    state: GenerationState
 ) {
-    if (!state.generateParametersMetadata || isSynthetic) {
-        return
-    }
-
     val iterator = irFunction.valueParameters.iterator()
     val kotlinParameterTypes = jvmSignature.valueParameters
     var isEnumName = true
@@ -545,3 +544,24 @@ fun getLabeledThisName(callableName: String, prefix: String, defaultName: String
         defaultName
     } else prefix + mangleNameIfNeeded(callableName)
 }
+
+val IrAnnotationContainer.deprecationFlags: Int
+    get() {
+        val annotation = annotations.findAnnotation(FQ_NAMES.deprecated) ?: return 0
+        val isHidden = (annotation.getValueArgument(2) as? IrGetEnumValue)?.symbol?.owner
+            ?.name?.asString() == DeprecationLevel.HIDDEN.name
+        return Opcodes.ACC_DEPRECATED or if (isHidden) Opcodes.ACC_SYNTHETIC else 0
+    }
+
+// We can't check for JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS because for interface methods
+// moved to DefaultImpls, origin is changed to DEFAULT_IMPLS
+// TODO: Fix origin somehow
+val IrFunction.isSyntheticMethodForProperty: Boolean
+    get() = name.asString().endsWith(JvmAbi.ANNOTATED_PROPERTY_METHOD_NAME_SUFFIX)
+
+val IrFunction.deprecationFlags: Int
+    get() {
+        val originFlags = if (isSyntheticMethodForProperty) Opcodes.ACC_DEPRECATED else 0
+        val propertyFlags = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.deprecationFlags ?: 0
+        return originFlags or propertyFlags or (this as IrAnnotationContainer).deprecationFlags
+    }

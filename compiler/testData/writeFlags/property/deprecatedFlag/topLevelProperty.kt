@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 @Deprecated("") val test: Int = 0
 
 // TESTED_OBJECT_KIND: property

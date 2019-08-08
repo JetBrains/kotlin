@@ -360,7 +360,7 @@ open class ClassCodegen protected constructor(
 }
 
 private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or when {
+    get() = origin.flags or getVisibilityAccessFlagForClass() or deprecationFlags or when {
         isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
         isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
@@ -368,7 +368,7 @@ private val IrClass.flags: Int
     }
 
 private val IrField.flags: Int
-    get() = origin.flags or visibility.flags or
+    get() = origin.flags or visibility.flags or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or
             (if (isFinal) Opcodes.ACC_FINAL else 0) or
             (if (isStatic) Opcodes.ACC_STATIC else 0) or
             (if (hasAnnotation(VOLATILE_ANNOTATION_FQ_NAME)) Opcodes.ACC_VOLATILE else 0) or
