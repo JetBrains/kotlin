@@ -57,7 +57,7 @@ class AddActualFix(
 
         for (missedDeclaration in missedDeclarationPointers.mapNotNull { it.element }) {
             val actualDeclaration = when (missedDeclaration) {
-                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, listOf(element))
+                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, outerClasses = listOf(element))
                 is KtFunction -> missedDeclaration.toDescriptor()?.safeAs<FunctionDescriptor>()?.let {
                     generateFunction(project, false, missedDeclaration, it, element)
                 }

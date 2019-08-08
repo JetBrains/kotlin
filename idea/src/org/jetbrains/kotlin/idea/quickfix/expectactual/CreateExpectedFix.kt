@@ -137,32 +137,30 @@ class CreateExpectedClassFix(
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
             chooseMembers(project, membersForSelection, prefix) ?: return@block null
         }
-    }.plus(members.filter(KtNamedDeclaration::isAlwaysActual)).let { selectedElements ->
-        val selectedClasses = findClasses(selectedElements + klass, commonModule)
-        if (selectedClasses != existingClasses) {
-            if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
-                showUnknownTypesError(element)
-                return@block null
-            }
+    }.plus(members.filter(KtNamedDeclaration::isAlwaysActual))
 
-            val (resultDeclarations, withErrors) = selectedElements.partition {
-                it.checkTypeAccessibilityInModule(commonModule, selectedClasses)
-            }
-            if (!showUnknownTypesDialog(project, withErrors)) return@block null
-            resultDeclarations
-        } else
-            selectedElements
-    }
+    val selectedClasses = findClasses(selectedElements + klass, commonModule)
+    val resultDeclarations = if (selectedClasses != existingClasses) {
+        if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
+            showUnknownTypesError(element)
+            return@block null
+        }
 
-
+        val (resultDeclarations, withErrors) = selectedElements.partition {
+            it.checkTypeAccessibilityInModule(commonModule, selectedClasses)
+        }
+        if (!showUnknownTypesDialog(project, withErrors)) return@block null
+        resultDeclarations
+    } else
+        selectedElements
 
     if (originalElements.isNotEmpty()) {
         project.executeWriteCommand("Repair actual members") {
-            repairActualModifiers(originalElements, selectedElements.toSet())
+            repairActualModifiers(originalElements, resultDeclarations.toSet())
         }
     }
 
-    generateClassOrObject(project, true, element, listOfNotNull(outerExpectedClass))
+    generateClassOrObject(project, true, element, commonModule, listOfNotNull(outerExpectedClass), selectedClasses)
 })
 
 private tailrec fun findClasses(elements: List<KtNamedDeclaration>, module: Module): HashSet<String> {
