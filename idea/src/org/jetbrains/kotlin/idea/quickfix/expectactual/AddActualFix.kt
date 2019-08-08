@@ -61,10 +61,10 @@ class AddActualFix(
             val actualDeclaration = when (missedDeclaration) {
                 is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, module, listOf(element))
                 is KtFunction -> missedDeclaration.toDescriptor()?.safeAs<FunctionDescriptor>()?.let {
-                    generateFunction(project, false, missedDeclaration, it, element)
+                    generateFunction(project, false, missedDeclaration, it, element, targetModule = module)
                 }
                 is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<PropertyDescriptor>()?.let {
-                    generateProperty(project, false, missedDeclaration, it, element)
+                    generateProperty(project, false, missedDeclaration, it, element, targetModule = module)
                 }
                 else -> null
             } ?: continue

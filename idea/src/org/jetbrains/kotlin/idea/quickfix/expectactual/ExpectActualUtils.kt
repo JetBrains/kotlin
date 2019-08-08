@@ -11,6 +11,7 @@ import com.intellij.psi.JavaDirectoryService
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
 import org.jetbrains.kotlin.idea.caches.project.isTestModule
 import org.jetbrains.kotlin.idea.caches.project.toDescriptor
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
@@ -133,14 +135,13 @@ internal fun KtPsiFactory.generateClassOrObject(
         context
     )
 
-    if (generatedClass.isAnnotation()) {
-        generatedClass.annotationEntries.zip(originalClass.annotationEntries).forEach { (generatedEntry, originalEntry) ->
-            val annotationDescriptor = context.get(BindingContext.ANNOTATION, originalEntry) ?: return@forEach
-            if (annotationDescriptor.fqName in forbiddenAnnotationFqNames) {
-                generatedEntry.delete()
-            }
+    generatedClass.annotationEntries.zip(originalClass.annotationEntries).forEach { (generatedEntry, originalEntry) ->
+        val annotationDescriptor = context.get(BindingContext.ANNOTATION, originalEntry)
+        if (annotationDescriptor?.isValidInModule(targetModule, existingFqNames, project) != true) {
+            generatedEntry.delete()
         }
     }
+
     if (generateExpectClass) {
         if (outerClasses.isEmpty()) {
             generatedClass.addModifier(KtTokens.EXPECT_KEYWORD)
@@ -170,29 +171,26 @@ internal fun KtPsiFactory.generateClassOrObject(
                 existingClasses,
                 existingFqNames
             )
-            is KtCallableDeclaration -> {
-                when (originalDeclaration) {
-                    is KtFunction -> generateFunction(
-                        project,
-                        generateExpectClass,
-                        originalDeclaration,
-                        descriptor as FunctionDescriptor,
-                        generatedClass,
-                        existingClasses,
-                        existingFqNames + superNames
-                    )
-                    is KtProperty -> generateProperty(
-                        project,
-                        generateExpectClass,
-                        originalDeclaration,
-                        descriptor as PropertyDescriptor,
-                        generatedClass,
-                        existingClasses,
-                        existingFqNames + superNames
-                    )
-                    else -> continue@declLoop
-                }
-            }
+            is KtFunction -> generateFunction(
+                project,
+                generateExpectClass,
+                originalDeclaration,
+                descriptor as FunctionDescriptor,
+                generatedClass,
+                existingClasses,
+                existingFqNames + superNames,
+                targetModule
+            )
+            is KtProperty -> generateProperty(
+                project,
+                generateExpectClass,
+                originalDeclaration,
+                descriptor as PropertyDescriptor,
+                generatedClass,
+                existingClasses,
+                existingFqNames + superNames,
+                targetModule
+            )
             else -> continue@declLoop
         }
         generatedClass.addDeclaration(generatedDeclaration)
@@ -208,7 +206,8 @@ internal fun KtPsiFactory.generateClassOrObject(
                 descriptor,
                 generatedClass,
                 outerClasses,
-                existingFqNames + superNames
+                existingFqNames + superNames,
+                targetModule
             )
             generatedClass.addDeclaration(generatedProperty)
         }
@@ -228,7 +227,8 @@ internal fun KtPsiFactory.generateClassOrObject(
                 descriptor,
                 generatedClass,
                 outerClasses,
-                existingFqNames + superNames
+                existingFqNames + superNames,
+                targetModule
             )
             generatedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
         }
@@ -293,7 +293,8 @@ internal fun generateFunction(
     descriptor: FunctionDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Collection<String> = emptySet()
+    existingFqNames: Set<String> = emptySet(),
+    targetModule: Module
 ): KtFunction {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -312,7 +313,9 @@ internal fun generateFunction(
         copyDoc = true,
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
-    ).also { if (generatedClass != null) it.repairOverride(descriptor, existingFqNames) } as KtFunction
+    ).apply {
+        repair(generatedClass, descriptor, existingFqNames, targetModule, project)
+    } as KtFunction
 }
 
 internal fun generateProperty(
@@ -322,7 +325,8 @@ internal fun generateProperty(
     descriptor: PropertyDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Collection<String> = emptySet()
+    existingFqNames: Set<String> = emptySet(),
+    targetModule: Module
 ): KtProperty {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -338,16 +342,47 @@ internal fun generateProperty(
         copyDoc = true,
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
-    ).also { if (generatedClass != null) it.repairOverride(descriptor, existingFqNames) } as KtProperty
+    ).apply {
+        repair(generatedClass, descriptor, existingFqNames, targetModule, project)
+    } as KtProperty
 }
 
-private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, existingFqNames: Collection<String>) {
+private fun KtCallableDeclaration.repair(
+    generatedClass: KtClassOrObject?,
+    descriptor: CallableDescriptor,
+    existingFqNames: Set<String>,
+    targetModule: Module,
+    project: Project
+) {
+    if (generatedClass != null) repairOverride(descriptor, existingFqNames)
+    repairAnnotationEntries(descriptor, existingFqNames, targetModule, project)
+}
+
+private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, existingFqNames: Set<String>) {
     if (!hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
     val superDescriptor = descriptor.overriddenDescriptors.firstOrNull()?.containingDeclaration
     if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in existingFqNames) {
         removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
+}
+
+private fun KtCallableDeclaration.repairAnnotationEntries(
+    descriptor: CallableDescriptor,
+    existingFqNames: Set<String>,
+    module: Module,
+    project: Project
+) {
+    for (annotation in descriptor.annotations) {
+        if (annotation.isValidInModule(module, existingFqNames, project)) {
+            val entry = annotation.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtAnnotationEntry>() ?: continue
+            addAnnotationEntry(entry)
+        }
+    }
+}
+
+private fun AnnotationDescriptor.isValidInModule(targetModule: Module, existingFqNames: Set<String>, project: Project): Boolean {
+    return fqName !in forbiddenAnnotationFqNames && type.checkTypeAccessibilityInModule(project, targetModule, existingFqNames)
 }
 
 private fun CallableMemberDescriptor.checkTypeParameterBoundsAccessibility(accessibleClasses: List<KtClassOrObject>) {

@@ -294,7 +294,8 @@ class CreateExpectedPropertyFix(
             element,
             descriptor,
             targetExpectedClass,
-            existingFqNames = targetExpectedClass?.getSuperNames().orEmpty()
+            existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty(),
+            targetModule = commonModule
         )
     }
 })
@@ -316,7 +317,8 @@ class CreateExpectedFunctionFix(
             element,
             descriptor,
             targetExpectedClass,
-            existingFqNames = targetExpectedClass?.getSuperNames().orEmpty()
+            existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty(),
+            targetModule = commonModule
         )
     }
 })

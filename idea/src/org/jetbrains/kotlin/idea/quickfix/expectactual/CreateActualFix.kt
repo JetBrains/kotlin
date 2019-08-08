@@ -96,7 +96,7 @@ class CreateActualPropertyFix(
     actualPlatform: TargetPlatform
 ) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, false, element, descriptor) }
+    descriptor?.let { generateProperty(project, false, element, descriptor, targetModule = actualModule) }
 })
 
 class CreateActualFunctionFix(
@@ -105,6 +105,6 @@ class CreateActualFunctionFix(
     actualPlatform: TargetPlatform
 ) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, false, element, descriptor) }
+    descriptor?.let { generateFunction(project, false, element, descriptor, targetModule = actualModule) }
 })
 
