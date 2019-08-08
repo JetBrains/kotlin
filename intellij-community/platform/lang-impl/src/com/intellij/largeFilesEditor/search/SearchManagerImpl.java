@@ -625,6 +625,10 @@ public class SearchManagerImpl implements SearchManager, SearchTaskCallback {
     //((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
     searchManageGUI.setRegularBackground();
     editorManager.getEditorModel().setHighlightingCloseSearchResultsEnabled(false);
+
+    boolean isMultiline = searchManageGUI.getSearchTextComponent().getText().contains("\n")
+                          || searchManageGUI.getReplaceTextComponent().getText().contains("\n");
+    searchManageGUI.update(searchManageGUI.getSearchTextComponent().getText(), "", false, isMultiline);
   }
 
   @Override
