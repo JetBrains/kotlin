@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.refactoring.rename;
 
 import com.intellij.lang.findUsages.DescriptiveNameUtil;
@@ -119,10 +119,8 @@ public class RenameProcessor extends BaseRefactoringProcessor {
     final List<RenamePsiElementProcessor> processors = RenamePsiElementProcessor.allForElement(element);
     myForceShowPreview = false;
     for (RenamePsiElementProcessor processor : processors) {
-      if (processor.canProcessElement(element)) {
-        processor.prepareRenaming(element, newName, allRenames);
-        myForceShowPreview |= processor.forcesShowPreview();
-      }
+      processor.prepareRenaming(element, newName, allRenames);
+      myForceShowPreview |= processor.forcesShowPreview();
     }
   }
 
