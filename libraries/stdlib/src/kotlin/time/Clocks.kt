@@ -5,8 +5,6 @@
 
 package kotlin.time
 
-import kotlin.js.JsName
-
 /**
  * The most precise clock available in the platform.
  *
@@ -64,19 +62,52 @@ public abstract class AbstractDoubleClock(protected val unit: DurationUnit) : Cl
 /**
  * A clock that has programmatically updatable readings. It is useful as a predictable source of time in tests.
  *
- * @param reading The initial value of the clock reading.
- * @param unit The unit of time in which [reading] value is expressed.
+ * The current clock reading value can be advanced by the specified duration amount with the operator [plusAssign]:
  *
- * @property reading Gets or sets this clock's current reading value.
+ * ```
+ * val clock = TestClock()
+ * clock += 10.seconds
+ * ```
+ *
+ * Implementation note: the current clock reading value is stored as a [Long] number of nanoseconds,
+ * thus it's capable to represent a time range of approximately ±292 years.
+ * Should the reading value overflow as the result of [plusAssign] operation, an [IllegalStateException] is thrown.
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
-public class TestClock(
-    @JsName("readingValue")
-    public var reading: Long = 0L,
-    unit: DurationUnit = DurationUnit.NANOSECONDS
-) : AbstractLongClock(unit) {
+public class TestClock : AbstractLongClock(unit = DurationUnit.NANOSECONDS) {
+    private var reading: Long = 0L
+
     override fun read(): Long = reading
+
+    /**
+     * Advances the current reading value of this clock by the specified [duration].
+     *
+     * [duration] value is rounded down towards zero when converting it to a [Long] number of nanoseconds.
+     * For example, if the duration being added is `0.6.nanoseconds`, the clock reading won't advance because
+     * the duration value will be rounded to zero nanoseconds.
+     *
+     * @throws IllegalStateException when the reading value overflows as the result of this operation.
+     */
+    public operator fun plusAssign(duration: Duration) {
+        val delta = duration.toDouble(unit)
+        val longDelta = delta.toLong()
+        reading = if (longDelta != Long.MIN_VALUE && longDelta != Long.MAX_VALUE) {
+            // when delta fits in long, add it as long
+            val newReading = reading + longDelta
+            if (reading xor longDelta >= 0 && reading xor newReading < 0) overflow(duration)
+            newReading
+        } else {
+            // when delta is greater than long, add it as double
+            val newReading = reading + delta
+            if (newReading > Long.MAX_VALUE || newReading < Long.MIN_VALUE) overflow(duration)
+            newReading.toLong()
+        }
+    }
+
+    private fun overflow(duration: Duration) {
+        throw IllegalStateException("TestClock will overflow if its reading ${reading}ns is advanced by $duration.")
+    }
 }
 
 /*

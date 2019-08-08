@@ -5388,10 +5388,7 @@ public final class kotlin/time/MonoClock : kotlin/time/AbstractLongClock, kotlin
 
 public final class kotlin/time/TestClock : kotlin/time/AbstractLongClock {
 	public fun <init> ()V
-	public fun <init> (JLjava/util/concurrent/TimeUnit;)V
-	public synthetic fun <init> (JLjava/util/concurrent/TimeUnit;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getReading ()J
-	public final fun setReading (J)V
+	public final fun plusAssign-LRDsOJo (D)V
 }
 
 public final class kotlin/time/TimedValue {
