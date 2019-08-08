@@ -49,7 +49,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
 
             doCompare(wholeFile, files.single().content, actualLocalVariables)
         } catch (e: Throwable) {
-            println(classFileFactory.createText())
+            printReport(wholeFile)
             throw e
         }
     }

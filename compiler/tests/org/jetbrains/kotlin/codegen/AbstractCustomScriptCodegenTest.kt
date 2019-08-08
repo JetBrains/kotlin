@@ -85,7 +85,7 @@ abstract class AbstractCustomScriptCodegenTest : CodegenTestCase() {
             val expectedFields = extractAllKeyValPairs(content, "expected:")
             checkExpectedFields(expectedFields, scriptClass, scriptInstance)
         } catch (e: Throwable) {
-            println(generateToText())
+            printReport(wholeFile)
             throw e
         }
     }

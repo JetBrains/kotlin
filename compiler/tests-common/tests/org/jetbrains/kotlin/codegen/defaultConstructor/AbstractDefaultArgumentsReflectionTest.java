@@ -38,7 +38,8 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
     protected void doTest(String path) throws IOException {
         loadFileByFullPath(path);
 
-        String fileText = FileUtil.loadFile(new File(path), true);
+        File file = new File(path);
+        String fileText = FileUtil.loadFile(file, true);
         String className = loadInstructionValue(fileText, "CLASS");
         boolean hasDefaultConstructor = loadInstructionValue(fileText, "HAS_DEFAULT_CONSTRUCTOR").equals("true");
 
@@ -53,12 +54,12 @@ public abstract class AbstractDefaultArgumentsReflectionTest extends CodegenTest
         }
         catch (NoSuchMethodException e) {
             if (hasDefaultConstructor) {
-                System.out.println(generateToText());
+                printReport(file);
                 throw new AssertionError("Cannot find default constructor");
             }
         }
         catch (Throwable e) {
-            System.out.println(generateToText());
+            printReport(file);
             throw new RuntimeException(e);
         }
     }

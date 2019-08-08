@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.AbstractLineNumberTest
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
@@ -76,4 +77,8 @@ abstract class AbstractIrLineNumberTest : AbstractLineNumberTest() {
             .toMutableList()
             .sortedBy { it.toInt() }
             .toList()
+
+    override fun getBackend(): TargetBackend {
+        return TargetBackend.JVM_IR
+    }
 }

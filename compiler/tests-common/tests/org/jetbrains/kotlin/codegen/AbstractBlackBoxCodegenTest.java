@@ -123,8 +123,4 @@ public abstract class AbstractBlackBoxCodegenTest extends CodegenTestCase {
                ? null
                : JvmFileClassUtil.getFileClassInfoNoResolve(file).getFacadeClassFqName().asString();
     }
-
-    protected TargetBackend getBackend() {
-        return TargetBackend.JVM;
-    }
 }

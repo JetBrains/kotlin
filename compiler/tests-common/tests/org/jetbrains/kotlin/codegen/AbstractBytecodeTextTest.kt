@@ -18,6 +18,7 @@ import java.util.regex.Pattern
 
 abstract class AbstractBytecodeTextTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(backend, wholeFile)
         createEnvironmentWithMockJdkAndIdeaAnnotations(
             ConfigurationKind.ALL,
             files,
@@ -27,15 +28,15 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
         loadMultiFiles(files)
 
         if (isMultiFileTest(files) && !InTextDirectivesUtils.isDirectiveDefined(wholeFile.readText(), "TREAT_AS_ONE_FILE")) {
-            doTestMultiFile(files)
+            doTestMultiFile(files, !isIgnored)
         } else {
             val expected = readExpectedOccurrences(wholeFile.path)
             val actual = generateToText("helpers/")
-            checkGeneratedTextAgainstExpectedOccurrences(actual, expected, getBackend())
+            checkGeneratedTextAgainstExpectedOccurrences(actual, expected, backend, !isIgnored)
         }
     }
 
-    private fun doTestMultiFile(files: List<TestFile>) {
+    private fun doTestMultiFile(files: List<TestFile>, reportProblems: Boolean) {
         val expectedOccurrencesByOutputFile = LinkedHashMap<String, List<OccurrenceInfo>>()
         for (file in files) {
             readExpectedOccurrencesForMultiFileTest(file, expectedOccurrencesByOutputFile)
@@ -46,7 +47,7 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             assertTextWasGenerated(expectedOutputFile, generated)
             val generatedText = generated[expectedOutputFile]!!
             val expectedOccurrences = expectedOccurrencesByOutputFile[expectedOutputFile]!!
-            checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences, getBackend())
+            checkGeneratedTextAgainstExpectedOccurrences(generatedText, expectedOccurrences, backend, reportProblems)
         }
     }
 
@@ -92,7 +93,12 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             return kotlinFiles > 1
         }
 
-        fun checkGeneratedTextAgainstExpectedOccurrences(text: String, expectedOccurrences: List<OccurrenceInfo>, currentBackend: TargetBackend) {
+        fun checkGeneratedTextAgainstExpectedOccurrences(
+            text: String,
+            expectedOccurrences: List<OccurrenceInfo>,
+            currentBackend: TargetBackend,
+            reportProblems: Boolean
+        ) {
             val expected = StringBuilder()
             val actual = StringBuilder()
             var lastBackend = TargetBackend.ANY
@@ -120,7 +126,9 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             try {
                 Assert.assertEquals(text, expected.toString(), actual.toString())
             } catch (e: Throwable) {
-                println(text)
+                if (reportProblems) {
+                    println(text)
+                }
                 throw e
             }
 
@@ -174,9 +182,5 @@ abstract class AbstractBytecodeTextTest : CodegenTestCase() {
             val needle = matcher.group(2)
             return OccurrenceInfo(numberOfOccurrences, needle, backend)
         }
-    }
-
-    protected open fun getBackend(): TargetBackend {
-        return TargetBackend.JVM
     }
 }
