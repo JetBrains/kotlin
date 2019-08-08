@@ -398,7 +398,7 @@ public class TemplateModuleBuilder extends ModuleBuilder {
           unzip(name, path, false, indicator, false);
           return ProjectManagerEx.getInstanceEx().convertAndLoadProject(baseDir);
         }
-        catch (IOException e) {
+        catch (IOException | CannotConvertException e) {
           LOG.error(e);
           return null;
         }
