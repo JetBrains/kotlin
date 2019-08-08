@@ -50,13 +50,5 @@ class JsIrLinker(
     override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
         moduleDescriptor.kotlinLibrary.fileCount()
 
-    override fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
-        if (size == 1)
-            return this[0]
-        assert(size != 0)
-        error("UniqId clash: ${uniqIdKey.uniqId.index}. Found in the " +
-                      "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.userName }}]")
-    }
-
     private val ModuleDescriptor.userName get() = kotlinLibrary.libraryFile.absolutePath
 }

@@ -16,7 +16,9 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.UniqId as ProtoUn
 data class UniqId(
     val index: Long,
     val isLocal: Boolean
-)
+) {
+    val isPublic: Boolean get() = !isLocal
+}
 
 // isLocal=true in UniqId is good while we dealing with a single current module.
 // To disambiguate module local declarations of different modules we use UniqIdKey.

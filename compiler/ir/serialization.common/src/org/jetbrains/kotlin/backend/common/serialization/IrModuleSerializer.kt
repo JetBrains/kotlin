@@ -11,9 +11,10 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.IrIrSerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
 
-abstract class IrModuleSerializer<F : IrFileSerializer>(protected val logger: LoggingContext,
-                                                        protected val mangler: KotlinMangler,
-                                                        protected val declarationTable: DeclarationTable) {
+abstract class IrModuleSerializer<F : IrFileSerializer>(
+    protected val logger: LoggingContext,
+    protected val mangler: KotlinMangler
+) {
 
 
     abstract fun createSerializerForFile(file: IrFile): F
