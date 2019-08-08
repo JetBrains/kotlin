@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.usageView.impl;
 
@@ -38,7 +38,11 @@ public class UsageViewContentManagerImpl extends UsageViewContentManager {
   private final Key<UsageView> NEW_USAGE_VIEW_KEY = Key.create("NEW_USAGE_VIEW_KEY");
   private final ContentManager myFindContentManager;
 
-  public UsageViewContentManagerImpl(@NotNull final Project project, final ToolWindowManager toolWindowManager) {
+  public UsageViewContentManagerImpl(@NotNull Project project) {
+    this(project, ToolWindowManager.getInstance(project));
+  }
+
+  public UsageViewContentManagerImpl(@NotNull Project project, @NotNull ToolWindowManager toolWindowManager) {
     ToolWindow toolWindow = toolWindowManager.registerToolWindow(ToolWindowId.FIND, true, ToolWindowAnchor.BOTTOM, project, true);
     toolWindow.setHelpId(UsageViewImpl.HELP_ID);
     toolWindow.setToHideOnEmptyContent(true);
