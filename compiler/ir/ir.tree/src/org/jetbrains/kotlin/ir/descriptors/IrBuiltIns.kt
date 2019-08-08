@@ -23,10 +23,7 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.KotlinTypeFactory
-import org.jetbrains.kotlin.types.SimpleType
-import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
 class IrBuiltIns(
@@ -204,8 +201,8 @@ class IrBuiltIns(
     val greaterFunByOperandType = primitiveTypesWithComparisons.defineComparisonOperatorForEachType(OperatorNames.GREATER)
 
     val ieee754equalsFunByOperandType =
-        primitiveFloatingPointTypes.associate {
-            it to defineOperator(OperatorNames.IEEE754_EQUALS, bool, listOf(it.makeNullable(), it.makeNullable()))
+        primitiveFloatingPointTypes.associateWith {
+            defineOperator(OperatorNames.IEEE754_EQUALS, bool, listOf(it.makeNullable(), it.makeNullable()))
         }
 
     val booleanNot = builtIns.boolean.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("not"), NoLookupLocation.FROM_BACKEND).single()
@@ -213,7 +210,6 @@ class IrBuiltIns(
 
     val eqeqeqSymbol = defineOperator(OperatorNames.EQEQEQ, bool, listOf(anyN, anyN))
     val eqeqSymbol = defineOperator(OperatorNames.EQEQ, bool, listOf(anyN, anyN))
-    val throwNpeSymbol = defineOperator(OperatorNames.THROW_NPE, nothing, listOf())
     val throwCceSymbol = defineOperator(OperatorNames.THROW_CCE, nothing, listOf())
     val throwIseSymbol = defineOperator(OperatorNames.THROW_ISE, nothing, listOf())
     val andandSymbol = defineOperator(OperatorNames.ANDAND, bool, listOf(bool, bool))
@@ -223,15 +219,11 @@ class IrBuiltIns(
 
     val eqeqeq = eqeqeqSymbol.descriptor
     val eqeq = eqeqSymbol.descriptor
-    val throwNpe = throwNpeSymbol.descriptor
     val throwCce = throwCceSymbol.descriptor
     val noWhenBranchMatchedException = noWhenBranchMatchedExceptionSymbol.descriptor
     val illegalArgumentException = illegalArgumentExceptionSymbol.descriptor
 
-    val enumValueOfSymbol = createEnumValueOfFun()
-    val enumValueOf = enumValueOfSymbol.descriptor
-
-    private fun createEnumValueOfFun(): IrSimpleFunctionSymbol =
+    val enumValueOfSymbol =
         SimpleFunctionDescriptorImpl.create(
             packageFragment,
             Annotations.EMPTY,
@@ -248,10 +240,42 @@ class IrBuiltIns(
                 false, false, false, null, SourceElement.NO_SOURCE
             )
 
-            val returnType = KotlinTypeFactory.simpleType(Annotations.EMPTY, typeParameterT.typeConstructor, listOf(), false)
+            val returnType = typeParameterT.typeConstructor.makeNonNullType()
 
             initialize(null, null, listOf(typeParameterT), listOf(valueParameterName), returnType, Modality.FINAL, Visibilities.PUBLIC)
         }.addStub()
+    val enumValueOf = enumValueOfSymbol.descriptor
+
+    val checkNotNullSymbol =
+        SimpleFunctionDescriptorImpl.create(
+            packageFragment,
+            Annotations.EMPTY,
+            Name.identifier("CHECK_NOT_NULL"),
+            CallableMemberDescriptor.Kind.SYNTHESIZED,
+            SourceElement.NO_SOURCE
+        ).apply {
+            val typeParameterT = TypeParameterDescriptorImpl.createForFurtherModification(
+                this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T"), 0, SourceElement.NO_SOURCE
+            ).apply {
+                addUpperBound(builtIns.anyType)
+                setInitialized()
+            }
+
+            val valueParameterX = ValueParameterDescriptorImpl(
+                this, null, 0, Annotations.EMPTY, Name.identifier("x"), typeParameterT.typeConstructor.makeNullableType(),
+                false, false, false, null, SourceElement.NO_SOURCE
+            )
+
+            initialize(
+                null, null,
+                listOf(typeParameterT), listOf(valueParameterX), typeParameterT.typeConstructor.makeNonNullType(),
+                Modality.FINAL, Visibilities.PUBLIC
+            )
+        }.addStub()
+    val checkNotNull = checkNotNullSymbol.descriptor
+
+    private fun TypeConstructor.makeNonNullType() = KotlinTypeFactory.simpleType(Annotations.EMPTY, this, listOf(), false)
+    private fun TypeConstructor.makeNullableType() = KotlinTypeFactory.simpleType(Annotations.EMPTY, this, listOf(), true)
 
     val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", int, listOf(any))
     val dataClassArrayMemberHashCode = dataClassArrayMemberHashCodeSymbol.descriptor

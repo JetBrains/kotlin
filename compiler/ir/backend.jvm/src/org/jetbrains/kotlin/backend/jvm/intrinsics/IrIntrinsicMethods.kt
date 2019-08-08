@@ -45,7 +45,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
 
     private val intrinsicsMap = (
             listOf(
-                Key(KOTLIN_JVM, FqName("T"),"<get-javaClass>", emptyList()) to JavaClassProperty,
+                Key(KOTLIN_JVM, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(
                     KOTLIN_JVM,
                     KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
@@ -96,7 +96,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
-                irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE,
+                // irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE, -- TODO checkNotNullSymbol
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 symbols.unsafeCoerceIntrinsicSymbol.toKey()!! to UnsafeCoerce
@@ -136,7 +136,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterOrEqualFunByOperandType, KtTokens.GTEQ)
-    ).toMap()
+            ).toMap()
 
     private val PrimitiveType.symbol
         get() = irBuiltIns.primitiveTypeToIrType[this]!!.classOrNull!!

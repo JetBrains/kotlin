@@ -68,17 +68,6 @@ fun IrGeneratorContext.equalsNull(startOffset: Int, endOffset: Int, argument: Ir
 fun IrGeneratorContext.eqeqeq(startOffset: Int, endOffset: Int, argument1: IrExpression, argument2: IrExpression): IrExpression =
     primitiveOp2(startOffset, endOffset, irBuiltIns.eqeqeqSymbol, irBuiltIns.booleanType, IrStatementOrigin.EQEQEQ, argument1, argument2)
 
-fun IrGeneratorContext.throwNpe(startOffset: Int, endOffset: Int, origin: IrStatementOrigin): IrExpression =
-    IrCallImpl(
-        startOffset, endOffset,
-        irBuiltIns.nothingType,
-        irBuiltIns.throwNpeSymbol,
-        irBuiltIns.throwNpeSymbol.descriptor,
-        typeArgumentsCount = 0,
-        valueArgumentsCount = 0,
-        origin = origin
-    )
-
 fun IrGeneratorContext.constTrue(startOffset: Int, endOffset: Int) =
     IrConstImpl.constTrue(startOffset, endOffset, irBuiltIns.booleanType)
 

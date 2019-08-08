@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.assertedCast
@@ -158,17 +157,6 @@ fun IrBuilderWithScope.irIfThenMaybeElse(
 
 fun IrBuilderWithScope.irIfNull(type: IrType, subject: IrExpression, thenPart: IrExpression, elsePart: IrExpression) =
     irIfThenElse(type, irEqualsNull(subject), thenPart, elsePart)
-
-fun IrBuilderWithScope.irThrowNpe(origin: IrStatementOrigin? = null) =
-    IrCallImpl(
-        startOffset, endOffset,
-        context.irBuiltIns.nothingType,
-        context.irBuiltIns.throwNpeSymbol,
-        context.irBuiltIns.throwNpeSymbol.descriptor,
-        typeArgumentsCount = 0,
-        valueArgumentsCount = 0,
-        origin = origin
-    )
 
 fun IrBuilderWithScope.irIfThenReturnTrue(condition: IrExpression) =
     irIfThen(context.irBuiltIns.unitType, condition, irReturnTrue())

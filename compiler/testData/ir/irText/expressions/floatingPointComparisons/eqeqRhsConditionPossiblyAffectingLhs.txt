@@ -9,18 +9,9 @@ FILE fqName:<root> fileName:/eqeqRhsConditionPossiblyAffectingLhs.kt
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=kotlin.Double
                 GET_VAR 'x: kotlin.Any declared in <root>.test' type=kotlin.Any origin=null
-              then: BLOCK type=kotlin.Nothing origin=EXCLEXCL
-                VAR IR_TEMPORARY_VARIABLE name:tmp0_notnull type:kotlin.Nothing? [val]
-                  CONST Null type=kotlin.Nothing? value=null
-                WHEN type=kotlin.Nothing origin=null
-                  BRANCH
-                    if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                      arg0: GET_VAR 'val tmp0_notnull: kotlin.Nothing? [val] declared in <root>.test' type=kotlin.Nothing? origin=null
-                      arg1: CONST Null type=kotlin.Nothing? value=null
-                    then: CALL 'public final fun THROW_NPE (): kotlin.Nothing declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
-                  BRANCH
-                    if: CONST Boolean type=kotlin.Boolean value=true
-                    then: GET_VAR 'val tmp0_notnull: kotlin.Nothing? [val] declared in <root>.test' type=kotlin.Nothing? origin=null
+              then: CALL 'public final fun CHECK_NOT_NULL <T> (x: T of kotlin.internal.ir.CHECK_NOT_NULL?): T of kotlin.internal.ir.CHECK_NOT_NULL declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+                <T>: kotlin.Nothing
+                x: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
               then: TYPE_OP type=kotlin.Double origin=IMPLICIT_CAST typeOperand=kotlin.Double

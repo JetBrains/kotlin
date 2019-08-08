@@ -19,7 +19,7 @@ class ExceptionHelperCallsTransformer(private val context: JsIrBackendContext) :
     }
 
     private val helperMapping = mapOf(
-        context.irBuiltIns.throwNpeSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))),
+        // context.irBuiltIns.throwNpeSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_NPE"))), -- TODO checkNotNullSymbol
         context.irBuiltIns.throwCceSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_CCE"))),
         context.irBuiltIns.throwIseSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("THROW_ISE"))),
         context.irBuiltIns.noWhenBranchMatchedExceptionSymbol to referenceFunction(kotlinPackageFqn.child(Name.identifier("noWhenBranchMatchedException")))

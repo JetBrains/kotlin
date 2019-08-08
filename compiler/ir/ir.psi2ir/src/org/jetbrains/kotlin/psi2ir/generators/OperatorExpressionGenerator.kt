@@ -40,10 +40,8 @@ import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.checkers.PrimitiveNumericComparisonInfo
 import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluator
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.intersectTypes
-import org.jetbrains.kotlin.types.isDynamic
-import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -488,16 +486,27 @@ class OperatorExpressionGenerator(statementGenerator: StatementGenerator) : Stat
         val irArgument = ktArgument.genExpr()
         val ktOperator = expression.operationReference
 
-        val resultType = irArgument.type.makeNotNull()
+        val argumentType = context.bindingContext.getType(ktArgument)
+            ?: throw AssertionError("No type for !! argument")
+        val expressionType = argumentType.makeNotNullable()
 
-        return irBlock(ktOperator.startOffsetSkippingComments, ktOperator.endOffset, origin, resultType) {
-            val temporary = irTemporary(irArgument, "notnull")
-            +irIfNull(
-                resultType,
-                irGet(temporary.type, temporary.symbol),
-                irThrowNpe(origin),
-                irGet(temporary.type, temporary.symbol)
-            )
+        val checkNotNull = context.irBuiltIns.checkNotNull
+        val checkNotNullSubstituted =
+            checkNotNull.substitute(
+                TypeSubstitutor.create(
+                    mapOf(checkNotNull.typeParameters[0].typeConstructor to TypeProjectionImpl(argumentType))
+                )
+            ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$argumentType")
+
+        return IrCallImpl(
+            ktOperator.startOffsetSkippingComments, ktOperator.endOffset,
+            expressionType.toIrType(),
+            context.irBuiltIns.checkNotNullSymbol,
+            checkNotNullSubstituted,
+            origin
+        ).apply {
+            putTypeArgument(0, argumentType.toIrType().makeNotNull())
+            putValueArgument(0, irArgument)
         }
     }
 
