@@ -204,7 +204,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFixture.file, project)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch file")
@@ -217,7 +217,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
         val worksheetFile = myFixture.configureByText(name, text).virtualFile
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(worksheetFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFixture.file, project)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")

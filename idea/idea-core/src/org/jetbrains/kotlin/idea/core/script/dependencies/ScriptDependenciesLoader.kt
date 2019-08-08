@@ -15,18 +15,22 @@ import com.intellij.openapi.util.EmptyRunnable
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.idea.core.script.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
+import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.scripting.definitions.KotlinScriptDefinition
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
+import org.jetbrains.kotlin.scripting.resolve.LegacyResolverWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.valueOrNull
+import kotlin.script.experimental.dependencies.AsyncDependenciesResolver
 
 // TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
 abstract class ScriptDependenciesLoader(protected val project: Project) {
 
-    abstract fun isApplicable(file: VirtualFile, scriptDefinition: ScriptDefinition): Boolean
-    abstract fun loadDependencies(file: VirtualFile, scriptDefinition: ScriptDefinition)
+    abstract fun isApplicable(file: KtFile, scriptDefinition: ScriptDefinition): Boolean
+    abstract fun loadDependencies(file: KtFile, scriptDefinition: ScriptDefinition)
 
     protected abstract fun shouldShowNotification(): Boolean
 
@@ -138,13 +142,23 @@ abstract class ScriptDependenciesLoader(protected val project: Project) {
         return true
     }
 
-    companion object {
-        private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.script")
+    protected fun isAsyncDependencyResolver(scriptDef: ScriptDefinition): Boolean =
+        scriptDef.asLegacyOrNull<KotlinScriptDefinition>()?.dependencyResolver?.let {
+            it is AsyncDependenciesResolver || it is LegacyResolverWrapper
+        } ?: false
 
-        internal fun debug(file: VirtualFile? = null, message: () -> String) {
-            if (LOG.isDebugEnabled) {
-                LOG.debug("[KOTLIN SCRIPT] " + (file?.let { "file = ${file.path}, " } ?: "") + message())
-            }
-        }
+}
+
+private val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.script")
+
+internal fun debug(file: VirtualFile? = null, message: () -> String) {
+    if (LOG.isDebugEnabled) {
+        LOG.debug("[KOTLIN SCRIPT] ${file?.path} " + message())
+    }
+}
+
+internal fun debug(file: KtFile, message: () -> String) {
+    if (LOG.isDebugEnabled) {
+        LOG.debug("[KOTLIN SCRIPT] ${file.originalFile.virtualFile?.path} " + message())
     }
 }

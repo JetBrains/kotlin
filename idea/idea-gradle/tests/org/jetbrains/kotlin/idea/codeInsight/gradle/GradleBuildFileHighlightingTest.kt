@@ -48,7 +48,7 @@ class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
             val psiFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile
                 ?: error("Couldn't find psiFile for virtual file: ${file.canonicalPath}")
 
-            ScriptDependenciesManager.updateScriptDependenciesSynchronously(file, myProject)
+            ScriptDependenciesManager.updateScriptDependenciesSynchronously(psiFile, myProject)
 
             val bindingContext = psiFile.analyzeWithContent()
 

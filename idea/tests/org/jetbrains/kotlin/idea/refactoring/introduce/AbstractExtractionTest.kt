@@ -12,10 +12,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VfsUtil
-import com.intellij.psi.PsiComment
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiJavaFile
+import com.intellij.psi.*
 import com.intellij.psi.codeStyle.JavaCodeStyleManager
 import com.intellij.psi.codeStyle.VariableKind
 import com.intellij.refactoring.BaseRefactoringProcessor.ConflictsInTestsException
@@ -32,8 +29,8 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.chooseMembers
 import org.jetbrains.kotlin.idea.refactoring.introduce.extractClass.ExtractSuperInfo
@@ -325,7 +322,9 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         PluginTestCaseBase.addJdk(myFixture.projectDisposable, PluginTestCaseBase::mockJdk)
 
         if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
-            ScriptDependenciesManager.updateScriptDependenciesSynchronously(VfsUtil.findFileByIoFile(mainFile, true)!!, project)
+            val virtualFile = VfsUtil.findFileByIoFile(mainFile, true)!!
+            val ktFile = PsiManager.getInstance(project).findFile(virtualFile)!!
+            ScriptDependenciesManager.updateScriptDependenciesSynchronously(ktFile, project)
         }
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"

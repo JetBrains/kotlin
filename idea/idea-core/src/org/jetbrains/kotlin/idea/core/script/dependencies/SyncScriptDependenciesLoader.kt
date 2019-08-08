@@ -6,28 +6,27 @@
 package org.jetbrains.kotlin.idea.core.script.dependencies
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import org.jetbrains.kotlin.idea.core.script.ScriptsCompilationConfigurationUpdater
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
-import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
+import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.refineScriptCompilationConfiguration
 
 class SyncScriptDependenciesLoader(project: Project) : ScriptDependenciesLoader(project) {
     override fun isApplicable(
-        file: VirtualFile,
+        file: KtFile,
         scriptDefinition: ScriptDefinition
     ): Boolean {
-        return !ScriptsCompilationConfigurationUpdater.getInstance(project).isAsyncDependencyResolver(scriptDefinition)
+        return !isAsyncDependencyResolver(scriptDefinition)
     }
 
     override fun loadDependencies(
-        file: VirtualFile,
+        file: KtFile,
         scriptDefinition: ScriptDefinition
     ) {
         debug(file) { "start sync dependencies loading" }
-        val result = refineScriptCompilationConfiguration(VirtualFileScriptSource(file), scriptDefinition, project)
+        val result = refineScriptCompilationConfiguration(KtFileScriptSource(file), scriptDefinition, project)
         debug(file) { "finish sync dependencies loading" }
-        processRefinedConfiguration(result, file)
+        processRefinedConfiguration(result, file.originalFile.virtualFile)
     }
 
     override fun shouldShowNotification(): Boolean = false

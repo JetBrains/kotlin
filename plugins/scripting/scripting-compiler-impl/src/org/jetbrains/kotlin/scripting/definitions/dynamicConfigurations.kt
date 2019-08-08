@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.scripting.definitions
 
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
@@ -25,16 +23,6 @@ fun PsiFile.findScriptCompilationConfiguration(): ScriptCompilationConfiguration
     // Ignoring the error here, assuming that it will be reported elsewhere anyway (this is important scenario in IDE)
     return provider?.getScriptConfigurationResult(this)?.valueOrNull()?.configuration
         ?: findScriptDefinition()?.compilationConfiguration
-}
-
-fun VirtualFile.findScriptCompilationConfiguration(project: Project): ScriptCompilationConfiguration? {
-    if (!isValid || isNonScript()) return null
-    // see comments in findScriptDefinition
-    // we do not need expensive check as in findScriptDefinition here, since it is assumed that this function is called only for known scripts
-
-    val provider = ScriptDependenciesProvider.getInstance(project)
-    return provider?.getScriptConfigurationResult(this)?.valueOrError()?.configuration
-        ?: findScriptDefinition(project)?.compilationConfiguration
 }
 
 private fun ScriptCompilationConfigurationResult.valueOrError() = valueOr { failure ->

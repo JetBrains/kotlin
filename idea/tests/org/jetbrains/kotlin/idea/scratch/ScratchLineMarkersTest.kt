@@ -37,7 +37,7 @@ abstract class AbstractScratchLineMarkersTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFixture.file, project)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
