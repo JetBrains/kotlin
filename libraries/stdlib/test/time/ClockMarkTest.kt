@@ -12,7 +12,7 @@ class ClockMarkTest {
 
     @Test
     fun adjustment() {
-        val clock = TestClock(unit = DurationUnit.NANOSECONDS)
+        val clock = TestClock()
 
         val mark = clock.mark()
         val markFuture1 = mark + 1.milliseconds
@@ -21,7 +21,7 @@ class ClockMarkTest {
         val markPast1 = mark - 1.milliseconds
         val markPast2 = markFuture1 + (-2).milliseconds
 
-        clock.reading = 500_000L
+        clock += 500_000.nanoseconds
 
         val elapsed = mark.elapsed()
         val elapsedFromFuture = elapsed - 1.milliseconds
