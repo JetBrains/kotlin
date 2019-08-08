@@ -42,14 +42,6 @@ public abstract class RunAnythingGroup {
   public abstract String getTitle();
 
   /**
-   * @return Group icon to be presented to the left of the group separator rule
-   */
-  @Nullable
-  public Icon getIcon() {
-    return null;
-  }
-
-  /**
    * @return Current group maximum number of items to be shown.
    */
   protected int getMaxInitialItems() {

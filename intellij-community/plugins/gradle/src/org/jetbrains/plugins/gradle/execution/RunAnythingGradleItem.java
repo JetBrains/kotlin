@@ -25,9 +25,9 @@ public class RunAnythingGradleItem extends RunAnythingItemBase {
 
   @NotNull
   @Override
-  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
+  public Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus) {
     String command = getCommand();
-    JPanel component = (JPanel)super.createComponent(pattern, groupIcon, isSelected, hasFocus);
+    JPanel component = (JPanel)super.createComponent(pattern, isSelected, hasFocus);
 
     int spaceIndex = StringUtil.lastIndexOf(command, ' ', 0, command.length());
     String toComplete = spaceIndex < 0 ? "" : command.substring(spaceIndex + 1);

@@ -140,14 +140,6 @@ public interface RunAnythingProvider<V> {
   Matcher getMatcher(@NotNull String pattern);
 
   /**
-   * Returns help/completion group icon.
-   */
-  @Nullable
-  default Icon getHelpIcon() {
-    return null;
-  }
-
-  /**
    * Finds provider that matches {@code pattern}
    *
    * @param dataContext use it to fetch project, module, working directory

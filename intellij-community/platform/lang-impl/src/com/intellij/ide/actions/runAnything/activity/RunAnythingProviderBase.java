@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.containers.ContainerUtil;
 import com.intellij.util.text.Matcher;
+import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,6 +70,11 @@ public abstract class RunAnythingProviderBase<V> implements RunAnythingProvider<
   @Override
   public Matcher getMatcher(@NotNull String pattern) {
     return null;
+  }
+
+  @Nullable
+  public Icon getHelpIcon() {
+    return EmptyIcon.ICON_16;
   }
 
   @Nullable

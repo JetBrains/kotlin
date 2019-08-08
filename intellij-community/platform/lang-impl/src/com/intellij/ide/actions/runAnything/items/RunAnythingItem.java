@@ -4,7 +4,6 @@ package com.intellij.ide.actions.runAnything.items;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -33,10 +32,9 @@ public abstract class RunAnythingItem {
    * Creates current item {@link Component}
    *
    * @param pattern    search field input field
-   * @param groupIcon  group this item belongs to
    * @param isSelected true if item is selected in the list
    * @param hasFocus   true if item has focus in the list
    */
   @NotNull
-  public abstract Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus);
+  public abstract Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus);
 }

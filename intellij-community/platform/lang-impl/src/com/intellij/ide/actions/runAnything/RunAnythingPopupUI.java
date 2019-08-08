@@ -543,7 +543,7 @@ public class RunAnythingPopupUI extends BigPopupUI {
 
       if (cmp == null) {
         if (value instanceof RunAnythingItem) {
-          cmp = ((RunAnythingItem)value).createComponent(myLastInputText, findIcon(index), isSelected, hasFocus);
+          cmp = ((RunAnythingItem)value).createComponent(myLastInputText, isSelected, hasFocus);
         }
         else {
           cmp = super.getListCellRendererComponent(list, value, index, isSelected, isSelected);
@@ -584,19 +584,6 @@ public class RunAnythingPopupUI extends BigPopupUI {
       }
 
       return myMainPanel;
-    }
-
-    @Nullable
-    private Icon findIcon(int index) {
-      RunAnythingSearchListModel model = getSearchingModel(myResultsList);
-      Icon groupIcon = null;
-      if (model != null) {
-        RunAnythingGroup group = model.findItemGroup(index);
-        if (group != null) {
-          groupIcon = group.getIcon();
-        }
-      }
-      return groupIcon;
     }
 
     @Override

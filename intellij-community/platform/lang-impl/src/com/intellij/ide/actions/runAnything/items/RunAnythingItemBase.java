@@ -8,6 +8,7 @@ import com.intellij.ui.SimpleTextAttributes;
 import com.intellij.ui.speedSearch.SpeedSearchUtil;
 import com.intellij.util.ObjectUtils;
 import com.intellij.util.ui.EmptyIcon;
+import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -16,7 +17,6 @@ import javax.swing.*;
 import java.awt.*;
 
 import static com.intellij.ui.SimpleTextAttributes.*;
-import static com.intellij.util.ui.UIUtil.getListSelectionForeground;
 
 public class RunAnythingItemBase extends RunAnythingItem {
   @NotNull private final String myCommand;
@@ -40,7 +40,7 @@ public class RunAnythingItemBase extends RunAnythingItem {
 
   @NotNull
   @Override
-  public Component createComponent(@Nullable String pattern, @Nullable Icon groupIcon, boolean isSelected, boolean hasFocus) {
+  public Component createComponent(@Nullable String pattern, boolean isSelected, boolean hasFocus) {
     Component oldComponent = createComponent(isSelected);
     if (oldComponent != null) {
       return oldComponent;
@@ -57,14 +57,9 @@ public class RunAnythingItemBase extends RunAnythingItem {
                                                     RunAnythingGroup.RUN_ANYTHING_MATCHER_BUILDER.fun(pattern).build(),
                                                     background,
                                                     isSelected);
-    component.add(BorderLayout.WEST, textComponent);
-
-    Icon icon = myIcon;
-    if (groupIcon == myIcon) {
-      icon = EmptyIcon.ICON_16;
-    }
-
-    textComponent.setIcon(icon);
+    component.add(textComponent, BorderLayout.WEST);
+    textComponent.appendTextPadding(20);
+    setupIcon(textComponent, myIcon);
     addDescription(component, isSelected);
 
     return component;
@@ -84,6 +79,7 @@ public class RunAnythingItemBase extends RunAnythingItem {
 
   public void setupIcon(@NotNull SimpleColoredComponent component, @Nullable Icon icon) {
     component.setIcon(ObjectUtils.notNull(icon, EmptyIcon.ICON_16));
+    component.setIpad(JBUI.insets(0, 10, 0, 0));
   }
 
   @Override
@@ -115,6 +111,6 @@ public class RunAnythingItemBase extends RunAnythingItem {
 
   @NotNull
   private static SimpleTextAttributes getDescriptionAttributes(boolean isSelected) {
-    return new SimpleTextAttributes(STYLE_PLAIN, isSelected ? getListSelectionForeground(true) : UIUtil.getInactiveTextColor());
+    return new SimpleTextAttributes(STYLE_PLAIN, isSelected ? UIUtil.getListSelectionForeground(true) : UIUtil.getInactiveTextColor());
   }
 }
