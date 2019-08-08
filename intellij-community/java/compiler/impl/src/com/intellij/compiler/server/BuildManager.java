@@ -30,9 +30,9 @@ import com.intellij.openapi.compiler.CompilerTopics;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
+import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.module.Module;
@@ -312,21 +312,6 @@ public final class BuildManager implements Disposable {
       @Override
       public void batchChangeCompleted(@NotNull Project project) {
         myFileChangeCounter--;
-      }
-    });
-
-    EditorFactory.getInstance().getEventMulticaster().addDocumentListener(new DocumentListener() {
-      @Override
-      public void documentChanged(@NotNull DocumentEvent e) {
-        if (Registry.is("compiler.document.save.enabled", false)) {
-          final Document document = e.getDocument();
-          if (FileDocumentManager.getInstance().isDocumentUnsaved(document)) {
-            final VirtualFile file = FileDocumentManager.getInstance().getFile(document);
-            if (file != null && file.isInLocalFileSystem()) {
-              scheduleProjectSave();
-            }
-          }
-        }
       }
     });
 
@@ -1956,6 +1941,31 @@ public final class BuildManager implements Disposable {
     public void cancel(RequestFuture<T> future) {
       myMessageDispatcher.cancelSession(future.getRequestID());
       notifySessionTerminationIfNeeded(future.getRequestID(), null);
+    }
+  }
+
+  static final class MyDocumentListener implements DocumentListener {
+    MyDocumentListener() {
+      if (ApplicationManager.getApplication().isUnitTestMode()) {
+        throw ExtensionNotApplicableException.INSTANCE;
+      }
+    }
+
+    @Override
+    public void documentChanged(@NotNull DocumentEvent e) {
+      if (!Registry.is("compiler.document.save.enabled", false)) {
+        return;
+      }
+
+      Document document = e.getDocument();
+      if (!FileDocumentManager.getInstance().isDocumentUnsaved(document)) {
+        return;
+      }
+
+      VirtualFile file = FileDocumentManager.getInstance().getFile(document);
+      if (file != null && file.isInLocalFileSystem()) {
+        getInstance().scheduleProjectSave();
+      }
     }
   }
 }
