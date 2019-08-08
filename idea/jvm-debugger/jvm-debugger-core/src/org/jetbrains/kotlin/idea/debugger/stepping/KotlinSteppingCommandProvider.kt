@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
+import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.caches.resolve.unsafeResolveToDescriptor
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.debugger.*
@@ -95,7 +96,7 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
     }
 
     data class KotlinSourcePosition(
-        val file: KtFile, val function: KtNamedFunction,
+        val file: KtFile, val declaration: KtDeclaration,
         val linesRange: IntRange, val sourcePosition: SourcePosition
     ) {
         companion object {
@@ -104,17 +105,20 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
                 if (sourcePosition.line < 0) return null
 
                 val elementAt = sourcePosition.elementAt ?: return null
-                val containingFunction = elementAt.parents
-                    .filterIsInstance<KtNamedFunction>()
-                    .firstOrNull { !it.isLocal } ?: return null
 
-                val startLineNumber = containingFunction.getLineNumber(true) + 1
-                val endLineNumber = containingFunction.getLineNumber(false) + 1
+                val containingDeclaration = elementAt.parents
+                    .filterIsInstance<KtDeclaration>()
+                    .filter { it is KtFunction || it is KtProperty || it is KtClassInitializer }
+                    .firstOrNull { !KtPsiUtil.isLocal(it) }
+                    ?: return null
+
+                val startLineNumber = containingDeclaration.getLineNumber(true) + 1
+                val endLineNumber = containingDeclaration.getLineNumber(false) + 1
                 if (startLineNumber > endLineNumber) return null
 
                 val linesRange = startLineNumber..endLineNumber
 
-                return KotlinSourcePosition(file, containingFunction, linesRange, sourcePosition)
+                return KotlinSourcePosition(file, containingDeclaration, linesRange, sourcePosition)
             }
         }
     }
@@ -128,9 +132,9 @@ class KotlinSteppingCommandProvider : JvmSteppingCommandProvider() {
         }
 
         // Step over calls to lambda arguments in inline function while execution is already in that function
-        val containingFunctionDescriptor = kotlinSourcePosition.function.unsafeResolveToDescriptor()
-        if (InlineUtil.isInline(containingFunctionDescriptor)) {
-            val inlineArgumentsCallsIfAny = getInlineArgumentsCallsIfAny(sourcePosition, containingFunctionDescriptor)
+        val containingDescriptor = kotlinSourcePosition.declaration.resolveToDescriptorIfAny()
+        if (containingDescriptor != null && InlineUtil.isInline(containingDescriptor)) {
+            val inlineArgumentsCallsIfAny = getInlineArgumentsCallsIfAny(sourcePosition, containingDescriptor)
             if (inlineArgumentsCallsIfAny != null && inlineArgumentsCallsIfAny.isNotEmpty()) {
                 return true
             }
