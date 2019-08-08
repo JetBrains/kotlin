@@ -86,6 +86,33 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             assertContains("Unable to use existing data, re-initializing classpath information for KAPT.")
         }
     }
+
+    @Test
+    fun testNonIncrementalWithUnrecognizedInputs() {
+        val project = getProject()
+
+        val additionalInputs = project.projectDir.resolve("additionalInputs").also { it.mkdirs() }
+        project.gradleBuildScript().appendText(
+            """
+            
+            tasks.whenTaskAdded {
+                if (it.name == "kaptKotlin") {
+                  it.getInputs().files("${additionalInputs.canonicalPath}")
+                }
+            }
+        """.trimIndent()
+        )
+
+        project.build("clean", "build") {
+            assertSuccessful()
+        }
+
+        additionalInputs.resolve("layout.xml").createNewFile()
+        project.build("build") {
+            assertSuccessful()
+            assertContains("Incremental annotation processing (apt mode): false")
+        }
+    }
 }
 
 private const val patternApt = "Processing java sources with annotation processors:"
