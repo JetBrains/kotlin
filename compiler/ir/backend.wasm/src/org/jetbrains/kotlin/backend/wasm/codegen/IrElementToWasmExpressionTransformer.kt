@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
+import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 
 class IrElementToWasmExpressionTransformer : BaseIrElementToWasmNodeTransformer<WasmInstruction, IrNamer> {
@@ -41,7 +43,11 @@ class IrElementToWasmExpressionTransformer : BaseIrElementToWasmNodeTransformer<
     }
 
     override fun visitGetField(expression: IrGetField, data: IrNamer): WasmInstruction {
-        TODO()
+        val fieldName = data.getNameForField(expression.symbol.owner).ident
+        if (expression.receiver != null)
+            TODO("Support member fields")
+
+        return WasmGetGlobal(fieldName)
     }
 
     override fun visitGetValue(expression: IrGetValue, data: IrNamer): WasmInstruction =
@@ -52,18 +58,18 @@ class IrElementToWasmExpressionTransformer : BaseIrElementToWasmNodeTransformer<
     }
 
     override fun visitSetField(expression: IrSetField, data: IrNamer): WasmInstruction {
-        TODO()
-//        val fieldName = data.getNameForField(expression.symbol.owner)
-//        val dest = JsNameRef(fieldName, expression.receiver?.accept(this, data))
-//        val source = expression.value.accept(this, data)
-//        return jsAssignment(dest, source)
+        val fieldName = data.getNameForField(expression.symbol.owner).ident
+        if (expression.receiver != null)
+            TODO("Support member fields")
+
+        val value = expression.value.accept(this, data)
+        return WasmSetGlobal(fieldName, value)
     }
 
     override fun visitSetVariable(expression: IrSetVariable, data: IrNamer): WasmInstruction {
-        TODO()
-//        val ref = JsNameRef(data.getNameForValueDeclaration(expression.symbol.owner))
-//        val value = expression.value.accept(this, data)
-//        return JsBinaryOperation(JsBinaryOperator.ASG, ref, value)
+        val fieldName = data.getNameForValueDeclaration(expression.symbol.owner).ident
+        val value = expression.value.accept(this, data)
+        return WasmSetLocal(fieldName, value)
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: IrNamer): WasmInstruction {
@@ -75,6 +81,13 @@ class IrElementToWasmExpressionTransformer : BaseIrElementToWasmNodeTransformer<
     }
 
     override fun visitCall(expression: IrCall, data: IrNamer): WasmInstruction {
+        if (expression.dispatchReceiver != null)
+            TODO("Support member calls")
+
+        val function = expression.symbol.owner.realOverrideTarget
+        require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" }
+        val symbol = function.symbol
+
         TODO()
 //        return translateCall(expression, context, this)
     }

@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.isInt
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
@@ -34,7 +33,15 @@ class IrDeclarationToWasmTransformer : BaseIrElementToWasmNodeTransformer<List<W
     }
 
     override fun visitField(declaration: IrField, context: WasmStaticContext): List<WasmModuleField> {
-        TODO()
+        val global = WasmGlobal(
+            name = context.getNameForField(declaration).ident,
+            type = context.transformType(declaration.type),
+            isMutable = true,
+            init = declaration.initializer?.let {
+                expressionToWasmInstruction(it.expression, context)
+            }
+        )
+        return listOf(global)
     }
 }
 
@@ -46,6 +53,13 @@ fun WasmStaticContext.transformValueParameter(irParameter: IrValueParameter): Wa
 
 fun WasmStaticContext.transformType(irType: IrType): WasmValueType =
     when {
+        irType.isBoolean() -> WasmI32
+        irType.isByte() -> WasmI32
+        irType.isShort() -> WasmI32
         irType.isInt() -> WasmI32
+        irType.isLong() -> WasmI64
+        irType.isChar() -> WasmI32
+        irType.isFloat() -> WasmF32
+        irType.isDouble() -> WasmF64
         else -> TODO()
     }

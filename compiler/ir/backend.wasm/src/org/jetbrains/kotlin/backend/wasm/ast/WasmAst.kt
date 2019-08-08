@@ -51,6 +51,33 @@ class WasmGetLocal(val name: String): WasmInstruction() {
     }
 }
 
+class WasmGetGlobal(val name: String): WasmInstruction() {
+    override fun toWat(ident: String): String {
+        return "$ident(get_global $$name)"
+    }
+}
+
+class WasmSetGlobal(
+    val name: String,
+    val instruction: WasmInstruction
+): WasmInstruction() {
+    override fun toWat(ident: String): String {
+        return "$ident(set_global $$name ${instruction.toWat("")})"
+    }
+}
+
+class WasmSetLocal(
+    val name: String,
+    val instruction: WasmInstruction
+): WasmInstruction() {
+    override fun toWat(ident: String): String {
+        return "$ident(set_local $$name ${instruction.toWat("")})"
+    }
+}
+
+
+
+
 sealed class WasmConst<KotlinType, WasmType : WasmValueType>(
     val value: KotlinType,
     val type: WasmType
@@ -75,12 +102,25 @@ class WasmParameter(
         "(param $$name $type)"
 }
 
+class WasmGlobal(
+    val name: String,
+    val type: WasmValueType,
+    val isMutable: Boolean,
+    val init: WasmInstruction?
+): WasmModuleField() {
+    override fun toWat(): String {
+        val watMut = if (isMutable) "mut " else ""
+        val watInit = if (init != null) " " + init.toWat("") else ""
+        return "(global $$name ($watMut$type) $watInit)"
+    }
+}
+
+
 class WasmLocal
 class WasmBody {
     fun toWat(): String = "TODO: Body"
 }
 class WasmImport
-class WasmGlobal
 
 enum class WasmExportKind(val identifier: String) {
     FUNCTION("func"),
