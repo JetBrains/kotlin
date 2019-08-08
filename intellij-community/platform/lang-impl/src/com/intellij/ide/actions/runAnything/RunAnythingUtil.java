@@ -43,7 +43,7 @@ public class RunAnythingUtil {
     return UIUtil.getLabelFont().deriveFont(UIUtil.getFontSize(UIUtil.FontSize.SMALL));
   }
 
-  static JComponent createTitle(@NotNull String titleText) {
+  static JComponent createTitle(@NotNull String titleText, @NotNull Color background) {
     JLabel titleLabel = new JLabel(StringUtil.capitalizeWords(titleText, true));
     titleLabel.setFont(getTitleFont());
     titleLabel.setForeground(UIUtil.getLabelDisabledForeground());
@@ -58,6 +58,7 @@ public class RunAnythingUtil {
     panel.setBorder(JBUI.Borders.empty(3));
     titleLabel.setBorder(JBUI.Borders.emptyRight(3));
 
+    panel.setBackground(background);
     return panel;
   }
 
