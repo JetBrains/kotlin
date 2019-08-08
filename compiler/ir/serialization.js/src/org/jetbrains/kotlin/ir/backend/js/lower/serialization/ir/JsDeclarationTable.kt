@@ -15,5 +15,6 @@ class JsDeclarationTable(builtIns: IrBuiltIns, descriptorTable: DescriptorTable)
 
     init {
         loadKnownBuiltins()
+        currentIndex = 0
     }
 }

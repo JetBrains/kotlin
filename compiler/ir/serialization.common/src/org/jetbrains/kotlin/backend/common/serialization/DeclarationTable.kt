@@ -26,7 +26,6 @@ abstract class DeclarationTable(val builtIns: IrBuiltIns, val descriptorTable: D
     private val table = mutableMapOf<IrDeclaration, UniqId>()
     val descriptors = descriptorTable
     protected abstract var currentIndex: Long
-    protected abstract val initialIndex: Long
 
     open fun loadKnownBuiltins(): Long {
         builtIns.knownBuiltins.forEach {
