@@ -2,10 +2,12 @@
 
 project("defaultJavaModule") {
   apply plugin: "java"
+  apply plugin: "idea"
 }
 
 project("moduleWithSourceSetDirBothAsResourceAndJava") {
   apply plugin: "java"
+  apply plugin: "idea"
 
   sourceSets.main.resources.srcDir 'src/main/java'
   sourceSets.test.resources.srcDir 'src/test/java'
@@ -13,6 +15,7 @@ project("moduleWithSourceSetDirBothAsResourceAndJava") {
 
 project("moduleWithSourceSetDirBothAsResourceAndGroovy") {
   apply plugin: "groovy"
+  apply plugin: "idea"
 
   sourceSets.main.resources.srcDir 'src/main/groovy'
   sourceSets.test.resources.srcDir 'src/test/groovy'
@@ -20,6 +23,7 @@ project("moduleWithSourceSetDirBothAsResourceAndGroovy") {
 
 project("moduleWithCustomSourceSet") {
   apply plugin: "java"
+  apply plugin: "idea"
 
   sourceSets {
     custom
@@ -30,6 +34,7 @@ project("moduleWithCustomSourceSet") {
 
 project("withIntegrationTests") {
   apply plugin: 'java'
+  apply plugin: "idea"
 
   sourceSets {
     integrationTest {

@@ -246,16 +246,19 @@ public class ModuleExtendedModelBuilderImpl implements ModelBuilderService {
 
     final IdeaPlugin ideaPlugin = project.getPlugins().findPlugin(IdeaPlugin.class);
     if (ideaPlugin == null) {
+      addIdeaPluginDefaults(project, result);
       return result;
     }
 
     final IdeaModel ideaModel = ideaPlugin.getModel();
     if (ideaModel == null) {
+      addIdeaPluginDefaults(project, result);
       return result;
     }
 
     final IdeaModule module = ideaModel.getModule();
     if (module == null) {
+      addIdeaPluginDefaults(project, result);
       return result;
     }
 
@@ -285,6 +288,13 @@ public class ModuleExtendedModelBuilderImpl implements ModelBuilderService {
     }
 
     return result;
+  }
+
+  private static void addIdeaPluginDefaults(Project project, IdeaModuleDirectorySet ideaModuleDirectorySet) {
+    ideaModuleDirectorySet.getExcludedDirectories().add(project.getBuildDir());
+    if (project.getRootProject() == project) {
+      ideaModuleDirectorySet.getExcludedDirectories().add(new File(project.getRootDir(), ".gradle"));
+    }
   }
 }
 
