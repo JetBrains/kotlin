@@ -221,7 +221,8 @@ private val inspectionLikePostProcessingGroup =
         intentionBasedProcessing(RemoveEmptyPrimaryConstructorIntention()),
         generalInspectionBasedProcessing(MayBeConstantInspection()),
         RemoveForExpressionLoopParameterTypeProcessing(),
-        intentionBasedProcessing(ReplaceMapGetOrDefaultIntention())
+        intentionBasedProcessing(ReplaceMapGetOrDefaultIntention()),
+        inspectionBasedProcessing(ReplaceGuardClauseWithFunctionCallInspection())
     )
 
 
