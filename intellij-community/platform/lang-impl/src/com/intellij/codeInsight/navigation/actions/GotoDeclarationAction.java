@@ -211,6 +211,23 @@ public class GotoDeclarationAction extends BaseCodeInsightAction implements Code
     }
   }
 
+  /**
+   * @deprecated use chooseAmbiguousTarget(Project, Editor, int, PsiElementProcessor, String, PsiElement[])
+   */
+  @Deprecated
+  @SuppressWarnings("unused") // for external usages only
+  public static boolean chooseAmbiguousTarget(@NotNull Editor editor,
+                                              int offset,
+                                              @NotNull PsiElementProcessor<? super PsiElement> processor,
+                                              @NotNull String titlePattern,
+                                              @Nullable PsiElement[] elements) {
+    Project project = editor.getProject();
+    if (project == null) {
+      return false;
+    }
+    return chooseAmbiguousTarget(project, editor, offset, processor, titlePattern, elements);
+  }
+
   // returns true if processor is run or is going to be run after showing popup
   public static boolean chooseAmbiguousTarget(@NotNull final Project project,
                                               @NotNull Editor editor,
