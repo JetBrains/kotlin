@@ -96,7 +96,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.enumValueOfSymbol.toKey()!! to IrEnumValueOf,
                 irBuiltIns.noWhenBranchMatchedExceptionSymbol.toKey()!! to IrNoWhenBranchMatchedException,
                 irBuiltIns.illegalArgumentExceptionSymbol.toKey()!! to IrIllegalArgumentException,
-                // irBuiltIns.throwNpeSymbol.toKey()!! to ThrowNPE, -- TODO checkNotNullSymbol
+                irBuiltIns.checkNotNullSymbol.toKey()!! to IrCheckNotNull,
                 irBuiltIns.andandSymbol.toKey()!! to AndAnd,
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 symbols.unsafeCoerceIntrinsicSymbol.toKey()!! to UnsafeCoerce

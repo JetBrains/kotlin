@@ -8,4 +8,4 @@ fun stubPreventBoxingOptimization(s: Int?) {
     s
 }
 
-//0 CHECKCAST java/lang/Number
+// 0 CHECKCAST java/lang/Number
