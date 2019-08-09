@@ -490,6 +490,11 @@ data class JKTypeParameterTypeImpl(
     override val nullability: Nullability = Nullability.Default
 ) : JKTypeParameterType
 
+data class JKCapturedType(
+    val wildcardType: JKWildCardType,
+    override val nullability: Nullability = Nullability.Default
+) : JKType
+
 class JKEnumConstantImpl(
     name: JKNameIdentifier,
     arguments: JKArgumentList,

@@ -121,6 +121,11 @@ fun PsiType.toJK(symbolProvider: JKSymbolProvider, nullability: Nullability = Nu
                     )
                 else -> JKStarProjectionTypeImpl()
             }
+        is PsiCapturedWildcardType ->
+            JKCapturedType(
+                wildcard.toJK(symbolProvider, nullability) as JKWildCardType,
+                nullability
+            )
         else -> throw Exception("Invalid PSI ${this::class.java}")
     }
 }

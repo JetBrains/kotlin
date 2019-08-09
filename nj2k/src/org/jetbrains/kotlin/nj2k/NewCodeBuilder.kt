@@ -935,10 +935,25 @@ private class JKPrinter(
     private fun JKClassSymbol.needFqName(): Boolean =
         fqName !in mappedToKotlinFqNames
 
+    private fun JKType.renderTypeInfo() {
+        print(elementInfoStorage.getOrCreateInfoForElement(this).render())
+    }
 
     fun renderType(type: JKType, owner: JKTreeElement?) {
         if (type is JKNoTypeImpl) return
-        print(elementInfoStorage.getOrCreateInfoForElement(type).render())
+        if (type is JKCapturedType) {
+            when (val wildcard = type.wildcardType) {
+                is JKVarianceTypeParameterType -> {
+                    renderType(wildcard.boundType, owner)
+                }
+                is JKStarProjectionType -> {
+                    type.renderTypeInfo()
+                    print("Any?")
+                }
+            }
+            return
+        }
+        type.renderTypeInfo()
         when (type) {
             is JKClassType -> {
                 renderClassSymbol(type.classReference, owner)
@@ -962,12 +977,11 @@ private class JKPrinter(
                 renderList(type.parameters, renderElement = { renderType(it, null) })
             }
         }
-        if (type.nullability == Nullability.Nullable) {
-            printWithNoIndent("?")
-        }
-        // we print undefined types as nullable because we need smartcast work in nullability inference in post-processing
-        if (type.nullability == Nullability.Default
-            && owner?.safeAs<JKLambdaExpression>()?.functionalType?.type != type
+        // we print undefined types as nullable because we need smartcast to work in nullability inference in post-processing
+        if (type !is JKWildCardType
+            && (type.nullability == Nullability.Default
+                    && owner?.safeAs<JKLambdaExpression>()?.functionalType?.type != type
+                    || type.nullability == Nullability.Nullable)
         ) {
             printWithNoIndent("?")
         }
