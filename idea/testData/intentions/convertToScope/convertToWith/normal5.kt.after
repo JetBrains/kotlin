@@ -1,0 +1,16 @@
+// WITH_RUNTIME
+
+class MyClass {
+    fun foo1() = Unit
+    fun foo2() = Unit
+    fun foo3() = Unit
+
+    fun foo4() {
+        val a = MyClass()
+        with(a) {
+            foo1()
+            foo2()
+            foo3()
+        }
+    }
+}

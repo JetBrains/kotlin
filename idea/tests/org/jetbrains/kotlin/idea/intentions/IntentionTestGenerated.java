@@ -6848,6 +6848,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToAlso/normal3.kt");
             }
 
+            @TestMetadata("normal4.kt")
+            public void testNormal4() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/normal4.kt");
+            }
+
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToAlso/onProperty.kt");
@@ -6871,6 +6876,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("withCommentAndSpaces.kt")
             public void testWithCommentAndSpaces() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToAlso/withCommentAndSpaces.kt");
+            }
+
+            @TestMetadata("withDifficultRenaming.kt")
+            public void testWithDifficultRenaming() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/withDifficultRenaming.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer.kt")
+            public void testWithNotSimpleInitializer() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/withNotSimpleInitializer.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer2.kt")
+            public void testWithNotSimpleInitializer2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToAlso/withNotSimpleInitializer2.kt");
             }
         }
 
@@ -6966,6 +6986,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToApply/normal3.kt");
             }
 
+            @TestMetadata("normal4.kt")
+            public void testNormal4() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/normal4.kt");
+            }
+
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToApply/onProperty.kt");
@@ -6999,6 +7024,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("withCommentAndSpaces.kt")
             public void testWithCommentAndSpaces() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToApply/withCommentAndSpaces.kt");
+            }
+
+            @TestMetadata("withDifficultRenaming.kt")
+            public void testWithDifficultRenaming() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/withDifficultRenaming.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer.kt")
+            public void testWithNotSimpleInitializer() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/withNotSimpleInitializer.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer2.kt")
+            public void testWithNotSimpleInitializer2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToApply/withNotSimpleInitializer2.kt");
             }
         }
 
@@ -7089,6 +7129,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToRun/normal4.kt");
             }
 
+            @TestMetadata("normal5.kt")
+            public void testNormal5() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/normal5.kt");
+            }
+
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToRun/onProperty.kt");
@@ -7117,6 +7162,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("withCommentAndSpaces.kt")
             public void testWithCommentAndSpaces() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToRun/withCommentAndSpaces.kt");
+            }
+
+            @TestMetadata("withDifficultRenaming.kt")
+            public void testWithDifficultRenaming() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/withDifficultRenaming.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer.kt")
+            public void testWithNotSimpleInitializer() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/withNotSimpleInitializer.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer2.kt")
+            public void testWithNotSimpleInitializer2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToRun/withNotSimpleInitializer2.kt");
             }
         }
 
@@ -7192,6 +7252,11 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
                 runTest("idea/testData/intentions/convertToScope/convertToWith/normal4.kt");
             }
 
+            @TestMetadata("normal5.kt")
+            public void testNormal5() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/normal5.kt");
+            }
+
             @TestMetadata("onProperty.kt")
             public void testOnProperty() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToWith/onProperty.kt");
@@ -7220,6 +7285,21 @@ public class IntentionTestGenerated extends AbstractIntentionTest {
             @TestMetadata("withCommentAndSpaces.kt")
             public void testWithCommentAndSpaces() throws Exception {
                 runTest("idea/testData/intentions/convertToScope/convertToWith/withCommentAndSpaces.kt");
+            }
+
+            @TestMetadata("withDifficultRenaming.kt")
+            public void testWithDifficultRenaming() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/withDifficultRenaming.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer.kt")
+            public void testWithNotSimpleInitializer() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/withNotSimpleInitializer.kt");
+            }
+
+            @TestMetadata("withNotSimpleInitializer2.kt")
+            public void testWithNotSimpleInitializer2() throws Exception {
+                runTest("idea/testData/intentions/convertToScope/convertToWith/withNotSimpleInitializer2.kt");
             }
         }
     }

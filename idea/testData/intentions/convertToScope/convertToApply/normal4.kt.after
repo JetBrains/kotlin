@@ -2,8 +2,7 @@
 
 class MyClass {
     fun foo(c: Int) {
-        val a = 23
-        with(a) {
+        val a = 23.apply {
             dec()
             dec()
             dec() + this

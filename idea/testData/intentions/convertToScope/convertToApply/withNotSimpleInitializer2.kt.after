@@ -1,0 +1,10 @@
+// WITH_RUNTIME
+
+class MyClass {
+    fun foo() {
+        val c = (2 + 3).apply {
+            div(2)
+            div(this + 2 + this) + div(this)
+        }
+    }
+}

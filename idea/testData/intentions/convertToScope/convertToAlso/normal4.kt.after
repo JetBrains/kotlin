@@ -1,0 +1,11 @@
+// WITH_RUNTIME
+
+class MyClass {
+    fun foo(c: Int) {
+        val a = 23.also {
+            it.dec()
+            it.dec()
+            it.dec() + it
+        }
+    }
+}

@@ -350,3 +350,15 @@ fun KtPsiFactory.appendSemicolonBeforeLambdaContainingElement(element: PsiElemen
         previousElement.parent.addAfter(createSemicolon(), previousElement)
     }
 }
+
+internal fun Sequence<PsiElement>.lastWithPersistedElementOrNull(elementShouldPersist: KtExpression): PsiElement? {
+    var lastElement: PsiElement? = null
+    var checked = false
+
+    for (element in this) {
+        checked = checked || (element === elementShouldPersist)
+        lastElement = element
+    }
+
+    return if (checked) lastElement else null
+}
