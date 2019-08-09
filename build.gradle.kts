@@ -397,6 +397,9 @@ allprojects {
             configurations.findByName("kotlinCompilerClasspath")?.let {
                 dependencies.add(it.name, files(bootstrapCompilerClasspath))
             }
+
+            configurations.findByName("kotlinCompilerPluginClasspath")
+                ?.exclude("org.jetbrains.kotlin", "kotlin-scripting-compiler-embeddable")
         }
 
         // Aggregate task for build related checks
