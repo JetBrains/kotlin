@@ -236,7 +236,7 @@ class SignatureEnhancement(
         return bounds.map { bound ->
             SignatureParts(
                 typeParameter, bound, emptyList(), false, context,
-                AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
+                AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
                 typeParameterBounds = true
             ).enhance().type
         }
@@ -258,7 +258,7 @@ class SignatureEnhancement(
         private val fromOverridden: Collection<KotlinType>,
         private val isCovariant: Boolean,
         private val containerContext: LazyJavaResolverContext,
-        private val containerApplicabilityType: AnnotationTypeQualifierResolver.QualifierApplicabilityType,
+        private val containerApplicabilityType: AnnotationQualifierApplicabilityType,
         private val typeParameterBounds: Boolean = false
     ) {
 
@@ -311,7 +311,7 @@ class SignatureEnhancement(
 
         private fun KotlinType.extractQualifiersFromAnnotations(
             isHeadTypeConstructor: Boolean,
-            defaultQualifiersForType: JavaTypeQualifiers?
+            defaultQualifiersForType: JavaDefaultQualifiers?
         ): JavaTypeQualifiers {
             val composedAnnotation =
                 if (isHeadTypeConstructor && typeContainer != null)
@@ -332,10 +332,10 @@ class SignatureEnhancement(
 
             val nullabilityInfo =
                 composedAnnotation.extractNullability()
-                    ?: defaultTypeQualifier?.nullability?.let {
+                    ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullabilityQualifierWithMigrationStatus ->
                         NullabilityQualifierWithMigrationStatus(
-                            defaultTypeQualifier.nullability!!,
-                            defaultTypeQualifier.isNullabilityQualifierForWarning
+                            nullabilityQualifierWithMigrationStatus.qualifier,
+                            nullabilityQualifierWithMigrationStatus.isForWarningOnly
                         )
                     }
 
@@ -397,9 +397,9 @@ class SignatureEnhancement(
                         c.defaultTypeQualifiers
                             ?.get(
                                 if (typeParameterBounds)
-                                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+                                    AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
                                 else
-                                    AnnotationTypeQualifierResolver.QualifierApplicabilityType.TYPE_USE
+                                    AnnotationQualifierApplicabilityType.TYPE_USE
                             )
                     )
                 )
@@ -420,7 +420,7 @@ class SignatureEnhancement(
 
         private fun KotlinType.computeQualifiersForOverride(
             fromSupertypes: Collection<KotlinType>,
-            defaultQualifiersForType: JavaTypeQualifiers?,
+            defaultQualifiersForType: JavaDefaultQualifiers?,
             isHeadTypeConstructor: Boolean
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
@@ -514,5 +514,5 @@ class SignatureEnhancement(
 
 private data class TypeAndDefaultQualifiers(
     val type: KotlinType,
-    val defaultQualifiers: JavaTypeQualifiers?
+    val defaultQualifiers: JavaDefaultQualifiers?
 )

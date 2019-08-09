@@ -9,6 +9,11 @@ import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.FqName
 
+data class JavaDefaultQualifiers(
+    val nullabilityQualifier: NullabilityQualifierWithMigrationStatus,
+    val qualifierApplicabilityTypes: Collection<AnnotationQualifierApplicabilityType>
+)
+
 val TYPE_QUALIFIER_NICKNAME_FQNAME = FqName("javax.annotation.meta.TypeQualifierNickname")
 val TYPE_QUALIFIER_FQNAME = FqName("javax.annotation.meta.TypeQualifier")
 val TYPE_QUALIFIER_DEFAULT_FQNAME = FqName("javax.annotation.meta.TypeQualifierDefault")
@@ -24,25 +29,25 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
 
 val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
     FqName("javax.annotation.ParametersAreNullableByDefault") to
-            NullabilityQualifierWithApplicability(
+            JavaDefaultQualifiers(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
                 listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
             ),
     FqName("javax.annotation.ParametersAreNonnullByDefault") to
-            NullabilityQualifierWithApplicability(
+            JavaDefaultQualifiers(
                 NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
                 listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
             ),
 
-    JSPECIFY_DEFAULT_NULLABLE to NullabilityQualifierWithApplicability(
+    JSPECIFY_DEFAULT_NULLABLE to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
         DEFAULT_JSPECIFY_APPLICABILITY
     ),
-    JSPECIFY_DEFAULT_NOT_NULL to NullabilityQualifierWithApplicability(
+    JSPECIFY_DEFAULT_NOT_NULL to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
         DEFAULT_JSPECIFY_APPLICABILITY
     ),
-    JSPECIFY_DEFAULT_NULLNESS_UNKNOWN to NullabilityQualifierWithApplicability(
+    JSPECIFY_DEFAULT_NULLNESS_UNKNOWN to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY),
         DEFAULT_JSPECIFY_APPLICABILITY
     )

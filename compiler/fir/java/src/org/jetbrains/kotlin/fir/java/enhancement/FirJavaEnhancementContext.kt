@@ -26,7 +26,7 @@ fun extractDefaultNullabilityQualifier(
     typeQualifierResolver: FirAnnotationTypeQualifierResolver,
     jsr305State: Jsr305State,
     annotationCall: FirAnnotationCall
-): NullabilityQualifierWithApplicability? {
+): JavaDefaultQualifiers? {
     typeQualifierResolver.resolveQualifierBuiltInDefaultAnnotation(annotationCall)?.let { return it }
 
     val (typeQualifier, applicability) =
@@ -45,7 +45,7 @@ fun extractDefaultNullabilityQualifier(
         typeQualifierResolver, jsr305State
     )?.copy(isForWarningOnly = jsr305ReportLevel.isWarning) ?: return null
 
-    return NullabilityQualifierWithApplicability(nullabilityQualifier, applicability)
+    return JavaDefaultQualifiers(nullabilityQualifier, applicability)
 }
 
 fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
@@ -55,7 +55,7 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
 ): JavaTypeQualifiersByElementType? {
     if (typeQualifierResolver.disabled) return defaultTypeQualifiers
 
-    val nullabilityQualifiersWithApplicability =
+    val defaultQualifiers =
         additionalAnnotations.mapNotNull { annotationCall ->
             extractDefaultNullabilityQualifier(
                 typeQualifierResolver,
@@ -64,21 +64,21 @@ fun FirJavaEnhancementContext.computeNewDefaultTypeQualifiers(
             )
         }
 
-    if (nullabilityQualifiersWithApplicability.isEmpty()) return defaultTypeQualifiers
+    if (defaultQualifiers.isEmpty()) return defaultTypeQualifiers
 
-    val nullabilityQualifiersByType =
-        defaultTypeQualifiers?.nullabilityQualifiers?.let(::QualifierByApplicabilityType)
+    val defaultQualifiersByType =
+        defaultTypeQualifiers?.defaultQualifiers?.let(::QualifierByApplicabilityType)
             ?: QualifierByApplicabilityType(AnnotationQualifierApplicabilityType::class.java)
 
     var wasUpdate = false
-    for ((nullability, applicableTo) in nullabilityQualifiersWithApplicability) {
-        for (applicabilityType in applicableTo) {
-            nullabilityQualifiersByType[applicabilityType] = nullability
+    for (qualifier in defaultQualifiers) {
+        for (applicabilityType in qualifier.qualifierApplicabilityTypes) {
+            defaultQualifiersByType[applicabilityType] = qualifier
             wasUpdate = true
         }
     }
 
-    return if (!wasUpdate) defaultTypeQualifiers else JavaTypeQualifiersByElementType(nullabilityQualifiersByType)
+    return if (!wasUpdate) defaultTypeQualifiers else JavaTypeQualifiersByElementType(defaultQualifiersByType)
 }
 
 fun FirJavaEnhancementContext.copyWithNewDefaultTypeQualifiers(
