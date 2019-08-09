@@ -756,6 +756,8 @@ public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R
  * Appends all elements yielded from results of [transform] function being invoked on each element of original sequence, to the given [destination].
  *
  * The operation is _terminal_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R, C : MutableCollection<in R>> Sequence<T>.flatMapTo(destination: C, transform: (T) -> Sequence<R>): C {
     for (element in this) {

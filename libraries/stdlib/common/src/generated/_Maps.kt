@@ -46,6 +46,8 @@ public inline fun <K, V, R> Map<out K, V>.flatMap(transform: (Map.Entry<K, V>) -
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each entry of original map, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <K, V, R, C : MutableCollection<in R>> Map<out K, V>.flatMapTo(destination: C, transform: (Map.Entry<K, V>) -> Iterable<R>): C {
     for (element in this) {

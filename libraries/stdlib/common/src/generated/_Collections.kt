@@ -1220,6 +1220,8 @@ public inline fun <T, R> Iterable<T>.flatMap(transform: (T) -> Iterable<R>): Lis
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original collection, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R, C : MutableCollection<in R>> Iterable<T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {

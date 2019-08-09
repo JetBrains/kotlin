@@ -8227,6 +8227,8 @@ public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(destination: C, transform: (T) -> Iterable<R>): C {
     for (element in this) {
@@ -8238,6 +8240,8 @@ public inline fun <T, R, C : MutableCollection<in R>> Array<out T>.flatMapTo(des
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destination: C, transform: (Byte) -> Iterable<R>): C {
     for (element in this) {
@@ -8249,6 +8253,8 @@ public inline fun <R, C : MutableCollection<in R>> ByteArray.flatMapTo(destinati
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destination: C, transform: (Short) -> Iterable<R>): C {
     for (element in this) {
@@ -8260,6 +8266,8 @@ public inline fun <R, C : MutableCollection<in R>> ShortArray.flatMapTo(destinat
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destination: C, transform: (Int) -> Iterable<R>): C {
     for (element in this) {
@@ -8271,6 +8279,8 @@ public inline fun <R, C : MutableCollection<in R>> IntArray.flatMapTo(destinatio
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destination: C, transform: (Long) -> Iterable<R>): C {
     for (element in this) {
@@ -8282,6 +8292,8 @@ public inline fun <R, C : MutableCollection<in R>> LongArray.flatMapTo(destinati
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destination: C, transform: (Float) -> Iterable<R>): C {
     for (element in this) {
@@ -8293,6 +8305,8 @@ public inline fun <R, C : MutableCollection<in R>> FloatArray.flatMapTo(destinat
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destination: C, transform: (Double) -> Iterable<R>): C {
     for (element in this) {
@@ -8304,6 +8318,8 @@ public inline fun <R, C : MutableCollection<in R>> DoubleArray.flatMapTo(destina
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destination: C, transform: (Boolean) -> Iterable<R>): C {
     for (element in this) {
@@ -8315,6 +8331,8 @@ public inline fun <R, C : MutableCollection<in R>> BooleanArray.flatMapTo(destin
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> CharArray.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {

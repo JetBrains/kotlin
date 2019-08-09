@@ -3728,6 +3728,8 @@ public inline fun <R> UShortArray.flatMap(transform: (UShort) -> Iterable<R>): L
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3742,6 +3744,8 @@ public inline fun <R, C : MutableCollection<in R>> UIntArray.flatMapTo(destinati
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3756,6 +3760,8 @@ public inline fun <R, C : MutableCollection<in R>> ULongArray.flatMapTo(destinat
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3770,6 +3776,8 @@ public inline fun <R, C : MutableCollection<in R>> UByteArray.flatMapTo(destinat
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each element of original array, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes

@@ -742,6 +742,8 @@ public inline fun <R> CharSequence.flatMap(transform: (Char) -> Iterable<R>): Li
 
 /**
  * Appends all elements yielded from results of [transform] function being invoked on each character of original char sequence, to the given [destination].
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R, C : MutableCollection<in R>> CharSequence.flatMapTo(destination: C, transform: (Char) -> Iterable<R>): C {
     for (element in this) {

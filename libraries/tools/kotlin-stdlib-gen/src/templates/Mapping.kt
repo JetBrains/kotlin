@@ -314,6 +314,7 @@ object Mapping : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Appends all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}, to the given [destination]." }
+        sample("samples.collections.Collections.Transformations.flatMap")
         specialFor(Sequences) {
             signature("flatMapTo(destination: C, transform: (T) -> Sequence<R>)")
         }
