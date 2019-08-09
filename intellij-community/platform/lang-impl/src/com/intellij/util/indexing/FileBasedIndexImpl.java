@@ -3,6 +3,8 @@ package com.intellij.util.indexing;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.intellij.AppTopics;
+import com.intellij.diagnostic.Activity;
+import com.intellij.diagnostic.ParallelActivity;
 import com.intellij.history.LocalHistory;
 import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.startup.ServiceNotReadyException;
@@ -2412,7 +2414,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     private SerializationManagerEx mySerializationManagerEx;
 
     private void initAssociatedDataForExtensions() {
-      long started = System.nanoTime();
+      Activity activity = ParallelActivity.PREPARE_APP_INIT.start("file index extensions iteration");
       Iterator<FileBasedIndexExtension> extensions =
         IndexInfrastructure.hasIndices() ?
         ((ExtensionPointImpl<FileBasedIndexExtension>)FileBasedIndexExtension.EXTENSION_POINT_NAME.getPoint(null)).iterator() :
@@ -2454,7 +2456,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       }
 
       myExtensionsRelatedDataWasLoaded = true;
-      LOG.info("File index extensions iterated:" + (System.nanoTime() - started) / 1000000);
+      activity.end();
     }
 
     @Override
