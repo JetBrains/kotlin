@@ -76,7 +76,7 @@ class ServiceViewTreeUi implements ServiceViewUi {
   @Override
   public void setServiceToolbar(@NotNull ServiceViewActionProvider actionProvider) {
     myServiceActionToolbar = actionProvider.createServiceToolbar(myMainPanel);
-    myContentPanel.setToolbar(myServiceActionToolbar.getComponent());
+    myContentPanel.setToolbar(actionProvider.wrapServiceToolbar(myServiceActionToolbar));
   }
 
   @Override

@@ -20,6 +20,8 @@ import javax.swing.*;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.tree.TreeModel;
 import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,6 +43,35 @@ class ServiceViewActionProvider {
     ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.SERVICES_TOOLBAR, actions, false);
     toolbar.setTargetComponent(component);
     return toolbar;
+  }
+
+  JComponent wrapServiceToolbar(@NotNull ActionToolbar toolbar) {
+    JPanel wrapper = new JPanel(new BorderLayout());
+    wrapper.add(toolbar.getComponent(), BorderLayout.CENTER);
+    toolbar.getComponent().addComponentListener(new ComponentListener() {
+      @Override
+      public void componentResized(ComponentEvent e) {
+      }
+
+      @Override
+      public void componentMoved(ComponentEvent e) {
+      }
+
+      @Override
+      public void componentShown(ComponentEvent e) {
+        wrapper.setVisible(true);
+      }
+
+      @Override
+      public void componentHidden(ComponentEvent e) {
+        wrapper.setVisible(false);
+      }
+    });
+    ActionToolbar prototypeToolbar = createPrototypeToolbar();
+    JLabel spacer = new JLabel();
+    spacer.setPreferredSize(new Dimension(prototypeToolbar.getComponent().getPreferredSize().width, 0));
+    wrapper.add(spacer, BorderLayout.SOUTH);
+    return wrapper;
   }
 
   void installPopupHandler(@NotNull JComponent component) {
@@ -92,6 +123,25 @@ class ServiceViewActionProvider {
       contextComponent = contextComponent.getParent();
     }
     return (ServiceView)contextComponent;
+  }
+
+  private static final AnAction EMPTY_ACTION = new DumbAwareAction(null, null, EmptyIcon.ICON_16) {
+    @Override
+    public void update(@NotNull AnActionEvent e) {
+      e.getPresentation().setEnabled(false);
+    }
+
+    @Override
+    public void actionPerformed(@NotNull AnActionEvent e) {
+    }
+  };
+
+  private static ActionToolbar createPrototypeToolbar() {
+    DefaultActionGroup actionGroup = new DefaultActionGroup();
+    actionGroup.add(EMPTY_ACTION);
+    ActionToolbar toolbar = ActionManager.getInstance().createActionToolbar(ActionPlaces.TOOLBAR, actionGroup, false);
+    toolbar.updateActionsImmediately();
+    return toolbar;
   }
 
   private static class ServiceViewTreeExpander extends DefaultTreeExpander {
@@ -152,7 +202,7 @@ class ServiceViewActionProvider {
       descriptor = selectedItems.get(0).getViewDescriptor();
     }
     else {
-      ServiceViewContributor contributor = getTheOnlyRootContributor(selectedItems);
+      ServiceViewContributor<?> contributor = getTheOnlyRootContributor(selectedItems);
       descriptor = contributor == null ? null : contributor.getViewDescriptor();
     }
     if (descriptor == null) return AnAction.EMPTY_ARRAY;
@@ -162,22 +212,10 @@ class ServiceViewActionProvider {
   }
 
   public static class ItemToolbarActionGroup extends ActionGroup {
-    private final static AnAction[] FAKE_GROUP = new AnAction[]{new DumbAwareAction(null, null, EmptyIcon.ICON_16) {
-      @Override
-      public void update(@NotNull AnActionEvent e) {
-        e.getPresentation().setEnabled(false);
-      }
-
-      @Override
-      public void actionPerformed(@NotNull AnActionEvent e) {
-      }
-    }};
-
     @NotNull
     @Override
     public AnAction[] getChildren(@Nullable AnActionEvent e) {
-      AnAction[] actions = doGetActions(e, true);
-      return actions.length != 0 ? actions : FAKE_GROUP;
+      return doGetActions(e, true);
     }
   }
 
