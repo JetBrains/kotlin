@@ -237,7 +237,8 @@ interface JKMutabilityOwner : JKModifiersListOwner {
 enum class Mutability(override val text: String) : Modifier {
     MUTABLE("var"),
     IMMUTABLE("val"),
-    UNKNOWN("var")//TODO ???
+    UNKNOWN("var"), //TODO ???
+    NONE("")
 }
 
 var JKMutabilityOwner.mutability: Mutability
@@ -386,7 +387,7 @@ interface JKLiteralExpression : JKExpression {
     }
 }
 
-abstract class JKParameter : JKVariable(), JKModifiersListOwner {
+abstract class JKParameter : JKVariable(), JKModifiersListOwner, JKMutabilityOwner {
     abstract var isVarArgs: Boolean
 
     override var rightNonCodeElements: List<JKNonCodeElement> = emptyList()

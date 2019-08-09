@@ -86,6 +86,7 @@ object ConversionsRunner {
             +CollectImportsConversion(context)
             +MoveInitBlocksToTheEndConversion()
             +AddElementsInfoConversion(context)
+            +DataClassConversion()
         }
 
     fun doApply(trees: List<JKTreeRoot>, context: NewJ2kConverterContext) {

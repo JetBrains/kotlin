@@ -805,6 +805,21 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/class/classWithMultiplyFields.java");
         }
 
+        @TestMetadata("dataClass.java")
+        public void testDataClass() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/dataClass.java");
+        }
+
+        @TestMetadata("dataClass2.java")
+        public void testDataClass2() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/dataClass2.java");
+        }
+
+        @TestMetadata("dataClass3.java")
+        public void testDataClass3() throws Exception {
+            runTest("nj2k/testData/newJ2k/class/dataClass3.java");
+        }
+
         @TestMetadata("emptyClass.java")
         public void testEmptyClass() throws Exception {
             runTest("nj2k/testData/newJ2k/class/emptyClass.java");

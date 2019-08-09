@@ -94,7 +94,8 @@ class JKParameterImpl(
     name: JKNameIdentifier,
     override var isVarArgs: Boolean = false,
     initializer: JKExpression = JKStubExpressionImpl(),
-    annotationList: JKAnnotationList = JKAnnotationListImpl()
+    annotationList: JKAnnotationList = JKAnnotationListImpl(),
+    mutabilityModifier: JKMutabilityModifierElement = JKMutabilityModifierElementImpl(Mutability.NONE)
 ) : JKParameter(), PsiOwner by PsiOwnerImpl() {
     override fun accept(visitor: JKVisitor) = visitor.visitParameter(this)
 
@@ -102,6 +103,7 @@ class JKParameterImpl(
     override var name by child(name)
     override var type by child(type)
     override var annotationList by child(annotationList)
+    override var mutabilityElement by child(mutabilityModifier)
 }
 
 class JKBlockImpl(statements: List<JKStatement> = emptyList()) : JKBlock(), PsiOwner by PsiOwnerImpl() {
