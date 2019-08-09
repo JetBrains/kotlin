@@ -138,7 +138,7 @@ class CreateExpectedClassFix(
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
             chooseMembers(project, membersForSelection, prefix) ?: return@block null
         }
-    }.plus(members.filter(KtNamedDeclaration::isAlwaysActual))
+    }.asSequence().plus(members.filter(KtNamedDeclaration::isAlwaysActual)).flatMap(KtNamedDeclaration::selected).toSet()
 
     val selectedClasses = findClasses(selectedElements + klass, commonModule)
     val resultDeclarations = if (selectedClasses != existingClasses) {
@@ -164,7 +164,7 @@ class CreateExpectedClassFix(
     generateClassOrObject(project, true, element, commonModule, listOfNotNull(outerExpectedClass), selectedClasses)
 })
 
-private tailrec fun findClasses(elements: List<KtNamedDeclaration>, module: Module): HashSet<String> {
+private tailrec fun findClasses(elements: Collection<KtNamedDeclaration>, module: Module): HashSet<String> {
     val classes = elements.filterIsInstance<KtClassOrObject>()
     val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
     val newExistingClasses = classes.filter { it.checkTypeAccessibilityInModule(module, existingNames) }
@@ -273,8 +273,14 @@ private fun repairActualModifiers(
 
 private tailrec fun KtDeclaration.makeActualWithParents() {
     makeActual()
-    safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()?.takeUnless(KtDeclaration::hasActualModifier)?.makeActual()
     containingClassOrObject?.takeUnless(KtDeclaration::hasActualModifier)?.makeActualWithParents()
+}
+
+private fun KtNamedDeclaration.selected(): Sequence<KtNamedDeclaration> {
+    val additionalSequence = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()?.let {
+        sequenceOf(it)
+    } ?: emptySequence()
+    return sequenceOf(this) + additionalSequence + containingClassOrObject?.selected().orEmpty()
 }
 
 class CreateExpectedPropertyFix(
