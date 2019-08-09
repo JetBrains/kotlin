@@ -667,6 +667,147 @@ func testDeprecation() throws {
     try assertEquals(actual: test.callEffectivelyHidden(obj: ImplementingHiddenSubclass()), expected: -2)
 }
 
+func setAssociatedObject(object: AnyObject, value: AnyObject) {
+    objc_setAssociatedObject(
+        object,
+        UnsafeRawPointer(bitPattern: 1)!,
+        value,
+        objc_AssociationPolicy.OBJC_ASSOCIATION_RETAIN
+    )
+}
+
+func testWeakRefs() throws {
+    try testWeakRefs0(frozen: false)
+    try testWeakRefs0(frozen: true)
+}
+
+func testWeakRefs0(frozen: Bool) throws {
+    func getObj(test: TestWeakRefs) -> AnyObject {
+        return autoreleasepool { test.getObj() as AnyObject }
+    }
+
+    func test1() throws {
+        var test = TestWeakRefs(frozen: frozen)
+
+        var obj: AnyObject? = getObj(test: test)
+        weak var ref = getObj(test: test)
+
+        ValuesKt.gc()
+        try assertTrue(ref === getObj(test: test)) // There are both Kotlin and Swift references to the object.
+
+        obj = nil
+        ValuesKt.gc()
+        try assertTrue(ref === getObj(test: test)) // There are only Kotlin references to the object.
+
+        test.clearObj()
+        ValuesKt.gc()
+        try assertTrue(ref === nil)
+    }
+
+    func test2() throws {
+        var test = TestWeakRefs(frozen: frozen)
+
+        var obj: AnyObject? = getObj(test: test)
+        weak var ref = getObj(test: test)
+
+        ValuesKt.gc()
+        try assertTrue(ref === obj!) // There are both Kotlin and Swift references to the object.
+
+        test.clearObj()
+        ValuesKt.gc()
+        try assertTrue(ref === obj!) // There are only Swift references to the object.
+
+        obj = nil
+        ValuesKt.gc()
+        try assertTrue(ref === nil)
+    }
+
+    func test3() throws {
+        class Holder {
+            static weak var ref: AnyObject? = nil
+            static var deinitialized = false
+
+            deinit {
+                // Access weak ref to Kotlin object during its counterpart dealloc:
+                try! assertTrue(Holder.ref === nil)
+                Holder.deinitialized = true
+            }
+        }
+
+        Holder.deinitialized = false
+        Holder.ref = nil
+
+        var test = TestWeakRefs(frozen: frozen)
+
+        Holder.ref = getObj(test: test)
+
+        // Prepare Holder() to get deinitialized along with getObj(test: test):
+        setAssociatedObject(
+            object: getObj(test: test),
+            value: Holder()
+        )
+
+        try assertFalse(Holder.ref === nil)
+        try assertFalse(Holder.deinitialized)
+
+        test.clearObj()
+        ValuesKt.gc()
+
+        try assertTrue(Holder.ref === nil)
+        try assertTrue(Holder.deinitialized)
+    }
+
+    func test4() throws {
+        class Holder {
+            static weak var ref1: AnyObject? = nil
+            static weak var ref2: AnyObject? = nil
+            static var deinitialized: Int = 0
+
+            deinit {
+                // Access weak ref to Kotlin object during its counterpart dealloc:
+                try! assertTrue(Holder.ref1 === nil)
+                try! assertTrue(Holder.ref2 === nil)
+                Holder.deinitialized += 1
+            }
+        }
+
+        Holder.deinitialized = 0
+        Holder.ref1 = nil
+        Holder.ref2 = nil
+
+        var test = TestWeakRefs(frozen: frozen)
+
+        autoreleasepool {
+            let cycle = test.createCycle()
+
+            let obj1 = cycle[0] as AnyObject
+            let obj2 = cycle[1] as AnyObject
+
+            // Prepare Holders to get deinitialized along with obj1 and obj2:
+            setAssociatedObject(object: obj1, value: Holder())
+            setAssociatedObject(object: obj2, value: Holder())
+
+            Holder.ref1 = obj1
+            Holder.ref2 = obj2
+        }
+
+        try assertFalse(Holder.ref1 === nil)
+        try assertFalse(Holder.ref2 === nil)
+        try assertEquals(actual: Holder.deinitialized, expected: 0)
+
+        ValuesKt.gc()
+
+        try assertTrue(Holder.ref1 === nil)
+        try assertTrue(Holder.ref2 === nil)
+        try assertEquals(actual: Holder.deinitialized, expected: 2)
+    }
+
+    try test1()
+    try test2()
+    try test3()
+    // try test4()
+}
+
 // See https://github.com/JetBrains/kotlin-native/issues/2931
 func testGH2931() throws {
     for i in 0..<50000 {
@@ -735,6 +876,7 @@ class ValuesTests : TestProvider {
             TestCase(name: "TestClashes", method: withAutorelease(testClashes)),
             TestCase(name: "TestInvalidIdentifiers", method: withAutorelease(testInvalidIdentifiers)),
             TestCase(name: "TestDeprecation", method: withAutorelease(testDeprecation)),
+            TestCase(name: "TestWeakRefs", method: withAutorelease(testWeakRefs)),
             TestCase(name: "TestGH2931", method: withAutorelease(testGH2931)),
         ]
     }

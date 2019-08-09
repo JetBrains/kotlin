@@ -951,6 +951,15 @@ __attribute__((swift_name("TopLevelHidden.InnerInner")))
 @interface ValuesTopLevelHiddenInnerInner : NSObject
 @end;
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("TestWeakRefs")))
+@interface ValuesTestWeakRefs : KotlinBase
+- (instancetype)initWithFrozen:(BOOL)frozen __attribute__((swift_name("init(frozen:)"))) __attribute__((objc_designated_initializer));
+- (id)getObj __attribute__((swift_name("getObj()")));
+- (void)clearObj __attribute__((swift_name("clearObj()")));
+- (NSArray<id> *)createCycle __attribute__((swift_name("createCycle()")));
+@end;
+
 @interface ValuesEnumeration (ValuesKt)
 - (ValuesEnumeration *)getAnswer __attribute__((swift_name("getAnswer()")));
 @end;
@@ -1029,6 +1038,7 @@ __attribute__((swift_name("ValuesKt")))
 + (void)takeForwardDeclaredProtocolObj:(id<ForwardDeclared>)obj __attribute__((swift_name("takeForwardDeclaredProtocol(obj:)")));
 + (void)error __attribute__((swift_name("error()"))) __attribute__((unavailable("error")));
 + (void)warning __attribute__((swift_name("warning()"))) __attribute__((deprecated("warning")));
++ (void)gc __attribute__((swift_name("gc()")));
 @property (class, readonly) double dbl __attribute__((swift_name("dbl")));
 @property (class, readonly) float flt __attribute__((swift_name("flt")));
 @property (class, readonly) int32_t integer __attribute__((swift_name("integer")));
