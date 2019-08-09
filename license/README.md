@@ -88,6 +88,10 @@ the Kotlin IntelliJ IDEA plugin:
  - Path: plugins/lint/lint-idea
       - License: Apache 2 ([license/third_party/aosp_license.txt][aosp])
       - Origin: Copyright (C) 2011-15 The Android Open Source Project
+      
+ - Path: idea/idea-gradle-tooling-api/src/org/gradle/tooling/model/kotlin/dsl
+       - License: Apache 2 ([license/third_party/gradle_license.txt][gradle])
+       - Origin: Gradle, Copyright 2002-2017 Gradle, Inc.
 
 ## Kotlin Test Data
 
@@ -164,7 +168,7 @@ The following source code is used for testing the Kotlin tools and/or libraries 
 any distributions of the tools or libraries:
 
  - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/kotlin/org/jetbrains/kotlin/gradle/PluginsDslIT.kt
-      - License: Apache 2 ([license/third_party/testdata/gradle_license.txt][gradle])
+      - License: Apache 2 ([license/third_party/gradle_license.txt][gradle])
       - Origin: Gradle, Copyright 2002-2017 Gradle, Inc.
 
  - Path: libraries/tools/kotlin-gradle-plugin-integration-tests/target/test-classes/testProject/noArgJpa/src/javax/persistence/Entity.java
@@ -227,7 +231,7 @@ any distributions of the compiler, libraries or plugin:
 [eclipse]: third_party/testdata/eclipse_license.txt
 [eclipse-distribution]: third_party/testdata/eclipse_distribution_license.txt
 [findbugs]: third_party/testdata/findbugs_license.txt
-[gradle]: third_party/testdata/gradle_license.txt
+[gradle]: third_party/gradle_license.txt
 [guava]: third_party/guava_license.txt
 [gwt]: third_party/gwt_license.txt
 [jquery]: third_party/jquery_license.txt

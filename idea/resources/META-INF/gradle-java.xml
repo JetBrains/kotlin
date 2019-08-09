@@ -9,6 +9,7 @@
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSBrowserFrameworkSupportProvider"/>
         <kotlinDslFrameworkSupport implementation="org.jetbrains.kotlin.idea.configuration.KotlinDslGradleKotlinJSNodeFrameworkSupportProvider"/>
         <pluginDescriptions implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradlePluginDescription"/>
+        <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleBuildScriptsResolver" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectResolverExtension" order="first"/>
         <projectResolve implementation="org.jetbrains.kotlin.kapt.idea.KaptProjectResolverExtension" order="last"/>
         <projectResolve implementation="org.jetbrains.kotlin.allopen.ide.AllOpenProjectResolverExtension" order="last"/>

@@ -23,6 +23,7 @@
         <projectTaskRunner implementation="org.jetbrains.kotlin.idea.gradle.execution.KotlinMPPGradleProjectTaskRunner" order="first, before gradle"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinSourceSetDataService"/>
         <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleProjectSettingsDataService"/>
+        <externalProjectDataService implementation="org.jetbrains.kotlin.idea.configuration.KotlinGradleBuildScriptsDataService"/>
         <registryKey key="kotlin.mpp.tests.force.gradle"
                      description="Run multi-platform tests with Gradle runner even if the platform runner is used by default.
                      This setting currently affects only HMPP projects. You may need to delete existing test configurations for the change to take place."
