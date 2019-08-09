@@ -51,6 +51,7 @@ import com.intellij.openapi.wm.impl.IdeGlassPaneImpl;
 import com.intellij.pom.Navigatable;
 import com.intellij.psi.search.GlobalSearchScope;
 import com.intellij.psi.search.GlobalSearchScopeUtil;
+import com.intellij.reference.SoftReference;
 import com.intellij.ui.*;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.components.JBLabel;
@@ -79,6 +80,8 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.text.JTextComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.lang.ref.Reference;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -1137,7 +1140,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
         final FindUsagesProcessPresentation processPresentation =
           FindInProjectUtil.setupProcessPresentation(myProject, myUsageViewPresentation);
         ThreadLocal<VirtualFile> lastUsageFileRef = new ThreadLocal<>();
-        ThreadLocal<Usage> recentUsageRef = new ThreadLocal<>();
+        ThreadLocal<Reference<Usage>> recentUsageRef = new ThreadLocal<>();
 
         FindInProjectUtil.findUsages(findModel, myProject, processPresentation, filesToScanInitially, info -> {
           if(isCancelled()) {
@@ -1153,15 +1156,14 @@ public class FindPopupPanel extends JBPanel implements FindUI {
             resultsFilesCount.incrementAndGet();
             lastUsageFileRef.set(usageFile);
           }
-          Usage recent = recentUsageRef.get();
+          Usage recent = SoftReference.dereference(recentUsageRef.get());
           UsageInfo2UsageAdapter recentAdapter =
             recent instanceof UsageInfo2UsageAdapter ? (UsageInfo2UsageAdapter)recent : null;
           UsageInfo2UsageAdapter currentAdapter = usage instanceof UsageInfo2UsageAdapter ? (UsageInfo2UsageAdapter)usage : null;
           final boolean merged = !myHelper.isReplaceState() && currentAdapter != null && recentAdapter != null && recentAdapter.merge(currentAdapter);
           if (!merged) {
-            recentUsageRef.set(usage);
+            recentUsageRef.set(new WeakReference<>(usage));
           }
-
 
           ApplicationManager.getApplication().invokeLater(() -> {
             if (isCancelled()) {
