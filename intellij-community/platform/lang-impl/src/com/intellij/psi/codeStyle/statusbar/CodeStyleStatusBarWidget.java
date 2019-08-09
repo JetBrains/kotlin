@@ -161,7 +161,7 @@ public class CodeStyleStatusBarWidget extends EditorBasedStatusBarPopup implemen
     ReadAction
       .nonBlocking(() -> CodeStyleSettingsManager.getInstance(project))
       .expireWith(project)
-      .finishOnUiThread(ModalityState.NON_MODAL,
+      .finishOnUiThread(ModalityState.any(),
                         manager -> {
                           manager.addListener(this);
                           Disposer.register(this, () -> CodeStyleSettingsManager.removeListener(project, this));
