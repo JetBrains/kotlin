@@ -11,6 +11,7 @@ import org.gradle.api.reporting.ReportingExtension
 import org.gradle.api.tasks.testing.TestTaskReports
 import org.gradle.testing.base.plugins.TestingBasePlugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
+import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 
 @Suppress("UnstableApiUsage")
@@ -24,7 +25,15 @@ internal val Project.testReportsDir: File
 
 internal fun KotlinTest.configureConventions() {
     reports.configureConventions(project, name)
-    conventionMapping.map("binResultsDir") { project.testResultsDir.resolve("$name/binary") }
+
+    fun binaryResultsDirDefault(): File = project.testResultsDir.resolve("$name/binary")
+
+    if (isGradleVersionAtLeast(5, 5)) {
+        @Suppress("UnstableApiUsage")
+        binaryResultsDirectory.convention(project.layout.buildDirectory.dir(binaryResultsDirDefault().toRelativeString(project.buildDir)))
+    } else {
+        conventionMapping.map("binResultsDir", ::binaryResultsDirDefault)
+    }
 }
 
 internal fun TestTaskReports.configureConventions(project: Project, name: String) {
