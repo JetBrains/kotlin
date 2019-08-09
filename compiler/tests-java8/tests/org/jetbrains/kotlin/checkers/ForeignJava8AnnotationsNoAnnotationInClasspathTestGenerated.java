@@ -60,6 +60,11 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/defaults.kt");
         }
 
+        @TestMetadata("nonPlatformTypeParameter.kt")
+        public void testNonPlatformTypeParameter() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/nonPlatformTypeParameter.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/simple.kt");
@@ -68,6 +73,11 @@ public class ForeignJava8AnnotationsNoAnnotationInClasspathTestGenerated extends
         @TestMetadata("typeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/typeParameterBounds.kt");
+        }
+
+        @TestMetadata("unknownNullnessTypeParameter.kt")
+        public void testUnknownNullnessTypeParameter() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/unknownNullnessTypeParameter.kt");
         }
     }
 

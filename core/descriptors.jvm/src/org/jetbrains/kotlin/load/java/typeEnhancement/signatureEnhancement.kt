@@ -325,19 +325,32 @@ class SignatureEnhancement(
             fun <T : Any> uniqueNotNull(x: T?, y: T?) = if (x == null || y == null || x == y) x ?: y else null
 
             val defaultTypeQualifier =
-                if (isHeadTypeConstructor)
+                (if (isHeadTypeConstructor)
                     containerContext.defaultTypeQualifiers?.get(containerApplicabilityType)
                 else
-                    defaultQualifiersForType
+                    defaultQualifiersForType)?.takeIf {
+                    it.affectsTypeParameterBasedTypes || !isTypeParameter()
+                }
 
+            val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
+                nullabilityInfoBoundsForTypeParameterUsage()
+
+            val annotationsNullability = composedAnnotation.extractNullability()
             val nullabilityInfo =
-                composedAnnotation.extractNullability()
+                annotationsNullability
+                    ?: nullabilityFromBoundsForTypeBasedOnTypeParameter
                     ?: defaultTypeQualifier?.nullabilityQualifier?.let { nullabilityQualifierWithMigrationStatus ->
                         NullabilityQualifierWithMigrationStatus(
                             nullabilityQualifierWithMigrationStatus.qualifier,
                             nullabilityQualifierWithMigrationStatus.isForWarningOnly
                         )
                     }
+
+            val isNotNullTypeParameter =
+                if (annotationsNullability != null)
+                    annotationsNullability.qualifier == NullabilityQualifier.NOT_NULL
+                else
+                    isTypeParameterWithNotNullableBounds || defaultTypeQualifier?.makesTypeParameterNotNull == true
 
             return JavaTypeQualifiers(
                 nullabilityInfo?.qualifier,
@@ -349,9 +362,32 @@ class SignatureEnhancement(
                         MutabilityQualifier.MUTABLE
                     )
                 ),
-                isNotNullTypeParameter = nullabilityInfo?.qualifier == NullabilityQualifier.NOT_NULL && isTypeParameter(),
+                isNotNullTypeParameter = isNotNullTypeParameter && isTypeParameter(),
                 isNullabilityQualifierForWarning = nullabilityInfo?.isForWarningOnly == true
             )
+        }
+
+        private fun KotlinType.nullabilityInfoBoundsForTypeParameterUsage(): Pair<NullabilityQualifierWithMigrationStatus?, Boolean> {
+            val typeParameterBoundsNullability =
+                (constructor.declarationDescriptor as? TypeParameterDescriptor)?.boundsNullability() ?: return Pair(null, false)
+
+            if (typeParameterBoundsNullability == NullabilityQualifier.FORCE_FLEXIBILITY) return Pair(null, false)
+
+            // If type parameter has a nullable (non-flexible) upper bound
+            // We shouldn't mark its type usages as nullable:
+            // interface A<T extends @Nullable Object> {
+            //      void foo(T t); // should be loaded as "fun foo(t: T)" but not as "fun foo(t: T?)"
+            // }
+            return Pair(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+                typeParameterBoundsNullability == NullabilityQualifier.NOT_NULL
+            )
+        }
+
+        private fun TypeParameterDescriptor.boundsNullability(): NullabilityQualifier = when {
+            upperBounds.all(KotlinType::isNullabilityFlexible) -> NullabilityQualifier.FORCE_FLEXIBILITY
+            upperBounds.any { !it.isNullable() } -> NullabilityQualifier.NOT_NULL
+            else -> NullabilityQualifier.NULLABLE
         }
 
         private fun Annotations.extractNullability(): NullabilityQualifierWithMigrationStatus? =
@@ -463,7 +499,6 @@ class SignatureEnhancement(
                 isAnyNonNullTypeParameter = isAnyNonNullTypeParameter
             )
         }
-
     }
 
     private open class PartEnhancementResult(
@@ -516,3 +551,8 @@ private data class TypeAndDefaultQualifiers(
     val type: KotlinType,
     val defaultQualifiers: JavaDefaultQualifiers?
 )
+
+private fun KotlinType.isNullabilityFlexible(): Boolean {
+    val flexibility = unwrap() as? FlexibleType ?: return false
+    return flexibility.lowerBound.isMarkedNullable != flexibility.upperBound.isMarkedNullable
+}
