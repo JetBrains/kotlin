@@ -290,6 +290,7 @@ object Mapping : TemplateGroupBase() {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns a single list of all elements yielded from results of [transform] function being invoked on each ${f.element} of original ${f.collection}." }
+        sample("samples.collections.Collections.Transformations.flatMap")
         typeParam("R")
         returns("List<R>")
         body {

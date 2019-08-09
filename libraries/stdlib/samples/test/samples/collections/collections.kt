@@ -503,6 +503,12 @@ class Collections {
         }
 
         @Sample
+        fun flatMap() {
+            val list = listOf("123", "45")
+            assertPrints(list.flatMap { it.toList() }, "[1, 2, 3, 4, 5]")
+        }
+
+        @Sample
         fun take() {
             val chars = ('a'..'z').toList()
             assertPrints(chars.take(3), "[a, b, c]")

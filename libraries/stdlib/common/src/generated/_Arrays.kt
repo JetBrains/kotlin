@@ -8407,6 +8407,8 @@ public fun CharArray.toSet(): Set<Char> {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8414,6 +8416,8 @@ public inline fun <T, R> Array<out T>.flatMap(transform: (T) -> Iterable<R>): Li
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8421,6 +8425,8 @@ public inline fun <R> ByteArray.flatMap(transform: (Byte) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8428,6 +8434,8 @@ public inline fun <R> ShortArray.flatMap(transform: (Short) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8435,6 +8443,8 @@ public inline fun <R> IntArray.flatMap(transform: (Int) -> Iterable<R>): List<R>
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8442,6 +8452,8 @@ public inline fun <R> LongArray.flatMap(transform: (Long) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8449,6 +8461,8 @@ public inline fun <R> FloatArray.flatMap(transform: (Float) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8456,6 +8470,8 @@ public inline fun <R> DoubleArray.flatMap(transform: (Double) -> Iterable<R>): L
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)
@@ -8463,6 +8479,8 @@ public inline fun <R> BooleanArray.flatMap(transform: (Boolean) -> Iterable<R>):
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public inline fun <R> CharArray.flatMap(transform: (Char) -> Iterable<R>): List<R> {
     return flatMapTo(ArrayList<R>(), transform)

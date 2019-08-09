@@ -761,6 +761,8 @@ public fun <T> Sequence<T>.toSet(): Set<T> {
  * Returns a single sequence of all elements from results of [transform] function being invoked on each element of original sequence.
  *
  * The operation is _intermediate_ and _stateless_.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 public fun <T, R> Sequence<T>.flatMap(transform: (T) -> Sequence<R>): Sequence<R> {
     return FlatteningSequence(this, transform, { it.iterator() })

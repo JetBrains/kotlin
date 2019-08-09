@@ -3748,6 +3748,8 @@ public inline fun ShortArray.toUShortArray(): UShortArray {
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3758,6 +3760,8 @@ public inline fun <R> UIntArray.flatMap(transform: (UInt) -> Iterable<R>): List<
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3768,6 +3772,8 @@ public inline fun <R> ULongArray.flatMap(transform: (ULong) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
@@ -3778,6 +3784,8 @@ public inline fun <R> UByteArray.flatMap(transform: (UByte) -> Iterable<R>): Lis
 
 /**
  * Returns a single list of all elements yielded from results of [transform] function being invoked on each element of original array.
+ * 
+ * @sample samples.collections.Collections.Transformations.flatMap
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
