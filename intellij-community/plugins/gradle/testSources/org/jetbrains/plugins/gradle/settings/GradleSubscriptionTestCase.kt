@@ -2,22 +2,43 @@
 package org.jetbrains.plugins.gradle.settings
 
 import com.intellij.openapi.Disposable
+import com.intellij.openapi.externalSystem.test.ExternalSystemTestCase
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import org.jetbrains.plugins.gradle.config.GradleSettingsListenerAdapter
-import org.jetbrains.plugins.gradle.importing.GradleImportingTestCase
-import org.junit.runners.Parameterized
+import org.jetbrains.plugins.gradle.util.GradleConstants
 
-abstract class GradleSubscriptionTestCase : GradleImportingTestCase() {
+abstract class GradleSubscriptionTestCase : ExternalSystemTestCase() {
+
+  private var _projectSettings: GradleProjectSettings? = null
+
+  private val projectSettings get() = _projectSettings!!
+
+  private val externalSystemId = GradleConstants.SYSTEM_ID
+
+  override fun getTestsTempDir() = "tmp"
+
+  override fun getExternalSystemConfigFileName() = "build.gradle"
+
+  override fun setUp() {
+    super.setUp()
+    _projectSettings = GradleProjectSettings()
+    projectSettings.externalProjectPath = projectPath
+  }
+
+  override fun tearDown() {
+    _projectSettings = null
+    super.tearDown()
+  }
 
   protected fun linkProject() {
     val settings = ExternalSystemApiUtil.getSettings(myProject, externalSystemId)
-    currentExternalProjectSettings.externalProjectPath = projectPath
-    settings.linkProject(currentExternalProjectSettings)
+    projectSettings.externalProjectPath = projectPath
+    settings.linkProject(projectSettings)
   }
 
   protected fun unlinkProject() {
     val settings = ExternalSystemApiUtil.getSettings(myProject, externalSystemId)
-    settings.unlinkExternalProject(currentExternalProjectSettings.externalProjectPath)
+    settings.unlinkExternalProject(projectSettings.externalProjectPath)
   }
 
   protected fun onProjectLinked(subscription: Disposable, listener: () -> Unit) {
@@ -32,14 +53,5 @@ abstract class GradleSubscriptionTestCase : GradleImportingTestCase() {
       override fun onProjectsLinked(settings: MutableCollection<GradleProjectSettings>) = listener()
     }
     ExternalSystemApiUtil.subscribe(myProject, externalSystemId, settingsListener)
-  }
-
-  companion object {
-    /**
-     * It's sufficient to run the test against one gradle version
-     */
-    @Parameterized.Parameters(name = "with Gradle-{0}")
-    @JvmStatic
-    fun tests(): Collection<Array<out String>> = arrayListOf(arrayOf(BASE_GRADLE_VERSION))
   }
 }
