@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.WasmInstruction
+import org.jetbrains.kotlin.backend.wasm.ast.WasmNop
 import org.jetbrains.kotlin.backend.wasm.ast.WasmReturn
+import org.jetbrains.kotlin.backend.wasm.ast.WasmSetLocal
 import org.jetbrains.kotlin.ir.backend.js.utils.IrNamer
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
@@ -58,8 +60,9 @@ class IrElementToWasmStatementTransformer : BaseIrElementToWasmNodeTransformer<W
     }
 
     override fun visitVariable(declaration: IrVariable, context: IrNamer): WasmInstruction {
-        val varName = context.getNameForValueDeclaration(declaration)
-        TODO()
+        val init = declaration.initializer ?: return WasmNop()
+        val varName = context.getNameForValueDeclaration(declaration).ident
+        return WasmSetLocal(varName, expressionToWasmInstruction(init, context))
         // return jsVar(varName, declaration.initializer, context)
     }
 

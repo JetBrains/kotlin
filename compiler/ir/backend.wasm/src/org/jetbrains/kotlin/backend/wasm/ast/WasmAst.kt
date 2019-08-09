@@ -25,18 +25,19 @@ class WasmFunction(
 ) : WasmModuleField() {
     override fun toWat(): String {
         val watId = "$$name"
+        val watLocals = locals.joinToString("") { "   " + it.toWat() + "\n" }
         val watParameters = parameters.joinToString(" ") { it.toWat() }
         val watResult = "(result $returnType)"
         val watBody = instructions.joinToString("") { it.toWat("    ") + "\n" }
-        return "  (func $watId $watParameters $watResult\n$watBody  )"
+        return "  (func $watId $watParameters $watResult\n$watLocals$watBody  )"
     }
 }
 
 sealed class WasmInstruction {
     abstract fun toWat(ident: String = ""): String
 }
-class WasmEmptyInstruction : WasmInstruction() {
-    override fun toWat(ident: String): String = TODO()
+class WasmNop : WasmInstruction() {
+    override fun toWat(ident: String): String = "$ident(nop)"
 }
 class WasmReturn(val value: WasmInstruction?): WasmInstruction() {
     override fun toWat(ident: String): String {
@@ -44,6 +45,14 @@ class WasmReturn(val value: WasmInstruction?): WasmInstruction() {
         return "$ident(return $watValue)"
     }
 }
+
+class WasmCall(val name: String, val parameters: List<WasmInstruction>): WasmInstruction() {
+    override fun toWat(ident: String): String {
+        val arguments = parameters.joinToString(" ") { it.toWat("") }
+        return "$ident(call $$name $arguments)"
+    }
+}
+
 
 class WasmGetLocal(val name: String): WasmInstruction() {
     override fun toWat(ident: String): String {
@@ -102,6 +111,15 @@ class WasmParameter(
         "(param $$name $type)"
 }
 
+class WasmLocal(
+    val name: String,
+    val type: WasmValueType
+) {
+    fun toWat(): String =
+        "(local $$name $type)"
+}
+
+
 class WasmGlobal(
     val name: String,
     val type: WasmValueType,
@@ -111,12 +129,10 @@ class WasmGlobal(
     override fun toWat(): String {
         val watMut = if (isMutable) "mut " else ""
         val watInit = if (init != null) " " + init.toWat("") else ""
-        return "(global $$name ($watMut$type) $watInit)"
+        return "  (global $$name ($watMut$type) $watInit)"
     }
 }
 
-
-class WasmLocal
 class WasmBody {
     fun toWat(): String = "TODO: Body"
 }

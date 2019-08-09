@@ -86,10 +86,10 @@ class IrElementToWasmExpressionTransformer : BaseIrElementToWasmNodeTransformer<
 
         val function = expression.symbol.owner.realOverrideTarget
         require(function is IrSimpleFunction) { "Only IrSimpleFunction could be called via IrCall" }
-        val symbol = function.symbol
-
-        TODO()
-//        return translateCall(expression, context, this)
+        val valueArgs = (0 until expression.valueArgumentsCount).mapNotNull { expression.getValueArgument(it) }
+        val arguments: List<IrExpression> = listOfNotNull(expression.extensionReceiver) + valueArgs
+        val name = data.getNameForStaticFunction(function).ident
+        return WasmCall(name, arguments.map { expressionToWasmInstruction(it, data) })
     }
 
     override fun visitWhen(expression: IrWhen, data: IrNamer): WasmInstruction {

@@ -6,18 +6,33 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.isAnnotationClass
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrDeclarationToWasmTransformer : BaseIrElementToWasmNodeTransformer<List<WasmModuleField>, WasmStaticContext> {
     override fun visitSimpleFunction(declaration: IrSimpleFunction, context: WasmStaticContext): List<WasmModuleField> {
+        val locals = mutableListOf<WasmLocal>()
+        declaration.body?.acceptChildrenVoid(object : IrElementVisitorVoid {
+            override fun visitElement(element: IrElement) {
+                element.acceptChildrenVoid(this)
+            }
+
+            override fun visitVariable(declaration: IrVariable) {
+                locals += context.transformVariable(declaration)
+                super.visitVariable(declaration)
+            }
+        })
+
         val function = WasmFunction(
             name = context.getNameForStaticFunction(declaration).ident,
             parameters = declaration.valueParameters.map { context.transformValueParameter(it) },
             returnType = context.transformType(declaration.returnType),
-            locals = emptyList(),
+            locals = locals,
             instructions = bodyToWasm(declaration.body!!, context)
         )
         return listOf(function)
@@ -46,9 +61,12 @@ class IrDeclarationToWasmTransformer : BaseIrElementToWasmNodeTransformer<List<W
 }
 
 
-
 fun WasmStaticContext.transformValueParameter(irParameter: IrValueParameter): WasmParameter {
     return WasmParameter(getNameForValueDeclaration(irParameter).ident, transformType(irParameter.type))
+}
+
+fun WasmStaticContext.transformVariable(irVariable: IrVariable): WasmLocal {
+    return WasmLocal(getNameForValueDeclaration(irVariable).ident, transformType(irVariable.type))
 }
 
 fun WasmStaticContext.transformType(irType: IrType): WasmValueType =
@@ -61,5 +79,6 @@ fun WasmStaticContext.transformType(irType: IrType): WasmValueType =
         irType.isChar() -> WasmI32
         irType.isFloat() -> WasmF32
         irType.isDouble() -> WasmF64
-        else -> TODO()
+        else ->
+            TODO()
     }
