@@ -35,7 +35,7 @@ class ServiceModel implements Disposable, InvokerSupplier {
     ExtensionPointName.create("com.intellij.serviceViewContributor");
 
   private final Project myProject;
-  private final Invoker myInvoker = new Invoker.BackgroundThread(this);
+  private final Invoker myInvoker = new Invoker.Background(this);
   private final List<ServiceViewItem> myRoots = new CopyOnWriteArrayList<>();
   private volatile boolean myRootsInitialized;
 
