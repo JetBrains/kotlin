@@ -189,6 +189,17 @@ val generateReducedRuntimeKLib by eagerTask<NoDebugJavaExec> {
     )
 }
 
+val generateWasmRuntimeKLib by task<NoDebugJavaExec> {
+    dependsOn(reducedRuntimeSources)
+
+    buildKLib(sources = listOf("$rootDir/libraries/stdlib/wasm"),
+              dependencies = emptyList(),
+              outPath = "$buildDir/wasmRuntime/klib",
+              commonSources = emptyList()
+    )
+}
+
+
 val kotlinTestCommonSources = listOf(
     "$rootDir/libraries/kotlin.test/annotations-common/src/main",
     "$rootDir/libraries/kotlin.test/common/src/main"
