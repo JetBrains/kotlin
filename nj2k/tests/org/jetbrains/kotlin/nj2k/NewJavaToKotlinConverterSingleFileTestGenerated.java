@@ -5001,6 +5001,34 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
         }
     }
 
+    @TestMetadata("nj2k/testData/newJ2k/types")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Types extends AbstractNewJavaToKotlinConverterSingleFileTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInTypes() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("nj2k/testData/newJ2k/types"), Pattern.compile("^([^\\.]+)\\.java$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("capturedTypeInStreamsLambda.java")
+        public void testCapturedTypeInStreamsLambda() throws Exception {
+            runTest("nj2k/testData/newJ2k/types/capturedTypeInStreamsLambda.java");
+        }
+
+        @TestMetadata("capturedWildcardTypeAsLambdaParameter.java")
+        public void testCapturedWildcardTypeAsLambdaParameter() throws Exception {
+            runTest("nj2k/testData/newJ2k/types/capturedWildcardTypeAsLambdaParameter.java");
+        }
+
+        @TestMetadata("unusedCapturedWildcardTypeInSAM.java")
+        public void testUnusedCapturedWildcardTypeInSAM() throws Exception {
+            runTest("nj2k/testData/newJ2k/types/unusedCapturedWildcardTypeInSAM.java");
+        }
+    }
+
     @TestMetadata("nj2k/testData/newJ2k/varArg")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

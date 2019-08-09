@@ -360,9 +360,13 @@ class JavaToJKTreeBuilder constructor(
         }
 
         fun PsiFunctionalExpression.functionalType(): JKTypeElement =
-            functionalInterfaceType?.toJK(symbolProvider)?.takeUnless { type ->
-                type.isKotlinFunctionType
-            }?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
+            functionalInterfaceType
+                ?.takeUnless { type ->
+                    type.safeAs<PsiClassType>()?.parameters?.any { it is PsiCapturedWildcardType } == true
+                }?.toJK(symbolProvider)
+                ?.takeUnless { type ->
+                    type.isKotlinFunctionType
+                }?.asTypeElement() ?: JKTypeElementImpl(JKNoTypeImpl)
 
         fun PsiMethodReferenceExpression.toJK(): JKMethodReferenceExpression {
             val symbol = symbolProvider.provideSymbolForReference<JKSymbol>(this).let { symbol ->

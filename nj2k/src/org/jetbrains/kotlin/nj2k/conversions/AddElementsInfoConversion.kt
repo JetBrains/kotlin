@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.nj2k.*
 import org.jetbrains.kotlin.nj2k.symbols.JKUniverseMethodSymbol
 import org.jetbrains.kotlin.nj2k.tree.*
+import org.jetbrains.kotlin.nj2k.tree.impl.JKCapturedType
 import org.jetbrains.kotlin.nj2k.tree.impl.psi
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
@@ -26,7 +28,9 @@ class AddElementsInfoConversion(private val context: NewJ2kConverterContext) : R
 
     private fun addInfoForTypeElement(typeElement: JKTypeElement) {
         typeElement.type.forAllInnerTypes { type ->
-            if (type.nullability == Nullability.Default) {
+            if (type.nullability == Nullability.Default
+                || type.safeAs<JKCapturedType>()?.wildcardType is JKStarProjectionType
+            ) {
                 context.elementsInfoStorage.addEntry(type, UnknownNullability)
             }
         }

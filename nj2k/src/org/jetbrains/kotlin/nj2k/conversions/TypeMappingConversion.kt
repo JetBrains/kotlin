@@ -113,6 +113,12 @@ class TypeMappingConversion(val context: NewJ2kConverterContext) : RecursiveAppl
                     variance,
                     boundType.mapType(null)
                 )
+            is JKCapturedType -> {
+                JKCapturedType(
+                    wildcardType.mapType(null) as JKWildCardType,
+                    nullability
+                )
+            }
             else -> this
         }.fixRawType(typeElement)
 

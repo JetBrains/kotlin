@@ -61,11 +61,13 @@ interface JKType {
 fun JKType.isNullable(): Boolean =
     nullability != Nullability.NotNull
 
-interface JKVarianceTypeParameterType : JKType {
+interface JKWildCardType : JKType
+
+interface JKVarianceTypeParameterType : JKWildCardType {
     val variance: Variance
     val boundType: JKType
     override val nullability: Nullability
-        get() = Nullability.NotNull
+        get() = Nullability.Default
 
     enum class Variance {
         IN, OUT
@@ -97,7 +99,7 @@ interface JKJavaArrayType : JKType {
     val type: JKType
 }
 
-interface JKStarProjectionType : JKType {
+interface JKStarProjectionType : JKWildCardType {
     override val nullability: Nullability
         get() = Nullability.NotNull
 }
