@@ -27,19 +27,22 @@ val inventNamesForLocalClassesPhase = makeIrFilePhase<JvmBackendContext>(
 
 class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        irFile.accept(NameInventor(), Data(null, false))
+        irFile.accept(NameInventor(), Data(null, false, false))
     }
 
     /**
      * @property enclosingName JVM internal name of the enclosing class (including anonymous classes, local objects and callable references)
      * @property isLocal true if the next declaration to be encountered in the IR tree is local
      */
-    private class Data(val enclosingName: String?, val isLocal: Boolean) {
+    private class Data(val enclosingName: String?, val isLocal: Boolean, val inInlineScope: Boolean) {
         fun withName(newName: String): Data =
-            Data(newName, isLocal)
+            Data(newName, isLocal, inInlineScope)
 
         fun makeLocal(): Data =
-            if (isLocal) this else Data(enclosingName, true)
+            if (isLocal) this else Data(enclosingName, true, inInlineScope)
+
+        fun markInlineScope(): Data =
+            if (inInlineScope) this else Data(enclosingName, isLocal, true)
     }
 
     private inner class NameInventor : IrElementVisitor<Unit, Data> {
@@ -63,7 +66,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
             }
 
             val internalName = inventName(declaration.name, data)
-            context.putLocalClassInfo(declaration, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassInfo(declaration, JvmBackendContext.LocalClassInfo(internalName, data.inInlineScope))
 
             val newData = data.withName(internalName)
 
@@ -80,6 +83,10 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
         override fun visitConstructor(declaration: IrConstructor, data: Data) {
             // Constructor is a special case because its name "<init>" doesn't participate when creating names for local classes inside.
             declaration.acceptChildren(this, data.makeLocal())
+        }
+
+        override fun visitFunction(declaration: IrFunction, data: Data) {
+            super.visitFunction(declaration, if (declaration.isInline) data.markInlineScope() else data)
         }
 
         override fun visitDeclaration(declaration: IrDeclaration, data: Data) {
@@ -130,14 +137,14 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: Data) {
             val internalName = localFunctionNames[expression.symbol] ?: inventName(null, data)
-            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName, data.inInlineScope))
 
             expression.acceptChildren(this, data)
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: Data) {
             val internalName = inventName(null, data)
-            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
+            context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName, data.inInlineScope))
 
             expression.acceptChildren(this, data)
         }
@@ -187,7 +194,7 @@ class InventNamesForLocalClasses(private val context: JvmBackendContext) : FileL
                     // It's only here to give resemblance of the name generated for SAM wrappers by the old backend. The exact logic
                     // of the old backend is somewhat difficult to emulate consistently, see `SamWrapperCodegen.getWrapperName`.
                     val internalName = inventName(Name.identifier("sam\$$superClassName$0"), data)
-                    context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName))
+                    context.putLocalClassInfo(expression, JvmBackendContext.LocalClassInfo(internalName, data.inInlineScope))
                     invokable.accept(this, data.withName(internalName))
                     return
                 }

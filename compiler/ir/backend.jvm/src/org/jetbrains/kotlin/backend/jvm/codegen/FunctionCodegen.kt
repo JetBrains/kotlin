@@ -106,7 +106,7 @@ open class FunctionCodegen(
             }
         }
 
-        val visibility = AsmUtil.getVisibilityAccessFlag(irFunction.visibility) ?: error("Unmapped visibility ${irFunction.visibility}")
+        val visibility = irFunction.getVisibilityAccessFlag(classCodegen.context)
         val staticFlag = if (isStatic) Opcodes.ACC_STATIC else 0
         val varargFlag = if (irFunction.valueParameters.any { it.varargElementType != null }) Opcodes.ACC_VARARGS else 0
         val deprecation = irFunction.deprecationFlags

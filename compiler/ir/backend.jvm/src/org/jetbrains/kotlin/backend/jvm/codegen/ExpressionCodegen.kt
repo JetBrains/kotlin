@@ -542,7 +542,7 @@ class ExpressionCodegen(
         )
 
     override fun visitClass(declaration: IrClass, data: BlockInfo): PromisedValue {
-        classCodegen.generateLocalClass(declaration, irFunction.isInline).also {
+        classCodegen.generateLocalClass(declaration).also {
             closureReifiedMarkers[declaration] = it
         }
         return immaterialUnitValue

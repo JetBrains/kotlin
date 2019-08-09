@@ -53,7 +53,7 @@ class JvmBackendContext(
     val irIntrinsics = IrIntrinsicMethods(irBuiltIns, ir.symbols)
 
     // TODO: also store info for EnclosingMethod
-    internal class LocalClassInfo(val internalName: String)
+    internal class LocalClassInfo(val internalName: String, val inInlineScope: Boolean)
 
     private val localClassInfo = mutableMapOf<IrAttributeContainer, LocalClassInfo>()
 

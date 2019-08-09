@@ -41,8 +41,7 @@ import java.io.File
 open class ClassCodegen protected constructor(
     internal val irClass: IrClass,
     val context: JvmBackendContext,
-    private val parentClassCodegen: ClassCodegen? = null,
-    private val withinInline: Boolean = false
+    private val parentClassCodegen: ClassCodegen? = null
 ) : InnerClassConsumer {
     private val innerClasses = mutableListOf<IrClass>()
 
@@ -76,8 +75,8 @@ open class ClassCodegen protected constructor(
         }
 
     fun generate(): ReifiedTypeParametersUsages {
-        if (withinInline) {
-            getOrCreateSourceMapper() //initialize default mapping that would be later written in class file
+        if (context.getLocalClassInfo(irClass)?.inInlineScope == true) {
+            getOrCreateSourceMapper() //initialize default mapping that would later be written in class file
         }
         val superClassInfo = irClass.getSuperClassInfo(typeMapper)
         val signature = getSignature(irClass, type, superClassInfo, typeMapper)
@@ -237,8 +236,8 @@ open class ClassCodegen protected constructor(
         }
     }
 
-    fun generateLocalClass(klass: IrClass, withinInline: Boolean): ReifiedTypeParametersUsages {
-        return ClassCodegen(klass, context, this, withinInline = withinInline || this.withinInline).generate()
+    fun generateLocalClass(klass: IrClass): ReifiedTypeParametersUsages {
+        return ClassCodegen(klass, context, this).generate()
     }
 
     private fun generateField(field: IrField) {
@@ -357,15 +356,15 @@ open class ClassCodegen protected constructor(
         }
         return sourceMapper!!
     }
-}
 
-private val IrClass.flags: Int
-    get() = origin.flags or getVisibilityAccessFlagForClass() or deprecationFlags or when {
-        isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
-        isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
-        isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
-        else -> Opcodes.ACC_SUPER or modality.flags
-    }
+    private val IrClass.flags: Int
+        get() = origin.flags or getVisibilityAccessFlagForClass(context) or deprecationFlags or when {
+            isAnnotationClass -> Opcodes.ACC_ANNOTATION or Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+            isInterface -> Opcodes.ACC_INTERFACE or Opcodes.ACC_ABSTRACT
+            isEnumClass -> Opcodes.ACC_ENUM or Opcodes.ACC_SUPER or modality.flags
+            else -> Opcodes.ACC_SUPER or modality.flags
+        }
+}
 
 private val IrField.flags: Int
     get() = origin.flags or visibility.flags or (correspondingPropertySymbol?.owner?.deprecationFlags ?: 0) or

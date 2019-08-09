@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 class Foo {
   fun a() {
     val s = object { }

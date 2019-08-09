@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.backend.common.lower.allOverridden
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.FQ_NAMES
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -135,15 +136,15 @@ private val visibilityToAccessFlag = mapOf(
     JavaVisibilities.PACKAGE_VISIBILITY to AsmUtil.NO_FLAG_PACKAGE_PRIVATE
 )
 
-private fun IrDeclaration.getVisibilityAccessFlagForAnonymous(): Int =
-    if (isInlineOrContainedInInline(parent as? IrDeclaration)) Opcodes.ACC_PUBLIC else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+private fun IrClass.getVisibilityAccessFlagForAnonymous(context: JvmBackendContext): Int =
+    if (context.getLocalClassInfo(this)?.inInlineScope == true) Opcodes.ACC_PUBLIC else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
 
 fun IrClass.calculateInnerClassAccessFlags(context: JvmBackendContext): Int {
     val isLambda = superTypes.any { it.safeAs<IrSimpleType>()?.classifier === context.ir.symbols.lambdaClass }
     val visibility = when {
-        isLambda -> getVisibilityAccessFlagForAnonymous()
+        isLambda -> getVisibilityAccessFlagForAnonymous(context)
         visibility === Visibilities.LOCAL -> Opcodes.ACC_PUBLIC
-        else -> getVisibilityAccessFlag()
+        else -> getVisibilityAccessFlag(context)
     }
     return visibility or
             if (origin.isSynthetic) Opcodes.ACC_SYNTHETIC else 0 or
@@ -167,13 +168,13 @@ private fun IrClass.innerAccessFlagsForModalityAndKind(): Int {
     return 0
 }
 
-private fun IrDeclarationWithVisibility.getVisibilityAccessFlag(kind: OwnerKind? = null): Int =
-    specialCaseVisibility(kind)
+fun IrDeclarationWithVisibility.getVisibilityAccessFlag(context: JvmBackendContext, kind: OwnerKind? = null): Int =
+    specialCaseVisibility(context, kind)
         ?: visibilityToAccessFlag[visibility]
         ?: throw IllegalStateException("$visibility is not a valid visibility in backend for ${ir2string(this)}")
 
 
-private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?): Int? {
+private fun IrDeclarationWithVisibility.specialCaseVisibility(context: JvmBackendContext, kind: OwnerKind?): Int? {
 //    if (JvmCodegenUtil.isNonIntrinsicPrivateCompanionObjectInInterface(memberDescriptor)) {
 //        return ACC_PUBLIC
 //    }
@@ -224,7 +225,7 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
 //        return getVisibilityAccessFlagForAnonymous(memberDescriptor.containingDeclaration as ClassDescriptor)
 //    }
     if (this is IrConstructor && parentAsClass.isAnonymousObject) {
-        return parentAsClass.getVisibilityAccessFlagForAnonymous()
+        return parentAsClass.getVisibilityAccessFlagForAnonymous(context)
     }
 
 //    TODO: when is this applicable?
@@ -247,7 +248,7 @@ private fun IrDeclarationWithVisibility.specialCaseVisibility(kind: OwnerKind?):
     if (this is IrField && correspondingPropertySymbol?.owner?.isExternal == true) {
         val method = correspondingPropertySymbol?.owner?.getter ?: correspondingPropertySymbol?.owner?.setter
         ?: error("No get/set method in SyntheticJavaPropertyDescriptor: ${ir2string(correspondingPropertySymbol?.owner)}")
-        return method.getVisibilityAccessFlag()
+        return method.getVisibilityAccessFlag(context)
     }
 
 //    if (memberDescriptor is CallableDescriptor && memberVisibility === Visibilities.PROTECTED) {
@@ -308,14 +309,6 @@ fun IrType.isTypeParameterWithUpperBoundThatRequiresMangling() =
     safeAs<IrSimpleType>()?.classifier?.owner.safeAs<IrTypeParameter>()?.let { param ->
         param.superTypes.any { it.requiresFunctionNameMangling() }
     } ?: false
-
-
-/* Borrowed from InlineUtil. */
-private tailrec fun isInlineOrContainedInInline(declaration: IrDeclaration?): Boolean = when {
-    declaration === null -> false
-    declaration is IrFunction && declaration.isInline -> true
-    else -> isInlineOrContainedInInline(declaration.parent as? IrDeclaration)
-}
 
 /* Borrowed from inlineOnly.kt */
 
@@ -408,23 +401,26 @@ internal fun getSignature(
    For other cases use getVisibilityAccessFlag(MemberDescriptor descriptor)
    Classes in byte code should be public or package private
 */
-fun IrClass.getVisibilityAccessFlagForClass(): Int {
-    /* Original had a check for SyntheticClassDescriptorForJava, never invoked in th IR backend. */
-    if (isOptionalAnnotationClass()) {
-        return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-    }
-    if (kind == ClassKind.ENUM_ENTRY) {
-        return AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-    }
-    return if (visibility === Visibilities.PUBLIC ||
-        visibility === Visibilities.PROTECTED ||
+fun IrClass.getVisibilityAccessFlagForClass(context: JvmBackendContext): Int =
+    when {
+        isOptionalAnnotationClass() -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+        kind === ClassKind.ENUM_ENTRY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+        visibility === Visibilities.PRIVATE -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+        isClassForCallableReference -> getVisibilityAccessFlagForAnonymous(context)
+        visibility === Visibilities.PUBLIC -> Opcodes.ACC_PUBLIC
+        visibility === Visibilities.PROTECTED -> Opcodes.ACC_PUBLIC
         // TODO: should be package private, but for now Kotlin's reflection can't access members of such classes
-        visibility === Visibilities.LOCAL ||
-        visibility === Visibilities.INTERNAL
-    ) {
-        Opcodes.ACC_PUBLIC
-    } else AsmUtil.NO_FLAG_PACKAGE_PRIVATE
-}
+        visibility === Visibilities.LOCAL -> Opcodes.ACC_PUBLIC
+        visibility === Visibilities.INTERNAL -> Opcodes.ACC_PUBLIC
+        visibility === JavaVisibilities.PACKAGE_VISIBILITY -> AsmUtil.NO_FLAG_PACKAGE_PRIVATE
+        else -> error("Unexpected visibility: $visibility")
+    }
+
+private val IrClass.isClassForCallableReference: Boolean
+    get() = origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.FUNCTION_REFERENCE_IMPL ||
+            origin == JvmLoweredDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION ||
+            origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
 /* Borrowed and translated from ExpectedActualDeclarationChecker */
 // TODO: Descriptor-based code also checks for `descriptor.isExpect`; we don't represent expect/actual distinction in IR thus far.
