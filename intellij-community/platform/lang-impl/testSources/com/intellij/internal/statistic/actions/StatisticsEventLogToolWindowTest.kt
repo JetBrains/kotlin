@@ -6,12 +6,14 @@ import com.intellij.internal.statistic.actions.StatisticsEventLogToolWindow.Comp
 import com.intellij.internal.statistic.eventLog.LogEvent
 import com.intellij.internal.statistic.eventLog.LogEventAction
 import com.intellij.internal.statistic.eventLog.validator.ValidationResultType.*
+import com.intellij.util.text.DateFormatUtil
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class StatisticsEventLogToolWindowTest {
   private val eventId = "third.party"
+  private val eventTime = 1564643114456
 
   @Test
   fun testShortenProjectId() {
@@ -21,7 +23,7 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertTrue("Not all messages have NORMAL_OUTPUT type", actual.all { it.second == ConsoleViewContentType.NORMAL_OUTPUT })
-    assertEquals("14:05:14 - ['toolwindow', v21]: '$eventId' {plugin_type='PLATFORM', project='5410c65e...ea'}\n",
+    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {plugin_type='PLATFORM', project='5410c65e...ea'}\n",
                  actual.joinToString("") { it.first })
   }
 
@@ -33,7 +35,7 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertTrue("Not all messages have NORMAL_OUTPUT type", actual.all { it.second == ConsoleViewContentType.NORMAL_OUTPUT })
-    assertEquals("14:05:14 - ['toolwindow', v21]: '$eventId' {project='$projectId'}\n",
+    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {project='$projectId'}\n",
                  actual.joinToString("") { it.first })
   }
 
@@ -45,7 +47,7 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertTrue("Not all messages have NORMAL_OUTPUT type", actual.all { it.second == ConsoleViewContentType.NORMAL_OUTPUT })
-    assertEquals("14:05:14 - ['toolwindow', v21]: '$eventId' {}\n",
+    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {}\n",
                  actual.joinToString("") { it.first })
   }
 
@@ -81,6 +83,6 @@ class StatisticsEventLogToolWindowTest {
     }
   }
 
-  private fun buildLogEvent(action: LogEventAction) = LogEvent("2e5b2e32e061", "193.1801", "176", 1564643114456,
+  private fun buildLogEvent(action: LogEventAction) = LogEvent("2e5b2e32e061", "193.1801", "176", eventTime,
                                                                "toolwindow", "21", "32", action)
 }
