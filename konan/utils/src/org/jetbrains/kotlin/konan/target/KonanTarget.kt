@@ -37,6 +37,7 @@ sealed class KonanTarget(override val name: String, val family: Family, val arch
     object IOS_ARM32 :      KonanTarget( "ios_arm32",       Family.IOS,     Architecture.ARM32)
     object IOS_ARM64 :      KonanTarget( "ios_arm64",       Family.IOS,     Architecture.ARM64)
     object IOS_X64 :        KonanTarget( "ios_x64",         Family.IOS,     Architecture.X64)
+    object IOSMAC_X64 :     KonanTarget( "iosmac_x64",      Family.IOS,     Architecture.X64)
     object LINUX_X64 :      KonanTarget( "linux_x64",       Family.LINUX,   Architecture.X64)
     object MINGW_X86 :      KonanTarget( "mingw_x86",       Family.MINGW,   Architecture.X86)
     object MINGW_X64 :      KonanTarget( "mingw_x64",       Family.MINGW,   Architecture.X64)
@@ -108,7 +109,7 @@ private class TargetManagerImpl(val userRequest: String?, val hostManager: HostM
             HostManager.host
         } else {
             val resolvedAlias = HostManager.resolveAlias(userRequest)
-            hostManager.targets[hostManager.known(resolvedAlias)]!!
+            hostManager.targets[hostManager.known(resolvedAlias)] ?: error("$resolvedAlias not found")
         }
     }
 
@@ -126,7 +127,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
         IOS_ARM32, IOS_ARM64, IOS_X64,
         LINUX_X64, LINUX_ARM32_HFP, LINUX_ARM64, LINUX_MIPS32, LINUX_MIPSEL32,
         MINGW_X64, MINGW_X86,
-        MACOS_X64,
+        MACOS_X64, IOSMAC_X64,
         WASM32)
 
     private val zephyrSubtargets = distribution.availableSubTarget("zephyr").map { ZEPHYR(it) }
@@ -144,7 +145,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
     fun toKonanTargets(names: Iterable<String>): List<KonanTarget> {
         return names.map {
             if (it == "host") HostManager.host
-            else targets[known(resolveAlias(it))]!!
+            else targets[known(resolveAlias(it))] ?: error("not found ${it}")
         }
     }
 
@@ -189,6 +190,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             IOS_ARM32,
             IOS_ARM64,
             IOS_X64,
+            IOSMAC_X64,
             LINUX_X64,
             LINUX_ARM32_HFP,
             LINUX_ARM64,
@@ -294,6 +296,7 @@ open class HostManager(protected val distribution: Distribution = Distribution()
             "ipad"        to "ios_arm64",
             "ios"         to "ios_arm64",
             "iphone_sim"  to "ios_x64",
+            "iosmac"      to "iosmac_x64",
             "mingw"       to "mingw_x64"
         )
 

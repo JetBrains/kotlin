@@ -256,6 +256,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun macosX64(name: String, configure: Closure<*>) = macosX64(name) { ConfigureUtil.configure(configure, this) }
     fun macosX64(configure: Closure<*>) = macosX64 { ConfigureUtil.configure(configure, this) }
 
+    fun iosmacX64(
+        name: String = "iosmacX64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("iosmacX64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun iosmacX64() = iosmacX64("iosmacX64") { }
+    fun iosmacX64(name: String) = iosmacX64(name) { }
+    fun iosmacX64(name: String, configure: Closure<*>) = iosmacX64(name) { ConfigureUtil.configure(configure, this) }
+    fun iosmacX64(configure: Closure<*>) = iosmacX64 { ConfigureUtil.configure(configure, this) }
+
     fun wasm32(
         name: String = "wasm32",
         configure: KotlinNativeTarget.() -> Unit = { }
