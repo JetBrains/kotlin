@@ -25,6 +25,14 @@ fun commitAllDocuments() {
     }
 }
 
+fun commitDocument(project: Project, document: Document) {
+    val psiDocumentManagerBase = PsiDocumentManager.getInstance(project) as PsiDocumentManagerBase
+
+    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
+        psiDocumentManagerBase.commitDocument(document)
+    })
+}
+
 fun enableHints(enable: Boolean) =
     HintType.values().forEach { it.option.set(enable) }
 
