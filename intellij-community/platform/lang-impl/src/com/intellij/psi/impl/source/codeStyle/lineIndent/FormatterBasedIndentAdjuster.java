@@ -3,13 +3,19 @@ package com.intellij.psi.impl.source.codeStyle.lineIndent;
 
 import com.intellij.formatting.FormattingMode;
 import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.application.ModalityState;
+import com.intellij.openapi.application.ReadAction;
 import com.intellij.openapi.command.CommandProcessor;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.RangeMarker;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDocumentManager;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleManager;
-import com.intellij.psi.codeStyle.FormattingModeAwareIndentAdjuster;
+import com.intellij.util.concurrency.AppExecutorUtil;
+import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class FormatterBasedIndentAdjuster  {
 
@@ -25,11 +31,8 @@ public class FormatterBasedIndentAdjuster  {
     PsiDocumentManager documentManager = PsiDocumentManager.getInstance(myProject);
     if (isSynchronousAdjustment(myDocument)) {
       documentManager.commitDocument(myDocument);
-      fixer.run();
     }
-    else {
-      documentManager.performLaterWhenAllCommitted(fixer);
-    }
+    fixer.run();
   }
 
   private static boolean isSynchronousAdjustment(@NotNull Document document) {
@@ -50,14 +53,34 @@ public class FormatterBasedIndentAdjuster  {
     @Override
     public void run() {
       int lineStart = myDocument.getLineStartOffset(myLine);
-      CommandProcessor.getInstance().runUndoTransparentAction(() ->
-        ApplicationManager.getApplication().runWriteAction(() -> {
-          CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(myProject);
-          if (codeStyleManager instanceof FormattingModeAwareIndentAdjuster) {
-            ((FormattingModeAwareIndentAdjuster)codeStyleManager).adjustLineIndent(myDocument, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER);
-          }
-        }));
+      int indentEnd = CharArrayUtil.shiftForward(myDocument.getCharsSequence(), lineStart, " \t");
+      PsiFile file = PsiDocumentManager.getInstance(myProject).getPsiFile(myDocument);
+      if (file != null) {
+        RangeMarker indentMarker = myDocument.createRangeMarker(lineStart, indentEnd);
+        CodeStyleManager codeStyleManager = CodeStyleManager.getInstance(myProject);
+        if (isSynchronousAdjustment(myDocument)) {
+          updateIndent(indentMarker, codeStyleManager.getLineIndent(file, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER));
+        }
+        else {
+          ReadAction.nonBlocking(() -> codeStyleManager.getLineIndent(file, lineStart, FormattingMode.ADJUST_INDENT_ON_ENTER))
+            .withDocumentsCommitted(myProject)
+            .finishOnUiThread(ModalityState.NON_MODAL, indentString -> updateIndent(indentMarker, indentString))
+            .submit(AppExecutorUtil.getAppExecutorService());
+        }
+      }
     }
+
+    private void updateIndent(@NotNull RangeMarker indentMarker, @Nullable String newIndent) {
+      if (newIndent != null) {
+        CommandProcessor.getInstance().runUndoTransparentAction(
+          () ->
+            ApplicationManager.getApplication().runWriteAction(() -> {
+              myDocument.replaceString(indentMarker.getStartOffset(), indentMarker.getEndOffset(), newIndent);
+              indentMarker.dispose();
+            }));
+      }
+    }
+
   }
 
 }
