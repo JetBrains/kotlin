@@ -106,6 +106,17 @@ internal class DescriptorRendererImpl(
 
     private fun renderFqName(pathSegments: List<Name>) = escape(org.jetbrains.kotlin.renderer.renderFqName(pathSegments))
 
+    private fun renderFqNameForLocalVariables(fqName: FqNameUnsafe): String =
+        if (fqName.isRoot) {
+            "<root>"
+        } else {
+            if (fullContextForLocalVariable) {
+                renderFqName(fqName)
+            } else {
+                renderFqName(fqName).substringAfterLast(".")
+            }
+        }.replace(".", "/")
+
     override fun renderClassifierName(klass: ClassifierDescriptor): String = if (ErrorUtils.isError(klass)) {
         klass.typeConstructor.toString()
     } else
@@ -709,6 +720,8 @@ internal class DescriptorRendererImpl(
 
     private fun renderReceiver(callableDescriptor: CallableDescriptor, builder: StringBuilder) {
         val receiver = callableDescriptor.extensionReceiverParameter
+            ?: (if (useBaseClassAsReceiver) callableDescriptor.dispatchReceiverParameter else null)
+        val extensionIsNull = callableDescriptor.extensionReceiverParameter == null
         if (receiver != null) {
             builder.renderAnnotations(receiver, AnnotationUseSiteTarget.RECEIVER)
 
@@ -717,7 +730,8 @@ internal class DescriptorRendererImpl(
             if (shouldRenderAsPrettyFunctionType(type) && !TypeUtils.isNullableType(type)) {
                 result = "($result)"
             }
-            builder.append(result).append(".")
+            // @ symbol is used to distinguish extension receiver from dispatch
+            builder.append(result).append(if (extensionIsNull) "@" else ".")
         }
     }
 
@@ -809,7 +823,7 @@ internal class DescriptorRendererImpl(
         builder: StringBuilder,
         topLevel: Boolean
     ) {
-        if (topLevel) {
+        if (topLevel && !renderContextNearLocalVariable) {
             builder.append(renderKeyword("value-parameter")).append(" ")
         }
 
@@ -862,6 +876,11 @@ internal class DescriptorRendererImpl(
 
         if (includeName) {
             renderName(variable, builder, topLevel)
+            if (topLevel && renderContextNearLocalVariable) {
+                val containingDeclaration = variable.containingDeclaration
+                val fqName = DescriptorUtils.getFqName(containingDeclaration)
+                builder.append("@").append(renderFqNameForLocalVariables(fqName))
+            }
             builder.append(": ")
         }
 
