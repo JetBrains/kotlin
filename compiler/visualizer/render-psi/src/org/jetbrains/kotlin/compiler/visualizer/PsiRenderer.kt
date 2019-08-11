@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
@@ -36,6 +37,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         renderContextNearLocalVariable = true
         fullContextForLocalVariable = false
         useBaseClassAsReceiver = true
+        parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
     }
 
     private fun addAnnotation(text: String, range: TextRange) {
