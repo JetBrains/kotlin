@@ -127,4 +127,8 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var presentableUnresolvedTypes: Boolean by property(false)
 
     override var boldOnlyForNamesInHtml: Boolean by property(false)
+
+    override var renderContextNearLocalVariable by property(false)
+    override var fullContextForLocalVariable by property(false)
+    override var useBaseClassAsReceiver by property(false)
 }
