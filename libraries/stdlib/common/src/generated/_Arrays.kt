@@ -4137,9 +4137,9 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4159,9 +4159,9 @@ public fun ByteArray.take(n: Int): List<Byte> {
     var count = 0
     val list = ArrayList<Byte>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4181,9 +4181,9 @@ public fun ShortArray.take(n: Int): List<Short> {
     var count = 0
     val list = ArrayList<Short>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4203,9 +4203,9 @@ public fun IntArray.take(n: Int): List<Int> {
     var count = 0
     val list = ArrayList<Int>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4225,9 +4225,9 @@ public fun LongArray.take(n: Int): List<Long> {
     var count = 0
     val list = ArrayList<Long>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4247,9 +4247,9 @@ public fun FloatArray.take(n: Int): List<Float> {
     var count = 0
     val list = ArrayList<Float>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4269,9 +4269,9 @@ public fun DoubleArray.take(n: Int): List<Double> {
     var count = 0
     val list = ArrayList<Double>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4291,9 +4291,9 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
     var count = 0
     val list = ArrayList<Boolean>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -4313,9 +4313,9 @@ public fun CharArray.take(n: Int): List<Char> {
     var count = 0
     val list = ArrayList<Char>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }

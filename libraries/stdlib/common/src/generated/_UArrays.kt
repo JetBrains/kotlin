@@ -2103,9 +2103,9 @@ public fun UIntArray.take(n: Int): List<UInt> {
     var count = 0
     val list = ArrayList<UInt>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -2127,9 +2127,9 @@ public fun ULongArray.take(n: Int): List<ULong> {
     var count = 0
     val list = ArrayList<ULong>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -2151,9 +2151,9 @@ public fun UByteArray.take(n: Int): List<UByte> {
     var count = 0
     val list = ArrayList<UByte>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }
@@ -2175,9 +2175,9 @@ public fun UShortArray.take(n: Int): List<UShort> {
     var count = 0
     val list = ArrayList<UShort>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list
 }

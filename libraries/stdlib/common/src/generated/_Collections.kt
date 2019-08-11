@@ -785,9 +785,9 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
     var count = 0
     val list = ArrayList<T>(n)
     for (item in this) {
-        if (count++ == n)
-            break
         list.add(item)
+        if (++count == n)
+            break
     }
     return list.optimizeReadOnlyList()
 }
