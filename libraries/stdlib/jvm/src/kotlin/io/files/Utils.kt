@@ -184,15 +184,10 @@ public fun File.copyTo(target: File, overwrite: Boolean = false, bufferSize: Int
     }
 
     if (target.exists()) {
-        val stillExists = if (!overwrite) true else !target.delete()
-
-        if (stillExists) {
-            throw FileAlreadyExistsException(
-                file = this,
-                other = target,
-                reason = "The destination file already exists."
-            )
-        }
+        if (!overwrite)
+            throw FileAlreadyExistsException(file = this, other = target, reason = "The destination file already exists.")
+        else if (!target.delete())
+            throw FileAlreadyExistsException(file = this, other = target, reason = "Tried to overwrite the destination, but failed to delete it.")
     }
 
     if (this.isDirectory) {
