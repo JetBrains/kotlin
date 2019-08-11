@@ -113,6 +113,8 @@ object SetOps : TemplateGroupBase() {
             The returned set preserves the element iteration order of the original ${f.collection}.
             Those elements of the [other] collection that are unique are iterated in the end
             in the order of the [other] collection.
+            
+            To get a set containing all elements that are contained in both collections use [intersect].
             """
         }
         returns("Set<T>")
@@ -131,9 +133,11 @@ object SetOps : TemplateGroupBase() {
         infix()
         doc {
             """
-            Returns a set containing all elements that are contained by both this set and the specified collection.
+            Returns a set containing all elements that are contained by both this ${f.collection} and the specified collection.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
+            
+            To get a set containing all elements that are contained at least in one of these collections use [union].
             """
         }
         returns("Set<T>")
