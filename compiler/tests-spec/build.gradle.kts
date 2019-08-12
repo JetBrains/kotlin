@@ -20,16 +20,16 @@ projectTest(parallel = true) {
     workingDir = rootDir
 }
 
-val generateSpecTests by generator("org.jetbrains.kotlin.spec.tasks.GenerateSpecTestsKt")
+val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
 
-val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.tasks.GenerateFeatureInteractionSpecTestDataKt")
+val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt")
 
-val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.tasks.PrintSpecTestsStatisticKt")
+val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt")
 
-val generateJsonTestsMap by generator("org.jetbrains.kotlin.spec.tasks.GenerateJsonTestsMapKt")
+val generateJsonTestsMap by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateJsonTestsMapKt")
 
 val remoteRunTests by task<Test> {
-    val packagePrefix = "org.jetbrains.kotlin."
+    val packagePrefix = "org.jetbrains.kotlin.spec."
     val includeTests = setOf(
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Contracts*",
         "checkers.DiagnosticsTestSpecGenerated\$NotLinked\$Annotations*",

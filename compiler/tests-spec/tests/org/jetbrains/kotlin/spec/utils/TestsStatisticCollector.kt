@@ -1,15 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.utils
 
-import org.jetbrains.kotlin.spec.SpecTestLinkedType
-import org.jetbrains.kotlin.spec.TestArea
-import org.jetbrains.kotlin.spec.models.AbstractSpecTest
-import org.jetbrains.kotlin.spec.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
+import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import java.io.File
 
 open class SpecTestsStatElement(val type: SpecTestsStatElementType) {
@@ -47,7 +45,8 @@ object TestsStatisticCollector {
         for (specTestArea in TestArea.values()) {
             val specTestsPath = "$TESTDATA_PATH/${specTestArea.name.toLowerCase().replace("_", "/")}/${testLinkedType.testDataPath}"
 
-            statistic[specTestArea] = SpecTestsStatElement(SpecTestsStatElementType.AREA)
+            statistic[specTestArea] =
+                SpecTestsStatElement(SpecTestsStatElementType.AREA)
 
             File(specTestsPath).walkTopDown().forEach areaTests@{
                 if (!it.isFile || it.extension != "kt") return@areaTests
