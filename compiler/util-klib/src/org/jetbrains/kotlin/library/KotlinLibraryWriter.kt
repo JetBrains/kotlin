@@ -33,20 +33,7 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
-class SerializedIrSymbol(
-    val symbolData: ByteArray,
-    val id: Long,
-    val isLocal: Boolean
-)
-
-//class SerializedIrFile(
-//    val fileData: ByteArray,
-//    val symbols: List<SerializedIrSymbol>,
-//    val types: List<ByteArray>,
-//    val strings: List<ByteArray>
-//)
-
-class IrIrSerializedIrFile(
+class SerializedIrFile(
     val fileData: ByteArray,
 //    val fileProto: ProtoFile,
     val fqName: List<String>,
@@ -59,13 +46,4 @@ class IrIrSerializedIrFile(
     val declarations: List<SerializedDeclaration>
 )
 
-class SerializedIrModule(val files: Collection<IrIrSerializedIrFile>)
-
-class SerializedIr(
-    val module: ByteArray,
-//    val symbols: List<Pair<Long, ByteArray>>,
-    val symbols: List<ByteArray>,
-    val types: List<ByteArray>,
-    val strings: List<ByteArray>,
-    val serializedDeclarations: List<SerializedDeclaration>
-)
+class SerializedIrModule(val files: Collection<SerializedIrFile>)

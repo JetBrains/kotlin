@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.lineStartOffsets
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
-import org.jetbrains.kotlin.library.IrIrSerializedIrFile
+import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.SerializedDeclaration
 import org.jetbrains.kotlin.library.impl.SkippedDeclaration
 import org.jetbrains.kotlin.library.impl.TopLevelDeclaration
@@ -1297,7 +1297,7 @@ open class IrFileSerializer(
     open fun backendSpecificExplicitRoot(declaration: IrFunction) = false
     open fun backendSpecificExplicitRoot(declaration: IrClass) = false
 
-    fun serializeIrFile(file: IrFile): IrIrSerializedIrFile {
+    fun serializeIrFile(file: IrFile): SerializedIrFile {
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
@@ -1350,7 +1350,7 @@ open class IrFileSerializer(
             }
         })
 
-        return IrIrSerializedIrFile(
+        return SerializedIrFile(
             proto.build().toByteArray(),
             file.fqName.pathSegments().map { it.identifier },
             file.path,

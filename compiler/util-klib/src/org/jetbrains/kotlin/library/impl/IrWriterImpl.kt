@@ -13,7 +13,7 @@ class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
         irLayout.irTablesDir.mkdirs()
     }
 
-    private fun serializeFile(file: IrIrSerializedIrFile) {
+    private fun serializeFile(file: SerializedIrFile) {
         val fqnPath = file.fqName.joinToString(separator = "/")
         val fileId = file.path.hashCode().toString(Character.MAX_RADIX)
 
