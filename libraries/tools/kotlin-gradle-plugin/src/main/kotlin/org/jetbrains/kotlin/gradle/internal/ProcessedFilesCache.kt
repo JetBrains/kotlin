@@ -153,6 +153,14 @@ internal open class ProcessedFilesCache(
                 byTarget[target] = element
             }
         }
+
+        fun remove(element: Element) {
+            if (element.target != null) {
+                byTarget.remove(element.target)
+            }
+
+            byHash.values.removeIf { it == element }
+        }
     }
 
     class Element(
@@ -199,8 +207,13 @@ internal open class ProcessedFilesCache(
         val key = compute()?.relativeTo(targetDir)?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
-            if (existedTarget.src != file.canonicalPath) {
-                reportTargetClash(key, file, File(existedTarget.src))
+            if (File(existedTarget.src).exists()) {
+                if (existedTarget.src != file.canonicalPath) {
+                    reportTargetClash(key, file, File(existedTarget.src))
+                }
+            } else {
+                project.logger.warn("Removing cache for removed source `${existedTarget.src}`")
+                state.remove(existedTarget)
             }
         }
         state[hash] = Element(file.canonicalPath, key)
