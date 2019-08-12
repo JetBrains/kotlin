@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Blackhole
+
 open class WithIndiciesBenchmark {
     private var _data: ArrayList<Value>? = null
     val data: ArrayList<Value>

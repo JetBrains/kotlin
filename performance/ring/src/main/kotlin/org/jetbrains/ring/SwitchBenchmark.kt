@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Blackhole
+
 val SPARSE_SWITCH_CASES = intArrayOf(11, 29, 47, 71, 103,
                                      149, 175, 227, 263, 307,
                                      361, 487, 563, 617, 677,

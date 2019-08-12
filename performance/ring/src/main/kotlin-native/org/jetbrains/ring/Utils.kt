@@ -16,20 +16,6 @@
 
 package org.jetbrains.ring
 
-import platform.posix.*
-
-//-----------------------------------------------------------------------------//
-
-actual class Blackhole {
-    @kotlin.native.ThreadLocal
-    actual companion object {
-        actual var consumer = 0
-        actual fun consume(value: Any) {
-            consumer += value.hashCode()
-        }
-    }
-}
-
 //-----------------------------------------------------------------------------//
 
 actual class Random actual constructor() {

@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Blackhole
+
 open class ClassStreamBenchmark {
     private var _data: Iterable<Value>? = null
     val data: Iterable<Value>

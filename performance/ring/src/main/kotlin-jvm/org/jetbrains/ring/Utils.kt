@@ -15,20 +15,6 @@
  */
 
 package org.jetbrains.ring
-
-import java.io.File
-
-//-----------------------------------------------------------------------------//
-
-actual class Blackhole {
-    actual companion object {
-        actual var consumer = 0
-        actual fun consume(value: Any) {
-            consumer += value.hashCode()
-        }
-    }
-}
-
 //-----------------------------------------------------------------------------//
 
 actual class Random actual constructor() {

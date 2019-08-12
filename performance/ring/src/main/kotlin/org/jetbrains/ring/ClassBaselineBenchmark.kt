@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Blackhole
+
 open class ClassBaselineBenchmark {
 
     //Benchmark 

@@ -15,8 +15,10 @@ actual class NumericalLauncher : Launcher() {
 }
 
 fun konanBellardPi() {
-    for (n in 1 .. 1000 step 9)
-            pi_nth_digit(n)
+    for (n in 1 .. 1000 step 9) {
+        val result = pi_nth_digit(n)
+        Blackhole.consume(result)
+    }
 }
 
 fun clangBellardPi() {

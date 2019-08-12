@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import org.jetbrains.benchmarksLauncher.Blackhole
+
 open class LoopBenchmark {
     lateinit var arrayList: List<Value>
     lateinit var array: Array<Value>

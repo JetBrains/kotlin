@@ -49,3 +49,14 @@ actual fun printStderr(message: String) {
     fflush(STDERR)
 }
 
+actual fun nanoTime(): Long = kotlin.system.getTimeNanos()
+
+actual class Blackhole {
+    @kotlin.native.ThreadLocal
+    actual companion object {
+        actual var consumer = 0
+        actual fun consume(value: Any) {
+            consumer += value.hashCode()
+        }
+    }
+}

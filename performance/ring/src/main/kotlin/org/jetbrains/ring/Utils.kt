@@ -18,13 +18,6 @@ package org.jetbrains.ring
 
 const val BENCHMARK_SIZE = 10000
 
-expect class Blackhole {
-    companion object {
-        var consumer: Int
-        fun consume(value: Any)
-    }
-}
-
 expect class Random() {
     companion object {
         var seedInt: Int
