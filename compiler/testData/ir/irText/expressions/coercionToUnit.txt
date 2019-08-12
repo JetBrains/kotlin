@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/coercionToUnit.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUN_EXPR type=kotlin.Function0<kotlin.Unit> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Unit
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/coercionToUnit.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Function0<kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:public [final,static]' type=kotlin.Function0<kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function0<kotlin.Unit> visibility:private [final,static]' type=kotlin.Function0<kotlin.Unit> origin=null
   FUN name:test2 visibility:public modality:FINAL <> (mc:kotlin.collections.MutableCollection<kotlin.String>) returnType:kotlin.Unit
     VALUE_PARAMETER name:mc index:0 type:kotlin.collections.MutableCollection<kotlin.String>
     BLOCK_BODY

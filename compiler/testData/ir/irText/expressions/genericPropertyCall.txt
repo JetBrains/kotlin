@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
         RETURN type=kotlin.Nothing from='public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>'
           GET_VAR '<this>: T of <root>.<get-id> declared in <root>.<get-id>' type=T of <root>.<get-id> origin=null
   PROPERTY name:test visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun <get-id> <T> (): T of <root>.<get-id> declared in <root>' type=kotlin.String origin=GET_PROPERTY
           <T>: kotlin.String
@@ -17,4 +17,4 @@ FILE fqName:<root> fileName:/genericPropertyCall.kt
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

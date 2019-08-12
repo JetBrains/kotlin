@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.String) returnType:<root>.TestAnn [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.String
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.String declared in <root>.TestAnn.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnn) returnType:kotlin.String
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnn
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.TestAnn'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.TestAnn declared in <root>.TestAnn.<get-x>' type=<root>.TestAnn origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -28,7 +28,7 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
         public open fun toString (): kotlin.String declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:testVal visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:private [final,static]
       annotations:
         TestAnn(x = 'testVal.field')
       EXPRESSION_BODY
@@ -37,9 +37,9 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       correspondingProperty: PROPERTY name:testVal visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testVal> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVal type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   PROPERTY name:testVar visibility:public modality:FINAL [var]
-    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static]
+    FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:private [static]
       annotations:
         TestAnn(x = 'testVar.field')
       EXPRESSION_BODY
@@ -48,10 +48,10 @@ FILE fqName:<root> fileName:/fieldsWithAnnotations.kt
       correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testVar> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:private [static]' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<set-testVar> visibility:public modality:FINAL <> (<set-?>:kotlin.String) returnType:kotlin.Unit
       correspondingProperty: PROPERTY name:testVar visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:public [static]' type=kotlin.Unit origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testVar type:kotlin.String visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.String declared in <root>.<set-testVar>' type=kotlin.String origin=null

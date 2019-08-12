@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:C modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:test1 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -14,7 +14,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test1>' type=<root>.C origin=null
     PROPERTY name:test2 visibility:public modality:FINAL [val]
       FUN name:<get-test2> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -24,7 +24,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>.C'
             CONST Int type=kotlin.Int value=0
     PROPERTY name:test3 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=0
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -32,18 +32,18 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test3>' type=<root>.C origin=null
       FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test3>' type=kotlin.Int origin=null
     PROPERTY name:test4 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -51,18 +51,18 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test4>' type=<root>.C origin=null
       FUN name:<set-test4> visibility:public modality:FINAL <> ($this:<root>.C, value:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public' type=kotlin.Unit origin=EQ
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:private' type=kotlin.Unit origin=EQ
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test4>' type=<root>.C origin=null
             value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-test4>' type=kotlin.Int origin=null
     PROPERTY name:test5 visibility:public modality:FINAL [var]
-      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public
+      FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test5> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -70,18 +70,18 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test5>' type=<root>.C origin=null
       FUN name:<set-test5> visibility:private modality:FINAL <> ($this:<root>.C, <set-?>:kotlin.Int) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [var]
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test5>' type=<root>.C origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.C.<set-test5>' type=kotlin.Int origin=null
     PROPERTY name:test6 visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final]
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=1
       FUN name:<get-test6> visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Int
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.Int declared in <root>.C'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<get-test6>' type=<root>.C origin=null
     PROPERTY name:test7 visibility:public modality:FINAL [delegated,val]
       FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]

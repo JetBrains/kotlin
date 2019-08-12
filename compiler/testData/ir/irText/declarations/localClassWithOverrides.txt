@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
           $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
           BLOCK_BODY
         PROPERTY name:aval visibility:public modality:OPEN [val]
-          FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public [final]
+          FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=1
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-aval> visibility:public modality:OPEN <> ($this:<root>.outer.Local) returnType:kotlin.Int
@@ -56,10 +56,10 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public open fun <get-aval> (): kotlin.Int declared in <root>.outer.Local'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:aval type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-aval>' type=<root>.outer.Local origin=null
         PROPERTY name:avar visibility:public modality:OPEN [var]
-          FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public
+          FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private
             EXPRESSION_BODY
               CONST Int type=kotlin.Int value=2
           FUN DEFAULT_PROPERTY_ACCESSOR name:<get-avar> visibility:public modality:OPEN <> ($this:<root>.outer.Local) returnType:kotlin.Int
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             BLOCK_BODY
               RETURN type=kotlin.Nothing from='public open fun <get-avar> (): kotlin.Int declared in <root>.outer.Local'
-                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+                GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private' type=kotlin.Int origin=null
                   receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<get-avar>' type=<root>.outer.Local origin=null
           FUN DEFAULT_PROPERTY_ACCESSOR name:<set-avar> visibility:public modality:OPEN <> ($this:<root>.outer.Local, <set-?>:kotlin.Int) returnType:kotlin.Unit
             correspondingProperty: PROPERTY name:avar visibility:public modality:OPEN [var]
@@ -78,7 +78,7 @@ FILE fqName:<root> fileName:/localClassWithOverrides.kt
             $this: VALUE_PARAMETER name:<this> type:<root>.outer.Local
             VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
             BLOCK_BODY
-              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+              SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:avar type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
                 receiver: GET_VAR '<this>: <root>.outer.Local declared in <root>.outer.Local.<set-avar>' type=<root>.outer.Local origin=null
                 value: GET_VAR '<set-?>: kotlin.Int declared in <root>.outer.Local.<set-avar>' type=kotlin.Int origin=null
         FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

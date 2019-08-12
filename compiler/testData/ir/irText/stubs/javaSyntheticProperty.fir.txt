@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/javaSyntheticProperty.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:private [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:public [final,static]
       EXPRESSION_BODY
         CALL 'public open fun getFoo (): kotlin.String? declared in <root>.J' type=kotlin.String? origin=GET_PROPERTY
           $this: CONSTRUCTOR_CALL 'public/*package*/ constructor <init> () [primary] declared in <root>.J' type=<root>.J origin=null
@@ -8,4 +8,4 @@ FILE fqName:<root> fileName:/javaSyntheticProperty.kt
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.String? declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:private [final,static]' type=kotlin.String? origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.String? visibility:public [final,static]' type=kotlin.String? origin=null

@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:A modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:runA visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'runA: @[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A.<init>' type=@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-runA> visibility:public modality:FINAL <> ($this:<root>.A) returnType:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>
@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.A
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-runA> (): @[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> declared in <root>.A'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:public [final]' type=@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:runA type:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> visibility:private [final]' type=@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit> origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-runA>' type=<root>.A origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:@[ExtensionFunctionType] kotlin.Function2<<root>.A, kotlin.String, kotlin.Unit>
       $this: VALUE_PARAMETER name:<this> type:<root>.A
@@ -130,7 +130,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:B modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Any declared in <root>.B.<init>' type=kotlin.Any origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Any
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/lambdaInDataClassDefaultParameter.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any declared in <root>.B'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:public [final]' type=kotlin.Any origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.B declared in <root>.B.<get-x>' type=<root>.B origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.B) returnType:kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:<root>.B

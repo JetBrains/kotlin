@@ -1,22 +1,22 @@
 FILE fqName:<root> fileName:/references.kt
   PROPERTY name:ok visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CONST String type=kotlin.String value="OK"
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:ok visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-ok> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   PROPERTY name:ok2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun <get-ok> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-ok2> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:ok2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-ok2> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:ok2 type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null
   PROPERTY name:ok3 visibility:public modality:FINAL [val]
     FUN name:<get-ok3> visibility:public modality:FINAL <> () returnType:kotlin.String
       correspondingProperty: PROPERTY name:ok3 visibility:public modality:FINAL [val]

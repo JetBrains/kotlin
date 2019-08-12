@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Base modality:ABSTRACT visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Base visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Base visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: T of <root>.Base declared in <root>.Base.<init>' type=T of <root>.Base origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Base<T of <root>.Base>) returnType:T of <root>.Base
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/genericClassInDifferentModule_m1.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Base<T of <root>.Base>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Base declared in <root>.Base'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Base visibility:public [final]' type=T of <root>.Base origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Base visibility:private [final]' type=T of <root>.Base origin=null
               receiver: GET_VAR '<this>: <root>.Base<T of <root>.Base> declared in <root>.Base.<get-x>' type=<root>.Base<T of <root>.Base> origin=null
     FUN name:foo visibility:public modality:ABSTRACT <Y> ($this:<root>.Base<T of <root>.Base>, y:Y of <root>.Base.foo) returnType:T of <root>.Base
       TYPE_PARAMETER name:Y index:0 variance: superTypes:[kotlin.Any?]

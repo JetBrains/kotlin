@@ -24,25 +24,25 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
   FUN name:bar visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
   PROPERTY name:qux visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CONST Int type=kotlin.Int value=1
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-qux> visibility:public modality:FINAL <> () returnType:kotlin.Int
       correspondingProperty: PROPERTY name:qux visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-qux> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:qux type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:private [final,static]
       EXPRESSION_BODY
         CLASS_REFERENCE 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KClass<<root>.A>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.reflect.KClass<<root>.A> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:public [final,static]' type=kotlin.reflect.KClass<<root>.A> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.reflect.KClass<<root>.A> visibility:private [final,static]' type=kotlin.reflect.KClass<<root>.A> origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:private [final,static]
       EXPRESSION_BODY
         GET_CLASS type=kotlin.reflect.KClass<out kotlin.Int>
           CALL 'public final fun <get-qux> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
@@ -50,27 +50,27 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.reflect.KClass<out kotlin.Int> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:public [final,static]' type=kotlin.reflect.KClass<out kotlin.Int> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.reflect.KClass<out kotlin.Int> visibility:private [final,static]' type=kotlin.reflect.KClass<out kotlin.Int> origin=null
   PROPERTY name:test3 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test3> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit>
       correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:public [final,static]' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test3 type:kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction1<<root>.A, kotlin.Unit> origin=null
   PROPERTY name:test4 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public constructor <init> () [primary] declared in <root>.A' type=kotlin.reflect.KFunction0<<root>.A> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test4> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<<root>.A>
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.reflect.KFunction0<<root>.A> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:public [final,static]' type=kotlin.reflect.KFunction0<<root>.A> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.reflect.KFunction0<<root>.A> visibility:private [final,static]' type=kotlin.reflect.KFunction0<<root>.A> origin=null
   PROPERTY name:test5 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in <root>.A' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
           $this: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
@@ -78,13 +78,13 @@ FILE fqName:<root> fileName:/reflectionLiterals.kt
       correspondingProperty: PROPERTY name:test5 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test5> (): kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
   PROPERTY name:test6 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]
       EXPRESSION_BODY
         FUNCTION_REFERENCE 'public final fun bar (): kotlin.Unit declared in <root>' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test6> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction0<kotlin.Unit>
       correspondingProperty: PROPERTY name:test6 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test6> (): kotlin.reflect.KFunction0<kotlin.Unit> declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:public [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test6 type:kotlin.reflect.KFunction0<kotlin.Unit> visibility:private [final,static]' type=kotlin.reflect.KFunction0<kotlin.Unit> origin=null

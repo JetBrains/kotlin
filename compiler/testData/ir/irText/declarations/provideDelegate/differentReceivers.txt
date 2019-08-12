@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:value visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'value: kotlin.String declared in <root>.MyClass.<init>' type=kotlin.String origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-value> visibility:public modality:FINAL <> ($this:<root>.MyClass) returnType:kotlin.String
@@ -15,7 +15,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.MyClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): kotlin.String declared in <root>.MyClass'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:public [final]' type=kotlin.String origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyClass declared in <root>.MyClass.<get-value>' type=<root>.MyClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -74,7 +74,7 @@ FILE fqName:<root> fileName:/differentReceivers.kt
             receiver: CONST Null type=kotlin.Nothing? value=null
             p: PROPERTY_REFERENCE 'public final testK: kotlin.String [delegated,val]' field=null getter='public final fun <get-testK> (): kotlin.String declared in <root>' setter=null type=kotlin.reflect.KProperty0<kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
   PROPERTY name:testOK visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun plus (other: kotlin.Any?): kotlin.String declared in kotlin.String' type=kotlin.String origin=PLUS
           $this: CALL 'public final fun <get-testO> (): kotlin.String declared in <root>' type=kotlin.String origin=GET_PROPERTY
@@ -83,4 +83,4 @@ FILE fqName:<root> fileName:/differentReceivers.kt
       correspondingProperty: PROPERTY name:testOK visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-testOK> (): kotlin.String declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:public [final,static]' type=kotlin.String origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:testOK type:kotlin.String visibility:private [final,static]' type=kotlin.String origin=null

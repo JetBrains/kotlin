@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test1 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: T of <root>.Test1 declared in <root>.Test1.<init>' type=T of <root>.Test1 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>) returnType:T of <root>.Test1
@@ -16,7 +16,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.Test1>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:public [final]' type=T of <root>.Test1 origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.<get-x>' type=<root>.Test1<T of <root>.Test1> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>) returnType:T of <root>.Test1
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.Test1>
@@ -114,7 +114,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test2 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: T of <root>.Test2 declared in <root>.Test2.<init>' type=T of <root>.Test2 origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:T of <root>.Test2
@@ -122,7 +122,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:public [final]' type=T of <root>.Test2 origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.<get-x>' type=<root>.Test2<T of <root>.Test2> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:T of <root>.Test2
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
@@ -209,7 +209,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test3 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3.<init>' type=kotlin.collections.List<T of <root>.Test3> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.collections.List<T of <root>.Test3>
@@ -217,7 +217,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test3<T of <root>.Test3>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:public [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.<get-x>' type=<root>.Test3<T of <root>.Test3> origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.collections.List<T of <root>.Test3>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3<T of <root>.Test3>
@@ -303,7 +303,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test4 modality:FINAL visibility:public [data] superTypes:[kotlin.Any]'
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.collections.List<kotlin.String> declared in <root>.Test4.<init>' type=kotlin.collections.List<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String>
@@ -311,7 +311,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Test4
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:public [final]' type=kotlin.collections.List<kotlin.String> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-x>' type=<root>.Test4 origin=null
     FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test4

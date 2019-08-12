@@ -4,7 +4,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.IntArray) returnType:<root>.TestAnnWithIntArray [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.IntArray
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.IntArray declared in <root>.TestAnnWithIntArray.<init>' type=kotlin.IntArray origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnnWithIntArray) returnType:kotlin.IntArray
@@ -12,7 +12,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnnWithIntArray
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.IntArray declared in <root>.TestAnnWithIntArray'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:public [final]' type=kotlin.IntArray origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.IntArray visibility:private [final]' type=kotlin.IntArray origin=null
               receiver: GET_VAR '<this>: <root>.TestAnnWithIntArray declared in <root>.TestAnnWithIntArray.<get-x>' type=<root>.TestAnnWithIntArray origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -32,7 +32,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
     CONSTRUCTOR visibility:public <> (x:kotlin.Array<kotlin.String>) returnType:<root>.TestAnnWithStringArray [primary]
       VALUE_PARAMETER name:x index:0 type:kotlin.Array<kotlin.String>
     PROPERTY name:x visibility:public modality:FINAL [val]
-      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public [final]
+      FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:private [final]
         EXPRESSION_BODY
           GET_VAR 'x: kotlin.Array<kotlin.String> declared in <root>.TestAnnWithStringArray.<init>' type=kotlin.Array<kotlin.String> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-x> visibility:public modality:FINAL <> ($this:<root>.TestAnnWithStringArray) returnType:kotlin.Array<kotlin.String>
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/arrayInAnnotationArguments.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestAnnWithStringArray
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Array<kotlin.String> declared in <root>.TestAnnWithStringArray'
-            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:public [final]' type=kotlin.Array<kotlin.String> origin=null
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Array<kotlin.String> visibility:private [final]' type=kotlin.Array<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.TestAnnWithStringArray declared in <root>.TestAnnWithStringArray.<get-x>' type=<root>.TestAnnWithStringArray origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

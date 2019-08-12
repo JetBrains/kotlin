@@ -17,7 +17,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
   PROPERTY name:test1 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.test1.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[kotlin.Any]
@@ -44,9 +44,9 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test1> (): kotlin.Any declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:public [final,static]' type=kotlin.Any origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Any visibility:private [final,static]' type=kotlin.Any origin=null
   PROPERTY name:test2 visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:private [final,static]
       EXPRESSION_BODY
         BLOCK type=<root>.test2.<no name provided> origin=OBJECT_LITERAL
           CLASS CLASS name:<no name provided> modality:FINAL visibility:local superTypes:[<root>.IFoo]
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
       correspondingProperty: PROPERTY name:test2 visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test2> (): <root>.IFoo declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:public [final,static]' type=<root>.IFoo origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:<root>.IFoo visibility:private [final,static]' type=<root>.IFoo origin=null
   CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer
     CONSTRUCTOR visibility:public <> () returnType:<root>.Outer [primary]

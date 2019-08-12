@@ -1,6 +1,6 @@
 FILE fqName:<root> fileName:/simple.kt
   PROPERTY name:test visibility:public modality:FINAL [val]
-    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:public [final,static]
+    FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final,static]
       EXPRESSION_BODY
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
           $this: CONST Int type=kotlin.Int value=2
@@ -9,4 +9,4 @@ FILE fqName:<root> fileName:/simple.kt
       correspondingProperty: PROPERTY name:test visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test> (): kotlin.Int declared in <root>'
-          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:public [final,static]' type=kotlin.Int origin=null
+          GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test type:kotlin.Int visibility:private [final,static]' type=kotlin.Int origin=null
