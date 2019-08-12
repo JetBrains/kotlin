@@ -24,6 +24,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.net.URL;
 
 /**
  * @author Sergey Simonchik
@@ -113,6 +114,16 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
                                 @NotNull File zipArchiveFile,
                                 @NotNull File extractToDir,
                                 boolean retryOnError) throws GeneratorException {
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      try {
+        File file = URLUtil.urlToFile(new URL(url));
+        ZipUtil.unzip(null, extractToDir, file, null, null, true);
+      }
+      catch (Exception e) {
+        throw new RuntimeException(e);
+      }
+      return;
+    }
     GithubDownloadUtil.downloadContentToFileWithProgressSynchronously(
       project,
       url,
