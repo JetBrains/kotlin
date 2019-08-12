@@ -45,7 +45,10 @@ object JvmPlatforms {
     )
     object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM)),
         // Needed for backward compatibility, because old code uses INSTANCEOF checks instead of calling extensions
-        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {}
+        org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform {
+        override val platformName: String
+            get() = "JVM"
+    }
 }
 
 class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {

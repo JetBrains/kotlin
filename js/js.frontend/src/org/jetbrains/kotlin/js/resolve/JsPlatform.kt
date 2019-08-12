@@ -27,10 +27,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
     level = DeprecationLevel.ERROR
 )
 interface JsPlatform : TargetPlatform {
-    @JvmDefault
-    override val platformName: String
-        get() = "JS"
-
     companion object {
         @JvmField
         val INSTANCE: JsPlatform = JsPlatforms.CompatJsPlatform

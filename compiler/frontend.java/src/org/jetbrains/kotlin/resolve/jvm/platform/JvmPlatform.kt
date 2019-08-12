@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
     level = DeprecationLevel.ERROR
 )
 interface JvmPlatform : TargetPlatform {
-    @JvmDefault
-    override val platformName: String
-        get() = "JVM"
-
     companion object {
         @JvmField
         val INSTANCE: JvmPlatform = JvmPlatforms.CompatJvmPlatform

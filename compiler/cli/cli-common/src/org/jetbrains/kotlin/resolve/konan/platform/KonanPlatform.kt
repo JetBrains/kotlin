@@ -16,10 +16,6 @@ import org.jetbrains.kotlin.resolve.TargetPlatform
     level = DeprecationLevel.ERROR
 )
 interface KonanPlatform : TargetPlatform {
-    @JvmDefault
-    override val platformName: String
-        get() = "Native"
-
     companion object {
         @JvmField
         val INSTANCE: KonanPlatform = KonanPlatforms.CompatKonanPlatform
