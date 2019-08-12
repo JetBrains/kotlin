@@ -17,14 +17,13 @@ import com.intellij.platform.templates.github.ZipUtil;
 import com.intellij.ui.components.labels.ActionLink;
 import com.intellij.util.NullableFunction;
 import com.intellij.util.PlatformUtils;
+import com.intellij.util.io.URLUtil;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 /**
  * @author Sergey Simonchik
@@ -138,12 +137,7 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
 
   @NotNull
   private File getCacheFile(@NotNull GithubTagInfo tag) {
-    String fileName = tag.getName() + ".zip";
-    try {
-      fileName = URLEncoder.encode(fileName, "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      LOG.warn("Can't urlEncode", e);
-    }
+    String fileName = URLUtil.encodeURIComponent(tag.getName() + ".zip");
     return GithubDownloadUtil.findCacheFile(getGithubUserName(), getGithubRepositoryName(), fileName);
   }
 
