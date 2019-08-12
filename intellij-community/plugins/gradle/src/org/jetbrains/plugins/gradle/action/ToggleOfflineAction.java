@@ -15,7 +15,10 @@
  */
 package org.jetbrains.plugins.gradle.action;
 
+import com.intellij.openapi.actionSystem.ActionPlaces;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import com.intellij.openapi.actionSystem.Presentation;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.externalSystem.action.ExternalSystemToggleAction;
 import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +29,21 @@ import org.jetbrains.plugins.gradle.util.GradleConstants;
  * @author Vladislav.Soroka
  */
 public class ToggleOfflineAction extends ExternalSystemToggleAction {
+  private static final Logger LOG = Logger.getInstance("#" + ToggleOfflineAction.class.getPackage().getName());
+
+  @Override
+  public void update(@NotNull AnActionEvent e) {
+    super.update(e);
+
+    if (ActionPlaces.ACTION_SEARCH.equals(e.getPlace())) {
+      Presentation p = e.getPresentation();
+      String name = p.getText();
+      String prefix = "Toggle ";
+      if (name != null && LOG.assertTrue(name.startsWith(prefix))) {
+        p.setText(prefix + "Gradle " + name.substring(prefix.length()));
+      }
+    }
+  }
 
   @Override
   protected boolean isVisible(@NotNull AnActionEvent e) {
