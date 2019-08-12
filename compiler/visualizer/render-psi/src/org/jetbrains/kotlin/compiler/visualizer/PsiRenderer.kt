@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.BindingContext.*
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.types.*
 
 class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer {
@@ -41,6 +42,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
     }
 
     private fun addAnnotation(text: String, range: TextRange) {
+        annotations.removeIf { it.range.startOffset == range.startOffset }
         annotations.add(Annotator.AnnotationInfo(text, range))
     }
 
@@ -85,6 +87,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         override fun visitTypeReference(typeReference: KtTypeReference) {
             val type = bindingContext[TYPE, typeReference]
             addAnnotation(renderType(type), typeReference.textRange)
+            super.visitTypeReference(typeReference)
         }
 
         override fun visitConstantExpression(expression: KtConstantExpression) {
