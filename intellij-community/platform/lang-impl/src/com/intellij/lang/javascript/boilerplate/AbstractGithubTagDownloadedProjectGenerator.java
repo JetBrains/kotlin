@@ -70,7 +70,7 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
       unpackToDir(project, VfsUtilCore.virtualToIoFile(baseDir), tag);
     }
     catch (GeneratorException e) {
-      showErrorMessage(project, e.getMessage());
+      reportError(project, e);
     }
     ApplicationManager.getApplication().runWriteAction(() -> baseDir.refresh(true, true));
   }
@@ -147,10 +147,15 @@ public abstract class AbstractGithubTagDownloadedProjectGenerator extends WebPro
     return GithubDownloadUtil.findCacheFile(getGithubUserName(), getGithubRepositoryName(), fileName);
   }
 
-  private void showErrorMessage(@NotNull Project project, @NotNull String message) {
-    String fullMessage = "Error creating " + getDisplayName() + " project. " + message;
+  private void reportError(@NotNull Project project, @NotNull GeneratorException e) {
+    String message = "Error creating " + getDisplayName() + " project";
+    if (ApplicationManager.getApplication().isUnitTestMode()) {
+      LOG.error(message, e);
+      return;
+    }
+    LOG.info(message, e);
     String title = "Create " + getDisplayName() + " Project";
-    Messages.showErrorDialog(project, fullMessage, title);
+    Messages.showErrorDialog(project, message + ". " + e.getMessage(), title);
   }
 
   public ActionLink createGitHubLink() {
