@@ -7,7 +7,6 @@ import com.intellij.codeInsight.hints.ChangeListener
 import com.intellij.codeInsight.hints.InlayHintsSettings
 import com.intellij.lang.Language
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.openapi.editor.colors.EditorFontType
 import com.intellij.openapi.editor.event.DocumentEvent
@@ -24,7 +23,6 @@ import com.intellij.ui.components.JBList
 import com.intellij.ui.components.JBScrollPane
 import com.intellij.util.ui.JBUI
 import java.awt.BorderLayout
-import java.awt.Component
 import java.awt.Dimension
 import java.awt.GridLayout
 import javax.swing.*
@@ -44,7 +42,7 @@ class SingleLanguageInlayHintsSettingsPanel(
   private val myCurrentProviderCustomSettingsPane = JBScrollPane().also { it.border = null }
   private val myCurrentProviderCasesPane = JBScrollPane().also { it.border = null }
   private val myBottomPanel = createBottomPanel()
-  private var myCurrentMainCheckBox: JCheckBox? = null
+  private var myCasesPanel: CasesPanel? = null
 
 
   init {
@@ -54,14 +52,9 @@ class SingleLanguageInlayHintsSettingsPanel(
     splitter.secondComponent = myBottomPanel
 
     for (model in myModels) {
-      model.onChangeListener = object: ChangeListener {
+      model.onChangeListener = object : ChangeListener {
         override fun settingsChanged() {
           updateHints()
-        }
-
-        override fun didDeactivated() {
-          myCurrentProvider.isEnabled = false
-          myCurrentMainCheckBox?.isSelected = false
         }
       }
     }
@@ -81,7 +74,7 @@ class SingleLanguageInlayHintsSettingsPanel(
     return myModels[findIndexToSelect()]
   }
 
-  private fun findIndexToSelect() : Int {
+  private fun findIndexToSelect(): Int {
     val id = config.getLastViewedProviderId() ?: return 0
     return when (val index = myModels.indexOfFirst { it.id == id }) {
       -1 -> 0
@@ -89,7 +82,7 @@ class SingleLanguageInlayHintsSettingsPanel(
     }
   }
 
-  private fun createList() : JBList<InlayProviderSettingsModel> {
+  private fun createList(): JBList<InlayProviderSettingsModel> {
     return JBList(*myModels).also {
       it.cellRenderer = object : ColoredListCellRenderer<InlayProviderSettingsModel>(), ListCellRenderer<InlayProviderSettingsModel> {
         override fun customizeCellRenderer(list: JList<out InlayProviderSettingsModel>,
@@ -207,16 +200,16 @@ class SingleLanguageInlayHintsSettingsPanel(
   }
 
   private fun createMainCheckBoxPanel(): JPanel {
-    val panel = JPanel()
-    panel.layout = BoxLayout(panel, BoxLayout.Y_AXIS)
-    val mainCheckBox = JCheckBox(myCurrentProvider.mainCheckBoxLabel, myCurrentProvider.isEnabled)
-    mainCheckBox.addChangeListener {
-      myCurrentProvider.isEnabled = mainCheckBox.isSelected
-    }
-    mainCheckBox.alignmentX = Component.LEFT_ALIGNMENT
-    panel.add(mainCheckBox)
-    myCurrentMainCheckBox = mainCheckBox
-    return panel
+    val model = myCurrentProvider
+    val casesPanel = CasesPanel(
+      model.cases,
+      model.mainCheckBoxLabel,
+      { model.isEnabled },
+      { model.isEnabled = it },
+      model.onChangeListener!! // must be installed at this point
+    )
+    myCasesPanel = casesPanel
+    return casesPanel
   }
 
   private fun updateHints() {
@@ -247,6 +240,6 @@ class SingleLanguageInlayHintsSettingsPanel(
     for (model in myModels) {
       model.reset()
     }
-    myCurrentMainCheckBox?.isSelected = myCurrentProvider.isEnabled
+    myCasesPanel?.updateFromSettings()
   }
 }

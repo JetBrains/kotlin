@@ -30,6 +30,8 @@ abstract class InlayProviderSettingsModel(var isEnabled: Boolean, val id: String
   abstract fun isModified(): Boolean
 
   abstract fun reset()
+
+  abstract val cases: List<ImmediateConfigurable.Case>
 }
 
 class ParameterInlayProviderSettingsModel(
@@ -38,18 +40,25 @@ class ParameterInlayProviderSettingsModel(
 ) : InlayProviderSettingsModel(isParameterHintsEnabledForLanguage(language), "parameter.hints.old") {
   override val mainCheckBoxLabel: String
     get() = provider.mainCheckboxText
-
   override val name: String
     get() = "Parameter hints"
+
   override val previewText: String?
     get() = null
   override val component by lazy {
-    val listener: () -> Unit = { onChangeListener?.didDeactivated() }
     ParameterHintsSettingsPanel(
       language = language,
-      options = provider.supportedOptions,
-      blackListSupported = provider.isBlackListSupported,
-      onDeactivated = if (provider.isExhaustive) listener else null
+      blackListSupported = provider.isBlackListSupported
+    )
+  }
+
+  private val optionStates = provider.supportedOptions.map { OptionState(it) }
+
+  override val cases: List<ImmediateConfigurable.Case> = provider.supportedOptions.mapIndexed { index, option ->
+    val state = optionStates[index]
+    ImmediateConfigurable.Case(option.name,
+                               loadFromSettings = { state.state },
+                               onUserChanged = { state.state = it }
     )
   }
 
@@ -60,17 +69,33 @@ class ParameterInlayProviderSettingsModel(
 
   override fun apply() {
     setShowParameterHintsForLanguage(isEnabled, language)
-    component.saveOptions()
+    for (state in optionStates) {
+      state.apply()
+    }
   }
 
   override fun isModified(): Boolean {
     if (isEnabled != isParameterHintsEnabledForLanguage(language)) return true
-    return component.isModified()
+    return optionStates.any { it.isModified() }
   }
 
   override fun reset() {
     isEnabled = isParameterHintsEnabledForLanguage(language)
-    component.reset()
+    for (state in optionStates) {
+      state.reset()
+    }
+  }
+
+  private data class OptionState(val option: Option, var state: Boolean = option.get()) {
+    fun isModified(): Boolean = state != option.get()
+
+    fun reset() {
+      state = option.get()
+    }
+
+    fun apply() {
+      option.set(state)
+    }
   }
 }
 
@@ -83,16 +108,18 @@ class NewInlayProviderSettingsModel<T : Any>(
 ) {
   override val name: String
     get() = providerWithSettings.provider.name
-
   override val mainCheckBoxLabel: String
     get() = providerWithSettings.configurable.mainCheckboxText
+
   override val component by lazy {
     providerWithSettings.configurable.createComponent(onChangeListener!!)
   }
-
   override fun collectAndApply(editor: Editor, file: PsiFile) {
     providerWithSettings.getCollectorWrapperFor(file, editor, providerWithSettings.language)?.collectTraversingAndApply(editor, file)
   }
+
+  override val cases: List<ImmediateConfigurable.Case>
+    get() = providerWithSettings.configurable.cases
 
   override val previewText: String?
     get() = providerWithSettings.provider.previewText
