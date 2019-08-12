@@ -25,7 +25,10 @@ object CommonPlatforms {
             defaultJsPlatform.single(),
             defaultKonanPlatform.single()
         )
-    ), org.jetbrains.kotlin.analyzer.common.CommonPlatform
+    ), org.jetbrains.kotlin.analyzer.common.CommonPlatform {
+        override val platformName: String
+            get() = "Default"
+    }
 
     val defaultCommonPlatform: TargetPlatform
         get() = CompatCommonPlatform
