@@ -38,7 +38,6 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.util.*;
-import com.intellij.openapi.util.io.FileUtilRt;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
@@ -1156,8 +1155,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
 
     GlobalSearchScope scope = GlobalSearchScopeUtil.toGlobalSearchScope(
       FindInProjectUtil.getScopeFromModel(myProject, myHelper.myPreviousModel), myProject);
-    myResultsPreviewTable.getColumnModel().getColumn(0).setCellRenderer(
-      new UsageTableCellRenderer(myCbFileFilter.isSelected(), false, scope));
+    myResultsPreviewTable.getColumnModel().getColumn(0).setCellRenderer(new UsageTableCellRenderer(scope));
     onStart(hash);
 
     final AtomicInteger resultsCount = new AtomicInteger();
@@ -1662,7 +1660,6 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       @NotNull
       private SimpleTextAttributes getAttributes(@NotNull TextChunk textChunk) {
         SimpleTextAttributes at = textChunk.getSimpleAttributesIgnoreBackground();
-        if (myUseBold) return at;
         boolean highlighted = textChunk.getType() != null || at.getFontStyle() == Font.BOLD;
         return highlighted
                ? new SimpleTextAttributes(null, at.getFgColor(), at.getWaveColor(),
@@ -1694,9 +1691,7 @@ public class FindPopupPanel extends JBPanel implements FindUI {
 
       @NotNull
       private String getFilePath(@NotNull UsageInfo2UsageAdapter ua) {
-        String uniquePath =
-          UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(ua.getUsageInfo().getProject(), ua.getFile(), myScope);
-        return myOmitFileExtension ? FileUtilRt.getNameWithoutExtension(uniquePath) : uniquePath;
+        return UniqueVFilePathBuilder.getInstance().getUniqueVirtualFilePath(ua.getUsageInfo().getProject(), ua.getFile(), myScope);
       }
 
       @Nullable
@@ -1708,13 +1703,9 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     };
 
     private static final int MARGIN = 2;
-    private final boolean myOmitFileExtension;
-    private final boolean myUseBold;
     private final GlobalSearchScope myScope;
 
-    UsageTableCellRenderer(boolean omitFileExtension, boolean useBold, GlobalSearchScope scope) {
-      myOmitFileExtension = omitFileExtension;
-      myUseBold = useBold;
+    UsageTableCellRenderer(GlobalSearchScope scope) {
       myScope = scope;
       setLayout(new BorderLayout());
       add(myUsageRenderer, BorderLayout.CENTER);
