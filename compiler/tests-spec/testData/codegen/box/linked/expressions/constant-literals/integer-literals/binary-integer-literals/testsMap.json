@@ -1,0 +1,22 @@
+{
+  "1": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Sequences with binary digit symbols separated by underscores.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Sequences with binary digit symbols.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

@@ -1,7 +1,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-draft
+ * SPEC VERSION: 0.1-100
  * PLACE: expressions, constant-literals, real-literals -> paragraph 1 -> sentence 1
  * NUMBER: 2
  * DESCRIPTION: Real literals with a many digits in a whole-number part and a fraction part (including conforms).

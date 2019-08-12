@@ -1,7 +1,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-draft
+ * SPEC VERSION: 0.1-100
  * PLACE: expressions, constant-literals, real-literals -> paragraph 1 -> sentence 3
  * NUMBER: 1
  * DESCRIPTION: Real literals suffixed by f/F (float suffix) separeted by comments.

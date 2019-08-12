@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 6
  * DESCRIPTION: Type annotations inside type check and cast expression with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 

@@ -1,0 +1,96 @@
+{
+  "1": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Various integer literals with a long literal mark in not allowed places.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Various integer literals with underscores after a long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "The long literal mark after not integer literals.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Various integer literals with a long literal mark doublicate.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Binary integer literals suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Decimal integer literals with underscores suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Hexadecimal integer literals suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Binary prefix only suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Long literal mark in not allowed places (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Binary integer literals with underscores suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Various integer literals with long literal mark in not allowed lower case (but valid in opinion the parser).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Hexadecimal prefix only suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Hexadecimal integer literals with underscores suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 0,
+          "description": "Decimal integer literals suffixed by the long literal mark.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

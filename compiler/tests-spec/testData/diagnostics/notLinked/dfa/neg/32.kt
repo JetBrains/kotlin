@@ -46,8 +46,8 @@ fun case_2(x: Int?, y: Nothing?) {
 fun case_3(x: Int?) {
     if (x == null) {
         <!ALWAYS_NULL!>x<!> as Int
-        stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!>)
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing")!>x<!>
+        <!UNREACHABLE_CODE!>stringArg(<!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!><!UNREACHABLE_CODE!>)<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
     }
 }
 
@@ -59,7 +59,7 @@ fun case_3(x: Int?) {
 fun case_4(x: Int?) {
     if (x == null) {
         <!ALWAYS_NULL!>x<!>!!
-        <!UNREACHABLE_CODE!>stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!>)<!>
+        <!UNREACHABLE_CODE!>stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>x<!>)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>x<!>
     }
 }
@@ -73,7 +73,7 @@ fun case_5(x: Int?) {
     if (x == null) {
         var y = <!DEBUG_INFO_CONSTANT!>x<!>
         <!ALWAYS_NULL!>y<!>!!
-        <!UNREACHABLE_CODE!>stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>y<!>)<!>
+        <!UNREACHABLE_CODE!>stringArg(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing"), DEBUG_INFO_SMARTCAST!>y<!>)<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int? & kotlin.Nothing"), UNREACHABLE_CODE!>y<!>
     }
 }

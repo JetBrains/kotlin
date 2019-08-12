@@ -3,32 +3,36 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-draft
+ * SPEC VERSION: 0.1-100
  * PLACE: expressions, when-expression -> paragraph 6 -> sentence 1
  * NUMBER: 1
- * DESCRIPTION: 'When' with bound value and not allowed break and continue expression (without labels) in the control structure body.
+ * DESCRIPTION: 'When' with bound value and type test condition (without companion object in classes), but without type checking operator.
+ * HELPERS: classes
  */
 
 // TESTCASE NUMBER: 1
-fun case_1(value_1: Int): Int {
-    while (true) {
-        when (value_1) {
-            1 -> return 1
-            2 -> <!BREAK_OR_CONTINUE_IN_WHEN!>break<!>
-        }
+fun case_1(value_1: Any): String {
+    when (value_1) {
+        <!NO_COMPANION_OBJECT!>EmptyClass<!> -> return ""
     }
 
-    return 0
+    return ""
 }
 
 // TESTCASE NUMBER: 2
-fun case_2(value_1: Int): Int {
-    while (true) {
-        when (value_1) {
-            1 -> <!BREAK_OR_CONTINUE_IN_WHEN!>continue<!>
-            2 -> return 1
-        }
+fun case_2(value_1: Any): String {
+    when (value_1) {
+        <!NO_COMPANION_OBJECT!>Any<!> -> return ""
     }
 
-    <!UNREACHABLE_CODE!>return 0<!>
+    return ""
+}
+
+// TESTCASE NUMBER: 3
+fun case_3(value_1: Any): String {
+    when (value_1) {
+        <!NO_COMPANION_OBJECT!>Nothing<!> -> return ""
+    }
+
+    return ""
 }

@@ -13,21 +13,19 @@
 
 /*
  * TESTCASE NUMBER: 1
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_1(x: Any?) {
     if (x is String) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.String")!>x<!>
         val y = if (true) Class::fun_1 else Class::fun_1
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        val z: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.String")!>x<!>
+        val z: String = <!DEBUG_INFO_SMARTCAST!>x<!>
     }
 }
 
 /*
  * TESTCASE NUMBER: 2
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656, KT-17386
  */
 fun case_2(x: Any?, b: Boolean?) {
@@ -38,13 +36,12 @@ fun case_2(x: Any?, b: Boolean?) {
         false -> Class::fun_2
         null -> Class::fun_3
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    val z: Any = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any?")!>x<!>
+    val z: Any = <!DEBUG_INFO_SMARTCAST!>x<!>
 }
 
 /*
  * TESTCASE NUMBER: 3
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_3(x: Any?, b: Boolean?) {
@@ -53,8 +50,8 @@ fun case_3(x: Any?, b: Boolean?) {
     val y = when (b) {
         else -> Class::fun_1
     }
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    val z: Int = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
+    val z: Int = <!DEBUG_INFO_SMARTCAST!>x<!>
 }
 
 // TESTCASE NUMBER: 4
@@ -70,20 +67,18 @@ fun case_4(x: Any?, b: Boolean?) {
 
 /*
  * TESTCASE NUMBER: 5
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_5(x: Any?, b: Class) {
     x as Int
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
     val y = if (true) b::fun_1 else b::fun_1
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    val z: Int = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
+    val z: Int = <!DEBUG_INFO_SMARTCAST!>x<!>
 }
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_6(x: Any?, b: Class) {
@@ -91,14 +86,13 @@ fun case_6(x: Any?, b: Class) {
     val z1 = x
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
     val y = if (true) b::fun_1 else b::fun_1
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>z1<!>
-    val z2: Int = <!TYPE_MISMATCH, TYPE_MISMATCH!>z1<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.Int")!>z1<!>
+    val z2: Int = <!DEBUG_INFO_SMARTCAST!>z1<!>
 }
 
 /*
  * TESTCASE NUMBER: 7
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-20656
  */
 fun case_7_1() {}
@@ -106,8 +100,8 @@ fun case_7(x: Any?) {
     if (x is String) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.String")!>x<!>
         val y = if (true) ::case_7_1 else ::case_7_1
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>x<!>
-        val z: String = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any & kotlin.Any? & kotlin.String")!>x<!>
+        val z: String = <!DEBUG_INFO_SMARTCAST!>x<!>
     }
 }
 

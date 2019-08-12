@@ -4,7 +4,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 9
  * DESCRIPTION: Type annotations on a setter argument type with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 

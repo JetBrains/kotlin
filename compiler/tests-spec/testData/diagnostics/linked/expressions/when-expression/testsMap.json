@@ -1,0 +1,232 @@
+{
+  "6": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "\u0027When\u0027 with bound value and type test condition on the non-type operand of the type checking operator.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 with bound value and type test condition (without companion object in classes), but without type checking operator.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with range expression, but without containment checking operator.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and \u0027when condition\u0027 with contains operator and type without defined contains operator.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "9": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and non-expressions in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 with bound value and with else branch not in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "11": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 without bound value and with \u0027else\u0027 branch not in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "\u0027When\u0027 with bound value and type test condition (invert type checking operator).",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "\u0027When\u0027 with bound value and enumaration of type test conditions.",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 7,
+          "description": "\u0027When\u0027 with bound value and enumaration of type test conditions (with invert type checking operator).",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "\u0027When\u0027 with bound value and type test condition.",
+          "unexpectedBehaviour": true
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and containment operator.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and enumeration of the containment operators.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "9": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 23,
+          "description": "\u0027When\u0027 with enumeration of the different variants of expressions in \u0027when condition\u0027.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 26,
+          "description": "\u0027When\u0027 with different variants of the arithmetic expressions (additive expression and multiplicative expression) in \u0027when condition\u0027.",
+          "unexpectedBehaviour": true
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "\u0027When\u0027 with bound value and else branch.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "11": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 without bound value and with else branch in the last position.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "1": {
+    "pos": {
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Empty when with bound value.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Empty when without bound value.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "2": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "When with non-boolean value in the when condition.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "When without bound value, forbidden comma in the when condition.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Forbidden break and continue in the control structure body of when.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 9,
+          "description": "When without bound value, various boolean values in the when condition.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "\u0027When\u0027 without bound value and with Nothing in condition (subtype of Boolean).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 without bound value and only one \u0027else\u0027 branch.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 25,
+          "description": "When without bound value, various expressions in the control structure body.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "5": {
+    "neg": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "\u0027When\u0027 with bound value and not allowed break and continue expression (without labels) in the control structure body.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 25,
+          "description": "\u0027When\u0027 with bound value and with different variants of expressions in the control structure body.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

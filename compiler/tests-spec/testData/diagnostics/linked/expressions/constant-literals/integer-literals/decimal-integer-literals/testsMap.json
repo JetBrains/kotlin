@@ -1,0 +1,26 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 8,
+          "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 8,
+          "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 8,
+          "description": "Integer literals with an underscore in the first position (it\u0027s considered as identifiers).",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

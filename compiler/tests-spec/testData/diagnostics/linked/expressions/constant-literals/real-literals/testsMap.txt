@@ -9,8 +9,8 @@
  */
 
 1
-    pos: 1-2, 1-type-system/introduction/7/pos/1.1.kt, 3-2
     neg: 3-1, 1-1
+    pos: 1-2, 3-2
 4
     neg: 2-3, 1-2
     pos: 1-5

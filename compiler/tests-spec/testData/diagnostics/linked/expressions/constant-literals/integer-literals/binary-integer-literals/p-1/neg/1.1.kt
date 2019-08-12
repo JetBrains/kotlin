@@ -1,7 +1,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (NEGATIVE)
  *
- * SPEC VERSION: 0.1-draft
+ * SPEC VERSION: 0.1-100
  * PLACE: expressions, constant-literals, integer-literals, binary-integer-literals -> paragraph 1 -> sentence 1
  * NUMBER: 1
  * DESCRIPTION: Binary integer literals with the prefix only.

@@ -53,19 +53,6 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                 KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
             }
 
-            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Conditional_expression extends AbstractDiagnosticsTestSpec {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInConditional_expression() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/expressions/conditional-expression"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-                }
-            }
-
             @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/expressions/constant-literals")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1398,19 +1385,19 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                     }
 
-                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any")
+                    @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any")
                     @TestDataPath("$PROJECT_ROOT")
                     @RunWith(JUnit3RunnerWithInners.class)
-                    public static class Kotlin_Any extends AbstractDiagnosticsTestSpec {
+                    public static class Kotlin_any extends AbstractDiagnosticsTestSpec {
                         private void runTest(String testDataFilePath) throws Exception {
                             KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
                         }
 
-                        public void testAllFilesPresentInKotlin_Any() throws Exception {
-                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                        public void testAllFilesPresentInKotlin_any() throws Exception {
+                            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                         }
 
-                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1")
+                        @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1")
                         @TestDataPath("$PROJECT_ROOT")
                         @RunWith(JUnit3RunnerWithInners.class)
                         public static class P_1 extends AbstractDiagnosticsTestSpec {
@@ -1419,10 +1406,10 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
                             }
 
                             public void testAllFilesPresentInP_1() throws Exception {
-                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                             }
 
-                            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1/pos")
+                            @TestMetadata("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos")
                             @TestDataPath("$PROJECT_ROOT")
                             @RunWith(JUnit3RunnerWithInners.class)
                             public static class Pos extends AbstractDiagnosticsTestSpec {
@@ -1432,16 +1419,16 @@ public class DiagnosticsTestSpecGenerated extends AbstractDiagnosticsTestSpec {
 
                                 @TestMetadata("1.1.kt")
                                 public void test1_1() throws Exception {
-                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1/pos/1.1.kt");
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.1.kt");
                                 }
 
                                 @TestMetadata("1.2.kt")
                                 public void test1_2() throws Exception {
-                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1/pos/1.2.kt");
+                                    runTest("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos/1.2.kt");
                                 }
 
                                 public void testAllFilesPresentInPos() throws Exception {
-                                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.Any/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
+                                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/diagnostics/linked/type-system/type-kinds/built-in-types/kotlin.any/p-1/pos"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
                                 }
                             }
                         }

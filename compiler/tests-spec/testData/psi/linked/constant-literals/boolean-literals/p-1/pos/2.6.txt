@@ -1,8 +1,0 @@
-KtFile: 2.6.kt
-  PACKAGE_DIRECTIVE
-    PsiElement(package)('package')
-    PsiWhiteSpace(' ')
-    REFERENCE_EXPRESSION
-      PsiElement(IDENTIFIER)('`true`')
-  IMPORT_LIST
-    <empty list>

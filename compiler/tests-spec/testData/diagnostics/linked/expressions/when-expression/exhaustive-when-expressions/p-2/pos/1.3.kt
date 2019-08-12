@@ -3,7 +3,7 @@
 /*
  * KOTLIN DIAGNOSTICS SPEC TEST (POSITIVE)
  *
- * SPEC VERSION: 0.1-draft
+ * SPEC VERSION: 0.1-100
  * PLACE: expressions, when-expression, exhaustive-when-expressions -> paragraph 2 -> sentence 1
  * NUMBER: 3
  * DESCRIPTION: Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.

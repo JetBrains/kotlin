@@ -56,11 +56,14 @@ fun case_5(x: Any?) {
     }
 }
 
-// TESTCASE NUMBER: 6
+/*
+ * TESTCASE NUMBER: 6
+ * UNEXPECTED BEHAVIOUR
+ */
 fun case_6(x: Any?) {
     if (x is Boolean? && <!DEBUG_INFO_SMARTCAST!>x<!>!!) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean"), DEBUG_INFO_SMARTCAST!>x<!>.not()
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean")!>select(<!DEBUG_INFO_SMARTCAST!>x<!>)<!>.not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Boolean?")!>x<!><!UNSAFE_CALL!>.<!>not()
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>select(<!DEBUG_INFO_SMARTCAST!>x<!>)<!><!UNSAFE_CALL!>.<!>not()
     }
 }
 

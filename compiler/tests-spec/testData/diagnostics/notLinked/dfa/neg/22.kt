@@ -74,7 +74,7 @@ fun case_4(x: Boolean?, y: Boolean?) {
 // TESTCASE NUMBER: 5
 fun case_5(x: Boolean?, y: Boolean?) {
     while (true) {
-        y.<!UNREACHABLE_CODE!><!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>to<!>(<!>break<!UNREACHABLE_CODE!>)<!>
+        y.<!UNREACHABLE_CODE!>to(<!>break<!UNREACHABLE_CODE!>)<!>
         <!UNREACHABLE_CODE!>x!!<!>
     }
 
@@ -176,7 +176,7 @@ fun case_12(x: Int?) {
 
     val y: Int
     while (true) {
-        <!IMPLICIT_NOTHING_AS_TYPE_PARAMETER!>break<!UNREACHABLE_CODE!>[x!!]<!><!>
+        <!DEBUG_INFO_ELEMENT_WITH_ERROR_TYPE, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>break<!UNREACHABLE_CODE!>[x!!]<!><!>
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>x<!>

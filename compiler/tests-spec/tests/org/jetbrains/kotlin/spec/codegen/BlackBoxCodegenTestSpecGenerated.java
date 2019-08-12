@@ -1,6 +1,6 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the license/LICENSE.txt file.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.spec.codegen;
@@ -39,45 +39,6 @@ public class BlackBoxCodegenTestSpecGenerated extends AbstractBlackBoxCodegenTes
 
         public void testAllFilesPresentInLinked() throws Exception {
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-        }
-
-        @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/constant-literals")
-        @TestDataPath("$PROJECT_ROOT")
-        @RunWith(JUnit3RunnerWithInners.class)
-        public static class Constant_literals extends AbstractBlackBoxCodegenTestSpec {
-            private void runTest(String testDataFilePath) throws Exception {
-                KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-            }
-
-            public void testAllFilesPresentInConstant_literals() throws Exception {
-                KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/constant-literals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-            }
-
-            @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/constant-literals/boolean-literals")
-            @TestDataPath("$PROJECT_ROOT")
-            @RunWith(JUnit3RunnerWithInners.class)
-            public static class Boolean_literals extends AbstractBlackBoxCodegenTestSpec {
-                private void runTest(String testDataFilePath) throws Exception {
-                    KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-                }
-
-                public void testAllFilesPresentInBoolean_literals() throws Exception {
-                    KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/constant-literals/boolean-literals"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-                }
-
-                @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/constant-literals/boolean-literals/p-1")
-                @TestDataPath("$PROJECT_ROOT")
-                @RunWith(JUnit3RunnerWithInners.class)
-                public static class P_1 extends AbstractBlackBoxCodegenTestSpec {
-                    private void runTest(String testDataFilePath) throws Exception {
-                        KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
-                    }
-
-                    public void testAllFilesPresentInP_1() throws Exception {
-                        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/tests-spec/testData/codegen/box/linked/constant-literals/boolean-literals/p-1"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
-                    }
-                }
-            }
         }
 
         @TestMetadata("compiler/tests-spec/testData/codegen/box/linked/expressions")

@@ -1,0 +1,122 @@
+{
+  "2": {
+    "neg": {
+      "10": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "Non-exhaustive when using nullable enum values.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 10,
+          "description": "Non-exhaustive when using subclasses of the nullable sealed class.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "Non-exhaustive when using nullable boolean values.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "Non-exhaustive when, with bound value, without else branch.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "Non-exhaustive when, without bound value, without else branch.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "Non-exhaustive when using boolean values.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 12,
+          "description": "Non-exhaustive when using subclasses of the sealed class.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "10": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 7,
+          "description": "Exhaustive when using subclasses of the nullable sealed class.",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "Exhaustive when using nullable enum values.",
+          "unexpectedBehaviour": true
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Exhaustive when using nullable boolean values.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Exhaustive when, with bound value, with else branch.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 8,
+          "description": "Exhaustive when, with bound value (sealed, enum, boolean), with redundant else branch.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 3,
+          "description": "Exhaustive when, without bound value, with else branch.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "3": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Exhaustive when using boolean values.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "8": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Exhaustive when using enum values.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "6": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 9,
+          "description": "Exhaustive when using subclasses of the sealed class.",
+          "unexpectedBehaviour": true
+        }
+      ]
+    }
+  }
+}

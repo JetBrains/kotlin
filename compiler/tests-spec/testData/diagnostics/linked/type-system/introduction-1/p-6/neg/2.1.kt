@@ -56,14 +56,14 @@ fun case_8() {
 // TESTCASE NUMBER: 9
 fun case_9() {
     val x = null
-    val y: Int = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    val y: Int = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>
 }
 
 // TESTCASE NUMBER: 10
 fun case_10(x: Int?) {
     var y = 10
-    y = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
+    y = <!TYPE_MISMATCH!>x<!>
 }
 
 // TESTCASE NUMBER: 11
-fun case_11(x: Int?, y: Int = <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>) = null
+fun case_11(x: Int?, y: Int = <!TYPE_MISMATCH!>x<!>) = null

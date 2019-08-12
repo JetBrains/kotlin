@@ -70,27 +70,25 @@ fun <T> ClassWithSixTypeParameters<out T, *, T, in T?, *, T>.case_5() {
 
 /*
  * TESTCASE NUMBER: 6
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25432
  */
 fun <T> case_6(y: Inv<out T>) {
     if (y.prop_3 is MutableList<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>y.prop_3<!>
-        <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!DEBUG_INFO_EXPRESSION_TYPE("T")!>y.prop_3<!><!NO_GET_METHOD!>[0]<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!! & kotlin.collections.MutableList<*>")!>y.prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<*>"), DEBUG_INFO_SMARTCAST!>y.prop_3<!>[0]
     }
 }
 
 /*
  * TESTCASE NUMBER: 7
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-25432
  */
 fun <T> Inv<out T>.case_7() {
     if (this.prop_3 is MutableList<*>) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>this.prop_3<!>
-        <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!DEBUG_INFO_EXPRESSION_TYPE("T")!>this.prop_3<!><!NO_GET_METHOD!>[0]<!><!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("T")!>prop_3<!>
-        <!DEBUG_INFO_UNRESOLVED_WITH_TARGET, UNRESOLVED_REFERENCE_WRONG_RECEIVER!><!DEBUG_INFO_EXPRESSION_TYPE("T")!>prop_3<!><!NO_GET_METHOD!>[0]<!><!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!! & kotlin.collections.MutableList<*>")!>this.prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<*>"), DEBUG_INFO_SMARTCAST!>this.prop_3<!>[0]
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & T!! & kotlin.collections.MutableList<*>")!>prop_3<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("T & kotlin.collections.MutableList<*>"), DEBUG_INFO_SMARTCAST!>prop_3<!>[0]
     }
 }
 

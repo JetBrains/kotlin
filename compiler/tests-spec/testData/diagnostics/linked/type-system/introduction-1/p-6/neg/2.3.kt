@@ -34,6 +34,6 @@ fun <T> case_4() {
 // TESTCASE NUMBER: 5
 fun <T, K> case_5(x: T) where T: Number?, K: Number {
     if (x == null) {
-        class Case5 constructor(y: K = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH, TYPE_MISMATCH!>x<!>)
+        class Case5 constructor(y: K = <!DEBUG_INFO_CONSTANT, TYPE_MISMATCH!>x<!>)
     }
 }

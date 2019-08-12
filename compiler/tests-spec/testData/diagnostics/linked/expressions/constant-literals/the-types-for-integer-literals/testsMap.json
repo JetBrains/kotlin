@@ -1,0 +1,92 @@
+{
+  "1": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Various integer literals with not allowed long literal mark in lower case (type checking).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Check of integer type selection depends on the context (incopatible types).",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Type checking (comparison with invalid types) of too a big integers.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 6,
+          "description": "Type checking (comparison with invalid types) of various integer literals.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 1,
+          "description": "Type checking (comparison with invalid types) of various integer literals with long literal mark.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Various integer literals with a not allowed underscore before the long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Various integer literals with not allowed long literal mark in lower case.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 8,
+          "description": "Binary and hexadecimal integer literals with a long literal mark only.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    },
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 2,
+          "description": "Type checking of various integer literals with long literal mark.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 4,
+          "description": "Check of integer type selection depends on the context.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "Type checking of binary integer literals.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "Type checking of hexadecimal integer literals.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "Type checking of decimal integer literals.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}

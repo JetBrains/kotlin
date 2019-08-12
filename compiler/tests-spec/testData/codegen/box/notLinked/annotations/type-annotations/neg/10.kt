@@ -6,7 +6,6 @@
  * SECTIONS: annotations, type-annotations
  * NUMBER: 10
  * DESCRIPTION: Type annotations on a lambda type with unresolved reference in parameters.
- * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-28424
  */
 
