@@ -159,7 +159,7 @@ internal class KotlinCBridgeBuilder(
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
     val prepare = mutableListOf<IrStatement>()
     val arguments = mutableListOf<IrExpression>()
-    val cleanup = mutableListOf<IrStatement>()
+    val cleanup = mutableListOf<IrBuilderWithScope.() -> IrStatement>()
 
     private var memScope: IrVariable? = null
 
@@ -172,8 +172,10 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
         prepare += newMemScope
 
         val clearImpl = symbols.interopMemScope.owner.simpleFunctions().single { it.name.asString() == "clearImpl" }
-        cleanup += irCall(clearImpl).apply {
-            dispatchReceiver = irGet(memScope!!)
+        cleanup += {
+            irCall(clearImpl).apply {
+                dispatchReceiver = irGet(memScope!!)
+            }
         }
 
         irGet(newMemScope)
@@ -207,15 +209,18 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
                     +kotlinCall
                 } else {
                     // Note: generating try-catch as finally blocks are already lowered.
-                    +IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
+                    val result = irTemporary(IrTryImpl(startOffset, endOffset, kotlinCall.type).apply {
                         tryResult = kotlinCall
                         catches += irCatch(context.irBuiltIns.throwableType).apply {
                             result = irBlock(kotlinCall) {
-                                cleanup.forEach { +it }
+                                cleanup.forEach { +it() }
                                 +irThrow(irGet(catchParameter))
                             }
                         }
-                    }
+                    })
+                    // TODO: consider handling a cleanup failure properly.
+                    cleanup.forEach { +it() }
+                    +irGet(result)
                 }
             }
         }
