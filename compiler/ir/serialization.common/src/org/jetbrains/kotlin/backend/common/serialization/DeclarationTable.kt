@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyDeclarationBase
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 
 class DescriptorTable {
@@ -14,6 +16,7 @@ class DescriptorTable {
     fun put(descriptor: DeclarationDescriptor, uniqId: UniqId) {
         descriptors.getOrPut(descriptor) { uniqId.index }
     }
+
     fun get(descriptor: DeclarationDescriptor) = descriptors[descriptor]
 }
 
@@ -46,7 +49,7 @@ class DeclarationTable(
     private val table = mutableMapOf<IrDeclaration, UniqId>()
 
     private fun IrDeclaration.isLocalDeclaration(): Boolean {
-        return origin == IrDeclarationOrigin.FAKE_OVERRIDE || !isExportedDeclaration(this) || this is IrVariable || this is IrValueParameter || this is IrAnonymousInitializer || this is IrLocalDelegatedProperty
+        return origin == IrDeclarationOrigin.FAKE_OVERRIDE || !isExportedDeclaration(this) || this is IrValueDeclaration || this is IrAnonymousInitializer || this is IrLocalDelegatedProperty
     }
 
     private var localIndex = startIndex
@@ -61,8 +64,39 @@ class DeclarationTable(
 
     fun uniqIdByDeclaration(declaration: IrDeclaration): UniqId {
         val uniqId = computeUniqIdByDeclaration(declaration)
-        descriptorTable.put(declaration.descriptor, uniqId)
+        if (declaration.isMetadataDeclaration(false)) {
+            descriptorTable.put(declaration.descriptor, uniqId)
+        }
         return uniqId
+    }
+
+    private tailrec fun IrDeclaration.isMetadataDeclaration(isTypeParameter: Boolean): Boolean {
+        if (this is IrValueDeclaration || this is IrField) {
+            return false
+        }
+
+        if (origin == IrDeclarationOrigin.FAKE_OVERRIDE || origin == IrDeclarationOrigin.ENUM_CLASS_SPECIAL_MEMBER) {
+            return false
+        }
+
+        if (!isTypeParameter) {
+            if (this is IrSimpleFunction) {
+                if (correspondingPropertySymbol != null)
+                    return false
+            }
+        }
+
+        if (this is IrDeclarationWithVisibility) {
+            if (visibility == Visibilities.LOCAL) {
+                return false
+            }
+        }
+
+        if (this is IrLazyDeclarationBase) return false
+
+        if (parent is IrPackageFragment) return true
+
+        return (parent as IrDeclaration).isMetadataDeclaration(this is IrTypeParameter || isTypeParameter)
     }
 }
 

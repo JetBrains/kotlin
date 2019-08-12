@@ -31,8 +31,6 @@ class JsKlibMetadataSerializerExtension(
     }
 
     private fun uniqId(descriptor: DeclarationDescriptor): JsKlibMetadataProtoBuf.DescriptorUniqId? {
-//        val index = declarationTable.descriptorTable.get(descriptor)
-//        return index?.let { newDescriptorUniqId(it) }
         return declarationTableHandler(descriptor)
     }
 
@@ -44,11 +42,6 @@ class JsKlibMetadataSerializerExtension(
     override fun serializeTypeAlias(typeAlias: TypeAliasDescriptor, proto: ProtoBuf.TypeAlias.Builder) {
         uniqId(typeAlias)?.let { proto.setExtension(JsKlibMetadataProtoBuf.typeAliasUniqId, it) }
         super.serializeTypeAlias(typeAlias, proto)
-    }
-
-    override fun serializeValueParameter(descriptor: ValueParameterDescriptor, proto: ProtoBuf.ValueParameter.Builder) {
-        uniqId(descriptor)?.let { proto.setExtension(JsKlibMetadataProtoBuf.valueParamUniqId, it) }
-        super.serializeValueParameter(descriptor, proto)
     }
 
     override fun serializeEnumEntry(descriptor: ClassDescriptor, proto: ProtoBuf.EnumEntry.Builder) {
