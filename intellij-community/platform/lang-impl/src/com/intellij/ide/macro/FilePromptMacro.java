@@ -22,16 +22,19 @@ import com.intellij.openapi.fileChooser.*;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * @author yole
  */
 public class FilePromptMacro extends PromptingMacro implements SecondQueueExpandMacro {
+  @NotNull
   @Override
   public String getName() {
     return "FilePrompt";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return "Shows a file chooser dialog";
@@ -46,7 +49,7 @@ public class FilePromptMacro extends PromptingMacro implements SecondQueueExpand
   }
 
   @Override
-  public void cachePreview(DataContext dataContext) {
+  public void cachePreview(@NotNull DataContext dataContext) {
     myCachedPreview = IdeBundle.message("macro.fileprompt.preview");
   }
 }

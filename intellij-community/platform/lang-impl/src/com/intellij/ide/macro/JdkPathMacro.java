@@ -23,23 +23,26 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.openapi.projectRoots.ex.PathUtilEx;
 import com.intellij.util.PathUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
 public final class JdkPathMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "JDKPath";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.jdk.path");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
       return null;

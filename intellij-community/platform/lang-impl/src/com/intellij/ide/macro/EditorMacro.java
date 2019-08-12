@@ -20,6 +20,7 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.editor.ex.util.EditorUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -29,23 +30,25 @@ public abstract class EditorMacro extends Macro {
   private final String myName;
   private final String myDescription;
 
-  public EditorMacro(String name, String description) {
+  public EditorMacro(@NotNull String name, @NotNull String description) {
     myName = name;
     myDescription = description;
   }
 
+  @NotNull
   @Override
   public String getName() {
     return myName;
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return myDescription;
   }
 
   @Override
-  public final String expand(DataContext dataContext) {
+  public final String expand(@NotNull DataContext dataContext) {
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     if (editor != null){
       return expand(editor);

@@ -20,17 +20,20 @@ import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.roots.ModuleRootManager;
 import com.intellij.util.PlatformUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * @author yole
  */
 public class ModuleSdkPathMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ModuleSdkPath";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return PlatformUtils.isPyCharm()
@@ -40,7 +43,7 @@ public class ModuleSdkPathMacro extends Macro {
 
   @Nullable
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
     if (module == null) {
       return null;

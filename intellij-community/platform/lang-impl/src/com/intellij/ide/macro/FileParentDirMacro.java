@@ -19,21 +19,24 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class FileParentDirMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "FileParentDir";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.parent.directory");
   }
 
   @Override
-  public String expand(DataContext dataContext, String... args) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException {
     if(args.length == 0 || StringUtil.isEmpty(args[0])) {
       return expand(dataContext);
     }
@@ -46,7 +49,7 @@ public class FileParentDirMacro extends Macro {
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     VirtualFile vFile = getVirtualDirOrParent(dataContext);
     return parentPath(vFile);
   }

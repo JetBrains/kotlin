@@ -21,14 +21,17 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class ProjectFileDirMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ProjectFileDir";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.project.file.directory");
@@ -36,7 +39,7 @@ public final class ProjectFileDirMacro extends Macro {
 
   @Override
   @Nullable
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final VirtualFile baseDir = PlatformDataKeys.PROJECT_FILE_DIRECTORY.getData(dataContext);
     if (baseDir == null) {
       return null;

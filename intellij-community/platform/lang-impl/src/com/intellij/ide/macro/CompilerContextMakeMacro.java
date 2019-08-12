@@ -18,20 +18,23 @@ package com.intellij.ide.macro;
 
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
+import org.jetbrains.annotations.NotNull;
 
 public final class CompilerContextMakeMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "IsMake";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.compiler.context.is.make");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     Object make = dataContext.getData("COMPILER_CONTEXT_MAKE");
     if (make instanceof Boolean) {
       return make.toString();

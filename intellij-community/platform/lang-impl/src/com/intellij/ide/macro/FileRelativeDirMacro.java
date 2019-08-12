@@ -22,20 +22,23 @@ import com.intellij.openapi.actionSystem.PlatformDataKeys;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class FileRelativeDirMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "FileRelativeDir";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.directory.relative");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final VirtualFile baseDir = PlatformDataKeys.PROJECT_FILE_DIRECTORY.getData(dataContext);
     if (baseDir == null) {
       return null;

@@ -35,20 +35,23 @@ public abstract class Macro {
 
   protected String myCachedPreview;
 
-  @NonNls public abstract String getName();
+  @NonNls
+  @NotNull
+  public abstract String getName();
 
   @Nls(capitalization = Nls.Capitalization.Sentence)
+  @NotNull
   public abstract String getDescription();
   
   @Nullable
-  public abstract String expand(DataContext dataContext) throws ExecutionCancelledException;
+  public abstract String expand(@NotNull DataContext dataContext) throws ExecutionCancelledException;
 
   @Nullable
-  public String expand(DataContext dataContext, String... args) throws ExecutionCancelledException{
+  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException{
     return expand(dataContext);
   }
 
-  public void cachePreview(DataContext dataContext) {
+  public void cachePreview(@NotNull DataContext dataContext) {
     try{
       myCachedPreview = expand(dataContext);
     }
@@ -62,16 +65,17 @@ public abstract class Macro {
   }
 
   @NotNull
-  protected static String getPath(VirtualFile file) {
+  protected static String getPath(@NotNull VirtualFile file) {
     return file.getPath().replace('/', File.separatorChar);
   }
 
-  static File getIOFile(VirtualFile file) {
+  @NotNull
+  static File getIOFile(@NotNull VirtualFile file) {
     return new File(getPath(file));
   }
 
   @Nullable
-  protected static VirtualFile getVirtualDirOrParent(DataContext dataContext) {
+  protected static VirtualFile getVirtualDirOrParent(@NotNull DataContext dataContext) {
     VirtualFile vFile = CommonDataKeys.VIRTUAL_FILE.getData(dataContext);
     if (vFile != null && !vFile.isDirectory()) {
       vFile = vFile.getParent();
@@ -83,21 +87,23 @@ public abstract class Macro {
     private final Macro myDelegate;
     private final String myValue;
 
-    public Silent(Macro delegate, String value) {
+    public Silent(@NotNull Macro delegate, String value) {
       myDelegate = delegate;
       myValue = value;
     }
 
     @Override
-    public String expand(DataContext dataContext) {
+    public String expand(@NotNull DataContext dataContext) {
       return myValue;
     }
 
+    @NotNull
     @Override
     public String getDescription() {
       return myDelegate.getDescription();
     }
 
+    @NotNull
     @Override
     public String getName() {
       return myDelegate.getName();

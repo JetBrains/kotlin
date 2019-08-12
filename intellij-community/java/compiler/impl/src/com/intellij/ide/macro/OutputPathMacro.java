@@ -13,22 +13,25 @@ import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.VirtualFileManager;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 public final class OutputPathMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "OutputPath";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.output.path");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
       return null;

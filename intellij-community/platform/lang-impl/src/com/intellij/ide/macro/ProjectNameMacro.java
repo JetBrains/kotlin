@@ -20,20 +20,23 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
+import org.jetbrains.annotations.NotNull;
 
 public final class ProjectNameMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ProjectName";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.project.file.name");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
       return null;

@@ -19,14 +19,17 @@ package com.intellij.ide.macro;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.ui.Messages;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class PromptMacro extends PromptingMacro implements SecondQueueExpandMacro {
+  @NotNull
   @Override
   public String getName() {
     return "Prompt";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.prompt");
@@ -43,7 +46,7 @@ public final class PromptMacro extends PromptingMacro implements SecondQueueExpa
   }
 
   @Override
-  public void cachePreview(DataContext dataContext) {
+  public void cachePreview(@NotNull DataContext dataContext) {
     myCachedPreview = IdeBundle.message("macro.prompt.preview");
   }
 }

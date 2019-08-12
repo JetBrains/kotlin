@@ -21,20 +21,23 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.OrderEnumerator;
+import org.jetbrains.annotations.NotNull;
 
 public final class ProjectPathMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "Projectpath";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.project.source.path");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) return null;
     return OrderEnumerator.orderEntries(project).withoutSdk().withoutLibraries().getSourcePathsList().getPathsString();

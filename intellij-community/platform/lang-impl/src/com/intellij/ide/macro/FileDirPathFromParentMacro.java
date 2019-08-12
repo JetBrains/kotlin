@@ -28,23 +28,25 @@ public class FileDirPathFromParentMacro extends Macro {
 
   private static final String PATH_DELIMITER = "/";
 
+  @NotNull
   @Override
   public String getName() {
     return "FileDirPathFromParent";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.directory.from.parent");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     return null;
   }
 
   @Override
-  public String expand(DataContext dataContext, String... args) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException {
     if(args.length == 0) {
       return super.expand(dataContext, args);
     }

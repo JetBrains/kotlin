@@ -19,14 +19,17 @@ package com.intellij.ide.macro;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.util.io.FileUtil;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public final class UnixSeparatorsMacro extends Macro implements SecondQueueExpandMacro{
+  @NotNull
   @Override
   public String getName() {
     return "UnixSeparators";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.unix.separators");
@@ -34,7 +37,7 @@ public final class UnixSeparatorsMacro extends Macro implements SecondQueueExpan
 
   @Nullable
   @Override
-  public String expand(DataContext dataContext, String... args) throws ExecutionCancelledException {
+  public String expand(@NotNull DataContext dataContext, @NotNull String... args) throws ExecutionCancelledException {
     if (args.length == 1) {
       return FileUtil.toSystemIndependentName(args[0]);
     }
@@ -43,7 +46,7 @@ public final class UnixSeparatorsMacro extends Macro implements SecondQueueExpan
 
   @Nullable
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     return null;
   }
 }

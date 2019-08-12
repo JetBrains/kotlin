@@ -21,20 +21,23 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.util.text.StringUtil;
+import org.jetbrains.annotations.NotNull;
 
 public final class AffectedModuleNamesMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "AffectedModuleNames";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.affected.module.names");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final Module[] modules = LangDataKeys.MODULE_CONTEXT_ARRAY.getData(dataContext);
     if (modules == null) {
       return null;

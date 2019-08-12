@@ -23,20 +23,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class FilePathRelativeToProjectRootMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "FilePathRelativeToProjectRoot";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.path.relative.to.root");
   }
 
   @Override
-  public String expand(final DataContext dataContext) {
+  public String expand(@NotNull final DataContext dataContext) {
     final Project project = CommonDataKeys.PROJECT.getData(dataContext);
     if (project == null) {
       return null;

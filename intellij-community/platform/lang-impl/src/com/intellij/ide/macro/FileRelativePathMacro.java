@@ -23,20 +23,23 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public class FileRelativePathMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "FileRelativePath";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.path.relative");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
     final VirtualFile baseDir = project == null ? null : project.getBaseDir();
     if (baseDir == null) {

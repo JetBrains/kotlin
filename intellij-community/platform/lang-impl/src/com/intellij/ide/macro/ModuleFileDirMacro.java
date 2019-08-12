@@ -20,22 +20,25 @@ import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.module.Module;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
 public final class ModuleFileDirMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ModuleFileDir";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.module.file.directory");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     final Module module = LangDataKeys.MODULE.getData(dataContext);
     final String path = module != null ? module.getModuleFilePath() : null;
     if (path == null) {

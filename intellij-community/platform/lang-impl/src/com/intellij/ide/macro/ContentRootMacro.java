@@ -26,11 +26,13 @@ import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 public class ContentRootMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "ContentRoot";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.content.root");

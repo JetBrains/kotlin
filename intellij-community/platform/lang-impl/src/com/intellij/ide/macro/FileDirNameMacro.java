@@ -19,20 +19,23 @@ package com.intellij.ide.macro;
 import com.intellij.ide.IdeBundle;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.vfs.VirtualFile;
+import org.jetbrains.annotations.NotNull;
 
 public final class FileDirNameMacro extends Macro {
+  @NotNull
   @Override
   public String getName() {
     return "FileDirName";
   }
 
+  @NotNull
   @Override
   public String getDescription() {
     return IdeBundle.message("macro.file.directory.name");
   }
 
   @Override
-  public String expand(DataContext dataContext) {
+  public String expand(@NotNull DataContext dataContext) {
     VirtualFile vFile = getVirtualDirOrParent(dataContext);
     return vFile != null ? vFile.getName() : null;
   }
