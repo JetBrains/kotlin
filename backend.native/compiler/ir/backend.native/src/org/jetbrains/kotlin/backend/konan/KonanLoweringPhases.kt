@@ -73,6 +73,12 @@ internal val lowerBeforeInlinePhase = makeKonanModuleLoweringPhase(
         description = "Special operations processing before inlining"
 )
 
+internal val arrayConstructorPhase = makeKonanModuleLoweringPhase(
+        ::ArrayConstructorLowering,
+        name = "ArrayConstructor",
+        description = "Transform `Array(size) { index -> value }` into a loop"
+)
+
 internal val inlinePhase = namedIrModulePhase(
         lower = object : SameTypeCompilerPhase<Context, IrModuleFragment> {
             override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>, context: Context, input: IrModuleFragment): IrModuleFragment {
@@ -82,7 +88,7 @@ internal val inlinePhase = namedIrModulePhase(
         },
         name = "Inline",
         description = "Functions inlining",
-        prerequisite = setOf(lowerBeforeInlinePhase),
+        prerequisite = setOf(lowerBeforeInlinePhase, arrayConstructorPhase),
         nlevels = 0,
         actions = modulePhaseActions
 )

@@ -5,7 +5,6 @@
 
 package kotlin.collections
 
-import kotlin.native.internal.InlineConstructor
 import kotlin.internal.PureReifiable
 
 /** Returns the array if it's not `null`, or an empty array otherwise. */

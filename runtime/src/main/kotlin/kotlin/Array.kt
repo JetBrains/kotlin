@@ -7,7 +7,6 @@ package kotlin
 
 import kotlin.native.internal.ExportForCompiler
 import kotlin.native.internal.ExportTypeInfo
-import kotlin.native.internal.InlineConstructor
 import kotlin.native.internal.PointsTo
 
 /**
@@ -26,7 +25,6 @@ public final class Array<T> {
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
      */
-    @InlineConstructor
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     public constructor(size: Int, init: (Int) -> T): this(size) {
         var index = 0

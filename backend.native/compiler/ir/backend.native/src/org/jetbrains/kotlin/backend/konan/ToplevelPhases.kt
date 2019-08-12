@@ -240,6 +240,7 @@ internal val allLoweringsPhase = namedIrModulePhase(
         lower = removeExpectDeclarationsPhase then
                 lowerBeforeInlinePhase then
                 provisionalFunctionExpressionPhase then
+                arrayConstructorPhase then
                 inlinePhase then
                 lowerAfterInlinePhase then
                 interopPart1Phase then

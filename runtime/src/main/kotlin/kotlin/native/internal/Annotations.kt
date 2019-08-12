@@ -41,13 +41,6 @@ internal annotation class Intrinsic
 public annotation class ExportForCompiler
 
 /**
- * Annotated constructor will be inlined.
- */
-@Target(AnnotationTarget.CONSTRUCTOR)
-@Retention(AnnotationRetention.BINARY)
-internal annotation class InlineConstructor
-
-/**
  * Class is frozen by default. Also this annotation is (ab)used for marking objects
  * where mutability checks are not needed, and they are shared, such as atomics.
  */
