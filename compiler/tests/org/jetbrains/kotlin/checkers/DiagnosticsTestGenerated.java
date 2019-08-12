@@ -1694,6 +1694,11 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 runTest("compiler/testData/diagnostics/tests/callableReference/classVsPackage.kt");
             }
 
+            @TestMetadata("constraintFromLHSWithCorrectDirection.kt")
+            public void testConstraintFromLHSWithCorrectDirection() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/callableReference/constraintFromLHSWithCorrectDirection.kt");
+            }
+
             @TestMetadata("correctInfoAfterArrayLikeCall.kt")
             public void testCorrectInfoAfterArrayLikeCall() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/callableReference/correctInfoAfterArrayLikeCall.kt");

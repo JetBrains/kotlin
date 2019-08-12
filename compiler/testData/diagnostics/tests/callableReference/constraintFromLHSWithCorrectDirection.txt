@@ -1,0 +1,21 @@
+package
+
+public val </*0*/ T : A> T.bla: kotlin.Int
+public fun </*0*/ K, /*1*/ V> B<out K>.bar(/*0*/ p: kotlin.reflect.KProperty1<out K, V>): B<V>
+public fun </*0*/ K, /*1*/ V> B<K>.baz(/*0*/ p: kotlin.reflect.KProperty1<out K, V>): B<V>
+public fun </*0*/ K, /*1*/ V> B<K>.foo(/*0*/ p: kotlin.reflect.KProperty1<in K, V>): B<V>
+public fun </*0*/ K, /*1*/ V> B<K>.star(/*0*/ p: kotlin.reflect.KProperty1<*, V>): B<V>
+public fun </*0*/ R : A> B<R>.test(): kotlin.Unit
+
+public interface A {
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class B</*0*/ T> {
+    public constructor B</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

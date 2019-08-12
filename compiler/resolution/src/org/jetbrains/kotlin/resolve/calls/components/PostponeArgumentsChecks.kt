@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintP
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -159,21 +160,15 @@ private fun preprocessCallableReference(
 
     if (expectedType == null) return result
 
+    val lhsResult = argument.lhsResult
+    if (lhsResult is LHSResult.Type) {
+        csBuilder.addConstraintFromLHS(lhsResult, expectedType)
+    }
+
     val notCallableTypeConstructor =
         csBuilder.getProperSuperTypeConstructors(expectedType)
             .firstOrNull { !ReflectionTypes.isPossibleExpectedCallableType(it.requireIs()) }
 
-    argument.lhsResult.safeAs<LHSResult.Type>()?.let {
-        val lhsType = it.unboundDetailedReceiver.stableType
-        if (ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) {
-            val lhsTypeVariable = expectedType.arguments.first().type.unwrap()
-            csBuilder.addSubtypeConstraint(
-                lhsType,
-                lhsTypeVariable,
-                LHSArgumentConstraintPosition(it.qualifier ?: it.unboundDetailedReceiver)
-            )
-        }
-    }
     if (notCallableTypeConstructor != null) {
         diagnosticsHolder.addDiagnostic(
             NotCallableExpectedType(
@@ -184,6 +179,21 @@ private fun preprocessCallableReference(
         )
     }
     return result
+}
+
+private fun ConstraintSystemBuilder.addConstraintFromLHS(lhsResult: LHSResult.Type, expectedType: UnwrappedType) {
+    if (!ReflectionTypes.isNumberedTypeWithOneOrMoreNumber(expectedType)) return
+
+    val lhsType = lhsResult.unboundDetailedReceiver.stableType
+    val expectedTypeProjectionForLHS = expectedType.arguments.first()
+    val expectedTypeForLHS = expectedTypeProjectionForLHS.type
+    val constraintPosition = LHSArgumentConstraintPosition(lhsResult.qualifier ?: lhsResult.unboundDetailedReceiver)
+
+    when (expectedTypeProjectionForLHS.projectionKind) {
+        Variance.INVARIANT -> addEqualityConstraint(lhsType, expectedTypeForLHS, constraintPosition)
+        Variance.IN_VARIANCE -> addSubtypeConstraint(expectedType, lhsType, constraintPosition)
+        Variance.OUT_VARIANCE -> addSubtypeConstraint(lhsType, expectedType, constraintPosition)
+    }
 }
 
 private fun preprocessCollectionLiteralArgument(
