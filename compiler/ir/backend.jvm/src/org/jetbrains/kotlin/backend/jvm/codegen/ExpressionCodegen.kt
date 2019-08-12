@@ -210,7 +210,7 @@ class ExpressionCodegen(
             val methodName =
                 if (state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "checkNotNullParameter"
                 else "checkParameterIsNotNull"
-            mv.invokestatic("kotlin/jvm/internal/Intrinsics", methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+            mv.invokestatic(IrIntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
         }
     }
 
@@ -811,7 +811,7 @@ class ExpressionCodegen(
                 val methodName =
                     if (state.languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4) "checkNotNullExpressionValue"
                     else "checkExpressionValueIsNotNull"
-                mv.invokestatic("kotlin/jvm/internal/Intrinsics", methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
+                mv.invokestatic(IrIntrinsicMethods.INTRINSICS_CLASS_NAME, methodName, "(Ljava/lang/Object;Ljava/lang/String;)V", false)
                 // Unbox primitives.
                 value.coerce(expression.type)
             }
