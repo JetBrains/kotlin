@@ -35,6 +35,7 @@ include ':performance'
 include ':performance:ring'
 include ':performance:cinterop'
 include ':performance:helloworld'
+include ':performance:numerical'
 include ':performance:videoplayer'
 include ':performance:framework'
 if (System.getProperty("os.name") == "Mac OS X") {

@@ -163,6 +163,11 @@ task ring {
     dependsOn 'ring:konanRun'
 }
 
+task numerical {
+    dependsOn 'clean'
+    dependsOn 'numerical:konanRun'
+}
+
 task swiftinterop {
     dependsOn 'clean'
     dependsOn 'swiftinterop:konanRun'
