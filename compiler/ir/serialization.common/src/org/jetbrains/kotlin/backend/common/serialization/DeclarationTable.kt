@@ -20,9 +20,20 @@ class DescriptorTable {
     fun get(descriptor: DeclarationDescriptor) = descriptors[descriptor]
 }
 
-// TODO: We don't manage id clashes anyhow now.
-abstract class GlobalDeclarationTable(private val mangler: KotlinMangler) {
+interface UniqIdClashTracker {
+    fun commit(declaration: IrDeclaration, uniqId: UniqId)
+
+    companion object {
+        val DEFAULT_TRACKER = object : UniqIdClashTracker {
+            override fun commit(declaration: IrDeclaration, uniqId: UniqId) {}
+        }
+    }
+}
+
+abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, private val clashTracker: UniqIdClashTracker) {
     private val table = mutableMapOf<IrDeclaration, UniqId>()
+
+    constructor(mangler: KotlinMangler) : this(mangler, UniqIdClashTracker.DEFAULT_TRACKER)
 
     protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
         var index = startIndex
@@ -34,7 +45,7 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler) {
 
     open fun computeUniqIdByDeclaration(declaration: IrDeclaration): UniqId {
         return table.getOrPut(declaration) {
-            UniqId(mangler.hashedMangleImpl(declaration), false)
+            UniqId(mangler.hashedMangleImpl(declaration), false).also { clashTracker.commit(declaration, it) }
         }
     }
 
