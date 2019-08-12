@@ -720,7 +720,12 @@ class ResolveElementCache(
         ).get()
     }
 
-    // All additional resolve should be done to separate trace
+    /*
+    Note that currently we *have* to re-create container with custom trace in order to disallow resolution of
+    bodies in top-level trace (trace from DI-container).
+    Resolving bodies in top-level trace may lead to memory leaks and incorrect resolution, because top-level
+    trace isn't invalidated on in-block modifications (while body resolution surely does)
+    */
     private fun createDelegatingTrace(resolveElement: KtElement, filter: BindingTraceFilter): BindingTrace {
         return resolveSession.storageManager.createSafeTrace(
             DelegatingBindingTrace(
