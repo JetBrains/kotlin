@@ -38,7 +38,7 @@ abstract class GlobalDeclarationTable(private val mangler: KotlinMangler, privat
     protected open fun loadKnownBuiltins(builtIns: IrBuiltIns, startIndex: Long): Long {
         var index = startIndex
         builtIns.knownBuiltins.forEach {
-            table[it.owner] = UniqId(index++, false)
+            table[it.owner] = UniqId(index++, false).also { id -> clashTracker.commit(it.owner, id) }
         }
         return index
     }

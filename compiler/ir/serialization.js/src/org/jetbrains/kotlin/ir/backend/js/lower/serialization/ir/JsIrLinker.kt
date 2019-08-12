@@ -23,9 +23,6 @@ class JsIrLinker(
 ) : KotlinIrLinker(logger, builtIns, symbolTable, emptyList(), null, PUBLIC_LOCAL_UNIQ_ID_EDGE),
     DescriptorUniqIdAware by JsDescriptorUniqIdAware {
 
-    override fun getPrimitiveTypeOrNull(symbol: IrClassifierSymbol, hasQuestionMark: Boolean) =
-        builtIns.getPrimitiveTypeOrNullByDescriptor(symbol.descriptor, hasQuestionMark)
-
     override val descriptorReferenceDeserializer =
         JsDescriptorReferenceDeserializer(currentModule, mangler, builtIns)
 

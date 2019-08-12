@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
+import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.library.SerializedIrFile
@@ -20,6 +21,6 @@ abstract class IrModuleSerializer<F : IrFileSerializer>(protected val logger: Lo
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
-        return SerializedIrModule(module.files.map { serializeIrFile(it) })
+        return SerializedIrModule(module.files.filter { it.packageFragmentDescriptor !is FunctionInterfacePackageFragment }.map { serializeIrFile(it) })
     }
 }

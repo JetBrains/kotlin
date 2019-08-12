@@ -29,11 +29,7 @@ abstract class DescriptorReferenceDeserializer(
 ) : DescriptorUniqIdAware {
 
     protected open fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
-
-    protected abstract fun resolveSpecialDescriptor(fqn: FqName): DeclarationDescriptor
-    abstract fun checkIfSpecialDescriptorId(id: Long): Boolean
-    protected abstract fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor): Long?
-    protected open fun checkIfSpecialDescriptorId(id: Long) = with(mangler) { id.isSpecial }
+    open fun checkIfSpecialDescriptorId(id: Long) = with(mangler) { id.isSpecial }
 
     protected open fun getDescriptorIdOrNull(descriptor: DeclarationDescriptor) =
         if (isBuiltInFunction(descriptor)) {
