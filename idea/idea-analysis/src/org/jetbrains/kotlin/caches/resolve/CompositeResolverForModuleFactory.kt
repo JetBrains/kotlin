@@ -236,12 +236,13 @@ class CompositeAnalyzerServices(val services: List<PlatformDependentAnalyzerServ
 }
 
 class CompositePlatformConigurator(private val componentConfigurators: List<PlatformConfigurator>) : PlatformConfigurator {
-    // TODO(dsavvinov): this is actually a hack. Review callers of that method, think about how to refactor it
-    // Unfortunately, clients of that container will inject additional services into them,
-    // without knowing about composite platform (see LocalClassifierAnalyzer), so we can't just use [createContainerForCompositePlatform]
-    // here. Hopefully, platformSpecific container won't at least make things worse.
     override val platformSpecificContainer: StorageComponentContainer
-        get() = CommonPlatformAnalyzerServices.platformConfigurator.platformSpecificContainer
+        get() = composeContainer(this::class.java.simpleName) {
+            configureDefaultCheckers()
+            for (configurator in componentConfigurators) {
+                (configurator as PlatformConfiguratorBase).configureExtensionsAndCheckers(this)
+            }
+        }
 
     override fun configureModuleComponents(container: StorageComponentContainer) {
         componentConfigurators.forEach { it.configureModuleComponents(container) }
