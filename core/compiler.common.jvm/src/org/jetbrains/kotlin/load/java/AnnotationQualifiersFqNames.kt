@@ -27,7 +27,8 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
     AnnotationQualifierApplicabilityType.FIELD,
     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
     AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
-    AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+    AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
+    AnnotationQualifierApplicabilityType.TYPE_USE
 )
 
 val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(

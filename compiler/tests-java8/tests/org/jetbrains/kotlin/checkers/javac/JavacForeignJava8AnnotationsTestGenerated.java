@@ -70,6 +70,11 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/simple.kt");
         }
 
+        @TestMetadata("typeArgumentsFromParameterBounds.kt")
+        public void testTypeArgumentsFromParameterBounds() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/typeArgumentsFromParameterBounds.kt");
+        }
+
         @TestMetadata("typeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/typeParameterBounds.kt");
