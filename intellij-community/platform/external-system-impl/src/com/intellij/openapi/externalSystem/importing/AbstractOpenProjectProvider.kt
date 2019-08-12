@@ -30,7 +30,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   }
 
   override fun openProject(projectFile: VirtualFile, projectToClose: Project?, forceOpenInNewFrame: Boolean): Project? {
-    debug("Open project from $projectFile")
+    LOG.debug("Open project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile) ?: return null
     if (focusOnOpenedSameProject(projectDirectory.path)) return null
     if (canOpenPlatformProject(projectDirectory)) {
@@ -45,7 +45,7 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
   }
 
   override fun linkToExistingProject(projectFile: VirtualFile, project: Project): Boolean {
-    debug("Import project from $projectFile")
+    LOG.debug("Import project from $projectFile")
     val projectDirectory = getProjectDirectory(projectFile) ?: return false
     linkAndRefreshProject(projectDirectory.path, project)
     return true
@@ -109,11 +109,5 @@ abstract class AbstractOpenProjectProvider : OpenProjectProvider {
 
   companion object {
     protected val LOG = Logger.getInstance(AbstractOpenProjectProvider::class.java)
-
-    fun debug(message: String) {
-      if (LOG.isDebugEnabled) {
-        LOG.debug(message)
-      }
-    }
   }
 }
