@@ -622,6 +622,9 @@ abstract class KotlinIrLinker(
             }
         return deserializeIrModuleHeader(moduleDescriptor, deserializationStrategy)
     }
+
+    fun deserializeFullModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, DeserializationStrategy.ALL)
 }
 
 enum class DeserializationStrategy(val needBodies: Boolean) {
