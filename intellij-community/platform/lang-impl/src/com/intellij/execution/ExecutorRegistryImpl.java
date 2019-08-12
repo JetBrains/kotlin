@@ -233,6 +233,7 @@ public final class ExecutorRegistryImpl extends ExecutorRegistry implements Disp
           if (!canRun(project, ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets())) {
             return false;
           }
+          continue;
         }
         ProgramRunner<?> runner = ProgramRunner.getRunner(myExecutor.getId(), configuration);
         if (runner == null
