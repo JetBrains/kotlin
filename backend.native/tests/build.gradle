@@ -248,7 +248,10 @@ boolean isExcluded(String dir) {
     def excluded = [ "codegen/box/functions/bigArity" /* KT-26140 */ ]
 
     if (project.twoStageEnabled) {
-        excluded += ["codegen/box/closures/captureInSuperConstructorCall", "codegen/box/enum"] // KT-33207.
+        excluded += [
+                "codegen/box/closures/captureInSuperConstructorCall", "codegen/box/enum",  // KT-33207.
+                "codegen/box/objects" // KT-33267.
+        ]
     }
 
     boolean result = false
