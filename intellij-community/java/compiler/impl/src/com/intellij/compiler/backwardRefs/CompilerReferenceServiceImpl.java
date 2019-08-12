@@ -11,10 +11,7 @@ import com.intellij.compiler.chainsSearch.context.ChainCompletionContext;
 import com.intellij.compiler.server.BuildManagerListener;
 import com.intellij.compiler.server.CustomBuilderMessageHandler;
 import com.intellij.openapi.application.ReadAction;
-import com.intellij.openapi.compiler.CompilationStatusListener;
-import com.intellij.openapi.compiler.CompileContext;
-import com.intellij.openapi.compiler.CompileScope;
-import com.intellij.openapi.compiler.CompilerTopics;
+import com.intellij.openapi.compiler.*;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.progress.ProgressManager;
@@ -73,7 +70,7 @@ public class CompilerReferenceServiceImpl extends CompilerReferenceServiceBase<B
         }
 
         private void compilationFinished(@NotNull CompileContext context) {
-          if (context.getProject() == myProject) {
+          if (!(context instanceof DummyCompileContext) && context.getProject() == myProject) {
             Runnable compilationFinished = () -> {
               final Module[] compilationModules = ReadAction.compute(() -> {
                 if (myProject.isDisposed()) return null;
