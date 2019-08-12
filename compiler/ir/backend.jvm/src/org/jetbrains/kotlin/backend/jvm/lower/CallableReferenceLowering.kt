@@ -397,7 +397,4 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
     private val functionGetOwner =
         context.ir.symbols.functionReference.functionByName("getOwner")
-
-    private val functionNInvokeFun =
-        context.ir.symbols.functionN.functionByName("invoke")
 }

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.types.toKotlinType
 import org.jetbrains.kotlin.resolve.calls.components.isVararg
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -144,8 +143,4 @@ fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<T
 fun IrFunctionAccessExpression.receiverAndArgs(): List<IrExpression> {
     return (arrayListOf(this.dispatchReceiver, this.extensionReceiver) +
             symbol.owner.valueParameters.mapIndexed { i, _ -> getValueArgument(i) }).filterNotNull()
-}
-
-fun List<IrExpression>.asmTypes(context: JvmBackendContext): List<Type> {
-    return map { context.state.typeMapper.mapType(it.type.toKotlinType()) }
 }

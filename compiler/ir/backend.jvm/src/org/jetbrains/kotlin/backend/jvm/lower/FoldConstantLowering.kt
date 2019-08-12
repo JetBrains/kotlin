@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrConst
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -45,18 +48,14 @@ class FoldConstantLowering(private val context: JvmBackendContext) : IrElementTr
         val operatorName: String
     )
 
+    @Suppress("unused")
     private data class PrimitiveType<T>(val name: String)
 
     companion object {
-        private val BYTE = PrimitiveType<Byte>("Byte")
-        private val SHORT = PrimitiveType<Short>("Short")
         private val INT = PrimitiveType<Int>("Int")
         private val LONG = PrimitiveType<Long>("Long")
         private val DOUBLE = PrimitiveType<Double>("Double")
         private val FLOAT = PrimitiveType<Float>("Float")
-        private val CHAR = PrimitiveType<Char>("Char")
-        private val BOOLEAN = PrimitiveType<Boolean>("Boolean")
-        private val STRING = PrimitiveType<String>("String")
 
         private val BINARY_OP_TO_EVALUATOR = HashMap<BinaryOp, Function2<Any?, Any?, Any>>()
 

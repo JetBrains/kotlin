@@ -291,12 +291,6 @@ class JvmSymbols(
     val getOrCreateKotlinPackage: IrSimpleFunctionSymbol =
         reflection.functionByName("getOrCreateKotlinPackage")
 
-    val getOrCreateKotlinClass: IrSimpleFunctionSymbol =
-        reflection.functionByName("getOrCreateKotlinClass")
-
-    val getOrCreateKotlinClasses: IrSimpleFunctionSymbol =
-        reflection.functionByName("getOrCreateKotlinClasses")
-
     val desiredAssertionStatus: IrSimpleFunctionSymbol by lazy {
         javaLangClass.functionByName("desiredAssertionStatus")
     }

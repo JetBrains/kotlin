@@ -33,39 +33,36 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
-import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
-
-    private val KOTLIN_INTERNAL_IR = FqName("kotlin.internal.ir")
-    private val KOTLIN_JVM = FqName("kotlin.jvm")
-    private val KOTLIN_JVM_INTERNAL_UNSAFE = FqName("kotlin.jvm.internal.unsafe")
+    private val kotlinJvm = FqName("kotlin.jvm")
+    private val kotlinJvmInternalUnsafe = FqName("kotlin.jvm.internal.unsafe")
 
     private val intrinsicsMap = (
             listOf(
-                Key(KOTLIN_JVM, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
+                Key(kotlinJvm, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
                 Key(
-                    KOTLIN_JVM,
+                    kotlinJvm,
                     KotlinBuiltIns.FQ_NAMES.kClass.toSafe(),
                     "<get-java>",
                     emptyList()
                 ) to KClassJavaProperty,
                 Key(
-                    KOTLIN_JVM_INTERNAL_UNSAFE,
+                    kotlinJvmInternalUnsafe,
                     null,
                     "monitorEnter",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_ENTER,
                 Key(
-                    KOTLIN_JVM_INTERNAL_UNSAFE,
+                    kotlinJvmInternalUnsafe,
                     null,
                     "monitorExit",
                     listOf(KotlinBuiltIns.FQ_NAMES.any.toSafe())
                 ) to MonitorInstruction.MONITOR_EXIT,
                 Key(
-                    KOTLIN_JVM,
+                    kotlinJvm,
                     KotlinBuiltIns.FQ_NAMES.array.toSafe(),
                     "isArrayOf",
                     emptyList()

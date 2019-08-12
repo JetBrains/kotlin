@@ -35,7 +35,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrEnumEntrySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrExternalPackageFragmentSymbolImpl
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.typeWith
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.hasAnnotation
+import org.jetbrains.kotlin.ir.util.isAnnotationClass
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -112,8 +115,6 @@ private class AdditionalClassAnnotationLowering(private val context: JvmBackendC
     private val etField = buildEnumEntry(elementTypeEnum, "FIELD")
     private val etLocalVariable = buildEnumEntry(elementTypeEnum, "LOCAL_VARIABLE")
     private val etMethod = buildEnumEntry(elementTypeEnum, "METHOD")
-    private val etModule = buildEnumEntry(elementTypeEnum, "MODULE")
-    private val etPackage = buildEnumEntry(elementTypeEnum, "PACKAGE")
     private val etParameter = buildEnumEntry(elementTypeEnum, "PARAMETER")
     private val etType = buildEnumEntry(elementTypeEnum, "TYPE")
     private val etTypeParameter = buildEnumEntry(elementTypeEnum, "TYPE_PARAMETER")
