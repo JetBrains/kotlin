@@ -16,7 +16,6 @@
 package com.intellij.refactoring.actions;
 
 import com.intellij.lang.ContextAwareActionHandler;
-import com.intellij.lang.Language;
 import com.intellij.lang.LanguageRefactoringSupport;
 import com.intellij.lang.refactoring.RefactoringSupportProvider;
 import com.intellij.openapi.actionSystem.DataContext;
@@ -48,7 +47,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
   public boolean isEnabledOnElements(@NotNull PsiElement[] elements) {
     if (elements.length == 1) {
       PsiElement member = findTargetMember(elements[0]);
-      return member != null && getChangeSignatureHandler(member.getLanguage()) != null;
+      return member != null && getChangeSignatureHandler(member) != null;
     }
     return false;
   }
@@ -57,13 +56,13 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
   protected boolean isAvailableOnElementInEditorAndFile(@NotNull final PsiElement element, @NotNull final Editor editor, @NotNull PsiFile file, @NotNull DataContext context) {
     PsiElement targetMember = findTargetMember(element);
     if (targetMember == null) {
-      final ChangeSignatureHandler targetHandler = getChangeSignatureHandler(file.getLanguage());
+      final ChangeSignatureHandler targetHandler = getChangeSignatureHandler(file);
       if (targetHandler != null) {
         return true;
       }
       return false;
     }
-    final ChangeSignatureHandler targetHandler = getChangeSignatureHandler(targetMember.getLanguage());
+    final ChangeSignatureHandler targetHandler = getChangeSignatureHandler(targetMember);
     if (targetHandler == null) return false;
     return true;
   }
@@ -71,7 +70,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
   @Nullable
   private static PsiElement findTargetMember(@Nullable PsiElement element) {
     if (element == null) return null;
-    final ChangeSignatureHandler fileHandler = getChangeSignatureHandler(element.getLanguage());
+    final ChangeSignatureHandler fileHandler = getChangeSignatureHandler(element);
     if (fileHandler != null) {
       final PsiElement targetMember = fileHandler.findTargetMember(element);
       if (targetMember != null) return targetMember;
@@ -108,7 +107,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
         editor.getScrollingModel().scrollToCaret(ScrollType.MAKE_VISIBLE);
         final PsiElement targetMember = findTargetMember(element);
         if (targetMember == null) {
-          final ChangeSignatureHandler handler = getChangeSignatureHandler(file.getLanguage());
+          final ChangeSignatureHandler handler = getChangeSignatureHandler(file);
           if (handler != null) {
             final String notFoundMessage = handler.getTargetNotFoundMessage();
             if (notFoundMessage != null) {
@@ -117,7 +116,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
           }
           return;
         }
-        final ChangeSignatureHandler handler = getChangeSignatureHandler(targetMember.getLanguage());
+        final ChangeSignatureHandler handler = getChangeSignatureHandler(targetMember);
         if (handler == null) return;
         handler.invoke(project, new PsiElement[]{targetMember}, dataContext);
       }
@@ -127,7 +126,7 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
         if (elements.length != 1) return;
         final PsiElement targetMember = findTargetMember(elements[0]);
         if (targetMember == null) return;
-        final ChangeSignatureHandler handler = getChangeSignatureHandler(targetMember.getLanguage());
+        final ChangeSignatureHandler handler = getChangeSignatureHandler(targetMember);
         if (handler == null) return;
         handler.invoke(project, new PsiElement[]{targetMember}, dataContext);
       }
@@ -135,7 +134,8 @@ public class ChangeSignatureAction extends BasePlatformRefactoringAction {
   }
 
   @Nullable
-  private static ChangeSignatureHandler getChangeSignatureHandler(Language language) {
-    return LanguageRefactoringSupport.INSTANCE.forLanguage(language).getChangeSignatureHandler();
+  private static ChangeSignatureHandler getChangeSignatureHandler(@NotNull PsiElement language) {
+    RefactoringSupportProvider provider = LanguageRefactoringSupport.INSTANCE.forContext(language);
+    return provider != null ? provider.getChangeSignatureHandler() : null;
   }
 }
