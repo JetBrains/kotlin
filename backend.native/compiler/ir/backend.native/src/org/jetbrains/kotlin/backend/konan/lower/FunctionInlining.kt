@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.resolveFakeOverride
 import org.jetbrains.kotlin.backend.konan.ir.*
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.backend.common.lower.ProvisionalFunctionExpressionLowering
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -51,10 +50,7 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
         if (callee.isTypeOfIntrinsic())
             return expression
 
-        /**
-         * HACK: it's temporary workaround over inliner's disability to work with IrFunctionExpression, should be removed.
-         */
-        val actualCallee = getFunctionDeclaration(callee.symbol).transform(ProvisionalFunctionExpressionLowering(), null) as IrFunction
+        val actualCallee = getFunctionDeclaration(callee.symbol)
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
 
@@ -231,11 +227,10 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                     }.implicitCastIfNeededTo(expression.type)
                     return this@FunctionInlining.visitExpression(super.visitExpression(immediateCall))
                 }
-                if (functionArgument !is IrBlock)
+                if (functionArgument !is IrFunctionExpression)
                     return super.visitCall(expression)
 
-                val functionDeclaration = functionArgument.statements[0] as IrFunction
-                val newExpression = inlineFunction(expression, functionDeclaration, false) // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
+                val newExpression = inlineFunction(expression, functionArgument.function, false) // Inline the lambda. Lambda parameters will be substituted with lambda arguments.
                 return newExpression.transform(this, null)                          // Substitute lambda arguments with target function arguments.
             }
 
@@ -266,21 +261,9 @@ internal class FunctionInlining(val context: Context) : IrElementTransformerVoid
                                                 val argumentExpression: IrExpression) {
 
             val isInlinableLambdaArgument: Boolean
-                get() {
-                    if (!parameter.isInlineParameter()) return false
-                    if (argumentExpression is IrFunctionReference) return true
-
-                    // Do pattern-matching on IR.
-                    if (argumentExpression !is IrBlock) return false
-                    if (argumentExpression.origin != IrStatementOrigin.LAMBDA &&
-                            argumentExpression.origin != IrStatementOrigin.ANONYMOUS_FUNCTION) return false
-                    val statements = argumentExpression.statements
-                    val irFunction = statements[0]
-                    val irCallableReference = statements[1]
-                    if (irFunction !is IrFunction) return false
-                    if (irCallableReference !is IrCallableReference) return false
-                    return true
-                }
+                get() = parameter.isInlineParameter() &&
+                        (argumentExpression is IrFunctionReference
+                        || argumentExpression is IrFunctionExpression)
 
             val isImmutableVariableLoad: Boolean
                 get() = argumentExpression.let {
