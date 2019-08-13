@@ -15,7 +15,9 @@ import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.resolve.BindingContext.*
+import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
 import org.jetbrains.kotlin.types.*
 
 class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer {
@@ -39,7 +41,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
 
     private val unnecessaryData = mapOf(
         "kotlin." to "",
-        "kotlin.collections." to ""
+        "collections." to ""
     )
 
     private fun addAnnotation(annotationText: String, element: PsiElement) {
@@ -49,7 +51,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         for ((key, value) in unnecessaryData) {
             textWithOutUnnecessaryData = textWithOutUnnecessaryData.replace(key, value)
         }
-        if (textWithOutUnnecessaryData != element.text) {
+        if (textWithOutUnnecessaryData != element.text && textWithOutUnnecessaryData.isNotEmpty()) {
             annotations.add(Annotator.AnnotationInfo(textWithOutUnnecessaryData, element.textRange))
         }
     }
@@ -93,7 +95,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             renderVariableType(multiDeclarationEntry)
 
         override fun visitTypeReference(typeReference: KtTypeReference) {
-            val type = bindingContext[TYPE, typeReference]
+            val type = typeReference.getAbbreviatedTypeOrType(bindingContext)
             addAnnotation(renderType(type), typeReference)
             super.visitTypeReference(typeReference)
         }
@@ -106,12 +108,31 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             val resolvedCall = bindingContext[RESOLVED_CALL, call] ?: return "[ERROR: not resolved]"
 
             val descriptor = resolvedCall.resultingDescriptor
-            var annotation = descriptorRenderer.render(descriptor)
-            if (descriptor.name.asString() == "<init>") annotation = annotation.replace("(", "<init>(")
+            var annotation =
+                if (descriptor.isSpecial()) descriptorRenderer.renderSpecialFunction(descriptor)
+                else descriptorRenderer.render(descriptor)
+            if (descriptor is ClassConstructorDescriptor) annotation = annotation.replace("(", "<init>(")
+
             resolvedCall.typeArguments.forEach { (type, value) ->
-                annotation = annotation.replaceFirst(type.name.toString(), "$value")
+                val newValue = if (value is ErrorType) "???" else "$value"
+                annotation = annotation.replaceFirst(type.name.toString(), newValue)
             }
             return annotation
+        }
+
+        private fun CallableDescriptor.isSpecial(): Boolean {
+            return this.name.asString().contains("SPECIAL-FUNCTION")
+        }
+
+        private fun DescriptorRenderer.renderSpecialFunction(descriptor: CallableDescriptor): String {
+            val descriptorName = descriptor.name.asString()
+            val name = when {
+                descriptorName.contains("ELVIS") -> "?:"
+                descriptorName.contains("EXCLEXCL") -> "!!"
+                else -> "UNKNOWN"
+            }
+            return "fun $name " + this.renderValueParameters(descriptor.valueParameters, false) +
+                    ": " + renderType(descriptor)
         }
 
         override fun visitSimpleNameExpression(expression: KtSimpleNameExpression) {
