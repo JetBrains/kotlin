@@ -65,6 +65,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.*
@@ -679,7 +680,7 @@ fun generateNullCheckOnCallSite(
     val assertionInfo = codegen.bindingContext.get(slice, callElement)
 
     if (assertionInfo?.needNotNullAssertion == true) {
-        codegen.v.dup()
+        File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(" -")
         codegen.v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
     }
 }
