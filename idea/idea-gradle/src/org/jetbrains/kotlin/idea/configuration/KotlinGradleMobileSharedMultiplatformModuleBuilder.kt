@@ -192,7 +192,7 @@ class KotlinGradleMobileSharedMultiplatformModuleBuilder : KotlinGradleAbstractM
                 doLast {
                     def binary = kotlin.targets.$nativeTargetName.binaries.getTest('DEBUG').outputFile
                     exec {
-                        commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
+                        commandLine 'xcrun', 'simctl', '--standalone', 'spawn', device, binary.absolutePath
                     }
                 }
             }
