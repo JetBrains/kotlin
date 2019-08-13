@@ -1,0 +1,9 @@
+FILE fqName:<root> fileName:/samByProjectedType.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      CALL 'public open fun bar (j: <root>.J<*>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+        j: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Any> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Any
+            VALUE_PARAMETER name:x index:0 type:kotlin.Any
+            BLOCK_BODY
+              GET_VAR 'x: kotlin.Any declared in <root>.test1.<anonymous>' type=kotlin.Any origin=null

@@ -41,7 +41,9 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.Variance
 import kotlin.math.max
 import kotlin.math.min
 
@@ -292,17 +294,9 @@ fun StatementGenerator.generateValueArgumentUsing(
             TODO("Unexpected valueArgument: ${valueArgument::class.java.simpleName}")
     }
 
-fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(
-    irExpression: IrExpression,
-    samType: KotlinType
-): IrExpression {
-    val samConversion = context.extensions.samConversion
-    val samTypeDescriptor = samType.constructor.declarationDescriptor
-    val samClassDescriptor = samTypeDescriptor as? ClassDescriptor
-        ?: throw AssertionError("SAM class expected: $samType")
-    val kotlinFunctionType = samConversion.getFunctionTypeForSAMClass(samClassDescriptor)
+fun StatementGenerator.castArgumentToFunctionalInterfaceForSamType(irExpression: IrExpression, samType: KotlinType): IrExpression {
+    val kotlinFunctionType = context.extensions.samConversion.getSubstitutedFunctionTypeForSamType(samType)
     val irFunctionType = context.typeTranslator.translateType(kotlinFunctionType)
-
     return irExpression.implicitCastTo(irFunctionType)
 }
 
@@ -422,6 +416,16 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
         "Mismatching value parameters, $originalDescriptor vs call: " +
                 "${originalValueParameters.size} != ${call.argumentsCount}"
     }
+    assert(underlyingDescriptor.typeParameters.size == originalDescriptor.typeParameters.size) {
+        "Mismatching type parameters:\n" +
+                "$underlyingDescriptor has ${underlyingDescriptor.typeParameters}\n" +
+                "$originalDescriptor has ${originalDescriptor.typeParameters}"
+    }
+
+    val substitutionContext = call.original.typeArguments.entries.associate { (typeParameterDescriptor, typeArgument) ->
+        underlyingDescriptor.typeParameters[typeParameterDescriptor.index].typeConstructor to TypeProjectionImpl(typeArgument)
+    }
+    val typeSubstitutor = TypeSubstitutor.create(substitutionContext)
 
     for (i in underlyingValueParameters.indices) {
         val originalParameterType = originalValueParameters[i].type
@@ -432,7 +436,13 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
 
         val originalArgument = call.irValueArgumentsByIndex[i] ?: continue
 
-        val targetType = underlyingParameterType.toIrType()
+        val expectedArgumentType = typeSubstitutor.substitute(underlyingParameterType, Variance.INVARIANT)
+            ?: throw AssertionError(
+                "Failed to substitute value argument type in SAM conversion: " +
+                        "underlyingParameterType=$underlyingParameterType, " +
+                        "substitutionContext=$substitutionContext"
+            )
+        val targetType = expectedArgumentType.toIrType()
 
         call.irValueArgumentsByIndex[i] =
             IrTypeOperatorCallImpl(
@@ -440,7 +450,7 @@ fun StatementGenerator.generateSamConversionForValueArgumentsIfRequired(call: Ca
                 targetType,
                 IrTypeOperator.SAM_CONVERSION,
                 targetType,
-                castArgumentToFunctionalInterfaceForSamType(originalArgument, underlyingParameterType)
+                castArgumentToFunctionalInterfaceForSamType(originalArgument, expectedArgumentType)
             )
     }
 }
@@ -477,9 +487,12 @@ private fun unwrapSpecialDescriptor(
     samConversion: GeneratorExtensions.SamConversion
 ): CallableDescriptor =
     when (descriptor) {
-        is ImportedFromObjectCallableDescriptor<*> -> unwrapSpecialDescriptor(descriptor.callableFromObject, samConversion)
-        is TypeAliasConstructorDescriptor -> descriptor.underlyingConstructorDescriptor
-        else -> samConversion.getOriginalForSamAdapter(descriptor)?.let { unwrapSpecialDescriptor(it, samConversion) } ?: descriptor
+        is ImportedFromObjectCallableDescriptor<*> ->
+            unwrapSpecialDescriptor(descriptor.callableFromObject, samConversion)
+        is TypeAliasConstructorDescriptor ->
+            descriptor.underlyingConstructorDescriptor
+        else ->
+            samConversion.getOriginalForSamAdapter(descriptor)?.let { unwrapSpecialDescriptor(it, samConversion) } ?: descriptor
     }
 
 fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samConversion: GeneratorExtensions.SamConversion): CallBuilder {
@@ -503,11 +516,11 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samC
             if (unsubstitutedUnwrappedTypeParameters.isEmpty())
                 null
             else
-                unsubstitutedUnwrappedTypeParameters.associate {
+                unsubstitutedUnwrappedTypeParameters.associateWith {
                     val originalTypeParameter = candidateDescriptor.typeParameters[it.index]
                     val originalTypeArgument = originalTypeArguments[originalTypeParameter]
                         ?: throw AssertionError("No type argument for $originalTypeParameter")
-                    it to originalTypeArgument
+                    originalTypeArgument
                 }
         }
 
@@ -516,8 +529,8 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samC
             if (substitutedType.arguments.isEmpty())
                 null
             else
-                unsubstitutedUnwrappedTypeParameters.associate {
-                    it to substitutedType.arguments[it.index].type
+                unsubstitutedUnwrappedTypeParameters.associateWith {
+                    substitutedType.arguments[it.index].type
                 }
         }
 
@@ -547,5 +560,17 @@ fun unwrapCallableDescriptorAndTypeArguments(resolvedCall: ResolvedCall<*>, samC
         }
     }
 
-    return CallBuilder(resolvedCall, unwrappedDescriptor, unwrappedTypeArguments)
+    val substitutedUnwrappedDescriptor =
+        if (unwrappedTypeArguments == null)
+            unwrappedDescriptor
+        else {
+            val substitutionContext = unsubstitutedUnwrappedDescriptor.typeParameters.associate {
+                val typeArgument = unwrappedTypeArguments[it]
+                    ?: throw AssertionError("No type argument for $it in $unwrappedTypeArguments")
+                it.typeConstructor to TypeProjectionImpl(typeArgument)
+            }
+            unwrappedDescriptor.substitute(TypeSubstitutor.create(substitutionContext))
+        }
+
+    return CallBuilder(resolvedCall, substitutedUnwrappedDescriptor, unwrappedTypeArguments)
 }

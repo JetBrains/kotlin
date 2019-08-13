@@ -1,0 +1,14 @@
+FILE fqName:<root> fileName:/samConversionInGenericConstructorCall.kt
+  FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>) returnType:IrErrorType
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (f: kotlin.Function1<kotlin.String, kotlin.String>): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/C.C]>#' type=IrErrorType
+          GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test1' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+  FUN name:test2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
+        GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/C.C]>#' type=IrErrorType
+        GET_VAR 'x: kotlin.Any declared in <root>.test2' type=kotlin.Any origin=null

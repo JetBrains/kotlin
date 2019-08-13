@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.SimpleType
 
 open class GeneratorExtensions {
     open val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)?
@@ -26,8 +27,8 @@ open class GeneratorExtensions {
 
         open fun isSamType(type: KotlinType): Boolean = false
 
-        open fun getFunctionTypeForSAMClass(descriptor: ClassDescriptor): KotlinType =
-            throw UnsupportedOperationException("SAM conversion is not supported in this configuration (class=$descriptor)")
+        open fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType =
+            throw UnsupportedOperationException("SAM conversion is not supported in this configuration (samType=$samType)")
 
         companion object Instance : SamConversion()
     }

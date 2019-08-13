@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.load.java.sam.SamConstructorDescriptor
 import org.jetbrains.kotlin.load.java.sam.SingleAbstractMethodUtils
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorExtensions
 import org.jetbrains.kotlin.synthetic.SamAdapterExtensionFunctionDescriptor
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.*
 
 object JvmGeneratorExtensions : GeneratorExtensions() {
     override val externalDeclarationOrigin: ((DeclarationDescriptor) -> IrDeclarationOrigin)? = { descriptor ->
@@ -43,15 +42,14 @@ object JvmGeneratorExtensions : GeneratorExtensions() {
         override fun isSamType(type: KotlinType): Boolean =
             SingleAbstractMethodUtils.isSamType(type)
 
-        override fun getFunctionTypeForSAMClass(descriptor: ClassDescriptor): KotlinType {
-            if (descriptor !is JavaClassDescriptor) {
-                throw AssertionError("SAM should be represented by a Java class: $descriptor")
-            }
-
+        override fun getSubstitutedFunctionTypeForSamType(samType: KotlinType): KotlinType {
+            val descriptor = samType.constructor.declarationDescriptor as? JavaClassDescriptor
+                ?: throw AssertionError("SAM should be represented by a Java class: $samType")
             val singleAbstractMethod = SingleAbstractMethodUtils.getSingleAbstractMethodOrNull(descriptor)
                 ?: throw AssertionError("$descriptor should have a single abstract method")
-
-            return SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(singleAbstractMethod, false)
+            val unsubstitutedFunctionType = SingleAbstractMethodUtils.getFunctionTypeForAbstractMethod(singleAbstractMethod, false)
+            return TypeSubstitutor.create(samType).substitute(unsubstitutedFunctionType, Variance.INVARIANT)
+                ?: throw AssertionError("Failed to substitute function type $unsubstitutedFunctionType corresponding to $samType")
         }
 
         companion object Instance : JvmSamConversion()

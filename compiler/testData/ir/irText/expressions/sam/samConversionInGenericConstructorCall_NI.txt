@@ -1,0 +1,113 @@
+FILE fqName:<root> fileName:/samConversionInGenericConstructorCall_NI.kt
+  FUN name:test3 visibility:public modality:FINAL <> (f1:kotlin.Function1<kotlin.String, kotlin.String>, f2:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:<root>.C.D<kotlin.Int, kotlin.String>
+    VALUE_PARAMETER name:f1 index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    VALUE_PARAMETER name:f2 index:1 type:kotlin.Function1<kotlin.Int, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 (f1: kotlin.Function1<kotlin.String, kotlin.String>, f2: kotlin.Function1<kotlin.Int, kotlin.String>): <root>.C.D<kotlin.Int, kotlin.String> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (jxy: <root>.J<X of <root>.C?, Y of <root>.C.D?>?) declared in <root>.C.D' type=<root>.C.D<kotlin.Int, kotlin.String> origin=null
+          <class: Y>: kotlin.Int
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (jxx: <root>.J<X of <root>.C?, X of <root>.C?>?) declared in <root>.C' type=<root>.C<kotlin.String> origin=null
+            <class: X>: kotlin.String
+            jxx: TYPE_OP type=<root>.J<kotlin.String?, kotlin.String?> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String?, kotlin.String?>
+              GET_VAR 'f1: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          jxy: TYPE_OP type=<root>.J<kotlin.String?, kotlin.Int?> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String?, kotlin.Int?>
+            GET_VAR 'f2: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test3' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
+  CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer<T1 of <root>.Outer>
+    TYPE_PARAMETER name:T1 index:0 variance: superTypes:[kotlin.Any?]
+    CONSTRUCTOR visibility:public <> (j11:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) returnType:<root>.Outer<T1 of <root>.Outer> [primary]
+      VALUE_PARAMETER name:j11 index:0 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
+      BLOCK_BODY
+        DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Outer modality:FINAL visibility:public superTypes:[kotlin.Any]'
+    PROPERTY name:j11 visibility:public modality:FINAL [val]
+      FIELD PROPERTY_BACKING_FIELD name:j11 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> visibility:public [final]
+        EXPRESSION_BODY
+          GET_VAR 'j11: <root>.J<T1 of <root>.Outer, T1 of <root>.Outer> declared in <root>.Outer.<init>' type=<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+      FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j11> visibility:public modality:FINAL <> ($this:<root>.Outer<T1 of <root>.Outer>) returnType:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer>
+        correspondingProperty: PROPERTY name:j11 visibility:public modality:FINAL [val]
+        $this: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
+        BLOCK_BODY
+          RETURN type=kotlin.Nothing from='public final fun <get-j11> (): <root>.J<T1 of <root>.Outer, T1 of <root>.Outer> declared in <root>.Outer'
+            GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j11 type:<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> visibility:public [final]' type=<root>.J<T1 of <root>.Outer, T1 of <root>.Outer> origin=null
+              receiver: GET_VAR '<this>: <root>.Outer<T1 of <root>.Outer> declared in <root>.Outer.<get-j11>' type=<root>.Outer<T1 of <root>.Outer> origin=null
+    CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
+      TYPE_PARAMETER name:T2 index:0 variance: superTypes:[kotlin.Any?]
+      CONSTRUCTOR visibility:public <> ($this:<root>.Outer<T1 of <root>.Outer>, j12:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) returnType:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> [primary]
+        $outer: VALUE_PARAMETER name:<this> type:<root>.Outer<T1 of <root>.Outer>
+        VALUE_PARAMETER name:j12 index:0 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Inner modality:FINAL visibility:public [inner] superTypes:[kotlin.Any]'
+      PROPERTY name:j12 visibility:public modality:FINAL [val]
+        FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:public [final]
+          EXPRESSION_BODY
+            GET_VAR 'j12: <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner.<init>' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=INITIALIZE_PROPERTY_FROM_PARAMETER
+        FUN DEFAULT_PROPERTY_ACCESSOR name:<get-j12> visibility:public modality:FINAL <> ($this:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>) returnType:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>
+          correspondingProperty: PROPERTY name:j12 visibility:public modality:FINAL [val]
+          $this: VALUE_PARAMETER name:<this> type:<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer>
+          BLOCK_BODY
+            RETURN type=kotlin.Nothing from='public final fun <get-j12> (): <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> declared in <root>.Outer.Inner'
+              GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j12 type:<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> visibility:public [final]' type=<root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner> origin=null
+                receiver: GET_VAR '<this>: <root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> declared in <root>.Outer.Inner.<get-j12>' type=<root>.Outer.Inner<T2 of <root>.Outer.Inner, T1 of <root>.Outer> origin=null
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+  FUN name:test4 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.String>, g:kotlin.Function1<kotlin.Any, kotlin.String>) returnType:<root>.Outer.Inner<kotlin.Any, kotlin.String>
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    VALUE_PARAMETER name:g index:1 type:kotlin.Function1<kotlin.Any, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test4 (f: kotlin.Function1<kotlin.String, kotlin.String>, g: kotlin.Function1<kotlin.Any, kotlin.String>): <root>.Outer.Inner<kotlin.Any, kotlin.String> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> (j12: <root>.J<T1 of <root>.Outer, T2 of <root>.Outer.Inner>) [primary] declared in <root>.Outer.Inner' type=<root>.Outer.Inner<kotlin.Any, kotlin.String> origin=null
+          <class: T2>: kotlin.Any
+          $outer: CONSTRUCTOR_CALL 'public constructor <init> (j11: <root>.J<T1 of <root>.Outer, T1 of <root>.Outer>) [primary] declared in <root>.Outer' type=<root>.Outer<kotlin.String> origin=null
+            <class: T1>: kotlin.String
+            j11: TYPE_OP type=<root>.J<kotlin.String, kotlin.String> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String, kotlin.String>
+              GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test4' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+          j12: TYPE_OP type=<root>.J<kotlin.String, kotlin.Any> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.String, kotlin.Any>
+            GET_VAR 'g: kotlin.Function1<kotlin.Any, kotlin.String> declared in <root>.test4' type=kotlin.Function1<kotlin.Any, kotlin.String> origin=null
+  FUN name:testGenericJavaCtor1 visibility:public modality:FINAL <> (f:kotlin.Function1<kotlin.String, kotlin.Int>) returnType:<root>.G<kotlin.String>
+    VALUE_PARAMETER name:f index:0 type:kotlin.Function1<kotlin.String, kotlin.Int>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testGenericJavaCtor1 (f: kotlin.Function1<kotlin.String, kotlin.Int>): <root>.G<kotlin.String> declared in <root>'
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String> origin=null
+          <class: TClass>: kotlin.String
+          <TCtor>: kotlin.Int
+          x: TYPE_OP type=<root>.J<kotlin.Int?, kotlin.String?> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.Int?, kotlin.String?>
+            GET_VAR 'f: kotlin.Function1<kotlin.String, kotlin.Int> declared in <root>.testGenericJavaCtor1' type=kotlin.Function1<kotlin.String, kotlin.Int> origin=null
+  FUN name:testGenericJavaCtor2 visibility:public modality:FINAL <> (x:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:x index:0 type:kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.Int> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.Int>
+          GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null
+      TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
+        CONSTRUCTOR_CALL 'public constructor <init> <TCtor> (x: <root>.J<TCtor of <root>.G.<init>?, TClass of <root>.G?>?) declared in <root>.G' type=<root>.G<kotlin.String> origin=null
+          <class: TClass>: kotlin.String
+          <TCtor>: kotlin.Int
+          x: TYPE_OP type=<root>.J<kotlin.Int?, kotlin.String?> origin=IMPLICIT_CAST typeOperand=<root>.J<kotlin.Int?, kotlin.String?>
+            GET_VAR 'x: kotlin.Any declared in <root>.testGenericJavaCtor2' type=kotlin.Any origin=null

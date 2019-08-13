@@ -1,0 +1,72 @@
+FILE fqName:<root> fileName:/samConversionToGeneric.kt
+  FUN name:test1 visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test1 (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: J>#' type=IrErrorType
+          FUN_EXPR type=IrErrorType origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:IrErrorType) returnType:IrErrorType
+              VALUE_PARAMETER name:x index:0 type:IrErrorType
+              BLOCK_BODY
+                ERROR_CALL 'Unresolved reference: x#' type=IrErrorType
+  FUN name:test2 visibility:public modality:FINAL <> () returnType:IrErrorType
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test2 (): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: J>#' type=IrErrorType
+          FUN_EXPR type=IrErrorType origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:IrErrorType
+              VALUE_PARAMETER name:x index:0 type:kotlin.String
+              BLOCK_BODY
+                ERROR_CALL 'Unresolved reference: x#' type=IrErrorType
+  FUN name:test3 visibility:public modality:FINAL <> () returnType:kotlin.Unit
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test3 (): kotlin.Unit declared in <root>'
+        CALL 'public open fun bar (j: <root>.J<X of <uninitialized parent>?>?): kotlin.Unit declared in <root>.H' type=kotlin.Unit origin=null
+          j: FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (x:kotlin.String) returnType:kotlin.String
+              VALUE_PARAMETER name:x index:0 type:kotlin.String
+              BLOCK_BODY
+                GET_VAR 'x: kotlin.String declared in <root>.test3.<anonymous>' type=kotlin.String origin=null
+  FUN name:test4 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=<root>.J<kotlin.String> origin=CAST typeOperand=<root>.J<kotlin.String>
+        GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
+        GET_VAR 'a: kotlin.Any declared in <root>.test4' type=kotlin.Any origin=null
+  FUN name:test5 visibility:public modality:FINAL <> (a:kotlin.Any) returnType:kotlin.Unit
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Function1<kotlin.String, kotlin.String> origin=CAST typeOperand=kotlin.Function1<kotlin.String, kotlin.String>
+        GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
+        GET_VAR 'a: kotlin.Any declared in <root>.test5' type=kotlin.Any origin=null
+  FUN name:test6 visibility:public modality:FINAL <T> (a:kotlin.Function1<T of <root>.test6, T of <root>.test6>) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Function1<T of <root>.test6, T of <root>.test6>
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
+        GET_VAR 'a: kotlin.Function1<T of <root>.test6, T of <root>.test6> declared in <root>.test6' type=kotlin.Function1<T of <root>.test6, T of <root>.test6> origin=null
+  FUN name:test7 visibility:public modality:FINAL <T> (a:kotlin.Any) returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[]
+    VALUE_PARAMETER name:a index:0 type:kotlin.Any
+    BLOCK_BODY
+      TYPE_OP type=kotlin.Function1<T of <root>.test7, T of <root>.test7> origin=CAST typeOperand=kotlin.Function1<T of <root>.test7, T of <root>.test7>
+        GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
+        GET_VAR 'a: kotlin.Any declared in <root>.test7' type=kotlin.Any origin=null
+  FUN name:test8 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:IrErrorType
+    VALUE_PARAMETER name:efn index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun test8 (efn: kotlin.Function1<kotlin.String, kotlin.String>): IrErrorType declared in <root>'
+        ERROR_CALL 'Unresolved reference: <Unresolved name: J>#' type=IrErrorType
+          GET_VAR 'efn: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test8' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+  FUN name:test9 visibility:public modality:FINAL <> (efn:kotlin.Function1<kotlin.String, kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:efn index:0 type:kotlin.Function1<kotlin.String, kotlin.String>
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar]>#' type=IrErrorType
+        GET_VAR 'efn: kotlin.Function1<kotlin.String, kotlin.String> declared in <root>.test9' type=kotlin.Function1<kotlin.String, kotlin.String> origin=null
+  FUN name:test10 visibility:public modality:FINAL <> (fn:kotlin.Function1<kotlin.Int, kotlin.String>) returnType:kotlin.Unit
+    VALUE_PARAMETER name:fn index:0 type:kotlin.Function1<kotlin.Int, kotlin.String>
+    BLOCK_BODY
+      ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [/H.bar2x]>#' type=IrErrorType
+        GET_VAR 'fn: kotlin.Function1<kotlin.Int, kotlin.String> declared in <root>.test10' type=kotlin.Function1<kotlin.Int, kotlin.String> origin=null
