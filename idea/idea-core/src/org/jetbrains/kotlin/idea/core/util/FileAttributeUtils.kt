@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.idea.core.util
 
+import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.NullableLazyKey
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileWithId
@@ -44,8 +45,15 @@ abstract class FileAttributeProperty<T : Any>(name: String, version: Int, privat
         if (file !is VirtualFileWithId || !file.isValid) return null
 
         return attribute.readAttribute(file)?.use { input ->
-            input.readNullable {
-                readValue(input)
+            try {
+                input.readNullable {
+                    readValue(input)
+                }
+            } catch (e: Throwable) {
+                Logger.getInstance("#org.jetbrains.kotlin.idea.core.util.FileAttributeProperty")
+                    .warn("Unable to read attribute from $file", e)
+                file.putUserData(cache, null)
+                null
             }
         } ?: default
     }
