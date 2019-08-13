@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl.statistics;
 
 import com.intellij.execution.RunManager;
@@ -10,11 +10,13 @@ import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.Multi
 import com.intellij.execution.impl.statistics.BaseTestConfigurationFactory.SecondBaseTestConfigurationFactory;
 import com.intellij.internal.statistic.beans.MetricEvent;
 import com.intellij.internal.statistic.eventLog.FeatureUsageData;
+import com.intellij.openapi.progress.EmptyProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.testFramework.LightPlatformTestCase;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
@@ -29,7 +31,13 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
 
       final RunConfigurationTypeUsagesCollector collector = new RunConfigurationTypeUsagesCollector();
 
-      final Set<MetricEvent> usages = collector.getMetrics(project);
+      final Set<MetricEvent> usages;
+      try {
+        usages = collector.getMetrics(project, new EmptyProgressIndicator()).get();
+      }
+      catch (InterruptedException | ExecutionException e) {
+        throw new RuntimeException(e);
+      }
       assertEquals(expected.size(), usages.size());
       assertEquals(expected, toTestUsageDescriptor(usages));
 
@@ -44,7 +52,13 @@ public class RunConfigurationUsageCollectorTest extends LightPlatformTestCase {
           temporaryExpected.add(new TestUsageDescriptor(descriptor.myKey, data));
         }
 
-        final Set<MetricEvent> temporaryUsages = collector.getMetrics(project);
+        final Set<MetricEvent> temporaryUsages;
+        try {
+          temporaryUsages = collector.getMetrics(project, new EmptyProgressIndicator()).get();
+        }
+        catch (InterruptedException | ExecutionException e) {
+          throw new RuntimeException(e);
+        }
         assertEquals(temporaryExpected.size(), temporaryUsages.size());
         final Set<TestUsageDescriptor> actual = toTestUsageDescriptor(temporaryUsages);
         assertEquals(temporaryExpected, actual);

@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.execution.impl.statistics;
 
 import com.intellij.execution.RunManager;
@@ -16,14 +16,18 @@ import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhite
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
-import com.intellij.openapi.application.ApplicationManager;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.util.ui.UIUtil;
 import gnu.trove.TObjectIntHashMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.concurrency.AsyncPromise;
+import org.jetbrains.concurrency.CancellablePromise;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -45,34 +49,50 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
 
   @NotNull
   @Override
-  public Set<MetricEvent> getMetrics(@NotNull Project project) {
-    final TObjectIntHashMap<Template> templates = new TObjectIntHashMap<>();
-    ApplicationManager.getApplication().invokeAndWait(() -> {
-      if (project.isDisposed()) return;
-      final RunManager runManager = RunManager.getInstance(project);
-      for (RunnerAndConfigurationSettings settings : runManager.getAllSettings()) {
-        RunConfiguration runConfiguration = settings.getConfiguration();
-        final ConfigurationFactory configurationFactory = runConfiguration.getFactory();
-        if (configurationFactory == null) {
-          // not realistic
-          continue;
+  public CancellablePromise<Set<MetricEvent>> getMetrics(@NotNull Project project, @Nullable ProgressIndicator indicator) {
+    AsyncPromise<Set<MetricEvent>> result = new AsyncPromise<>();
+    UIUtil.invokeLaterIfNeeded(() -> {
+      try {
+        TObjectIntHashMap<Template> templates = new TObjectIntHashMap<>();
+        if (project.isDisposed()) {
+          result.setResult(Collections.emptySet());
+          return;
         }
+        RunManager runManager = RunManager.getInstance(project);
+        for (RunnerAndConfigurationSettings settings : runManager.getAllSettings()) {
+          if (indicator != null) {
+            indicator.checkCanceled();
+          }
+          RunConfiguration runConfiguration = settings.getConfiguration();
+          final ConfigurationFactory configurationFactory = runConfiguration.getFactory();
+          if (configurationFactory == null) {
+            // not realistic
+            continue;
+          }
 
-        final ConfigurationType configurationType = configurationFactory.getType();
-        final FeatureUsageData data = newFeatureUsageData(configurationType, configurationFactory);
-        fillSettings(data, settings, runConfiguration);
-        final Template template = new Template("configured.in.project", data);
-        if (templates.containsKey(template)) {
-          templates.increment(template);
+          final ConfigurationType configurationType = configurationFactory.getType();
+          final FeatureUsageData data = newFeatureUsageData(configurationType, configurationFactory);
+          fillSettings(data, settings, runConfiguration);
+          final Template template = new Template("configured.in.project", data);
+          if (templates.containsKey(template)) {
+            templates.increment(template);
+          }
+          else {
+            templates.put(template, 1);
+          }
         }
-        else {
-          templates.put(template, 1);
-        }
+        Set<MetricEvent> metrics = new HashSet<>();
+        templates.forEachEntry((template, value) -> {
+          metrics.add(template.createMetricEvent(value));
+          return true;
+        });
+        result.setResult(metrics);
+      }
+      catch (Throwable t) {
+        result.setError(t);
+        throw t;
       }
     });
-
-    final Set<MetricEvent> result = new HashSet<>();
-    templates.forEachEntry((template, value) -> result.add(template.createMetricEvent(value)));
     return result;
   }
 
