@@ -95,6 +95,14 @@ class LineBreakpointExpressionVisitor private constructor(
         return ApplicabilityResult.UNKNOWN
     }
 
+    override fun visitPackageDirective(directive: KtPackageDirective, data: Unit?): ApplicabilityResult {
+        return ApplicabilityResult.UNKNOWN
+    }
+
+    override fun visitImportDirective(importDirective: KtImportDirective, data: Unit?): ApplicabilityResult {
+        return ApplicabilityResult.UNKNOWN
+    }
+
     override fun visitProperty(property: KtProperty, data: Unit?): ApplicabilityResult {
         if (property.hasModifier(KtTokens.CONST_KEYWORD)) {
             return ApplicabilityResult.UNKNOWN
