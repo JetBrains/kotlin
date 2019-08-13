@@ -392,3 +392,15 @@ inline fun IrBuilderWithScope.irBlockBody(
         startOffset,
         endOffset
     ).blockBody(body)
+
+fun IrBuilderWithScope.irThrowIse(origin: IrStatementOrigin? = null) =
+    IrCallImpl(
+        startOffset, endOffset,
+        context.irBuiltIns.nothingType,
+        context.irBuiltIns.throwIseSymbol,
+        context.irBuiltIns.throwIseSymbol.descriptor,
+        typeArgumentsCount = 0,
+        valueArgumentsCount = 0,
+        origin = origin
+    )
+

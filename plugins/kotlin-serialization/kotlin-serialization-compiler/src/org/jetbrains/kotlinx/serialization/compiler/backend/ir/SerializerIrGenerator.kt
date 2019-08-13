@@ -351,7 +351,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
                 +irSetVar(indexVar.symbol, irInvoke(localInput.get(), readElementF, localSerialDesc.get()))
                 +irWhen {
                     // if index == -2 (READ_ALL) todo...
-                    +IrBranchImpl(irEquals(indexVar.get(), irInt(-2)), irThrowNpe())
+                    +IrBranchImpl(irEquals(indexVar.get(), irInt(-2)), irThrowIse()) // TODO throw proper exception
 
                     // if index == -1 (READ_DONE) break loop
                     +IrBranchImpl(irEquals(indexVar.get(), irInt(-1)), irSetVar(flagVar.symbol, irBoolean(false)))
@@ -436,7 +436,7 @@ class SerializerIrGenerator(val irClass: IrClass, override val compilerContext: 
         if (serializableDescriptor.modality != Modality.ABSTRACT && serializableDescriptor.modality != Modality.SEALED) {
             +irReturn(irInvoke(null, ctor, typeArgs, args))
         } else {
-            +irThrowNpe()
+            +irThrowIse() // TODO throw proper exception
         }
     }
 

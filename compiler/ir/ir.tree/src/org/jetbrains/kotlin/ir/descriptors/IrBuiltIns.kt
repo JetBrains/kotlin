@@ -295,7 +295,6 @@ class IrBuiltIns(
         const val EQEQ = "EQEQ"
         const val EQEQEQ = "EQEQEQ"
         const val IEEE754_EQUALS = "ieee754equals"
-        const val THROW_NPE = "THROW_NPE"
         const val THROW_CCE = "THROW_CCE"
         const val THROW_ISE = "THROW_ISE"
         const val NO_WHEN_BRANCH_MATCHED_EXCEPTION = "noWhenBranchMatchedException"
