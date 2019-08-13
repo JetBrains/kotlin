@@ -82,6 +82,18 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             element.acceptChildren(this)
         }
 
+        override fun visitPackageDirective(directive: KtPackageDirective) {
+            //don't resolve package names
+        }
+
+        override fun visitSuperExpression(expression: KtSuperExpression) {
+            //don't resolve super expression
+        }
+
+        override fun visitThisExpression(expression: KtThisExpression) {
+            //don't resolve this expression
+        }
+
         private fun renderVariableType(variable: KtVariableDeclaration) {
             val descriptor = bindingContext[VARIABLE, variable]
             addAnnotation(renderType(descriptor), variable.nameIdentifier!!)
