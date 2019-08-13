@@ -313,7 +313,8 @@ class SignatureEnhancement(
         private fun KotlinType.extractQualifiersFromAnnotations(
             isHeadTypeConstructor: Boolean,
             defaultQualifiersForType: JavaDefaultQualifiers?,
-            typeParameterForArgument: TypeParameterDescriptor?
+            typeParameterForArgument: TypeParameterDescriptor?,
+            isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
             val composedAnnotation =
                 if (isHeadTypeConstructor && typeContainer != null)
@@ -337,7 +338,7 @@ class SignatureEnhancement(
             val (nullabilityFromBoundsForTypeBasedOnTypeParameter, isTypeParameterWithNotNullableBounds) =
                 nullabilityInfoBoundsForTypeParameterUsage()
 
-            val annotationsNullability = composedAnnotation.extractNullability()
+            val annotationsNullability = composedAnnotation.extractNullability()?.takeUnless { isFromStarProjection }
             val nullabilityInfo =
                 annotationsNullability
                     ?: computeNullabilityInfoInTheAbsenceOfExplicitAnnotation(
@@ -447,11 +448,13 @@ class SignatureEnhancement(
                 val isHeadTypeConstructor = index == 0
                 assert(isHeadTypeConstructor || !onlyHeadTypeConstructor) { "Only head type constructors should be computed" }
 
-                val (qualifiers, defaultQualifiers, typeParameterForArgument) = indexedThisType[index]
+                val (qualifiers, defaultQualifiers, typeParameterForArgument, isFromStarProjection) = indexedThisType[index]
                 val verticalSlice = indexedFromSupertypes.mapNotNull { it.getOrNull(index)?.type }
 
                 // Only the head type constructor is safely co-variant
-                qualifiers.computeQualifiersForOverride(verticalSlice, defaultQualifiers, isHeadTypeConstructor, typeParameterForArgument)
+                qualifiers.computeQualifiersForOverride(
+                    verticalSlice, defaultQualifiers, isHeadTypeConstructor, typeParameterForArgument, isFromStarProjection
+                )
             }
 
             return { index -> computedResult.getOrElse(index) { JavaTypeQualifiers.NONE } }
@@ -464,24 +467,26 @@ class SignatureEnhancement(
             fun add(type: KotlinType, ownerContext: LazyJavaResolverContext, typeParameterForArgument: TypeParameterDescriptor?) {
                 val c = ownerContext.copyWithNewDefaultTypeQualifiers(type.annotations)
 
+                val defaultQualifiers = c.defaultTypeQualifiers
+                    ?.get(
+                        if (typeParameterBounds)
+                            AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
+                        else
+                            AnnotationQualifierApplicabilityType.TYPE_USE
+                    )
                 list.add(
                     TypeAndDefaultQualifiers(
                         type,
-                        c.defaultTypeQualifiers
-                            ?.get(
-                                if (typeParameterBounds)
-                                    AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
-                                else
-                                    AnnotationQualifierApplicabilityType.TYPE_USE
-                            ),
-                        typeParameterForArgument
+                        defaultQualifiers,
+                        typeParameterForArgument,
+                        isFromStarProjection = false
                     )
                 )
 
                 for ((arg, parameter) in type.arguments.zip(type.constructor.parameters)) {
                     if (arg.isStarProjection) {
                         // TODO: sort out how to handle wildcards
-                        list.add(TypeAndDefaultQualifiers(arg.type, null, parameter))
+                        list.add(TypeAndDefaultQualifiers(arg.type, defaultQualifiers, parameter, isFromStarProjection = true))
                     } else {
                         add(arg.type, c, parameter)
                     }
@@ -496,7 +501,8 @@ class SignatureEnhancement(
             fromSupertypes: Collection<KotlinType>,
             defaultQualifiersForType: JavaDefaultQualifiers?,
             isHeadTypeConstructor: Boolean,
-            typeParameterForArgument: TypeParameterDescriptor?
+            typeParameterForArgument: TypeParameterDescriptor?,
+            isFromStarProjection: Boolean
         ): JavaTypeQualifiers {
             val superQualifiers = fromSupertypes.map { it.extractQualifiers() }
             val mutabilityFromSupertypes = superQualifiers.mapNotNull { it.mutability }.toSet()
@@ -505,7 +511,10 @@ class SignatureEnhancement(
                 .mapNotNull { it.unwrapEnhancement().extractQualifiers().nullability }
                 .toSet()
 
-            val own = extractQualifiersFromAnnotations(isHeadTypeConstructor, defaultQualifiersForType, typeParameterForArgument)
+            val own =
+                extractQualifiersFromAnnotations(
+                    isHeadTypeConstructor, defaultQualifiersForType, typeParameterForArgument, isFromStarProjection
+                )
             val ownNullability = own.takeIf { !it.isNullabilityQualifierForWarning }?.nullability
             val ownNullabilityForWarning = own.nullability
 
@@ -589,7 +598,8 @@ class SignatureEnhancement(
 private data class TypeAndDefaultQualifiers(
     val type: KotlinType,
     val defaultQualifiers: JavaDefaultQualifiers?,
-    val typeParameterForArgument: TypeParameterDescriptor?
+    val typeParameterForArgument: TypeParameterDescriptor?,
+    val isFromStarProjection: Boolean
 )
 
 private fun KotlinType.isNullabilityFlexible(): Boolean {

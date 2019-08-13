@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 import org.jetbrains.kotlin.types.typeUtil.createProjection
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
+import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
 fun KotlinType.hasEnhancedNullability(): Boolean =
     SimpleClassicTypeSystemContext.hasEnhancedNullability(this)
