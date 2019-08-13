@@ -336,7 +336,7 @@ internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
 
 /**
  * Converts this [Double] value to [Long].
- * The fractional part, if any, is rounded down.
+ * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is `NaN`, [Long.MIN_VALUE] if it's less than `Long.MIN_VALUE`,
  * [Long.MAX_VALUE] if it's bigger than `Long.MAX_VALUE`.
  */

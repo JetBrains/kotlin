@@ -349,7 +349,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
                 /**
                  * Converts this [$otherName] value to [$className].
                  *
-                 * The fractional part, if any, is rounded down.
+                 * The fractional part, if any, is rounded down towards zero.
                  * Returns zero if this `$otherName` value is negative or `NaN`, [$className.MAX_VALUE] if it's bigger than `$className.MAX_VALUE`.
                  */
                 """.trimIndent()

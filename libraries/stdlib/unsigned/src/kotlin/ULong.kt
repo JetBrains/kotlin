@@ -316,7 +316,7 @@ public inline fun Long.toULong(): ULong = ULong(this)
 /**
  * Converts this [Float] value to [ULong].
  *
- * The fractional part, if any, is rounded down.
+ * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Float` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
 @SinceKotlin("1.3")
@@ -326,7 +326,7 @@ public inline fun Float.toULong(): ULong = doubleToULong(this.toDouble())
 /**
  * Converts this [Double] value to [ULong].
  *
- * The fractional part, if any, is rounded down.
+ * The fractional part, if any, is rounded down towards zero.
  * Returns zero if this `Double` value is negative or `NaN`, [ULong.MAX_VALUE] if it's bigger than `ULong.MAX_VALUE`.
  */
 @SinceKotlin("1.3")
