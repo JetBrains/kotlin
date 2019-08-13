@@ -17,7 +17,7 @@ public class TabActionsPromoter implements ActionPromoter {
     List<AnAction> newList = new ArrayList<>(actions);
     newList.sort(Comparator.comparingInt(action -> {
       if (action instanceof BraceOrQuoteOutAction) return 0;
-      else if (action instanceof TabAction || action instanceof NextParameterAction) return 1;
+      else if (action instanceof TabAction || action instanceof NextParameterAction || action instanceof EmacsStyleIndentAction) return 1;
       else return -1;
     }));
     return newList;
