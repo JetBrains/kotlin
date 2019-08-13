@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 
 package com.intellij.codeInsight.daemon.impl;
 
@@ -81,29 +81,6 @@ public class ShowIntentionsPass extends TextEditorHighlightingPass {
     List<HighlightInfo.IntentionActionDescriptor> result = new ArrayList<>();
     infos.forEach(info-> addAvailableFixesForGroups(info, editor, file, result, passId, offset));
     return result;
-  }
-
-  public static boolean markActionInvoked(@NotNull Project project,
-                                          @NotNull final Editor editor,
-                                          @NotNull IntentionAction action) {
-    final int offset = ((EditorEx)editor).getExpectedCaretOffset();
-
-    List<HighlightInfo> infos = new ArrayList<>();
-    DaemonCodeAnalyzerImpl.processHighlightsNearOffset(editor.getDocument(), project, HighlightSeverity.INFORMATION, offset, true,
-                                                       new CommonProcessors.CollectProcessor<>(infos));
-    boolean removed = false;
-    for (HighlightInfo info : infos) {
-      if (info.quickFixActionMarkers != null) {
-        for (Pair<HighlightInfo.IntentionActionDescriptor, RangeMarker> pair : info.quickFixActionMarkers) {
-          HighlightInfo.IntentionActionDescriptor actionInGroup = pair.first;
-          if (actionInGroup.getAction() == action) {
-            // no CME because the list is concurrent
-            removed |= info.quickFixActionMarkers.remove(pair);
-          }
-        }
-      }
-    }
-    return removed;
   }
 
   private static void addAvailableFixesForGroups(@NotNull HighlightInfo info,

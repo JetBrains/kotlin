@@ -1,4 +1,4 @@
-// Copyright 2000-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.codeInsight.intention.impl;
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo;
@@ -235,10 +235,7 @@ public class CachedIntentions {
                                             @Nullable PsiElement element,
                                             @Nullable PsiFile containingFile,
                                             @Nullable Editor containingEditor) {
-    IntentionActionWithTextCaching cachedAction = new IntentionActionWithTextCaching(descriptor, (cached, action)->{
-      removeActionFromCached(cached);
-      markInvoked(action);
-    });
+    IntentionActionWithTextCaching cachedAction = new IntentionActionWithTextCaching(descriptor);
     if (element == null) return cachedAction;
     final List<IntentionAction> options = descriptor.getOptions(element, containingEditor);
     if (options == null) return cachedAction;
@@ -271,22 +268,6 @@ public class CachedIntentions {
       }
     }
     return cachedAction;
-  }
-
-  private void markInvoked(@NotNull IntentionAction action) {
-    if (myEditor != null) {
-      ShowIntentionsPass.markActionInvoked(myFile.getProject(), myEditor, action);
-    }
-  }
-
-  private void removeActionFromCached(@NotNull IntentionActionWithTextCaching action) {
-    // remove from the action from the list after invocation to make it appear unavailable sooner.
-    // (the highlighting will process the whole file and remove the no more available action from the list automatically - but it's may be too long)
-    myErrorFixes.remove(action);
-    myGutters.remove(action);
-    myInspectionFixes.remove(action);
-    myIntentions.remove(action);
-    myNotifications.remove(action);
   }
 
   @NotNull
