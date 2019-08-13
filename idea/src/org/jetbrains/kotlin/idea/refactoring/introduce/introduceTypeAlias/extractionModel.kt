@@ -57,7 +57,7 @@ class IntroduceTypeAliasData(
                                  return
                 typeReference.resolveInfo = TypeReferenceInfo(typeReference, kotlinType)
 
-                typeElement.typeArgumentsAsTypes.forEach { it.accept(this) }
+                typeElement.typeArgumentsAsTypes.forEach { it?.accept(this) }
             }
         }
         (originalTypeElement.parent as? KtTypeReference ?: originalTypeElement).accept(visitor)
