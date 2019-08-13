@@ -8,7 +8,6 @@ import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.project.ProjectUtil;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
@@ -29,6 +28,8 @@ import org.jetbrains.annotations.Nullable;
 import javax.swing.*;
 import java.util.List;
 
+import static com.intellij.openapi.project.ProjectUtilCore.displayUrlRelativeToProject;
+import static com.intellij.openapi.util.io.FileUtil.toSystemDependentName;
 import static com.intellij.openapi.vfs.VfsUtilCore.VFS_SEPARATOR_CHAR;
 
 public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionActionOnPsiElement {
@@ -131,7 +132,10 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
     String filePath = myNewFileName;
     if (mySubPath.length > 0) {
-      filePath = StringUtil.join(mySubPath, VFS_SEPARATOR_CHAR + "") + VFS_SEPARATOR_CHAR + myNewFileName;
+      filePath = toSystemDependentName(
+        StringUtil.join(mySubPath, Character.toString(VFS_SEPARATOR_CHAR))
+        + VFS_SEPARATOR_CHAR + myNewFileName
+      );
     }
 
     BaseListPopupStep<TargetDirectoryListItem> step =
@@ -206,12 +210,13 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     VirtualFile f = directory.getVirtualFile();
     Project project = directory.getProject();
 
-    String toProjectPath = ProjectUtil.calcRelativeToProjectPath(f, project, true, false, true);
+    String path = f.getPath();
     if (pathToCreate.length > 0) {
-      toProjectPath += VFS_SEPARATOR_CHAR + StringUtil.join(pathToCreate, VFS_SEPARATOR_CHAR + "");
+      path += VFS_SEPARATOR_CHAR + StringUtil.join(pathToCreate, VFS_SEPARATOR_CHAR + "");
     }
+    String presentablePath = f.getFileSystem().extractPresentableUrl(path);
 
-    return toProjectPath;
+    return displayUrlRelativeToProject(f, presentablePath, project, true, true);
   }
 
   protected static class TargetDirectoryListItem {
