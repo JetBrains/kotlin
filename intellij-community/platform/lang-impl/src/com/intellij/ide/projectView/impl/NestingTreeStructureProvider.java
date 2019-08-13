@@ -1,4 +1,4 @@
-// Copyright 2000-2017 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
+// Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.ide.projectView.impl;
 
 import com.intellij.ide.projectView.*;
@@ -95,19 +95,18 @@ public class NestingTreeStructureProvider implements TreeStructureProvider, Dumb
       if (!((ProjectViewPane)pane).isUseFileNestingRules()) return Collections.emptyList();
     }
 
-    final VirtualFile dir = parentFile.getParent();
-    if (dir == null) return Collections.emptyList();
-
     final Collection<NestingRule> rules = FileNestingBuilder.getInstance().getNestingRules();
     if (rules.isEmpty()) return Collections.emptyList();
 
-    final VirtualFile[] children = dir.getChildren();
-    if (children.length <= 1) return Collections.emptyList();
-
     final Collection<NestingRule> rulesWhereItCanBeParent = filterRules(rules, parentFile.getName(), true);
     if (rulesWhereItCanBeParent.isEmpty()) return Collections.emptyList();
-
     final Collection<NestingRule> rulesWhereItCanBeChild = filterRules(rules, parentFile.getName(), false);
+    if (rulesWhereItCanBeChild.isEmpty()) return Collections.emptyList();
+
+    final VirtualFile dir = parentFile.getParent();
+    if (dir == null) return Collections.emptyList();
+    final VirtualFile[] children = dir.getChildren();
+    if (children.length <= 1) return Collections.emptyList();
 
     final SmartList<ChildFileInfo> result = new SmartList<>();
 
