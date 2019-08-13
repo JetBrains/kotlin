@@ -32,7 +32,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.DocumentEvent;
 import com.intellij.openapi.editor.event.DocumentListener;
-import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
 import com.intellij.openapi.module.Module;
@@ -1945,15 +1944,10 @@ public final class BuildManager implements Disposable {
   }
 
   static final class MyDocumentListener implements DocumentListener {
-    MyDocumentListener() {
-      if (ApplicationManager.getApplication().isUnitTestMode()) {
-        throw ExtensionNotApplicableException.INSTANCE;
-      }
-    }
-
     @Override
     public void documentChanged(@NotNull DocumentEvent e) {
-      if (!Registry.is("compiler.document.save.enabled", false)) {
+      if (ApplicationManager.getApplication().isUnitTestMode() ||
+          !Registry.is("compiler.document.save.enabled", false)) {
         return;
       }
 
