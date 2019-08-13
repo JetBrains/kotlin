@@ -4,11 +4,12 @@ package com.intellij.execution.impl;
 import com.intellij.execution.ExecutionBundle;
 import com.intellij.execution.configurations.ConfigurationFactory;
 import com.intellij.execution.configurations.ConfigurationType;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.openapi.ui.popup.ListPopupStep;
 import com.intellij.openapi.ui.popup.PopupStep;
 import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.Consumer;
 import com.intellij.util.ui.EmptyIcon;
 import org.jetbrains.annotations.NotNull;
@@ -23,18 +24,19 @@ import java.util.List;
  */
 public class NewRunConfigurationPopup {
   @NotNull
-  public static ListPopup createAddPopup(@NotNull final List<? extends ConfigurationType> typesToShow,
+  public static ListPopup createAddPopup(@NotNull Project project,
+                                         @NotNull final List<? extends ConfigurationType> typesToShow,
                                          @NotNull final String defaultText,
                                          @NotNull final Consumer<? super ConfigurationFactory> creator,
                                          @Nullable final ConfigurationType selectedConfigurationType,
                                          @Nullable final Runnable finalStep, boolean showTitle) {
-    return JBPopupFactory.getInstance().createListPopup(new BaseListPopupStep<ConfigurationType>(
+    BaseListPopupStep<ConfigurationType> step = new BaseListPopupStep<ConfigurationType>(
       showTitle ? ExecutionBundle.message("add.new.run.configuration.action2.name") : null, typesToShow) {
 
       @Override
       @NotNull
       public String getTextFor(final ConfigurationType type) {
-        return type != null ? type.getDisplayName() :  defaultText;
+        return type != null ? type.getDisplayName() : defaultText;
       }
 
       @Override
@@ -97,6 +99,20 @@ public class NewRunConfigurationPopup {
       public boolean hasSubstep(final ConfigurationType type) {
         return type != null && type.getConfigurationFactories().length > 1;
       }
-    });
+    };
+
+    return new ListPopupImpl(project, step) {
+      @Override
+      protected void onSpeedSearchPatternChanged() {
+        List<ConfigurationType> values = step.getValues();
+        values.clear();
+        values.addAll(RunConfigurable.Companion.configurationTypeSorted(project,
+                                                                        false,
+                                                                        ConfigurationType.CONFIGURATION_TYPE_EP.getExtensionList()));
+
+        getListModel().updateOriginalList();
+        super.onSpeedSearchPatternChanged();
+      }
+    };
   }
 }

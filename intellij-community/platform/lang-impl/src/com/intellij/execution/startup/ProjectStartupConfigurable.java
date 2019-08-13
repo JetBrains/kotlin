@@ -217,7 +217,7 @@ final class ProjectStartupConfigurable implements SearchableConfigurable, Config
           return factory != null &&
                  ProgramRunner.getRunner(executor.getId(), runManager.getConfigurationTemplate(factory).getConfiguration()) != null;
         });
-        final ListPopup popup = NewRunConfigurationPopup.createAddPopup(typesToShow, "",
+        final ListPopup popup = NewRunConfigurationPopup.createAddPopup(project, typesToShow, "",
                                                                         factory -> ApplicationManager.getApplication().invokeLater(() -> {
                                                                           final EditConfigurationsDialog dialog = new EditConfigurationsDialog(project, factory);
                                                                           if (dialog.showAndGet()) {
