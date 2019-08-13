@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.idea.debugger.stepping.KotlinBasicStepMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaMethodFilter
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
+import org.jetbrains.kotlin.idea.util.application.runReadAction
 
 class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
     override fun isAvailable(position: SourcePosition?) = position?.file is KtFile
@@ -29,11 +30,12 @@ class KotlinSmartStepIntoHandler : JvmSmartStepIntoHandler() {
         val document = PsiDocumentManager.getInstance(file.project).getDocument(file) ?: return emptyList()
         val lines = Range(document.getLineNumber(elementTextRange.startOffset), document.getLineNumber(elementTextRange.endOffset))
 
-        val consumer = OrderedSet<SmartStepTarget>()
-        val visitor = SmartStepTargetVisitor(ktElement, lines, consumer)
-        ktElement.accept(visitor, null)
-
-        return consumer
+        return runReadAction {
+            val consumer = OrderedSet<SmartStepTarget>()
+            val visitor = SmartStepTargetVisitor(ktElement, lines, consumer)
+            ktElement.accept(visitor, null)
+            return@runReadAction consumer
+        }
     }
 
     override fun createMethodFilter(stepTarget: SmartStepTarget?): MethodFilter? {
