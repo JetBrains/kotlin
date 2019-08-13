@@ -1,0 +1,7 @@
+class A {
+
+  void meeeeeeeeeeeeeeeeeeeeeeeeetttttttttttttttttttttttthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhooooooooooooooodddddd() {
+
+  }
+
+}

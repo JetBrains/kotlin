@@ -1,0 +1,17 @@
+#if (${PROJECT_NAME} && ${PROJECT_NAME} != "")
+#if (((!${MODULE_PATH} || ${MODULE_PATH} == "")) && (${MODULE_NAME} && ${MODULE_NAME} != ""))
+rootProject.name = '${MODULE_NAME}'
+#else
+rootProject.name = '${PROJECT_NAME}'
+#end
+#end
+#if (${MODULE_PATH} && ${MODULE_PATH} != "")
+#if (${MODULE_FLAT_DIR} == "true")includeFlat '${MODULE_PATH}'
+#else
+include '${MODULE_PATH}'
+#end
+#if (${MODULE_NAME} && ${MODULE_NAME} != "" && ${MODULE_PATH} != ${MODULE_NAME})
+findProject(':${MODULE_PATH}')?.name = '${MODULE_NAME}'
+#end
+#end
+

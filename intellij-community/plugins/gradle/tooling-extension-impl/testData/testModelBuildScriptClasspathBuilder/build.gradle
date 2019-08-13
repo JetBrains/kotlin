@@ -1,0 +1,38 @@
+//noinspection GrPackage
+buildscript {
+  dependencies {
+    classpath 'junit:junit:4.11'
+  }
+  repositories {
+    mavenCentral()
+  }
+}
+
+project("moduleWithAdditionalClasspath") {
+  buildscript {
+    dependencies {
+      classpath files("lib/someDep.jar")
+    }
+  }
+}
+
+project("baseModule") {
+  buildscript {
+    dependencies {
+      classpath files("lib/inheritedDep.jar")
+    }
+  }
+}
+
+allprojects {
+  configurations.all {
+
+    // check for configuration which is not in unresolved state  - https://youtrack.jetbrains.com/issue/IDEA-124839
+    exclude group: 'some-group'
+
+    // check for usage of custom resolutionStrategy - https://youtrack.jetbrains.com/issue/IDEA-125592
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+      println details.target
+    }
+  }
+}

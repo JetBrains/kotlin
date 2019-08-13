@@ -1,0 +1,94 @@
+<idea-plugin>
+  <id>com.intellij.stats.completion</id>
+  <name>Completion Stats Collector</name>
+  <vendor>JetBrains</vendor>
+
+  <description><![CDATA[
+      Collects data about your usage of code completion, anonymizes and sends it to JetBrains.
+      Note, the plugin doesn't send any of your personal data or code. All it sends is just numbers
+      calculated based on your completion usage patterns. The plugin does not send more than 15MB of data per day.
+      It will not send anything until you explicitly allow it in the settings/preferences: Editor | General | Code Completion,
+      "Machine Learning Assistant Code Completion" section.
+    ]]></description>
+
+  <depends>com.intellij.modules.lang</depends>
+  <depends>com.intellij.modules.platform</depends>
+
+  <extensions defaultExtensionNs="com.intellij">
+
+    <applicationService serviceInterface="com.intellij.stats.completion.CompletionLoggerProvider"
+                        serviceImplementation="com.intellij.stats.completion.CompletionFileLoggerProvider">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.stats.storage.FilePathProvider"
+                        serviceImplementation="com.intellij.stats.storage.PluginDirectoryFilePathProvider"
+                        testServiceImplementation="com.intellij.mocks.TestFilePathProvider">
+    </applicationService>
+
+
+    <applicationService serviceInterface="com.intellij.stats.sender.StatisticSender"
+                        serviceImplementation="com.intellij.stats.sender.StatisticSenderImpl"
+                        testServiceImplementation="com.intellij.mocks.TestStatisticSender">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.stats.experiment.WebServiceStatus"
+                        serviceImplementation="com.intellij.stats.experiment.WebServiceStatusProvider">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.stats.network.service.RequestService"
+                        serviceImplementation="com.intellij.stats.network.service.SimpleRequestService"
+                        testServiceImplementation="com.intellij.mocks.TestRequestService">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.codeInsight.completion.CompletionFinalSorter$Factory"
+                        serviceImplementation="com.intellij.completion.sorting.MLSorterFactory">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.stats.completion.InstallationIdProvider"
+                        serviceImplementation="com.intellij.stats.completion.PermanentInstallationIdProvider">
+    </applicationService>
+
+    <applicationService serviceInterface="com.intellij.completion.tracker.LookupElementPositionTracker"
+                        serviceImplementation="com.intellij.completion.tracker.UserDataLookupElementPositionTracker"/>
+
+    <registryKey key="completion.stats.exit.experiment" defaultValue="false"
+                 description="Do not perform A/B experiment for code completion on this installation"/>
+
+    <registryKey key="completion.stats.show.ml.ranking.diff" defaultValue="false"
+                 description="Show how element position changed after ml ranking performed, if ml completion ranking is enabled"/>
+
+    <registryKey key="completion.stats.enable.ml.ranking" defaultValue="false"
+                 description="Re-rank lookup elements using ML model"/>
+
+    <registryKey key="completion.stats.send.logs" defaultValue="true"
+                 description="Send anonymous logs about completion usage"/>
+  </extensions>
+
+  <application-components>
+    <component>
+      <implementation-class>com.intellij.stats.sender.SenderComponent</implementation-class>
+    </component>
+
+    <component>
+      <implementation-class>com.intellij.stats.completion.CompletionTrackerInitializer</implementation-class>
+    </component>
+
+    <component>
+      <implementation-class>
+        com.intellij.stats.personalization.impl.ApplicationUserFactorStorage
+      </implementation-class>
+    </component>
+  </application-components>
+
+  <project-components>
+    <component>
+      <implementation-class>com.intellij.stats.personalization.impl.ProjectUserFactorStorage</implementation-class>
+    </component>
+
+    <component>
+      <interface-class>com.intellij.stats.personalization.UserFactorsManager</interface-class>
+      <implementation-class>com.intellij.stats.personalization.impl.UserFactorsManagerImpl</implementation-class>
+    </component>
+  </project-components>
+
+</idea-plugin>

@@ -1,0 +1,11 @@
+//noinspection GrPackage
+
+allprojects{
+  apply plugin: 'java'
+}
+
+project("dependentProject") {
+  dependencies {
+    compile project(":dependencyProject")
+  }
+}
