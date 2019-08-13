@@ -212,6 +212,19 @@ class BuiltinMembersConversion(private val context: NewJ2kConverterContext) : Re
             Method("java.lang.Short.valueOf") convertTo ExtensionMethod("kotlin.Short.toShort")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
 
+            Method("java.lang.Byte.parseByte") convertTo ExtensionMethod("kotlin.text.toByte")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Method("java.lang.Short.parseShort") convertTo ExtensionMethod("kotlin.text.toShort")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Method("java.lang.Integer.parseInt") convertTo ExtensionMethod("kotlin.text.toInt")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Method("java.lang.Long.parseLong") convertTo ExtensionMethod("kotlin.text.toLong")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Method("java.lang.Float.parseFloat") convertTo ExtensionMethod("kotlin.text.toFloat")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+            Method("java.lang.Double.parseDouble") convertTo ExtensionMethod("kotlin.text.toDouble")
+                    withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER,
+
             Method("java.io.PrintStream.println") convertTo Method("kotlin.io.println")
                     withReplaceType ReplaceType.REPLACE_WITH_QUALIFIER
                     withFilter ::isSystemOutCall,

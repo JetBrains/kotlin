@@ -40,4 +40,18 @@ class A {
             entry.setValue(value + 1);
         }
     }
+
+    void kt21504() {
+        byte b = Byte.parseByte("1");
+        short s = Short.parseShort("1");
+        int i  = Integer.parseInt("1");
+        long l = Long.parseLong("1");
+        float f = Float.parseFloat("1");
+        double d = Double.parseDouble("1");
+
+        byte b2 = Byte.parseByte("1", 10);
+        short s2 = Short.parseShort("1", 10);
+        int i2  = Integer.parseInt("1", 10);
+        long l2 = Long.parseLong("1", 10);
+    }
 }
