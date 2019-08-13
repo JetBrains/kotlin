@@ -101,7 +101,6 @@ public class NestingTreeStructureProvider implements TreeStructureProvider, Dumb
     final Collection<NestingRule> rulesWhereItCanBeParent = filterRules(rules, parentFile.getName(), true);
     if (rulesWhereItCanBeParent.isEmpty()) return Collections.emptyList();
     final Collection<NestingRule> rulesWhereItCanBeChild = filterRules(rules, parentFile.getName(), false);
-    if (rulesWhereItCanBeChild.isEmpty()) return Collections.emptyList();
 
     final VirtualFile dir = parentFile.getParent();
     if (dir == null) return Collections.emptyList();
