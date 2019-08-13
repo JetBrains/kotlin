@@ -48,10 +48,6 @@ interface MetadataKotlinLibraryLayout : KotlinLibraryLayout {
 interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     val irDir
         get() = File(libDir, "ir")
-    val irTablesDir
-        get() = File(irDir, "ir_tables")
-    val irHeader
-        get() = File(irDir, "irHeaders.kni")
     val irDeclarations
         get() = File(irDir, "irDeclarations.knd")
     val irSymbols
@@ -73,15 +69,4 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
     fun irStrings(file: File): File = File(file, "strings.knt")
     fun irBodies(file: File): File = File(file, "body.knb")
     fun irFile(file: File): File = File(file, "file.knf")
-
-    val irFilesX
-        get() = run {
-            val fileDirectories = mutableListOf<File>()
-            irDir.postorder {
-                if (it.fileName.toString().endsWith(".file")) {
-                    fileDirectories.add(File(it))
-                }
-            }
-            fileDirectories
-        }
 }

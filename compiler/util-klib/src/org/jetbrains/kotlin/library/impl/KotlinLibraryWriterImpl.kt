@@ -81,7 +81,8 @@ class KoltinLibraryWriterImpl(
 
     base: BaseWriter = BaseWriterImpl(layout, moduleName, versions, nopack),
     metadata: MetadataWriter = MetadataWriterImpl(layout),
-    ir: IrWriter = IrWriterImpl(layout)
+//    ir: IrWriter = IrMonoliticWriterImpl(layout)
+    ir: IrWriter = IrPerFileWriterImpl(layout)
 
 ) : BaseWriter by base, MetadataWriter by metadata, IrWriter by ir, KotlinLibraryWriter
 
