@@ -364,11 +364,13 @@ allprojects {
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 
-    task("listArchives") { listConfigurationContents("archives") }
+    tasks {
+        register("listArchives") { listConfigurationContents("archives") }
 
-    task("listRuntimeJar") { listConfigurationContents("runtimeJar") }
+        register("listRuntimeJar") { listConfigurationContents("runtimeJar") }
 
-    task("listDistJar") { listConfigurationContents("distJar") }
+        register("listDistJar") { listConfigurationContents("distJar") }
+    }
 
     afterEvaluate {
         if (javaHome != defaultJavaHome || jvmTarget != defaultJvmTarget) {
@@ -386,10 +388,12 @@ allprojects {
         } catch (_: UnknownDomainObjectException) {
             null
         }?.let { javaConvention ->
-            task("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
-            task("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
-            task("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
-            task("printTestRuntimeClasspath") { doFirst { javaConvention.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
+            tasks {
+                register("printCompileClasspath") { doFirst { javaConvention.sourceSets["main"].compileClasspath.printClassPath("compile") } }
+                register("printRuntimeClasspath") { doFirst { javaConvention.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
+                register("printTestCompileClasspath") { doFirst { javaConvention.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
+                register("printTestRuntimeClasspath") { doFirst { javaConvention.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
+            }
         }
 
         run configureCompilerClasspath@{
@@ -446,26 +450,26 @@ val ideaPlugin by task<Task> {
 }
 
 tasks {
-    create("clean") {
+    register("clean") {
         doLast {
             delete("$buildDir/repo")
             delete(distDir)
         }
     }
 
-    create("cleanupArtifacts") {
+    register("cleanupArtifacts") {
         doLast {
             delete(artifactsDir)
         }
     }
 
     listOf("clean", "assemble", "install", "dist").forEach { taskName ->
-        create("coreLibs${taskName.capitalize()}") {
+        register("coreLibs${taskName.capitalize()}") {
             coreLibProjects.forEach { projectName -> dependsOn("$projectName:$taskName") }
         }
     }
 
-    create("coreLibsTest") {
+    register("coreLibsTest") {
         (coreLibProjects + listOf(
             ":kotlin-stdlib:samples",
             ":kotlin-test:kotlin-test-js:kotlin-test-js-it",
@@ -476,17 +480,17 @@ tasks {
         }
     }
 
-    create("gradlePluginTest") {
+    register("gradlePluginTest") {
         gradlePluginProjects.forEach {
             dependsOn("$it:check")
         }
     }
 
-    create("gradlePluginIntegrationTest") {
+    register("gradlePluginIntegrationTest") {
         dependsOn(":kotlin-gradle-plugin-integration-tests:check")
     }
 
-    create("jvmCompilerTest") {
+    register("jvmCompilerTest") {
         dependsOn("dist")
         dependsOn(
             ":compiler:test",
@@ -497,19 +501,19 @@ tasks {
         dependsOn(":plugins:jvm-abi-gen:test")
     }
 
-    create("jsCompilerTest") {
+    register("jsCompilerTest") {
         dependsOn(":js:js.tests:test")
         dependsOn(":js:js.tests:runMocha")
     }
 
-    create("firCompilerTest") {
+    register("firCompilerTest") {
         dependsOn(":compiler:fir:psi2fir:test")
         dependsOn(":compiler:fir:resolve:test")
         dependsOn(":compiler:fir:fir2ir:test")
         dependsOn(":compiler:fir:lightTree:test")
     }
 
-    create("scriptingTest") {
+    register("scriptingTest") {
         dependsOn("dist")
         dependsOn(":kotlin-script-util:test")
         dependsOn(":kotlin-scripting-compiler:test")
@@ -520,7 +524,7 @@ tasks {
         dependsOn(":kotlin-main-kts-test:test")
     }
 
-    create("compilerTest") {
+    register("compilerTest") {
         dependsOn("jvmCompilerTest")
         dependsOn("jsCompilerTest")
         dependsOn("firCompilerTest")
@@ -531,44 +535,44 @@ tasks {
         dependsOn(":core:descriptors.runtime:test")
     }
 
-    create("toolsTest") {
+    register("toolsTest") {
         dependsOn(":tools:kotlinp:test")
     }
 
-    create("examplesTest") {
+    register("examplesTest") {
         dependsOn("dist")
         (project(":examples").subprojects + project(":kotlin-gradle-subplugin-example")).forEach { p ->
             dependsOn("${p.path}:check")
         }
     }
 
-    create("distTest") {
+    register("distTest") {
         dependsOn("compilerTest")
         dependsOn("toolsTest")
         dependsOn("gradlePluginTest")
         dependsOn("examplesTest")
     }
 
-    create("specTest") {
+    register("specTest") {
         dependsOn("dist")
         dependsOn(":compiler:tests-spec:test")
     }
 
-    create("androidCodegenTest") {
+    register("androidCodegenTest") {
         dependsOn(":compiler:android-tests:test")
     }
 
-    create("jps-tests") {
+    register("jps-tests") {
         dependsOn("dist")
         dependsOn(":jps-plugin:test")
     }
 
-    create("idea-plugin-main-tests") {
+    register("idea-plugin-main-tests") {
         dependsOn("dist")
         dependsOn(":idea:test")
     }
 
-    create("idea-plugin-additional-tests") {
+    register("idea-plugin-additional-tests") {
         dependsOn("dist")
         dependsOn(
             ":idea:idea-gradle:test",
@@ -583,7 +587,7 @@ tasks {
         )
     }
 
-    create("idea-plugin-tests") {
+    register("idea-plugin-tests") {
         dependsOn("dist")
         dependsOn(
             "idea-plugin-main-tests",
@@ -591,7 +595,7 @@ tasks {
         )
     }
 
-    create("android-ide-tests") {
+    register("android-ide-tests") {
         dependsOn("dist")
         dependsOn(
             ":plugins:android-extensions-ide:test",
@@ -600,7 +604,7 @@ tasks {
         )
     }
 
-    create("plugins-tests") {
+    register("plugins-tests") {
         dependsOn("dist")
         dependsOn(
             ":kotlin-annotation-processing:test",
@@ -616,7 +620,7 @@ tasks {
     }
 
 
-    create("ideaPluginTest") {
+    register("ideaPluginTest") {
         dependsOn(
             "idea-plugin-tests",
             "jps-tests",
@@ -627,13 +631,13 @@ tasks {
     }
 
 
-    create("test") {
+    register("test") {
         doLast {
             throw GradleException("Don't use directly, use aggregate tasks *-check instead")
         }
     }
 
-    create("check") {
+    register("check") {
         dependsOn("test")
     }
 }
@@ -772,49 +776,51 @@ fun Project.configureShadowJarSubstitutionInCompileClasspath() {
     }
 }
 
-tasks.create("findShadowJarsInClasspath").doLast {
-    fun Collection<File>.printSorted(indent: String = "    ") {
-        sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
-    }
-
-    val mainJars = hashSetOf<File>()
-    val shadowJars = hashSetOf<File>()
-    for (project in rootProject.allprojects) {
-        project.withJavaPlugin {
-            project.sourceSets.forEach { sourceSet ->
-                val jarTask = project.tasks.findByPath(sourceSet.jarTaskName) as? Jar
-                jarTask?.outputFile?.let { mainJars.add(it) }
-            }
+tasks.register("findShadowJarsInClasspath") {
+    doLast {
+        fun Collection<File>.printSorted(indent: String = "    ") {
+            sortedBy { it.path }.forEach { println(indent + it.relativeTo(rootProject.projectDir)) }
         }
-        for (task in project.tasks) {
-            when (task) {
-                is ShadowJar -> {
-                    shadowJars.add(fileFrom(task.outputFile))
-                }
-                is ProGuardTask -> {
-                    shadowJars.addAll(task.outputs.files.toList())
+
+        val mainJars = hashSetOf<File>()
+        val shadowJars = hashSetOf<File>()
+        for (project in rootProject.allprojects) {
+            project.withJavaPlugin {
+                project.sourceSets.forEach { sourceSet ->
+                    val jarTask = project.tasks.findByPath(sourceSet.jarTaskName) as? Jar
+                    jarTask?.outputFile?.let { mainJars.add(it) }
                 }
             }
+            for (task in project.tasks) {
+                when (task) {
+                    is ShadowJar -> {
+                        shadowJars.add(fileFrom(task.outputFile))
+                    }
+                    is ProGuardTask -> {
+                        shadowJars.addAll(task.outputs.files.toList())
+                    }
+                }
+            }
         }
-    }
 
-    shadowJars.removeAll(mainJars)
-    println("Shadow jars that might break incremental compilation:")
-    shadowJars.printSorted()
+        shadowJars.removeAll(mainJars)
+        println("Shadow jars that might break incremental compilation:")
+        shadowJars.printSorted()
 
-    fun Project.checkConfig(configName: String) {
-        val config = configurations.findByName(configName) ?: return
-        val shadowJarsInConfig = config.resolvedConfiguration.files.filter { it in shadowJars }
-        if (shadowJarsInConfig.isNotEmpty()) {
-            println()
-            println("Project $project contains shadow jars in configuration '$configName':")
-            shadowJarsInConfig.printSorted()
+        fun Project.checkConfig(configName: String) {
+            val config = configurations.findByName(configName) ?: return
+            val shadowJarsInConfig = config.resolvedConfiguration.files.filter { it in shadowJars }
+            if (shadowJarsInConfig.isNotEmpty()) {
+                println()
+                println("Project $project contains shadow jars in configuration '$configName':")
+                shadowJarsInConfig.printSorted()
+            }
         }
-    }
 
-    for (project in rootProject.allprojects) {
-        project.sourceSetsOrNull?.forEach { sourceSet ->
-            project.checkConfig(sourceSet.compileClasspathConfigurationName)
+        for (project in rootProject.allprojects) {
+            project.sourceSetsOrNull?.forEach { sourceSet ->
+                project.checkConfig(sourceSet.compileClasspathConfigurationName)
+            }
         }
     }
 }
