@@ -1889,6 +1889,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           if (scheduleForUpdate) {
             IndexingStamp.flushCache(fileId);
             myChangedFilesCollector.scheduleForUpdate(file);
+          } else if (file instanceof VirtualFileSystemEntry) {
+            ((VirtualFileSystemEntry)file).setFileIndexed(true);
           }
         });
       }
@@ -2219,7 +2221,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           int inputId = Math.abs(getIdMaskingNonIdBasedFile(file));
           for (ID<?, ?> indexId : myNotRequiringContentIndices) {
             if (shouldIndexFile(file, indexId)) {
-              isUptoDate = false;
               if (fileContent == null) {
                 fileContent = new FileContentImpl(file);
               }
