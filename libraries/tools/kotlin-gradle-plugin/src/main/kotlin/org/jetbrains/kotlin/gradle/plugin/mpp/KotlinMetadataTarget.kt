@@ -17,10 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.sources.sourceSetDependencyConfigurati
 import org.jetbrains.kotlin.gradle.targets.metadata.KotlinMetadataTargetConfigurator
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
+import javax.inject.Inject
 
 internal const val COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME = "commonMainMetadataElements"
 
-open class KotlinMetadataTarget(project: Project) : KotlinOnlyTarget<KotlinCommonCompilation>(project, KotlinPlatformType.common) {
+open class KotlinMetadataTarget @Inject constructor(project: Project) :
+    KotlinOnlyTarget<KotlinCommonCompilation>(project, KotlinPlatformType.common) {
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
         if (!project.isKotlinGranularMetadataEnabled)
             super.kotlinComponents

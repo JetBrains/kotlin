@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinOnlyTarget
 import org.jetbrains.kotlin.gradle.utils.addExtendsFromRelation
 import java.util.concurrent.Callable
+import javax.inject.Inject
 
-class KotlinJvmTarget(
+open class KotlinJvmTarget @Inject constructor(
     project: Project
 ) : KotlinOnlyTarget<KotlinJvmCompilation>(project, KotlinPlatformType.jvm),
     KotlinTargetWithTests<JvmClasspathTestRunSource, KotlinJvmTestRun> {

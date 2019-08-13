@@ -23,7 +23,9 @@ open class KotlinJsTargetPreset(
     override val platformType: KotlinPlatformType
         get() = KotlinPlatformType.js
 
-    override fun instantiateTarget() = KotlinJsTarget(project, platformType)
+    override fun instantiateTarget(): KotlinJsTarget {
+        return project.objects.newInstance(KotlinJsTarget::class.java, project, platformType)
+    }
 
     override fun createKotlinTargetConfigurator() = KotlinJsTargetConfigurator(kotlinPluginVersion)
 

@@ -124,7 +124,9 @@ open class KotlinNativeTargetPreset(name: String, project: Project, konanTarget:
     override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTarget> =
         KotlinNativeTargetConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(name: String): KotlinNativeTarget = KotlinNativeTarget(project, konanTarget)
+    override fun instantiateTarget(name: String): KotlinNativeTarget {
+        return project.objects.newInstance(KotlinNativeTarget::class.java, project, konanTarget)
+    }
 }
 
 open class KotlinNativeTargetWithTestsPreset(name: String, project: Project, konanTarget: KonanTarget, kotlinPluginVersion: String) :
@@ -133,7 +135,9 @@ open class KotlinNativeTargetWithTestsPreset(name: String, project: Project, kon
     override fun createTargetConfigurator(): KotlinTargetConfigurator<KotlinNativeTargetWithTests> =
         KotlinNativeTargetWithTestsConfigurator(kotlinPluginVersion)
 
-    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests = KotlinNativeTargetWithTests(project, konanTarget)
+    override fun instantiateTarget(name: String): KotlinNativeTargetWithTests {
+        return project.objects.newInstance(KotlinNativeTargetWithTests::class.java, project, konanTarget)
+    }
 }
 
 internal val KonanTarget.isCurrentHost: Boolean

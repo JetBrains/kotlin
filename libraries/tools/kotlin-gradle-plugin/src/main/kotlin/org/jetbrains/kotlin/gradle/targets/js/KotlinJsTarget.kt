@@ -21,8 +21,9 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.testing.internal.KotlinTestReport
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import javax.inject.Inject
 
-class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
+open class KotlinJsTarget @Inject constructor(project: Project, platformType: KotlinPlatformType) :
     KotlinOnlyTarget<KotlinJsCompilation>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl
@@ -41,7 +42,7 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
         }
 
     private val browserLazyDelegate = lazy {
-        KotlinBrowserJs(this).also {
+        project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
             browserConfiguredHandlers.forEach { handler -> handler(it) }
             browserConfiguredHandlers.clear()
@@ -59,7 +60,7 @@ class KotlinJsTarget(project: Project, platformType: KotlinPlatformType) :
     }
 
     private val nodejsLazyDelegate = lazy {
-        KotlinNodeJs(this).also {
+        project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
             nodejsConfiguredHandlers.forEach { handler -> handler(it) }
             nodejsConfiguredHandlers.clear()

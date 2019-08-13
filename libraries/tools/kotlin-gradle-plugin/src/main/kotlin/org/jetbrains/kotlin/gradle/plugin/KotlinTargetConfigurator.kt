@@ -18,6 +18,7 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.bundling.Jar
@@ -410,14 +411,13 @@ internal interface KotlinTargetWithTestsConfigurator<R : KotlinTargetTestRun<*>,
                             "override the $testRunsPropertyName property with a var."
                 )
 
+        val testRunsContainer = project.container(testRunClass) { testRunName -> createTestRun(testRunName, target) }
+
         @Suppress("UNCHECKED_CAST")
         (mutableProperty as KMutableProperty1<KotlinTargetWithTests<*, R>, NamedDomainObjectContainer<R>>)
-            .set(
-                target,
-                project.container(testRunClass) { testRunName ->
-                    createTestRun(testRunName, target)
-                }
-            )
+            .set(target, testRunsContainer)
+
+        (target as ExtensionAware).extensions.add(target::testRuns.name, testRunsContainer)
     }
 }
 

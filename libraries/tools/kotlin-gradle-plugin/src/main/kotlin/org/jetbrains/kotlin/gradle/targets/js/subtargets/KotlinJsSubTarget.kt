@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.subtargets
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.plugins.ExtensionAware
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -34,8 +35,8 @@ abstract class KotlinJsSubTarget(
     val runTaskName = disambiguateCamelCased("run")
     val testTaskName = disambiguateCamelCased("test")
 
-    override val testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun> =
-        project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, this) }
+    final override lateinit var testRuns: NamedDomainObjectContainer<KotlinJsPlatformTestRun>
+        private set
 
     fun configure() {
         NpmResolverPlugin.apply(project)
@@ -53,6 +54,10 @@ abstract class KotlinJsSubTarget(
         lowerCamelCaseName(target.disambiguationClassifier, disambiguationClassifier, name)
 
     private fun configureTests() {
+        testRuns = project.container(KotlinJsPlatformTestRun::class.java) { name -> KotlinJsPlatformTestRun(name, this) }.also {
+            (this as ExtensionAware).extensions.add(this::testRuns.name, it)
+        }
+
         testRuns.all { configureTestRunDefaults(it) }
         testRuns.create(KotlinTargetWithTests.DEFAULT_TEST_RUN_NAME)
     }

@@ -10,8 +10,9 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsExec
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
+import javax.inject.Inject
 
-class KotlinNodeJs(target: KotlinJsTarget) :
+open class KotlinNodeJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "node"),
     KotlinJsNodeDsl {
 

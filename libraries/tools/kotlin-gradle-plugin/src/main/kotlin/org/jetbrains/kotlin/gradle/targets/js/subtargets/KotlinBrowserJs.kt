@@ -14,8 +14,9 @@ import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.createOrRegisterTask
+import javax.inject.Inject
 
-class KotlinBrowserJs(target: KotlinJsTarget) :
+open class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     KotlinJsSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
