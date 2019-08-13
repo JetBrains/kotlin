@@ -34,4 +34,18 @@ internal class A {
             entry.setValue(value + 1)
         }
     }
+    
+    fun kt21504() {
+        val b = "1".toByte()
+        val s = "1".toShort()
+        val i = "1".toInt()
+        val l = "1".toLong()
+        val f = "1".toFloat()
+        val d = "1".toDouble()
+
+        val b2 = "1".toByte(10)
+        val s2 = "1".toShort(10)
+        val i2 = "1".toInt(10)
+        val l2 = "1".toLong(10)
+    }
 }
