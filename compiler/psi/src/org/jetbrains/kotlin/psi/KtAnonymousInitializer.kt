@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.utils.sure
+import java.util.concurrent.atomic.AtomicLong
 
 interface KtAnonymousInitializer : KtDeclaration, KtStatementExpression {
     val containingDeclaration: KtDeclaration
@@ -57,4 +58,15 @@ class KtScriptInitializer(node: ASTNode) : KtDeclarationImpl(node), KtAnonymousI
         get() = getParentOfType<KtScript>(true).sure { "Should only be present in script" }
 
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D) = visitor.visitScriptInitializer(this, data)
+
+    private val modificationStamp = AtomicLong()
+
+    override fun subtreeChanged() {
+        super.subtreeChanged()
+        modificationStamp.getAndIncrement()
+    }
+
+    fun getModificationStamp(): Long {
+        return modificationStamp.get()
+    }
 }
