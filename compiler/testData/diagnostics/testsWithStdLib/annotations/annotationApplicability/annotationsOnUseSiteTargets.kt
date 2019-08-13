@@ -5,7 +5,7 @@ interface Test {
     <!INAPPLICABLE_JVM_NAME!>@get:JvmName("1")<!>
     val b: Int
 
-    <!SYNCHRONIZED_ON_ABSTRACT!>@get:Synchronized<!>
+    <!SYNCHRONIZED_IN_INTERFACE!>@get:Synchronized<!>
     val c: Int
 
     <!OVERLOADS_INTERFACE, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:JvmOverloads<!>

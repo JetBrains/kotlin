@@ -206,6 +206,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/Synchronized.kt");
         }
 
+        @TestMetadata("SynchronizedOnInterfaceCompanionMember.kt")
+        public void testSynchronizedOnInterfaceCompanionMember() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/SynchronizedOnInterfaceCompanionMember.kt");
+        }
+
         @TestMetadata("targetuse.kt")
         public void testTargetuse() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/targetuse.kt");
