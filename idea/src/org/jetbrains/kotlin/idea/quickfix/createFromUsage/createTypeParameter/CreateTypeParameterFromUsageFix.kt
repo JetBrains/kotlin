@@ -97,7 +97,8 @@ class CreateTypeParameterFromUsageFix(
                 } else null
                 val upperBound = upperBoundText?.let { psiFactory.createType(it) }
                 val newTypeParameterText = if (upperBound != null) "${typeParameter.name} : ${upperBound.text}" else typeParameter.name
-                val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))!!
+                val newTypeParameter = declaration.addTypeParameter(psiFactory.createTypeParameter(newTypeParameterText))
+                    ?: error("Couldn't create type parameter from '$newTypeParameterText' for '$declaration'")
                 elementsToShorten += newTypeParameter
 
                 val anonymizedTypeParameter = createFakeTypeParameterDescriptor(typeParameter.fakeTypeParameter.containingDeclaration, "_")

@@ -489,9 +489,10 @@ fun KtTypeParameterListOwner.addTypeParameter(typeParameter: KtTypeParameter): K
     val list = KtPsiFactory(this).createTypeParameterList("<X>")
     list.parameters[0].replace(typeParameter)
     val leftAnchor = when (this) {
-        is KtClass -> nameIdentifier ?: getClassOrInterfaceKeyword()
+        is KtClass -> nameIdentifier
         is KtNamedFunction -> funKeyword
         is KtProperty -> valOrVarKeyword
+        is KtTypeAlias -> nameIdentifier
         else -> null
     } ?: return null
     return (addAfter(list, leftAnchor) as KtTypeParameterList).parameters.first()

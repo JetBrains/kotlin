@@ -4780,6 +4780,11 @@ public class QuickFixTestGenerated extends AbstractQuickFixTest {
                 public void testNotOnTypeArgumentList() throws Exception {
                     runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration/notOnTypeArgumentList.kt");
                 }
+
+                @TestMetadata("typealias.kt")
+                public void testTypealias() throws Exception {
+                    runTest("idea/testData/quickfix/createFromUsage/createTypeParameter/inReferencedDeclaration/typealias.kt");
+                }
             }
         }
 
