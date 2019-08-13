@@ -11,14 +11,16 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
-import com.intellij.openapi.ui.popup.*;
-import com.intellij.openapi.ui.popup.util.BaseListPopupStep;
+import com.intellij.openapi.ui.popup.JBPopupAdapter;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.LightweightWindowEvent;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiFile;
+import com.intellij.ui.SimpleListCellRenderer;
 import com.intellij.util.IconUtil;
 import com.intellij.util.IncorrectOperationException;
 import com.intellij.util.containers.ContainerUtil;
@@ -138,43 +140,38 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       );
     }
 
-    BaseListPopupStep<TargetDirectoryListItem> step =
-      new BaseListPopupStep<TargetDirectoryListItem>(CodeInsightBundle.message(myKey, filePath), items) {
-        @Override
-        public Icon getIconFor(TargetDirectoryListItem value) {
-          return value.getIcon();
-        }
-
-        @NotNull
-        @Override
-        public String getTextFor(TargetDirectoryListItem value) {
-          return value.getPresentablePath();
-        }
-
-        @Nullable
-        @Override
-        public PopupStep onChosen(TargetDirectoryListItem selectedValue, boolean finalChoice) {
-          WriteCommandAction.writeCommandAction(project)
-            .withName(CodeInsightBundle.message("create.file.text", myNewFileName))
-            .run(() -> apply(project, selectedValue.getTarget()));
-
-          return super.onChosen(selectedValue, finalChoice);
-        }
-      };
-
-    ListPopup popup = JBPopupFactory.getInstance().createListPopup(step);
-    popup.addListener(new JBPopupListener() {
-      @Override
-      public void onClosed(@NotNull LightweightWindowEvent event) {
-        // rerun code-insight after popup close
-        PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
-        if (file != null) {
-          DaemonCodeAnalyzer.getInstance(project).restart(file);
-        }
-      }
+    SimpleListCellRenderer<TargetDirectoryListItem> renderer = SimpleListCellRenderer.create((label, value, index) -> {
+      label.setIcon(value.getIcon());
+      label.setText(value.getPresentablePath());
     });
 
-    popup.showInBestPositionFor(editor);
+    JBPopupFactory.getInstance()
+      .createPopupChooserBuilder(items)
+      .setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
+      .setTitle(CodeInsightBundle.message(myKey, filePath))
+      .setMovable(false)
+      .setResizable(false)
+      .setRequestFocus(true)
+      .setRenderer(renderer)
+      .setNamerForFiltering(item -> item.getPresentablePath())
+      .setItemChosenCallback(chosenValue -> {
+
+        WriteCommandAction.writeCommandAction(project)
+          .withName(CodeInsightBundle.message("create.file.text", myNewFileName))
+          .run(() -> apply(project, chosenValue.getTarget()));
+      })
+      .addListener(new JBPopupAdapter() {
+        @Override
+        public void onClosed(@NotNull LightweightWindowEvent event) {
+          // rerun code-insight after popup close
+          PsiFile file = PsiDocumentManager.getInstance(project).getPsiFile(editor.getDocument());
+          if (file != null) {
+            DaemonCodeAnalyzer.getInstance(project).restart(file);
+          }
+        }
+      })
+      .createPopup()
+      .showInBestPositionFor(editor);
   }
 
   @NotNull
