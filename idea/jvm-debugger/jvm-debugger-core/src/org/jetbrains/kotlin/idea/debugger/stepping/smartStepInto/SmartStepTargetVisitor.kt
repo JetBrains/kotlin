@@ -19,8 +19,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToCall
 import org.jetbrains.kotlin.idea.codeInsight.DescriptorToSourceUtilsIde
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.load.java.isFromJava
@@ -68,7 +66,13 @@ class SmartStepTargetVisitor(
                 val label = KotlinLambdaSmartStepTarget.calcLabel(resultingDescriptor, param.name)
                 val isInline = InlineUtil.isInline(resultingDescriptor)
                 val isSuspend = param.type.isSuspendFunctionType
-                val target = KotlinLambdaSmartStepTarget(label, function, lines, isInline, isSuspend)
+                val target = KotlinLambdaSmartStepTarget(
+                    label,
+                    function,
+                    lines,
+                    isInline,
+                    isSuspend
+                )
                 append(target)
                 return true
             }

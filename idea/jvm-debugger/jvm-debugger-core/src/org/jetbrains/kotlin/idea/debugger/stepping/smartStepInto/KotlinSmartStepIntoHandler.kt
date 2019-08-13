@@ -15,8 +15,6 @@ import com.intellij.util.containers.OrderedSet
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils.getTopmostElementAtOffset
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinBasicStepMethodFilter
 import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaMethodFilter
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinLambdaSmartStepTarget
-import org.jetbrains.kotlin.idea.debugger.stepping.KotlinMethodSmartStepTarget
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 

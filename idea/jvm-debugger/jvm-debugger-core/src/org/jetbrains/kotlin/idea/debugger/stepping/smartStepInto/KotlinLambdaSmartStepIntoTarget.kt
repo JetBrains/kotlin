@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.jetbrains.kotlin.idea.debugger.stepping
+package org.jetbrains.kotlin.idea.debugger.stepping.smartStepInto
 
 import com.intellij.debugger.actions.SmartStepTarget
 import com.intellij.util.Range
