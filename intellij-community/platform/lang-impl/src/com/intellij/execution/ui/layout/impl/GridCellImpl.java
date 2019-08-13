@@ -16,10 +16,7 @@ import com.intellij.ui.components.panels.NonOpaquePanel;
 import com.intellij.ui.content.Content;
 import com.intellij.ui.content.ContentManager;
 import com.intellij.ui.tabs.*;
-import com.intellij.ui.tabs.impl.DefaultTabPainterAdapter;
-import com.intellij.ui.tabs.impl.JBEditorTabs;
-import com.intellij.ui.tabs.impl.TabLabel;
-import com.intellij.ui.tabs.impl.TabPainterAdapter;
+import com.intellij.ui.tabs.impl.*;
 import com.intellij.ui.tabs.impl.singleRow.ScrollableSingleRowLayout;
 import com.intellij.ui.tabs.impl.singleRow.SingleRowLayout;
 import com.intellij.util.SmartList;
@@ -443,7 +440,7 @@ public class GridCellImpl implements GridCell {
     return ActionCallback.DONE;
   }
 
-  private static class GridCellTabs extends JBEditorTabs {
+  private static class GridCellTabs extends SingleHeightTabs {
     private final ViewContextEx myContext;
 
     @Override
@@ -488,7 +485,7 @@ public class GridCellImpl implements GridCell {
 
     @Override
     protected TabLabel createTabLabel(TabInfo info) {
-      return new TabLabel(this, info) {
+      return new SingleHeightTabs.SingleHeightLabel(this, info) {
         @Override
         public void setAlignmentToCenter(boolean toCenter) {
           super.setAlignmentToCenter(false);
