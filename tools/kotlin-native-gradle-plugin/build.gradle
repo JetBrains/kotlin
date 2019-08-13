@@ -77,6 +77,7 @@ dependencies {
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-utils:$kotlinVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-native-shared:$konanVersion"
     bundleDependencies "org.jetbrains.kotlin:kotlin-util-io:$kotlinVersion"
+    bundleDependencies "org.jetbrains.kotlin:kotlin-util-klib:$kotlinVersion"
 
     testImplementation 'junit:junit:4.12'
     testImplementation "org.jetbrains.kotlin:kotlin-test:$buildKotlinVersion"
@@ -90,7 +91,7 @@ dependencies {
 shadowJar {
     from sourceSets.main.output
     configurations = [project.configurations.bundleDependencies]
-    classifier = null
+    archiveClassifier.set(null)
     relocate('org.jetbrains.kotlinx', 'shadow.org.jetbrains.kotlinx')
     relocate('org.jetbrains.kotlin.compilerRunner', 'shadow.org.jetbrains.kotlin.compilerRunner')
     relocate('org.jetbrains.kotlin.konan', 'shadow.org.jetbrains.kotlin.konan')
