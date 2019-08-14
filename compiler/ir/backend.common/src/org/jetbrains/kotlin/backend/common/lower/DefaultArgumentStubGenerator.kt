@@ -363,7 +363,7 @@ open class DefaultParameterInjector(
         if (expression.symbol is IrConstructorSymbol) {
             val defaultArgumentMarker = context.ir.symbols.defaultConstructorMarker
             params += markerParameterDeclaration(realFunction) to
-                    IrConstImpl.constNull(startOffset, endOffset, defaultArgumentMarker.owner.defaultType)
+                    IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
         } else if (context.ir.shouldGenerateHandlerParameterForDefaultBodyFun()) {
             params += realFunction.valueParameters.last() to
                     IrConstImpl.constNull(startOffset, endOffset, context.irBuiltIns.nothingNType)
