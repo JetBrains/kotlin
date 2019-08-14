@@ -16,6 +16,10 @@ fun isDev(version: String): Boolean {
     return version.contains("dev")
 }
 
+fun isSnapshot(version: String): Boolean {
+    return version.contains("SNAPSHOT", ignoreCase = true)
+}
+
 val buildNumber: String by lazy {
     val file = File(PathUtil.kotlinPathsForIdeaPlugin.homePath, "build.txt")
     if (file.exists()) file.readText().trim() else "unknown"
