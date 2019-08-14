@@ -6,7 +6,9 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -280,6 +282,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitExpression(unknownTypeExpression, null)
     }
 
+    open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
+        visitUnknownTypeExpression(binaryLogicExpression, null)
+    }
+
     open fun visitBlock(block: FirBlock) {
         visitUnknownTypeExpression(block, null)
     }
@@ -494,6 +500,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: Nothing?) {
         visitBackingFieldReference(backingFieldReference)
+    }
+
+    final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?) {
+        visitBinaryLogicExpression(binaryLogicExpression)
     }
 
     final override fun visitBlock(block: FirBlock, data: Nothing?) {

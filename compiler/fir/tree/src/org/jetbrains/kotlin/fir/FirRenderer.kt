@@ -949,4 +949,10 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         }
         print("|")
     }
+
+    override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
+        binaryLogicExpression.leftOperand.accept(this)
+        print(" ${binaryLogicExpression.kind.token} ")
+        binaryLogicExpression.rightOperand.accept(this)
+    }
 }

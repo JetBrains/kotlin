@@ -37,15 +37,7 @@ FILE: branches.kt
     }
     public? final? fun grade(g: Int): String {
         ^grade when (g#) {
-            when () {
-                ==($subj$, Int(6)) ->  {
-                    Boolean(true)
-                }
-                else ->  {
-                    ==($subj$, Int(7))
-                }
-            }
-             ->  {
+            ==($subj$, Int(6)) || ==($subj$, Int(7)) ->  {
                 String(Outstanding)
             }
             ==($subj$, Int(5)) ->  {

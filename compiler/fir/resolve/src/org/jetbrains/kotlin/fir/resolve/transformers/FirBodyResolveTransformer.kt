@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirTopLevelDeclaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.withReplacedConeType
 import org.jetbrains.kotlin.fir.symbols.*
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds.Int
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.CompositeTransformResult
@@ -48,6 +47,7 @@ open class FirBodyResolveTransformer(
     final override val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession)
     final override val labels: SetMultimap<Name, ConeKotlinType> = LinkedHashMultimap.create()
     final override val noExpectedType = FirImplicitTypeRefImpl(null)
+    private val booleanType = FirImplicitBooleanTypeRef(null)
 
     final override val symbolProvider = session.service<FirSymbolProvider>()
     val scopes = mutableListOf<FirScope>()
@@ -729,6 +729,15 @@ open class FirBodyResolveTransformer(
                 emptyList()
             )
         return transformedGetClassCall.compose()
+    }
+
+    override fun transformBinaryLogicExpression(
+        binaryLogicExpression: FirBinaryLogicExpression,
+        data: Any?
+    ): CompositeTransformResult<FirStatement> {
+        return super.transformBinaryLogicExpression(binaryLogicExpression, booleanType).also {
+            (it.single as FirBinaryLogicExpression).resultType = booleanType
+        }
     }
 
     // ----------------------- Util functions -----------------------

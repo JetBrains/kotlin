@@ -6,7 +6,9 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -278,6 +280,10 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitUnknownTypeExpression(unknownTypeExpression: FirUnknownTypeExpression, data: D): R {
         return visitExpression(unknownTypeExpression, data)
+    }
+
+    open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R {
+        return visitUnknownTypeExpression(binaryLogicExpression, data)
     }
 
     open fun visitBlock(block: FirBlock, data: D): R {

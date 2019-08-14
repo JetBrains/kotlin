@@ -6,7 +6,9 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -280,6 +282,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformExpression(unknownTypeExpression, data)
     }
 
+    open fun transformBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): CompositeTransformResult<FirStatement> {
+        return transformUnknownTypeExpression(binaryLogicExpression, data)
+    }
+
     open fun transformBlock(block: FirBlock, data: D): CompositeTransformResult<FirStatement> {
         return transformUnknownTypeExpression(block, data)
     }
@@ -494,6 +500,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitBackingFieldReference(backingFieldReference: FirBackingFieldReference, data: D): CompositeTransformResult<FirElement> {
         return transformBackingFieldReference(backingFieldReference, data)
+    }
+
+    final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): CompositeTransformResult<FirElement> {
+        return transformBinaryLogicExpression(binaryLogicExpression, data)
     }
 
     final override fun visitBlock(block: FirBlock, data: D): CompositeTransformResult<FirElement> {
