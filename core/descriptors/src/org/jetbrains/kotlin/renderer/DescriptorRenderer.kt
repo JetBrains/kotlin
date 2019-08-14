@@ -246,10 +246,6 @@ interface DescriptorRendererOptions {
     var parameterNamesInFunctionalTypes: Boolean
     var renderFunctionContracts: Boolean
     var presentableUnresolvedTypes: Boolean
-
-    var renderContextNearLocalVariable: Boolean
-    var fullContextForLocalVariable: Boolean
-    var useBaseClassAsReceiver: Boolean
 }
 
 object ExcludedTypeAnnotations {
