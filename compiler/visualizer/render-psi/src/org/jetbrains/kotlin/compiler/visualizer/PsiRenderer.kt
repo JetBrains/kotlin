@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
 import org.jetbrains.kotlin.renderer.ClassifierNamePolicy
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
+import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
@@ -253,13 +255,21 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         }
 
         private fun renderFqName(descriptor: DeclarationDescriptor): String {
-            /*generateSequence(descriptor) { it.containingDeclaration }
-                .takeWhile {  }*/
-            return descriptor.fqNameUnsafe.render().let {
-                if (descriptor !is PropertyDescriptor && descriptor !is VariableDescriptor)
-                    it.replace(".", "/")
-                else it
-            }
+            return generateSequence(descriptor) { it.containingDeclaration }
+                .fold("") { acc, desc ->
+                    val name = when (desc) {
+                        is LazyPackageDescriptor -> desc.fqName.toString().replace(".", "/")
+                        else -> desc.name.asString()
+                    }
+                    val separator = when {
+                        acc.isEmpty() -> ""
+                        else -> if (desc is PackageFragmentDescriptor || desc is PackageViewDescriptor) "/" else "."
+                    }
+                    if (name == FqName.ROOT.toString() || desc is ModuleDescriptor) {
+                        return acc
+                    }
+                    return@fold "$name$separator$acc"
+                }
         }
 
         private fun renderReceiver(descriptor: CallableDescriptor, data: StringBuilder): ReceiverParameterDescriptor? {
