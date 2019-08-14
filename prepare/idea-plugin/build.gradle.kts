@@ -157,7 +157,7 @@ dependencies {
 val jar = runtimeJar {
     from("$rootDir/resources/kotlinManifest.properties")
     archiveName = "kotlin-plugin.jar"
-}
+}.get() // make it eager to avoid corresponding refactorings in the kotlin-ultimate part for now
 
 val ideaPluginDir: File by rootProject.extra
 tasks.register<Sync>("ideaPlugin") {

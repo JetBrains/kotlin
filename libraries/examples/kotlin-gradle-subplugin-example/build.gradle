@@ -37,5 +37,5 @@ dependencies {
 
 // Relocate `com.intellij.*` and some other classes to match those in the `kotlin-compiler-embeddable`
 // (for example, the actual package at runtime is `org.jetbrains.kotlin.com.intellij.*`):
-ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDepsToShadedCompiler(project, jar, {}), {})
+ArtifactsKt.runtimeJar(project, EmbeddableKt.rewriteDefaultJarDepsToShadedCompiler(project, {}), {})
 // In a standalone build, you can setup the relocation with the Shadow plugin.

@@ -69,12 +69,12 @@ fun Project.runtimeJarArtifactBy(task: Task, artifactRef: Any, body: Configurabl
     }
 }
 
-fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
+fun <T : Jar> Project.runtimeJar(task: TaskProvider<T>, body: T.() -> Unit = {}): TaskProvider<T> {
     extra["runtimeJarTask"] = task
     tasks.findByName("jar")?.let { defaultJarTask ->
         removeArtifacts(configurations.getOrCreate("archives"), defaultJarTask)
     }
-    return task.apply {
+    task.configure {
         configurations.findByName("embedded")?.let { embedded ->
             dependsOn(embedded)
             from {
@@ -86,9 +86,10 @@ fun <T : Jar> Project.runtimeJar(task: T, body: T.() -> Unit = {}): T {
         body()
         project.runtimeJarArtifactBy(this, this)
     }
+    return task
 }
 
-fun Project.runtimeJar(body: Jar.() -> Unit = {}): Jar = runtimeJar(getOrCreateTask("jar", body), { })
+fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = runtimeJar(getOrCreateTask("jar", body), { })
 
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     val task = tasks.register<Jar>("sourcesJar") {
@@ -116,7 +117,7 @@ fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
     return task
 }
 
-fun Project.javadocJar(body: Jar.() -> Unit = {}): Jar = getOrCreateTask("javadocJar") {
+fun Project.javadocJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> = getOrCreateTask("javadocJar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     classifier = "javadoc"
     tasks.findByName("javadoc")?.let { it as Javadoc }?.takeIf { it.enabled }?.let {

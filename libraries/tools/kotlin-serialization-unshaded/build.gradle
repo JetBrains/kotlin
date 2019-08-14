@@ -13,7 +13,8 @@ compileJava {
     options.fork = false
 }
 
-jar {
+TaskProvider<Jar> jar = tasks.named("jar")
+jar.configure {
     manifestAttributes(manifest, project)
 }
 

@@ -34,7 +34,7 @@ fun Project.codegenTest(
     target: Int, jvm: String, jdk: String,
     targetInTestClass: String = "$target",
     body: Test.() -> Unit
-): Test = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
+): TaskProvider<Test> = projectTest("codegenTarget${targetInTestClass}Jvm${jvm}Test") {
     dependsOn(":dist")
     workingDir = rootDir
 

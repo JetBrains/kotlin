@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.internal.artifacts.publish.ArchivePublishArtifact
 import org.gradle.jvm.tasks.Jar
 
 description = "Kapt - Annotation processing for Kotlin"
@@ -22,13 +21,12 @@ projectTest(parallel = true) {
 
 publish()
 
-val jar: Jar by tasks
-jar.apply {
+tasks.named<Jar>("jar").configure {
     classifier = "base"
 }
 
 runtimeJar(rewriteDepsToShadedCompiler(
-    task<ShadowJar>("shadowJar") {
+    tasks.register<ShadowJar>("shadowJar") {
         from(packedJars)
     }
 ))

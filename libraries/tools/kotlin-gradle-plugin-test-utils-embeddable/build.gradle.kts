@@ -28,7 +28,7 @@ dependencies {
 }
 
 runtimeJar(rewriteDepsToShadedCompiler(
-    task<ShadowJar>("shadowJar")  {
+    tasks.register<ShadowJar>("shadowJar")  {
         from(packedJars)
     }
 ))

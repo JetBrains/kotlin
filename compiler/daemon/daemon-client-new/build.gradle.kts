@@ -65,7 +65,7 @@ publish()
 
 noDefaultJar()
 
-runtimeJar(task<ShadowJar>("shadowJar")) {
+runtimeJar(tasks.register<ShadowJar>("shadowJar")) {
     from(mainSourceSet.output)
 }
 

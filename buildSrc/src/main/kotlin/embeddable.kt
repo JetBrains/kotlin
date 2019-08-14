@@ -3,8 +3,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
+import org.gradle.api.tasks.TaskProvider
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.task
 import org.gradle.kotlin.dsl.*
 import java.io.File
 
@@ -59,12 +59,12 @@ private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boo
     }
 }
 
-private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): Jar {
+private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Unit): TaskProvider<out Jar> {
 
     val compilerJar = configurations.getOrCreate("compilerJar")
     dependencies.add(compilerJar.name, dependencies.project(":kotlin-compiler", configuration = "runtimeJar"))
 
-    return task<ShadowJar>(taskName) {
+    return tasks.register<ShadowJar>(taskName) {
         destinationDir = File(buildDir, "libs")
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from(compilerJar)
@@ -72,31 +72,39 @@ private fun Project.compilerShadowJar(taskName: String, body: ShadowJar.() -> Un
     }
 }
 
-fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): Jar =
-        compilerShadowJar(taskName) {
-            configureEmbeddableCompilerRelocation()
-            body()
-        }
+fun Project.embeddableCompiler(taskName: String = "embeddable", body: ShadowJar.() -> Unit = {}): TaskProvider<out Jar> =
+    compilerShadowJar(taskName) {
+        configureEmbeddableCompilerRelocation()
+        body()
+    }
 
-fun Project.compilerDummyForDependenciesRewriting(taskName: String = "compilerDummy", body: ShadowJar.() -> Unit = {}): Jar =
-        compilerShadowJar(taskName) {
-            exclude(packagesToExcludeFromDummy)
-            body()
-        }
+fun Project.compilerDummyForDependenciesRewriting(
+    taskName: String = "compilerDummy", body: ShadowJar.() -> Unit = {}
+): TaskProvider<out Jar> =
+    compilerShadowJar(taskName) {
+        exclude(packagesToExcludeFromDummy)
+        body()
+    }
 
 const val COMPILER_DUMMY_JAR_CONFIGURATION_NAME = "compilerDummyJar"
 
-fun Project.compilerDummyJar(task: Jar, body: Jar.() -> Unit = {}) {
-    task.body()
-    addArtifact(COMPILER_DUMMY_JAR_CONFIGURATION_NAME, task, task)
+fun Project.compilerDummyJar(task: TaskProvider<out Jar>, body: Jar.() -> Unit = {}) {
+    task.configure(body)
+    task.configure {
+        addArtifact(COMPILER_DUMMY_JAR_CONFIGURATION_NAME, this, this)
+    }
 }
 
-fun Project.embeddableCompilerDummyForDependenciesRewriting(taskName: String = "embeddable", body: Jar.() -> Unit = {}): Jar {
+fun Project.embeddableCompilerDummyForDependenciesRewriting(
+    taskName: String = "embeddable", body: Jar.() -> Unit = {}
+): TaskProvider<ShadowJar> {
     val compilerDummyJar = configurations.getOrCreate("compilerDummyJar")
-    dependencies.add(compilerDummyJar.name,
-                     dependencies.project(":kotlin-compiler-embeddable", configuration = COMPILER_DUMMY_JAR_CONFIGURATION_NAME))
+    dependencies.add(
+        compilerDummyJar.name,
+        dependencies.project(":kotlin-compiler-embeddable", configuration = COMPILER_DUMMY_JAR_CONFIGURATION_NAME)
+    )
 
-    return task<ShadowJar>(taskName) {
+    return tasks.register<ShadowJar>(taskName) {
         destinationDir = File(buildDir, "libs")
         setDuplicatesStrategy(DuplicatesStrategy.EXCLUDE)
         from(compilerDummyJar)
@@ -105,14 +113,16 @@ fun Project.embeddableCompilerDummyForDependenciesRewriting(taskName: String = "
     }
 }
 
-fun Project.rewriteDepsToShadedJar(originalJarTask: Jar, shadowJarTask: Jar, body: Jar.() -> Unit = {}): Jar {
-    originalJarTask.apply {
+fun Project.rewriteDepsToShadedJar(
+    originalJarTask: TaskProvider<out Jar>, shadowJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}
+): TaskProvider<out Jar> {
+    originalJarTask.configure {
         classifier = "original"
     }
 
     val compilerDummyJarFile by lazy { configurations.getAt("compilerDummyJar").singleFile }
 
-    return shadowJarTask.apply {
+    shadowJarTask.configure {
         dependsOn(originalJarTask)
         from(originalJarTask)// { include("**") }
 
@@ -123,7 +133,11 @@ fun Project.rewriteDepsToShadedJar(originalJarTask: Jar, shadowJarTask: Jar, bod
         classifier = ""
         body()
     }
+    return shadowJarTask
 }
 
-fun Project.rewriteDepsToShadedCompiler(originalJarTask: Jar, body: Jar.() -> Unit = {}): Jar =
-        rewriteDepsToShadedJar(originalJarTask, embeddableCompilerDummyForDependenciesRewriting(), body)
+fun Project.rewriteDepsToShadedCompiler(originalJarTask: TaskProvider<out Jar>, body: Jar.() -> Unit = {}): TaskProvider<out Jar> =
+    rewriteDepsToShadedJar(originalJarTask, embeddableCompilerDummyForDependenciesRewriting(), body)
+
+fun Project.rewriteDefaultJarDepsToShadedCompiler(body: Jar.() -> Unit = {}): TaskProvider<out Jar> =
+    rewriteDepsToShadedJar(tasks.named<Jar>("jar"), embeddableCompilerDummyForDependenciesRewriting(), body)

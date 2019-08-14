@@ -13,8 +13,6 @@ plugins {
 
 publish()
 
-// todo: make lazy
-val jar: Jar by tasks
 val jarContents by configurations.creating
 
 sourcesJar()
@@ -91,7 +89,7 @@ if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     configurations.compile.get().exclude("com.android.tools.external.com-intellij", "intellij-core")
 }
 
-runtimeJar(rewriteDepsToShadedCompiler(jar)) {
+runtimeJar(rewriteDefaultJarDepsToShadedCompiler()).configure {
     dependsOn(jarContents)
 
     from {

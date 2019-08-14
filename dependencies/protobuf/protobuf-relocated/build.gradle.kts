@@ -25,7 +25,7 @@ dependencies {
     baseProtobufSources("com.google.protobuf:protobuf-java:$protobufVersion:sources")
 }
 
-val prepare = task<ShadowJar>("prepare") {
+val prepare = tasks.register<ShadowJar>("prepare") {
     destinationDir = File(outputJarsPath)
     version = protobufVersion
     classifier = ""
