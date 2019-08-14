@@ -166,9 +166,17 @@ abstract class BaseGradleIT {
             assert(version != runnerGradleVersion) { "Not stopping Gradle daemon v$version as it matches the runner version" }
             println("Stopping gradle daemon v$version")
 
+            val envVariables = if (GradleVersion.version(version) < GradleVersion.version("5.0")) {
+                // Gradle versions below 5.0 do not support running on JDK11, and some of the tests
+                // set JAVA_HOME to JDK11. This makes sure we are using JDK8 when stopping those daemons.
+                environmentVariables + mapOf("JAVA_HOME" to System.getenv()["JDK_18"]!!)
+            } else {
+                environmentVariables
+            }
+
             val wrapperDir = gradleWrappers[version] ?: error("Was asked to stop unknown daemon $version")
             val cmd = createGradleCommand(wrapperDir, arrayListOf("-stop"))
-            val result = runProcess(cmd, wrapperDir, environmentVariables)
+            val result = runProcess(cmd, wrapperDir, envVariables)
             assert(result.isSuccessful) { "Could not stop daemon: $result" }
             DaemonRegistry.unregister(version)
         }
