@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import org.jetbrains.kotlin.backend.common.DescriptorsToIrRemapper
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.descriptors.WrappedSimpleFunctionDescriptor
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.isMethodOfAny
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
@@ -16,8 +16,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.backend.jvm.ir.hasJvmDefault
-import org.jetbrains.kotlin.codegen.OwnerKind
-import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
@@ -32,13 +30,14 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.impl.IrFunctionImpl
+import org.jetbrains.kotlin.ir.declarations.impl.IrPropertyImpl
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrPropertySymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.function.UnaryOperator
 
@@ -49,9 +48,6 @@ internal val interfaceDelegationPhase = makeIrFilePhase(
 )
 
 private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrElementVisitorVoid, FileLoweringPass {
-
-    val state: GenerationState = context.state
-
     val replacementMap = mutableMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
 
     override fun lower(irFile: IrFile) {
@@ -120,19 +116,14 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
 
         val irFunction =
             if (!isDefaultImplsGeneration) {
-                val descriptor = WrappedSimpleFunctionDescriptor(inheritedFun.descriptor.annotations, inheritedFun.descriptor.source)
-                /*
-                    By using WrappedDescriptor, we lose information whether the function is an accessor.
-                    `KotlinTypeMapper` needs that info to generate JVM name.
-                    TODO: streamline name generation.
-                 */
-                val name = Name.identifier(context.state.typeMapper.mapFunctionName(inheritedFun.descriptor, OwnerKind.IMPLEMENTATION))
+                val inheritedProperty = inheritedFun.correspondingPropertySymbol?.owner
+                val descriptor = DescriptorsToIrRemapper.remapDeclaredSimpleFunction(inheritedFun.descriptor)
                 IrFunctionImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
                     IrDeclarationOrigin.DEFINED,
                     IrSimpleFunctionSymbolImpl(descriptor),
-                    name,
+                    inheritedFun.name,
                     Visibilities.PUBLIC,
                     inheritedFun.modality,
                     inheritedFun.returnType,
@@ -142,10 +133,23 @@ private class InterfaceDelegationLowering(val context: JvmBackendContext) : IrEl
                     isSuspend = inheritedFun.isSuspend
                 ).apply {
                     descriptor.bind(this)
-                    parent = inheritedFun.parent
+                    parent = irClass
                     overriddenSymbols.addAll(inheritedFun.overriddenSymbols)
                     copyParameterDeclarationsFrom(inheritedFun)
                     annotations.addAll(inheritedFun.annotations)
+
+                    if (inheritedProperty != null) {
+                        val propertyDescriptor = DescriptorsToIrRemapper.remapDeclaredProperty(inheritedProperty.descriptor)
+                        IrPropertyImpl(
+                            UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.DEFINED, IrPropertySymbolImpl(propertyDescriptor),
+                            inheritedProperty.name, Visibilities.PUBLIC, inheritedProperty.modality, inheritedProperty.isVar,
+                            inheritedProperty.isConst, inheritedProperty.isLateinit, inheritedProperty.isDelegated, isExternal = false
+                        ).apply {
+                            propertyDescriptor.bind(this)
+                            parent = irClass
+                            correspondingPropertySymbol = symbol
+                        }
+                    }
                 }
             } else context.declarationFactory.getDefaultImplsFunction(inheritedFun)
 
