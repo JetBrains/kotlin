@@ -97,19 +97,26 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
             }
         }
 
+        rebuildAndCompareOutput(sourceRoots, testDir, buildLogSteps, outDir)
+    }
+
+    protected open fun rebuildAndCompareOutput(
+        sourceRoots: List<File>,
+        testDir: File,
+        buildLogSteps: List<BuildStep>,
+        outDir: File
+    ) {
         // todo: also compare caches
-        run rebuildAndCompareOutput@{
-            val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
-            val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
-            val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
+        val rebuildOutDir = File(workingDir, "rebuild-out").apply { mkdirs() }
+        val rebuildCacheDir = File(workingDir, "rebuild-cache").apply { mkdirs() }
+        val rebuildResult = make(rebuildCacheDir, sourceRoots, createCompilerArguments(rebuildOutDir, testDir))
 
-            val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
-            val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
-            Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
+        val rebuildExpectedToSucceed = buildLogSteps.last().compileSucceeded
+        val rebuildSucceeded = rebuildResult.exitCode == ExitCode.OK
+        Assert.assertEquals("Rebuild exit code differs from incremental exit code", rebuildExpectedToSucceed, rebuildSucceeded)
 
-            if (rebuildSucceeded) {
-                assertEqualDirectories(rebuildOutDir, outDir, forgiveExtraFiles = false)
-            }
+        if (rebuildSucceeded) {
+            assertEqualDirectories(rebuildOutDir, outDir, forgiveExtraFiles = false)
         }
     }
 
