@@ -122,7 +122,6 @@ public class PsiVFSListener implements BulkFileListener {
         VirtualFile parent = vFile.getParent();
         PsiDirectory parentDir = getCachedDirectory(parent);
         if (parentDir == null) {
-          // parent directory was never accessed via PSI
           handleVfsChangeWithoutPsi(vFile);
           return;
         }
