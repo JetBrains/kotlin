@@ -116,8 +116,14 @@ class KotlinBuildScriptManipulator(
     override fun changeApiVersion(version: String, forTests: Boolean): PsiElement? =
         scriptFile.changeKotlinTaskParameter("apiVersion", version, forTests)
 
+    @Suppress("OverridingDeprecatedMember")
     override fun addKotlinLibraryToModuleBuildScript(
-        targetModule: Module,
+        scope: DependencyScope,
+        libraryDescriptor: ExternalLibraryDescriptor
+    ) = addKotlinLibraryToModuleBuildScript(null, scope, libraryDescriptor)
+
+    override fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module?,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     ) {
@@ -128,7 +134,7 @@ class KotlinBuildScriptManipulator(
             scope.toGradleCompileScope(scriptFile.module?.getBuildSystemType() == AndroidGradle)
         )
 
-        if (usesNewMultiplatform()) {
+        if (targetModule != null && usesNewMultiplatform()) {
             val findOrCreateTargetSourceSet = scriptFile
                 .getKotlinBlock()
                 ?.getSourceSetsBlock()

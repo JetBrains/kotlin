@@ -54,7 +54,16 @@ interface GradleBuildScriptManipulator<out Psi : PsiFile> {
     fun changeApiVersion(version: String, forTests: Boolean): PsiElement?
 
     fun addKotlinLibraryToModuleBuildScript(
-        targetModule: Module,
+        targetModule: Module?,
+        scope: DependencyScope,
+        libraryDescriptor: ExternalLibraryDescriptor
+    )
+
+    @Deprecated(
+        "Can't work with multiplatform projects",
+        ReplaceWith("addKotlinLibraryToModuleBuildScript(null, scope, libraryDescriptor)")
+    )
+    fun addKotlinLibraryToModuleBuildScript(
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     )

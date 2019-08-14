@@ -184,8 +184,14 @@ class GroovyBuildScriptManipulator(
     override fun changeApiVersion(version: String, forTests: Boolean): PsiElement? =
         changeKotlinTaskParameter(scriptFile, "apiVersion", version, forTests)
 
+    @Suppress("OverridingDeprecatedMember")
     override fun addKotlinLibraryToModuleBuildScript(
-        targetModule: Module,
+        scope: DependencyScope,
+        libraryDescriptor: ExternalLibraryDescriptor
+    ) = addKotlinLibraryToModuleBuildScript(null, scope, libraryDescriptor)
+
+    override fun addKotlinLibraryToModuleBuildScript(
+        targetModule: Module?,
         scope: DependencyScope,
         libraryDescriptor: ExternalLibraryDescriptor
     ) {
@@ -197,7 +203,7 @@ class GroovyBuildScriptManipulator(
             libraryDescriptor.maxVersion
         )
 
-        if (usesNewMultiplatform()) {
+        if (targetModule != null && usesNewMultiplatform()) {
             scriptFile
                 .getKotlinBlock()
                 .getSourceSetsBlock()
