@@ -10,6 +10,7 @@ import com.intellij.ui.DoubleClickListener;
 import com.intellij.ui.TreeSpeedSearch;
 import com.intellij.ui.tree.AsyncTreeModel;
 import com.intellij.ui.treeStructure.Tree;
+import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,6 +23,14 @@ import java.awt.event.MouseEvent;
 import static com.intellij.ui.AnimatedIcon.ANIMATION_IN_RENDERER_ALLOWED;
 
 class ServiceViewTree extends Tree {
+  private static final Convertor<TreePath, String> DISPLAY_NAME_CONVERTER = path -> {
+    Object node = path.getLastPathComponent();
+    if (node instanceof ServiceViewItem) {
+      return ServiceViewDragHelper.getDisplayName(((ServiceViewItem)node).getViewDescriptor().getPresentation());
+    }
+    return node.toString();
+  };
+
   private final TreeModel myTreeModel;
 
   ServiceViewTree(@NotNull TreeModel treeModel, @NotNull Disposable parent) {
@@ -39,7 +48,7 @@ class ServiceViewTree extends Tree {
     UIUtil.putClientProperty(this, ANIMATION_IN_RENDERER_ALLOWED, true);
 
     // listeners
-    new TreeSpeedSearch(this, TreeSpeedSearch.NODE_DESCRIPTOR_TOSTRING, true);
+    new TreeSpeedSearch(this, DISPLAY_NAME_CONVERTER, true);
     ServiceViewTreeLinkMouseListener mouseListener = new ServiceViewTreeLinkMouseListener(this);
     mouseListener.installOn(this);
     new DoubleClickListener() {
