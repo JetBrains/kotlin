@@ -69,12 +69,14 @@ fun unzipSdkTask(
             }
         }
     }
-    prepareSdk.dependsOn(unzipTask)
+    prepareSdk.configure {
+        dependsOn(unzipTask)
+    }
 
     additionalConfig?.also {
         dependencies.add(it.name, dependency)
     }
-    
+
     return unzipTask
 }
 

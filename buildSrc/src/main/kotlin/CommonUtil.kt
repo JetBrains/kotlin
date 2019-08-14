@@ -12,11 +12,14 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceSetOutput
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.extra
+import org.gradle.kotlin.dsl.registering
 import org.gradle.kotlin.dsl.the
 import java.io.File
 import java.util.concurrent.Callable
 
-inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
+inline fun <reified T : Task> Project.task(noinline configuration: T.() -> Unit) = tasks.registering(T::class, configuration)
+
+inline fun <reified T : Task> Project.eagerTask(noinline configuration: T.() -> Unit) = tasks.creating(T::class, configuration)
 
 fun Project.callGroovy(name: String, vararg args: Any?): Any? {
     return (property(name) as Closure<*>).call(*args)

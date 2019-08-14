@@ -85,7 +85,7 @@ val fullRuntimeSources by task<Sync> {
 val reducedRuntimeSources by task<Sync> {
     dependsOn(fullRuntimeSources)
 
-    from(fullRuntimeSources.outputs.files.singleFile) {
+    from(fullRuntimeSources.get().outputs.files.singleFile) {
         exclude(
             listOf(
                 "libraries/stdlib/unsigned/**",
@@ -161,10 +161,10 @@ fun JavaExec.buildKLib(sources: List<String>, dependencies: List<String>, outPat
 
 val fullRuntimeDir = buildDir.resolve("fullRuntime/klib")
 
-val generateFullRuntimeKLib by task<NoDebugJavaExec> {
+val generateFullRuntimeKLib by eagerTask<NoDebugJavaExec> {
     dependsOn(fullRuntimeSources)
 
-    buildKLib(sources = listOf(fullRuntimeSources.outputs.files.singleFile.path),
+    buildKLib(sources = listOf(fullRuntimeSources.get().outputs.files.singleFile.path),
               dependencies = emptyList(),
               outPath = fullRuntimeDir.absolutePath,
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/fullRuntime/src/libraries/stdlib/$it" }
@@ -178,11 +178,11 @@ val packFullRuntimeKLib by tasks.registering(Jar::class) {
     archiveFileName.set("full-runtime.klib")
 }
 
-val generateReducedRuntimeKLib by task<NoDebugJavaExec> {
+val generateReducedRuntimeKLib by eagerTask<NoDebugJavaExec> {
     dependsOn(reducedRuntimeSources)
 
     val outPath = buildDir.resolve("reducedRuntime/klib").absolutePath
-    buildKLib(sources = listOf(reducedRuntimeSources.outputs.files.singleFile.path),
+    buildKLib(sources = listOf(reducedRuntimeSources.get().outputs.files.singleFile.path),
               dependencies = emptyList(),
               outPath = outPath,
               commonSources = listOf("common", "src", "unsigned").map { "$buildDir/reducedRuntime/src/libraries/stdlib/$it" }
@@ -193,7 +193,7 @@ val kotlinTestCommonSources = listOf(
     "$rootDir/libraries/kotlin.test/annotations-common/src/main",
     "$rootDir/libraries/kotlin.test/common/src/main"
 )
-val generateKotlinTestKLib by task<NoDebugJavaExec> {
+val generateKotlinTestKLib by eagerTask<NoDebugJavaExec> {
     dependsOn(generateFullRuntimeKLib)
 
     buildKLib(

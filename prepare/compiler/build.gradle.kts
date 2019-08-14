@@ -246,7 +246,7 @@ val proguard by task<ProGuardTask> {
 
     val outputJar = fileFrom(buildDir, "libs", "$compilerBaseName-after-proguard.jar")
 
-    inputs.files(packCompiler.outputs.files.singleFile)
+    inputs.files(packCompiler.get().outputs.files.singleFile)
     outputs.file(outputJar)
 
     libraryjars(mapOf("filter" to "!META-INF/versions/**"), proguardLibraries)
@@ -255,7 +255,7 @@ val proguard by task<ProGuardTask> {
 
     // This properties are used by proguard config compiler.pro
     doFirst {
-        System.setProperty("kotlin-compiler-jar-before-shrink", packCompiler.outputs.files.singleFile.canonicalPath)
+        System.setProperty("kotlin-compiler-jar-before-shrink", packCompiler.get().outputs.files.singleFile.canonicalPath)
         System.setProperty("kotlin-compiler-jar", outputJar.canonicalPath)
     }
 }
@@ -267,7 +267,7 @@ val jar = runtimeJar {
     dependsOn(pack)
 
     from {
-        zipTree(pack.outputs.files.singleFile)
+        zipTree(pack.get().outputs.files.singleFile)
     }
 
     manifest.attributes["Class-Path"] = compilerManifestClassPath

@@ -123,14 +123,14 @@ val reflectShadowJar by task<ShadowJar> {
     }
 }
 
-val stripMetadata by tasks.creating {
+val stripMetadata by tasks.registering {
     dependsOn(reflectShadowJar)
-    val inputJar = reflectShadowJar.outputs.files.singleFile
+    val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = File("$libsDir/kotlin-reflect-stripped.jar")
     inputs.file(inputJar)
     outputs.file(outputJar)
     doLast {
-        stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar, outputJar)
+        stripMetadata(logger, "kotlin/reflect/jvm/internal/impl/.*", inputJar.get(), outputJar)
     }
 }
 
@@ -138,10 +138,10 @@ val proguardOutput = "$libsDir/${property("archivesBaseName")}-proguard.jar"
 
 val proguard by task<ProGuardTask> {
     dependsOn(stripMetadata)
-    inputs.files(stripMetadata.outputs.files)
+    inputs.files(stripMetadata.get().outputs.files)
     outputs.file(proguardOutput)
 
-    injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.outputs.files)
+    injars(mapOf("filter" to "!META-INF/versions/**"), stripMetadata.get().outputs.files)
     injars(mapOf("filter" to "!META-INF/**,!**/*.kotlin_builtins"), proguardAdditionalInJars)
     outjars(proguardOutput)
 
@@ -198,7 +198,7 @@ val result by task<Jar> {
     dependsOn(task)
     
     from {
-        zipTree(task.outputs.files.singleFile)
+        zipTree(task.get().outputs.files.singleFile)
     }
     
     callGroovy("manifestAttributes", manifest, project, "Main")
@@ -208,7 +208,7 @@ val modularJar by task<Jar> {
     dependsOn(proguard)
     archiveClassifier.set("modular")
     from(zipTree(file(proguardOutput)))
-    from(zipTree(reflectShadowJar.archivePath)) {
+    from(zipTree(reflectShadowJar.get().archivePath)) {
         include("META-INF/versions/**")
     }
     callGroovy("manifestAttributes", manifest, project, "Main", true)
@@ -216,14 +216,14 @@ val modularJar by task<Jar> {
 
 val dexMethodCount by task<DexMethodCount> {
     dependsOn(result)
-    jarFile = result.outputs.files.single()
+    jarFile = result.get().outputs.files.single()
     ownPackages = listOf("kotlin.reflect")
 }
 tasks.getByName("check").dependsOn(dexMethodCount)
 
 artifacts {
     listOf(mainJar.name, "runtime", "archives").forEach { configurationName ->
-        add(configurationName, result.outputs.files.singleFile) {
+        add(configurationName, result.get().outputs.files.singleFile) {
             builtBy(result)
         }
     }

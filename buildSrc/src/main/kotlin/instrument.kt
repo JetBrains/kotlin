@@ -68,16 +68,15 @@ fun Project.configureFormInstrumentation() {
             val instrumentedClassesDir = File(project.buildDir, "classes/${sourceSetParam.name}-instrumented")
             (sourceSetParam.output.classesDirs as ConfigurableFileCollection).setFrom(instrumentedClassesDir)
             val instrumentTask =
-                project.tasks.create(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java)
-            instrumentTask.apply {
-                dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
-                sourceSet = sourceSetParam
-                instrumentationClasspath = instrumentationClasspathCfg
-                originalClassesDirs = classesDirsCopy
-                output = instrumentedClassesDir
-            }
+                project.tasks.register(sourceSetParam.getTaskName("instrument", "classes"), IntelliJInstrumentCodeTask::class.java) {
+                    dependsOn(sourceSetParam.classesTaskName).onlyIf { !classesDirsCopy.isEmpty }
+                    sourceSet = sourceSetParam
+                    instrumentationClasspath = instrumentationClasspathCfg
+                    originalClassesDirs = classesDirsCopy
+                    output = instrumentedClassesDir
+                    outputs.dir(instrumentedClassesDir)
+                }
 
-            instrumentTask.outputs.dir(instrumentedClassesDir)
             // Ensure that our task is invoked when the source set is built
             sourceSetParam.compiledBy(instrumentTask)
             @Suppress("UNUSED_EXPRESSION")
