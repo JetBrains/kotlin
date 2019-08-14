@@ -27,7 +27,7 @@ import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analyzer.LanguageSettingsProvider
 import org.jetbrains.kotlin.analyzer.ModuleInfo
-import org.jetbrains.kotlin.cli.common.arguments.Jsr305Parser
+import org.jetbrains.kotlin.cli.common.arguments.JavaTypeEnhancementStateParser
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -77,7 +77,7 @@ object IDELanguageSettingsProvider : LanguageSettingsProvider {
             val settings = KotlinFacetSettingsProvider.getInstance(project)?.getSettings(module) ?: continue
             val compilerArguments = settings.mergedCompilerArguments as? K2JVMCompilerArguments ?: continue
 
-            result = Jsr305Parser(MessageCollector.NONE).parse(
+            result = JavaTypeEnhancementStateParser(MessageCollector.NONE).parse(
                 compilerArguments.jsr305,
                 compilerArguments.supportCompatqualCheckerFrameworkAnnotations
             )

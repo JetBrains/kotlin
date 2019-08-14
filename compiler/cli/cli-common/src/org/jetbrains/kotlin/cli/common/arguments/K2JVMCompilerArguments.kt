@@ -395,7 +395,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     override fun configureAnalysisFlags(collector: MessageCollector): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector)
         result[JvmAnalysisFlags.strictMetadataVersionSemantics] = strictMetadataVersionSemantics
-        result[JvmAnalysisFlags.jsr305] = Jsr305Parser(collector).parse(
+        result[JvmAnalysisFlags.jsr305] = JavaTypeEnhancementStateParser(collector).parse(
             jsr305,
             supportCompatqualCheckerFrameworkAnnotations
         )
