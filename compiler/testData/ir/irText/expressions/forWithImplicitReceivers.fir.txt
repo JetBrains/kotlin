@@ -71,7 +71,9 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
       $receiver: VALUE_PARAMETER name:<this> type:<root>.IntCell
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hasNext (): kotlin.Boolean declared in <root>.IReceiver'
-          ERROR_CALL 'Comparison of arguments with different types: kotlin/Int, kotlin/Boolean' type=kotlin.Boolean
+          CALL 'public final fun greater (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=GT
+            arg0: CALL 'public final fun <get-value> (): kotlin.Int declared in <root>.IntCell' type=kotlin.Int origin=null
+            arg1: CONST Int type=kotlin.Int value=0
     FUN name:next visibility:public modality:OPEN <> ($this:<root>.IReceiver, $receiver:<root>.IntCell) returnType:kotlin.Int
       $this: VALUE_PARAMETER name:<this> type:<root>.IReceiver
       $receiver: VALUE_PARAMETER name:<this> type:<root>.IntCell
