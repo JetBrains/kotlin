@@ -20,17 +20,6 @@ data class UniqId(
     val isPublic: Boolean get() = !isLocal
 }
 
-// isLocal=true in UniqId is good while we dealing with a single current module.
-// To disambiguate module local declarations of different modules we use UniqIdKey.
-// It has moduleDescriptor specified for isLocal=true uniqIds.
-
-// TODO: make sure UniqId is really uniq for any global declaration
-
-data class UniqIdKey private constructor(val uniqId: UniqId, val moduleDescriptor: ModuleDescriptor?) {
-    constructor(moduleDescriptor: ModuleDescriptor?, uniqId: UniqId)
-            : this(uniqId, if (uniqId.isLocal) moduleDescriptor!! else null)
-}
-
 fun protoUniqId(uniqId: UniqId): ProtoUniqId =
     ProtoUniqId.newBuilder()
         .setIndex(uniqId.index)
@@ -38,8 +27,6 @@ fun protoUniqId(uniqId: UniqId): ProtoUniqId =
         .build()
 
 fun ProtoUniqId.uniqId(): UniqId = UniqId(this.index, this.isLocal)
-fun ProtoUniqId.uniqIdKey(moduleDescriptor: ModuleDescriptor) =
-    UniqIdKey(moduleDescriptor, this.uniqId())
 
 fun <T, M : GeneratedMessageLite.ExtendableMessage<M>> M.tryGetExtension(extension: GeneratedMessageLite.GeneratedExtension<M, T>) =
     if (this.hasExtension(extension)) this.getExtension<T>(extension) else null

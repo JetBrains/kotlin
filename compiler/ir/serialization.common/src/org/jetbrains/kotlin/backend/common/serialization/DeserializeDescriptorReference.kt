@@ -25,7 +25,7 @@ abstract class DescriptorReferenceDeserializer(
     val currentModule: ModuleDescriptor,
     val mangler: KotlinMangler,
     val builtIns: IrBuiltIns,
-    val resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>
+    val resolvedForwardDeclarations: MutableMap<UniqId, UniqId>
 ) : DescriptorUniqIdAware {
 
     protected open fun resolveSpecialDescriptor(fqn: FqName) = builtIns.builtIns.getBuiltInClassByFqName(fqn)
@@ -119,8 +119,8 @@ abstract class DescriptorReferenceDeserializer(
             ) {
                 if (descriptor is DeserializedClassDescriptor) {
                     val uniqId = UniqId(descriptor.getUniqId()!!, false)
-                    val newKey = UniqIdKey(null, uniqId)
-                    val oldKey = UniqIdKey(null, UniqId(protoIndex!!, false))
+                    val newKey = uniqId
+                    val oldKey = UniqId(protoIndex!!, false)
 
                     resolvedForwardDeclarations.put(oldKey, newKey)
                 } else {

@@ -415,7 +415,7 @@ abstract class IrFileDeserializer(
     }
 
 
-    fun deserializeEnumConstructorCall(
+    private fun deserializeEnumConstructorCall(
         proto: ProtoEnumConstructorCall,
         start: Int,
         end: Int,
@@ -1246,18 +1246,18 @@ abstract class IrFileDeserializer(
     private val allKnownDeclarationOrigins =
         IrDeclarationOrigin::class.nestedClasses.toList() + DeclarationFactory.FIELD_FOR_OUTER_THIS::class
 
-    val declarationOriginIndex =
+    private val declarationOriginIndex =
         allKnownDeclarationOrigins.map { it.objectInstance as IrDeclarationOriginImpl }.associateBy { it.name }
 
 
-    fun deserializeIrDeclarationOrigin(proto: ProtoDeclarationOrigin): IrDeclarationOriginImpl {
+    private fun deserializeIrDeclarationOrigin(proto: ProtoDeclarationOrigin): IrDeclarationOriginImpl {
         val originName = deserializeString(proto.custom)
         return declarationOriginIndex[originName] ?: object : IrDeclarationOriginImpl(originName) {}
     }
 
     private val allKnownStatementOrigins =
         IrStatementOrigin::class.nestedClasses.toList()
-    val statementOriginIndex =
+    private val statementOriginIndex =
         allKnownStatementOrigins.map { it.objectInstance as? IrStatementOriginImpl }.filterNotNull().associateBy { it.debugName }
 
     fun deserializeIrStatementOrigin(proto: ProtoStatementOrigin): IrStatementOrigin {
