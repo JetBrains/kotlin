@@ -23,7 +23,7 @@ public class RunConfigurationUsageTriggerCollector {
   public static void trigger(@NotNull Project project, @NotNull ConfigurationFactory factory, @NotNull Executor executor) {
     final ConfigurationType configurationType = factory.getType();
     final FeatureUsageData data = newFeatureUsageData(configurationType, factory).addExecutor(executor);
-    FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", "executed", data);
+    FUCounterUsageLogger.getInstance().logEvent(project, "run.configuration.exec", "started", data);
   }
 
   public static class RunConfigurationExecutorUtilValidator extends CustomWhiteListRule {
