@@ -681,6 +681,7 @@ fun generateNullCheckOnCallSite(
 
     if (assertionInfo?.needNotNullAssertion == true) {
         File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(" -")
+        codegen.v.dup()
         codegen.v.invokestatic(IntrinsicMethods.INTRINSICS_CLASS_NAME, "checkNotNull", "(Ljava/lang/Object;)V", false)
     }
 }

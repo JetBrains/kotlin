@@ -121,8 +121,7 @@ object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker
         val isEnabledGeneratingNullChecksOnCallSite =
             context.languageVersionSettings.supportsFeature(LanguageFeature.GenerateNullChecksForGenericTypeReturningFunctions)
 
-        if (isEnabledGeneratingNullChecksOnCallSite &&
-            unsubstitutedReturnType.isTypeParameter() &&
+        if (unsubstitutedReturnType.isTypeParameter() &&
             unsubstitutedReturnType.isNullable() &&
             !inferredReturnType.isNullable()
         ) {
