@@ -22,7 +22,7 @@ dependencies {
     relocatedProtobuf(project(":protobuf-relocated"))
 }
 
-val prepare by tasks.creating {
+val prepare by tasks.registering {
     inputs.files(relocatedProtobuf) // this also adds a dependency
     outputs.file(outputJarPath)
     doFirst {

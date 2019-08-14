@@ -29,13 +29,13 @@ node {
 }
 
 tasks {
-    "yarn" {
+    named("yarn") {
         outputs.upToDateWhen {
             projectDir.resolve("node_modules").isDirectory
         }
     }
 
-    create<YarnTask>("yarnBuild") {
+    register<YarnTask>("yarnBuild") {
         group = "build"
 
         dependsOn("yarn")
@@ -54,7 +54,7 @@ tasks {
         outputs.dir("lib")
     }
 
-    create<Delete>("cleanYarn") {
+    register<Delete>("cleanYarn") {
         group = "build"
 
         delete = setOf(
@@ -64,11 +64,13 @@ tasks {
         )
     }
 
-    getByName("clean").dependsOn("cleanYarn")
+    named("clean") {
+        dependsOn("cleanYarn")
+    }
 }
 
-val jar = tasks.create<Jar>("jar") {
-    dependsOn("yarnBuild")
+val jar by tasks.creating(Jar::class) {
+    dependsOn(tasks.named("yarnBuild"))
     from(projectDir.resolve("lib"))
 }
 

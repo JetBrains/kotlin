@@ -51,7 +51,7 @@ dependencies {
     androidDxSources("google:dx:0@tar.gz")
 }
 
-val unzipDxJar by tasks.creating {
+val unzipDxJar by tasks.registering {
     val outputDir = File(buildDir, name)
     val outputFile = File(outputDir, "dx.jar")
 
@@ -68,7 +68,7 @@ val unzipDxJar by tasks.creating {
     }
 }
 
-val untarDxSources by tasks.creating {
+val untarDxSources by tasks.registering {
     val dxSourcesTargetDir = File(buildDir, name)
     dependsOn(androidDxSources)
     inputs.files(androidDxSources)
@@ -83,7 +83,7 @@ val untarDxSources by tasks.creating {
     }
 }
 
-val prepareDxSourcesJar by tasks.creating(Jar::class) {
+val prepareDxSourcesJar by tasks.registering(Jar::class) {
     dependsOn(untarDxSources)
     from(untarDxSources)
 

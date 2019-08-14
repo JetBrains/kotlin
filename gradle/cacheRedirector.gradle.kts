@@ -178,7 +178,9 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
     }
 }
 
-tasks.findByName("checkBuild")?.dependsOn(checkRepositories)
+tasks.named("checkBuild").configure {
+    dependsOn(checkRepositories)
+}
 
 if (cacheRedirectorEnabled()) {
     logger.info("Redirecting repositories for $displayName")

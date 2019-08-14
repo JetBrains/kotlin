@@ -9,7 +9,7 @@ plugins {
 val builtinsSrc = fileFrom(rootDir, "core", "builtins", "src")
 val builtinsNative = fileFrom(rootDir, "core", "builtins", "native")
 
-val serialize by tasks.creating(NoDebugJavaExec::class) {
+val serialize by tasks.registering(NoDebugJavaExec::class) {
     val outDir = "$buildDir/$name"
     val inDirs = arrayOf(builtinsSrc, builtinsNative)
     inDirs.forEach { inputs.dir(it) }
