@@ -3,10 +3,7 @@ package com.intellij.largeFilesEditor.search;
 
 import com.intellij.find.SearchReplaceComponent;
 import com.intellij.largeFilesEditor.editor.EditorManager;
-import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskBase;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.event.CaretEvent;
 import com.intellij.openapi.util.TextRange;

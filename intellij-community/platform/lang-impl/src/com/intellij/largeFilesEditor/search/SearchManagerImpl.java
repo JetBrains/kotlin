@@ -12,7 +12,9 @@ import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.editor.EditorManager;
 import com.intellij.largeFilesEditor.search.actions.*;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
-import com.intellij.largeFilesEditor.search.searchTask.*;
+import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
+import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
+import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.IdeActions;
@@ -135,7 +137,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
     RangeSearch rangeSearch = myRangeSearchCreator.createContent(
       editorManager.getProject(), editorManager.getVirtualFile(),
-      editorManager.getVirtualFile().getName(), fileDataProviderForSearch);
+      editorManager.getVirtualFile().getName());
 
     rangeSearch.setAdditionalStatusText(null);
     rangeSearch.updateTabName();
@@ -157,7 +159,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
                                          pagesAmount - 1 : searchTaskOptions.rightBoundPageNumber);
     rangeSearch.update();
 
-    rangeSearch.runSearch(searchTaskOptions);
+    rangeSearch.runSearch(searchTaskOptions, fileDataProviderForSearch);
   }
 
   @Override

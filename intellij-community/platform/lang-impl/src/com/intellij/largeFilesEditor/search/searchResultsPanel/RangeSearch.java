@@ -5,11 +5,9 @@ import com.intellij.largeFilesEditor.GuiUtils;
 import com.intellij.largeFilesEditor.Utils;
 import com.intellij.largeFilesEditor.editor.EditorManager;
 import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
-import com.intellij.largeFilesEditor.search.SearchManagerImpl;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.actions.FindFurtherAction;
 import com.intellij.largeFilesEditor.search.actions.StopRangeSearchAction;
-import com.intellij.largeFilesEditor.search.searchTask.CloseSearchTask;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.largeFilesEditor.search.searchTask.RangeSearchTask;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
@@ -58,7 +56,6 @@ public class RangeSearch implements RangeSearchTask.Callback {
   private final Project myProject;
   private final VirtualFile myVirtualFile;
   private final EditorManagerAccessor myEditorManagerAccessor;
-  private final FileDataProviderForSearch myFileDataProviderForSearch;
 
   private Content myContent = null;
   private final JComponent myComponent;
@@ -99,12 +96,10 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   public RangeSearch(@NotNull VirtualFile virtualFile,
                      @NotNull Project project,
-                     @NotNull EditorManagerAccessor editorManagerAccessor,
-                     FileDataProviderForSearch fileDataProviderForSearch) {
+                     @NotNull EditorManagerAccessor editorManagerAccessor) {
     myVirtualFile = virtualFile;
     myProject = project;
     myEditorManagerAccessor = editorManagerAccessor;
-    myFileDataProviderForSearch = fileDataProviderForSearch;
 
     lblSearchStatusLeft = new SimpleColoredComponent();
     lblSearchStatusLeft.setBorder(JBUI.Borders.emptyLeft(5));
@@ -370,7 +365,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
                          myLeftBorderPageNumber - 1, SearchTaskOptions.NO_LIMIT);
     }
 
-    runSearch(newOptions);
+    runSearch(newOptions, editorManager.getFileDataProviderForSearch());
   }
 
   private void updateStatusStringInfo() {
@@ -410,9 +405,9 @@ public class RangeSearch implements RangeSearchTask.Callback {
     return myComponent;
   }
 
-  public void runSearch(SearchTaskOptions searchTaskOptions) {
+  public void runSearch(SearchTaskOptions searchTaskOptions, FileDataProviderForSearch fileDataProviderForSearch) {
     final RangeSearchTask newRangeSearchTask = new RangeSearchTask(
-      searchTaskOptions, myProject, myFileDataProviderForSearch, this);
+      searchTaskOptions, myProject, fileDataProviderForSearch, this);
     lastExecutedRangeSearchTask = newRangeSearchTask;
     String title = newRangeSearchTask.getTitleForBackgroundableTask();
     Task.Backgroundable task = new Task.Backgroundable(null, title, true) {
@@ -457,13 +452,13 @@ public class RangeSearch implements RangeSearchTask.Callback {
       ApplicationManager.getApplication().invokeLater(() -> {
         if (!caller.isShouldStop()) {
           // caller is instance of RangeSearchTask
-            if (caller.getOptions().searchForwardDirection) {
-              setRightBorderPageNumber(curPageNumber);
-            }
-            else {
-              setLeftBorderPageNumber(curPageNumber);
-            }
-            update();
+          if (caller.getOptions().searchForwardDirection) {
+            setRightBorderPageNumber(curPageNumber);
+          }
+          else {
+            setLeftBorderPageNumber(curPageNumber);
+          }
+          update();
         }
       });
     }

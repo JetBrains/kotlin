@@ -4,7 +4,6 @@ package com.intellij.largeFilesEditor.search;
 import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
 import com.intellij.largeFilesEditor.editor.EditorManagerAccessorImpl;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
-import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,11 +19,9 @@ public class RangeSearchCreatorImpl implements RangeSearchCreator {
   @Override
   public RangeSearch createContent(Project project,
                                    VirtualFile virtualFile,
-                                   String titleName,
-                                   FileDataProviderForSearch fileDataProviderForSearch) {
+                                   String titleName) {
     EditorManagerAccessor editorManagerAccessor = new EditorManagerAccessorImpl();
-    RangeSearch rangeSearch = new RangeSearch(
-      virtualFile, project, editorManagerAccessor, fileDataProviderForSearch);
+    RangeSearch rangeSearch = new RangeSearch(virtualFile, project, editorManagerAccessor);
     Content content = UsageViewContentManager.getInstance(project).addContent(
       titleName, true, rangeSearch.getComponent(), false, true);
     rangeSearch.setContent(content);
@@ -40,5 +37,4 @@ public class RangeSearchCreatorImpl implements RangeSearchCreator {
 
     return rangeSearch;
   }
-
 }
