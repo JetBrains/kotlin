@@ -11,6 +11,7 @@ import com.intellij.openapi.ui.popup.JBPopup;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.util.DimensionService;
 import com.intellij.openapi.util.Disposer;
+import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.util.ui.JBInsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +24,7 @@ public class RunAnythingManager {
   private JBPopup myBalloon;
   private RunAnythingPopupUI myRunAnythingUI;
   private Dimension myBalloonFullSize;
+  @Nullable private String mySelectedText;
 
   public RunAnythingManager(@NotNull Project project) {
     myProject = project;
@@ -50,12 +52,18 @@ public class RunAnythingManager {
       myRunAnythingUI.getSearchField().selectAll();
     }
 
+    predefineSelectedText(searchText);
+
     myBalloon = JBPopupFactory.getInstance().createComponentPopupBuilder(myRunAnythingUI, myRunAnythingUI.getSearchField())
       .setProject(myProject)
       .setModalContext(false)
       .setCancelOnClickOutside(true)
       .setRequestFocus(true)
       .setCancelKeyEnabled(false)
+      .setCancelCallback(() -> {
+        saveSearchText();
+        return true;
+      })
       .addUserData("SIMPLE_WINDOW")
       .setResizable(true)
       .setMovable(true)
@@ -84,6 +92,28 @@ public class RunAnythingManager {
       myBalloon.setSize(prefSize);
     }
     calcPositionAndShow(project, myBalloon);
+  }
+
+  private void predefineSelectedText(@Nullable String searchText) {
+    if (StringUtil.isEmpty(searchText)) {
+      searchText = mySelectedText;
+    }
+
+    if (StringUtil.isNotEmpty(searchText)) {
+      myRunAnythingUI.getSearchField().setText(searchText);
+      myRunAnythingUI.getSearchField().selectAll();
+    }
+  }
+
+  private void saveSearchText() {
+    if (!isShown()) {
+      return;
+    }
+
+    String searchText = myRunAnythingUI.getSearchField().getText();
+    if (!searchText.isEmpty()) {
+      mySelectedText = searchText;
+    }
   }
 
   private void calcPositionAndShow(Project project, JBPopup balloon) {
