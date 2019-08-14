@@ -22,7 +22,40 @@ import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 
 class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
-    fun parse(value: Array<String>?, supportCompatqualCheckerFrameworkAnnotations: String?): JavaTypeEnhancementState {
+    fun parse(
+        jsr305Args: Array<String>?, supportCompatqualCheckerFrameworkAnnotations: String?
+    ): JavaTypeEnhancementState {
+        val jsr305State = parseJsr305State(jsr305Args)
+
+        val enableCompatqualCheckerFrameworkAnnotations = when (supportCompatqualCheckerFrameworkAnnotations) {
+            "enable" -> true
+            "disable" -> false
+            null -> null
+            else -> {
+                collector.report(
+                    CompilerMessageSeverity.ERROR,
+                    "Unrecognized -Xsupport-compatqual-checker-framework-annotations option: $supportCompatqualCheckerFrameworkAnnotations. Possible values are 'enable'/'disable'"
+                )
+                null
+            }
+        }
+
+        val state = JavaTypeEnhancementState(
+            jsr305State.global ?: ReportLevel.WARN, jsr305State.migration, jsr305State.usedDefined,
+            enableCompatqualCheckerFrameworkAnnotations =
+            enableCompatqualCheckerFrameworkAnnotations
+                ?: JavaTypeEnhancementState.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
+        )
+        return if (state == JavaTypeEnhancementState.DISABLED_JSR_305) JavaTypeEnhancementState.DISABLED_JSR_305 else state
+    }
+
+    private data class Jsr305State(
+        val global: ReportLevel?,
+        val migration: ReportLevel?,
+        val usedDefined: Map<String, ReportLevel>
+    )
+
+    private fun parseJsr305State(args: Array<String>?): Jsr305State {
         var global: ReportLevel? = null
         var migration: ReportLevel? = null
         val userDefined = mutableMapOf<String, ReportLevel>()
@@ -32,7 +65,7 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
             return ReportLevel.findByDescription(rawState) ?: reportUnrecognizedJsr305(item).let { null }
         }
 
-        value?.forEach { item ->
+        args?.forEach { item ->
             when {
                 item.startsWith("@") -> {
                     val (name, state) = parseJsr305UserDefined(item) ?: return@forEach
@@ -55,8 +88,8 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                 }
                 item == "enable" -> {
                     collector.report(
-                            CompilerMessageSeverity.STRONG_WARNING,
-                            "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
+                        CompilerMessageSeverity.STRONG_WARNING,
+                        "Option 'enable' for -Xjsr305 flag is deprecated. Please use 'strict' instead"
                     )
                     if (global != null) return@forEach
 
@@ -72,27 +105,7 @@ class JavaTypeEnhancementStateParser(private val collector: MessageCollector) {
                 }
             }
         }
-
-        val enableCompatqualCheckerFrameworkAnnotations = when (supportCompatqualCheckerFrameworkAnnotations) {
-            "enable" -> true
-            "disable" -> false
-            null -> null
-            else -> {
-                collector.report(
-                    CompilerMessageSeverity.ERROR,
-                    "Unrecognized -Xsupport-compatqual-checker-framework-annotations option: $supportCompatqualCheckerFrameworkAnnotations. Possible values are 'enable'/'disable'"
-                )
-                null
-            }
-        }
-
-        val state = JavaTypeEnhancementState(
-            global ?: ReportLevel.WARN, migration, userDefined,
-            enableCompatqualCheckerFrameworkAnnotations =
-            enableCompatqualCheckerFrameworkAnnotations
-                    ?: JavaTypeEnhancementState.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
-        )
-        return if (state == JavaTypeEnhancementState.DISABLED_JSR_305) JavaTypeEnhancementState.DISABLED_JSR_305 else state
+        return Jsr305State(global, migration, userDefined)
     }
 
     private fun reportUnrecognizedJsr305(item: String) {
