@@ -131,9 +131,8 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
     val target: String
         @Input get() = compilation.target.konanTarget.name
 
-    // TODO: rework.
     val additionalCompilerOptions: Collection<String>
-        @Input get() = compilation.extraOpts
+        @Input get() = kotlinOptions.freeCompilerArgs
 
     // region Language settings imported from a SourceSet.
     val languageSettings: LanguageSettingsBuilder?
@@ -169,12 +168,12 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
         override var suppressWarnings: Boolean = false
         override var verbose: Boolean = false
 
-        // TODO: deprecate extraOptions because now we have a uniform way to access these parameters.
+        // TODO: Drop extraOpts in 1.3.70 and create a list here directly
         // Delegate for compilations's extra options.
         override var freeCompilerArgs: List<String>
-            get() = compilation.extraOpts
+            get() = compilation.extraOptsNoWarn
             set(value) {
-                compilation.extraOpts = value.toMutableList()
+                compilation.extraOptsNoWarn = value.toMutableList()
             }
     }
 
