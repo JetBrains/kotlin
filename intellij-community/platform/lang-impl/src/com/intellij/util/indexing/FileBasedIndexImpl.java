@@ -2188,7 +2188,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         }
         myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
           boolean isUptoDate = true;
-          if (file.isDirectory() || !isTooLarge(file)) {
+          boolean isDirectory = file.isDirectory();
+          if (!isDirectory && !isTooLarge(file)) {
             final List<ID<?, ?>> affectedIndexCandidates = getAffectedIndexCandidates(file);
             //noinspection ForLoopReplaceableByForEach
             for (int i = 0, size = affectedIndexCandidates.size(); i < size; ++i) {
@@ -2219,7 +2220,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           }
           FileContent fileContent = null;
           int inputId = Math.abs(getIdMaskingNonIdBasedFile(file));
-          for (ID<?, ?> indexId : myNotRequiringContentIndices) {
+          for (ID<?, ?> indexId : isDirectory ? myIndicesForDirectories : myNotRequiringContentIndices) {
             if (shouldIndexFile(file, indexId)) {
               if (fileContent == null) {
                 fileContent = new FileContentImpl(file);
