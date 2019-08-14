@@ -32,8 +32,7 @@ import org.jetbrains.kotlin.fir.types.render
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.primitiveOp1
-import org.jetbrains.kotlin.ir.builders.primitiveOp2
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.*
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
@@ -60,9 +59,9 @@ internal class Fir2IrVisitor(
     private val moduleDescriptor: FirModuleDescriptor,
     private val symbolTable: SymbolTable,
     private val sourceManager: PsiSourceManager,
-    private val irBuiltIns: IrBuiltIns,
+    override val irBuiltIns: IrBuiltIns,
     private val fakeOverrideMode: FakeOverrideMode
-) : FirVisitor<IrElement, Any?>() {
+) : FirVisitor<IrElement, Any?>(), IrGeneratorContextInterface {
     companion object {
         private val NEGATED_OPERATIONS: Set<FirOperation> = EnumSet.of(FirOperation.NOT_EQ, FirOperation.NOT_IDENTITY)
 
