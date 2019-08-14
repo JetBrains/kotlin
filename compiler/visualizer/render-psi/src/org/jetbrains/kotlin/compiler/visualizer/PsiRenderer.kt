@@ -36,6 +36,7 @@ import java.util.ArrayList
 class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer {
     val bindingContext = analysisResult.bindingContext
     private val annotations = mutableListOf<Annotator.AnnotationInfo>()
+    private val filePackage = file.packageFqName.toString().replace(".", "/")
 
     val descriptorRenderer = PsiDescriptorRenderer()
 
@@ -217,10 +218,12 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         private val typeRenderer: DescriptorRenderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
             modifiers = emptySet()
-            classifierNamePolicy = /*ClassifierNamePolicy.SOURCE_CODE_QUALIFIED*/object : ClassifierNamePolicy {
+            classifierNamePolicy = object : ClassifierNamePolicy {
                 override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-                    return (if (classifier is TypeParameterDescriptor) renderer.renderName(classifier.name, false)
+                    val fqName = (if (classifier is TypeParameterDescriptor) renderer.renderName(classifier.name, false)
                     else renderer.renderFqName(DescriptorUtils.getFqName(classifier))).replace(".", "/")
+
+                    return removeCurrentFilePackage(fqName)
                 }
             }
             includeAdditionalModifiers = false
@@ -254,8 +257,8 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             }
         }
 
-        private fun renderFqName(descriptor: DeclarationDescriptor): String {
-            return generateSequence(descriptor) { it.containingDeclaration }
+        private fun renderFqName(descriptor: DeclarationDescriptor, removeCurrentPackage: Boolean = true): String {
+            val fqName = generateSequence(descriptor) { it.containingDeclaration }
                 .fold("") { acc, desc ->
                     val name = when (desc) {
                         is LazyPackageDescriptor -> desc.fqName.toString().replace(".", "/")
@@ -266,10 +269,20 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
                         else -> if (desc is PackageFragmentDescriptor || desc is PackageViewDescriptor) "/" else "."
                     }
                     if (name == FqName.ROOT.toString() || desc is ModuleDescriptor) {
-                        return acc
+                        return@fold acc
                     }
                     return@fold "$name$separator$acc"
                 }
+
+            return if (removeCurrentPackage) removeCurrentFilePackage(fqName) else fqName
+        }
+
+        private fun removeCurrentFilePackage(fqName: String): String {
+            return if (fqName.startsWith(filePackage) && !fqName.substring(filePackage.length + 1).contains("/")) {
+                fqName.replaceFirst("$filePackage/", "")
+            } else {
+                fqName
+            }
         }
 
         private fun renderReceiver(descriptor: CallableDescriptor, data: StringBuilder): ReceiverParameterDescriptor? {
@@ -331,11 +344,11 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         }
 
         override fun visitPackageFragmentDescriptor(descriptor: PackageFragmentDescriptor, data: StringBuilder) {
-            data.append("package-fragment ${renderFqName(descriptor)}")
+            data.append("package-fragment ${renderFqName(descriptor, removeCurrentPackage = false)}")
         }
 
         override fun visitPackageViewDescriptor(descriptor: PackageViewDescriptor, data: StringBuilder) {
-            data.append("package ${renderFqName(descriptor)}")
+            data.append("package ${renderFqName(descriptor, removeCurrentPackage = false)}")
         }
 
         override fun visitVariableDescriptor(variable: VariableDescriptor, data: StringBuilder) {
