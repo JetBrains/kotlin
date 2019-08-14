@@ -1689,7 +1689,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     fc.putUserData(IndexingDataKeys.PROJECT, project);
   }
 
-  private boolean updateSingleIndex(@NotNull ID<?, ?> indexId, VirtualFile file, final int inputId, @Nullable FileContent currentFC) {
+  private boolean updateSingleIndex(@NotNull ID<?, ?> indexId, @Nullable VirtualFile file, int inputId, @Nullable FileContent currentFC) {
     if (!myExtensionsRelatedDataWasLoaded) reportUnexpectedAsyncInitState();
     if (!RebuildStatus.isOk(indexId) && !myIsUnitTestMode) {
       return false; // the index is scheduled for rebuild, no need to update
@@ -1698,8 +1698,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
     final UpdatableIndex<?, ?, FileContent> index = getIndex(indexId);
     assert index != null;
-
-    boolean hasContent = currentFC != null;
 
     if (ourIndexedFile.get() != null) throw new AssertionError("Reentrant indexing");
     ourIndexedFile.set(file);
@@ -1710,7 +1708,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       final Computable<Boolean> update = index.update(inputId, currentFC);
       updateCalculated = true;
 
-      scheduleUpdate(indexId, update, file, inputId, hasContent);
+      runIndexUpdate(indexId, update, file, inputId);
     }
     catch (RuntimeException exception) {
       Throwable causeToRebuildIndex = getCauseToRebuildIndex(exception);
@@ -1765,11 +1763,15 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     myReadLock = lock.readLock();
     myWriteLock = lock.writeLock();
   }
-  private void scheduleUpdate(@NotNull final ID<?, ?> indexId, @NotNull Computable<Boolean> update, VirtualFile file, final int inputId, final boolean hasContent) {
+
+  private void runIndexUpdate(@NotNull ID<?, ?> indexId,
+                              @NotNull Computable<Boolean> update,
+                              @Nullable VirtualFile file,
+                              int inputId) {
     if (runUpdate(false, update)) {
-      ConcurrencyUtil.withLock(myReadLock, ()->{
+      ConcurrencyUtil.withLock(myReadLock, () -> {
         UpdatableIndex<?, ?, FileContent> index = getIndex(indexId);
-        if (hasContent) {
+        if (file != null) {
           index.setIndexedStateForFile(inputId, file);
         }
         else {
