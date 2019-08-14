@@ -823,7 +823,7 @@ public class GotoActionModel implements ChooseByNameModel, Comparator<Object>, D
         return value.getHit() + " = " + value.getValue();
       }
       String hit = StringUtil.defaultIfEmpty(value.getHit(), value.getOption());
-      return StringUtil.unescapeXmlEntities(hit)
+      return StringUtil.unescapeXmlEntities(StringUtil.notNullize(hit))
         .replace(BundleBase.MNEMONIC_STRING, "")
         .replace("  ", " "); // avoid extra spaces from mnemonics and xml conversion
     }
