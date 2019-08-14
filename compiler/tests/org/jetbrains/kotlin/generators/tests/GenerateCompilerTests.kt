@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
+import org.jetbrains.kotlin.visualizer.AbstractPsiVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -480,4 +481,9 @@ fun main(args: Array<String>) {
         }
     }
 
+    testGroup("compiler/visualizer/tests", "compiler/fir/psi2fir/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForRawFirDataGenerated") {
+            model("rawBuilder", testMethod = "doFirBuilderDataTest")
+        }
+    }
 }
