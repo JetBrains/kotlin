@@ -1826,8 +1826,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
         // the file is for sure not a dir and it was previously indexed by at least one index
         if (file.isValid()) {
-          if(!isTooLarge(file)) myChangedFilesCollector.scheduleForUpdate(file);
-          else myChangedFilesCollector.scheduleForUpdate(new DeletedVirtualFileStub((VirtualFileWithId)file));
+          myChangedFilesCollector.scheduleForUpdate(isTooLarge(file) ? new DeletedVirtualFileStub((VirtualFileWithId)file) : file);
         }
         else {
           LOG.info("Unexpected state in update:" + file);
@@ -1854,14 +1853,19 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     // handle 'content-less' indices separately
     boolean fileIsDirectory = file.isDirectory();
 
+    boolean fileTypeCalculated = false;
     if (!contentChange) {
       FileContent fileContent = null;
-      for (ID<?, ?> indexId : fileIsDirectory ? myIndicesForDirectories : myNotRequiringContentIndices) {
-        if (getInputFilter(indexId).acceptInput(file)) {
-          if (fileContent == null) {
-            fileContent = new FileContentImpl(file);
+      FileType fastFileType = fileIsDirectory ? file.getFileType() : myFileTypeManager.getByFile(file);
+      if (fastFileType != null) {
+        fileTypeCalculated = true;
+        for (ID<?, ?> indexId : fileIsDirectory ? myIndicesForDirectories : myNotRequiringContentIndices) {
+          if (getInputFilter(indexId).acceptInput(file)) {
+            if (fileContent == null) {
+              fileContent = new FileContentImpl(file, fastFileType);
+            }
+            updateSingleIndex(indexId, file, fileId, fileContent);
           }
-          updateSingleIndex(indexId, file, fileId, fileContent);
         }
       }
     }
@@ -1874,6 +1878,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         myChangedFilesCollector.removeScheduledFileFromUpdate(file);
       }
       else {
+        boolean finalFileTypeCalculated = fileTypeCalculated;
         myFileTypeManager.freezeFileTypeTemporarilyIn(file, () -> {
           final List<ID<?, ?>> candidates = getAffectedIndexCandidates(file);
 
@@ -1882,7 +1887,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
           //noinspection ForLoopReplaceableByForEach
           for (int i = 0, size = candidates.size(); i < size; ++i) {
             final ID<?, ?> indexId = candidates.get(i);
-            if (needsFileContentLoading(indexId) && getInputFilter(indexId).acceptInput(file)) {
+            if ((!finalFileTypeCalculated || needsFileContentLoading(indexId)) && getInputFilter(indexId).acceptInput(file)) {
               getIndex(indexId).resetIndexedStateForFile(fileId);
               scheduleForUpdate = true;
             }
@@ -1895,7 +1900,11 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
             ((VirtualFileSystemEntry)file).setFileIndexed(true);
           }
         });
+        return;
       }
+    }
+    if (file instanceof VirtualFileSystemEntry) {
+      ((VirtualFileSystemEntry)file).setFileIndexed(true);
     }
   }
 
