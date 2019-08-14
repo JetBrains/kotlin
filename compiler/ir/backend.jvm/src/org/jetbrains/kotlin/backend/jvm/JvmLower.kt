@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.loops.forLoopsPhase
 import org.jetbrains.kotlin.backend.common.phaser.*
 import org.jetbrains.kotlin.backend.jvm.lower.*
 import org.jetbrains.kotlin.codegen.OwnerKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -71,10 +72,15 @@ private val lateinitPhase = makeIrFilePhase(
 private val propertiesPhase = makeIrFilePhase<JvmBackendContext>(
     { context ->
         PropertiesLowering(context, JvmLoweredDeclarationOrigin.SYNTHETIC_METHOD_FOR_PROPERTY_ANNOTATIONS) { property ->
-            val getterName = property.getter?.let { getter ->
-                context.typeMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
-            } ?: JvmAbi.getterName(property.name.asString())
-            JvmAbi.getSyntheticMethodNameForAnnotatedProperty(getterName)
+            val baseName =
+                if (context.state.languageVersionSettings.supportsFeature(LanguageFeature.UseGetterNameForPropertyAnnotationsMethodOnJvm)) {
+                    property.getter?.let { getter ->
+                        context.typeMapper.mapFunctionName(getter, OwnerKind.IMPLEMENTATION)
+                    } ?: JvmAbi.getterName(property.name.asString())
+                } else {
+                    property.name.asString()
+                }
+            JvmAbi.getSyntheticMethodNameForAnnotatedProperty(baseName)
         }
     },
     name = "Properties",
