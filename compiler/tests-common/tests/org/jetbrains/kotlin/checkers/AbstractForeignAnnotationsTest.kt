@@ -40,16 +40,16 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     }
 
     protected fun compileTestAnnotations(extraClassPath: List<File>): List<File> =
-            listOf(MockLibraryUtil.compileJavaFilesLibraryToJar(
-                TEST_ANNOTATIONS_SOURCE_PATH,
-                "test-foreign-annotations",
-                extraOptions = listOf("-Xallow-kotlin-package"),
-                extraClasspath = extraClassPath.map { it.path }
+        listOf(MockLibraryUtil.compileJavaFilesLibraryToJar(
+            TEST_ANNOTATIONS_SOURCE_PATH,
+            "test-foreign-annotations",
+            extraOptions = listOf("-Xallow-kotlin-package"),
+            extraClasspath = extraClassPath.map { it.path }
         ))
 
     protected fun createJarWithForeignAnnotations(): List<File> = listOf(
-            MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
-            ForTestCompileRuntime.jvmAnnotationsForTests()
+        MockLibraryUtil.compileJavaFilesLibraryToJar(annotationsPath, "foreign-annotations"),
+        ForTestCompileRuntime.jvmAnnotationsForTests()
     )
 
     open protected val annotationsPath: String
@@ -58,10 +58,10 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     override fun loadLanguageVersionSettings(module: List<TestFile>): LanguageVersionSettings {
         val analysisFlags = loadAnalysisFlags(module)
         return CompilerTestLanguageVersionSettings(
-                DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
-                ApiVersion.LATEST_STABLE,
-                LanguageVersion.LATEST_STABLE,
-                analysisFlags = analysisFlags
+            DEFAULT_DIAGNOSTIC_TESTS_FEATURES,
+            ApiVersion.LATEST_STABLE,
+            LanguageVersion.LATEST_STABLE,
+            analysisFlags = analysisFlags
         )
     }
 
@@ -78,10 +78,16 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             name to state
         }.toMap()
 
-        return mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(globalState, migrationState, userAnnotationsState))
+        return mapOf(
+            JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
+                globalState,
+                migrationState,
+                userAnnotationsState
+            )
+        )
     }
 
     private fun List<TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {
-            InTextDirectivesUtils.findLinesWithPrefixesRemoved(it.expectedText, directive).firstOrNull()
+        InTextDirectivesUtils.findLinesWithPrefixesRemoved(it.expectedText, directive).firstOrNull()
     }.firstOrNull().let { ReportLevel.findByDescription(it) }
 }
