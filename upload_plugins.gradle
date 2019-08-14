@@ -2,19 +2,17 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url('https://dl.bintray.com/jetbrains/plugin-repository-rest-client/')
+            url('https://dl.bintray.com/jetbrains/intellij-plugin-service')
         }
     }
     dependencies {
-        classpath 'org.jetbrains.intellij:plugin-repository-rest-client:0.1.15'
+        classpath 'org.jetbrains.intellij:plugin-repository-rest-client:0.4.32'
     }
 }
 
 task uploadPlugins {
     doLast {
         def env = System.getenv()
-        def username = env['PLUGIN_REPOSITORY_USER']
-        def password = env['PLUGIN_REPOSITORY_PASSWORD']
         def channel = env['PLUGIN_REPOSITORY_CHANNEL']
         if (channel == "_default_") {
             channel = null
@@ -23,9 +21,10 @@ task uploadPlugins {
         if (path == null) {
             path = "."
         }
-        def repo = new org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance(
-                "https://plugins.jetbrains.com/",
-                username, password)
+
+        def token = project.property("plugins.repository.token")
+
+        def repo = new org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance("https://plugins.jetbrains.com/", token)
 
         File[] files = new File(path).listFiles({ _, String filename ->
             if (!filename.startsWith("kotlin-plugin") || !filename.endsWith(".zip")) false
@@ -47,5 +46,3 @@ task uploadPlugins {
         }
     }
 }
-
-defaultTasks 'uploadPlugins'
