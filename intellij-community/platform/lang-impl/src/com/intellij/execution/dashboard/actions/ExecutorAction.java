@@ -76,12 +76,15 @@ public abstract class ExecutorAction extends DumbAwareAction {
 
     String executorId = getExecutor().getId();
     RunConfiguration configuration = settings.getConfiguration();
+    Project project = configuration.getProject();
     if (configuration instanceof CompoundRunConfiguration) {
+      if (ExecutionTargetManager.getInstance(project).getTargetsFor(configuration).isEmpty()) return false;
+
       List<SettingsAndEffectiveTarget> subConfigurations =
         ((CompoundRunConfiguration)configuration).getConfigurationsWithEffectiveRunTargets();
-      if (!isValid(settings)) return false;
+      if (subConfigurations.isEmpty()) return false;
 
-      RunManager runManager = RunManager.getInstance(configuration.getProject());
+      RunManager runManager = RunManager.getInstance(project);
       for (SettingsAndEffectiveTarget subConfiguration : subConfigurations) {
         RunnerAndConfigurationSettings subSettings = runManager.findSettings(subConfiguration.getConfiguration());
         if (subSettings == null || !canRun(subSettings, subConfiguration.getTarget(), isDumb)) {
@@ -95,7 +98,7 @@ public abstract class ExecutorAction extends DumbAwareAction {
 
     ProgramRunner<?> runner = ProgramRunner.getRunner(executorId, configuration);
     return runner != null && ExecutionTargetManager.canRun(configuration, target) &&
-          !ExecutorRegistry.getInstance().isStarting(configuration.getProject(), executorId, runner.getRunnerId());
+          !ExecutorRegistry.getInstance().isStarting(project, executorId, runner.getRunnerId());
   }
 
   private static boolean isValid(RunnerAndConfigurationSettings settings) {
