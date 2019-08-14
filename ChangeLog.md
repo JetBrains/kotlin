@@ -22,6 +22,9 @@
 - [`KT-31734`](https://youtrack.jetbrains.com/issue/KT-31734) Empty parameter list required on Annotations of function types
 - [`KT-32434`](https://youtrack.jetbrains.com/issue/KT-32434) New type inference fails for Caffeine Cache
 - [`KT-32452`](https://youtrack.jetbrains.com/issue/KT-32452) Kotlin 1.3.40 - problem in IDE with new type inference and suspending method reference
+- [`KT-32407`](https://youtrack.jetbrains.com/issue/KT-32407) NI: "use property access syntax" intention causes freezes in editor
+- [`KT-33127`](https://youtrack.jetbrains.com/issue/KT-33127) Script result value is not calculated properly for the last expression
+- [`KT-33157`](https://youtrack.jetbrains.com/issue/KT-33157) Inline class with generic method is considered bad class by javac
 
 ### Docs & Examples
 
@@ -57,6 +60,8 @@
 - [`KT-29267`](https://youtrack.jetbrains.com/issue/KT-29267) Enable ultra-light classes by default
 - [`KT-31129`](https://youtrack.jetbrains.com/issue/KT-31129) Call only Kotlin-specific reference contributors for getting Kotlin references from PSI
 - [`KT-32082`](https://youtrack.jetbrains.com/issue/KT-32082) Kotlin facet: 1.3.40 plugin does not properly read target platform settings of 1.3.50 plugin
+- [`KT-32969`](https://youtrack.jetbrains.com/issue/KT-32969) Data class extending abstract class with final `toString`, `equals` or `hashCode` causes exception
+- [`KT-33245`](https://youtrack.jetbrains.com/issue/KT-33245) IllegalArgumentException exception occurs on Tools->Configure Koltin in Project action in Android Studio
 
 ### IDE. Completion
 
@@ -113,6 +118,7 @@
 - [`KT-30974`](https://youtrack.jetbrains.com/issue/KT-30974) Script dependencies resolution failed error while trying to use Kotlin for Gradle
 - [`KT-31440`](https://youtrack.jetbrains.com/issue/KT-31440) Add link to Gradle Kotlin DSL logs when script dependencies resolution process fails
 - [`KT-32483`](https://youtrack.jetbrains.com/issue/KT-32483) CNFE org.gradle.kotlin.dsl.KotlinBuildScript on creating new Gradle Kotlin project from wizard
+- [`KT-21501`](https://youtrack.jetbrains.com/issue/KT-21501) build.gradle.kts displays failures if not using java sdk for module
 
 ### IDE. Inspections and Intentions
 
@@ -220,6 +226,7 @@
 - [`KT-23604`](https://youtrack.jetbrains.com/issue/KT-23604) Scratch: end of line is wrongly indented with the end of scratch line output 
 - [`KT-27963`](https://youtrack.jetbrains.com/issue/KT-27963) Make REPL mode in Scratch files incremental
 - [`KT-29534`](https://youtrack.jetbrains.com/issue/KT-29534) Line output jumps to the next line together with cursor
+- [`KT-32791`](https://youtrack.jetbrains.com/issue/KT-32791) "Access is allowed from event dispatch thread only" while working with a scratch file
 
 ### IDE. Script
 
@@ -256,6 +263,8 @@
 - [`KT-29372`](https://youtrack.jetbrains.com/issue/KT-29372) measureTime that returns both the result of block and elapsed time
 - [`KT-32083`](https://youtrack.jetbrains.com/issue/KT-32083) Incorrect ReplaceWith annotation on kotlin.js.pow
 - [`KT-12749`](https://youtrack.jetbrains.com/issue/KT-12749) Provide Int.bitCount, Long.bitCount etc.
+- [`KT-32359`](https://youtrack.jetbrains.com/issue/KT-32359) Common Array.fill
+- [`KT-33225`](https://youtrack.jetbrains.com/issue/KT-33225) JS: Incorrect conversion of infinite Double to Long
 
 ### Reflection
 
@@ -269,6 +278,16 @@
 - [`KT-32950`](https://youtrack.jetbrains.com/issue/KT-32950) Daemon should inherit "-XX:MaxMetaspaceSize" of client VM
 - [`KT-32992`](https://youtrack.jetbrains.com/issue/KT-32992) Enable assertions in Kotlin Compile Daemon
 - [`KT-33027`](https://youtrack.jetbrains.com/issue/KT-33027) Compilation with daemon fails, because IncrementalModuleInfo#serialVersionUID does not match
+
+### Tools. CLI
+
+- [`KT-33177`](https://youtrack.jetbrains.com/issue/KT-33177) Introduce compiler flags -Xinline-classes and -Xpolymorphic-signature as a higher priority than -XXLanguage
+
+### Tools. Compiler Plugins
+
+- [`KT-28824`](https://youtrack.jetbrains.com/issue/KT-28824) Add jvm-abi-gen-embeddable for use with embeddable compiler
+- [`KT-31279`](https://youtrack.jetbrains.com/issue/KT-31279) JPS build with compiler plugin and "Keep compiler alive = No" fails with CCE: "Cannot cast NoArgComponentRegistrar to ComponentRegistrar" at ServiceLoaderLite.loadImplementations()
+- [`KT-32346`](https://youtrack.jetbrains.com/issue/KT-32346) kotlinx.serialization: Performance problems with completion/intellisense
 
 ### Tools. Gradle
 
@@ -309,6 +328,7 @@
 - [`KT-31891`](https://youtrack.jetbrains.com/issue/KT-31891) Gradle: JS or Native tests execution: `build --scan` fails with ISE "Expected attachment of type ... but did not find it"
 - [`KT-32210`](https://youtrack.jetbrains.com/issue/KT-32210) Kapt randomly fails with java.io.UTFDataFormatException
 - [`KT-32706`](https://youtrack.jetbrains.com/issue/KT-32706) Gradle target "jsBrowserWebpack" should use output of JS compile task as input
+- [`KT-32697`](https://youtrack.jetbrains.com/issue/KT-32697) [Tests] org.jetbrains.kotlin.gradle.SubpluginsIT
 
 
 ### Tools. Incremental Compile
@@ -347,6 +367,7 @@
 - [`KT-32702`](https://youtrack.jetbrains.com/issue/KT-32702) New J2K: lambda with method reference is converted to lamdba with excessive parameter declaration
 - [`KT-32835`](https://youtrack.jetbrains.com/issue/KT-32835) New J2K: NumberFormatException occurs on converting binary literals
 - [`KT-32837`](https://youtrack.jetbrains.com/issue/KT-32837) J2K: NumberFormatException occurs on converting literals with underscore characters
+- [`KT-22412`](https://youtrack.jetbrains.com/issue/KT-22412) J2K: Intention to replace if(...) throw IAE with require
 
 ### Tools. JPS
 
@@ -369,6 +390,7 @@
 - [`KT-31127`](https://youtrack.jetbrains.com/issue/KT-31127) Kotlin-generating processor which uses Filer API breaks JavaCompile task
 - [`KT-31378`](https://youtrack.jetbrains.com/issue/KT-31378) v1.3.31: NoSuchElementException in kapt when kapt.incremental.apt=true
 - [`KT-32535`](https://youtrack.jetbrains.com/issue/KT-32535) Kapt aptMode=compile don't include files generated at `kapt.kotlin.generated` as sources to compile
+- [`KT-31471`](https://youtrack.jetbrains.com/issue/KT-31471) KAPT prints "IncrementalProcessor" instead of processor name in verbose mode
 
 ### Kotlin Native
 Related [Kotlin Native changelog](https://github.com/JetBrains/kotlin-native/blob/master/CHANGELOG.md#v1350-aug-2019) can be found separately.
