@@ -14,29 +14,30 @@ object Annotator {
 
     class AnnotationInfo(val text: String, val range: TextRange)
 
-    private fun putAnnotationToLines(annotations: List<AnnotationInfo>, lineStart: Int, lineSize: Int): Map<Int, StringBuilder> {
-        val annotationLines = mutableMapOf(0 to StringBuilder(comment + " ".repeat(lineSize - comment.length)))
+    private fun putAnnotationToLines(annotations: List<AnnotationInfo>, lineStart: Int, lineSize: Int): List<StringBuilder> {
+        val annotationLines = mutableListOf(StringBuilder(comment + " ".repeat(lineSize - comment.length)))
+        val levelToOffset = mutableMapOf(0 to 0)
 
-        var prevAnnStart = Int.MAX_VALUE
-        var lastLevel = 1
         for (ann in annotations) {
-            if (ann.range.startOffset + ann.text.length >= prevAnnStart) {
-                lastLevel++
-            } else {
-                lastLevel = 1
+            var lastLevel = 0
+            lastLevel = levelToOffset.values.takeWhile { ann.range.startOffset + ann.text.length >= it }.size
+
+            if (annotationLines.size <= lastLevel) {
+                annotationLines.add(StringBuilder(comment + " ".repeat(lineSize - comment.length)))
             }
 
-            if (!annotationLines.containsKey(lastLevel)) {
-                annotationLines[lastLevel] = StringBuilder(comment + " ".repeat(lineSize - comment.length))
-            }
             val startReplace = max(comment.length, ann.range.startOffset - lineStart)
-            annotationLines[lastLevel] = annotationLines[lastLevel]!!.replace(startReplace, startReplace + ann.text.length, ann.text)
+            annotationLines[lastLevel].replace(startReplace, startReplace + ann.text.length, ann.text)
 
             for (i in 0 until lastLevel) {
-                annotationLines[i] = annotationLines[i]!!.replace(startReplace, startReplace + 1, verticalLine)
+                if (annotationLines[i][startReplace] == ' ') { //to avoid char replacement for a multilevel annotation
+                    annotationLines[i].replace(startReplace, startReplace + 1, verticalLine)
+                }
             }
 
-            prevAnnStart = ann.range.startOffset
+            for (i in 1..lastLevel) {
+                levelToOffset[i] = ann.range.startOffset
+            }
         }
 
         return annotationLines
@@ -54,9 +55,7 @@ object Annotator {
 
             if (annotations.isNotEmpty()) {
                 val annotationLines = putAnnotationToLines(annotations, lineStartOffset, line.length)
-                annotationLines.toSortedMap(Comparator.reverseOrder()).mapTo(resultLines) {
-                    it.value.toString()
-                }
+                annotationLines.asReversed().mapTo(resultLines) { it.toString() }
             }
             resultLines.add(line)
 
