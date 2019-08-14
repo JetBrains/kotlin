@@ -18,11 +18,11 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 
 class Jsr305Parser(private val collector: MessageCollector) {
-    fun parse(value: Array<String>?, supportCompatqualCheckerFrameworkAnnotations: String?): Jsr305State {
+    fun parse(value: Array<String>?, supportCompatqualCheckerFrameworkAnnotations: String?): JavaTypeEnhancementState {
         var global: ReportLevel? = null
         var migration: ReportLevel? = null
         val userDefined = mutableMapOf<String, ReportLevel>()
@@ -86,13 +86,13 @@ class Jsr305Parser(private val collector: MessageCollector) {
             }
         }
 
-        val state = Jsr305State(
+        val state = JavaTypeEnhancementState(
             global ?: ReportLevel.WARN, migration, userDefined,
             enableCompatqualCheckerFrameworkAnnotations =
             enableCompatqualCheckerFrameworkAnnotations
-                    ?: Jsr305State.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
+                    ?: JavaTypeEnhancementState.COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
         )
-        return if (state == Jsr305State.DISABLED) Jsr305State.DISABLED else state
+        return if (state == JavaTypeEnhancementState.DISABLED_JSR_305) JavaTypeEnhancementState.DISABLED_JSR_305 else state
     }
 
     private fun reportUnrecognizedJsr305(item: String) {

@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
 
@@ -78,7 +78,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             name to state
         }.toMap()
 
-        return mapOf(JvmAnalysisFlags.jsr305 to Jsr305State(globalState, migrationState, userAnnotationsState))
+        return mapOf(JvmAnalysisFlags.jsr305 to JavaTypeEnhancementState(globalState, migrationState, userAnnotationsState))
     }
 
     private fun List<TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {

@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import java.io.File
 
 class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
@@ -97,7 +97,7 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
                 listOf(File(TEST_DATA_PATH))
         ).apply {
             languageVersionSettings = LanguageVersionSettingsImpl(
-                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.jsr305 to Jsr305State.STRICT)
+                    LanguageVersion.LATEST_STABLE, ApiVersion.LATEST_STABLE, mapOf(JvmAnalysisFlags.jsr305 to JavaTypeEnhancementState.STRICT)
             )
         }
 

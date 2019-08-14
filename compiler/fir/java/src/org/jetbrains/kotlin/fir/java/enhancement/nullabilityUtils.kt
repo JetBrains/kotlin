@@ -13,23 +13,23 @@ import org.jetbrains.kotlin.load.java.*
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifier
 import org.jetbrains.kotlin.load.java.typeEnhancement.NullabilityQualifierWithMigrationStatus
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 fun List<FirAnnotationCall>.extractNullability(
     annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    jsr305State: Jsr305State
+    javaTypeEnhancementState: JavaTypeEnhancementState
 ): NullabilityQualifierWithMigrationStatus? =
     this.firstNotNullResult { annotationCall ->
-        annotationCall.extractNullability(annotationTypeQualifierResolver, jsr305State)
+        annotationCall.extractNullability(annotationTypeQualifierResolver, javaTypeEnhancementState)
     }
 
 
 fun FirAnnotationCall.extractNullability(
     annotationTypeQualifierResolver: FirAnnotationTypeQualifierResolver,
-    jsr305State: Jsr305State
+    javaTypeEnhancementState: JavaTypeEnhancementState
 ): NullabilityQualifierWithMigrationStatus? {
-    this.extractNullabilityFromKnownAnnotations(jsr305State)?.let { return it }
+    this.extractNullabilityFromKnownAnnotations(javaTypeEnhancementState)?.let { return it }
 
     val typeQualifierAnnotation =
         annotationTypeQualifierResolver.resolveTypeQualifierAnnotation(this)
@@ -38,10 +38,10 @@ fun FirAnnotationCall.extractNullability(
     val jsr305ReportLevel = annotationTypeQualifierResolver.resolveJsr305ReportLevel(this)
     if (jsr305ReportLevel.isIgnore) return null
 
-    return typeQualifierAnnotation.extractNullabilityFromKnownAnnotations(jsr305State)?.copy(isForWarningOnly = jsr305ReportLevel.isWarning)
+    return typeQualifierAnnotation.extractNullabilityFromKnownAnnotations(javaTypeEnhancementState)?.copy(isForWarningOnly = jsr305ReportLevel.isWarning)
 }
 
-private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(jsr305State: Jsr305State): NullabilityQualifierWithMigrationStatus? {
+private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(javaTypeEnhancementState: JavaTypeEnhancementState): NullabilityQualifierWithMigrationStatus? {
     val annotationClassId = classId ?: return null
 
     return when {
@@ -49,10 +49,10 @@ private fun FirAnnotationCall.extractNullabilityFromKnownAnnotations(jsr305State
         annotationClassId in NOT_NULL_ANNOTATION_IDS -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
         annotationClassId == JAVAX_NONNULL_ANNOTATION_ID -> extractNullabilityTypeFromArgument()
 
-        annotationClassId == COMPATQUAL_NULLABLE_ANNOTATION_ID && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+        annotationClassId == COMPATQUAL_NULLABLE_ANNOTATION_ID && javaTypeEnhancementState.enableCompatqualCheckerFrameworkAnnotations ->
             NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
 
-        annotationClassId == COMPATQUAL_NONNULL_ANNOTATION_ID && jsr305State.enableCompatqualCheckerFrameworkAnnotations ->
+        annotationClassId == COMPATQUAL_NONNULL_ANNOTATION_ID && javaTypeEnhancementState.enableCompatqualCheckerFrameworkAnnotations ->
             NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
 
         annotationClassId == ANDROIDX_RECENTLY_NON_NULL_ANNOTATION_ID -> NullabilityQualifierWithMigrationStatus(

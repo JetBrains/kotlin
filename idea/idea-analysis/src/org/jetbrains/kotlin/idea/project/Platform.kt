@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.utils.Jsr305State
+import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import java.io.File
 
 val KtElement.platform: TargetPlatform
@@ -116,7 +116,7 @@ fun Module.getStableName(): Name {
 @JvmOverloads
 fun Project.getLanguageVersionSettings(
     contextModule: Module? = null,
-    jsr305State: Jsr305State? = null,
+    javaTypeEnhancementState: JavaTypeEnhancementState? = null,
     isReleaseCoroutines: Boolean? = null
 ): LanguageVersionSettings {
     val kotlinFacetSettings = contextModule?.let {
@@ -150,7 +150,7 @@ fun Project.getLanguageVersionSettings(
     }
 
     val extraAnalysisFlags = additionalArguments.configureAnalysisFlags(MessageCollector.NONE).apply {
-        if (jsr305State != null) put(JvmAnalysisFlags.jsr305, jsr305State)
+        if (javaTypeEnhancementState != null) put(JvmAnalysisFlags.jsr305, javaTypeEnhancementState)
         initIDESpecificAnalysisSettings(this@getLanguageVersionSettings)
     }
 
