@@ -13,7 +13,7 @@ object JvmAnalysisFlags {
     val strictMetadataVersionSemantics by AnalysisFlag.Delegates.Boolean
 
     @JvmStatic
-    val jsr305 by Delegates.Jsr305StateWarnByDefault
+    val javaTypeEnhancementState by AnalysisFlag.Delegates.JavaTypeEnhancementStateWarnByDefault
 
     @JvmStatic
     val jvmDefaultMode by Delegates.JvmDefaultModeDisabledByDefault

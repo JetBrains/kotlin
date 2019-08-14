@@ -78,7 +78,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             name to state
         }.toMap()
 
-        return mapOf(JvmAnalysisFlags.jsr305 to JavaTypeEnhancementState(globalState, migrationState, userAnnotationsState))
+        return mapOf(JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(globalState, migrationState, userAnnotationsState))
     }
 
     private fun List<TestFile>.getDirectiveValue(directive: String): ReportLevel? = mapNotNull {

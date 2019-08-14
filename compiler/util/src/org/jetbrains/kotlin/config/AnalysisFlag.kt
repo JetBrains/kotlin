@@ -34,7 +34,7 @@ class AnalysisFlag<out T> internal constructor(
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, ExplicitApiMode.DISABLED)
         }
 
-        object Jsr305StateWarnByDefault {
+        object JavaTypeEnhancementStateWarnByDefault {
             operator fun provideDelegate(instance: Any?, property: KProperty<*>) = Delegate(property.name, JavaTypeEnhancementState.DEFAULT)
         }
 
