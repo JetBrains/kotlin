@@ -53,7 +53,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.coverage.CoverageManager
 import org.jetbrains.kotlin.ir.symbols.impl.IrTypeParameterSymbolImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.konan.library.KonanLibraryLayout
-import org.jetbrains.kotlin.library.SerializedIr
+import org.jetbrains.kotlin.library.SerializedIrModule
 
 /**
  * Offset for synthetic elements created by lowerings and not attributable to other places in the source code.
@@ -270,7 +270,7 @@ internal class Context(config: KonanConfig) : KonanBackendContext(config) {
     // But we have to wait until the code generation phase,
     // to dump this information into generated file.
     var serializedMetadata: SerializedMetadata? = null
-    var serializedIr: SerializedIr? = null
+    var serializedIr: SerializedIrModule? = null
     var dataFlowGraph: ByteArray? = null
 
     val librariesWithDependencies by lazy {

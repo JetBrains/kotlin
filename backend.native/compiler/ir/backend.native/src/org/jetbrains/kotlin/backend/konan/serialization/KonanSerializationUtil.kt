@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.descriptors.isExpectMember
 import org.jetbrains.kotlin.backend.konan.descriptors.isSerializableExpectClass
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
+import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.serialization.konan.SourceFileMap
  * with MemberDeserializer class.
  */
 
-internal class KonanSerializationUtil(val context: Context, val metadataVersion: BinaryVersion, val declarationTable: DeclarationTable) {
+internal class KonanSerializationUtil(val context: Context, val metadataVersion: BinaryVersion, val descriptorTable: DescriptorTable) {
 
     lateinit var serializerContext: SerializerContext
 
@@ -46,7 +46,7 @@ internal class KonanSerializationUtil(val context: Context, val metadataVersion:
             var classSerializer: DescriptorSerializer = topSerializer
     )
     private fun createNewContext(): SerializerContext {
-        val extension = KonanSerializerExtension(context, metadataVersion, sourceFileMap, declarationTable)
+        val extension = KonanSerializerExtension(context, metadataVersion, sourceFileMap, descriptorTable)
         return SerializerContext(
                 extension,
                 DescriptorSerializer.createTopLevel(extension)

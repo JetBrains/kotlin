@@ -8,6 +8,6 @@ class KonanDescriptorReferenceDeserializer(
     currentModule: ModuleDescriptor,
     mangler: KotlinMangler,
     builtIns: IrBuiltIns,
-    resolvedForwardDeclarations: MutableMap<UniqIdKey, UniqIdKey>
+    resolvedForwardDeclarations: MutableMap<UniqId, UniqId>
 ): DescriptorReferenceDeserializer(currentModule, mangler, builtIns, resolvedForwardDeclarations),
    DescriptorUniqIdAware by KonanDescriptorUniqIdAware

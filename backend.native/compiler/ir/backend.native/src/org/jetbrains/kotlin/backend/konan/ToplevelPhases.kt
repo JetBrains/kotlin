@@ -14,15 +14,23 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
+import org.jetbrains.kotlin.utils.DFS
 import java.util.Collections.emptySet
 
 internal fun moduleValidationCallback(state: ActionState, module: IrModuleFragment, context: Context) {
@@ -152,7 +160,14 @@ internal val psiToIrPhase = konanUnitPhase(
                 val dependencies = moduleDescriptor.allDependencyModules.filter {
                     config.librariesWithDependencies(moduleDescriptor).contains(it.konanLibrary)
                 }
-                for (dependency in dependencies) {
+
+                fun sortDependencies(dependencies: List<ModuleDescriptor>): Collection<ModuleDescriptor> {
+                    return DFS.topologicalOrder(dependencies) {
+                        it.allDependencyModules
+                    }.reversed()
+                }
+
+                for (dependency in sortDependencies(dependencies)) {
                     deserializer.deserializeIrModuleHeader(dependency)
                 }
                 if (dependencies.size == dependenciesCount) break
@@ -214,9 +229,10 @@ internal val copyDefaultValuesToActualPhase = konanUnitPhase(
 
 internal val serializerPhase = konanUnitPhase(
         op = {
-            val declarationTable = KonanDeclarationTable(irModule!!.irBuiltins, DescriptorTable())
-            serializedIr = KonanIrModuleSerializer(this, declarationTable).serializedIrModule(irModule!!)
-            val serializer = KonanSerializationUtil(this, config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, declarationTable)
+            val descriptorTable = DescriptorTable()
+//            val declarationTable = KonanDeclarationTable(irModule!!.irBuiltins)
+            serializedIr = KonanIrModuleSerializer(this, irModule!!.irBuiltins, descriptorTable).serializedIrModule(irModule!!)
+            val serializer = KonanSerializationUtil(this, config.configuration.get(CommonConfigurationKeys.METADATA_VERSION)!!, descriptorTable)
             serializedMetadata = serializer.serializeModule(moduleDescriptor)
         },
         name = "Serializer",

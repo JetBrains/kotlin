@@ -19,51 +19,57 @@ package org.jetbrains.kotlin.backend.konan.serialization
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.konan.descriptors.konanLibrary
+import org.jetbrains.kotlin.backend.konan.llvm.KonanMangler
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 class KonanIrLinker(
-    currentModule: ModuleDescriptor,
-    logger: LoggingContext,
-    builtIns: IrBuiltIns,
-    symbolTable: SymbolTable,
-    forwardModuleDescriptor: ModuleDescriptor?,
-    exportedDependencies: List<ModuleDescriptor>
+        currentModule: ModuleDescriptor,
+        logger: LoggingContext,
+        builtIns: IrBuiltIns,
+        symbolTable: SymbolTable,
+        forwardModuleDescriptor: ModuleDescriptor?,
+        exportedDependencies: List<ModuleDescriptor>
 ) : KotlinIrLinker(logger, builtIns, symbolTable, exportedDependencies, forwardModuleDescriptor, 0L),
-    DescriptorUniqIdAware by KonanDescriptorUniqIdAware {
+        DescriptorUniqIdAware by KonanDescriptorUniqIdAware {
 
     override val descriptorReferenceDeserializer =
-        KonanDescriptorReferenceDeserializer(currentModule, KonanDeclarationTable(builtIns, DescriptorTable()), builtIns, resolvedForwardDeclarations)
+            KonanDescriptorReferenceDeserializer(currentModule, KonanMangler, builtIns, resolvedForwardDeclarations)
 
-    override fun reader(moduleDescriptor: ModuleDescriptor, uniqId: UniqId) =
-        moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal)
+    override fun reader(moduleDescriptor: ModuleDescriptor, fileIndex: Int, uniqId: UniqId) =
+            moduleDescriptor.konanLibrary!!.irDeclaration(uniqId.index, uniqId.isLocal, fileIndex)
 
-    override fun readSymbol(moduleDescriptor: ModuleDescriptor, symbolIndex: Int) =
-            moduleDescriptor.konanLibrary!!.symbol(symbolIndex)
+    override fun readSymbol(moduleDescriptor: ModuleDescriptor, fileIndex: Int, symbolIndex: Int) =
+            moduleDescriptor.konanLibrary!!.symbol(symbolIndex, fileIndex)
 
-    override fun readType(moduleDescriptor: ModuleDescriptor, typeIndex: Int) =
-            moduleDescriptor.konanLibrary!!.type(typeIndex)
+    override fun readType(moduleDescriptor: ModuleDescriptor, fileIndex: Int, typeIndex: Int) =
+            moduleDescriptor.konanLibrary!!.type(typeIndex, fileIndex)
 
-    override fun readString(moduleDescriptor: ModuleDescriptor, stringIndex: Int) =
-            moduleDescriptor.konanLibrary!!.string(stringIndex)
+    override fun readString(moduleDescriptor: ModuleDescriptor, fileIndex: Int, stringIndex: Int) =
+            moduleDescriptor.konanLibrary!!.string(stringIndex, fileIndex)
 
-    override val ModuleDescriptor.irHeader get() = this.konanLibrary!!.irHeader
+    override fun readBody(moduleDescriptor: ModuleDescriptor, fileIndex: Int, bodyIndex: Int) =
+            moduleDescriptor.konanLibrary!!.body(bodyIndex, fileIndex)
 
-    override fun List<IrFile>.handleClashes(uniqIdKey: UniqIdKey): IrFile {
-        if (size == 1)
-            return this[0]
-        assert(size != 0)
-        error("UniqId clash: ${uniqIdKey.uniqId.index}. Found in the " +
-                "[${this.joinToString { it.packageFragmentDescriptor.containingDeclaration.userName }}]")
+    override fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int) =
+            moduleDescriptor.konanLibrary!!.file(fileIndex)
+
+    override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
+            moduleDescriptor.run { if (isForwardDeclarationModule) 0 else konanLibrary!!.fileCount() }
+
+    private val ModuleDescriptor.userName get() = konanLibrary!!.libraryFile.absolutePath
+
+    override fun checkAccessibility(declarationDescriptor: DeclarationDescriptor) = true
+
+    override fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState {
+        return globalDeserializationState
     }
 
-    private val ModuleDescriptor.userName get() = konanLibrary?.libraryFile?.absolutePath ?: name.asString()
-
     val modules: Map<String, IrModuleFragment> get() = mutableMapOf<String, IrModuleFragment>().apply {
-        deserializersForModules.forEach {
+        deserializersForModules.filter { !it.key.isForwardDeclarationModule }.forEach {
             this.put(it.key.konanLibrary!!.libraryName, it.value.module)
         }
     }
