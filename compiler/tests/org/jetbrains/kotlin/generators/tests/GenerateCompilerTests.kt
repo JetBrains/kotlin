@@ -54,7 +54,7 @@ import org.jetbrains.kotlin.resolve.constraintSystem.AbstractConstraintSystemTes
 import org.jetbrains.kotlin.serialization.AbstractLocalClassProtoTest
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.types.AbstractTypeBindingTest
-import org.jetbrains.kotlin.visualizer.AbstractPsiVisualizer
+import org.jetbrains.kotlin.visualizer.psi.AbstractPsiVisualizer
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
