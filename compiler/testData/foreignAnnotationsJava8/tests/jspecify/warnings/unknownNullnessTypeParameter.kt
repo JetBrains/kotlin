@@ -2,7 +2,7 @@
 // CODE_ANALYSIS_STATE warn
 // FILE: A.java
 
-import codeanalysis.annotations.*;
+import jspecify.annotations.*;
 
 public class A<T> {
     public void foo(T t) {}

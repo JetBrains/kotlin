@@ -10,6 +10,7 @@ public fun main(/*0*/ a: A): kotlin.Unit
     public open fun everythingNotNullable(/*0*/ x: kotlin.String): kotlin.String
     @jspecify.annotations.DefaultNullable public open fun everythingNullable(/*0*/ x: kotlin.String?): kotlin.String?
     @jspecify.annotations.DefaultNullnessUnknown public open fun everythingUnknown(/*0*/ x: kotlin.String!): kotlin.String!
+    public open fun explicitlyNullnessUnknown(/*0*/ @jspecify.annotations.NullnessUnknown x: kotlin.String!): kotlin.String
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     @jspecify.annotations.DefaultNullable public open fun mixed(/*0*/ @jspecify.annotations.NotNull x: kotlin.String): kotlin.String?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
