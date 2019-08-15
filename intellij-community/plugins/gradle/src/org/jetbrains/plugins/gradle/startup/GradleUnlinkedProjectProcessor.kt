@@ -78,6 +78,7 @@ class GradleUnlinkedProjectProcessor : StartupActivity, DumbAware {
           notificationExpire()
         }
       }
+      Disposer.register(project, subscription)
       ExternalSystemApiUtil.subscribe(project, GradleConstants.SYSTEM_ID, settingsListener, subscription)
 
       notification.notify(project)
