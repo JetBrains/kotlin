@@ -71,6 +71,20 @@ public abstract class ClockMark {
     public fun hasNotPassedNow(): Boolean = elapsedNow().isNegative()
 }
 
+
+@ExperimentalTime
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Deprecated("Subtracting one ClockMark from another is not a well defined operation because these clock marks could have been obtained from the different clocks.", level = DeprecationLevel.ERROR)
+public inline operator fun ClockMark.minus(other: ClockMark): Duration = throw Error("Operation is disallowed.")
+
+@ExperimentalTime
+@SinceKotlin("1.3")
+@kotlin.internal.InlineOnly
+@Deprecated("Comparing one ClockMark to another is not a well defined operation because these clock marks could have been obtained from the different clocks.", level = DeprecationLevel.ERROR)
+public inline operator fun ClockMark.compareTo(other: ClockMark): Int = throw Error("Operation is disallowed.")
+
+
 @ExperimentalTime
 private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark() {
     override fun elapsedNow(): Duration = mark.elapsedNow() - adjustment
