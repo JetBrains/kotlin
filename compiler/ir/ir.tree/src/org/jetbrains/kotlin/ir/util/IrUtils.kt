@@ -178,17 +178,23 @@ fun IrMemberAccessExpression.usesDefaultArguments(): Boolean =
 val DeclarationDescriptorWithSource.startOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.startOffset
 val DeclarationDescriptorWithSource.endOffset: Int? get() = (this.source as? PsiSourceElement)?.psi?.endOffset
 
-val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
-    get() = this.owner.declarations.asSequence().filterIsInstance<IrSimpleFunction>().map { it.symbol }
-
 val IrClass.functions: Sequence<IrSimpleFunction>
-    get() = this.declarations.asSequence().filterIsInstance<IrSimpleFunction>()
+    get() = declarations.asSequence().filterIsInstance<IrSimpleFunction>()
 
-val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
-    get() = this.owner.declarations.asSequence().filterIsInstance<IrConstructor>().map { it.symbol }
+val IrClassSymbol.functions: Sequence<IrSimpleFunctionSymbol>
+    get() = owner.functions.map { it.symbol }
 
 val IrClass.constructors: Sequence<IrConstructor>
-    get() = this.declarations.asSequence().filterIsInstance<IrConstructor>()
+    get() = declarations.asSequence().filterIsInstance<IrConstructor>()
+
+val IrClassSymbol.constructors: Sequence<IrConstructorSymbol>
+    get() = owner.constructors.map { it.symbol }
+
+val IrClass.fields: Sequence<IrField>
+    get() = declarations.asSequence().filterIsInstance<IrField>()
+
+val IrClassSymbol.fields: Sequence<IrFieldSymbol>
+    get() = owner.fields.map { it.symbol }
 
 val IrClass.primaryConstructor: IrConstructor?
     get() = this.declarations.singleOrNull { it is IrConstructor && it.isPrimary } as IrConstructor?

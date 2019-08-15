@@ -28,7 +28,7 @@ class JvmDefaultParameterInjector(context: JvmBackendContext) :
             return super.nullConst(startOffset, endOffset, type)
 
         val underlyingType = type.unboxInlineClass()
-        return IrCallImpl(startOffset, endOffset, type, context.ir.symbols.unsafeCoerceIntrinsicSymbol).apply {
+        return IrCallImpl(startOffset, endOffset, type, context.ir.symbols.unsafeCoerceIntrinsic).apply {
             putTypeArgument(0, underlyingType) // from
             putTypeArgument(1, type) // to
             putValueArgument(0, super.nullConst(startOffset, endOffset, underlyingType))

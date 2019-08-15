@@ -63,7 +63,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
 
     private fun newArray(size: IrExpression): IrExpression {
         val arrayConstructor = if (unwrappedArrayType.isBoxedArray)
-            builder.backendContext.ir.symbols.arrayOfNulls
+            builder.irSymbols.arrayOfNulls
         else
             unwrappedArrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
 
@@ -97,7 +97,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // Copy a single spread expression, unless it refers to a newly constructed array.
     private fun copyArray(spread: IrExpression): IrExpression {
         if (spread is IrConstructorCall ||
-            (spread is IrFunctionAccessExpression && spread.symbol == builder.backendContext.ir.symbols.arrayOfNulls))
+            (spread is IrFunctionAccessExpression && spread.symbol == builder.irSymbols.arrayOfNulls))
             return spread
 
         return builder.irBlock {
@@ -105,7 +105,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             val size = unwrappedArrayType.classOrNull!!.getPropertyGetter("size")!!
             fun getSize() = irCall(size).apply { dispatchReceiver = irGet(spreadVar) }
             val result = irTemporary(newArray(getSize()))
-            +irCall(builder.backendContext.ir.symbols.systemArraycopy).apply {
+            +irCall(builder.irSymbols.systemArraycopy).apply {
                 putValueArgument(0, irGet(spreadVar))
                 putValueArgument(1, irInt(0))
                 putValueArgument(2, irGet(result))
@@ -119,16 +119,16 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // Build an array containing spread expressions.
     private fun buildComplexArray(): IrExpression {
         val spreadBuilder = if (unwrappedArrayType.isBoxedArray)
-            builder.backendContext.ir.symbols.spreadBuilder
+            builder.irSymbols.spreadBuilder
         else
-            builder.backendContext.ir.symbols.primitiveSpreadBuilders.getValue(elementType)
+            builder.irSymbols.primitiveSpreadBuilders.getValue(elementType)
 
-        val addElement = spreadBuilder.functions.single { it.name.asString() == "add" }
-        val addSpread = spreadBuilder.functions.single { it.name.asString() == "addSpread" }
-        val toArray = spreadBuilder.functions.single { it.name.asString() == "toArray" }
+        val addElement = spreadBuilder.functions.single { it.owner.name.asString() == "add" }
+        val addSpread = spreadBuilder.functions.single { it.owner.name.asString() == "addSpread" }
+        val toArray = spreadBuilder.functions.single { it.owner.name.asString() == "toArray" }
 
         return builder.irBlock {
-            val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single().symbol, listOf()).apply {
+            val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single(), listOf()).apply {
                 putValueArgument(0, irInt(elements.size))
             })
 
@@ -142,8 +142,8 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
             val toArrayCall = irCall(toArray).apply {
                 dispatchReceiver = irGet(spreadBuilderVar)
                 if (unwrappedArrayType.isBoxedArray) {
-                    val size = spreadBuilder.functions.single { it.name.asString() == "size" }
-                    putValueArgument(0, irCall(builder.backendContext.ir.symbols.arrayOfNulls, arrayType).apply {
+                    val size = spreadBuilder.functions.single { it.owner.name.asString() == "size" }
+                    putValueArgument(0, irCall(builder.irSymbols.arrayOfNulls, arrayType).apply {
                         putTypeArgument(0, elementType)
                         putValueArgument(0, irCall(size).apply {
                             dispatchReceiver = irGet(spreadBuilderVar)
@@ -162,7 +162,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // Coerce expression to irType if we are working with an inline class array type
     private fun coerce(expression: IrExpression, irType: IrType): IrExpression =
         if (isUnboxedInlineClassArray)
-            builder.irCall(builder.backendContext.ir.symbols.unsafeCoerceIntrinsicSymbol, irType).apply {
+            builder.irCall(builder.irSymbols.unsafeCoerceIntrinsic, irType).apply {
                 putTypeArgument(0, expression.type)
                 putTypeArgument(1, irType)
                 putValueArgument(0, expression)
