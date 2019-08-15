@@ -1,0 +1,21 @@
+package
+
+public fun </*0*/ T, /*1*/ R> kotlin.collections.Iterable<T>.map(/*0*/ transform: (T) -> R): kotlin.collections.List<R>
+public operator fun </*0*/ T> kotlin.collections.Collection<T>.plus(/*0*/ elements: kotlin.collections.Iterable<T>): kotlin.collections.List<T>
+
+public final class Test</*0*/ X, /*1*/ T> {
+    public constructor Test</*0*/ X, /*1*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public final fun hereIdeaFail(/*0*/ values: kotlin.collections.List<kotlin.Int>, /*1*/ others: kotlin.collections.List<kotlin.String>): kotlin.collections.List<Test<out kotlin.Int, out kotlin.String>>
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    public companion object Companion {
+        private constructor Companion()
+        public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+        public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+        public final fun </*0*/ L> left(/*0*/ left: L): Test<L, kotlin.Nothing>
+        public final fun </*0*/ R> right(/*0*/ right: R): Test<kotlin.Nothing, R>
+        public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+    }
+}
