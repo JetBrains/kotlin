@@ -1,48 +1,42 @@
+import org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance
+
 buildscript {
     repositories {
         mavenCentral()
-        maven {
-            url('https://dl.bintray.com/jetbrains/intellij-plugin-service')
-        }
+        maven("https://dl.bintray.com/jetbrains/intellij-plugin-service")
     }
+
     dependencies {
-        classpath 'org.jetbrains.intellij:plugin-repository-rest-client:0.4.32'
+        classpath("org.jetbrains.intellij:plugin-repository-rest-client:0.4.32")
     }
 }
 
-task uploadPlugins {
+task("uploadPlugins") {
     doLast {
-        def env = System.getenv()
-        def channel = env['PLUGIN_REPOSITORY_CHANNEL']
-        if (channel == "_default_") {
-            channel = null
-        }
-        def path = env['PLUGIN_UPLOAD_PATH']
-        if (path == null) {
-            path = "."
-        }
+        val kotlinPluginId = 6954
+        val channel = (project.findProperty("plugins.repository.channel") as String?)
+            ?.let { if (it == "_default_") null else it }
+        val path = project.findProperty("plugins.path") as String? ?: "."
+        val token = project.property("plugins.repository.token") as String
 
-        def token = project.property("plugins.repository.token")
+        val repo = PluginRepositoryInstance("https://plugins.jetbrains.com/", token)
 
-        def repo = new org.jetbrains.intellij.pluginRepository.PluginRepositoryInstance("https://plugins.jetbrains.com/", token)
-
-        File[] files = new File(path).listFiles({ _, String filename ->
-            if (!filename.startsWith("kotlin-plugin") || !filename.endsWith(".zip")) false
-            else {
-                // don't publish CIDR plugins to IDEA channel
-                def filenameLowerCase = filename.toLowerCase()
-                if (filenameLowerCase.contains("clion") || filenameLowerCase.contains("appcode")) false
-                else true
+        val pluginFiles = File(path)
+            .listFiles { _, fileName ->
+                fileName.toLowerCase().let {
+                    it.startsWith("kotlin-plugin") &&
+                            it.endsWith(".zip") &&
+                            // don't publish CIDR plugins to IDEA channel
+                            !it.contains("clion") &&
+                            !it.contains("appcode")
+                }
             }
-        } as FilenameFilter)
 
-        files = files.sort { f1, f2 ->
-            f1.name.contains("1.1.2-5") ? 1 : (f2.name.contains("1.1.2-5") ? -1 : (f1.name <=> f2.name))
-        }
-
-        files.each { file ->
-            println("Uploading ${file.name}")
-            repo.uploadPlugin(6954, file, channel)
-        }
+        pluginFiles
+            ?.sorted()
+            ?.forEach { pluginFile ->
+                println("Uploading ${pluginFile.name}")
+                repo.uploadPlugin(kotlinPluginId, pluginFile, channel)
+            }
     }
 }
