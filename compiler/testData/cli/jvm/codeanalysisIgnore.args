@@ -1,0 +1,6 @@
+-Xcodeanalysis-annotations=ignore
+$TESTDATA_DIR$/codeanalysisUsage.kt
+$TESTDATA_DIR$/codeanalysis
+$FOREIGN_ANNOTATIONS_DIR$
+-d
+$TEMP_DIR$

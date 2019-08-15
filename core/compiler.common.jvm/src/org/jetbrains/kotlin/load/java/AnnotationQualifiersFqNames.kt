@@ -31,18 +31,7 @@ val DEFAULT_JSPECIFY_APPLICABILITY = listOf(
     AnnotationQualifierApplicabilityType.TYPE_USE
 )
 
-val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
-    FqName("javax.annotation.ParametersAreNullableByDefault") to
-            JavaDefaultQualifiers(
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
-                listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
-            ),
-    FqName("javax.annotation.ParametersAreNonnullByDefault") to
-            JavaDefaultQualifiers(
-                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
-                listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
-            ),
-
+val CODE_ANALYSIS_DEFAULT_ANNOTATIONS = mapOf(
     JSPECIFY_DEFAULT_NULLABLE to JavaDefaultQualifiers(
         NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
         DEFAULT_JSPECIFY_APPLICABILITY
@@ -57,5 +46,18 @@ val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
         DEFAULT_JSPECIFY_APPLICABILITY
     )
 )
+
+val BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS = mapOf(
+    FqName("javax.annotation.ParametersAreNullableByDefault") to
+            JavaDefaultQualifiers(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE),
+                listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
+            ),
+    FqName("javax.annotation.ParametersAreNonnullByDefault") to
+            JavaDefaultQualifiers(
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL),
+                listOf(AnnotationQualifierApplicabilityType.VALUE_PARAMETER)
+            )
+) + CODE_ANALYSIS_DEFAULT_ANNOTATIONS
 
 val BUILT_IN_TYPE_QUALIFIER_FQ_NAMES = setOf(JAVAX_NONNULL_ANNOTATION, JAVAX_CHECKFORNULL_ANNOTATION)

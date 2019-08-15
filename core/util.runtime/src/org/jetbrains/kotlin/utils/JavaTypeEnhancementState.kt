@@ -34,7 +34,8 @@ class JavaTypeEnhancementState(
     val globalJsr305Level: ReportLevel,
     val migrationLevelForJsr305: ReportLevel?,
     val userDefinedLevelForSpecificJsr305Annotation: Map<String, ReportLevel>,
-    val enableCompatqualCheckerFrameworkAnnotations: Boolean = COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE
+    val enableCompatqualCheckerFrameworkAnnotations: Boolean = COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE,
+    val jspecifyReportLevel: ReportLevel = DEFAULT_REPORT_LEVEL_FOR_CODE_ANALYSIS
 ) {
     val description: Array<String> by lazy {
         val result = mutableListOf<String>()
@@ -49,10 +50,18 @@ class JavaTypeEnhancementState(
         result.toTypedArray()
     }
 
-    val disabledJsr305: Boolean get() = this === DISABLED_JSR_305
+    val disabledJsr305: Boolean =
+        globalJsr305Level == ReportLevel.IGNORE &&
+                migrationLevelForJsr305 == ReportLevel.IGNORE &&
+                userDefinedLevelForSpecificJsr305Annotation.isEmpty()
+
+    val disabledDefaultAnnotations = disabledJsr305 || jspecifyReportLevel == ReportLevel.IGNORE
 
     companion object {
         const val COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS_SUPPORT_DEFAULT_VALUE = true
+
+        @JvmField
+        val DEFAULT_REPORT_LEVEL_FOR_CODE_ANALYSIS = ReportLevel.WARN
 
         @JvmField
         val DEFAULT: JavaTypeEnhancementState = JavaTypeEnhancementState(ReportLevel.WARN, null, emptyMap())

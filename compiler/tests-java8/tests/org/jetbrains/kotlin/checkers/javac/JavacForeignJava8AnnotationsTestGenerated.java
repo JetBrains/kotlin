@@ -60,9 +60,67 @@ public class JavacForeignJava8AnnotationsTestGenerated extends AbstractJavacFore
             runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/annotatedWildcards.kt");
         }
 
+        @TestMetadata("ignoreAnnotations.kt")
+        public void testIgnoreAnnotations() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/ignoreAnnotations.kt");
+        }
+
         @TestMetadata("wildcardsWithDefault.kt")
         public void testWildcardsWithDefault() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/wildcardsWithDefault.kt");
+        }
+
+        @TestMetadata("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings")
+        @TestDataPath("$PROJECT_ROOT")
+        @RunWith(JUnit3RunnerWithInners.class)
+        public static class Warnings extends AbstractJavacForeignJava8AnnotationsTest {
+            private void runTest(String testDataFilePath) throws Exception {
+                KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+            }
+
+            public void testAllFilesPresentInWarnings() throws Exception {
+                KotlinTestUtils.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @TestMetadata("annotatedWildcards.kt")
+            public void testAnnotatedWildcards() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/annotatedWildcards.kt");
+            }
+
+            @TestMetadata("defaults.kt")
+            public void testDefaults() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/defaults.kt");
+            }
+
+            @TestMetadata("nonPlatformTypeParameter.kt")
+            public void testNonPlatformTypeParameter() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/nonPlatformTypeParameter.kt");
+            }
+
+            @TestMetadata("simple.kt")
+            public void testSimple() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/simple.kt");
+            }
+
+            @TestMetadata("typeArgumentsFromParameterBounds.kt")
+            public void testTypeArgumentsFromParameterBounds() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/typeArgumentsFromParameterBounds.kt");
+            }
+
+            @TestMetadata("typeParameterBounds.kt")
+            public void testTypeParameterBounds() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/typeParameterBounds.kt");
+            }
+
+            @TestMetadata("unknownNullnessTypeParameter.kt")
+            public void testUnknownNullnessTypeParameter() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/unknownNullnessTypeParameter.kt");
+            }
+
+            @TestMetadata("wildcardsWithDefault.kt")
+            public void testWildcardsWithDefault() throws Exception {
+                runTest("compiler/testData/foreignAnnotationsJava8/tests/codeanalysis/warnings/wildcardsWithDefault.kt");
+            }
         }
     }
 

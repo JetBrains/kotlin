@@ -79,16 +79,24 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
     }
 
     fun resolveQualifierBuiltInDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): JavaDefaultQualifiers? {
-        if (javaTypeEnhancementState.disabledJsr305) {
+        if (javaTypeEnhancementState.disabledDefaultAnnotations) {
             return null
         }
 
         return BUILT_IN_TYPE_QUALIFIER_DEFAULT_ANNOTATIONS[annotationDescriptor.fqName]?.let { qualifierForDefaultingAnnotation ->
-            val state = resolveJsr305AnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
+            val state = resolveDefaultAnnotationState(annotationDescriptor).takeIf { it != ReportLevel.IGNORE } ?: return null
             return qualifierForDefaultingAnnotation.copy(
                 nullabilityQualifier = qualifierForDefaultingAnnotation.nullabilityQualifier.copy(isForWarningOnly = state.isWarning)
             )
         }
+    }
+
+    private fun resolveDefaultAnnotationState(annotationDescriptor: AnnotationDescriptor): ReportLevel {
+        if (annotationDescriptor.fqName in CODE_ANALYSIS_DEFAULT_ANNOTATIONS) {
+            return javaTypeEnhancementState.jspecifyReportLevel
+        }
+
+        return resolveJsr305AnnotationState(annotationDescriptor)
     }
 
     fun resolveTypeQualifierDefaultAnnotation(annotationDescriptor: AnnotationDescriptor): TypeQualifierWithApplicability? {
@@ -156,8 +164,6 @@ class AnnotationTypeQualifierResolver(storageManager: StorageManager, private va
             )
             else -> emptyList()
         }
-
-    val disabled: Boolean = javaTypeEnhancementState.disabledJsr305
 }
 
 private val ClassDescriptor.isAnnotatedWithTypeQualifier: Boolean

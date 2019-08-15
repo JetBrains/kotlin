@@ -115,6 +115,26 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/classpath.args");
         }
 
+        @TestMetadata("codeanalysisDefault.args")
+        public void testCodeanalysisDefault() throws Exception {
+            runTest("compiler/testData/cli/jvm/codeanalysisDefault.args");
+        }
+
+        @TestMetadata("codeanalysisIgnore.args")
+        public void testCodeanalysisIgnore() throws Exception {
+            runTest("compiler/testData/cli/jvm/codeanalysisIgnore.args");
+        }
+
+        @TestMetadata("codeanalysisStrict.args")
+        public void testCodeanalysisStrict() throws Exception {
+            runTest("compiler/testData/cli/jvm/codeanalysisStrict.args");
+        }
+
+        @TestMetadata("codeanalysisWarn.args")
+        public void testCodeanalysisWarn() throws Exception {
+            runTest("compiler/testData/cli/jvm/codeanalysisWarn.args");
+        }
+
         @TestMetadata("compatqualDefault.args")
         public void testCompatqualDefault() throws Exception {
             runTest("compiler/testData/cli/jvm/compatqualDefault.args");

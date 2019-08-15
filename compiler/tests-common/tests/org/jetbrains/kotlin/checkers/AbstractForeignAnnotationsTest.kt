@@ -18,10 +18,8 @@ package org.jetbrains.kotlin.checkers
 
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.MockLibraryUtil
-import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
 import org.jetbrains.kotlin.utils.ReportLevel
 import java.io.File
@@ -33,6 +31,7 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
     private val JSR305_GLOBAL_DIRECTIVE = "JSR305_GLOBAL_REPORT"
     private val JSR305_MIGRATION_DIRECTIVE = "JSR305_MIGRATION_REPORT"
     private val JSR305_SPECIAL_DIRECTIVE = "JSR305_SPECIAL_REPORT"
+    private val CODE_ANALYSIS_STATE_SPECIAL_DIRECTIVE = "CODE_ANALYSIS_STATE"
 
     override fun getExtraClasspath(): List<File> {
         val foreignAnnotations = createJarWithForeignAnnotations()
@@ -78,11 +77,14 @@ abstract class AbstractForeignAnnotationsTest : AbstractDiagnosticsTest() {
             name to state
         }.toMap()
 
+        val codeAnalysisReportLevel = module.getDirectiveValue(CODE_ANALYSIS_STATE_SPECIAL_DIRECTIVE) ?: ReportLevel.STRICT
+
         return mapOf(
             JvmAnalysisFlags.javaTypeEnhancementState to JavaTypeEnhancementState(
                 globalState,
                 migrationState,
-                userAnnotationsState
+                userAnnotationsState,
+                jspecifyReportLevel = codeAnalysisReportLevel
             )
         )
     }

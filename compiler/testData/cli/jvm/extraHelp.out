@@ -12,6 +12,9 @@ where advanced options include:
                              -Xassertions=legacy:         calculate condition on each call, check depends on jvm assertion settings in the kotlin package;
                              default: legacy
   -Xbuild-file=<path>        Path to the .xml build file to compile
+  -Xcodeanalysis-annotations=ignore|strict|warn
+                             Specify behavior for Codeanalysis annotations.
+                             Default value is 'warn'
   -Xcompile-java             Reuse javac analysis and compile Java source files
   -Xnormalize-constructor-calls={disable|enable}
                              Normalize constructor calls (disable: don't normalize; enable: normalize),

@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.JavaTypeEnhancementState
+import org.jetbrains.kotlin.utils.ReportLevel
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -102,11 +103,16 @@ class SignatureEnhancement(
 
     private fun jspecifyMigrationStatus(
         annotationFqName: FqName
-    ): NullabilityQualifierWithMigrationStatus? = when (annotationFqName) {
-        JSPECIFY_NOT_NULL -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL)
-        JSPECIFY_NULLABLE -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE)
-        JSPECIFY_NULLNESS_UNKNOWN -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY)
-        else -> null
+    ): NullabilityQualifierWithMigrationStatus? {
+        if (javaTypeEnhancementState.jspecifyReportLevel == ReportLevel.IGNORE) return null
+        val isForWarningOnly = javaTypeEnhancementState.jspecifyReportLevel == ReportLevel.WARN
+        return when (annotationFqName) {
+            JSPECIFY_NOT_NULL -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NOT_NULL, isForWarningOnly)
+            JSPECIFY_NULLABLE -> NullabilityQualifierWithMigrationStatus(NullabilityQualifier.NULLABLE, isForWarningOnly)
+            JSPECIFY_NULLNESS_UNKNOWN ->
+                NullabilityQualifierWithMigrationStatus(NullabilityQualifier.FORCE_FLEXIBILITY, isForWarningOnly)
+            else -> null
+        }
     }
 
     private fun commonMigrationStatus(
