@@ -6,6 +6,7 @@ import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.wm.IdeFocusManager;
+import com.intellij.ui.SideBorder;
 import com.intellij.ui.awt.RelativePoint;
 import com.intellij.ui.tabs.JBTabPainter;
 import com.intellij.ui.tabs.JBTabsBorder;
@@ -45,22 +46,7 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   @Override
   protected JBTabsBorder createTabBorder() {
-    return new JBTabsBorder(this) {
-      @NotNull
-      @Override
-      public Insets getEffectiveBorder() {
-        return new Insets(getBorderThickness(), getBorderThickness(), 0, 0);
-      }
-
-      @Override
-      public void paintBorder(@NotNull Component c, @NotNull Graphics g, int x, int y, int width, int height) {
-        if (isEmptyVisible()) return;
-        getTabPainter().paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y), new Point(x, y + height));
-        getTabPainter()
-          .paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y + myHeaderFitSize.height),
-                           new Point(x + width, y + myHeaderFitSize.height));
-      }
-    };
+    return new JBRunnerTabsBorder(this);
   }
 
   @Override
@@ -122,4 +108,34 @@ public class JBRunnerTabs extends SingleHeightTabs implements JBRunnerTabsBase {
 
   }
 
+  class JBRunnerTabsBorder extends JBTabsBorder {
+    private int mySideMask = SideBorder.LEFT;
+
+    JBRunnerTabsBorder(@NotNull JBTabsImpl tabs) {
+      super(tabs);
+    }
+
+    @NotNull
+    @Override
+    public Insets getEffectiveBorder() {
+      //noinspection UseDPIAwareInsets
+      return new Insets(getBorderThickness(), (mySideMask & SideBorder.LEFT) != 0 ? getBorderThickness() : 0, 0, 0);
+    }
+
+    @Override
+    public void paintBorder(@NotNull Component c, @NotNull Graphics g, int x, int y, int width, int height) {
+      if (isEmptyVisible()) return;
+
+      if ((mySideMask & SideBorder.LEFT) != 0) {
+        getTabPainter().paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y), new Point(x, y + height));
+      }
+      getTabPainter()
+        .paintBorderLine((Graphics2D)g, getBorderThickness(), new Point(x, y + myHeaderFitSize.height),
+                         new Point(x + width, y + myHeaderFitSize.height));
+    }
+
+    void setSideMask(@SideBorder.SideMask int mask) {
+      mySideMask = mask;
+    }
+  }
 }

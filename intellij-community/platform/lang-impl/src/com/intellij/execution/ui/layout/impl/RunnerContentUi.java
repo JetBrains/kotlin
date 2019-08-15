@@ -55,6 +55,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -190,6 +191,10 @@ public class RunnerContentUi implements ContentUI, Disposable, CellTransform.Fac
 
   void setLeftToolbarVisible(boolean value) {
     myToolbar.setVisible(value);
+    Border border = myTabs.getComponent().getBorder();
+    if (border instanceof JBRunnerTabs.JBRunnerTabsBorder) {
+      ((JBRunnerTabs.JBRunnerTabsBorder)border).setSideMask(value ? SideBorder.LEFT : SideBorder.NONE);
+    }
     myComponent.revalidate();
     myComponent.repaint();
   }
