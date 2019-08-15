@@ -86,7 +86,7 @@ public class RangeSearchTask extends SearchTaskBase {
         searcher.setFrame(curPageNumber, prefixSymbol, curPageText, tailText, postfixSymbol);
         allMatchesAtFrame = searcher.findAllMatchesAtFrame();
         if (allMatchesAtFrame.size() > 0) {
-          myCallback.tellFrameSearchResultsFound(this, allMatchesAtFrame);
+          myCallback.tellFrameSearchResultsFound(this, curPageNumber, allMatchesAtFrame);
         }
 
         if (isShouldStop()) {
@@ -166,7 +166,7 @@ public class RangeSearchTask extends SearchTaskBase {
 
     void tellSearchProgress(RangeSearchTask caller, long curPageNumber, long pagesAmount);
 
-    void tellFrameSearchResultsFound(RangeSearchTask caller, ArrayList<SearchResult> allMatchesAtFrame);
+    void tellFrameSearchResultsFound(RangeSearchTask caller, long curPageNumber, ArrayList<SearchResult> allMatchesAtFrame);
 
     void tellSearchIsStopped(long curPageNumber);
 

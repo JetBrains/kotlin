@@ -451,7 +451,6 @@ public class RangeSearch implements RangeSearchTask.Callback {
       lastProgressStatusUpdateTime = time;
       ApplicationManager.getApplication().invokeLater(() -> {
         if (!caller.isShouldStop()) {
-          // caller is instance of RangeSearchTask
           if (caller.getOptions().searchForwardDirection) {
             setRightBorderPageNumber(curPageNumber);
           }
@@ -466,6 +465,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   @Override
   public void tellFrameSearchResultsFound(RangeSearchTask caller,
+                                          long curPageNumber,
                                           ArrayList<SearchResult> allMatchesAtFrame) {
     if (!allMatchesAtFrame.isEmpty()) {
       ApplicationManager.getApplication().invokeLater(() -> {
@@ -477,9 +477,11 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
           if (options.searchForwardDirection) {
             addSearchResultsIntoEnd(allMatchesAtFrame);
+            setRightBorderPageNumber(curPageNumber);
           }
           else {
             addSearchResultsIntoBeginning(allMatchesAtFrame);
+            setLeftBorderPageNumber(curPageNumber);
           }
 
           if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
