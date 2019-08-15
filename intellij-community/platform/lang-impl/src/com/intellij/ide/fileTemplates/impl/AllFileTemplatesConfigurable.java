@@ -83,6 +83,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   private boolean myModified;
   private JComponent myEditorComponent;
   private JPanel myLeftPanel;
+  private SchemesPanel mySchemesPanel;
   private FileTemplateTab[] myTabs;
   private Disposable myUIDisposable;
   private final Set<String> myInternalTemplateNames;
@@ -320,9 +321,9 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     myToolBar = ActionManager.getInstance().createActionToolbar("FileTemplatesConfigurable", group, true).getComponent();
     myToolBar.setBorder(new CustomLineBorder(1, 1, 0, 1));
 
-    SchemesPanel schemesPanel = new SchemesPanel();
-    schemesPanel.setBorder(JBUI.Borders.empty(5, 10, 0, 10));
-    schemesPanel.resetSchemes(Arrays.asList(FileTemplatesScheme.DEFAULT, myManager.getProjectScheme()));
+    mySchemesPanel = new SchemesPanel();
+    mySchemesPanel.setBorder(JBUI.Borders.empty(5, 10, 0, 10));
+    mySchemesPanel.resetSchemes(Arrays.asList(FileTemplatesScheme.DEFAULT, myManager.getProjectScheme()));
 
     JPanel leftPanelWrapper = new JPanel(new BorderLayout());
     leftPanelWrapper.setBorder(JBUI.Borders.empty(10, 10, 10, 0));
@@ -338,7 +339,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     centerPanel.add(splitter, BorderLayout.CENTER);
 
     myMainPanel = new JPanel(new BorderLayout());
-    myMainPanel.add(schemesPanel, BorderLayout.NORTH);
+    myMainPanel.add(mySchemesPanel, BorderLayout.NORTH);
     myMainPanel.add(centerPanel, BorderLayout.CENTER);
 
     final PropertiesComponent propertiesComponent = PropertiesComponent.getInstance();
@@ -582,6 +583,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
   public void reset() {
     myEditor.reset();
     changeScheme(myManager.getCurrentScheme());
+    mySchemesPanel.selectScheme(myScheme);
     myChangesCache.clear();
     myModified = false;
   }
@@ -650,6 +652,7 @@ public final class AllFileTemplatesConfigurable implements SearchableConfigurabl
     }
     updateCache();
     myScheme = scheme;
+
     initLists();
   }
 
