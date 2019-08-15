@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.IrDeserializer
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite.newInstance
-import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -107,7 +106,7 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private val globalDeserializationState = DeserializationState.SimpleDeserializationState()
+    protected val globalDeserializationState = DeserializationState.SimpleDeserializationState()
     private val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
 
     //TODO: This is Native specific. Eliminate me.
@@ -281,16 +280,15 @@ abstract class KotlinIrLinker(
                         descriptorReferenceDeserializer.checkIfSpecialDescriptorId(uniqId.index)
             }
 
-            private fun getModuleForTopLevelId(key: UniqId): IrModuleDeserializer {
+            private fun getModuleForTopLevelId(key: UniqId): IrModuleDeserializer? {
                 if (key in moduleReversedFileIndex) return this@IrModuleDeserializer
-                return moduleDependencies.firstOrNull { key in it.moduleReversedFileIndex } ?:
-                error("Deserializer for declaration $key is not found")
+                return moduleDependencies.firstOrNull { key in it.moduleReversedFileIndex }
             }
 
             private fun getStateForID(key: UniqId): DeserializationState {
                 if (key.isLocal) return fileLocalDeserializationState
                 if (isGlobalUniqID(key)) return globalDeserializationState
-                return getModuleForTopLevelId(key).moduleDeserializationState
+                return getModuleForTopLevelId(key)?.moduleDeserializationState ?: handleNoModuleDeserializerFound(key)
             }
 
             private fun deserializeIrSymbolData(proto: ProtoSymbolData): IrSymbol {
@@ -316,9 +314,8 @@ abstract class KotlinIrLinker(
                     }
 
                     resolvedForwardDeclarations[key]?.let {
-                        with (getForwardDeclararationModuleDeserializer().moduleDeserializationState) {
-                            if (it !in this) addUniqID(it)
-                        }
+                        val fdState = getStateForID(it)
+                        fdState.addUniqID(it)
                     }
 
                     referenceDeserializedSymbol(proto, descriptor)
@@ -513,6 +510,11 @@ abstract class KotlinIrLinker(
     protected abstract fun readFile(moduleDescriptor: ModuleDescriptor, fileIndex: Int): ByteArray
     protected abstract fun readFileCount(moduleDescriptor: ModuleDescriptor): Int
 
+    protected abstract fun checkAccessibility(declarationDescriptor: DeclarationDescriptor): Boolean
+    protected open fun handleNoModuleDeserializerFound(key: UniqId): DeserializationState {
+        error("Deserializer for declaration $key is not found")
+    }
+
     private fun deserializeAllReachableTopLevels() {
         do {
             val moduleDeserializer = modulesWithReachableTopLevels.first()
@@ -525,12 +527,13 @@ abstract class KotlinIrLinker(
     private fun findDeserializedDeclarationForDescriptor(descriptor: DeclarationDescriptor): DeclarationDescriptor? {
         val topLevelDescriptor = descriptor.findTopLevelDescriptor() as DeclarationDescriptorWithVisibility
 
-        require(topLevelDescriptor.isPublishedApi() || topLevelDescriptor.visibility.let { it.isPublicAPI || it == Visibilities.INTERNAL }) {
+        // This is Native specific. Try to eliminate.
+        if (topLevelDescriptor.module.isForwardDeclarationModule) return null
+
+        require(checkAccessibility(topLevelDescriptor)) {
             "Locally accessible declarations should not be accessed here $topLevelDescriptor"
         }
 
-        // This is Native specific. Try to eliminate.
-        if (topLevelDescriptor.module.isForwardDeclarationModule) return null
 
         if (topLevelDescriptor !is DeserializedClassDescriptor && topLevelDescriptor !is DeserializedCallableMemberDescriptor) {
             return null

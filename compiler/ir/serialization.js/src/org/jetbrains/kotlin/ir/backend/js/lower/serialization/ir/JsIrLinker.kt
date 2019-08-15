@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.*
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptorWithVisibility
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.backend.js.kotlinLibrary
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
 
 class JsIrLinker(
     currentModule: ModuleDescriptor,
@@ -46,6 +48,11 @@ class JsIrLinker(
 
     override fun readFileCount(moduleDescriptor: ModuleDescriptor) =
         moduleDescriptor.kotlinLibrary.fileCount()
+
+    override fun checkAccessibility(declarationDescriptor: DeclarationDescriptor): Boolean {
+        require(declarationDescriptor is DeclarationDescriptorWithVisibility)
+        return declarationDescriptor.isPublishedApi() || declarationDescriptor.visibility.let { it.isPublicAPI || it == Visibilities.INTERNAL }
+    }
 
     private val ModuleDescriptor.userName get() = kotlinLibrary.libraryFile.absolutePath
 }
