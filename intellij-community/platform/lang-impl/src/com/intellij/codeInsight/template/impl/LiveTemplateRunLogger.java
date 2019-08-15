@@ -18,16 +18,10 @@ class LiveTemplateRunLogger {
   private static final String GROUP = "live.templates";
 
   static void log(@NotNull Project project, @NotNull TemplateImpl template, @NotNull Language language) {
-    Triple<String, String, PluginInfo> keyGroupPluginToLog = getKeyGroupPluginToLog(template);
-    if (keyGroupPluginToLog == null) return;
-
-    FeatureUsageData data = new FeatureUsageData().addLanguage(language).addData("group", keyGroupPluginToLog.getSecond());
-    PluginInfo plugin = keyGroupPluginToLog.getThird();
-    if (plugin != null) {
-      data.addPluginInfo(plugin);
+    final FeatureUsageData data = createTemplateData(template, language);
+    if (data != null) {
+      FUCounterUsageLogger.getInstance().logEvent(project, GROUP, "started", data);
     }
-    data.addData("key", keyGroupPluginToLog.getFirst());
-    FUCounterUsageLogger.getInstance().logEvent(project, GROUP, "started", data);
   }
 
   @Nullable
@@ -46,6 +40,22 @@ class LiveTemplateRunLogger {
       groupName = "custom.plugin.group";
     }
     return new Triple<>(key, groupName, plugin);
+  }
+
+  @Nullable
+  static FeatureUsageData createTemplateData(@NotNull TemplateImpl template, @NotNull Language language) {
+    Triple<String, String, PluginInfo> keyGroupPluginToLog = getKeyGroupPluginToLog(template);
+    if (keyGroupPluginToLog == null) {
+      return null;
+    }
+
+    FeatureUsageData data = new FeatureUsageData().addLanguage(language).addData("group", keyGroupPluginToLog.getSecond());
+    PluginInfo plugin = keyGroupPluginToLog.getThird();
+    if (plugin != null) {
+      data.addPluginInfo(plugin);
+    }
+    data.addData("key", keyGroupPluginToLog.getFirst());
+    return data;
   }
 
   private static boolean isCreatedProgrammatically(String key, String groupName) {
