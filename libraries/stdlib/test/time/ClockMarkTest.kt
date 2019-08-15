@@ -14,12 +14,19 @@ class ClockMarkTest {
     fun adjustment() {
         val clock = TestClock()
 
-        val mark = clock.markNow()
-        val markFuture1 = mark + 1.milliseconds
-        val markFuture2 = mark - (-1).milliseconds
+        fun ClockMark.assertHasPassed(hasPassed: Boolean) {
+            assertEquals(!hasPassed, this.hasNotPassedNow(), "Expected mark in the future")
+            assertEquals(hasPassed, this.hasPassedNow(), "Expected mark in the past")
 
-        val markPast1 = mark - 1.milliseconds
-        val markPast2 = markFuture1 + (-2).milliseconds
+            assertEquals(!hasPassed, this.elapsedNow() < Duration.ZERO, "Mark elapsed: ${this.elapsedNow()}, expected hasPassed: $hasPassed")
+        }
+
+        val mark = clock.markNow()
+        val markFuture1 = (mark + 1.milliseconds).apply { assertHasPassed(false) }
+        val markFuture2 = (mark - (-1).milliseconds).apply { assertHasPassed(false) }
+
+        val markPast1 = (mark - 1.milliseconds).apply { assertHasPassed(true) }
+        val markPast2 = (markFuture1 + (-2).milliseconds).apply { assertHasPassed(true) }
 
         clock += 500_000.nanoseconds
 
@@ -33,5 +40,14 @@ class ClockMarkTest {
 
         assertEquals(elapsedFromPast, markPast1.elapsedNow())
         assertEquals(elapsedFromPast, markPast2.elapsedNow())
+
+        markFuture1.assertHasPassed(false)
+        markPast1.assertHasPassed(true)
+
+        clock += 1.milliseconds
+
+        markFuture1.assertHasPassed(true)
+        markPast1.assertHasPassed(true)
+
     }
 }

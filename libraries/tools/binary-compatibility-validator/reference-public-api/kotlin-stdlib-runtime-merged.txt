@@ -5288,6 +5288,8 @@ public abstract interface class kotlin/time/Clock {
 public abstract class kotlin/time/ClockMark {
 	public fun <init> ()V
 	public abstract fun elapsedNow ()D
+	public final fun hasNotPassedNow ()Z
+	public final fun hasPassedNow ()Z
 	public fun minus-LRDsOJo (D)Lkotlin/time/ClockMark;
 	public fun plus-LRDsOJo (D)Lkotlin/time/ClockMark;
 }
