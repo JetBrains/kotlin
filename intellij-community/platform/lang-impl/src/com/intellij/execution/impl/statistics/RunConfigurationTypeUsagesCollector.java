@@ -136,8 +136,8 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
       if (isThirdPartyValue(data) || "unknown".equals(data)) return ValidationResultType.ACCEPTED;
 
-      final String configurationId = getDataField(context, ID_FIELD);
-      final String factoryId = getDataField(context, FACTORY_FIELD);
+      final String configurationId = getEventDataField(context, ID_FIELD);
+      final String factoryId = getEventDataField(context, FACTORY_FIELD);
       if (configurationId == null) {
         return ValidationResultType.REJECTED;
       }
@@ -155,11 +155,6 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
         }
       }
       return ValidationResultType.REJECTED;
-    }
-
-    @Nullable
-    private static String getDataField(@NotNull EventContext context, @NotNull String fieldName) {
-      return context.eventData.containsKey(fieldName) ? context.eventData.get(fieldName).toString() : null;
     }
 
     @NotNull

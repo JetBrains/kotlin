@@ -8,6 +8,7 @@ import com.intellij.internal.statistic.eventLog.validator.rules.impl.CustomWhite
 import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogger;
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.text.StringUtil;
 import kotlin.Triple;
 import org.jetbrains.annotations.NotNull;
@@ -16,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 class LiveTemplateRunLogger {
   private static final String GROUP = "live.templates";
 
-  static void log(@NotNull TemplateImpl template, @NotNull Language language) {
+  static void log(@NotNull Project project, @NotNull TemplateImpl template, @NotNull Language language) {
     Triple<String, String, PluginInfo> keyGroupPluginToLog = getKeyGroupPluginToLog(template);
     if (keyGroupPluginToLog == null) return;
 
@@ -25,7 +26,8 @@ class LiveTemplateRunLogger {
     if (plugin != null) {
       data.addPluginInfo(plugin);
     }
-    FUCounterUsageLogger.getInstance().logEvent(GROUP, keyGroupPluginToLog.getFirst(), data);
+    data.addData("key", keyGroupPluginToLog.getFirst());
+    FUCounterUsageLogger.getInstance().logEvent(project, GROUP, "started", data);
   }
 
   @Nullable
@@ -59,7 +61,12 @@ class LiveTemplateRunLogger {
     @NotNull
     @Override
     protected ValidationResultType doValidate(@NotNull String data, @NotNull EventContext context) {
-      return validateKeyGroup(context.eventId, context.eventData.get("group"));
+      final String key = getEventDataField(context, "key");
+      final String group = getEventDataField(context, "group");
+      if (key == null || group == null || !isKeyOrGroup(data, key, group)) {
+        return ValidationResultType.REJECTED;
+      }
+      return validateKeyGroup(key, group);
     }
 
     @NotNull
@@ -76,6 +83,9 @@ class LiveTemplateRunLogger {
       } catch (Exception ignored) { }
       return ValidationResultType.REJECTED;
     }
-  }
 
+    private static boolean isKeyOrGroup(@NotNull String data, @NotNull String key, @NotNull String group) {
+      return StringUtil.equals(data, key) || StringUtil.equals(data, group);
+    }
+  }
 }

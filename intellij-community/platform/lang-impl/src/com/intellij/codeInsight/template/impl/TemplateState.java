@@ -392,7 +392,7 @@ public class TemplateState implements Disposable {
     myTemplateRange.setGreedyToLeft(true);
     myTemplateRange.setGreedyToRight(true);
 
-    LiveTemplateRunLogger.log(template, file.getLanguage());
+    LiveTemplateRunLogger.log(myProject, template, file.getLanguage());
 
     processAllExpressions(myTemplate);
   }

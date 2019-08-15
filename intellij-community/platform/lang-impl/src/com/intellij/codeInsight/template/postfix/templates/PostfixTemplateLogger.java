@@ -9,6 +9,7 @@ import com.intellij.internal.statistic.service.fus.collectors.FUCounterUsageLogg
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.lang.Language;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.psi.PsiElement;
@@ -20,18 +21,20 @@ public class PostfixTemplateLogger {
   private static final String CUSTOM = "custom";
   private static final String NO_PROVIDER = "no.provider";
   private static final String TEMPLATE_FIELD = "template";
+  private static final String PROVIDER_FIELD = "provider";
 
   static void log(@NotNull final PostfixTemplate template, @NotNull final PsiElement context) {
+    final Project project = context.getProject();
     final FeatureUsageData data = new FeatureUsageData().addLanguage(context.getLanguage());
     if (template.isBuiltin()) {
-      data.addData(TEMPLATE_FIELD, template.getId());
       final PostfixTemplateProvider provider = template.getProvider();
       final String providerId = provider != null ? provider.getId() : NO_PROVIDER;
-      FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, providerId, data);
+      data.addData(PROVIDER_FIELD, providerId).addData(TEMPLATE_FIELD, template.getId());
     }
     else {
-      FUCounterUsageLogger.getInstance().logEvent(context.getProject(), USAGE_GROUP, CUSTOM, data);
+      data.addData(PROVIDER_FIELD, CUSTOM).addData(TEMPLATE_FIELD, CUSTOM);
     }
+    FUCounterUsageLogger.getInstance().logEvent(project, USAGE_GROUP, "expanded", data);
   }
 
   public static class PostfixTemplateValidator extends CustomWhiteListRule {
@@ -49,21 +52,25 @@ public class PostfixTemplateLogger {
       final Language lang = getLanguage(context);
       if (lang == null) return ValidationResultType.REJECTED;
 
-      final String providerId = context.eventId;
-      final String templateId = context.eventData.containsKey(TEMPLATE_FIELD) ? context.eventData.get(TEMPLATE_FIELD).toString() : null;
-      if ((StringUtil.equals(data, providerId) || StringUtil.equals(data, templateId)) && StringUtil.isNotEmpty(templateId)) {
-        final Pair<PostfixTemplate, PostfixTemplateProvider> template = findPostfixTemplate(lang, providerId, templateId);
-        if (template.getFirst() != null && template.getSecond() != null) {
-          final PluginInfo templateInfo = PluginInfoDetectorKt.getPluginInfo(template.getFirst().getClass());
-          final PluginInfo providerInfo = PluginInfoDetectorKt.getPluginInfo(template.getSecond().getClass());
-          if (StringUtil.equals(data, context.eventId)) {
-            context.setPluginInfo(templateInfo);
-          }
-          return templateInfo.isDevelopedByJetBrains() && providerInfo.isDevelopedByJetBrains() ?
-                 ValidationResultType.ACCEPTED : ValidationResultType.THIRD_PARTY;
-        }
+      final String provider = getEventDataField(context, PROVIDER_FIELD);
+      final String template = getEventDataField(context, TEMPLATE_FIELD);
+      if (provider == null || template == null || !isProviderOrTemplate(data, provider, template)) {
+        return ValidationResultType.REJECTED;
+      }
+
+      final Pair<PostfixTemplate, PostfixTemplateProvider> result = findPostfixTemplate(lang, provider, template);
+      if (result.getFirst() != null && result.getSecond() != null) {
+        final PluginInfo templateInfo = PluginInfoDetectorKt.getPluginInfo(result.getFirst().getClass());
+        final PluginInfo providerInfo = PluginInfoDetectorKt.getPluginInfo(result.getSecond().getClass());
+        context.setPluginInfo(templateInfo);
+        return templateInfo.isDevelopedByJetBrains() && providerInfo.isDevelopedByJetBrains() ?
+               ValidationResultType.ACCEPTED : ValidationResultType.THIRD_PARTY;
       }
       return ValidationResultType.REJECTED;
+    }
+
+    private static boolean isProviderOrTemplate(@NotNull String data, @NotNull String provider, @NotNull String template) {
+      return StringUtil.equals(data, provider) || StringUtil.equals(data, template);
     }
 
     @NotNull
