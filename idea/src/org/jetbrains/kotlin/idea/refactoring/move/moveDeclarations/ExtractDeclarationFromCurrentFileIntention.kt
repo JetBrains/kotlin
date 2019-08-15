@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.moveCaret
 import org.jetbrains.kotlin.idea.intentions.SelfTargetingRangeIntention
-import org.jetbrains.kotlin.idea.kdoc.insert
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
 import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.MoveKotlinTopLevelDeclarationsDialog
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -55,12 +54,12 @@ class ExtractDeclarationFromCurrentFileIntention :
 
         val extraClassesToMove = element.tryGetExtraClassesToMove() ?: return null
 
-        val keyword = when (element) {
-            is KtClass -> element.getClassOrInterfaceKeyword()
-            is KtObjectDeclaration -> element.getObjectKeyword()
+        val startOffset = when (element) {
+            is KtClass -> element.startOffset
+            is KtObjectDeclaration -> element.getObjectKeyword()?.startOffset
             else -> return null
-        }
-        val startOffset = keyword?.startOffset ?: return null
+        } ?: return null
+
         val endOffset = element.nameIdentifier?.endOffset ?: return null
 
         text = if (extraClassesToMove.isNotEmpty()) "Extract '${element.name}' and subclasses from current file"
