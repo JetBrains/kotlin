@@ -61,7 +61,7 @@ import java.util.Collection;
  */
 public class PsiElement2UsageTargetAdapter
   implements PsiElementUsageTarget, TypeSafeDataProvider, PsiElementNavigationItem, ItemPresentation, ConfigurableUsageTarget {
-  private final SmartPsiElementPointer myPointer;
+  private final SmartPsiElementPointer<?> myPointer;
   @NotNull protected final FindUsagesOptions myOptions;
   private String myPresentableText;
   private Icon myIcon;
@@ -286,5 +286,10 @@ public class PsiElement2UsageTargetAdapter
   @Override
   public Icon getIcon(boolean open) {
     return myIcon;
+  }
+
+  @NotNull
+  public Project getProject() {
+    return myPointer.getProject();
   }
 }

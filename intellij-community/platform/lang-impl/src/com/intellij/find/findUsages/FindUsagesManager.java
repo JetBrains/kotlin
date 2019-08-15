@@ -337,7 +337,7 @@ public class FindUsagesManager {
       PsiElement[] primaryElements = ReadAction.compute(() -> PsiElement2UsageTargetAdapter.convertToPsiElements(primaryTargets));
       PsiElement[] secondaryElements = ReadAction.compute(() -> PsiElement2UsageTargetAdapter.convertToPsiElements(secondaryTargets));
 
-      Project project = ReadAction.compute(() -> scopeFile != null ? scopeFile.getProject() : primaryElements[0].getProject());
+      Project project = ReadAction.compute(() -> scopeFile != null ? scopeFile.getProject() : primaryTargets[0].getProject());
       ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
       LOG.assertTrue(indicator != null, "Must run under progress. see ProgressManager.run*");
 
