@@ -24,6 +24,20 @@ public class FormatterBasedIndentAdjuster  {
   private FormatterBasedIndentAdjuster() {
   }
 
+  /**
+   * Performs a delayed indent adjustment for large documents bigger than {@link #MAX_SYNCHRONOUS_ADJUSTMENT_DOC_SIZE} by
+   * scheduling it to a time when the document is committed. Uses formatter to calculate the new indent on a background
+   * thread. Only the actual change is done on EDT: the old indent is replaced with a new indent string directly in the
+   * document. Doesn't commit the document, thus a subsequent {@link PsiDocumentManager#commitDocument(Document)} may
+   * be required.
+   * <b>Note:</b> visually it may lead to a text jump which becomes more obvious, more time it takes to calculate the
+   * new indent using a formatting model. A better way to handle large documents is to implement
+   * {@link com.intellij.psi.codeStyle.lineIndent.LineIndentProvider} returning a non-null value when possible.
+   *
+   * @param myProject  The current project.
+   * @param myDocument The document to be modified.
+   * @param myOffset   The offset in the line whose indent is to be adjusted.
+   */
   public static void scheduleIndentAdjustment(@NotNull Project myProject,
                                               @NotNull Document myDocument,
                                               int myOffset) {
