@@ -25,7 +25,7 @@ public open class A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any!, /*1*/ E
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@DefaultUnknownNullness /* annotation class not found */ public open class D {
+@codeanalysis.experimental.annotations.DefaultNullnessUnknown public open class D {
     public constructor D()
     public open fun bar(/*0*/ a: A<kotlin.String!, kotlin.String!, kotlin.String!>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
