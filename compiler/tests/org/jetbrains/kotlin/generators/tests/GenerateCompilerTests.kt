@@ -486,4 +486,10 @@ fun main(args: Array<String>) {
             model("rawBuilder", testMethod = "doFirBuilderDataTest")
         }
     }
+
+    testGroup("compiler/visualizer/tests", "compiler/visualizer/testData") {
+        testClass<AbstractPsiVisualizer>("PsiVisualizerForUncommonCasesGenerated") {
+            model("uncommonCases/testFiles", testMethod = "doUncommonCasesTest")
+        }
+    }
 }
