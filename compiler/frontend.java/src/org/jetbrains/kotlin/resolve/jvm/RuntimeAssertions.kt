@@ -17,17 +17,26 @@ import org.jetbrains.kotlin.resolve.calls.callUtil.isSafeCall
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
+import org.jetbrains.kotlin.resolve.calls.checkers.ImplicitNothingAsTypeParameterCallChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
+import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.tower.isSynthesized
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPublicApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.isPublishedApi
+import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.isNullableUnderlyingType
 import org.jetbrains.kotlin.resolve.scopes.LexicalScopeKind
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.isClassType
+import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.immediateSupertypes
 import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import java.io.File
 
 class RuntimeAssertionInfo(val needNotNullAssertion: Boolean, val message: String) {
     interface DataFlowExtras {
@@ -115,18 +124,42 @@ object RuntimeAssertionsTypeChecker : AdditionalTypeChecker {
 }
 
 object RuntimeAssertionsOnGenericTypeReturningFunctionsCallChecker : CallChecker {
+    private val SPECIAL_FUNCTION_NAMES = ControlStructureTypingUtils.ResolveConstruct.values().map { it.specialFunctionName }.toSet()
+
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val unsubstitutedReturnType = resolvedCall.candidateDescriptor.original.returnType ?: return
         val inferredReturnType = resolvedCall.resultingDescriptor.returnType ?: return
         val isEnabledGeneratingNullChecksOnCallSite =
             context.languageVersionSettings.supportsFeature(LanguageFeature.GenerateNullChecksForGenericTypeReturningFunctions)
 
-        if (unsubstitutedReturnType.isTypeParameter() &&
+        /*
+         * For flexible types the null checks is generated in the other place,
+         * This branch isn't executed for calls returning a flexible type,
+         * because `inferredReturnType` in this case will be flexible (nullable), too.
+         */
+
+        if (resolvedCall !is VariableAsFunctionResolvedCall &&
+            unsubstitutedReturnType.isTypeParameter() &&
             unsubstitutedReturnType.isNullable() &&
-            !inferredReturnType.isNullable()
+            !inferredReturnType.isNullable() &&
+            resolvedCall.candidateDescriptor.name !in SPECIAL_FUNCTION_NAMES
         ) {
+            val y = resolvedCall.candidateDescriptor.annotations
+            val y1 = resolvedCall.candidateDescriptor.fqNameSafe
+            val y2 = resolvedCall.candidateDescriptor.containingDeclaration
+            val y3 = resolvedCall.candidateDescriptor.isEffectivelyPublicApi
+            val y4 = resolvedCall.candidateDescriptor.module
             val callElement = resolvedCall.call.callElement
             val assertionInfo = RuntimeAssertionInfo(needNotNullAssertion = true, message = callElement.textForRuntimeAssertionInfo)
+
+            if (resolvedCall is VariableAsFunctionResolvedCall) {
+                File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(resolvedCall.variableCall.candidateDescriptor.toString() + " +++|+++\n")
+            } else {
+                File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(resolvedCall.candidateDescriptor.toString() + "\n")
+            }
+            File("/Users/victor.petukhov/Desktop/untitled_folder/1.txt").appendText(unsubstitutedReturnType.toString() + ": " + inferredReturnType + "\n\n")
+
+            File("/Users/victor.petukhov/Desktop/untitled_folder/10.txt").appendText(" |")
 
             context.trace.record(
                 when (context.scope.kind) {

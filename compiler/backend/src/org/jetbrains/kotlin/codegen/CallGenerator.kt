@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen
 
+import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
@@ -40,7 +41,7 @@ interface CallGenerator {
                 (callableMethod as CallableMethod).genInvokeDefaultInstruction(codegen.v)
             }
 
-            if (resolvedCall != null) {
+            if (resolvedCall != null && !isPrimitive(callableMethod.returnType)) {
                 generateNullCheckOnCallSite(
                     JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
                     resolvedCall.call.callElement,

@@ -45,8 +45,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.codegen.AsmUtil.getDeprecatedAccessFlag;
-import static org.jetbrains.kotlin.codegen.AsmUtil.getVisibilityForBackingField;
+import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.generateNullCheckOnCallSite;
 import static org.jetbrains.kotlin.codegen.FunctionCodegen.processInterfaceMethod;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
@@ -611,11 +610,13 @@ public class PropertyCodegen {
             Type asmType = signature.getReturnType();
             KotlinType kotlinReturnType = propertyAccessorDescriptor.getOriginal().getReturnType();
             lastValue.put(asmType, kotlinReturnType, v);
-            generateNullCheckOnCallSite(
-                    JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_DELEGATES,
-                    resolvedCall.getCall().getCallElement(),
-                    codegen
-            );
+            if (!isPrimitive(asmType)) {
+                generateNullCheckOnCallSite(
+                        JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_DELEGATES,
+                        resolvedCall.getCall().getCallElement(),
+                        codegen
+                );
+            }
             v.areturn(asmType);
         }
     }

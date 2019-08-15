@@ -1691,7 +1691,8 @@ public abstract class StackValue {
                 }
                 else {
                     getter.genInvokeInstruction(v);
-                    if (resolvedCall != null) {
+
+                    if (resolvedCall != null && !isPrimitive(type)) {
                         generateNullCheckOnCallSite(
                                 JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
                                 resolvedCall.getCall().getCallElement(),

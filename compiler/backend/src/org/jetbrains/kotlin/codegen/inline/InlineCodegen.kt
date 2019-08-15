@@ -737,7 +737,7 @@ class PsiInlineCodegen(
             state.globalInlineContext.exitFromInliningOf(resolvedCall)
         }
 
-        if (resolvedCall != null) {
+        if (resolvedCall != null && !isPrimitive(callableMethod.returnType)) {
             generateNullCheckOnCallSite(
                 JvmBindingContextSlices.RUNTIME_ASSERTION_INFO_ON_GENERIC_CALL,
                 resolvedCall.call.callElement,
