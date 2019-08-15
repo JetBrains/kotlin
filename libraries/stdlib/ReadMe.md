@@ -6,7 +6,7 @@ This module creates the [standard library for Kotlin](https://kotlinlang.org/api
 
 We use code generation to generate utility extension functions for some collection-like types like arrays, strings, `Collection<T>`, `Sequence<T>`, `Map<K, V>` etc.
 
-These sources are placed into the `generated` folder and their names are prefixed with the underscore, for example `generated/_Collections.kt`
+These sources are placed into the `generated` folder and their names are prefixed with an underscore, for example, `generated/_Collections.kt`
 
 To run the code generator, use the following command in the root directory of the project:
 
