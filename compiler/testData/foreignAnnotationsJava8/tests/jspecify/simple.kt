@@ -7,7 +7,7 @@ public class A {
     @Nullable public String field = null;
 
     @Nullable
-    public String foo(@NotNull String x, @UnknownNullness CharSequence y) {
+    public String foo(@NotNull String x, @NullnessUnknown CharSequence y) {
         return "";
     }
 

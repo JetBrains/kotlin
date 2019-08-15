@@ -2,8 +2,8 @@ package
 
 public fun main(/*0*/ aNotNullNotNullNotNull: A<kotlin.String, kotlin.String, kotlin.String>, /*1*/ aNotNullNotNullNull: A<kotlin.String, kotlin.String, kotlin.String?>, /*2*/ aNotNullNullNotNull: A<kotlin.String, kotlin.String?, kotlin.String>, /*3*/ aNotNullNullNull: A<kotlin.String, kotlin.String?, kotlin.String?>, /*4*/ b: B, /*5*/ c: C, /*6*/ d: D): kotlin.Unit
 
-public open class A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.UnknownNullness kotlin.Any!> {
-    public constructor A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.UnknownNullness kotlin.Any!>()
+public open class A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.NullnessUnknown kotlin.Any!> {
+    public constructor A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.NullnessUnknown kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

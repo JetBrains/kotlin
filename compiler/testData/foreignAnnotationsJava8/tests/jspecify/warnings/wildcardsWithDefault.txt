@@ -2,8 +2,8 @@ package
 
 public fun main(/*0*/ aNotNullNotNullNotNull: A<kotlin.String, kotlin.String, kotlin.String>, /*1*/ aNotNullNotNullNull: A<kotlin.String, kotlin.String, kotlin.String?>, /*2*/ aNotNullNullNotNull: A<kotlin.String, kotlin.String?, kotlin.String>, /*3*/ aNotNullNullNull: A<kotlin.String, kotlin.String?, kotlin.String?>, /*4*/ b: B): kotlin.Unit
 
-public open class A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.UnknownNullness kotlin.Any!> {
-    public constructor A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any, /*1*/ E, /*2*/ F : @jspecify.annotations.UnknownNullness kotlin.Any!>()
+public open class A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any!, /*1*/ E : @jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @jspecify.annotations.NullnessUnknown kotlin.Any!> {
+    public constructor A</*0*/ T : @jspecify.annotations.NotNull kotlin.Any!, /*1*/ E : @jspecify.annotations.Nullable kotlin.Any!, /*2*/ F : @jspecify.annotations.NullnessUnknown kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -13,7 +13,7 @@ public open class B {
     public constructor B()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    @jspecify.annotations.DefaultNotNull public open fun noBoundsNotNull(/*0*/ a: A<out @jspecify.annotations.NotNull kotlin.Any, out @jspecify.annotations.Nullable kotlin.Any, out @codeanalysis.annotations.UnknownNullness kotlin.Any>): kotlin.Unit
-    @jspecify.annotations.DefaultNullable public open fun noBoundsNullable(/*0*/ a: A<out @jspecify.annotations.NotNull kotlin.Any, *, *>?): kotlin.Unit
+    @jspecify.annotations.DefaultNotNull public open fun noBoundsNotNull(/*0*/ a: A<*, *, *>!): kotlin.Unit
+    @jspecify.annotations.DefaultNullable public open fun noBoundsNullable(/*0*/ a: A<*, *, *>!): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }

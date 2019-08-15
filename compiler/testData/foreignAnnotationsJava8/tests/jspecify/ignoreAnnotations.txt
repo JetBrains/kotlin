@@ -10,7 +10,7 @@ public open class A {
     @jspecify.annotations.DefaultNotNull public open fun everythingNotNullable(/*0*/ x: kotlin.String!): kotlin.String!
     @jspecify.annotations.DefaultNullable public open fun everythingNullable(/*0*/ x: kotlin.String!): kotlin.String!
     @jspecify.annotations.DefaultNullnessUnknown public open fun everythingUnknown(/*0*/ x: kotlin.String!): kotlin.String!
-    @jspecify.annotations.Nullable public open fun foo(/*0*/ @jspecify.annotations.NotNull x: kotlin.String!, /*1*/ @jspecify.annotations.UnknownNullness y: kotlin.CharSequence!): kotlin.String!
+    @jspecify.annotations.Nullable public open fun foo(/*0*/ @jspecify.annotations.NotNull x: kotlin.String!, /*1*/ @jspecify.annotations.NullnessUnknown y: kotlin.CharSequence!): kotlin.String!
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
