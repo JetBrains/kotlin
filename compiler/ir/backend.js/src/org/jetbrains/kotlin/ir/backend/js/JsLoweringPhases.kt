@@ -403,9 +403,9 @@ val jsPhases = namedIrModulePhase(
             testGenerationPhase then
             expectDeclarationsRemovingPhase then
             stripTypeAliasDeclarationsPhase then
-            provisionalFunctionExpressionPhase then
             arrayConstructorPhase then
             functionInliningPhase then
+            provisionalFunctionExpressionPhase then
             lateinitLoweringPhase then
             tailrecLoweringPhase then
             enumClassConstructorLoweringPhase then
