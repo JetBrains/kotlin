@@ -23,7 +23,7 @@ public actual object MonoClock : Clock {
 
     }
 
-    override fun mark(): ClockMark = actualClock.mark()
+    override fun markNow(): ClockMark = actualClock.markNow()
 }
 
 internal external interface Process {
@@ -34,9 +34,9 @@ internal external interface Process {
 @ExperimentalTime
 internal class HrTimeClock(val process: Process) : Clock {
 
-    override fun mark(): ClockMark = object : ClockMark() {
+    override fun markNow(): ClockMark = object : ClockMark() {
         val startedAt = process.hrtime()
-        override fun elapsed(): Duration =
+        override fun elapsedNow(): Duration =
             process.hrtime(startedAt).let { (seconds, nanos) -> seconds.seconds + nanos.nanoseconds }
     }
 

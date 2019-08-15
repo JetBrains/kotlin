@@ -8,7 +8,7 @@ package kotlin.time
 /**
  * A source of time for measuring time intervals.
  *
- * The only operation provided by the clock is [mark]. It returns a [ClockMark], which can be used to query the elapsed time later.
+ * The only operation provided by the clock is [markNow]. It returns a [ClockMark], which can be used to query the elapsed time later.
  *
  * @see [measureTime]
  * @see [measureTimedValue]
@@ -20,22 +20,24 @@ public interface Clock {
      * Marks a time point on this clock.
      *
      * The returned [ClockMark] instance encapsulates captured time point and allows querying
-     * the duration of time interval [elapsed][ClockMark.elapsed] from that point.
+     * the duration of time interval [elapsed][ClockMark.elapsedNow] from that point.
      */
-    public fun mark(): ClockMark
+    public fun markNow(): ClockMark
 }
 
 /**
  * Represents a time point notched on a particular [Clock]. Remains bound to the clock it was taken from
- * and allows querying for the duration of time elapsed from that point (see the function [elapsed]).
+ * and allows querying for the duration of time elapsed from that point (see the function [elapsedNow]).
  */
 @SinceKotlin("1.3")
 @ExperimentalTime
 public abstract class ClockMark {
     /**
      * Returns the amount of time passed from this clock mark on the clock from which this mark was taken.
+     *
+     * Note that the value returned by this function can change on subsequent invocations.
      */
-    public abstract fun elapsed(): Duration
+    public abstract fun elapsedNow(): Duration
 
     /**
      * Returns a clock mark on the same clock that is ahead of this clock mark by the specified [duration].
@@ -54,7 +56,7 @@ public abstract class ClockMark {
 
 @ExperimentalTime
 private class AdjustedClockMark(val mark: ClockMark, val adjustment: Duration) : ClockMark() {
-    override fun elapsed(): Duration = mark.elapsed() - adjustment
+    override fun elapsedNow(): Duration = mark.elapsedNow() - adjustment
 
     override fun plus(duration: Duration): ClockMark = AdjustedClockMark(mark, adjustment + duration)
 }
