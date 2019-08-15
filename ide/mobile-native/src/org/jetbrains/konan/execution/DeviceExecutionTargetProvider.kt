@@ -9,11 +9,10 @@ import com.intellij.execution.ExecutionTarget
 import com.intellij.execution.ExecutionTargetProvider
 import com.intellij.execution.configurations.RunConfiguration
 import com.intellij.openapi.project.Project
-import org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfiguration
 
 class DeviceExecutionTargetProvider : ExecutionTargetProvider() {
     override fun getTargets(project: Project, configuration: RunConfiguration): List<ExecutionTarget> =
-        if (configuration is GradleKonanAppRunConfiguration)
+        if (configuration is MobileRunConfiguration)
             DeviceService.instance.getAll()
         else emptyList()
 }

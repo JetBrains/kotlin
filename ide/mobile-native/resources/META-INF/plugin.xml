@@ -29,13 +29,12 @@
 <!--    <directoryProjectGenerator implementation="org.jetbrains.konan.KonanGradleProjectGenerator"/>-->
     <projectTaskRunner implementation="org.jetbrains.konan.gradle.execution.GradleKonanProjectTaskRunner"/>
 
-    <configurationType implementation="org.jetbrains.konan.gradle.execution.GradleKonanAppRunConfigurationType"/>
-    <runConfigurationProducer implementation="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunConfigurationProducer"/>
-    <executionTargetProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanExecutionTargetProvider"/>
+    <configurationType implementation="org.jetbrains.konan.execution.MobileRunConfigurationType"/>
     <runLineMarkerContributor language="ObjectiveC"
                               implementationClass="org.jetbrains.konan.gradle.execution.GradleKonanTargetRunLineMarkerProvider"/>
 
     <stepsBeforeRunProvider implementation="org.jetbrains.konan.gradle.execution.GradleKonanBuildBeforeRunTaskProvider"/>
+    <programRunner implementation="org.jetbrains.konan.execution.MobileRunner" order="first"/>
 
     <applicationService serviceInterface="com.jetbrains.cidr.OCPathManagerCustomization"
                         serviceImplementation="org.jetbrains.konan.PathManagerCustomization" overrides="true"/>

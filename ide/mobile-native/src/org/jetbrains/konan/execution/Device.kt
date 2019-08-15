@@ -5,13 +5,24 @@
 
 package org.jetbrains.konan.execution
 
-import org.jetbrains.konan.gradle.execution.GradleKonanBuildProfileExecutionTarget
+import com.intellij.execution.ExecutionTarget
+import com.intellij.execution.configurations.RunConfiguration
+import com.intellij.execution.runners.ExecutionEnvironment
+import com.jetbrains.cidr.execution.CidrCommandLineState
+import javax.swing.Icon
 
 abstract class Device(
-    id: String,
+    private val uniqueID: String,
     val name: String,
     val osName: String,
     val osVersion: String
-) : GradleKonanBuildProfileExecutionTarget(id) {
+) : ExecutionTarget() {
+    override fun getId(): String = uniqueID
     override fun getDisplayName(): String = "$name | $osName $osVersion"
+    override fun getIcon(): Icon? = null
+
+    override fun canRun(configuration: RunConfiguration): Boolean =
+        configuration is MobileRunConfiguration
+
+    abstract fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState
 }
