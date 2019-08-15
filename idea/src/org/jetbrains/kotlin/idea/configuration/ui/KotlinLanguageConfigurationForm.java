@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.idea.util.VersioningKt;
 import javax.swing.*;
 import java.util.List;
 
-public class ConfigurePluginUpdatesForm {
+public class KotlinLanguageConfigurationForm {
     public JComboBox<String> channelCombo;
     public JButton reCheckButton;
     public JPanel mainPanel;
@@ -27,8 +27,9 @@ public class ConfigurePluginUpdatesForm {
     private JTextPane currentVersion;
     private JPanel bundledCompilerVersionPanel;
     private JTextPane compilerVersion;
+    public JCheckBox useNewJ2kCheckBox;
 
-    public ConfigurePluginUpdatesForm() {
+    public KotlinLanguageConfigurationForm() {
         showVerifierDisabledStatus();
 
         String pluginVersion = KotlinPluginUtil.getPluginVersion();

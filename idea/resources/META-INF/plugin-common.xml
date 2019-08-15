@@ -487,7 +487,7 @@
                          parentId="project.propCompiler"/>
 
     <applicationConfigurable groupId="language" displayName="Kotlin" id="preferences.language.Kotlin"
-                             instance="org.jetbrains.kotlin.idea.configuration.KotlinUpdatesSettingsConfigurable"/>
+                             instance="org.jetbrains.kotlin.idea.configuration.KotlinLanguageConfiguration"/>
 
     <projectConfigurable groupId="language" displayName="Kotlin Scripting" id="preferences.language.Kotlin.scripting"
                          instance="org.jetbrains.kotlin.idea.script.configuration.KotlinScriptingSettingsConfigurable"
