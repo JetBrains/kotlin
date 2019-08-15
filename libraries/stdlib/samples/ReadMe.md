@@ -8,7 +8,7 @@ with the [`@sample`](https://kotlinlang.org/docs/reference/kotlin-doc.html#block
 
 ### Guides for sample authoring
 
-Note that samples are conceptually different from unit tests, although they are written as such. 
+Note that samples, although written as unit tests, are conceptually different from them. 
 While a unit test usually explores corner cases of a function being tested, 
 the goal of a sample is to show a common use case of a function.
 
