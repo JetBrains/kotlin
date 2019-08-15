@@ -2,14 +2,14 @@
 
 This project contains samples for the standard library functions. 
 They are located in the [test](test) source root and each sample is written like a small unit test.
-These samples can be referenced in the documentation of the standard library functions 
+These samples are referenced in the documentation of the standard library functions 
 with the [`@sample`](https://kotlinlang.org/docs/reference/kotlin-doc.html#block-tags) tag and embedded in the generated documentation as runnable samples.
 
 
 ### Guides for sample authoring
 
-Note that samples, even though they are written as unit tests, are not conceptually the same as unit tests. 
-Unlike a unit test, which usually explores corner cases of a function being tested, 
+Note that samples are conceptually different from unit tests, although they are written as such. 
+While a unit test usually explores corner cases of a function being tested, 
 the goal of a sample is to show a common use case of a function.
 
 Please see the existing samples for an inspiration on authoring new ones.
