@@ -146,8 +146,8 @@ class IrTypeMapper(private val context: JvmBackendContext) {
             }
             else -> error(
                 "Local class should have its name computed in InventNamesForLocalClasses: ${klass.fqNameWhenAvailable}\n" +
-                        "Ensure that any lowering that transforms elements with local class info (classes, function references, " +
-                        "IrTypeOperatorCall for SAM conversions) invokes `copyAttributes` on the transformed element."
+                        "Ensure that any lowering that transforms elements with local class info (classes, function references) " +
+                        "invokes `copyAttributes` on the transformed element."
             )
         }
     }

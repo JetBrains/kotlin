@@ -45,7 +45,7 @@ import static org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE;
 import static org.jetbrains.org.objectweb.asm.Opcodes.*;
 
 public class SamWrapperCodegen {
-    private static final String FUNCTION_FIELD_NAME = "function";
+    public static final String FUNCTION_FIELD_NAME = "function";
 
     private final GenerationState state;
     private final boolean isInsideInline;
