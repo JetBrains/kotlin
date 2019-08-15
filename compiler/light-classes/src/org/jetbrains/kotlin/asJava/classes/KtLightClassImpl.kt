@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.asJava.classes
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
 // light class for top level or (inner/nested of top level) source declarations
-open class KtLightClassImpl(
+open class KtLightClassImpl @JvmOverloads constructor(
     classOrObject: KtClassOrObject,
     forceUsingOldLightClasses: Boolean = false
 ) : KtLightClassForSourceDeclaration(classOrObject, forceUsingOldLightClasses) {
