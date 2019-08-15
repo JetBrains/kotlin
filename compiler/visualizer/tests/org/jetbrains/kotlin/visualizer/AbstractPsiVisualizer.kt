@@ -48,4 +48,9 @@ abstract class AbstractPsiVisualizer: KotlinMultiFileTestWithJava<Void?, Void?>(
         replacement = "fir\\psi2fir" to "visualizer"
         doTest(filePath)
     }
+
+    fun doUncommonCasesTest(filePath: String) {
+        replacement = "testFiles" to "resultFiles"
+        doTest(filePath)
+    }
 }
