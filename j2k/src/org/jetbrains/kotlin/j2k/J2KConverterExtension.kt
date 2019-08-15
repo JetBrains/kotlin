@@ -31,7 +31,7 @@ abstract class J2kConverterExtension : AbstractExtensionPointBean() {
 
     companion object {
         val isNewJ2k
-            get() = Registry.`is`("kotlin.use.new.j2k", true)
+            get() = Registry.`is`("kotlin.use.new.j2k", false)
 
         val EP_NAME = ExtensionPointName.create<J2kConverterExtension>("org.jetbrains.kotlin.j2kConverterExtension")
 
