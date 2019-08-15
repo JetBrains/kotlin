@@ -129,7 +129,9 @@ abstract class KotlinIrLinker(
 
         private val moduleDeserializationState = DeserializationState.ModuleDeserializationState(this)
         private val moduleReversedFileIndex = mutableMapOf<UniqId, IrDeserializerForFile>()
-        private val moduleDependencies = mutableListOf<IrModuleDeserializer>()
+        private val moduleDependencies by lazy {
+            moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.map { deserializersForModules[it]!! }
+        }
 
         // This is a heavy initializer
         val module = deserializeIrModuleHeader()
@@ -460,7 +462,6 @@ abstract class KotlinIrLinker(
                 files.add(deserializeIrFile(ProtoFile.parseFrom(readFile(moduleDescriptor, i), newInstance()), i))
             }
 
-            moduleDescriptor.allDependencyModules.filter { it != moduleDescriptor }.mapTo(moduleDependencies) { deserializersForModules[it]!! }
 
             return IrModuleFragmentImpl(moduleDescriptor, builtIns, files)
         }
