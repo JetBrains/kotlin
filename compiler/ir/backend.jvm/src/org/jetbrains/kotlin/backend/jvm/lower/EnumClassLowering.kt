@@ -249,7 +249,7 @@ private class EnumClassLowering(val context: JvmBackendContext) : ClassLoweringP
         private fun createSyntheticValuesFieldInitializerExpression(): IrExpression =
             context.createJvmIrBuilder(irClass.symbol).irArray(context.irBuiltIns.arrayClass.typeWith(irClass.defaultType)) {
                 enumEntryFields.forEach { irField ->
-                    +IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irField.symbol, irField.symbol.owner.type)
+                    +IrGetFieldImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irField.symbol, irField.type)
                 }
             }
 

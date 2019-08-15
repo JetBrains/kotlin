@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrClassReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -159,23 +158,25 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
             copyAttributes(irFunctionReference)
         }
 
-        fun build(): IrExpression = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).irBlock {
-            val constructor = createConstructor()
-            createInvokeMethod(
-                if (samSuperType != null && boundReceiver != null) {
-                    irTemporary(boundReceiver.second)
-                } else null
-            )
+        fun build(): IrExpression = context.createJvmIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
+            irBlock {
+                val constructor = createConstructor()
+                createInvokeMethod(
+                    if (samSuperType != null && boundReceiver != null) {
+                        irTemporary(boundReceiver.second)
+                    } else null
+                )
 
-            if (!isLambda && samSuperType == null) {
-                createGetSignatureMethod(functionGetSignature)
-                createGetNameMethod(functionGetName)
-                createGetOwnerMethod(functionGetOwner)
-            }
+                if (!isLambda && samSuperType == null) {
+                    createGetSignatureMethod(this@run.irSymbols.functionReferenceGetSignature.owner)
+                    createGetNameMethod(this@run.irSymbols.functionReferenceGetName.owner)
+                    createGetOwnerMethod(this@run.irSymbols.functionReferenceGetOwner.owner)
+                }
 
-            +functionReferenceClass
-            +irCall(constructor.symbol).apply {
-                if (valueArgumentsCount > 0) putValueArgument(0, boundReceiver!!.second)
+                +functionReferenceClass
+                +irCall(constructor.symbol).apply {
+                    if (valueArgumentsCount > 0) putValueArgument(0, boundReceiver!!.second)
+                }
             }
         }
 
@@ -292,7 +293,7 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                 // will put it into a field.
                                 if (samSuperType == null)
                                     irImplicitCast(
-                                        irGetField(irGet(dispatchReceiverParameter!!), functionReferenceReceiverField),
+                                        irGetField(irGet(dispatchReceiverParameter!!), irSymbols.functionReferenceReceiverField.owner),
                                         boundReceiver.second.type
                                     )
                                 else
@@ -318,9 +319,8 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
                                 }
 
                             unboundIndex >= argumentTypes.size ->
-                                // Default value argument
-                                // TODO For suspend functions the last argument is continuation and it is implicit:
-                                //      irCall(getContinuationSymbol, listOf(ourSymbol.descriptor.returnType!!))
+                                // Default value argument (this pass doesn't handle suspend functions, otherwise
+                                // it could also be the continuation argument)
                                 null
 
                             else ->
@@ -405,18 +405,4 @@ internal class CallableReferenceLowering(private val context: JvmBackendContext)
 
     private val currentDeclarationParent
         get() = allScopes.last { it.irElement is IrDeclarationParent }.irElement as IrDeclarationParent
-
-    private fun IrClassSymbol.functionByName(name: String) = owner.functions.single { it.name.asString() == name }
-
-    private val functionReferenceReceiverField =
-        context.ir.symbols.functionReference.owner.declarations.single { it is IrField && it.name.toString() == "receiver" } as IrField
-
-    private val functionGetSignature =
-        context.ir.symbols.functionReference.functionByName("getSignature")
-
-    private val functionGetName =
-        context.ir.symbols.functionReference.functionByName("getName")
-
-    private val functionGetOwner =
-        context.ir.symbols.functionReference.functionByName("getOwner")
 }

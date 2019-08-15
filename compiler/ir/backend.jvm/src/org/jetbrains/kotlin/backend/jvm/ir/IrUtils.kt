@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.ir
 
 import org.jetbrains.kotlin.backend.common.lower.IrLoweringContext
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.JvmSymbols
 import org.jetbrains.kotlin.backend.jvm.codegen.isJvmInterface
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -109,7 +110,10 @@ class JvmIrBuilder(
     Scope(symbol),
     startOffset,
     endOffset
-)
+) {
+    val irSymbols: JvmSymbols
+        get() = backendContext.ir.symbols
+}
 
 fun JvmBackendContext.createJvmIrBuilder(
     symbol: IrSymbol,
