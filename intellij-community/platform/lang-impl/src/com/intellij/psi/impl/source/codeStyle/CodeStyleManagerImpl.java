@@ -26,6 +26,7 @@ import com.intellij.psi.formatter.FormatterUtil;
 import com.intellij.psi.impl.CheckUtil;
 import com.intellij.psi.impl.source.PostprocessReformattingAspect;
 import com.intellij.psi.impl.source.SourceTreeToPsiMap;
+import com.intellij.psi.impl.source.codeStyle.lineIndent.FormatterBasedIndentAdjuster;
 import com.intellij.psi.impl.source.tree.FileElement;
 import com.intellij.psi.impl.source.tree.RecursiveTreeElementWalkingVisitor;
 import com.intellij.psi.impl.source.tree.TreeElement;
@@ -949,5 +950,10 @@ public class CodeStyleManagerImpl extends CodeStyleManager implements Formatting
       return settingsProvider.getDocCommentSettings(CodeStyle.getSettings(file));
     }
     return DocCommentSettings.DEFAULTS;
+  }
+
+  @Override
+  public void scheduleIndentAdjustment(@NotNull Document document, int offset) {
+    FormatterBasedIndentAdjuster.scheduleIndentAdjustment(myProject, document, offset);
   }
 }
