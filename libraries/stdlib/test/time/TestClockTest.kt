@@ -48,15 +48,15 @@ class TestClockTest {
     @Test
     fun nanosecondRounding() {
         val clock = TestClock()
-        val mark = clock.mark()
+        val mark = clock.markNow()
 
         repeat(10_000) {
             clock += 0.9.nanoseconds
 
-            assertEquals(Duration.ZERO, mark.elapsed())
+            assertEquals(Duration.ZERO, mark.elapsedNow())
         }
 
         clock += 1.9.nanoseconds
-        assertEquals(1.nanoseconds, mark.elapsed())
+        assertEquals(1.nanoseconds, mark.elapsedNow())
     }
 }
