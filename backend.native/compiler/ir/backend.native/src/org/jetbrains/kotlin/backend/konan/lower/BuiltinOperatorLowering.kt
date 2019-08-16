@@ -184,7 +184,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
         }
     }
 
-    private fun lowerCheckNotNull(expression: IrCall) = builder.at(expression).irBlock {
+    private fun lowerCheckNotNull(expression: IrCall) = builder.at(expression).irBlock(resultType = expression.type) {
         val temp = irTemporary(expression.getValueArgument(0)!!)
         +irIfThen(context.irBuiltIns.unitType, irEqeqNull(irGet(temp)), irCall(symbols.ThrowNullPointerException))
         +irGet(temp)

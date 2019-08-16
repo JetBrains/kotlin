@@ -152,7 +152,7 @@ fun IrBuilderWithScope.irForceNotNull(expression: IrExpression): IrExpression {
         return expression
     }
 
-    return irCall(context.irBuiltIns.checkNotNullSymbol).apply {
+    return irCall(context.irBuiltIns.checkNotNullSymbol, expression.type.makeNotNull()).apply {
         putValueArgument(0, expression)
     }
 }
