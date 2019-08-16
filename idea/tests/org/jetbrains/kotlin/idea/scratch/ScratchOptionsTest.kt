@@ -27,7 +27,7 @@ class ScratchOptionsTest : AbstractScratchRunActionTest() {
         myManager.closeFile(myFixture.file.virtualFile)
         myManager.openFile(myFixture.file.virtualFile, true)
 
-        val (_, scratchPanelAfterClosingFile) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile) ?: error("Couldn't find scratch panel")
+        val scratchPanelAfterClosingFile = getScratchPanelFromEditorSelectedForFile(myManager, myFixture.file.virtualFile) ?: error("Couldn't find scratch panel")
 
         Assert.assertEquals("Wrong value for isRepl checkbox", newIsReplValue, scratchPanelAfterClosingFile.scratchFile.options.isRepl)
         Assert.assertEquals(
@@ -55,12 +55,12 @@ class ScratchOptionsTest : AbstractScratchRunActionTest() {
     }
 
     fun testCurrentModuleIsAutomaticallySelectedForWorksheetFile() {
-        val scratchTopPanel = configureWorksheetByText("worksheet.ws.kts", testScratchText())
+        val scratchFile = configureWorksheetByText("worksheet.ws.kts", testScratchText()).scratchFile
 
         Assert.assertEquals(
             "Selected module should be equal to current project module for worksheets",
             myFixture.module,
-            scratchTopPanel.scratchFile.module
+            scratchFile.module
         )
     }
 

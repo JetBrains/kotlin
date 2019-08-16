@@ -23,7 +23,7 @@ abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
     fun doScratchTest(path: String) {
         val fileText = FileUtil.loadFile(File(path))
 
-        val scratchFile = ScratchRootType.getInstance().createScratchFile(
+        val scratchVirtualFile = ScratchRootType.getInstance().createScratchFile(
             project,
             "scratch.kts",
             KotlinLanguage.INSTANCE,
@@ -31,14 +31,14 @@ abstract class AbstractScratchLineMarkersTest : AbstractLineMarkersTest() {
             ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file")
 
-        myFixture.openFileInEditor(scratchFile)
+        myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
 
-        val (_, scratchPanel) = getEditorWithScratchPanel(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
+        val scratchFile = getScratchFileFromEditorSelectedForFile(FileEditorManager.getInstance(project), myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
-        configureOptions(scratchPanel, fileText, null)
+        configureOptions(scratchFile, fileText, null)
 
         val project = myFixture.project
         val document = myFixture.editor.document
