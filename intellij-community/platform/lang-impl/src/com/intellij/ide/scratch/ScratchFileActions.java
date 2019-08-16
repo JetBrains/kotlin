@@ -152,7 +152,7 @@ public class ScratchFileActions {
     return context;
   }
 
-  static void doCreateNewScratch(@NotNull Project project, @NotNull ScratchFileCreationHelper.Context context) {
+  static PsiFile doCreateNewScratch(@NotNull Project project, @NotNull ScratchFileCreationHelper.Context context) {
     FeatureUsageTracker.getInstance().triggerFeatureUsed("scratch");
     Language language = ObjectUtils.notNull(context.language);
     if (context.fileExtension == null) {
@@ -172,13 +172,14 @@ public class ScratchFileActions {
                                             context.fileExtension);
     VirtualFile file = ScratchRootType.getInstance().createScratchFile(
       project, fileName, language, context.text, context.createOption);
-    if (file == null) return;
+    if (file == null) return null;
 
     PsiNavigationSupport.getInstance().createNavigatable(project, file, context.caretOffset).navigate(true);
     PsiFile psiFile = PsiManager.getInstance(project).findFile(file);
     if (context.ideView != null && psiFile != null) {
       context.ideView.selectElement(psiFile);
     }
+    return psiFile;
   }
 
   private static void checkLanguageAndTryToFixText(@NotNull Project project,
