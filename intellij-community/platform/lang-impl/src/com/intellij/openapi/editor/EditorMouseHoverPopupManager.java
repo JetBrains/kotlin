@@ -73,6 +73,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   private WeakReference<AbstractPopup> myPopupReference;
   private Context myContext;
   private ProgressIndicator myCurrentProgress;
+  private boolean mySkipNextMovement;
 
   public EditorMouseHoverPopupManager() {
     myAlarm = new Alarm(Alarm.ThreadToUse.POOLED_THREAD, ApplicationManager.getApplication());
@@ -154,6 +155,10 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     }
   }
 
+  private void skipNextMovement() {
+    mySkipNextMovement = true;
+  }
+
   private void scheduleProcessing(@NotNull Editor editor,
                                   @NotNull Context context,
                                   boolean updateExistingPopup,
@@ -198,6 +203,10 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   }
 
   private boolean ignoreEvent(EditorMouseEvent e) {
+    if (mySkipNextMovement) {
+      mySkipNextMovement = false;
+      return true;
+    }
     Rectangle currentHintBounds = getCurrentHintBounds(e.getEditor());
     return myMouseMovementTracker.isMovingTowards(e.getMouseEvent(), currentHintBounds) ||
            currentHintBounds != null && myKeepPopupOnMouseMove;
@@ -732,6 +741,16 @@ public final class EditorMouseHoverPopupManager implements Disposable {
   }
 
   static final class MyEditorMouseEventListener implements EditorMouseListener {
+    @Override
+    public void mouseEntered(@NotNull EditorMouseEvent event) {
+      if (!Registry.is("editor.new.mouse.hover.popups")) {
+        return;
+      }
+      // we receive MOUSE_MOVED event after MOUSE_ENTERED even if mouse wasn't physically moved,
+      // e.g. if a popup overlapping editor has been closed
+      getInstance().skipNextMovement();
+    }
+
     @Override
     public void mouseExited(@NotNull EditorMouseEvent event) {
       if (!Registry.is("editor.new.mouse.hover.popups")) {
