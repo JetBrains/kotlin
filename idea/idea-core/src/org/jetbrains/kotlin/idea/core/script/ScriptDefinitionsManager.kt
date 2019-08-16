@@ -24,6 +24,7 @@ import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.components.ServiceManager
+import com.intellij.openapi.diagnostic.ControlFlowException
 import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.extensions.Extensions
@@ -203,6 +204,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         if (!failedContributorsHashes.contains(this@safeGetDefinitions.hashCode())) try {
             return definitions.toList()
         } catch (t: Throwable) {
+            if (t is ControlFlowException) throw t
             // reporting failed loading only once
             LOG.error("[kts] cannot load script definitions using $this", t)
             failedContributorsHashes.add(this@safeGetDefinitions.hashCode())
