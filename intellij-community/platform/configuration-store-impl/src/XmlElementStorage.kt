@@ -12,11 +12,12 @@ import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.vfs.LargeFileWriteRequestor
 import com.intellij.openapi.vfs.SafeWriteRequestor
-import com.intellij.openapi.vfs.safeOutputStream
 import com.intellij.util.LineSeparator
 import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.intellij.util.io.delete
+import com.intellij.util.io.outputStream
+import com.intellij.util.io.safeOutputStream
 import gnu.trove.THashMap
 import org.jdom.Attribute
 import org.jdom.Element
@@ -399,12 +400,13 @@ interface DataWriter {
   fun hasData(filter: DataWriterFilter): Boolean
 }
 
-internal fun DataWriter?.writeTo(file: Path, lineSeparator: String = LineSeparator.LF.separatorString) {
+internal fun DataWriter?.writeTo(file: Path, requestor: Any?, lineSeparator: String = LineSeparator.LF.separatorString) {
   if (this == null) {
     file.delete()
   }
   else {
-    file.safeOutputStream(null).use {
+    val safe = SafeWriteRequestor.shouldUseSafeWrite(requestor)
+    (if (safe) file.safeOutputStream() else file.outputStream()).use {
       write(it, lineSeparator)
     }
   }

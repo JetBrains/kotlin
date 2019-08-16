@@ -116,7 +116,7 @@ open class FileBasedStorage(file: Path,
           val file = storage.file
           LOG.debugOrInfoIfTestMode { "Save $file" }
           try {
-            dataWriter.writeTo(file, lineSeparator.separatorString)
+            dataWriter.writeTo(file, this, lineSeparator.separatorString)
           }
           catch (e: ReadOnlyModificationException) {
             throw e

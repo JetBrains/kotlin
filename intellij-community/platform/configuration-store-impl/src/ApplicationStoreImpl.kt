@@ -95,7 +95,7 @@ class ApplicationStorageManager(application: Application?, pathMacroManager: Pat
     // IDEA-144052 When "Settings repository" is enabled changes in 'Path Variables' aren't saved to default path.macros.xml file causing errors in build process
     if (storage.fileSpec == "path.macros.xml" || storage.fileSpec == "applicationLibraries.xml") {
       LOG.runAndLogException {
-        writer.writeTo(storage.file)
+        writer.writeTo(storage.file, null)
       }
     }
   }
