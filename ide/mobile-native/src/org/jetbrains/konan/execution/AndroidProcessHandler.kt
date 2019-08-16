@@ -65,26 +65,24 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
         override fun deviceDisconnected(device: IDevice?) {}
     }
 
-    init {
+    fun prepareForLaunch() {
         AndroidDebugBridge.addClientChangeListener(clientListener)
         AndroidDebugBridge.addDeviceChangeListener(deviceListener)
 
-        addProcessListener(object : ProcessAdapter() {
-            override fun startNotified(event: ProcessEvent) {
-                logCatTask.addLogCatListener { messages: List<LogCatMessage> ->
-                    messages
-                        .filter { it.appName == appId }
-                        .forEach {
-                            notifyTextAvailable(
-                                "${it.logLevel.priorityLetter}/${it.tag}: ${it.message}\n",
-                                if (it.logLevel >= Log.LogLevel.ERROR) ProcessOutputType.STDERR
-                                else ProcessOutputType.STDOUT
-                            )
-                        }
+        logCatTask.addLogCatListener { messages: List<LogCatMessage> ->
+            messages
+                .filter { it.appName == appId }
+                .forEach {
+                    notifyTextAvailable(
+                        "${it.logLevel.priorityLetter}/${it.tag}: ${it.message}\n",
+                        if (it.logLevel >= Log.LogLevel.ERROR) ProcessOutputType.STDERR
+                        else ProcessOutputType.STDOUT
+                    )
                 }
-                AppExecutorUtil.getAppExecutorService().execute(logCatTask)
-            }
+        }
+        AppExecutorUtil.getAppExecutorService().execute(logCatTask)
 
+        addProcessListener(object : ProcessAdapter() {
             override fun processTerminated(event: ProcessEvent) {
                 logCatTask.stop()
 

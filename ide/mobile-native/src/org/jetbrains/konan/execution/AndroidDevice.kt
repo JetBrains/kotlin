@@ -56,6 +56,7 @@ class AndroidDevice(private val raw: IDevice) : Device(
             indicator.fraction = 0.2
             indicator.text = MobileBundle.message("run.installing")
             install(apk)
+            handler.prepareForLaunch()
 
             indicator.fraction = 0.8
             indicator.text = MobileBundle.message("run.starting")
