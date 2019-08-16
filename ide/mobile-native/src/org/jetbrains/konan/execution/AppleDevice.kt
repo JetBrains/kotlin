@@ -5,26 +5,12 @@
 
 package org.jetbrains.konan.execution
 
-import com.intellij.execution.configurations.CommandLineState
-import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.configurations.SimpleProgramParameters
-import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
-import com.intellij.openapi.diagnostic.logger
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.io.FileUtil
-import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.ArchitectureType
-import com.jetbrains.cidr.execution.*
-import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.debugger.IPhoneDebugProcess
-import com.jetbrains.cidr.execution.debugger.IPhoneSimulatorDebugProcess
-import com.jetbrains.cidr.execution.debugger.backend.XcodeLLDBDriverConfiguration
+import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.cidr.execution.deviceSupport.AMDevice
-import com.jetbrains.cidr.execution.deviceSupport.AMDeviceUtil
 import com.jetbrains.cidr.execution.simulatorSupport.SimulatorConfiguration
 import com.jetbrains.cidr.execution.testing.CidrLauncher
-import java.io.File
 
 abstract class AppleDevice(id: String, name: String, osVersion: String) : Device(id, name, "iOS", osVersion) {
     override fun createState(configuration: MobileRunConfiguration, environment: ExecutionEnvironment): CidrCommandLineState =
@@ -50,79 +36,3 @@ class AppleSimulator(private val wrapped: SimulatorConfiguration) : AppleDevice(
     override fun createLauncher(configuration: MobileRunConfiguration): CidrLauncher =
         AppleLauncher(configuration, wrapped.launchArchitecture.type, null)
 }
-
-private class AppleLauncher(
-    val configuration: MobileRunConfiguration,
-    val arch: ArchitectureType,
-    val raw: AMDevice?
-) : CidrLauncher() {
-    override fun getProject(): Project = configuration.project
-
-    override fun createProcess(state: CommandLineState): ProcessHandler {
-        log.assertTrue(raw == null, "should start debug process instead")
-        configureConsole(state)
-
-        TODO("not implemented")
-    }
-
-    override fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess {
-        configureConsole(state)
-
-        val bundle = configuration.getProductBundle(state.environment)
-        val installer = AppleInstaller(project, bundle, raw)
-        val parameters = TrivialRunParameters(XcodeLLDBDriverConfiguration(null), installer, arch)
-        val process: CidrDebugProcess =
-            if (raw != null) {
-                IPhoneDebugProcess(parameters, raw, session, state.consoleBuilder, true)
-            } else {
-                object : IPhoneSimulatorDebugProcess(parameters, session, state.consoleBuilder, true) {
-                    override fun createSimulatorProcessHandler(
-                        params: RunParameters,
-                        allowConcurrentSessions: Boolean
-                    ): ProcessHandlerWithPID {
-                        TODO("not implemented")
-                    }
-                }
-            }
-        configProcessHandler(process.processHandler, process.isDetachDefault, true, project)
-        return process
-    }
-
-    private fun configureConsole(state: CommandLineState) {
-        state.consoleBuilder = CidrConsoleBuilder(project, null, project.basePath?.let { File(it) })
-    }
-}
-
-private class AppleInstaller(
-    val project: Project,
-    val bundle: File,
-    val raw: AMDevice?
-) : Installer {
-    private var alreadyInstalled: GeneralCommandLine? = null
-
-    override fun install(): GeneralCommandLine {
-        alreadyInstalled?.let { return it }
-
-        val commandLine = GeneralCommandLine()
-        if (raw != null) {
-            AMDeviceUtil.installApplicationInBackgroundAndAcquireDebugInfo(raw, true, bundle, project, commandLine)
-            commandLine.exePath += "/" + FileUtil.getNameWithoutExtension(bundle)
-        } else {
-            commandLine.exePath = bundle.absolutePath
-        }
-
-        val params = SimpleProgramParameters().also {
-            it.workingDirectory = File(commandLine.exePath).parentFile.parent
-            it.isPassParentEnvs = false
-        }
-        CidrCommandLineConfigurator(project, params).configureCommandLine(commandLine)
-
-        alreadyInstalled = commandLine
-        return commandLine
-    }
-
-    override fun getExecutableFile(): File = bundle
-    override fun getAppWorkingDir(): File? = null
-}
-
-private val log = logger<AppleDevice>()
