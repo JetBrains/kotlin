@@ -23,7 +23,7 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertTrue("Not all messages have NORMAL_OUTPUT type", actual.all { it.second == ConsoleViewContentType.NORMAL_OUTPUT })
-    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {plugin_type='PLATFORM', project='5410c65e...ea'}\n",
+    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {\"plugin_type\":\"PLATFORM\", \"project\":\"5410c65e...ea\"}\n",
                  actual.joinToString("") { it.first })
   }
 
@@ -35,7 +35,7 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertTrue("Not all messages have NORMAL_OUTPUT type", actual.all { it.second == ConsoleViewContentType.NORMAL_OUTPUT })
-    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {project='$projectId'}\n",
+    assertEquals("${DateFormatUtil.formatTimeWithSeconds(eventTime)} - ['toolwindow', v21]: '$eventId' {\"project\":\"$projectId\"}\n",
                  actual.joinToString("") { it.first })
   }
 
@@ -69,9 +69,9 @@ class StatisticsEventLogToolWindowTest {
 
     val actual = buildLogMessage(buildLogEvent(action))
     assertEquals(7, actual.size)
-    assertEquals("test='validation.incorrect_rule'", actual[3].first)
+    assertEquals("\"test\":\"validation.incorrect_rule\"", actual[3].first)
     assertEquals(ConsoleViewContentType.ERROR_OUTPUT, actual[3].second)
-    assertEquals("project='validation.undefined_rule'", actual[5].first)
+    assertEquals("\"project\":\"validation.undefined_rule\"", actual[5].first)
     assertEquals(ConsoleViewContentType.ERROR_OUTPUT, actual[5].second)
   }
 

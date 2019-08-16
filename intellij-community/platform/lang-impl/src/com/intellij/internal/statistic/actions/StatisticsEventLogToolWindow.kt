@@ -67,7 +67,7 @@ class StatisticsEventLogToolWindow(myProject: Project) : SimpleToolWindowPanel(f
         if (contentType != ERROR_OUTPUT && key == "project") {
           valueAsString = shortenProjectId(valueAsString)
         }
-        eventDataMessages.add("$key='$valueAsString'" to contentType)
+        eventDataMessages.add("\"$key\":\"$valueAsString\"" to contentType)
       }
       return eventDataMessages
     }
