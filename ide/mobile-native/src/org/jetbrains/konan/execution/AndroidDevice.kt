@@ -6,6 +6,8 @@
 package org.jetbrains.konan.execution
 
 import com.android.ddmlib.*
+import com.android.ddmlib.logcat.LogCatMessage
+import com.android.ddmlib.logcat.LogCatReceiverTask
 import com.intellij.execution.ExecutionException
 import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
@@ -18,6 +20,7 @@ import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
+import com.intellij.util.concurrency.AppExecutorUtil
 import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.CidrCommandLineState
@@ -46,7 +49,7 @@ class AndroidDevice(private val raw: IDevice) : Device(
         raw.executeShellCommand(
             "am start -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
         )
-        log.debug("Installed app with output: ${receiver.output}")
+        log.debug("Launched app with output: ${receiver.output}")
     }
 
     fun installAndLaunch(apk: File, project: Project): ProcessHandler {
@@ -90,6 +93,7 @@ private class AndroidProcessHandler(
 ) : ProcessHandler() {
     lateinit var appId: String
     private var processClient: Client? = null
+    private val logCatTask = LogCatReceiverTask(raw)
 
     private fun isRelevantEvent(device: IDevice, changeMask: Int, expectedMask: Int) =
         (changeMask and expectedMask) == expectedMask &&
@@ -136,8 +140,28 @@ private class AndroidProcessHandler(
         AndroidDebugBridge.addDeviceChangeListener(deviceListener)
 
         addProcessListener(object : ProcessAdapter() {
+            override fun startNotified(event: ProcessEvent) {
+                logCatTask.addLogCatListener { messages: List<LogCatMessage> ->
+                    messages
+                        .filter { it.appName == appId }
+                        .forEach {
+                            notifyTextAvailable(
+                                "${it.logLevel.priorityLetter}/${it.tag}: ${it.message}\n",
+                                if (it.logLevel >= Log.LogLevel.ERROR) ProcessOutputType.STDERR
+                                else ProcessOutputType.STDOUT
+                            )
+                        }
+                }
+                AppExecutorUtil.getAppExecutorService().execute(logCatTask)
+            }
+
             override fun processTerminated(event: ProcessEvent) {
+                logCatTask.stop()
+
                 notifyTextAvailable(MobileBundle.message("run.android.finished") + "\n", ProcessOutputType.SYSTEM)
+
+                AndroidDebugBridge.removeClientChangeListener(clientListener)
+                AndroidDebugBridge.removeDeviceChangeListener(deviceListener)
             }
         })
     }
@@ -147,7 +171,6 @@ private class AndroidProcessHandler(
 
     override fun detachProcessImpl() {
         notifyProcessDetached()
-        cleanup()
     }
 
     override fun destroyProcessImpl() {
@@ -155,12 +178,6 @@ private class AndroidProcessHandler(
         raw.executeShellCommand("am force-stop $appId", receiver)
         log.debug("Destroyed process with output: ${receiver.output}")
         notifyProcessTerminated(0)
-        cleanup()
-    }
-
-    private fun cleanup() {
-        AndroidDebugBridge.removeClientChangeListener(clientListener)
-        AndroidDebugBridge.removeDeviceChangeListener(deviceListener)
     }
 }
 
