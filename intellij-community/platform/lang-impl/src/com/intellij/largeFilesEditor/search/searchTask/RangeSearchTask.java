@@ -80,14 +80,10 @@ public class RangeSearchTask extends SearchTaskBase {
 
 
       while (true) {
-        myCallback.tellSearchProgress(this, curPageNumber, pagesAmount);
-
         /* searching result in current page */
         searcher.setFrame(curPageNumber, prefixSymbol, curPageText, tailText, postfixSymbol);
         allMatchesAtFrame = searcher.findAllMatchesAtFrame();
-        if (allMatchesAtFrame.size() > 0) {
-          myCallback.tellFrameSearchResultsFound(this, curPageNumber, allMatchesAtFrame);
-        }
+        myCallback.tellFrameSearchResultsFound(this, curPageNumber, allMatchesAtFrame);
 
         if (isShouldStop()) {
           if (myProgressIndicator != null) {
@@ -163,8 +159,6 @@ public class RangeSearchTask extends SearchTaskBase {
   public interface Callback {
 
     void tellSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber);
-
-    void tellSearchProgress(RangeSearchTask caller, long curPageNumber, long pagesAmount);
 
     void tellFrameSearchResultsFound(RangeSearchTask caller, long curPageNumber, ArrayList<SearchResult> allMatchesAtFrame);
 

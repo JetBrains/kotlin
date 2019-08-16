@@ -133,33 +133,10 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
   }
 
   private void launchNewRangeSearch(SearchTaskOptions searchTaskOptions) {
-    stopSearchTaskIfItExists();
-
     RangeSearch rangeSearch = myRangeSearchCreator.createContent(
       editorManager.getProject(), editorManager.getVirtualFile(),
       editorManager.getVirtualFile().getName());
-
-    rangeSearch.setAdditionalStatusText(null);
-    rangeSearch.updateTabName();
-
-    long pagesAmount;
-    try {
-      pagesAmount = fileDataProviderForSearch.getPagesAmount();
-    }
-    catch (IOException e) {
-      logger.warn(e);
-      Messages.showWarningDialog("Working with file error.", "Error");
-      return;
-    }
-
-    rangeSearch.clearAllResults();
-    rangeSearch.setLeftBorderPageNumber(searchTaskOptions.leftBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-                                        0 : searchTaskOptions.leftBoundPageNumber);
-    rangeSearch.setRightBorderPageNumber(searchTaskOptions.rightBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-                                         pagesAmount - 1 : searchTaskOptions.rightBoundPageNumber);
-    rangeSearch.update();
-
-    rangeSearch.runSearch(searchTaskOptions, fileDataProviderForSearch);
+    rangeSearch.runNewSearch(searchTaskOptions, fileDataProviderForSearch);
   }
 
   @Override

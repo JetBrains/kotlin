@@ -26,6 +26,7 @@ import com.intellij.ui.*;
 import com.intellij.ui.components.JBList;
 import com.intellij.ui.components.JBScrollPane;
 import com.intellij.ui.content.Content;
+import com.intellij.util.concurrency.EdtExecutorService;
 import com.intellij.util.ui.AsyncProcessIcon;
 import com.intellij.util.ui.JBUI;
 import com.intellij.util.ui.UIUtil;
@@ -43,6 +44,8 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class RangeSearch implements RangeSearchTask.Callback {
 
@@ -51,11 +54,13 @@ public class RangeSearch implements RangeSearchTask.Callback {
   private static final Logger logger = Logger.getInstance(RangeSearch.class);
   private static final String ACTION_TOOLBAR_PLACE_ID = "lfe.searchResultsToolWindow.actionToolbar";
   private static final long UNDEFINED = -1;
-  private static final int PROGRESS_STATUS_UPDATE_PERIOD = 150;
+  private static final int SCHEDULED_UPDATE_DELAY = 150;
 
   private final Project myProject;
   private final VirtualFile myVirtualFile;
   private final EditorManagerAccessor myEditorManagerAccessor;
+
+  private final AtomicBoolean isScheduledUpdateCalled = new AtomicBoolean(false);
 
   private Content myContent = null;
   private final JComponent myComponent;
@@ -71,9 +76,6 @@ public class RangeSearch implements RangeSearchTask.Callback {
   private final ActionToolbar myActionToolbar;
 
   private RangeSearchTask lastExecutedRangeSearchTask;
-
-  // TODO: 12.08.19 code duplicated like in class SearchManagerImpl
-  private long lastProgressStatusUpdateTime = System.currentTimeMillis();
 
   public boolean isButtonFindFurtherEnabled(boolean directionForward) {
     if (directionForward) {
@@ -210,12 +212,12 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   public void setLeftBorderPageNumber(long leftBorderPageNumber) {
     myLeftBorderPageNumber = leftBorderPageNumber;
-    updateStatusStringInfo();
+    callScheduledUpdate();
   }
 
   public void setRightBorderPageNumber(long rightBorderPageNumber) {
     myRightBorderPageNumber = rightBorderPageNumber;
-    updateStatusStringInfo();
+    callScheduledUpdate();
   }
 
   public void setAdditionalStatusText(@Nullable String statusText) {
@@ -223,11 +225,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     if (statusText != null) {
       lblSearchStatusCenter.append(statusText);
     }
-    progressIcon.update();
-  }
-
-  public void clearAllResults() {
-    myResultsListModel.removeAll();
+    callScheduledUpdate();
   }
 
   public void addSearchResultsIntoBeginning(List<SearchResult> searchResults) {
@@ -281,12 +279,12 @@ public class RangeSearch implements RangeSearchTask.Callback {
     }
   }
 
-  public void update() {
-    if (ApplicationManager.getApplication().isDispatchThread()) {
-      updateInEdt();
-    }
-    else {
-      ApplicationManager.getApplication().invokeLater(() -> updateInEdt());
+  public void callScheduledUpdate() {
+    if (isScheduledUpdateCalled.compareAndSet(false, true)) {
+      EdtExecutorService.getScheduledExecutorInstance().schedule(() -> {
+        isScheduledUpdateCalled.set(false);
+        updateInEdt();
+      }, SCHEDULED_UPDATE_DELAY, TimeUnit.MILLISECONDS);
     }
   }
 
@@ -311,6 +309,9 @@ public class RangeSearch implements RangeSearchTask.Callback {
       logger.info(e);
       Messages.showWarningDialog("Working with file error.", "Error");
     }
+
+    updateTabName();
+    updateStatusStringInfo();
     myActionToolbar.updateActionsImmediately();
     SwingUtilities.updateComponentTreeUI(myShowingResultsList);
     progressIcon.update();
@@ -365,7 +366,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
                          myLeftBorderPageNumber - 1, SearchTaskOptions.NO_LIMIT);
     }
 
-    runSearch(newOptions, editorManager.getFileDataProviderForSearch());
+    runSearchTask(newOptions, editorManager.getFileDataProviderForSearch());
   }
 
   private void updateStatusStringInfo() {
@@ -405,7 +406,34 @@ public class RangeSearch implements RangeSearchTask.Callback {
     return myComponent;
   }
 
-  public void runSearch(SearchTaskOptions searchTaskOptions, FileDataProviderForSearch fileDataProviderForSearch) {
+  public void runNewSearch(SearchTaskOptions options, FileDataProviderForSearch fileDataProviderForSearch) {
+    long pagesAmount;
+    try {
+      pagesAmount = fileDataProviderForSearch.getPagesAmount();
+    }
+    catch (IOException e) {
+      logger.warn(e);
+      Messages.showWarningDialog("Working with file error.", "Error");
+      return;
+    }
+
+    long initialBorderPageNumber;
+    if (options.searchForwardDirection) {
+      initialBorderPageNumber = options.leftBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
+               0 : options.leftBoundPageNumber;
+    }
+    else {
+      initialBorderPageNumber = options.rightBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
+               pagesAmount - 1 : options.rightBoundPageNumber;
+    }
+
+    setLeftBorderPageNumber(initialBorderPageNumber);
+    setRightBorderPageNumber(initialBorderPageNumber);
+
+    runSearchTask(options, fileDataProviderForSearch);
+  }
+
+  private void runSearchTask(SearchTaskOptions searchTaskOptions, FileDataProviderForSearch fileDataProviderForSearch) {
     final RangeSearchTask newRangeSearchTask = new RangeSearchTask(
       searchTaskOptions, myProject, fileDataProviderForSearch, this);
     lastExecutedRangeSearchTask = newRangeSearchTask;
@@ -436,73 +464,42 @@ public class RangeSearch implements RangeSearchTask.Callback {
         }
         setAdditionalStatusText("Search complete.");
       }
-      update();
+      callScheduledUpdate();
     });
-  }
-
-  @Override
-  public void tellSearchProgress(RangeSearchTask caller,
-                                 long curPageNumber,
-                                 long pagesAmount) {
-    long time = System.currentTimeMillis();
-    if (time - lastProgressStatusUpdateTime > PROGRESS_STATUS_UPDATE_PERIOD
-        || curPageNumber == 0
-        || curPageNumber == pagesAmount - 1) {
-      lastProgressStatusUpdateTime = time;
-      ApplicationManager.getApplication().invokeLater(() -> {
-        if (!caller.isShouldStop()) {
-          if (caller.getOptions().searchForwardDirection) {
-            setRightBorderPageNumber(curPageNumber);
-          }
-          else {
-            setLeftBorderPageNumber(curPageNumber);
-          }
-          update();
-        }
-      });
-    }
   }
 
   @Override
   public void tellFrameSearchResultsFound(RangeSearchTask caller,
                                           long curPageNumber,
                                           ArrayList<SearchResult> allMatchesAtFrame) {
-    if (!allMatchesAtFrame.isEmpty()) {
-      ApplicationManager.getApplication().invokeLater(() -> {
-        if (caller != lastExecutedRangeSearchTask) {
-          return; // means new search was launched
-        }
-        SearchTaskOptions options = caller.getOptions();
-        if (!caller.isShouldStop()) {
+    ApplicationManager.getApplication().invokeLater(() -> {
+      if (caller != lastExecutedRangeSearchTask  // means new search task has been already launched
+          || caller.isShouldStop()) {
+        return;
+      }
 
-          if (options.searchForwardDirection) {
-            addSearchResultsIntoEnd(allMatchesAtFrame);
-            setRightBorderPageNumber(curPageNumber);
-          }
-          else {
-            addSearchResultsIntoBeginning(allMatchesAtFrame);
-            setLeftBorderPageNumber(curPageNumber);
-          }
+      SearchTaskOptions options = caller.getOptions();
 
-          if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
-            stopSearchTaskIfItExists();
-            if (options.searchForwardDirection) {
-              setRightBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
-            }
-            else {
-              setLeftBorderPageNumber(allMatchesAtFrame.get(0).startPosition.pageNumber);
-            }
-            setAdditionalStatusText("Search stopped because too many results were found.");
-            update();
-          }
-        }
-      });
-    }
+      if (options.searchForwardDirection) {
+        addSearchResultsIntoEnd(allMatchesAtFrame);
+        setRightBorderPageNumber(curPageNumber);
+      }
+      else {
+        addSearchResultsIntoBeginning(allMatchesAtFrame);
+        setLeftBorderPageNumber(curPageNumber);
+      }
+
+      if (getAmountOfStoredSearchResults() > options.criticalAmountOfSearchResults) {
+        stopSearchTaskIfItExists();
+        setAdditionalStatusText("Search stopped because too many results were found.");
+        callScheduledUpdate();
+      }
+    });
   }
 
   @Override
   public void tellSearchIsStopped(long curPageNumber) {
-    update();
+    callScheduledUpdate();
   }
 
   @Override
