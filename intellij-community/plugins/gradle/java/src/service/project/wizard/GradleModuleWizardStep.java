@@ -267,6 +267,11 @@ public class GradleModuleWizardStep extends ModuleWizardStep {
   }
 
   @TestOnly
+  public void setVersion(@NotNull String version) {
+    myVersionField.setText(version);
+  }
+
+  @TestOnly
   public void setParentProject(@Nullable ProjectData parent) {
     myParentProjectForm.setParentProject(parent);
   }

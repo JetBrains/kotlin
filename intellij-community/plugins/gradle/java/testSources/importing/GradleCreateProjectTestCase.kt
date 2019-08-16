@@ -10,35 +10,36 @@ import com.intellij.ide.util.projectWizard.ModuleWizardStep
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.invokeAndWaitIfNeeded
 import com.intellij.openapi.application.runWriteAction
-import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
+import com.intellij.openapi.externalSystem.model.project.ProjectData
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.findProjectData
+import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil.getSettings
+import com.intellij.openapi.externalSystem.util.use
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ui.configuration.DefaultModulesProvider
 import com.intellij.openapi.roots.ui.configuration.ModulesProvider
 import com.intellij.openapi.roots.ui.configuration.actions.NewModuleAction
 import com.intellij.openapi.util.Disposer
-import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.util.text.StringUtil.convertLineSeparators
 import com.intellij.testFramework.PlatformTestUtil
+import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInfoBuilder
+import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInfoBuilder.ModuleInfo
+import org.jetbrains.plugins.gradle.org.jetbrains.plugins.gradle.util.ProjectInfoBuilder.ProjectInfo
+import org.jetbrains.plugins.gradle.service.project.wizard.GradleFrameworksWizardStep
 import org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleWizardStep
 import org.jetbrains.plugins.gradle.settings.GradleSettings
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.junit.runners.Parameterized
+import java.io.File
 
 
 abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
 
-  data class ProjectInfo(val root: VirtualFile, val modules: List<ModuleInfo>) {
-    constructor(root: VirtualFile, vararg modules: ModuleInfo) : this(root, modules.toList())
-  }
-
-  data class ModuleInfo(val name: String, val root: VirtualFile, val modulesPerSourceSet: List<String>) {
-    constructor(name: String, root: VirtualFile, vararg modulesPerSourceSet: String) :
-      this(name, root, modulesPerSourceSet.toList())
-  }
-
-  fun assertProjectStructure(project: Project, projectInfo: ProjectInfo) {
-    val modules = projectInfo.modules.map { it.name }
+  fun Project.assertProjectStructure(projectInfo: ProjectInfo) {
+    val rootModule = projectInfo.rootModule.ideName
+    val rootSourceSetModules = projectInfo.rootModule.modulesPerSourceSet
+    val modules = projectInfo.modules.map { it.ideName }
     val sourceSetModules = projectInfo.modules.flatMap { it.modulesPerSourceSet }
-    assertModules(project, *(modules + sourceSetModules).toTypedArray())
+    assertModules(this, rootModule, *rootSourceSetModules.toTypedArray(), *modules.toTypedArray(), *sourceSetModules.toTypedArray())
   }
 
   fun deleteProject(projectInfo: ProjectInfo) {
@@ -54,22 +55,16 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     }
   }
 
-  fun generateProjectInfo(id: String): ProjectInfo {
-    val name = "${System.currentTimeMillis()}-$id"
-    val projectDir = createProjectSubDir("$name-project")
-    val projectModuleDir = createProjectSubDir("$name-project/module")
-    val externalModuleDir = createProjectSubDir("$name-module")
-    return ProjectInfo(projectDir,
-                       ModuleInfo("$name-project", projectDir, "$name-project.main", "$name-project.test"),
-                       ModuleInfo("$name-project.module", projectModuleDir, "$name-project.module.main", "$name-project.module.test"),
-                       ModuleInfo("$name-project.$name-module", externalModuleDir, "$name-project.$name-module.main",
-                                  "$name-project.$name-module.test")
-    )
+  fun projectInfo(id: String, useKotlinDsl: Boolean = false, configure: ProjectInfoBuilder.() -> Unit): ProjectInfo {
+    return ProjectInfoBuilder.projectInfo(id, myProjectRoot) {
+      this.useKotlinDsl = useKotlinDsl
+      configure()
+    }
   }
 
-  protected fun assertDefaultProjectSettings(project: Project) {
-    val externalProjectPath = project.basePath!!
-    val settings = ExternalSystemApiUtil.getSettings(project, GradleConstants.SYSTEM_ID) as GradleSettings
+  protected fun Project.assertDefaultProjectSettings() {
+    val externalProjectPath = basePath!!
+    val settings = getSettings(this, GradleConstants.SYSTEM_ID) as GradleSettings
     val projectSettings = settings.getLinkedProjectSettings(externalProjectPath)!!
     assertEquals(projectSettings.externalProjectPath, externalProjectPath)
     assertEquals(projectSettings.isUseAutoImport, false)
@@ -77,19 +72,47 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     assertEquals(settings.storeProjectFilesExternally, true)
   }
 
-  fun createProject(projectInfo: ProjectInfo): Project {
-    val projectDirectory = projectInfo.root
-    val project = createProject(projectDirectory.path) {
-      configureProjectWizardStep(projectDirectory, it)
+  fun withProject(projectInfo: ProjectInfo, save: Boolean = false, action: Project.() -> Unit) {
+    createProject(projectInfo).use(save = save) { project ->
+      for (moduleInfo in projectInfo.modules) {
+        createModule(moduleInfo, project)
+      }
+      project.action()
     }
-    for (module in projectInfo.modules) {
-      val moduleDirectory = module.root
-      if (moduleDirectory.path == projectDirectory.path) continue
-      createModule(moduleDirectory.path, project) {
-        configureModuleWizardStep(moduleDirectory, project, it)
+  }
+
+  private fun createProject(projectInfo: ProjectInfo): Project {
+    return createProject(projectInfo.rootModule.root.path) { step ->
+      configureWizardStepSettings(step, projectInfo.rootModule, null)
+    }
+  }
+
+  private fun createModule(moduleInfo: ModuleInfo, project: Project) {
+    val parentData = findProjectData(project, GradleConstants.SYSTEM_ID, project.basePath!!)!!
+    return createModule(moduleInfo.root.path, project) { step ->
+      configureWizardStepSettings(step, moduleInfo, parentData.data)
+    }
+  }
+
+  private fun configureWizardStepSettings(step: ModuleWizardStep, moduleInfo: ModuleInfo, parentData: ProjectData?) {
+    when (step) {
+      is ProjectTypeStep -> {
+        step.setSelectedTemplate("Gradle", null)
+        val frameworksStep = step.frameworksStep
+        frameworksStep as GradleFrameworksWizardStep
+        frameworksStep.setUseKotlinDsl(moduleInfo.useKotlinDsl)
+      }
+      is GradleModuleWizardStep -> {
+        step.setParentProject(parentData)
+        moduleInfo.groupId?.let { step.setGroupId(it) }
+        step.setArtifactId(moduleInfo.artifactId)
+        moduleInfo.version?.let { step.setVersion(it) }
+      }
+      is ProjectSettingsStep -> {
+        step.setNameValue(moduleInfo.root.name)
+        step.setPath(moduleInfo.root.path)
       }
     }
-    return project
   }
 
   private fun createProject(directory: String, configure: (ModuleWizardStep) -> Unit): Project {
@@ -139,37 +162,80 @@ abstract class GradleCreateProjectTestCase : GradleImportingTestCase() {
     }
   }
 
-  private fun configureProjectWizardStep(directory: VirtualFile, step: ModuleWizardStep) {
-    when (step) {
-      is ProjectTypeStep -> {
-        step.setSelectedTemplate("Gradle", null)
+  fun assertSettingsFileContent(projectInfo: ProjectInfo) {
+    val builder = StringBuilder()
+    val rootModuleInfo = projectInfo.rootModule
+    val useKotlinDsl = rootModuleInfo.useKotlinDsl
+    builder.appendln(defineProject(rootModuleInfo.artifactId, useKotlinDsl))
+    for (moduleInfo in projectInfo.modules) {
+      val externalName = moduleInfo.externalName
+      val artifactId = moduleInfo.artifactId
+      when (moduleInfo.isFlat) {
+        true -> builder.appendln(includeFlatModule(externalName, useKotlinDsl))
+        else -> builder.appendln(includeModule(externalName, useKotlinDsl))
       }
-      is GradleModuleWizardStep -> {
-        step.setGroupId("org.example")
-        step.setArtifactId(directory.name)
+      if (externalName != artifactId) {
+        builder.appendln(renameModule(externalName, artifactId, useKotlinDsl))
       }
-      is ProjectSettingsStep -> {
-        step.setNameValue(directory.name)
-        step.setPath(directory.path)
-      }
+    }
+    val settingsFileName = getSettingsFileName(useKotlinDsl)
+    val settingsFile = File(rootModuleInfo.root.path, settingsFileName)
+    assertFileContent(settingsFile, builder.toString())
+  }
+
+  private fun assertFileContent(file: File, content: String) {
+    val expected = convertLineSeparators(file.readText().trim())
+    val actual = convertLineSeparators(content.trim())
+    assertEquals(expected, actual)
+  }
+
+  fun assertBuildScriptFiles(projectInfo: ProjectInfo) {
+    for (module in projectInfo.modules + projectInfo.rootModule) {
+      val buildFileName = getBuildFileName(module.useKotlinDsl)
+      val buildFile = File(module.root.path, buildFileName)
+      assertTrue(buildFile.exists())
     }
   }
 
-  private fun configureModuleWizardStep(directory: VirtualFile, project: Project, step: ModuleWizardStep) {
-    when (step) {
-      is ProjectTypeStep -> {
-        step.setSelectedTemplate("Gradle", null)
-      }
-      is GradleModuleWizardStep -> {
-        val projectPath = project.basePath!!
-        val projectData = ExternalSystemApiUtil.findProjectData(project, GradleConstants.SYSTEM_ID, projectPath)!!
-        step.setParentProject(projectData.data)
-        step.setArtifactId(directory.name)
-      }
-      is ProjectSettingsStep -> {
-        step.setNameValue(directory.name)
-        step.setPath(directory.path)
-      }
+  private fun getBuildFileName(useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """build.gradle.kts"""
+      else -> """build.gradle"""
+    }
+  }
+
+  private fun getSettingsFileName(useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """settings.gradle.kts"""
+      else -> """settings.gradle"""
+    }
+  }
+
+  private fun defineProject(name: String, useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """rootProject.name = "$name""""
+      else -> """rootProject.name = '$name'"""
+    }
+  }
+
+  private fun includeModule(name: String, useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """include("$name")"""
+      else -> """include '$name'"""
+    }
+  }
+
+  private fun includeFlatModule(name: String, useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """includeFlat("$name")"""
+      else -> """includeFlat '$name'"""
+    }
+  }
+
+  private fun renameModule(from: String, to: String, useKotlinDsl: Boolean): String {
+    return when (useKotlinDsl) {
+      true -> """findProject(":$from")?.name = "$to""""
+      else -> """findProject(':$from')?.name = '$to'"""
     }
   }
 

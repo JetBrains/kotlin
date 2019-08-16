@@ -21,6 +21,7 @@ import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.ui.components.JBLabel;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.plugins.gradle.frameworkSupport.GradleFrameworkSupportProvider;
 import org.jetbrains.plugins.gradle.frameworkSupport.KotlinDslGradleFrameworkSupportProvider;
 
@@ -43,7 +44,10 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   @SuppressWarnings("unused") private JBLabel myFrameworksLabel;
   private JCheckBox kdslCheckBox;
 
+  private final GradleModuleBuilder builder;
+
   public GradleFrameworksWizardStep(WizardContext context, final GradleModuleBuilder builder) {
+    this.builder = builder;
 
     Project project = context.getProject();
     final LibrariesContainer container = LibrariesContainerFactory.createContainer(context.getProject());
@@ -75,14 +79,7 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
     ((CardLayout)myOptionsPanel.getLayout()).show(myOptionsPanel, "frameworks card");
 
     kdslCheckBox.addActionListener((actionEvent) -> {
-      builder.setUseKotlinDsl(kdslCheckBox.isSelected());
-
-      Set<String> selectedNodeIds = ContainerUtil.map2Set(myFrameworksPanel.getSelectedNodes(), FrameworkSupportNodeBase::getId);
-      if (kdslCheckBox.isSelected()) {
-        setKotlinDslGradleFrameworkSupportProviders(selectedNodeIds);
-      } else {
-        setGradleFrameworkSupportProviders(selectedNodeIds);
-      }
+      updateGradleFrameworkSupportProviders(kdslCheckBox.isSelected());
     });
   }
 
@@ -120,5 +117,23 @@ public class GradleFrameworksWizardStep extends ModuleWizardStep implements Disp
   public void addCustomFeatureUsageData(@NotNull String eventId, @NotNull FeatureUsageData data) {
     myFrameworksPanel.reportSelectedFrameworks(eventId, data);
     data.addData("gradle-kotlin-dsl", kdslCheckBox.isSelected());
+  }
+
+  private void updateGradleFrameworkSupportProviders(boolean useKotlinDsl) {
+    builder.setUseKotlinDsl(kdslCheckBox.isSelected());
+
+    Set<String> selectedNodeIds = ContainerUtil.map2Set(myFrameworksPanel.getSelectedNodes(), FrameworkSupportNodeBase::getId);
+    if (useKotlinDsl) {
+      setKotlinDslGradleFrameworkSupportProviders(selectedNodeIds);
+    }
+    else {
+      setGradleFrameworkSupportProviders(selectedNodeIds);
+    }
+  }
+
+  @TestOnly
+  public void setUseKotlinDsl(boolean useKotlinDsl) {
+    kdslCheckBox.setSelected(useKotlinDsl);
+    updateGradleFrameworkSupportProviders(useKotlinDsl);
   }
 }
