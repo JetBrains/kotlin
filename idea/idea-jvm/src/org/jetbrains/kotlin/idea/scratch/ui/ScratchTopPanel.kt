@@ -17,67 +17,22 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.*
 import com.intellij.openapi.application.ApplicationManager
-import com.intellij.openapi.fileEditor.TextEditor
-import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
 import com.intellij.util.messages.Topic
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
-import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.StopScratchAction
-import org.jetbrains.kotlin.idea.scratch.addScratchPanel
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
-import org.jetbrains.kotlin.idea.scratch.removeScratchPanel
 import javax.swing.JComponent
 
-class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : Disposable {
+class ScratchTopPanel(val scratchFile: ScratchFile) : Disposable {
     override fun dispose() {
         scratchFile.replScratchExecutor?.stop()
         scratchFile.compilingScratchExecutor?.stop()
-        scratchFile.editor.removeScratchPanel()
-    }
-
-    companion object {
-        fun createPanel(project: Project, virtualFile: VirtualFile, editor: TextEditor) {
-            val psiFile = PsiManager.getInstance(project).findFile(virtualFile) ?: return
-            val scratchFile = ScratchFileLanguageProvider.get(psiFile.language)?.newScratchFile(project, editor) ?: return
-            val panel = ScratchTopPanel(scratchFile)
-
-            val toolbarHandler = createUpdateToolbarHandler(panel)
-            scratchFile.replScratchExecutor?.addOutputHandler(object : ScratchOutputHandlerAdapter() {
-                override fun onFinish(file: ScratchFile) {
-                    ApplicationManager.getApplication().invokeLater {
-                        if (!file.project.isDisposed) {
-                            val scratch = file.getPsiFile()
-                            if (scratch?.isValid == true) {
-                                DaemonCodeAnalyzer.getInstance(project).restart(scratch)
-                            }
-                        }
-                    }
-                }
-            })
-            scratchFile.replScratchExecutor?.addOutputHandler(toolbarHandler)
-            scratchFile.compilingScratchExecutor?.addOutputHandler(toolbarHandler)
-
-            editor.addScratchPanel(panel)
-        }
-
-        private fun createUpdateToolbarHandler(panel: ScratchTopPanel) = object : ScratchOutputHandlerAdapter() {
-            override fun onStart(file: ScratchFile) {
-                panel.updateToolbar()
-            }
-
-            override fun onFinish(file: ScratchFile) {
-                panel.updateToolbar()
-            }
-        }
     }
 
     private val moduleChooserAction: ModulesComboBoxAction = ModulesComboBoxAction(scratchFile)
@@ -85,6 +40,7 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : Dispos
 
     init {
         scratchFile.addModuleListener { _, _ -> updateToolbar() }
+        setupTopPanelUpdateHandlers()
 
         val toolbarGroup = DefaultActionGroup().apply {
             add(RunScratchAction())
@@ -104,6 +60,24 @@ class ScratchTopPanel private constructor(val scratchFile: ScratchFile) : Dispos
     }
 
     val component: JComponent = actionsToolbar.component
+
+    private fun setupTopPanelUpdateHandlers() {
+        val toolbarHandler = createUpdateToolbarHandler()
+        scratchFile.replScratchExecutor?.addOutputHandler(toolbarHandler)
+        scratchFile.compilingScratchExecutor?.addOutputHandler(toolbarHandler)
+    }
+
+    private fun createUpdateToolbarHandler(): ScratchOutputHandlerAdapter {
+        return object : ScratchOutputHandlerAdapter() {
+            override fun onStart(file: ScratchFile) {
+                updateToolbar()
+            }
+
+            override fun onFinish(file: ScratchFile) {
+                updateToolbar()
+            }
+        }
+    }
 
     @TestOnly
     fun setReplMode(isSelected: Boolean) {

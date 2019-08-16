@@ -16,22 +16,23 @@
 
 package org.jetbrains.kotlin.idea.scratch.ui
 
+import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
+import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.idea.scratch.*
+import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
 
 class ScratchFileHook(val project: Project) : ProjectComponent {
 
     override fun projectOpened() {
         project.messageBus.connect(project).subscribe(FileEditorManagerListener.FILE_EDITOR_MANAGER, ScratchEditorListener())
-    }
-
-    override fun projectClosed() {
-        getAllEditorsWithScratchFiles(project).forEach { editor -> editor.removeScratchPanel() }
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
@@ -40,7 +41,9 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
 
             val editor = getEditorWithoutScratchFile(source, file) ?: return
 
-            ScratchTopPanel.createPanel(project, file, editor)
+            val scratchFile = createScratchFile(project, file, editor) ?: return
+            val panel = ScratchTopPanel(scratchFile)
+            editor.addScratchPanel(panel)
 
             ScratchFileAutoRunner.addListener(project, editor)
         }
@@ -54,4 +57,27 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
         val psiFile = PsiManager.getInstance(project).findFile(file) ?: return false
         return ScratchFileLanguageProvider.get(psiFile.fileType) != null
     }
+}
+
+private fun createScratchFile(project: Project, file: VirtualFile, editor: TextEditor): ScratchFile? {
+    val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
+    val scratchFile = ScratchFileLanguageProvider.get(psiFile.language)?.newScratchFile(project, editor) ?: return null
+    setupReplRestartingOutputHandler(project, scratchFile)
+
+    return scratchFile
+}
+
+private fun setupReplRestartingOutputHandler(project: Project, scratchFile: ScratchFile) {
+    scratchFile.replScratchExecutor?.addOutputHandler(object : ScratchOutputHandlerAdapter() {
+        override fun onFinish(file: ScratchFile) {
+            ApplicationManager.getApplication().invokeLater {
+                if (!file.project.isDisposed) {
+                    val scratch = file.getPsiFile()
+                    if (scratch?.isValid == true) {
+                        DaemonCodeAnalyzer.getInstance(project).restart(scratch)
+                    }
+                }
+            }
+        }
+    })
 }

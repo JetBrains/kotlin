@@ -72,9 +72,4 @@ fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     panel.scratchFile.project.syncPublisherWithDisposeCheck(ScratchPanelListener.TOPIC).panelAdded(panel)
 }
 
-fun TextEditor.removeScratchPanel() {
-    scratchTopPanel?.let { FileEditorManager.getInstance(it.scratchFile.project).removeTopComponent(this, it.component) }
-    scratchTopPanel = null
-}
-
 private var TextEditor.scratchTopPanel: ScratchTopPanel? by UserDataProperty<TextEditor, ScratchTopPanel>(Key.create("scratch.panel"))
