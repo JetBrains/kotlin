@@ -49,8 +49,7 @@ class ProjectFilesCondition implements Condition<VirtualFile> {
       return true;
     }
 
-    if (fileId < 0 && file instanceof DeletedVirtualFileStub) {
-      //file = ((FileBasedIndexImpl.MyLightVirtualFile)file).getOriginalFile();
+    if (file instanceof DeletedVirtualFileStub) {
       return true;
     }
     if (FileBasedIndexImpl.belongsToScope(file, myRestrictedTo, myFilter)) return true;
