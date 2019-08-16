@@ -32,7 +32,9 @@ class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, na
         MobileRunConfigurationEditor(project, helper)
 
     override fun canRunOn(target: ExecutionTarget): Boolean =
-        target is Device
+        target is Device &&
+                (canRunOnApple && target is AppleDevice) ||
+                (canRunOnAndroid && target is AndroidDevice)
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): CidrCommandLineState? =
         (environment.executionTarget as? Device)?.createState(this, environment)
@@ -42,6 +44,9 @@ class MobileRunConfiguration(project: Project, factory: ConfigurationFactory, na
         //  and retrieve info from gradle when executable not selected explicitly
         return File(_executableData!!.path!!)
     }
+
+    val canRunOnAndroid: Boolean get() = _executableData!!.path!!.endsWith(".apk")
+    val canRunOnApple: Boolean get() = _executableData!!.path!!.endsWith(".app")
 
     private var _executableData: ExecutableData? = null
 
