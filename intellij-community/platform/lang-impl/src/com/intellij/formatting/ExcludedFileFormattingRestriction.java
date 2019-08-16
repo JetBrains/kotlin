@@ -4,6 +4,7 @@ package com.intellij.formatting;
 import com.intellij.application.options.CodeStyle;
 import com.intellij.lang.LanguageFormattingRestriction;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiInvalidElementAccessException;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import org.jetbrains.annotations.NotNull;
@@ -12,8 +13,9 @@ public class ExcludedFileFormattingRestriction implements LanguageFormattingRest
   @Override
   public boolean isFormatterAllowed(@NotNull PsiElement context) {
     try {
-      CodeStyleSettings settings = CodeStyle.getSettings(context.getProject());
-      return !settings.getExcludedFiles().contains(context.getContainingFile());
+      PsiFile file = context.getContainingFile();
+      CodeStyleSettings settings = CodeStyle.getSettings(file);
+      return !settings.getExcludedFiles().contains(file);
     }
     catch (PsiInvalidElementAccessException e) {
       return false;
