@@ -70,7 +70,7 @@ class KtScratchExecutionSession(
                             ) ?: return
 
                             try {
-                                val commandLine = createCommandLine(psiFile, file.getModule(), result.mainClassName, tempDir.path)
+                                val commandLine = createCommandLine(psiFile, file.module, result.mainClassName, tempDir.path)
 
                                 LOG.printDebugMessage(commandLine.commandLineString)
 

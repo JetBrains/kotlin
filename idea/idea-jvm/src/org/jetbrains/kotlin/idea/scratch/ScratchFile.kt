@@ -29,6 +29,10 @@ abstract class ScratchFile(val project: Project, val editor: TextEditor) {
     var replScratchExecutor: SequentialScratchExecutor? = null
     var compilingScratchExecutor: ScratchExecutor? = null
 
+    private val moduleListeners: MutableList<() -> Unit> = mutableListOf()
+    var module: Module? = null
+        private set
+
     fun getExpressions(): List<ScratchExpression> = runReadAction {
         getPsiFile()?.let { getExpressions(it) } ?: emptyList()
     }
@@ -37,8 +41,20 @@ abstract class ScratchFile(val project: Project, val editor: TextEditor) {
         PsiDocumentManager.getInstance(project).getPsiFile(editor.editor.document)
     }
 
-    fun getModule(): Module? {
-        return editor.getScratchPanel()?.getModule()
+    fun setModule(value: Module?) {
+        module = value
+        moduleListeners.forEach { it() }
+    }
+
+    fun addModuleListener(f: (PsiFile, Module?) -> Unit) {
+        moduleListeners.add {
+            val selectedModule = module
+
+            val psiFile = getPsiFile()
+            if (psiFile != null) {
+                f(psiFile, selectedModule)
+            }
+        }
     }
 
     val options: ScratchFileOptions

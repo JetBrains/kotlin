@@ -61,14 +61,14 @@ fun TextEditor.getScratchPanel(): ScratchTopPanel? {
 
 fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     scratchTopPanel = panel
-    FileEditorManager.getInstance(panel.scratchFile.project).addTopComponent(this, panel)
+    FileEditorManager.getInstance(panel.scratchFile.project).addTopComponent(this, panel.component)
 
     Disposer.register(this, panel)
     panel.scratchFile.project.syncPublisherWithDisposeCheck(ScratchPanelListener.TOPIC).panelAdded(panel)
 }
 
 fun TextEditor.removeScratchPanel() {
-    scratchTopPanel?.let { FileEditorManager.getInstance(it.scratchFile.project).removeTopComponent(this, it) }
+    scratchTopPanel?.let { FileEditorManager.getInstance(it.scratchFile.project).removeTopComponent(this, it.component) }
     scratchTopPanel = null
 }
 

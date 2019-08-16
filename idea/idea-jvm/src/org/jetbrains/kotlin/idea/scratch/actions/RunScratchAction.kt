@@ -69,7 +69,7 @@ class RunScratchAction : ScratchAction(
             val isMakeBeforeRun = scratchFile.options.isMakeBeforeRun
             log.printDebugMessage("Run Action: isMakeBeforeRun = $isMakeBeforeRun")
 
-            val module = scratchFile.getModule()
+            val module = scratchFile.module
             log.printDebugMessage("Run Action: module = ${module?.name}")
 
             if (!isAutoRun && module != null && isMakeBeforeRun) {

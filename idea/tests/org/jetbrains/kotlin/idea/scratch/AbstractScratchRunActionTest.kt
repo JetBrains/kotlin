@@ -212,6 +212,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         action.actionPerformed(e)
     }
 
+    protected fun getActionVisibility(action: AnAction): Boolean {
+        val e = getActionEvent(myFixture.file.virtualFile, action)
+        action.beforeActionPerformedUpdate(e)
+        return e.presentation.isVisible
+    }
+
     protected fun waitUntilScratchFinishes(shouldStopRepl: Boolean = true) {
         UIUtil.dispatchAllInvocationEvents()
 
@@ -317,7 +323,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             }
 
             if (module != null && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
-                scratchPanel.setModule(module)
+                scratchPanel.scratchFile.setModule(module)
             }
         }
 
