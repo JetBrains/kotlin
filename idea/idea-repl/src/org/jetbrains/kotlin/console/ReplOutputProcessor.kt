@@ -46,19 +46,13 @@ class ReplOutputProcessor(
     private val historyDocument = historyEditor.document
     private val historyMarkup = historyEditor.markupModel
 
-    private fun textOffsets(text: String): Pair<Int, Int> {
-        consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
-        val oldLen = historyDocument.textLength
-        val newLen = oldLen + text.length
-
-        return Pair(oldLen, newLen)
-    }
-
     private fun printOutput(output: String, contentType: ConsoleViewContentType, iconWithTooltip: IconWithTooltip? = null) {
-        val (startOffset, endOffset) = textOffsets(output)
+        consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
+        val startOffset = historyDocument.textLength
 
         consoleView.print(output, contentType)
         consoleView.flushDeferredText()
+        val endOffset = historyDocument.textLength
 
         if (iconWithTooltip == null) return
 

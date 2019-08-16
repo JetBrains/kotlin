@@ -31,9 +31,10 @@ class HistoryUpdater(private val runner: KotlinConsoleRunner) {
         val historyEditor = consoleView.historyViewer
         addLineBreakIfNeeded(historyEditor)
         val startOffset = historyEditor.document.textLength
-        val endOffset = startOffset + trimmedCommandText.length
 
         addCommandTextToHistoryEditor(trimmedCommandText)
+        val endOffset = historyEditor.document.textLength
+
         addFoldingRegion(historyEditor, startOffset, endOffset, trimmedCommandText)
 
         historyEditor.markupModel.addRangeHighlighter(
