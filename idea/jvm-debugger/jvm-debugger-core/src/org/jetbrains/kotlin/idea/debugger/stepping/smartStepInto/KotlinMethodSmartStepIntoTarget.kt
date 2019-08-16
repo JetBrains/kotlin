@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.renderer.ParameterNameRenderingPolicy
 import org.jetbrains.kotlin.renderer.PropertyAccessorRenderingPolicy
 import org.jetbrains.kotlin.resolve.descriptorUtil.isExtension
+import org.jetbrains.kotlin.resolve.inline.InlineUtil
 import javax.swing.Icon
 
 class KotlinMethodSmartStepTarget(
-    descriptor: CallableMemberDescriptor,
+    private val descriptor: CallableMemberDescriptor,
     declaration: KtDeclaration?,
     label: String,
     highlightElement: PsiElement,
@@ -29,13 +30,15 @@ class KotlinMethodSmartStepTarget(
 ) : SmartStepTarget(label, highlightElement, false, lines) {
     val declaration = declaration?.let(SourceNavigationHelper::getNavigationElement)
 
-    val isInvoke = descriptor is FunctionInvokeDescriptor
-
     init {
         assert(declaration != null || isInvoke)
     }
 
-    private val isExtension = descriptor.isExtension
+    val isInvoke: Boolean
+        get() = descriptor is FunctionInvokeDescriptor
+
+    private val isExtension: Boolean
+        get() = descriptor.isExtension
 
     val targetMethodName: String = when (descriptor) {
         is ClassDescriptor, is ConstructorDescriptor -> "<init>"
@@ -43,12 +46,7 @@ class KotlinMethodSmartStepTarget(
         else -> descriptor.name.asString()
     }
 
-    override fun getIcon(): Icon? {
-        return when {
-            isExtension -> KotlinIcons.EXTENSION_FUNCTION
-            else -> KotlinIcons.FUNCTION
-        }
-    }
+    override fun getIcon(): Icon = if (isExtension) KotlinIcons.EXTENSION_FUNCTION else KotlinIcons.FUNCTION
 
     companion object {
         private val renderer = IdeDescriptorRenderers.SOURCE_CODE_SHORT_NAMES_NO_ANNOTATIONS.withOptions {
