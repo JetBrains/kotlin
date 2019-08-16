@@ -260,16 +260,16 @@ fun <T : KtDeclaration> insertMembersAfter(
             }
         }
 
-        ShortenReferences.DEFAULT.process(insertedMembers)
-
+        @Suppress("UNCHECKED_CAST") val resultMembers = ShortenReferences.DEFAULT.process(insertedMembers) as Collection<T>
+        val firstElement = resultMembers.firstOrNull() ?: return@runWriteAction emptyList()
         if (editor != null) {
-            moveCaretIntoGeneratedElement(editor, insertedMembers.first())
+            moveCaretIntoGeneratedElement(editor, firstElement)
         }
 
-        val codeStyleManager = CodeStyleManager.getInstance(classOrObject.project)
-        insertedMembers.forEach { codeStyleManager.reformat(it) }
+        val codeStyleManager = CodeStyleManager.getInstance(firstElement.project)
+        resultMembers.forEach { codeStyleManager.reformat(it) }
 
-        insertedMembers
+        resultMembers.toList()
     }
 }
 
