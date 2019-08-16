@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.idea.scratch.actions
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.scratch.getScratchPanelFromSelectedEditor
-import org.jetbrains.kotlin.idea.scratch.LOG as log
+import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
 
 class StopScratchAction : ScratchAction(
     KotlinBundle.message("scratch.stop.button"),
@@ -24,8 +23,8 @@ class StopScratchAction : ScratchAction(
         super.update(e)
 
         val project = e.project ?: return
-        val panel = getScratchPanelFromSelectedEditor(project) ?: return
+        val scratchFile = getScratchFileFromSelectedEditor(project) ?: return
 
-        e.presentation.isEnabledAndVisible = ScratchCompilationSupport.isInProgress(panel.scratchFile)
+        e.presentation.isEnabledAndVisible = ScratchCompilationSupport.isInProgress(scratchFile)
     }
 }

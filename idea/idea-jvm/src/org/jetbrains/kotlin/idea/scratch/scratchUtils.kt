@@ -15,6 +15,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchPanelListener
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
@@ -32,31 +33,35 @@ val VirtualFile.isKotlinWorksheet: Boolean
 val VirtualFile.isKotlinScratch: Boolean
     get() = ScratchFileService.getInstance().getRootType(this) is ScratchRootType
 
-fun getEditorWithoutScratchPanel(fileManager: FileEditorManager, virtualFile: VirtualFile): TextEditor? {
+fun getEditorWithoutScratchFile(fileManager: FileEditorManager, virtualFile: VirtualFile): TextEditor? {
     val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor
-    if (editor?.scratchTopPanel != null) return null
+    if (editor?.getScratchFile() != null) return null
     return editor
 }
 
-fun getEditorWithScratchPanel(fileManager: FileEditorManager, virtualFile: VirtualFile): Pair<TextEditor, ScratchTopPanel>? {
+@TestOnly
+fun getScratchPanelFromEditorSelectedForFile(fileManager: FileEditorManager, virtualFile: VirtualFile): ScratchTopPanel? {
     val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor ?: return null
-    val scratchTopPanel = editor.scratchTopPanel ?: return null
-    return editor to scratchTopPanel
+    return editor.scratchTopPanel
 }
 
-fun getAllEditorsWithScratchPanel(project: Project): List<Pair<TextEditor, ScratchTopPanel>> =
-    FileEditorManager.getInstance(project).allEditors.filterIsInstance<TextEditor>().mapNotNull {
-        val panel = it.scratchTopPanel
-        if (panel != null) it to panel else null
-    }
+fun getScratchFileFromEditorSelectedForFile(fileManager: FileEditorManager, virtualFile: VirtualFile): ScratchFile? {
+    val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor ?: return null
+    return editor.getScratchFile()
+}
 
-fun getScratchPanelFromSelectedEditor(project: Project): ScratchTopPanel? {
+fun getAllEditorsWithScratchFiles(project: Project): List<TextEditor> =
+    FileEditorManager.getInstance(project).allEditors
+        .filterIsInstance<TextEditor>()
+        .filter { it.getScratchFile() != null }
+
+fun getScratchFileFromSelectedEditor(project: Project): ScratchFile? {
     val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
-    return TextEditorProvider.getInstance().getTextEditor(editor).getScratchPanel()
+    return TextEditorProvider.getInstance().getTextEditor(editor).getScratchFile()
 }
 
-fun TextEditor.getScratchPanel(): ScratchTopPanel? {
-    return scratchTopPanel
+fun TextEditor.getScratchFile(): ScratchFile? {
+    return scratchTopPanel?.scratchFile
 }
 
 fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {

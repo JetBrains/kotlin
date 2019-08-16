@@ -176,10 +176,10 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
 
-        val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
+        val scratchPanel= getScratchPanelFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
-        configureOptions(scratchPanel, text, myFixture.module)
+        configureOptions(scratchPanel.scratchFile, text, myFixture.module)
 
         return scratchPanel
     }
@@ -189,12 +189,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(worksheetFile, project)
 
-        val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
+        val scratchPanel = getScratchPanelFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
         // We want to check that correct module is selected automatically,
         // that's why we set `module` to null so it wouldn't be changed
-        configureOptions(scratchPanel, text, null)
+        configureOptions(scratchPanel.scratchFile, text, null)
 
         return scratchPanel
     }
@@ -234,9 +234,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     protected fun stopReplProcess() {
         if (myFixture.file != null) {
-            val (_, scratchPanel) = getEditorWithScratchPanel(myManager, myFixture.file.virtualFile)
+            val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
                 ?: error("Couldn't find scratch panel")
-            scratchPanel.scratchFile.replScratchExecutor?.stopAndWait()
+            scratchFile.replScratchExecutor?.stopAndWait()
         }
 
         UIUtil.dispatchAllInvocationEvents()
@@ -310,20 +310,20 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
 
         fun configureOptions(
-            scratchPanel: ScratchTopPanel,
+            scratchFile: ScratchFile,
             fileText: String,
             module: Module?
         ) {
             if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// INTERACTIVE_MODE: ") != true) {
-                scratchPanel.setInteractiveMode(false)
+                scratchFile.saveOptions { copy(isInteractiveMode = false) }
             }
 
             if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// REPL_MODE: ") == true) {
-                scratchPanel.setReplMode(true)
+                scratchFile.saveOptions { copy(isRepl = true) }
             }
 
             if (module != null && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
-                scratchPanel.scratchFile.setModule(module)
+                scratchFile.setModule(module)
             }
         }
 

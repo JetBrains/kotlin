@@ -31,14 +31,14 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
     }
 
     override fun projectClosed() {
-        getAllEditorsWithScratchPanel(project).forEach { (editor, _) -> editor.removeScratchPanel() }
+        getAllEditorsWithScratchFiles(project).forEach { editor -> editor.removeScratchPanel() }
     }
 
     private inner class ScratchEditorListener : FileEditorManagerListener {
         override fun fileOpened(source: FileEditorManager, file: VirtualFile) {
             if (!isPluggable(file)) return
 
-            val editor = getEditorWithoutScratchPanel(source, file) ?: return
+            val editor = getEditorWithoutScratchFile(source, file) ?: return
 
             ScratchTopPanel.createPanel(project, file, editor)
 

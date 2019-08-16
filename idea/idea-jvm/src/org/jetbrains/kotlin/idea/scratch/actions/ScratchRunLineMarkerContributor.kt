@@ -17,10 +17,7 @@ import com.intellij.psi.impl.source.tree.LeafPsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.idea.core.util.getLineCount
 import org.jetbrains.kotlin.idea.refactoring.getLineNumber
-import org.jetbrains.kotlin.idea.scratch.ScratchExpression
-import org.jetbrains.kotlin.idea.scratch.getScratchPanel
-import org.jetbrains.kotlin.idea.scratch.isKotlinScratch
-import org.jetbrains.kotlin.idea.scratch.isKotlinWorksheet
+import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
@@ -72,9 +69,7 @@ class ScratchRunLineMarkerContributor : RunLineMarkerContributor() {
     }
 
     private fun getLastExecutedExpression(element: PsiElement): ScratchExpression? {
-        val panel = getSingleOpenedTextEditor(element.containingFile)?.getScratchPanel() ?: return null
-
-        val scratchFile = panel.scratchFile
+        val scratchFile = getSingleOpenedTextEditor(element.containingFile)?.getScratchFile() ?: return null
         if (!scratchFile.options.isRepl) return null
         val replExecutor = scratchFile.replScratchExecutor ?: return null
         return replExecutor.getFirstNewExpression()
