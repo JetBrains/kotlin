@@ -940,6 +940,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             // it.
             val expression = setupTypeParameterListTemplate(builder, declaration)
 
+            PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(containingFileEditor.document)
             // the template built by TemplateBuilderImpl is ordered by element position, but we want types to be first, so hack it
             val templateImpl = builder.buildInlineTemplate() as TemplateImpl
             val variables = templateImpl.variables!!
