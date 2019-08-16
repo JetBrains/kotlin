@@ -217,7 +217,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
     fun build(onFinish: () -> Unit = {}) {
         try {
             assert(config.currentEditor != null) { "Can't run build() without editor" }
-            if (finished) throw IllegalStateException("Current builder has already finished")
+            check(!finished) { "Current builder has already finished" }
             buildNext(config.callableInfos.iterator())
         } finally {
             finished = true
@@ -945,7 +945,7 @@ class CallableBuilder(val config: CallableBuilderConfiguration) {
             val variables = templateImpl.variables!!
             if (variables.isNotEmpty()) {
                 val typeParametersVar = if (expression != null) variables.removeAt(0) else null
-                for (i in 0..(callableInfo.parameterInfos.size - 1)) {
+                for (i in callableInfo.parameterInfos.indices) {
                     Collections.swap(variables, i * 2, i * 2 + 1)
                 }
                 typeParametersVar?.let { variables.add(it) }
