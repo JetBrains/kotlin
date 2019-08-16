@@ -38,7 +38,9 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
     override fun projectOpened() {
         project.messageBus.connect().subscribe(ScratchPanelListener.TOPIC, object : ScratchPanelListener {
             override fun panelAdded(panel: ScratchTopPanel) {
-                val ktFile = panel.scratchFile.getPsiFile() as? KtFile ?: return
+                val scratchFile = panel.scratchFile
+
+                val ktFile = scratchFile.getPsiFile() as? KtFile ?: return
                 val file = ktFile.virtualFile ?: return
 
                 // BUNCH: 181 scratch files are created with .kt extension
@@ -59,7 +61,7 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
                     return
                 }
 
-                panel.addModuleListener { psiFile, module ->
+                scratchFile.addModuleListener { psiFile, module ->
                     psiFile.virtualFile.scriptRelatedModuleName = module?.name
 
                     // Drop caches for old module
@@ -69,13 +71,11 @@ class ScratchFileModuleInfoProvider(val project: Project) : ProjectComponent {
                 }
 
                 if (file.isKotlinWorksheet) {
-                    panel.hideModuleSelector()
-
                     val module = file.getModule(project) ?: return
-                    panel.setModule(module)
+                    scratchFile.setModule(module)
                 } else {
                     val module = file.scriptRelatedModuleName?.let { ModuleManager.getInstance(project).findModuleByName(it) } ?: return
-                    panel.setModule(module)
+                    scratchFile.setModule(module)
                 }
             }
         })

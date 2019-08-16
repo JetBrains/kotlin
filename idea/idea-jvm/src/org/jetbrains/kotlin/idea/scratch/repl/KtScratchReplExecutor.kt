@@ -42,7 +42,7 @@ class KtScratchReplExecutor(file: ScratchFile) : SequentialScratchExecutor(file)
     private var osProcessHandler: OSProcessHandler? = null
 
     override fun startExecution() {
-        val module = file.getModule()
+        val module = file.module
         val cmdLine = KotlinConsoleKeeper.createReplCommandLine(file.project, module)
 
         LOG.printDebugMessage("Execute REPL: ${cmdLine.commandLineString}")

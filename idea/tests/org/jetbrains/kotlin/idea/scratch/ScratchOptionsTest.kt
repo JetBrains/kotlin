@@ -9,21 +9,12 @@ import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.test.JUnit3WithIdeaConfigurationRunner
 import org.junit.Assert
 import org.junit.runner.RunWith
-import javax.swing.JCheckBox
-import kotlin.reflect.full.createType
-import kotlin.reflect.full.declaredMemberProperties
 
 @RunWith(JUnit3WithIdeaConfigurationRunner::class)
 class ScratchOptionsTest : AbstractScratchRunActionTest() {
 
     fun testOptionsSaveOnClosingFile() {
         val scratchPanelBeforeClosingFile = configureScratchByText("scratch_1.kts", testScratchText())
-
-        Assert.assertEquals(
-            "This test checks that checkbox options are restored after file closing. Not all checkboxes are checked in this test",
-            3,
-            ScratchTopPanel::class.declaredMemberProperties.filter { it.returnType == JCheckBox::class.createType() }.size
-        )
 
         val newIsReplValue = !scratchPanelBeforeClosingFile.scratchFile.options.isRepl
         val newIsMakeBeforeRunValue = !scratchPanelBeforeClosingFile.scratchFile.options.isMakeBeforeRun
@@ -54,13 +45,13 @@ class ScratchOptionsTest : AbstractScratchRunActionTest() {
     fun testModuleSelectionPanelIsVisibleForScratchFile() {
         val scratchTopPanel = configureScratchByText("scratch_1.kts", testScratchText())
 
-        Assert.assertTrue("Module selector should be visible for scratches", scratchTopPanel.isModuleSelectorVisible())
+        Assert.assertTrue("Module selector should be visible for scratches", isModuleSelectorVisible(scratchTopPanel))
     }
 
     fun testModuleSelectionPanelIsHiddenForWorksheetFile() {
         val scratchTopPanel = configureWorksheetByText("worksheet.ws.kts", testScratchText())
 
-        Assert.assertFalse("Module selector should be hidden for worksheets", scratchTopPanel.isModuleSelectorVisible())
+        Assert.assertFalse("Module selector should be hidden for worksheets", isModuleSelectorVisible(scratchTopPanel))
     }
 
     fun testCurrentModuleIsAutomaticallySelectedForWorksheetFile() {
@@ -69,8 +60,12 @@ class ScratchOptionsTest : AbstractScratchRunActionTest() {
         Assert.assertEquals(
             "Selected module should be equal to current project module for worksheets",
             myFixture.module,
-            scratchTopPanel.getModule()
+            scratchTopPanel.scratchFile.module
         )
+    }
+
+    private fun isModuleSelectorVisible(scratchTopPanel: ScratchTopPanel): Boolean {
+        return getActionVisibility(scratchTopPanel.getModuleSelectorAction())
     }
 
 }
