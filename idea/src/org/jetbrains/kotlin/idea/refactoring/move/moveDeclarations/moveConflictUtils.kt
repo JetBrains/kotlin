@@ -42,11 +42,11 @@ import org.jetbrains.kotlin.idea.project.TargetPlatformDetector
 import org.jetbrains.kotlin.idea.project.forcedTargetPlatform
 import org.jetbrains.kotlin.idea.refactoring.getUsageContext
 import org.jetbrains.kotlin.idea.refactoring.move.KotlinMoveUsage
+import org.jetbrains.kotlin.idea.refactoring.pullUp.renderForConflicts
 import org.jetbrains.kotlin.idea.search.and
 import org.jetbrains.kotlin.idea.search.not
 import org.jetbrains.kotlin.idea.util.projectStructure.getModule
 import org.jetbrains.kotlin.idea.util.projectStructure.module
-import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JavaVisibilities
 import org.jetbrains.kotlin.name.FqName
@@ -191,8 +191,10 @@ class MoveConflictChecker(
 
     private fun render(declaration: PsiElement) = RefactoringUIUtil.getDescription(declaration, false)
 
+    private fun render(descriptor: DeclarationDescriptor) = CommonRefactoringUtil.htmlEmphasize(descriptor.renderForConflicts())
+
     // Based on RefactoringConflictsUtil.analyzeModuleConflicts
-    fun analyzeModuleConflictsInUsages(
+    private fun analyzeModuleConflictsInUsages(
         project: Project,
         usages: Collection<UsageInfo>,
         targetScope: VirtualFile,
@@ -231,7 +233,7 @@ class MoveConflictChecker(
         }
     }
 
-    fun checkModuleConflictsInUsages(externalUsages: MutableSet<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
+    private fun checkModuleConflictsInUsages(externalUsages: MutableSet<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val newConflicts = MultiMap<PsiElement, String>()
         val targetScope = moveTarget.targetScope ?: return
 
@@ -363,7 +365,7 @@ class MoveConflictChecker(
         internalUsages.removeIf { it.reference?.element?.let { element -> element in referencesToSkip } ?: false }
     }
 
-    fun checkVisibilityInUsages(usages: Collection<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
+    private fun checkVisibilityInUsages(usages: Collection<UsageInfo>, conflicts: MultiMap<PsiElement, String>) {
         val declarationToContainers = HashMap<KtNamedDeclaration, MutableSet<PsiElement>>()
         for (usage in usages) {
             val element = usage.element
@@ -578,12 +580,14 @@ class MoveConflictChecker(
         fun walkDeclarations(
             currentScopeDeclaration: DeclarationDescriptor,
             declaration: DeclarationDescriptor,
-            report: (String, String) -> Unit
+            report: (DeclarationDescriptor, DeclarationDescriptor) -> Unit
         ) {
-            fun descrText(d: DeclarationDescriptor) = d.findPsi()?.text ?: "unknown"
             when (currentScopeDeclaration) {
                 is PackageFragmentDescriptor -> {
-                    fun getPackage(decl: PackageFragmentDescriptor) = decl.containingDeclaration.getPackage(decl.fqName)
+
+                    fun getPackage(declaration: PackageFragmentDescriptor) =
+                        declaration.containingDeclaration.getPackage(declaration.fqName)
+
                     val packageDescriptor = getPackage(currentScopeDeclaration)
                     if ((declaration.containingDeclaration)?.fqNameOrNull() == currentScopeDeclaration.fqNameOrNull()) {
                         return
@@ -592,7 +596,7 @@ class MoveConflictChecker(
                         .memberScope
                         .getContributedDescriptors { it == declaration.name }
                         .filter { equivalent(it, declaration) }
-                        .forEach { report(descrText(it), packageDescriptor.fqName.asString()) }
+                        .forEach { report(it, packageDescriptor) }
                     return
                 }
                 is ClassDescriptor -> {
@@ -601,7 +605,7 @@ class MoveConflictChecker(
                             .unsubstitutedMemberScope
                             .getContributedDescriptors { it == declaration.name }
                             .filter { equivalent(it, declaration) }
-                            .forEach { report(descrText(it), descrText(currentScopeDeclaration)) }
+                            .forEach { report(it, currentScopeDeclaration) }
                     }
                 }
 
@@ -615,15 +619,15 @@ class MoveConflictChecker(
                 val declarationDescriptor =
                     (declaration as KtElement).analyze().get(BindingContext.DECLARATION_TO_DESCRIPTOR, declaration)
                 if (declarationDescriptor is DeclarationDescriptor) {
-                    val baseDescriptor = moveTarget.getContainerDescriptor()
-                    if (baseDescriptor != null) {
-                        walkDeclarations(baseDescriptor, declarationDescriptor) { conflictingDecl, scopeName ->
-                            conflicts.putValue(
-                                declaration,
-                                "Following declarations would clash: \"${declaration.getText()}\" (element to move) " +
-                                        "and \"\n$conflictingDecl\" declared in scope " +
-                                        "$scopeName (move destination)"
-                            )
+
+                    moveTarget.getContainerDescriptor()?.let { baseDescriptor ->
+                        walkDeclarations(baseDescriptor, declarationDescriptor) { conflictingDeclaration, conflictingScope ->
+                            val message =
+                                "Following declarations would clash: to move ${render(declarationDescriptor)} " +
+                                        "and destination ${render(conflictingDeclaration)} declared in scope " +
+                                        render(conflictingScope)
+
+                            conflicts.putValue(declaration, message)
                         }
                     }
                 }
