@@ -228,6 +228,8 @@ public class KotlinJavaPsiFacade {
     }
 
     public PsiPackage findPackage(@NotNull String qualifiedName, GlobalSearchScope searchScope) {
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
         PackageCache cache = SoftReference.dereference(packageCache);
         if (cache == null) {
             packageCache = new SoftReference<>(cache = new PackageCache());
