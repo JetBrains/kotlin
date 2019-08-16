@@ -78,8 +78,6 @@ public class UnindexedFilesUpdater extends DumbModeTask {
 
     myIndex.iterateIndexableFilesConcurrently(finder, myProject, indicator);
 
-    myIndex.filesUpdateEnumerationFinished();
-
     if (trackResponsiveness) snapshot.logResponsivenessSinceCreation("Indexable file iteration");
 
     List<VirtualFile> files = finder.getFiles();

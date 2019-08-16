@@ -997,9 +997,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private static final Key<SoftReference<ProjectIndexableFilesFilter>> ourProjectFilesSetKey = Key.create("projectFiles");
 
-  void filesUpdateEnumerationFinished() {
-  }
-
   @TestOnly
   public void cleanupForNextTest() {
     myChangedFilesCollector.ensureUpToDate();
