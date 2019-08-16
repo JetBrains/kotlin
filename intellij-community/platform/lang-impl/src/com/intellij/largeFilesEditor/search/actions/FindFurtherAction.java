@@ -14,33 +14,22 @@ public class FindFurtherAction extends AnAction implements DumbAware {
 
   //private static final Logger logger = Logger.getInstance(FindFurtherAction.class);
 
-  private static final String TEXT_FIND_NEXT = "Find Next Matches";
-  private static final String TEXT_FIND_PREV = "Find Previous Matches";
   private static final String TEXT_FIND_ADD_NEXT = "Find and Add Next Matches";
   private static final String TEXT_FIND_ADD_PREV = "Find and Add Previous Matches";
 
-  private static final String DESCRIPTION_FIND_NEXT =
-    "Search for matches toward the end of the file and replace existing results";
-  private static final String DESCRIPTION_FIND_PREV =
-    "Search for matches toward the beginning of the file and replace existing results";
   private static final String DESCRIPTION_FIND_ADD_NEXT =
     "Search for matches toward the end of the file and add them to existing results";
   private static final String DESCRIPTION_FIND_ADD_PREV =
     "Search for matches toward the beginning of the file and add them to existing results";
 
-  // TODO: 2019-05-17 remove 2 next positions if they won't be realy needed
-  private static final Icon ICON_FIND_NEXT = AllIcons.Actions.Stub; // not used
-  private static final Icon ICON_FIND_PREV = AllIcons.Actions.Stub; // not used
   private static final Icon ICON_FIND_ADD_NEXT = AllIcons.Actions.FindAndShowNextMatches;
   private static final Icon ICON_FIND_ADD_PREV = AllIcons.Actions.FindAndShowPrevMatches;
 
   private final boolean directionForward;
-  private final boolean additionMode;
   private final RangeSearch myRangeSearch;
 
-  public FindFurtherAction(boolean directionForward, boolean additionMode, RangeSearch rangeSearch) {
+  public FindFurtherAction(boolean directionForward, RangeSearch rangeSearch) {
     this.directionForward = directionForward;
-    this.additionMode = additionMode;
     this.myRangeSearch = rangeSearch;
 
     String text;
@@ -48,28 +37,14 @@ public class FindFurtherAction extends AnAction implements DumbAware {
     Icon icon;
 
     if (directionForward) {
-      if (additionMode) {
-        text = TEXT_FIND_ADD_NEXT;
-        description = DESCRIPTION_FIND_ADD_NEXT;
-        icon = ICON_FIND_ADD_NEXT;
-      }
-      else {
-        text = TEXT_FIND_NEXT;
-        description = DESCRIPTION_FIND_NEXT;
-        icon = ICON_FIND_NEXT;
-      }
+      text = TEXT_FIND_ADD_NEXT;
+      description = DESCRIPTION_FIND_ADD_NEXT;
+      icon = ICON_FIND_ADD_NEXT;
     }
     else {
-      if (additionMode) {
-        text = TEXT_FIND_ADD_PREV;
-        description = DESCRIPTION_FIND_ADD_PREV;
-        icon = ICON_FIND_ADD_PREV;
-      }
-      else {
-        text = TEXT_FIND_PREV;
-        description = DESCRIPTION_FIND_PREV;
-        icon = ICON_FIND_PREV;
-      }
+      text = TEXT_FIND_ADD_PREV;
+      description = DESCRIPTION_FIND_ADD_PREV;
+      icon = ICON_FIND_ADD_PREV;
     }
 
     getTemplatePresentation().setText(text);
@@ -85,6 +60,6 @@ public class FindFurtherAction extends AnAction implements DumbAware {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    myRangeSearch.onClickSearchFurther(directionForward, additionMode);
+    myRangeSearch.onClickSearchFurther(directionForward);
   }
 }

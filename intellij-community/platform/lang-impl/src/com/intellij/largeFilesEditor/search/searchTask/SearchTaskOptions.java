@@ -12,7 +12,6 @@ public class SearchTaskOptions implements Cloneable {
 
   public String stringToFind;
 
-  public boolean onlyOnePageSearch = false;
   public boolean loopedPhase = false;
 
   public long leftBoundPageNumber = NO_LIMIT;
@@ -31,11 +30,6 @@ public class SearchTaskOptions implements Cloneable {
 
   public SearchTaskOptions setStringToFind(String stringToFind) {
     this.stringToFind = stringToFind;
-    return this;
-  }
-
-  public SearchTaskOptions setOnlyOnePageSearch(boolean onlyOnePageSearch) {
-    this.onlyOnePageSearch = onlyOnePageSearch;
     return this;
   }
 

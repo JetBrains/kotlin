@@ -150,8 +150,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
       boolean launchedLoopedCloseSearch = false;
 
-      SearchTaskOptions normalCloseSearchOptions = generateOptionsForNormalCloseSearch(
-        directionForward, false);
+      SearchTaskOptions normalCloseSearchOptions = generateOptionsForNormalCloseSearch(directionForward);
 
       if (notFoundState) {
         notFoundState = false;
@@ -190,7 +189,6 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
       return false;
     }
     if (!normalCloseSearchOptions.stringToFind.equals(oldOptions.stringToFind)
-        || normalCloseSearchOptions.onlyOnePageSearch != oldOptions.onlyOnePageSearch
         || normalCloseSearchOptions.wholeWords != oldOptions.wholeWords
         || normalCloseSearchOptions.caseSensitive != oldOptions.caseSensitive
         || normalCloseSearchOptions.searchForwardDirection != oldOptions.searchForwardDirection
@@ -227,22 +225,15 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
     return true;
   }
 
-  // TODO: 2019-06-12 remove "onlyOnePageSearch" at all
-  private SearchTaskOptions generateOptionsForNormalCloseSearch(boolean directionForward, boolean onlyOnePageSearch) {
+  private SearchTaskOptions generateOptionsForNormalCloseSearch(boolean directionForward) {
     SearchTaskOptions options = new SearchTaskOptions()
-      .setOnlyOnePageSearch(onlyOnePageSearch)
       .setSearchDirectionForward(directionForward)
       .setStringToFind(searchManageGUI.getSearchTextComponent().getText())
       .setCaseSensetive(toggleCaseSensitiveAction.isSelected(null))
       .setWholeWords(toggleWholeWordsAction.isSelected(null))
       .setContextOneSideLength(CONTEXT_ONE_SIDE_LENGTH);
 
-    if (onlyOnePageSearch) {
-      long pageNumber = editorManager.getCaretPageNumber();
-      options.setSearchBounds(pageNumber, SearchTaskOptions.NO_LIMIT,
-                              pageNumber, SearchTaskOptions.NO_LIMIT);
-    }
-    else if (!closeSearchResultsList.isEmpty() && closeSearchResultsList.getSelectedIndex() != -1) {
+    if (!closeSearchResultsList.isEmpty() && closeSearchResultsList.getSelectedIndex() != -1) {
       Position position = closeSearchResultsList.getSelectedValue().startPosition;
       if (directionForward) {
         options.setSearchBounds(
@@ -314,32 +305,22 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
           }
         }
         else {
-          if (options.onlyOnePageSearch) {
-            if (!closeSearchResultsList.isEmpty()
-                && closeSearchResultsList.getModel().getElementAt(0).startPosition.pageNumber
-                   != lastScannedPageNumber) {
-              ((CollectionListModel<SearchResult>)closeSearchResultsList.getModel()).removeAll();
-            }
+          notFoundState = true;
+          AnAction action = ActionManager.getInstance().getAction(
+            options.searchForwardDirection ? IdeActions.ACTION_FIND_NEXT : IdeActions.ACTION_FIND_PREVIOUS);
+          String shortcutsText = KeymapUtil.getFirstKeyboardShortcutText(action);
+          String findAgainFromText = options.searchForwardDirection ? "start" : "end";
+          String message;
+          setNewStatusText("");
+          if (!shortcutsText.isEmpty()) {
+            message = String.format("\"%s\" not found, press %s to search from the %s",
+                                    options.stringToFind, shortcutsText, findAgainFromText);
           }
           else {
-            notFoundState = true;
-
-            AnAction action = ActionManager.getInstance().getAction(
-              options.searchForwardDirection ? IdeActions.ACTION_FIND_NEXT : IdeActions.ACTION_FIND_PREVIOUS);
-            String shortcutsText = KeymapUtil.getFirstKeyboardShortcutText(action);
-            String findAgainFromText = options.searchForwardDirection ? "start" : "end";
-            String message;
-            setNewStatusText("");
-            if (!shortcutsText.isEmpty()) {
-              message = String.format("\"%s\" not found, press %s to search from the %s",
-                                      options.stringToFind, shortcutsText, findAgainFromText);
-            }
-            else {
-              message = String.format("\"%s\" not found, perform \"%s\" action again to search from the %s",
-                                      options.stringToFind, action.getTemplatePresentation().getText(), findAgainFromText);
-            }
-            showSimpleHintInEditor(message, editorManager.getEditor());
+            message = String.format("\"%s\" not found, perform \"%s\" action again to search from the %s",
+                                    options.stringToFind, action.getTemplatePresentation().getText(), findAgainFromText);
           }
+          showSimpleHintInEditor(message, editorManager.getEditor());
         }
       }
     });
@@ -451,8 +432,7 @@ public class SearchManagerImpl implements SearchManager, CloseSearchTask.Callbac
 
   @Override
   public List<TextRange> getAllSearchResultsInDocument(Document document) {
-    // TODO: 2019-05-06 (code style) use another structure without redundant fields
-    SearchTaskOptions options = generateOptionsForNormalCloseSearch(true, false); // these parameters will be ignored
+    SearchTaskOptions options = generateOptionsForNormalCloseSearch(true); // these parameters will be ignored
     if (StringUtil.isEmpty(options.stringToFind)) {
       return null;
     }

@@ -11,7 +11,10 @@ import com.intellij.largeFilesEditor.search.actions.StopRangeSearchAction;
 import com.intellij.largeFilesEditor.search.searchTask.FileDataProviderForSearch;
 import com.intellij.largeFilesEditor.search.searchTask.RangeSearchTask;
 import com.intellij.largeFilesEditor.search.searchTask.SearchTaskOptions;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionManager;
+import com.intellij.openapi.actionSystem.ActionToolbar;
+import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -86,14 +89,14 @@ public class RangeSearch implements RangeSearchTask.Callback {
     }
   }
 
-  public void onClickSearchFurther(boolean directionForward, boolean additionMode) {
+  public void onClickSearchFurther(boolean directionForward) {
     int listSize = myShowingResultsList.getItemsCount();
     if (listSize > 0) {
       int indexToSelect = directionForward ? listSize - 1 : 0;
       myShowingResultsList.setSelectedIndex(indexToSelect);
       myShowingResultsList.ensureIndexIsVisible(indexToSelect);
     }
-    launchSearchingFurther(directionForward, additionMode);
+    launchSearchingFurther(directionForward);
   }
 
   public RangeSearch(@NotNull VirtualFile virtualFile,
@@ -148,19 +151,11 @@ public class RangeSearch implements RangeSearchTask.Callback {
       }
     });
 
-    AnAction action1 = new FindFurtherAction(false, true, this);
-    //AnAction action2 = new FindFurtherAction(false, false, this);
-    //AnAction action3 = new FindFurtherAction(true, false, this);
-    AnAction action4 = new FindFurtherAction(true, true, this);
-    AnAction action5 = new StopRangeSearchAction(this, editorManagerAccessor);
-
     DefaultActionGroup actionGroup = new DefaultActionGroup();
-    actionGroup.add(action1);
-    //actionGroup.add(action2);
-    //actionGroup.add(action3);
-    actionGroup.add(action4);
+    actionGroup.add(new FindFurtherAction(false, this));
+    actionGroup.add(new FindFurtherAction(true, this));
     actionGroup.add(new Separator());
-    actionGroup.add(action5);
+    actionGroup.add(new StopRangeSearchAction(this, editorManagerAccessor));
     myActionToolbar = ActionManager.getInstance().createActionToolbar(
       ACTION_TOOLBAR_PLACE_ID, actionGroup, false);
 
@@ -326,7 +321,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     return myRightBorderPageNumber != UNDEFINED && myRightBorderPageNumber < pagesAmount - 1;
   }
 
-  private void launchSearchingFurther(boolean directionForward, boolean additionMode) {
+  private void launchSearchingFurther(boolean directionForward) {
     EditorManager editorManager =
       myEditorManagerAccessor.getEditorManager(true, myProject, myVirtualFile);
     if (editorManager == null) {
@@ -345,13 +340,8 @@ public class RangeSearch implements RangeSearchTask.Callback {
       return;
     }
 
-    if (additionMode) {
-      newOptions.setCriticalAmountOfSearchResults(
-        myResultsListModel.getSize() + SearchTaskOptions.DEFAULT_CRITICAL_AMOUNT_OF_SEARCH_RESULTS);
-    }
-    else {
-      newOptions.setCriticalAmountOfSearchResults(SearchTaskOptions.DEFAULT_CRITICAL_AMOUNT_OF_SEARCH_RESULTS);
-    }
+    newOptions.setCriticalAmountOfSearchResults(
+      myResultsListModel.getSize() + SearchTaskOptions.DEFAULT_CRITICAL_AMOUNT_OF_SEARCH_RESULTS);
 
     if (directionForward) {
       newOptions
@@ -420,11 +410,11 @@ public class RangeSearch implements RangeSearchTask.Callback {
     long initialBorderPageNumber;
     if (options.searchForwardDirection) {
       initialBorderPageNumber = options.leftBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-               0 : options.leftBoundPageNumber;
+                                0 : options.leftBoundPageNumber;
     }
     else {
       initialBorderPageNumber = options.rightBoundPageNumber == SearchTaskOptions.NO_LIMIT ?
-               pagesAmount - 1 : options.rightBoundPageNumber;
+                                pagesAmount - 1 : options.rightBoundPageNumber;
     }
 
     setLeftBorderPageNumber(initialBorderPageNumber);
@@ -452,7 +442,6 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   @Override
   public void tellSearchIsFinished(RangeSearchTask caller, long lastScannedPageNumber) {
-    //final RangeSearchTask caller = lastExecutedSearchTask;
     ApplicationManager.getApplication().invokeLater(() -> {
       SearchTaskOptions options = caller.getOptions();
       if (!caller.isShouldStop()) {
@@ -597,7 +586,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     @Override
     public void onSelected() {
       if (isEnabled) {
-        onClickSearchFurther(isForwardDirection, true);
+        onClickSearchFurther(isForwardDirection);
       }
       else {
         logger.warn("[Large File Editor Subsystem] SearchResultsToolWindow.SearchFurtherBtnWrapper.onSelected():"

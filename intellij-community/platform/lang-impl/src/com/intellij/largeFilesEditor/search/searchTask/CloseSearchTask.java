@@ -71,11 +71,6 @@ public class CloseSearchTask extends SearchTaskBase {
         return;
       }
 
-      if (options.onlyOnePageSearch) {
-        myCallback.tellSearchIsFinished(this, curPageNumber);
-        return;
-      }
-
       /* searching in next pages... */
       while (true) {
 

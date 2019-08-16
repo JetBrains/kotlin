@@ -19,7 +19,6 @@ public class LargeFileManagerImpl implements LargeFileManager {
   private static final Logger logger = Logger.getInstance(LargeFileManagerImpl.class);
   private static final int MAX_SIZE_OF_PAGE_CASH = 3;
 
-  // TODO: 2019-05-13 add checks for fileAdapter is null or not in all places, where it is used.
   private FileAdapter fileAdapter;
   private final Queue<Page> notUpdatedPagesCash;
   private final ExecutorService readingPageExecutor =
@@ -101,10 +100,6 @@ public class LargeFileManagerImpl implements LargeFileManager {
 
   @Override
   public boolean hasBOM() {
-    if (fileAdapter == null) {
-      return false;
-    }
-
     VirtualFile vFile = fileAdapter.getVirtualFile();
     return vFile.getBOM() != null && vFile.getBOM().length > 0;
   }

@@ -47,7 +47,7 @@ public class PlatformActionsReplacer {
     addEditorActionHandler(actionId, LfeEditorActionHandlerDisabled::new);
   }
 
-  private static void addEditorActionHandler(String actionId, MyEditorActionHandlerFactory lfeEditorActionHandlerFactory) {
+  private static void addEditorActionHandler(String actionId, MyEditorActionHandlerFactory<LfeBaseEditorActionHandler> lfeEditorActionHandlerFactory) {
     try {
       EditorActionManager editorActionManager = EditorActionManager.getInstance();
       EditorActionHandler originalHandler = editorActionManager.getActionHandler(actionId);
@@ -63,7 +63,7 @@ public class PlatformActionsReplacer {
     replaceActionByProxy(actionId, LfeActionDisabled::new);
   }
 
-  private static void replaceActionByProxy(String actionId, MyActionFactory actionFactory) {
+  private static void replaceActionByProxy(String actionId, MyActionFactory<LfeBaseProxyAction> actionFactory) {
     ActionManager actionManager = ActionManager.getInstance();
     AnAction originalAction = actionManager.getAction(actionId);
     if (originalAction == null) {
