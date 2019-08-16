@@ -105,10 +105,6 @@ sealed class ResultWithDiagnostics<out R> {
     ) : ResultWithDiagnostics<Nothing>() {
         constructor(vararg reports: ScriptDiagnostic) : this(reports.asList())
     }
-
-    override fun equals(other: Any?): Boolean = this === other || (other is ResultWithDiagnostics<*> && this.reports == other.reports)
-
-    override fun hashCode(): Int = reports.hashCode()
 }
 
 /**
