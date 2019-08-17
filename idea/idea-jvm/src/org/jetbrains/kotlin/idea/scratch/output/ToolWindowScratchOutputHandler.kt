@@ -38,15 +38,15 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 
-fun getToolwindowHandler(): ScratchOutputHandler {
+fun getToolwindowHandler(parentDisposable: Disposable): ScratchOutputHandler {
     return if (ApplicationManager.getApplication().isUnitTestMode) {
         TestOutputHandler
     } else {
-        ToolWindowScratchOutputHandler
+        ToolWindowScratchOutputHandler(parentDisposable)
     }
 }
 
-private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
+private class ToolWindowScratchOutputHandler(private val parentDisposable: Disposable) : ScratchOutputHandlerAdapter() {
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         printToConsole(file) {
@@ -134,7 +134,7 @@ private object ToolWindowScratchOutputHandler : ScratchOutputHandlerAdapter() {
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
 
-        Disposer.register(file.editor, Disposable {
+        Disposer.register(parentDisposable, Disposable {
             window.setAvailable(false, null)
         })
 

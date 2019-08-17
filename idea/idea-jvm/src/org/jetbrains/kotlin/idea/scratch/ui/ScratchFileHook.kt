@@ -21,7 +21,6 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.ProjectComponent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.FileEditorManagerListener
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
@@ -41,9 +40,14 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
 
             val editor = getEditorWithoutScratchFile(source, file) ?: return
 
-            val scratchFile = createScratchFile(project, file, editor) ?: return
-            val panel = ScratchTopPanel(scratchFile)
-            editor.addScratchPanel(panel)
+            val scratchFile = createScratchFile(project, file) ?: return
+
+            val inlayOutputHandler = InlayScratchOutputHandler(editor)
+            scratchFile.compilingScratchExecutor?.addOutputHandler(inlayOutputHandler)
+            scratchFile.replScratchExecutor?.addOutputHandler(inlayOutputHandler)
+            editor.attachOutputHandler(inlayOutputHandler)
+
+            editor.addScratchPanel(ScratchTopPanel(scratchFile))
 
             ScratchFileAutoRunner.addListener(project, editor)
         }
@@ -59,9 +63,9 @@ class ScratchFileHook(val project: Project) : ProjectComponent {
     }
 }
 
-private fun createScratchFile(project: Project, file: VirtualFile, editor: TextEditor): ScratchFile? {
+private fun createScratchFile(project: Project, file: VirtualFile): ScratchFile? {
     val psiFile = PsiManager.getInstance(project).findFile(file) ?: return null
-    val scratchFile = ScratchFileLanguageProvider.get(psiFile.language)?.newScratchFile(project, editor) ?: return null
+    val scratchFile = ScratchFileLanguageProvider.get(psiFile.language)?.newScratchFile(project, file) ?: return null
     setupReplRestartingOutputHandler(project, scratchFile)
 
     return scratchFile

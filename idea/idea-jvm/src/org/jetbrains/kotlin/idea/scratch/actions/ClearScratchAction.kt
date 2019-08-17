@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.idea.scratch.actions
 
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.scratch.ScratchFileLanguageProvider
-import org.jetbrains.kotlin.idea.scratch.getScratchFileFromSelectedEditor
+import org.jetbrains.kotlin.idea.scratch.attachedOutputHandler
+import org.jetbrains.kotlin.idea.scratch.getScratchFile
 
 class ClearScratchAction : ScratchAction(
     KotlinBundle.message("scratch.clear.button"),
@@ -28,9 +30,11 @@ class ClearScratchAction : ScratchAction(
 ) {
     override fun actionPerformed(e: AnActionEvent) {
         val project = e.project ?: return
-        val scratchFile = getScratchFileFromSelectedEditor(project) ?: return
-        val psiFile = scratchFile.getPsiFile() ?: return
 
-        ScratchFileLanguageProvider.get(psiFile.language)?.getOutputHandler()?.clear(scratchFile)
+        val selectedEditor = FileEditorManager.getInstance(project).selectedTextEditor ?: return
+        val textEditor = TextEditorProvider.getInstance().getTextEditor(selectedEditor)
+        val scratchFile = textEditor.getScratchFile() ?: return
+
+        textEditor.attachedOutputHandler?.clear(scratchFile)
     }
 }
