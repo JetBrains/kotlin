@@ -17,6 +17,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
+import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.psi.UserDataProperty
 
@@ -69,4 +70,12 @@ fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     Disposer.register(this, panel)
 }
 
+fun TextEditor.attachOutputHandler(handler: ScratchOutputHandler) {
+    outputHandler = handler
+}
+
+val TextEditor.attachedOutputHandler: ScratchOutputHandler? get() = outputHandler
+
 private var TextEditor.scratchTopPanel: ScratchTopPanel? by UserDataProperty<TextEditor, ScratchTopPanel>(Key.create("scratch.panel"))
+
+private var TextEditor.outputHandler: ScratchOutputHandler? by UserDataProperty<TextEditor, ScratchOutputHandler>(Key.create("scratch.output.handler"))

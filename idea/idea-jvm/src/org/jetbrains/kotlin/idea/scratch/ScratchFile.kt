@@ -17,16 +17,16 @@
 package org.jetbrains.kotlin.idea.scratch
 
 import com.intellij.openapi.application.runReadAction
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDocumentManager
+import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.util.messages.Topic
+import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.scratchFileOptions
 
-abstract class ScratchFile(val project: Project, val editor: TextEditor) {
+abstract class ScratchFile(val project: Project, private val file: VirtualFile) {
     var replScratchExecutor: SequentialScratchExecutor? = null
     var compilingScratchExecutor: ScratchExecutor? = null
 
@@ -39,7 +39,7 @@ abstract class ScratchFile(val project: Project, val editor: TextEditor) {
     }
 
     fun getPsiFile(): PsiFile? = runReadAction {
-        PsiDocumentManager.getInstance(project).getPsiFile(editor.editor.document)
+        file.toPsiFile(project)
     }
 
     fun setModule(value: Module?) {
