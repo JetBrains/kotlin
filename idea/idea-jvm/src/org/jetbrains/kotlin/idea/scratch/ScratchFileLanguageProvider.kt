@@ -25,6 +25,7 @@ import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
+import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
 
 abstract class ScratchFileLanguageProvider {
     fun newScratchFile(project: Project, editor: TextEditor): ScratchFile? {
@@ -35,6 +36,8 @@ abstract class ScratchFileLanguageProvider {
 
         scratchFile.replScratchExecutor?.addOutputHandlers()
         scratchFile.compilingScratchExecutor?.addOutputHandlers()
+
+        scratchFile.project.syncPublisherWithDisposeCheck(ScratchFileListener.TOPIC).fileCreated(scratchFile)
 
         return scratchFile
     }

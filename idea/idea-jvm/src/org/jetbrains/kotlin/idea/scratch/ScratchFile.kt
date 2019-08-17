@@ -23,6 +23,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.idea.scratch.ui.scratchFileOptions
 
 abstract class ScratchFile(val project: Project, val editor: TextEditor) {
@@ -83,3 +84,14 @@ data class ScratchFileOptions(
     val isMakeBeforeRun: Boolean = false,
     val isInteractiveMode: Boolean = true
 )
+
+interface ScratchFileListener {
+    fun fileCreated(file: ScratchFile)
+
+    companion object {
+        val TOPIC = Topic.create(
+            "ScratchFileListener",
+            ScratchFileListener::class.java
+        )
+    }
+}

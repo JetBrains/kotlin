@@ -17,9 +17,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
-import org.jetbrains.kotlin.idea.scratch.ui.ScratchPanelListener
 import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
-import org.jetbrains.kotlin.idea.syncPublisherWithDisposeCheck
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 internal val LOG = Logger.getInstance("#org.jetbrains.kotlin.idea.scratch")
@@ -69,7 +67,6 @@ fun TextEditor.addScratchPanel(panel: ScratchTopPanel) {
     FileEditorManager.getInstance(panel.scratchFile.project).addTopComponent(this, panel.component)
 
     Disposer.register(this, panel)
-    panel.scratchFile.project.syncPublisherWithDisposeCheck(ScratchPanelListener.TOPIC).panelAdded(panel)
 }
 
 private var TextEditor.scratchTopPanel: ScratchTopPanel? by UserDataProperty<TextEditor, ScratchTopPanel>(Key.create("scratch.panel"))
