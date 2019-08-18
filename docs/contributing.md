@@ -1,6 +1,6 @@
 # Contributing
 
-We love contributions! There's [lots to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
+We love contributions! There is [a lot to do on Kotlin](https://youtrack.jetbrains.com/issues/KT) and on the
 [standard library](https://youtrack.jetbrains.com/issues/KT?q=%23Kotlin%20%23Unresolved%20and%20(links:%20KT-2554,%20KT-4089%20or%20%23Libraries)) so why not chat with us
 about what you're interested in doing? Please join the #kontributors channel in [our Slack chat](http://slack.kotlinlang.org/)
 and let us know about your plans.
@@ -12,7 +12,7 @@ Currently only committers can assign issues to themselves so just add a comment 
 A nice gentle way to contribute would be to review the [standard library docs](https://kotlinlang.org/api/latest/jvm/stdlib/index.html)
 and find classes or functions which are not documented very well and submit a patch.
 
-In particular it'd be great if all functions included a nice example of how to use it such as for the
+In particular, it'd be great if all functions included a nice example of how to use it such as for the
 [`hashMapOf()`](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/hash-map-of.html) function.
 This is implemented using the [`@sample`](https://github.com/JetBrains/kotlin/blob/1.1.0/libraries/stdlib/src/kotlin/collections/Maps.kt#L91)
 macro to include code from a test function. The benefits of this approach are twofold; First, the API's documentation is improved via beneficial examples that help new users and second, the code coverage is increased.
@@ -26,7 +26,7 @@ If you want to contribute a new language feature, it is important to discuss it 
 ## Submitting patches
 
 The best way to submit a patch is to [fork the project on GitHub](https://help.github.com/articles/fork-a-repo/) and then send us a
-[pull request](https://help.github.com/articles/creating-a-pull-request/) via [GitHub](https://github.com).
+[pull request](https://help.github.com/articles/creating-a-pull-request/) to the `master` branch via [GitHub](https://github.com).
 
 If you create your own fork, it might help to enable rebase by default
 when you pull by executing
@@ -39,7 +39,7 @@ which will help keep your pull request simple and easy to apply.
 ## Intention/QuickFix/Inspection
 
 Please read the [Intention/QuickFix/Inspection Quick Notes](intentions_inspections_quickfixes.md) if you are
-going to implement inspection, intention or add a quick fix.
+going to implement an inspection or intention or add a quick fix.
 
 ## Checklist
 
