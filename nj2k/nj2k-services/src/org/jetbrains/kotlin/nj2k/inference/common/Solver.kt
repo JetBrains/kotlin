@@ -186,7 +186,7 @@ internal class Solver(
                 }
                 is EqualsConstraint -> {
                     (constraint.left.safeAs<TypeVariableBound>()
-                        ?: constraint.right.safeAs())
+                        ?: constraint.right.safeAs<TypeVariableBound>())
                         ?.let { return it.typeVariable }
                 }
             }

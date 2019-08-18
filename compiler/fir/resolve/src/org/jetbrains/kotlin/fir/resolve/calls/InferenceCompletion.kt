@@ -152,7 +152,7 @@ class ConstraintSystemCompleter(val components: InferenceComponents) {
         direction: TypeVariableDirectionCalculator.ResolveDirection
     ) {
         val resultType = components.resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-        c.fixVariable(variableWithConstraints.typeVariable, resultType)
+        c.fixVariable(variableWithConstraints.typeVariable, resultType, atom = null) // TODO: obtain atom for diagnostics
     }
 
     private fun analyzePostponeArgumentIfPossible(

@@ -41,7 +41,7 @@ class KotlinConstraintSystemCompleter(
         // mutable operations
         fun addError(error: KotlinCallDiagnostic)
 
-        fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker)
+        fun fixVariable(variable: TypeVariableMarker, resultType: KotlinTypeMarker, atom: ResolvedAtom?)
     }
 
     fun runCompletion(
@@ -87,7 +87,7 @@ class KotlinConstraintSystemCompleter(
                 val variableWithConstraints = c.notFixedTypeVariables.getValue(variableForFixation.variable)
 
                 if (variableForFixation.hasProperConstraint)
-                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives)
+                    fixVariable(c, topLevelType, variableWithConstraints, postponedKtPrimitives, topLevelAtoms)
                 else
                     processVariableWhenNotEnoughInformation(c, variableWithConstraints, topLevelAtoms)
 
@@ -206,19 +206,22 @@ class KotlinConstraintSystemCompleter(
         c: Context,
         topLevelType: UnwrappedType,
         variableWithConstraints: VariableWithConstraints,
-        postponedResolveKtPrimitives: List<PostponedResolvedAtom>
+        postponedResolveKtPrimitives: List<PostponedResolvedAtom>,
+        topLevelAtoms: List<ResolvedAtom>
     ) {
         val direction = TypeVariableDirectionCalculator(c, postponedResolveKtPrimitives, topLevelType).getDirection(variableWithConstraints)
-        fixVariable(c, variableWithConstraints, direction)
+        fixVariable(c, variableWithConstraints, direction, topLevelAtoms)
     }
 
     fun fixVariable(
         c: Context,
         variableWithConstraints: VariableWithConstraints,
-        direction: TypeVariableDirectionCalculator.ResolveDirection
+        direction: TypeVariableDirectionCalculator.ResolveDirection,
+        topLevelAtoms: List<ResolvedAtom>
     ) {
         val resultType = resultTypeResolver.findResultType(c, variableWithConstraints, direction)
-        c.fixVariable(variableWithConstraints.typeVariable, resultType)
+        val resolvedAtom = findResolvedAtomBy(variableWithConstraints.typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
+        c.fixVariable(variableWithConstraints.typeVariable, resultType, resolvedAtom)
     }
 
     private fun processVariableWhenNotEnoughInformation(
@@ -238,7 +241,7 @@ class KotlinConstraintSystemCompleter(
         else
             ErrorUtils.createErrorType("Cannot infer type variable $typeVariable")
 
-        c.fixVariable(typeVariable, resultErrorType)
+        c.fixVariable(typeVariable, resultErrorType, resolvedAtom)
     }
 
     private fun findResolvedAtomBy(typeVariable: TypeVariableMarker, topLevelAtoms: List<ResolvedAtom>): ResolvedAtom? {
