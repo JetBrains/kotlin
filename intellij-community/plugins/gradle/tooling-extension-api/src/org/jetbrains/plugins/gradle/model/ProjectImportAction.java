@@ -16,6 +16,9 @@
 package org.jetbrains.plugins.gradle.model;
 
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
+import com.intellij.openapi.util.Pair;
+import com.intellij.util.ExceptionUtilRt;
+import gnu.trove.THashSet;
 import org.gradle.api.Action;
 import org.gradle.tooling.BuildAction;
 import org.gradle.tooling.BuildController;
@@ -30,26 +33,29 @@ import org.gradle.tooling.model.build.BuildEnvironment;
 import org.gradle.tooling.model.gradle.BasicGradleProject;
 import org.gradle.tooling.model.gradle.GradleBuild;
 import org.gradle.tooling.model.idea.IdeaProject;
+import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider.BuildModelConsumer;
 import org.jetbrains.plugins.gradle.model.ProjectImportModelProvider.ProjectModelConsumer;
+import org.jetbrains.plugins.gradle.model.internal.DummyModel;
+import org.jetbrains.plugins.gradle.tooling.Exceptions;
+import org.jetbrains.plugins.gradle.tooling.serialization.SerializationService;
 import org.jetbrains.plugins.gradle.tooling.serialization.ToolingSerializer;
+import org.jetbrains.plugins.gradle.tooling.serialization.internal.IdeaProjectSerializationService;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
  * @author Vladislav.Soroka
  */
 public class ProjectImportAction implements BuildAction<ProjectImportAction.AllModels>, Serializable {
-  private final Set<ProjectImportModelProvider> myProjectsLoadedModelProviders = new LinkedHashSet<ProjectImportModelProvider>();
-  private final Set<ProjectImportModelProvider> myBuildFinishedModelProviders = new LinkedHashSet<ProjectImportModelProvider>();
-  private final Set<Class> myTargetTypes = new LinkedHashSet<Class>();
+  private final Set<ProjectImportModelProvider> myProjectsLoadedModelProviders = new THashSet<ProjectImportModelProvider>();
+  private final Set<ProjectImportModelProvider> myBuildFinishedModelProviders = new THashSet<ProjectImportModelProvider>();
+  private final Set<Class> myTargetTypes = new THashSet<Class>();
   private final boolean myIsPreviewMode;
   private final boolean myIsCompositeBuildsSupported;
   private final boolean myUseCustomSerialization;
@@ -57,6 +63,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   private AllModels myAllModels = null;
   @Nullable
   private transient GradleBuild myGradleBuild;
+  private ToolingSerializerAdapter mySerializer;
 
   public ProjectImportAction(boolean isPreviewMode) {
     this(isPreviewMode, false, false);
@@ -110,15 +117,16 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
       allModels.setBuildEnvironment(buildEnvironment);
       allModels.logPerformance("Get model BuildEnvironment", System.currentTimeMillis() - startTimeBuildEnv);
       myAllModels = allModels;
+      mySerializer = new ToolingSerializerAdapter(controller);
     }
 
     assert myGradleBuild != null;
+    assert mySerializer != null;
     controller = new MyBuildController(controller, myGradleBuild);
-    ToolingSerializerAdapter serializerHolder = new ToolingSerializerAdapter();
     for (BasicGradleProject gradleProject : myGradleBuild.getProjects()) {
-      addProjectModels(serializerHolder, controller, myAllModels, gradleProject, isProjectsLoadedAction);
+      addProjectModels(mySerializer, controller, myAllModels, gradleProject, isProjectsLoadedAction);
     }
-    addBuildModels(serializerHolder, controller, myAllModels, myGradleBuild, isProjectsLoadedAction);
+    addBuildModels(mySerializer, controller, myAllModels, myGradleBuild, isProjectsLoadedAction);
 
     if (myIsCompositeBuildsSupported) {
       for (GradleBuild includedBuild : myGradleBuild.getIncludedBuilds()) {
@@ -126,12 +134,11 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
           myAllModels.getIncludedBuilds().add(convert(includedBuild));
         }
         for (BasicGradleProject project : includedBuild.getProjects()) {
-          addProjectModels(serializerHolder, controller, myAllModels, project, isProjectsLoadedAction);
+          addProjectModels(mySerializer, controller, myAllModels, project, isProjectsLoadedAction);
         }
-        addBuildModels(serializerHolder, controller, myAllModels, includedBuild, isProjectsLoadedAction);
+        addBuildModels(mySerializer, controller, myAllModels, includedBuild, isProjectsLoadedAction);
       }
     }
-
     return isProjectsLoadedAction && myAllModels.hasModels() ? null : myAllModels;
   }
 
@@ -189,7 +196,7 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
     try {
       Set<ProjectImportModelProvider> modelProviders = getModelProviders(isProjectsLoadedAction);
       for (ProjectImportModelProvider extension : modelProviders) {
-        final Set<String> obtainedModels = new HashSet<String>();
+        final Set<String> obtainedModels = new THashSet<String>();
         long startTime = System.currentTimeMillis();
         ProjectModelConsumer modelConsumer = new ProjectModelConsumer() {
           @Override
@@ -330,51 +337,89 @@ public class ProjectImportAction implements BuildAction<ProjectImportAction.AllM
   }
 
   private static class ToolingSerializerAdapter {
-    private ClassLoader myModelBuildersClassLoader;
-    private Object mySerializer;
-    private Method mySerializerWriteMethod;
+    private final Object mySerializer;
+    private final Method mySerializerWriteMethod;
+    private final ClassLoader myModelBuildersClassLoader;
 
-    private Object prepare(Object object) throws IOException {
+    private ToolingSerializerAdapter(@NotNull BuildController controller) {
+      Object unpacked = new ProtocolToModelAdapter().unpack(controller.getModel(DummyModel.class));
+      myModelBuildersClassLoader = unpacked.getClass().getClassLoader();
       try {
-        object = new ProtocolToModelAdapter().unpack(object);
+        Class<?> toolingSerializerClass = myModelBuildersClassLoader.loadClass(ToolingSerializer.class.getName());
+        mySerializer = toolingSerializerClass.newInstance();
+        mySerializerWriteMethod = toolingSerializerClass.getMethod("write", Object.class, Class.class);
+        registerIdeaProjectSerializationService(toolingSerializerClass);
       }
-      catch (IllegalArgumentException ignore) {
+      catch (Exception e) {
+        throw new RuntimeException(e);
       }
+    }
 
+    // support custom serialization of the gradle built-in IdeaProject model
+    private void registerIdeaProjectSerializationService(Class<?> toolingSerializerClass)
+      throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
+      Class<?> serializationServiceClass = myModelBuildersClassLoader.loadClass(SerializationService.class.getName());
+      final IdeaProjectSerializationService ideaProjectService = new IdeaProjectSerializationService(getBuildGradleVersion());
+      Method register = toolingSerializerClass.getMethod("register", serializationServiceClass);
+      Object proxyInstance =
+        Proxy.newProxyInstance(myModelBuildersClassLoader, new Class<?>[]{serializationServiceClass}, new InvocationHandler() {
+          @Override
+          public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+            return ideaProjectService.getClass().getMethod(method.getName(), method.getParameterTypes()).invoke(ideaProjectService, args);
+          }
+        });
+      register.invoke(mySerializer, proxyInstance);
+    }
+
+    @NotNull
+    private GradleVersion getBuildGradleVersion() {
       try {
-        ClassLoader objectClassLoader = object.getClass().getClassLoader();
-        if (myModelBuildersClassLoader == null) {
-          Class<?> toolingSerializerClass = objectClassLoader.loadClass(ToolingSerializer.class.getName());
-          mySerializer = toolingSerializerClass.newInstance();
-          mySerializerWriteMethod = toolingSerializerClass.getMethod("write", Object.class, Class.class);
-          myModelBuildersClassLoader = objectClassLoader;
+        Class<?> gradleVersionClass = myModelBuildersClassLoader.loadClass("org.gradle.util.GradleVersion");
+        Object buildGradleVersion = gradleVersionClass.getMethod("current").invoke(gradleVersionClass);
+        return GradleVersion.version(gradleVersionClass.getMethod("getVersion").invoke(buildGradleVersion).toString());
+      }
+      catch (Exception e) {
+        ExceptionUtilRt.rethrowUnchecked(e);
+        throw new RuntimeException(e);
+      }
+    }
+
+    @Nullable
+    private Pair<Object, ? extends Class<?>> prepare(Object object) {
+      Class<?> modelClazz;
+      if (object instanceof IdeaProject) { // support custom serialization of the gradle built-in IdeaProject model
+        modelClazz = IdeaProject.class;
+      }
+      else {
+        try {
+          object = new ProtocolToModelAdapter().unpack(object);
         }
-        else if (objectClassLoader != myModelBuildersClassLoader) {
+        catch (IllegalArgumentException ignore) {
+        }
+        modelClazz = object.getClass();
+        if (modelClazz.getClassLoader() != myModelBuildersClassLoader) {
           //The object has not been created by custom model builders
           return null;
         }
       }
-      catch (ClassNotFoundException e) {
-        // The object has not been created by custom model builders
-        return null;
-      }
-      catch (Exception e) {
-        throw new IOException(e);
-      }
-
-      return object;
+      return Pair.pair(object, modelClazz);
     }
 
     private Object serialize(Object object) {
       try {
-        Object preparedObject = prepare(object);
+        Pair<Object, ? extends Class<?>> preparedObject = prepare(object);
         if (preparedObject != null) {
-          return mySerializerWriteMethod.invoke(mySerializer, preparedObject, preparedObject.getClass());
+          return mySerializerWriteMethod.invoke(mySerializer, preparedObject.first, preparedObject.second);
         }
       }
       catch (Exception e) {
+        Throwable unwrap = Exceptions.unwrap(e);
+        if (object instanceof IdeaProject) {
+          ExceptionUtilRt.rethrowUnchecked(unwrap);
+          throw new RuntimeException(unwrap);
+        }
         //noinspection UseOfSystemOutOrSystemErr
-        System.err.println(e.getMessage());
+        System.err.println(ExceptionUtilRt.getThrowableText(unwrap, "org.jetbrains."));
       }
       return object;
     }

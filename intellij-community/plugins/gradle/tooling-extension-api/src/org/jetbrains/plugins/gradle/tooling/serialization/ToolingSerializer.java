@@ -6,25 +6,29 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.tooling.util.ClassMap;
 
 import java.io.IOException;
-import java.util.ServiceLoader;
+
+import static java.util.ServiceLoader.load;
 
 /**
  * @author Vladislav.Soroka
  */
 public class ToolingSerializer {
   private final DefaultSerializationService myDefaultSerializationService;
-  private final ClassMap<SerializationService> mySerializationServices;
+  private final ClassMap<SerializationService<?>> mySerializationServices;
 
   public ToolingSerializer() {
     myDefaultSerializationService = new DefaultSerializationService();
-    mySerializationServices = new ClassMap<SerializationService>();
-    for (SerializationService serializerService : ServiceLoader
-      .load(SerializationService.class, SerializationService.class.getClassLoader())) {
-      mySerializationServices.put(serializerService.getModelClass(), serializerService);
+    mySerializationServices = new ClassMap<SerializationService<?>>();
+    for (SerializationService<?> serializerService : load(SerializationService.class, SerializationService.class.getClassLoader())) {
+      register(serializerService);
     }
   }
 
-  public byte[] write(@NotNull Object object, @NotNull Class modelClazz) throws IOException {
+  public final void register(@NotNull SerializationService<?> serializerService) {
+    mySerializationServices.put(serializerService.getModelClass(), serializerService);
+  }
+
+  public byte[] write(@NotNull Object object, @SuppressWarnings("rawtypes") @NotNull Class modelClazz) throws IOException {
     //noinspection unchecked
     return getService(modelClazz).write(object, modelClazz);
   }
@@ -36,7 +40,7 @@ public class ToolingSerializer {
 
   @NotNull
   private <T> SerializationService<T> getService(@NotNull Class<T> modelClazz) {
-    SerializationService service = mySerializationServices.get(modelClazz);
+    SerializationService<?> service = mySerializationServices.get(modelClazz);
     //noinspection unchecked
     return service == null ? myDefaultSerializationService : (SerializationService<T>)service;
   }

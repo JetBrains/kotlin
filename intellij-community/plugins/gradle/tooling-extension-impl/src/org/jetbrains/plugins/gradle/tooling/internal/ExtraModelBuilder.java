@@ -22,6 +22,7 @@ import org.gradle.tooling.provider.model.ToolingModelBuilder;
 import org.gradle.util.GradleVersion;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.TestOnly;
+import org.jetbrains.plugins.gradle.model.internal.DummyModel;
 import org.jetbrains.plugins.gradle.tooling.AbstractModelBuilderService;
 import org.jetbrains.plugins.gradle.tooling.ErrorMessageBuilder;
 import org.jetbrains.plugins.gradle.tooling.ModelBuilderContext;
@@ -58,6 +59,7 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
 
   @Override
   public boolean canBuild(String modelName) {
+    if (DummyModel.class.getName().equals(modelName)) return true;
     for (ModelBuilderService service : modelBuilderServices) {
       if (service.canBuild(modelName) && isVersionMatch(service)) return true;
     }
@@ -66,6 +68,11 @@ public class ExtraModelBuilder implements ToolingModelBuilder {
 
   @Override
   public Object buildAll(String modelName, Project project) {
+    if (DummyModel.class.getName().equals(modelName)) {
+      return new DummyModel() {
+      };
+    }
+
     if (myModelBuilderContext == null) {
       Gradle rootGradle = getRootGradle(project.getGradle());
       myModelBuilderContext = new MyModelBuilderContext(rootGradle);

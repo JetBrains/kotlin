@@ -24,15 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamUtils.*;
+import static com.intellij.util.ArrayUtilRt.EMPTY_STRING_ARRAY;
+import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamApiUtils.*;
 
 /**
  * @author Vladislav.Soroka
  */
 public class ExternalProjectSerializationService implements SerializationService<ExternalProject> {
-  @SuppressWarnings("SSBasedInspection")
-  private static final String[] EMPTY_STRING_ARRAY = new String[0];
-
   private final WriteContext myWriteContext = new WriteContext();
   private final ReadContext myReadContext = new ReadContext();
 

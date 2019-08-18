@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
 import org.jetbrains.plugins.gradle.ExternalDependencyId;
-import org.jetbrains.plugins.gradle.util.BooleanBiFunction;
-import org.jetbrains.plugins.gradle.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
+import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
 
 import java.util.*;
 

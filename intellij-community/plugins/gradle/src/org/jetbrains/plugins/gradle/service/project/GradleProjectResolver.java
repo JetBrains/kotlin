@@ -288,7 +288,8 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
 
     resolverCtx.checkCancelled();
     if (useCustomSerialization) {
-      allModels.initToolingSerializer();
+      assert gradleVersion != null;
+      allModels.initToolingSerializer(gradleVersion);
     }
 
     allModels.setBuildEnvironment(buildEnvironment);
@@ -298,9 +299,7 @@ public class GradleProjectResolver implements ExternalSystemProjectResolver<Grad
     // import project data
     ProjectData projectData = tracedResolverChain.createProject();
     DataNode<ProjectData> projectDataNode = new DataNode<>(ProjectKeys.PROJECT, projectData, null);
-    DataNode<PerformanceTrace> performanceTraceNode =
-      new DataNode<>(PerformanceTrace.TRACE_NODE_KEY, performanceTrace,
-                     projectDataNode);
+    DataNode<PerformanceTrace> performanceTraceNode = new DataNode<>(PerformanceTrace.TRACE_NODE_KEY, performanceTrace, projectDataNode);
 
     projectDataNode.addChild(performanceTraceNode);
 

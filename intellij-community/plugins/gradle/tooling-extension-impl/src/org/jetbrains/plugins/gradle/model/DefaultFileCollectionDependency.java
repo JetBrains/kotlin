@@ -4,15 +4,15 @@ package org.jetbrains.plugins.gradle.model;
 import org.gradle.internal.impldep.com.google.common.base.Objects;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.plugins.gradle.DefaultExternalDependencyId;
-import org.jetbrains.plugins.gradle.util.BooleanBiFunction;
-import org.jetbrains.plugins.gradle.util.ContainerUtil;
+import org.jetbrains.plugins.gradle.tooling.util.BooleanBiFunction;
+import org.jetbrains.plugins.gradle.tooling.util.ContainerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import static com.intellij.util.containers.ContainerUtilRt.map2List;
-import static org.jetbrains.plugins.gradle.util.FunctionUtils.FILE_TO_PATH;
+import static org.jetbrains.plugins.gradle.tooling.util.FunctionUtils.FILE_TO_PATH;
 
 public final class DefaultFileCollectionDependency extends AbstractExternalDependency implements FileCollectionDependency {
   private static final long serialVersionUID = 1L;

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamUtils.*;
+import static org.jetbrains.plugins.gradle.tooling.serialization.ToolingStreamApiUtils.*;
 
 /**
  * @author Vladislav.Soroka

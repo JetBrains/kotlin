@@ -15,9 +15,17 @@ import org.jetbrains.annotations.NotNull;
  * @author Vladislav.Soroka
  */
 public class ObjectCollector<T, E extends Exception> {
-  @SuppressWarnings("unchecked")
-  private final TObjectIntHashMap<T> myObjectMap = new TObjectIntHashMap<T>(TObjectHashingStrategy.CANONICAL);
+  private final TObjectIntHashMap<T> myObjectMap;
   private int instanceCounter = 0;
+
+  public ObjectCollector() {
+    //noinspection unchecked
+    this(TObjectHashingStrategy.CANONICAL);
+  }
+
+  public ObjectCollector(TObjectHashingStrategy<T> hashingStrategy) {
+    myObjectMap = new TObjectIntHashMap<T>(hashingStrategy);
+  }
 
   public void add(@NotNull T object, @NotNull Processor<? extends E> consumer) throws E {
     int objectId = myObjectMap.get(object);
