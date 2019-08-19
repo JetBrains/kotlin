@@ -84,6 +84,10 @@
     <preloadingActivity implementation="com.intellij.stats.sender.SenderPreloadingActivity"/>
   </extensions>
 
+  <extensions defaultExtensionNs="com.intellij.stats.completion">
+    <contextFeatures language="" implementationClass="com.intellij.completion.ml.common.CommonLocationFeatures"/>
+  </extensions>
+
   <application-components>
     <component>
       <implementation-class>com.intellij.stats.completion.CompletionTrackerInitializer</implementation-class>
