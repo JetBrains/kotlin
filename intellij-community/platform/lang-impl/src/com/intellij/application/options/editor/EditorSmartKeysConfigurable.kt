@@ -34,7 +34,7 @@ val myCbInsertPairBracket = CheckboxDescriptor(ApplicationBundle.message("checkb
 val myCbInsertPairQuote = CheckboxDescriptor(ApplicationBundle.message("checkbox.insert.pair.quote"),
                                              codeInsightSettings::AUTOINSERT_PAIR_QUOTE.toBinding())
 val myCbReformatBlockOnTypingRBrace = CheckboxDescriptor(ApplicationBundle.message("checkbox.reformat.on.typing.rbrace"),
-                                                         codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
+                                                         codeInsightSettings::REFORMAT_BLOCK_ON_RBRACE.toBinding())
 val myCbCamelWords = CheckboxDescriptor(ApplicationBundle.message("checkbox.use.camelhumps.words"),
                                         PropertyBinding(editorSettings::isCamelWords, editorSettings::setCamelWords))
 val myCbSurroundSelectionOnTyping = CheckboxDescriptor("Surround selection on typing quote or brace",
@@ -46,7 +46,7 @@ val myCbEnableAddingCaretsOnDoubleCtrlArrows = CheckboxDescriptor(ApplicationBun
 val myCbSmartIndentOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.smart.indent"),
                                                 codeInsightSettings::AUTOCOMPLETE_ON_SMART_TYPE_COMPLETION.toBinding())
 val myCbInsertPairCurlyBraceOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.insert.pair.curly.brace"),
-                                                         codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
+                                                         codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
 val myCbInsertJavadocStubOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.javadoc.stub.after.slash.star.star"),
                                                       codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
 /**
