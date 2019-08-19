@@ -36,11 +36,22 @@ public final class JpsFileTargetContextSorter {
       return targetContexts;
     }
 
+    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
+    boolean isInSources = projectFileIndex.isInSourceContent(file)
+                          && !projectFileIndex.isInTestSourceContent(file);
+
     List<FileTargetContextWrapper> targetContextWrappers = ContainerUtil.filter(findSourceRootTypes(targetContexts), tc -> {
+      if (isInSources) {
+        // exclude test directories for sources options
+        if (tc.getSourceRootType() != null
+            && tc.getSourceRootType().isForTests()) {
+          return false;
+        }
+      }
+
       if (tc.getJpsModuleSourceRoot() == null) {
         return true;
       }
-
       JavaSourceRootProperties srcProperties = tc.getJpsModuleSourceRoot().getProperties(JavaModuleSourceRootTypes.SOURCES);
       if (srcProperties == null) {
         return true;
@@ -56,7 +67,6 @@ public final class JpsFileTargetContextSorter {
 
     // if file is under sources root then src/resources directories at the top
     // if file is under test sources root then test/resources directories at the top
-    ProjectFileIndex projectFileIndex = ProjectFileIndex.getInstance(project);
     if (projectFileIndex.isInTestSourceContent(file)) {
       targetContextWrappers.sort(JpsFileTargetContextSorter::compareTargetsForTests);
     }
@@ -198,7 +208,7 @@ public final class JpsFileTargetContextSorter {
       return mySourceFolder != null ? mySourceFolder.getRootType() : null;
     }
 
-    private JpsModuleSourceRoot getJpsModuleSourceRoot() {
+    public JpsModuleSourceRoot getJpsModuleSourceRoot() {
       return mySourceFolder != null ? mySourceFolder.getJpsElement() : null;
     }
   }
