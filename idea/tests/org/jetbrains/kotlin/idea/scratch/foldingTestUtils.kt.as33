@@ -1,0 +1,19 @@
+/*
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.idea.scratch
+
+import com.intellij.openapi.editor.Editor
+import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
+
+fun getFoldingData(topEditor: Editor, withCollapseStatus: Boolean): String {
+    return CodeInsightTestFixtureImpl.getTagsFromSegments(
+        topEditor.document.text,
+        topEditor.foldingModel.allFoldRegions.asList(),
+        "fold"
+    ) { foldRegion ->
+        """text='${foldRegion.placeholderText}'${if (withCollapseStatus) """ expand='${foldRegion.isExpanded}'""" else ""}"""
+    }
+}
