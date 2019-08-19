@@ -19,6 +19,7 @@ import com.intellij.util.Alarm
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchFromHereAction
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
+import org.jetbrains.kotlin.idea.scratch.ui.findScratchFileEditorWithPreview
 
 class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
     companion object {
@@ -72,6 +73,7 @@ class ScratchFileAutoRunner(private val project: Project) : DocumentListener {
     }
 
     private fun getScratchFile(file: VirtualFile, project: Project): ScratchFile? {
-        return getScratchFileFromEditorSelectedForFile(FileEditorManager.getInstance(project), file)
+        val editor = FileEditorManager.getInstance(project).getSelectedEditor(file) as? TextEditor
+        return editor?.findScratchFileEditorWithPreview()?.scratchFile
     }
 }

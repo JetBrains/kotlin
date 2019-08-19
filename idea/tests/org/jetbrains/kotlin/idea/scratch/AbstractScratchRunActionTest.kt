@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.scratch.output.getInlays
+import org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorWithPreview
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -175,12 +176,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
 
-        val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
+        val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch file")
 
-        configureOptions(scratchFile, text, myFixture.module)
+        configureOptions(scratchFileEditor, text, myFixture.module)
 
-        return scratchFile
+        return scratchFileEditor.scratchFile
     }
 
     protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
@@ -188,14 +189,14 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(worksheetFile, project)
 
-        val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
+        val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
         // We want to check that correct module is selected automatically,
         // that's why we set `module` to null so it wouldn't be changed
-        configureOptions(scratchFile, text, null)
+        configureOptions(scratchFileEditor, text, null)
 
-        return scratchFile
+        return scratchFileEditor.scratchFile
     }
 
 
@@ -227,7 +228,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
     protected fun stopReplProcess() {
         if (myFixture.file != null) {
-            val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
+            val scratchFile = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)?.scratchFile
                 ?: error("Couldn't find scratch panel")
             scratchFile.replScratchExecutor?.stopAndWait()
         }
@@ -303,10 +304,12 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         }
 
         fun configureOptions(
-            scratchFile: ScratchFile,
+            scratchFileEditor: KtScratchFileEditorWithPreview,
             fileText: String,
             module: Module?
         ) {
+            val scratchFile = scratchFileEditor.scratchFile
+
             if (InTextDirectivesUtils.getPrefixedBoolean(fileText, "// INTERACTIVE_MODE: ") != true) {
                 scratchFile.saveOptions { copy(isInteractiveMode = false) }
             }
@@ -318,6 +321,9 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             if (module != null && !InTextDirectivesUtils.isDirectiveDefined(fileText, "// NO_MODULE")) {
                 scratchFile.setModule(module)
             }
+
+            val isPreviewEnabled = InTextDirectivesUtils.getPrefixedBoolean(fileText, "// PREVIEW_ENABLED: ") == true
+            scratchFileEditor.setPreviewEnabled(isPreviewEnabled)
         }
 
     }
