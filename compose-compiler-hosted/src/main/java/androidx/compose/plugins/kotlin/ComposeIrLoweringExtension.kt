@@ -17,28 +17,28 @@
 package androidx.compose.plugins.kotlin
 
 import org.jetbrains.kotlin.backend.common.phaser.CompilerPhase
-import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.extensions.IrLoweringExtension
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeFcsPatcher
 import androidx.compose.plugins.kotlin.compiler.lower.ComposeObservePatcher
 import androidx.compose.plugins.kotlin.frames.FrameIrTransformer
+import org.jetbrains.kotlin.backend.common.phaser.makeIrModulePhase
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
-val ComposeObservePhase = makeIrFilePhase(
+val ComposeObservePhase = makeIrModulePhase(
     ::ComposeObservePatcher,
     name = "ComposeObservePhase",
     description = "Observe @Model"
 )
 
-val FrameClassGenPhase = makeIrFilePhase(
+val FrameClassGenPhase = makeIrModulePhase(
     ::FrameIrTransformer,
     name = "ComposeFrameTransformPhase",
     description = "Transform @Model classes into framed classes"
 )
 
-val ComposeFcsPhase = makeIrFilePhase(
+val ComposeFcsPhase = makeIrModulePhase(
     ::ComposeFcsPatcher,
     name = "ComposeFcsPhase",
     description = "Rewrite FCS descriptors to IR bytecode"
@@ -46,8 +46,8 @@ val ComposeFcsPhase = makeIrFilePhase(
 
 class ComposeIrLoweringExtension : IrLoweringExtension {
     override fun interceptLoweringPhases(
-        phases: CompilerPhase<JvmBackendContext, IrFile, IrFile>
-    ): CompilerPhase<JvmBackendContext, IrFile, IrFile> {
+        phases: CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment>
+    ): CompilerPhase<JvmBackendContext, IrModuleFragment, IrModuleFragment> {
         return FrameClassGenPhase then ComposeObservePhase then ComposeFcsPhase then phases
     }
 }

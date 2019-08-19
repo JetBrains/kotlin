@@ -24,11 +24,11 @@ import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtExpression
 import androidx.compose.plugins.kotlin.analysis.ComposeErrors
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.constants.ArrayValue
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
@@ -38,7 +38,7 @@ class UnionAnnotationCheckerProvider() : StorageComponentContainerContributor {
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
         container.useInstance(
             UnionAnnotationChecker(
                 moduleDescriptor

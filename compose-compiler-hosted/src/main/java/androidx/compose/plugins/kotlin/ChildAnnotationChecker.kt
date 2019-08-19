@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.container.StorageComponentContainer
 import org.jetbrains.kotlin.container.useInstance
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 open class ChildAnnotationChecker() : DeclarationChecker, StorageComponentContainerContributor {
     override fun check(
@@ -51,7 +51,7 @@ open class ChildAnnotationChecker() : DeclarationChecker, StorageComponentContai
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
         container.useInstance(this)
     }
 }
