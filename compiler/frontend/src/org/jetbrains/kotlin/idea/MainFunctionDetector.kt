@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 class MainFunctionDetector {
     private val getFunctionDescriptor: (KtNamedFunction) -> FunctionDescriptor?
@@ -39,7 +40,8 @@ class MainFunctionDetector {
     constructor(bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings) {
         this.getFunctionDescriptor = { function ->
             bindingContext.get(BindingContext.FUNCTION, function)
-                ?: throw IllegalStateException("No descriptor resolved for " + function + " " + function.text)
+                ?: throw throw KotlinExceptionWithAttachments("No descriptor resolved for $function")
+                    .withAttachment("function.text", function.text)
         }
         this.languageVersionSettings = languageVersionSettings
     }
