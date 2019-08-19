@@ -9,7 +9,6 @@ import com.intellij.openapi.util.RecursionGuard;
 import com.intellij.openapi.util.RecursionManager;
 import com.intellij.patterns.ElementPattern;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiManager;
 import com.intellij.psi.impl.PsiManagerEx;
 import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.ConcurrencyUtil;
@@ -37,13 +36,13 @@ public class SemServiceImpl extends SemService {
   private static final Logger LOG = Logger.getInstance(SemServiceImpl.class);
 
   private final AtomicReference<ConcurrentMap<PsiElement, SemCacheChunk>> myCache = new AtomicReference<>();
-  private volatile  MultiMap<SemKey, NullableFunction<PsiElement, Collection<? extends SemElement>>> myProducers;
+  private volatile  MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> myProducers;
   private final Project myProject;
 
   private boolean myBulkChange = false;
   private final AtomicInteger myCreatingSem = new AtomicInteger(0);
 
-  public SemServiceImpl(Project project, PsiManager psiManager) {
+  public SemServiceImpl(Project project) {
     myProject = project;
     final MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(PsiModificationTracker.TOPIC, () -> {
@@ -52,7 +51,7 @@ public class SemServiceImpl extends SemService {
       }
     });
 
-    ((PsiManagerEx)psiManager).registerRunnableToRunOnChange(() -> {
+    PsiManagerEx.getInstanceEx(project).registerRunnableToRunOnChange(() -> {
       if (!isInsideAtomicChange()) {
         clearCache();
       }
@@ -67,8 +66,8 @@ public class SemServiceImpl extends SemService {
     }, project);
   }
 
-  private MultiMap<SemKey, NullableFunction<PsiElement, Collection<? extends SemElement>>> collectProducers() {
-    final MultiMap<SemKey, NullableFunction<PsiElement, Collection<? extends SemElement>>> map = MultiMap.createSmart();
+  private MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> collectProducers() {
+    MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> map = MultiMap.createSmart();
 
     final SemRegistrar registrar = new SemRegistrar() {
       @Override
@@ -143,7 +142,7 @@ public class SemServiceImpl extends SemService {
   @Override
   @Nullable
   public <T extends SemElement> List<T> getSemElements(@NotNull SemKey<T> key, @NotNull final PsiElement psi) {
-    List<T> cached = _getCachedSemElements(key, true, psi);
+    List<T> cached = _getCachedSemElements(key, psi);
     if (cached != null) {
       return cached;
     }
@@ -153,8 +152,8 @@ public class SemServiceImpl extends SemService {
     RecursionGuard.StackStamp stamp = RecursionManager.markStack();
 
     LinkedHashSet<T> result = new LinkedHashSet<>();
-    final Map<SemKey, List<SemElement>> map = new THashMap<>();
-    for (final SemKey each : key.getInheritors()) {
+    Map<SemKey<?>, List<SemElement>> map = new THashMap<>();
+    for (SemKey<?> each : key.getInheritors()) {
       List<SemElement> list = createSemElements(each, psi);
       map.put(each, list);
       result.addAll((List<T>)list);
@@ -162,7 +161,7 @@ public class SemServiceImpl extends SemService {
 
     if (stamp.mayCacheNow()) {
       final SemCacheChunk persistent = getOrCreateChunk(psi);
-      for (SemKey semKey : map.keySet()) {
+      for (SemKey<?> semKey : map.keySet()) {
         persistent.putSemElements(semKey, map.get(semKey));
       }
     }
@@ -177,7 +176,7 @@ public class SemServiceImpl extends SemService {
   }
 
   @NotNull
-  private List<SemElement> createSemElements(SemKey key, PsiElement psi) {
+  private List<SemElement> createSemElements(SemKey<?> key, PsiElement psi) {
     List<SemElement> result = null;
     Collection<NullableFunction<PsiElement, Collection<? extends SemElement>>> functions = myProducers.get(key);
     if (!functions.isEmpty()) {
@@ -198,29 +197,22 @@ public class SemServiceImpl extends SemService {
     return result == null ? Collections.emptyList() : Collections.unmodifiableList(result);
   }
 
-  @Override
   @Nullable
-  public <T extends SemElement> List<T> getCachedSemElements(SemKey<T> key, @NotNull PsiElement psi) {
-    return _getCachedSemElements(key, false, psi);
-  }
-
-  @Nullable
-  private <T extends SemElement> List<T> _getCachedSemElements(@NotNull SemKey<T> key, boolean paranoid, final PsiElement element) {
+  private <T extends SemElement> List<T> _getCachedSemElements(@NotNull SemKey<T> key, final PsiElement element) {
     final SemCacheChunk chunk = obtainChunk(element);
     if (chunk == null) return null;
 
     List<T> singleList = null;
     LinkedHashSet<T> result = null;
-    final List<SemKey> inheritors = key.getInheritors();
+    List<SemKey> inheritors = key.getInheritors();
     //noinspection ForLoopReplaceableByForEach
     for (int i = 0; i < inheritors.size(); i++) {
       List<T> cached = (List<T>)chunk.getSemElements(inheritors.get(i));
-
-      if (cached == null && paranoid) {
+      if (cached == null) {
         return null;
       }
 
-      if (cached != null && cached != Collections.<T>emptyList()) {
+      if (cached != Collections.<T>emptyList()) {
         if (singleList == null) {
           singleList = cached;
           continue;
@@ -249,11 +241,6 @@ public class SemServiceImpl extends SemService {
   private SemCacheChunk obtainChunk(@Nullable PsiElement root) {
     ConcurrentMap<PsiElement, SemCacheChunk> map = myCache.get();
     return map == null ? null : map.get(root);
-  }
-
-  @Override
-  public <T extends SemElement> void setCachedSemElement(SemKey<T> key, @NotNull PsiElement psi, @Nullable T semElement) {
-    getOrCreateChunk(psi).putSemElements(key, ContainerUtil.createMaybeSingletonList(semElement));
   }
 
   private SemCacheChunk getOrCreateChunk(final PsiElement element) {
