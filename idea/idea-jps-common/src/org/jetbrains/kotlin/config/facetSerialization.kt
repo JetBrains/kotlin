@@ -305,7 +305,7 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
 
     targetPlatform?.let {
         element.setAttribute("platform", it.oldFashionedDescription)
-        element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.joinToString(separator = "/"))
+        element.setAttribute("allPlatforms", it.componentPlatforms.map { it.serializeToString() }.sorted().joinToString(separator = "/"))
     }
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
