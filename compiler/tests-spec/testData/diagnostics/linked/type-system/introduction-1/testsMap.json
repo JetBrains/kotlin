@@ -1,0 +1,64 @@
+{
+  "7": {
+    "pos": {
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 11,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 9,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "6": {
+    "neg": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 11,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 5,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        },
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 15,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  },
+  "8": {
+    "pos": {
+      "2": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 15,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        }
+      ],
+      "1": [
+        {
+          "specVersion": "0.1-100",
+          "casesNumber": 13,
+          "description": "The use of Boolean literals as the identifier (with backtick) in the class.",
+          "unexpectedBehaviour": false
+        }
+      ]
+    }
+  }
+}
