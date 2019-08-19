@@ -54,9 +54,9 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
         val matcher = testCaseInfoPattern.matcher(fileContent)
         var startFind = 0
 
-        if (!testCasesSet.byFiles.contains(filename)) {
-            testCasesSet.byFiles[filename] = mutableMapOf()
-            testCasesSet.byRanges[filename] = TreeMap()
+        testCasesSet.byFiles.computeIfAbsent(filename) {
+            testCasesSet.byRanges.putIfAbsent(filename, TreeMap())
+            mutableMapOf()
         }
 
         val testCasesOfFile = testCasesSet.byFiles[filename]!!
