@@ -11,8 +11,11 @@ import com.intellij.psi.PsiFileSystemItem;
 import com.intellij.util.containers.ContainerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import org.jetbrains.jps.model.java.JavaResourceRootType;
+import org.jetbrains.jps.model.java.JavaSourceRootProperties;
 import org.jetbrains.jps.model.java.JavaSourceRootType;
+import org.jetbrains.jps.model.module.JpsModuleSourceRoot;
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 
 import java.util.Collection;
@@ -22,6 +25,9 @@ public final class JpsFileTargetContextSorter {
   private JpsFileTargetContextSorter() {
   }
 
+  /**
+   * Sorts target contexts depending on their {@link JpsModuleSourceRootType} and filters out generated source directories.
+   */
   public static Collection<FileTargetContext> sortTargetContextsResourceFirst(@NotNull Project project,
                                                                               @NotNull VirtualFile file,
                                                                               @NotNull Collection<FileTargetContext> targetContexts) {
@@ -30,7 +36,18 @@ public final class JpsFileTargetContextSorter {
       return targetContexts;
     }
 
-    List<FileTargetContextWrapper> targetContextWrappers = findSourceRootTypes(targetContexts);
+    List<FileTargetContextWrapper> targetContextWrappers = ContainerUtil.filter(findSourceRootTypes(targetContexts), tc -> {
+      if (tc.getJpsModuleSourceRoot() == null) {
+        return true;
+      }
+
+      JavaSourceRootProperties srcProperties = tc.getJpsModuleSourceRoot().getProperties(JavaModuleSourceRootTypes.SOURCES);
+      if (srcProperties == null) {
+        return true;
+      }
+
+      return !srcProperties.isForGeneratedSources();
+    });
 
     // sort only if we have different source root types
     if (hasEqualSourceRootTypes(targetContextWrappers)) {
@@ -81,7 +98,7 @@ public final class JpsFileTargetContextSorter {
         sourceFolder = getSourceFolder(project, file);
       }
 
-      return new FileTargetContextWrapper(c, sourceFolder != null ? sourceFolder.getRootType() : null);
+      return new FileTargetContextWrapper(c, sourceFolder);
     });
   }
 
@@ -165,20 +182,24 @@ public final class JpsFileTargetContextSorter {
 
   private static class FileTargetContextWrapper {
     private final FileTargetContext myTargetContext;
-    private final JpsModuleSourceRootType<?> myRootType;
+    private final SourceFolder mySourceFolder;
 
-    private FileTargetContextWrapper(FileTargetContext context, @Nullable JpsModuleSourceRootType<?> type) {
+    private FileTargetContextWrapper(FileTargetContext context, @Nullable SourceFolder sourceFolder) {
       myTargetContext = context;
-      myRootType = type;
+      mySourceFolder = sourceFolder;
     }
 
-    private FileTargetContext getTargetContext() {
+    public FileTargetContext getTargetContext() {
       return myTargetContext;
     }
 
     @Nullable
-    private JpsModuleSourceRootType<?> getSourceRootType() {
-      return myRootType;
+    public JpsModuleSourceRootType<?> getSourceRootType() {
+      return mySourceFolder != null ? mySourceFolder.getRootType() : null;
+    }
+
+    private JpsModuleSourceRoot getJpsModuleSourceRoot() {
+      return mySourceFolder != null ? mySourceFolder.getJpsElement() : null;
     }
   }
 }
