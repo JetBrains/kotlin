@@ -22,6 +22,7 @@
   </extensions>
 
   <extensions defaultExtensionNs="com.intellij">
+    <fileType name="Groovy" extensions="gradle"/>
     <resolveScopeEnlarger implementation="org.jetbrains.plugins.gradle.config.GradleBuildClasspathResolveScopeEnlarger"/>
     <useScopeEnlarger implementation="org.jetbrains.plugins.gradle.config.GradleUseScopeEnlarger"/>
     <implicitUsageProvider implementation="org.jetbrains.plugins.gradle.config.GradleImplicitUsageProvider"/>
