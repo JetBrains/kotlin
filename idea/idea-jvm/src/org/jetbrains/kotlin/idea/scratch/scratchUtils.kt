@@ -38,21 +38,10 @@ fun getEditorWithoutScratchFile(fileManager: FileEditorManager, virtualFile: Vir
     return editor
 }
 
-@TestOnly
-fun getScratchPanelFromEditorSelectedForFile(fileManager: FileEditorManager, virtualFile: VirtualFile): ScratchTopPanel? {
-    val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor ?: return null
-    return editor.scratchTopPanel
-}
-
 fun getScratchFileFromEditorSelectedForFile(fileManager: FileEditorManager, virtualFile: VirtualFile): ScratchFile? {
     val editor = fileManager.getSelectedEditor(virtualFile) as? TextEditor ?: return null
     return editor.getScratchFile()
 }
-
-fun getAllEditorsWithScratchFiles(project: Project): List<TextEditor> =
-    FileEditorManager.getInstance(project).allEditors
-        .filterIsInstance<TextEditor>()
-        .filter { it.getScratchFile() != null }
 
 fun getScratchFileFromSelectedEditor(project: Project): ScratchFile? {
     val editor = FileEditorManager.getInstance(project).selectedTextEditor ?: return null
