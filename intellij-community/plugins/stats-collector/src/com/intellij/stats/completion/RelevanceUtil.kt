@@ -13,9 +13,10 @@ object RelevanceUtil {
       val value = pair.second
       if (name in IGNORED_FACTORS || value == null) continue
       when (name) {
-        "proximity" -> relevanceMap.addProximityValues("prox", value.toString())
-        "kotlin.proximity" -> relevanceMap.addProximityValues("kt_prox", value.toString())
+        "proximity" -> relevanceMap.addCompoundValues("prox", value.toString())
+        "kotlin.proximity" -> relevanceMap.addCompoundValues("kt_prox", value.toString())
         "kotlin.callableWeight" -> relevanceMap.addDataClassValues("kotlin.callableWeight", value.toString())
+        "ml_weigh" -> relevanceMap.addCompoundValues("ml", value.toString())
         else -> relevanceMap[name] = value
       }
     }
@@ -30,7 +31,7 @@ object RelevanceUtil {
   /**
    * Proximity features now came like [samePsiFile=true, openedInEditor=false], need to convert to proper map
    */
-  private fun MutableMap<String, Any>.addProximityValues(prefix: String, proximity: String) {
+  private fun MutableMap<String, Any>.addCompoundValues(prefix: String, proximity: String) {
     val items = proximity.replace("[", "").replace("]", "").split(",")
 
     this.addProperties(prefix, items)

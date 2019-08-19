@@ -19,6 +19,15 @@
   <depends>com.intellij.modules.lang</depends>
   <depends>com.intellij.modules.platform</depends>
 
+  <extensionPoints>
+    <extensionPoint name="contextFeatures" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.completion.ml.ContextFeatureProvider"/>
+    </extensionPoint>
+    <extensionPoint name="elementFeatures" beanClass="com.intellij.lang.LanguageExtensionPoint">
+      <with attribute="implementationClass" implements="com.intellij.completion.ml.ElementFeatureProvider"/>
+    </extensionPoint>
+  </extensionPoints>
+
   <extensions defaultExtensionNs="com.intellij">
     <applicationService serviceImplementation="com.intellij.completion.settings.CompletionMLRankingSettings"/>
 
@@ -57,6 +66,8 @@
                         serviceImplementation="com.intellij.stats.personalization.impl.UserFactorsManagerImpl"/>
 
     <projectService serviceImplementation="com.intellij.stats.personalization.impl.ProjectUserFactorStorage"/>
+
+    <weigher key="completion" id="ml_weigh" implementationClass="com.intellij.completion.ml.MLCompletionWeigher" order="last"/>
 
     <registryKey key="completion.stats.exit.experiment" defaultValue="false"
                  description="Do not perform A/B experiment for code completion on this installation"/>

@@ -115,11 +115,13 @@ class MLSorter : CompletionFinalSorter() {
     val lookupStorage = MutableLookupStorage.get(lookup)
 
     val userFactors = lookupStorage?.userFactors ?: emptyMap()
+    val contextFactors = lookupStorage?.contextFactors ?: emptyMap()
     SessionFactorsUtils.updateSessionFactors(lookup, items)
+    // TODO: Utilize session, context and user factors
     for (element in items) {
       val position = positionsBefore.getValue(element)
       val relevanceMap = buildRelevanceMap(element, relevanceObjects.getOrDefault(element, emptyList()), prefixLength, position, parameters)
-      val score = calculateElementScore(ranker, element, position, relevanceMap, userFactors, prefixLength)
+      val score = calculateElementScore(ranker, element, position, relevanceMap, userFactors, contextFactors, prefixLength)
       element2score[element] = score
 
       // only log the session features because the ML current models know nothing about sessions features
@@ -199,6 +201,7 @@ class MLSorter : CompletionFinalSorter() {
                                     position: Int,
                                     relevance: Map<String, Any>,
                                     userFactors: Map<String, Any?>,
+                                    contextFactors: Map<String, Any>,
                                     prefixLength: Int): Double? {
     if (ranker == null || !shouldSortByMlRank(ranker.displayName)) return null
     val unknownFactors = ranker.unknownFeatures(relevance.keys)

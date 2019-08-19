@@ -9,6 +9,7 @@ import com.intellij.stats.personalization.session.LookupSessionFactorsStorage
 
 class MutableLookupStorage(override val startedTimestamp: Long) : LookupStorage {
   override var userFactors: Map<String, String?> = emptyMap()
+  override var contextFactors: Map<String, String> = emptyMap()
 
   companion object {
     private val LOOKUP_STORAGE = Key.create<MutableLookupStorage>("completion.ml.lookup.storage")

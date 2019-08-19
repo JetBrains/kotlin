@@ -50,7 +50,8 @@ class FeaturesInfo(private val knownFeatures: Set<String>,
   override fun unknownFeatures(features: Set<String>): List<String> {
     var result: MutableList<String>? = null
     for (featureName in features) {
-      if (featureName !in knownFeatures) {
+      // skip unknown ml features since they do not impact the default ranking
+      if (!(featureName.startsWith("ml_") || featureName in knownFeatures)) {
         result = (result ?: mutableListOf()).apply { add(featureName) }
       }
     }

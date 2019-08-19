@@ -3,15 +3,20 @@ package com.intellij.stats.completion
 
 import com.intellij.codeInsight.lookup.LookupManager
 import com.intellij.codeInsight.lookup.impl.LookupImpl
+import com.intellij.completion.ml.ContextFeatureProvider
+import com.intellij.completion.ml.ContextFeatures
+import com.intellij.completion.ml.MLFeatureValue
 import com.intellij.completion.settings.CompletionMLRankingSettings
 import com.intellij.completion.tracker.PositionTrackingListener
 import com.intellij.internal.statistic.utils.StatisticsUploadAssistant
 import com.intellij.lang.Language
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ex.AnActionListener
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ProjectManager
 import com.intellij.openapi.project.ProjectManagerListener
+import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.registry.Registry
 import com.intellij.reporting.isUnitTestMode
 import com.intellij.stats.experiment.WebServiceStatus
@@ -47,6 +52,7 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
 
       val lookupStorage = MutableLookupStorage.initLookupStorage(lookup, System.currentTimeMillis())
 
+      processContextFactors(lookup, lookupStorage)
       processUserFactors(lookup, lookupStorage)
       processSessionFactors(lookup, lookupStorage)
 
@@ -88,6 +94,23 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
     }
 
     return Random.nextDouble() < logSessionChance
+  }
+
+  private fun processContextFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
+    val element = lookup.psiElement
+    if (element != null) {
+      val result = mutableMapOf<String, MLFeatureValue>()
+      for (provider in ContextFeatureProvider.forLanguage(element.language)) {
+        val providerName = provider.name
+        for ((featureName, value) in provider.calculateFeatures(lookup)) {
+          result["ml_ctx_${providerName}_$featureName"] = value
+        }
+      }
+
+      ContextFeatures.setContextFeatures(element, result)
+      Disposer.register(lookup, Disposable { ContextFeatures.clear(element) })
+      lookupStorage.contextFactors = result.mapValues { it.value.toString() }
+    }
   }
 
   private fun processUserFactors(lookup: LookupImpl,
