@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.idea.scratch.ui
 
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
+import com.intellij.diff.tools.util.BaseSyncScrollable
+import com.intellij.diff.tools.util.SyncScrollSupport.TwosideSyncScrollSupport
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.actionSystem.ActionToolbar
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorFactory
+import com.intellij.openapi.editor.event.VisibleAreaListener
 import com.intellij.openapi.fileEditor.FileEditor
 import com.intellij.openapi.fileEditor.FileEditorPolicy
 import com.intellij.openapi.fileEditor.FileEditorProvider
@@ -51,7 +54,7 @@ class KtScratchFileEditorProvider : FileEditorProvider, DumbAware {
 
 class KtScratchFileEditorWithPreview private constructor(
     val scratchFile: ScratchFile,
-    sourceTextEditor: TextEditor,
+    private val sourceTextEditor: TextEditor,
     private val previewTextEditor: TextEditor
 ) : TextEditorWithPreview(sourceTextEditor, previewTextEditor), TextEditor {
 
@@ -73,7 +76,37 @@ class KtScratchFileEditorWithPreview private constructor(
         scratchFile.compilingScratchExecutor?.addOutputHandler(commonPreviewOutputHandler)
         scratchFile.replScratchExecutor?.addOutputHandler(commonPreviewOutputHandler)
 
+        configureSyncScrollForSourceAndPreview()
+
         ScratchFileAutoRunner.addListener(scratchFile.project, sourceTextEditor)
+    }
+
+    private fun configureSyncScrollForSourceAndPreview() {
+        val sourceEditor = sourceTextEditor.editor
+        val previewEditor = previewTextEditor.editor
+
+        val scrollable = object : BaseSyncScrollable() {
+            override fun processHelper(helper: ScrollHelper) {
+                if (!helper.process(0, 0)) return
+
+                val alignments = previewEditorScratchOutputHandler.sourceToPreviewAlignments
+
+                for ((fromSource, fromPreview) in alignments) {
+                    if (!helper.process(fromSource, fromPreview)) return
+                    if (!helper.process(fromSource, fromPreview)) return
+                }
+
+                helper.process(sourceEditor.document.lineCount, previewEditor.document.lineCount)
+            }
+
+            override fun isSyncScrollEnabled(): Boolean = true
+        }
+
+        val scrollSupport = TwosideSyncScrollSupport(listOf(sourceEditor, previewEditor), scrollable)
+        val listener = VisibleAreaListener { e -> scrollSupport.visibleAreaChanged(e) }
+
+        sourceEditor.scrollingModel.addVisibleAreaListener(listener)
+        previewEditor.scrollingModel.addVisibleAreaListener(listener)
     }
 
     override fun dispose() {
