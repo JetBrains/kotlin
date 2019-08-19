@@ -37,6 +37,7 @@ class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
             @Suppress("UNUSED_PARAMETER") project: Project,
             extension: DiagnosticSuppressor
         ) {
+            @Suppress("DEPRECATION")
             Extensions.getRootArea().getExtensionPoint(DiagnosticSuppressor.EP_NAME)
                 .registerExtension(extension)
         }

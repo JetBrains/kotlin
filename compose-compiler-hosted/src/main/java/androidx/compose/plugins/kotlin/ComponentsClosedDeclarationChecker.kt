@@ -30,10 +30,10 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import androidx.compose.plugins.kotlin.analysis.ComponentMetadata
 import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
 import androidx.compose.plugins.kotlin.analysis.ComposeErrors
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 
 class ComponentsClosedDeclarationChecker :
     DeclarationChecker,
@@ -44,7 +44,7 @@ class ComponentsClosedDeclarationChecker :
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
         container.useInstance(ComponentsClosedDeclarationChecker())
     }
 

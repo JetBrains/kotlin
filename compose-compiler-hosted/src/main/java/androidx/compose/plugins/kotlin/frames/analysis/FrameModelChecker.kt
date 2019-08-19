@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.psi.KtDeclaration
 import androidx.compose.plugins.kotlin.ComposeUtils
 import androidx.compose.plugins.kotlin.analysis.ComposeDefaultErrorMessages
 import androidx.compose.plugins.kotlin.analysis.ComposeErrors
-import org.jetbrains.kotlin.resolve.TargetPlatform
+import org.jetbrains.kotlin.platform.TargetPlatform
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
-import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatform
 
 class FrameModelChecker : DeclarationChecker, StorageComponentContainerContributor {
 
@@ -25,7 +25,7 @@ class FrameModelChecker : DeclarationChecker, StorageComponentContainerContribut
         platform: TargetPlatform,
         moduleDescriptor: ModuleDescriptor
     ) {
-        if (platform != JvmPlatform) return
+        if (!platform.isJvm()) return
         container.useInstance(FrameModelChecker())
     }
 

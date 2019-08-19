@@ -29,13 +29,13 @@ plugins {
 }
 
 dependencies {
-    implementation(KOTLIN_STDLIB)
+    implementation(KOTLIN_COMPOSE_STDLIB)
     testImplementation(JUNIT)
     testImplementation(ROBOLECTRIC)
 
     testImplementation("org.jetbrains.kotlin:kotlin-compiler:$COMPOSE_VERSION")
 
-    testImplementation(KOTLIN_STDLIB)
+    testImplementation(KOTLIN_COMPOSE_STDLIB)
     testImplementation(project(":compose:compose-runtime"))
     testImplementation(project(":ui:ui-android-view-non-ir"))
     testImplementation(project(":compose:compose-compiler-hosted"))

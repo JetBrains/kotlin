@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.putValueArgument
 import org.jetbrains.kotlin.ir.expressions.putTypeArguments
+import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.toIrType
 import org.jetbrains.kotlin.ir.util.declareSimpleFunctionWithOverrides
 import org.jetbrains.kotlin.ir.util.referenceFunction
 import org.jetbrains.kotlin.name.Name
@@ -77,6 +77,12 @@ import org.jetbrains.kotlin.psi2ir.unwrappedGetMethod
 import org.jetbrains.kotlin.psi2ir.unwrappedSetMethod
 import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.plugins.kotlin.frames.buildWithScope
+import org.jetbrains.kotlin.descriptors.CallableDescriptor
+import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
+import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -100,11 +106,10 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         )
         val openTagName =
             element.simpleTagName ?: element.qualifiedTagName ?: error("malformed element")
-        return visitResolvedKtx(
+        return statementGenerator.visitResolvedKtx(
             element.startOffset,
             element.endOffset,
             element.body,
-            statementGenerator,
             resolvedKtxCall,
             openTagName
         )
@@ -125,11 +130,10 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         val body = (
                 (resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?
         )?.bodyExpression?.statements
-        return visitResolvedKtx(
+        return statementGenerator.visitResolvedKtx(
             element.startOffset,
             element.endOffset,
             body,
-            statementGenerator,
             resolvedKtxCall,
             openTagName
         )
@@ -152,30 +156,30 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         val body = (
                 (resolvedKtxCall.emitOrCall as? EmitCallNode)?.inlineChildren as KtLambdaExpression?
         )?.bodyExpression?.statements
-        return visitResolvedKtx(
+        return statementGenerator.visitResolvedKtx(
             element.startOffset,
             element.endOffset,
             body,
-            statementGenerator,
             resolvedKtxCall,
             openTagName
         )
     }
 
-    fun visitResolvedKtx(
+    fun StatementGenerator.visitResolvedKtx(
         startOffset: Int,
         endOffset: Int,
         body: List<KtExpression>?,
-        statementGenerator: StatementGenerator,
         resolvedKtxCall: ResolvedKtxElementCall,
         openTagName: KtExpression
     ): IrExpression {
 
-        val irBuiltIns = statementGenerator.context.irBuiltIns
+        val irBuiltIns = context.irBuiltIns
 
         val resolvedAttributes = resolvedKtxCall.usedAttributes.map { it.name to it }.toMap()
 
         val statements = mutableListOf<IrStatement>()
+
+        val statementGenerator = this@visitResolvedKtx
 
         // Convert tag attribute expressions
         val attributeExpressions = resolvedAttributes.mapValues { (_, attribute) ->
@@ -191,19 +195,19 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
             } else {
                 // Create a temporary variable to hold the value of the expression
                 val attributeType = attribute.type
-                val attributeVariable = IrTemporaryVariableDescriptorImpl(
-                    statementGenerator.scopeOwner,
-                    Name.identifier("__el_attr_${attribute.name.jvmSafeChars()}"),
-                    attributeType,
-                    false
+                val attributeVariable = statementGenerator.scope.createTemporaryVariable(
+                    irValueExpression,
+                    isMutable = false,
+                    type = attributeType,
+                    irType = attributeType.toIrType()
                 )
 
                 val attrVariableDeclaration =
                     statementGenerator.context.symbolTable.declareVariable(
                         valueExpression.startOffset, valueExpression.endOffset,
-                        IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-                        attributeVariable,
-                        attributeType.toIrType()!!,
+                        IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
+                        attributeVariable.descriptor,
+                        attributeType.toIrType(),
                         irValueExpression
                     )
                 // OUTPUT: var _el_attr_name = <attribute expression>
@@ -211,7 +215,9 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                 val getValue = IrGetValueImpl(
                     valueExpression.startOffset, valueExpression.endOffset,
-                    statementGenerator.context.symbolTable.referenceVariable(attributeVariable)
+                    statementGenerator.context.symbolTable.referenceVariable(
+                        attributeVariable.descriptor
+                    )
                 )
 
                 getValue
@@ -259,12 +265,14 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
         fun lambdaExpression(
             descriptor: FunctionDescriptor,
             kotlinType: KotlinType,
+            origin: IrDeclarationOrigin,
             block: (statements: MutableList<IrStatement>) -> Unit
         ) = statementGenerator.lambdaExpression(
             openTagName.startOffset,
             openTagName.endOffset,
             descriptor,
             kotlinType,
+            origin,
             block
         )
 
@@ -311,13 +319,15 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         val ctorLambda =
                             lambdaExpression(
                                 ctorLambdaDescriptor,
-                                ctorParameterType
+                                ctorParameterType,
+                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
                             ) { statements ->
-                            val ctorCall = statementGenerator.buildCall(
+                            val ctorCall = statementGenerator.buildCtorCall(
                                 openTagName.startOffset,
                                 openTagName.endOffset,
                                 ctor,
-                                ctor.resultingDescriptor.original as FunctionDescriptor
+                                ctor.resultingDescriptor.original as ClassConstructorDescriptor,
+                                memoize.ctorCall.valueArguments.size
                             ).apply {
                                 putValueParameters(
                                     memoize.ctorParams,
@@ -352,7 +362,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             getComposerCallParameterType(KtxNameConventions.EMIT_UPDATER_PARAMETER)
                         val updaterLambda = lambdaExpression(
                             updaterLambdaDescriptor,
-                            updaterParameterType
+                            updaterParameterType,
+                            IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
                         ) { statements ->
                             statements.addAll(
                                 memoize.validations.map { validation ->
@@ -387,7 +398,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             )
                             val bodyLambda = lambdaExpression(
                                 bodyLambdaDescriptor,
-                                bodyParameterType
+                                bodyParameterType,
+                                IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
                             ) { statements ->
                                 statements.addAll(
                                     bodyStatements.map { it.accept(statementGenerator, null) }
@@ -408,12 +420,13 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             callNode.resolvedCall.functionCall
                         else callNode.resolvedCall
 
-                    var result: IrExpression = statementGenerator.buildCall(
+                    var result: IrExpression = statementGenerator.buildCallOrCtor(
                         startOffset,
                         endOffset,
                         resolvedCall = resolvedCall,
                         descriptor = resolvedCall.resultingDescriptor as FunctionDescriptor,
-                        dispatchReceiver = receiver ?: attributeExpressions[TAG_KEY]
+                        dispatchReceiver = receiver ?: attributeExpressions[TAG_KEY],
+                        valueArgumentsCount = resolvedCall.valueArguments.size
                     ).apply {
                         putValueParameters(callNode.params, statementGenerator) {
                             getAttribute(it)
@@ -440,9 +453,9 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                         val elVarDecl = statementGenerator.context.symbolTable.declareVariable(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
+                            IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE,
                             elVarDescriptor,
-                            elType.toIrType()!!,
+                            elType.toIrType(),
                             result
                         )
 
@@ -483,8 +496,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
 
                         result = IrBlockImpl(
                             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                            type = elType.toIrType()!!,
-                            origin = IrStatementOrigin.LAMBDA,
+                            type = elType.toIrType(),
+                            origin = IrStatementOrigin.IR_TRANSFORM,
                             statements = postAssignmentStatements
                         )
                     }
@@ -567,14 +580,16 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                                 getComposerCallParameterType(KtxNameConventions.CALL_CTOR_PARAMETER)
                             val ctorLambda = lambdaExpression(
                                 ctorLambdaDescriptor,
-                                ctorParameterType
+                                ctorParameterType,
+                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
                             ) { statements ->
-                                val ctorCall = statementGenerator.buildCall(
+                                val ctorCall = statementGenerator.buildCtorCall(
                                     openTagName.startOffset,
                                     openTagName.endOffset,
                                     memoize.ctorCall,
                                     memoize.ctorCall.resultingDescriptor.original
-                                            as FunctionDescriptor
+                                            as ClassConstructorDescriptor,
+                                    memoize.ctorCall.valueArguments.size
                                 ).apply {
                                     putValueParameters(memoize.ctorParams, statementGenerator) {
                                         getAttribute(it)
@@ -609,7 +624,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                         val validateLambda =
                             lambdaExpression(
                                 validateLambdaDescriptor,
-                                validateParameterType
+                                validateParameterType,
+                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
                             ) { statements ->
                             // all as one expression: a or b or c ... or z
 
@@ -678,7 +694,8 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                             getComposerCallParameterType(KtxNameConventions.CALL_BLOCK_PARAMETER)
                         val bodyLambda =
                             lambdaExpression(
-                                bodyLambdaDescriptor, bodyParameterType
+                                bodyLambdaDescriptor, bodyParameterType,
+                                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
                             ) { statements ->
                             val nextReceiver =
                                 bodyLambdaDescriptor.valueParameters.firstOrNull()?.let {
@@ -687,7 +704,7 @@ class ComposeSyntheticIrExtension : SyntheticIrExtension {
                                 IrGetValueImpl(
                                     UNDEFINED_OFFSET,
                                     UNDEFINED_OFFSET,
-                                    it.type.toIrType()!!,
+                                    it.type.toIrType(),
                                     receiverValue
                                 )
                             }
@@ -808,7 +825,8 @@ private fun StatementGenerator.validationCall(
             val validationAssignment = lambdaExpression(
                 startOffset, endOffset,
                 assignmentLambdaDescriptor,
-                validationCall.resultingDescriptor.valueParameters[1].type
+                validationCall.resultingDescriptor.valueParameters[1].type,
+                IrDeclarationOrigin.LOCAL_FUNCTION_NO_CLOSURE
             ) { statements ->
                 val parameterDefinition = validation.assignmentLambda.valueParameters.first()
                 val parameterReference = context.symbolTable.referenceValueParameter(
@@ -846,7 +864,7 @@ private fun StatementGenerator.validationCall(
     }
 }
 
-private fun IrCall.putValueParameters(
+private fun IrMemberAccessExpression.putValueParameters(
     parameters: List<ValueNode>,
     statementGenerator: StatementGenerator,
     ctorValueParameters: List<ValueParameterDescriptor> = emptyList(),
@@ -873,15 +891,17 @@ private fun IrCall.putValueParameters(
                 val implicitCtorParameter = implicitLambdaParameterCandidates.single()
                 val implicitCtorParameterReference =
                     statementGenerator.context.symbolTable.referenceValue(implicitCtorParameter)
-                putValueArgument(
-                    index,
-                    IrGetValueImpl(
-                        UNDEFINED_OFFSET,
-                        UNDEFINED_OFFSET,
-                        implicitCtorParameter.type.toIrType()!!,
-                        implicitCtorParameterReference
+                with(statementGenerator) {
+                    putValueArgument(
+                        index,
+                        IrGetValueImpl(
+                            UNDEFINED_OFFSET,
+                            UNDEFINED_OFFSET,
+                            implicitCtorParameter.type.toIrType(),
+                            implicitCtorParameterReference
+                        )
                     )
-                )
+                }
             }
             is AttributeNode -> {
                 if (parameter.descriptor !is ValueParameterDescriptor) {
@@ -1004,6 +1024,32 @@ private fun StatementGenerator.createPropertyLValue(
         )
 }
 
+private fun StatementGenerator.buildCallOrCtor(
+    startOffset: Int,
+    endOffset: Int,
+    resolvedCall: ResolvedCall<*>,
+    descriptor: CallableDescriptor,
+    valueArgumentsCount: Int,
+    dispatchReceiver: IrExpression? = null
+) = when (descriptor) {
+    is ClassConstructorDescriptor -> buildCtorCall(
+        startOffset,
+        endOffset,
+        resolvedCall,
+        descriptor,
+        valueArgumentsCount,
+        dispatchReceiver = dispatchReceiver
+    )
+    is FunctionDescriptor -> buildCall(
+        startOffset,
+        endOffset,
+        resolvedCall,
+        descriptor,
+        dispatchReceiver = dispatchReceiver
+    )
+    else -> error("Unrecognized descriptor $descriptor")
+}
+
 private fun StatementGenerator.buildCall(
     startOffset: Int,
     endOffset: Int,
@@ -1052,45 +1098,95 @@ private fun StatementGenerator.buildCall(
     } as IrCall
 }
 
+private fun StatementGenerator.buildCtorCall(
+    startOffset: Int,
+    endOffset: Int,
+    resolvedCall: ResolvedCall<*>,
+    descriptor: ClassConstructorDescriptor,
+    valueArgumentsCount: Int,
+    dispatchReceiver: IrExpression? = null,
+    extensionReceiver: IrExpression? = null
+): IrConstructorCall {
+    val callBuilder = pregenerateCallReceivers(resolvedCall)
+    return (callBuilder.callReceiver.call { dispatchReceiverValue, extensionReceiverValue ->
+        val returnType = descriptor.returnType
+        val functionSymbol =
+            context.symbolTable.referenceFunction(descriptor.original) as IrConstructorSymbol
+        IrConstructorCallImpl(
+            startOffset, endOffset,
+            returnType.toIrType(),
+            functionSymbol,
+            descriptor,
+            typeArgumentsCount = descriptor.typeParametersCount,
+            constructorTypeArgumentsCount = 0,
+            valueArgumentsCount = valueArgumentsCount
+        ).apply {
+            when (resolvedCall.explicitReceiverKind) {
+                ExplicitReceiverKind.DISPATCH_RECEIVER -> {
+                    this.dispatchReceiver = dispatchReceiver ?: dispatchReceiverValue?.load()
+                    this.extensionReceiver = extensionReceiver ?: extensionReceiverValue?.load()
+                }
+                ExplicitReceiverKind.EXTENSION_RECEIVER -> {
+                    this.dispatchReceiver = dispatchReceiver ?: dispatchReceiverValue?.load()
+                    this.extensionReceiver = extensionReceiver ?: extensionReceiverValue?.load()
+                }
+                ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> {
+                    this.dispatchReceiver = dispatchReceiver ?: dispatchReceiverValue?.load()
+                    this.extensionReceiver = extensionReceiver ?: extensionReceiverValue?.load()
+                }
+                ExplicitReceiverKind.BOTH_RECEIVERS -> {
+                    this.dispatchReceiver = dispatchReceiver ?: dispatchReceiverValue?.load()
+                    this.extensionReceiver = extensionReceiver ?: extensionReceiverValue?.load()
+                }
+            }
+            putTypeArguments(resolvedCall.typeArguments) { it.toIrType() }
+        }
+    }) as IrConstructorCall
+}
+
 private fun getKeyValue(descriptor: DeclarationDescriptor, startOffset: Int): Int =
     descriptor.fqNameSafe.toString().hashCode() xor startOffset
 
 private fun buildLambda(
+    statementGenerator: StatementGenerator,
     context: GeneratorContext,
     startOffset: Int,
     endOffset: Int,
     descriptor: FunctionDescriptor,
+    origin: IrDeclarationOrigin,
     body: (statements: MutableList<IrStatement>) -> Unit
 ): IrSimpleFunction {
     return context.symbolTable.declareSimpleFunctionWithOverrides(
         startOffset = startOffset,
         endOffset = endOffset,
-        origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
+        origin = origin,
         descriptor = descriptor
     )
         .buildWithScope(context) { function ->
-            fun declareParameter(descriptor: ParameterDescriptor) =
-                context.symbolTable.declareValueParameter(
-                    startOffset = startOffset,
-                    endOffset = endOffset,
-                    origin = IrDeclarationOrigin.DEFINED,
-                    descriptor = descriptor,
-                    type = descriptor.type.toIrType(context.symbolTable)!!
-                )
+            with(statementGenerator) {
+                fun declareParameter(descriptor: ParameterDescriptor) =
+                    context.symbolTable.declareValueParameter(
+                        startOffset = startOffset,
+                        endOffset = endOffset,
+                        origin = IrDeclarationOrigin.DEFINED,
+                        descriptor = descriptor,
+                        type = descriptor.type.toIrType()
+                    )
 
-            function.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
-                declareParameter(it)
-            }
-            function.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
-                declareParameter(it)
-            }
-            descriptor.valueParameters.mapTo(function.valueParameters) { declareParameter(it) }
+                function.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let {
+                    declareParameter(it)
+                }
+                function.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let {
+                    declareParameter(it)
+                }
+                descriptor.valueParameters.mapTo(function.valueParameters) { declareParameter(it) }
 
-            val statements = mutableListOf<IrStatement>()
-            body(statements)
-            function.body = IrBlockBodyImpl(startOffset, endOffset, statements)
-            function.returnType = descriptor.returnType?.toIrType(context.symbolTable)
-                ?: error("unable to find return type")
+                val statements = mutableListOf<IrStatement>()
+                body(statements)
+                function.body = IrBlockBodyImpl(startOffset, endOffset, statements)
+                function.returnType = descriptor.returnType?.toIrType()
+                    ?: error("unable to find return type")
+            }
         }
 }
 
@@ -1099,13 +1195,16 @@ private fun StatementGenerator.lambdaExpression(
     endOffset: Int,
     descriptor: FunctionDescriptor,
     kotlinType: KotlinType,
+    origin: IrDeclarationOrigin,
     block: (statements: MutableList<IrStatement>) -> Unit
 ): IrExpression {
     val declaration = buildLambda(
+        this,
         context,
         startOffset,
         endOffset,
         descriptor,
+        origin,
         block
     )
     val type = kotlinType.toIrType()
@@ -1113,7 +1212,7 @@ private fun StatementGenerator.lambdaExpression(
         startOffset = startOffset,
         endOffset = endOffset,
         type = type,
-        origin = IrStatementOrigin.LAMBDA,
+        origin = IrStatementOrigin.IR_TRANSFORM,
         statements = mutableListOf(
             declaration,
             IrFunctionReferenceImpl(
@@ -1123,7 +1222,7 @@ private fun StatementGenerator.lambdaExpression(
                 symbol = declaration.symbol,
                 descriptor = declaration.symbol.descriptor,
                 typeArgumentsCount = 0,
-                origin = IrStatementOrigin.LAMBDA
+                origin = IrStatementOrigin.IR_TRANSFORM
             )
         )
     )
