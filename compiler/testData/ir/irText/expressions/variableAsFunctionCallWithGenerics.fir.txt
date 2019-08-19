@@ -4,8 +4,8 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
       correspondingProperty: PROPERTY name:gk visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-gk> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>'
-          FUN_EXPR type=kotlin.Function1<kotlin.Function0<T of <uninitialized parent>>, kotlin.Function0<T of <uninitialized parent>>> origin=LAMBDA
-            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>>
+          FUN_EXPR type=kotlin.Function0<IrErrorType> origin=LAMBDA
+            FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
               BLOCK_BODY
                 ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
   FUN name:testGeneric1 visibility:public modality:FINAL <> (x:kotlin.String) returnType:T of <uninitialized parent>
@@ -19,10 +19,10 @@ FILE fqName:<root> fileName:/variableAsFunctionCallWithGenerics.kt
       correspondingProperty: PROPERTY name:kt26531Val visibility:public modality:FINAL [val]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-kt26531Val> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>'
-          FUN_EXPR type=kotlin.Function0<kotlin.Function0<T of <uninitialized parent>>> origin=LAMBDA
-            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:kotlin.Function0<T of <uninitialized parent>>
+          FUN_EXPR type=kotlin.Function0<IrErrorType> origin=LAMBDA
+            FUN name:<no name provided> visibility:local modality:FINAL <> () returnType:IrErrorType
               BLOCK_BODY
-                RETURN type=kotlin.Nothing from='local final fun <no name provided> (): kotlin.Function0<T of <uninitialized parent>> declared in <root>.<get-kt26531Val>'
+                RETURN type=kotlin.Nothing from='local final fun <no name provided> (): IrErrorType declared in <root>.<get-kt26531Val>'
                   ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
   FUN name:kt26531 visibility:public modality:FINAL <> () returnType:T of <uninitialized parent>
     BLOCK_BODY

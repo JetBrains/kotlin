@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
+import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.Name
 
 open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirConstructor {
@@ -68,6 +69,20 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
         delegatedConstructor?.transformSingle(transformer, data)
         body = body?.transformSingle(transformer, data)
 
+        return this
+    }
+
+    override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
+        annotations.forEach { it.accept(visitor, data) }
+        valueParameters.forEach { it.accept(visitor, data) }
+        returnTypeRef.accept(visitor, data)
+        status.accept(visitor, data)
+        delegatedConstructor?.accept(visitor, data)
+        body?.accept(visitor, data)
+    }
+
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        valueParameters.transformInplace(transformer, data)
         return this
     }
 

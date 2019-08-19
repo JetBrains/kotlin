@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -78,5 +79,10 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember<FirNamedFunction>, 
         body = body?.transformSingle(transformer, data)
 
         return super<FirAbstractCallableMember>.transformChildren(transformer, data)
+    }
+
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction {
+        valueParameters.transformInplace(transformer, data)
+        return this
     }
 }

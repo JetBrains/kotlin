@@ -45,6 +45,10 @@ abstract class FirDefaultPropertyAccessor(
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
     }
+
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirDefaultPropertyAccessor {
+        return this
+    }
 }
 
 class FirDefaultPropertyGetter(

@@ -1,11 +1,11 @@
 FILE: functionX.kt
-    public final val x: R|kotlin/jvm/functions/Function0<kotlin/Int>| = fun R|kotlin/jvm/functions/Function0<kotlin/Int>|.<anonymous>(): R|kotlin/jvm/functions/Function0<kotlin/Int>| {
+    public final val x: R|kotlin/jvm/functions/Function0<kotlin/Int>| = fun <anonymous>(): R|kotlin/jvm/functions/Function0<kotlin/Int>| {
         Int(42)
     }
 
         public get(): R|kotlin/jvm/functions/Function0<kotlin/Int>|
-    public final val y: R|kotlin/Function1<kotlin/String, kotlin/String>| = fun R|kotlin/Function1<kotlin/String, kotlin/String>|.<anonymous>(it: R|kotlin/String|): R|kotlin/Function1<kotlin/String, kotlin/String>| {
-        <Unresolved name: it>#
+    public final val y: R|kotlin/Function1<kotlin/String, kotlin/String>| = fun <anonymous>(it: R|kotlin/String|): R|kotlin/String| {
+        R|<local>/it|
     }
 
         public get(): R|kotlin/Function1<kotlin/String, kotlin/String>|

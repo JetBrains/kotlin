@@ -41,4 +41,13 @@ class FirAnonymousFunctionImpl(
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
     }
+
+    override fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef) {
+        this.receiverTypeRef = receiverTypeRef
+    }
+
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunction {
+        valueParameters.transformInplace(transformer, data)
+        return this
+    }
 }

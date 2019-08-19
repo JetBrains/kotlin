@@ -2,11 +2,11 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test1 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test1 type:kotlin.Function1<kotlin.String, kotlin.String> visibility:public [final,static]
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function2<kotlin.Function1<kotlin.String, kotlin.String>, kotlin.String, kotlin.Function1<kotlin.String, kotlin.String>> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.Function1<kotlin.String, kotlin.String>
+        FUN_EXPR type=kotlin.Function1<kotlin.String, kotlin.String> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:kotlin.String) returnType:kotlin.String
             VALUE_PARAMETER name:it index:0 type:kotlin.String
             BLOCK_BODY
-              ERROR_CALL 'Unresolved reference: <Unresolved name: it>#' type=IrErrorType
+              GET_VAR 'it: kotlin.String declared in <root>.test1.<anonymous>' type=kotlin.String origin=null
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test1> visibility:public modality:FINAL <> () returnType:kotlin.Function1<kotlin.String, kotlin.String>
       correspondingProperty: PROPERTY name:test1 visibility:public modality:FINAL [val]
       BLOCK_BODY
@@ -15,8 +15,8 @@ FILE fqName:<root> fileName:/lambdas.kt
   PROPERTY name:test2 visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any> visibility:public [final,static]
       EXPRESSION_BODY
-        FUN_EXPR type=kotlin.Function1<kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>, kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>> origin=LAMBDA
-          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>
+        FUN_EXPR type=kotlin.Function0<IrErrorType> origin=LAMBDA
+          FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:IrErrorType
             BLOCK_BODY
               ERROR_CALL 'Unresolved reference: <Unresolved name: hashCode>#' type=IrErrorType
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-test2> visibility:public modality:FINAL <> () returnType:kotlin.Function2<kotlin.Any, kotlin.Any, kotlin.Any>

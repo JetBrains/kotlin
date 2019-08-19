@@ -33,4 +33,6 @@ abstract class FirAnonymousFunction(
         typeRef.accept(visitor, data)
         // Don't call super<FirExpression>.acceptChildren (annotations & typeRef are already processed)
     }
+
+    abstract fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef)
 }
