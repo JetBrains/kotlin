@@ -26,7 +26,6 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.CacheUpdateRunner;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.openapi.vfs.ex.dummy.DummyFileSystem;
 import com.intellij.openapi.vfs.newvfs.persistent.PersistentFS;
 import com.intellij.psi.stubs.StubIndexKey;
 import com.intellij.psi.stubs.StubUpdatingIndex;
@@ -48,7 +47,6 @@ import java.util.concurrent.Future;
 
 @SuppressWarnings("HardCodedStringLiteral")
 public class IndexInfrastructure {
-  private static final boolean ourUnitTestMode = ApplicationManager.getApplication().isUnitTestMode();
   private static final String STUB_VERSIONS = ".versions";
   private static final String PERSISTENT_INDEX_DIRECTORY_NAME = ".persistent";
   private static final boolean ourDoParallelIndicesInitialization = SystemProperties
@@ -114,40 +112,12 @@ public class IndexInfrastructure {
 
   @Nullable
   public static VirtualFile findFileById(@NotNull PersistentFS fs, final int id) {
-    if (ourUnitTestMode) {
-      final VirtualFile testFile = findTestFile(id);
-      if (testFile != null) {
-        return testFile;
-      }
-    }
-
     return fs.findFileById(id);
-
-    /*
-
-    final boolean isDirectory = fs.isDirectory(id);
-    final DirectoryInfo directoryInfo = isDirectory ? dirIndex.getInfoForDirectoryId(id) : dirIndex.getInfoForDirectoryId(fs.getParent(id));
-    if (directoryInfo != null && (directoryInfo.contentRoot != null || directoryInfo.sourceRoot != null || directoryInfo.libraryClassRoot != null)) {
-      return isDirectory? directoryInfo.directory : directoryInfo.directory.findChild(fs.getName(id));
-    }
-    return null;
-    */
   }
 
   @Nullable
   public static VirtualFile findFileByIdIfCached(@NotNull PersistentFS fs, final int id) {
-    if (ourUnitTestMode) {
-      final VirtualFile testFile = findTestFile(id);
-      if (testFile != null) {
-        return testFile;
-      }
-    }
     return fs.findFileByIdIfCached(id);
-  }
-
-  @Nullable
-  private static VirtualFile findTestFile(final int id) {
-    return DummyFileSystem.getInstance().findById(id);
   }
 
   @NotNull
