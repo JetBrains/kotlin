@@ -26,5 +26,5 @@ fun case_1(x: Number?): Long? {
  * ISSUES: KT-22997
  */
 fun case_2(x: Number?): Long? {
-    if (x == null || x is Long) return <!TYPE_MISMATCH!>x<!> else return 0L
+    if (x == null || x is Long) return <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!> else return 0L
 }

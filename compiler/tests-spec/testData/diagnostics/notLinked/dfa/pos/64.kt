@@ -26,7 +26,7 @@ class Case1<T> {
             x = getT()
         }
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
-        return <!TYPE_MISMATCH!>x<!>
+        return <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     }
 }
 
@@ -59,7 +59,7 @@ class Case3<T> {
         var x = getTN()
         x = x ?: getT()
         <!DEBUG_INFO_EXPRESSION_TYPE("T?")!>x<!>
-        return <!TYPE_MISMATCH!>x<!>
+        return <!TYPE_MISMATCH, TYPE_MISMATCH!>x<!>
     }
 }
 

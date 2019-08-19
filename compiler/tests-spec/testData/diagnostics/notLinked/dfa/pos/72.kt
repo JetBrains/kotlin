@@ -22,5 +22,5 @@ fun case_1() {
     val strs = list as MutableList<String>
     strs.add("two")
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.String>")!>list<!>
-    val s: String = <!TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.String>"), DEBUG_INFO_SMARTCAST!>list<!>[0]<!>
+    val s: String = <!TYPE_MISMATCH, TYPE_MISMATCH!><!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.MutableList<kotlin.Int> & kotlin.collections.MutableList<kotlin.String>"), DEBUG_INFO_SMARTCAST!>list<!>[0]<!>
 }

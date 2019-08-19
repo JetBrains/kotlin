@@ -149,12 +149,13 @@ fun case_12(z: Any?) {
 
 /*
  * TESTCASE NUMBER: 13
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-30927
  */
 fun case_13(z: Any?) {
     val y = z.run {
         if (this is ClassLevel6)
-            return@run <!DEBUG_INFO_SMARTCAST!>this<!>
+            return@run <!TYPE_MISMATCH!>this<!>
         this as ClassLevel3
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("ClassLevel3")!>y<!>
@@ -199,13 +200,14 @@ fun case_16(z: Any?) {
 
 /*
  * TESTCASE NUMBER: 17
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-30927
  */
 fun case_17(z: Any?) {
     val y = z.run {
         when (this) {
             is Class? -> <!DEBUG_INFO_SMARTCAST!>this<!>!!
-            is Class -> return@run <!DEBUG_INFO_SMARTCAST!>this<!>
+            is Class -> return@run <!TYPE_MISMATCH!>this<!>
             is Float -> Class()
             else -> return@run Class()
         }
@@ -216,12 +218,13 @@ fun case_17(z: Any?) {
 
 /*
  * TESTCASE NUMBER: 18
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-30927
  */
 fun case_18(z: Any?) {
     val y = z.run {
         this as Int
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        <!TYPE_MISMATCH!>this<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>y<!>.inv()
@@ -239,12 +242,13 @@ fun case_19(z: Any?) {
 
 /*
  * TESTCASE NUMBER: 20
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-30927
  */
 fun case_20(z: Any?) {
     val y = z.run {
         this!!
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        <!TYPE_MISMATCH!>this<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
@@ -334,12 +338,13 @@ fun case_27(z: Any?) {
 
 /*
  * TESTCASE NUMBER: 28
+ * UNEXPECTED BEHAVIOUR
  * ISSUES: KT-30927
  */
 fun case_28(z: Any?) {
     val y = z.run {
         if (this == null) throw IllegalStateException()
-        <!DEBUG_INFO_SMARTCAST!>this<!>
+        <!TYPE_MISMATCH!>this<!>
     }
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any")!>y<!>.equals(10)
