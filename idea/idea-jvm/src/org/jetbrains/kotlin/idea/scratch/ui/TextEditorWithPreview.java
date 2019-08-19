@@ -117,7 +117,7 @@ public class TextEditorWithPreview extends UserDataHolderBase implements FileEdi
 
             if (myLayout == null) {
                 String lastUsed = PropertiesComponent.getInstance().getValue(getLayoutPropertyName());
-                myLayout = Layout.fromName(lastUsed, Layout.SHOW_EDITOR_AND_PREVIEW);
+                setLayout(Layout.fromName(lastUsed, Layout.SHOW_EDITOR_AND_PREVIEW));
             }
             adjustEditorsVisibility();
 
@@ -152,7 +152,7 @@ public class TextEditorWithPreview extends UserDataHolderBase implements FileEdi
                 myPreview.setState(compositeState.getSecondState());
             }
             if (compositeState.getSplitLayout() != null) {
-                myLayout = compositeState.getSplitLayout();
+                setLayout(compositeState.getSplitLayout());
                 invalidateLayout();
             }
         }
@@ -234,6 +234,10 @@ public class TextEditorWithPreview extends UserDataHolderBase implements FileEdi
 
     public Layout getLayout() {
         return myLayout;
+    }
+
+    protected void setLayout(@NotNull Layout layout) {
+        myLayout = layout;
     }
 
     static class MyFileEditorState implements FileEditorState {
@@ -430,7 +434,7 @@ public class TextEditorWithPreview extends UserDataHolderBase implements FileEdi
         @Override
         public void setSelected(@NotNull AnActionEvent e, boolean state) {
             if (state) {
-                myLayout = myActionLayout;
+                setLayout(myActionLayout);
                 PropertiesComponent.getInstance().setValue(getLayoutPropertyName(), myLayout.myName, Layout.SHOW_EDITOR_AND_PREVIEW.myName);
                 adjustEditorsVisibility();
             }
