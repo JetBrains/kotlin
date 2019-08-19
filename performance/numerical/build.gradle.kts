@@ -14,12 +14,14 @@ plugins {
 
 benchmark {
     applicationName = "Numerical"
-    commonSrcDirs = listOf("src/main/kotlin", "../../tools/benchmarks/shared/src", "../shared/src/main/kotlin", "../../endorsedLibraries/kliopt/src/main/kotlin")
-    jvmSrcDirs = listOf("src/main/kotlin-jvm", "../shared/src/main/kotlin-jvm", "../../endorsedLibraries/kliopt/src/main/kotlin-jvm")
-    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common", "../../endorsedLibraries/kliopt/src/main/kotlin-native")
+    commonSrcDirs = listOf("src/main/kotlin", "../../tools/benchmarks/shared/src", "../shared/src/main/kotlin")
+    jvmSrcDirs = listOf("src/main/kotlin-jvm", "../shared/src/main/kotlin-jvm")
+    nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("../shared/src/main/kotlin-native/posix")
     linkerOpts = listOf("$buildDir/pi.o")
+
+    dependencies.common(project(":endorsedLibraries:kliopt"))
 }
 
 val compileLibary by tasks.creating {

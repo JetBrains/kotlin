@@ -36,17 +36,21 @@ kotlin {
         commonMain {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlinVersion"
+                implementation project(":endorsedLibraries:kliopt")
             }
             kotlin.srcDir "src"
             kotlin.srcDir "../shared/src/main/kotlin"
-            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin"
             kotlin.srcDir "$toolsPath/benchmarks/shared/src/main/kotlin"
         }
         macosMain {
             dependsOn commonMain
             kotlin.srcDir "../shared/src/main/kotlin-native/common"
             kotlin.srcDir "../shared/src/main/kotlin-native/posix"
-            kotlin.srcDir "$rootProject.projectDir/endorsedLibraries/kliopt/src/main/kotlin-native"
+             
+            // Exclude kliopt added in commonMain dependencies and inherited by macosMain.
+            configurations.getByName(implementationConfigurationName) {
+                exclude module: "kliopt"
+            }
         }
     }
 

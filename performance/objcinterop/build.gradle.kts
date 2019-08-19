@@ -20,6 +20,8 @@ benchmark {
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
     linkerOpts = listOf("-L$buildDir", "-lcomplexnumbers")
+
+    dependencies.common(project(":endorsedLibraries:kliopt"))
 }
 
 val compileLibary by tasks.creating {

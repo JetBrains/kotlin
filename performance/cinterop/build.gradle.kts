@@ -16,6 +16,8 @@ benchmark {
     nativeSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/common")
     mingwSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/mingw")
     posixSrcDirs = listOf("src/main/kotlin-native", "../shared/src/main/kotlin-native/posix")
+
+    dependencies.common(project(":endorsedLibraries:kliopt"))
 }
 
 val native = kotlin.targets.getByName("native") as KotlinNativeTarget
