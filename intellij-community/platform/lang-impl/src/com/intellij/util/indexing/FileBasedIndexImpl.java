@@ -582,7 +582,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private void removeTransientFileDataFromIndices(Collection<? extends ID<?, ?>> indices, int inputId, VirtualFile file) {
     for (ID<?, ?> indexId : indices) {
-      final UpdatableIndex index = myState.getIndex(indexId);
+      final UpdatableIndex<?, ?, FileContent> index = myState.getIndex(indexId);
       assert index != null;
       index.removeTransientDataForFile(inputId);
     }
@@ -2278,7 +2278,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
   }
 
   @NotNull
-  CollectingContentIterator createContentIterator(@Nullable ProgressIndicator indicator) {
+  CollectingContentIterator createContentIterator() {
     return new UnindexedFilesFinder();
   }
 
