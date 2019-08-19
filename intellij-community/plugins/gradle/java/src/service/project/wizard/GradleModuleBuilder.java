@@ -7,7 +7,6 @@ import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.highlighter.ModuleFileType;
 import com.intellij.ide.projectWizard.ProjectSettingsStep;
 import com.intellij.ide.util.EditorHelper;
-import com.intellij.ide.util.PropertiesComponent;
 import com.intellij.ide.util.projectWizard.*;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
@@ -96,8 +95,6 @@ public class GradleModuleBuilder extends AbstractExternalModuleBuilder<GradlePro
   private static final String TEMPLATE_ATTRIBUTE_GRADLE_VERSION = "GRADLE_VERSION";
   private static final Key<BuildScriptDataBuilder> BUILD_SCRIPT_DATA =
     Key.create("gradle.module.buildScriptData");
-
-  private static final String USE_KOTLIN_DSL = "org.jetbrains.plugins.gradle.service.project.wizard.GradleModuleBuilder.useKotlinDSL";
 
   private WizardContext myWizardContext;
 
