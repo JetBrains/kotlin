@@ -21,8 +21,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.fileEditor.impl.text.TextEditorProvider
 import org.jetbrains.kotlin.idea.KotlinBundle
-import org.jetbrains.kotlin.idea.scratch.attachedOutputHandler
-import org.jetbrains.kotlin.idea.scratch.getScratchFile
+import org.jetbrains.kotlin.idea.scratch.ui.findScratchFileEditorWithPreview
 
 class ClearScratchAction : ScratchAction(
     KotlinBundle.message("scratch.clear.button"),
@@ -33,8 +32,7 @@ class ClearScratchAction : ScratchAction(
 
         val selectedEditor = FileEditorManager.getInstance(project).selectedTextEditor ?: return
         val textEditor = TextEditorProvider.getInstance().getTextEditor(selectedEditor)
-        val scratchFile = textEditor.getScratchFile() ?: return
 
-        textEditor.attachedOutputHandler?.clear(scratchFile)
+        textEditor.findScratchFileEditorWithPreview()?.clearOutputHandlers()
     }
 }
