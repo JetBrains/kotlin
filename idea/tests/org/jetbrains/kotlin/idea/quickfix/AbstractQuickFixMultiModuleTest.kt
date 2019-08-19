@@ -44,14 +44,15 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
         enableInspectionTools(*inspections)
 
         CommandProcessor.getInstance().executeCommand(project, {
-            var expectedErrorMessage: String = ""
+            var expectedErrorMessage = ""
             try {
                 val actionHint = ActionHint.parse(actionFile, actionFileText)
                 val text = actionHint.expectedText
 
                 val actionShouldBeAvailable = actionHint.shouldPresent()
 
-                expectedErrorMessage = InTextDirectivesUtils.findStringWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ") ?: ""
+                expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ")
+                    .joinToString(separator = "\n")
 
                 AbstractQuickFixMultiFileTest.doAction(
                     text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
@@ -87,7 +88,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
         for (editedFile in project.allKotlinFiles()) {
             val afterFileInTmpProject = editedFile.containingDirectory?.findFile(editedFile.name + ".after") ?: continue
-            val afterFileInTestData = afterFiles.filter { it.name == afterFileInTmpProject.name } .single {
+            val afterFileInTestData = afterFiles.filter { it.name == afterFileInTmpProject.name }.single {
                 it.readText() == File(afterFileInTmpProject.virtualFile.path).readText()
             }
 
