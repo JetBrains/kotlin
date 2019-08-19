@@ -660,7 +660,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractQuickFixMultiModuleTest> {
-            model("multiModuleQuickFix", recursive = false, extension = null)
+             model("multiModuleQuickFix", extension = null, deep = 1)
         }
 
         testClass<AbstractKotlinGotoImplementationMultiModuleTest> {

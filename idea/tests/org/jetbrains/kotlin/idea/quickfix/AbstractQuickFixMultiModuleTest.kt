@@ -31,10 +31,10 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
 
     fun doTest(dirPath: String) {
         setupMppProjectFromDirStructure(File(dirPath))
-        doQuickFixTest()
+        doQuickFixTest(dirPath)
     }
 
-    private fun doQuickFixTest() {
+    private fun doQuickFixTest(dirPath: String) {
         val actionFile = project.findFileWithCaret()
         val virtualFile = actionFile.virtualFile!!
         configureByExistingFile(virtualFile)
@@ -64,7 +64,7 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                 }
 
                 if (actionShouldBeAvailable) {
-                    compareToExpected()
+                    compareToExpected(dirPath)
                 }
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
             } catch (e: ComparisonFailure) {
@@ -82,8 +82,8 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
         }, "", "")
     }
 
-    private fun compareToExpected() {
-        val projectDirectory = File("$testDataPath${getTestName(true)}")
+    private fun compareToExpected(directory: String) {
+        val projectDirectory = File("${KotlinTestUtils.getHomeDirectory()}/$directory")
         val afterFiles = projectDirectory.walkTopDown().filter { it.path.endsWith(".after") }.toList()
 
         for (editedFile in project.allKotlinFiles()) {

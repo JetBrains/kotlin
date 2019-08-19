@@ -25,742 +25,781 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
-    @TestMetadata("abstract")
-    public void testAbstract() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/abstract/");
-    }
-
-    @TestMetadata("abstractClassWithJdk")
-    public void testAbstractClassWithJdk() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/abstractClassWithJdk/");
-    }
-
-    @TestMetadata("actualImplementAsConstructorParam")
-    public void testActualImplementAsConstructorParam() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/actualImplementAsConstructorParam/");
-    }
-
-    @TestMetadata("actualNoImplementAsConstructorParam")
-    public void testActualNoImplementAsConstructorParam() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/actualNoImplementAsConstructorParam/");
-    }
-
-    @TestMetadata("actualWithoutExpect")
-    public void testActualWithoutExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/actualWithoutExpect/");
-    }
-
-    @TestMetadata("addActualToClass")
-    public void testAddActualToClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addActualToClass/");
-    }
-
-    @TestMetadata("addActualToClassMember")
-    public void testAddActualToClassMember() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addActualToClassMember/");
-    }
-
-    @TestMetadata("addActualToTopLevelMember")
-    public void testAddActualToTopLevelMember() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addActualToTopLevelMember/");
-    }
-
-    @TestMetadata("addFunctionToCommonClassFromJavaUsage")
-    public void testAddFunctionToCommonClassFromJavaUsage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addFunctionToCommonClassFromJavaUsage/");
-    }
-
-    @TestMetadata("addOperatorByActual")
-    public void testAddOperatorByActual() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addOperatorByActual/");
-    }
-
-    @TestMetadata("addOperatorByExpect")
-    public void testAddOperatorByExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/addOperatorByExpect/");
-    }
-
     public void testAllFilesPresentInMultiModuleQuickFix() throws Exception {
-        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, false);
-    }
-
-    @TestMetadata("annotation")
-    public void testAnnotation() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/annotation/");
-    }
-
-    @TestMetadata("annotationOptionalExpectation")
-    public void testAnnotationOptionalExpectation() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/annotationOptionalExpectation/");
-    }
-
-    @TestMetadata("annotationOptionalExpectationNoDir")
-    public void testAnnotationOptionalExpectationNoDir() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/annotationOptionalExpectationNoDir/");
-    }
-
-    @TestMetadata("class")
-    public void testClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/class/");
-    }
-
-    @TestMetadata("classFunction")
-    public void testClassFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classFunction/");
-    }
-
-    @TestMetadata("classFunctionSameSignature")
-    public void testClassFunctionSameSignature() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classFunctionSameSignature/");
-    }
-
-    @TestMetadata("classFunctionWithConstructor")
-    public void testClassFunctionWithConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classFunctionWithConstructor/");
-    }
-
-    @TestMetadata("classFunctionWithConstructorAndParameters")
-    public void testClassFunctionWithConstructorAndParameters() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classFunctionWithConstructorAndParameters/");
-    }
-
-    @TestMetadata("classFunctionWithIncompatibleConstructor")
-    public void testClassFunctionWithIncompatibleConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classFunctionWithIncompatibleConstructor/");
-    }
-
-    @TestMetadata("classOverloadedFunction")
-    public void testClassOverloadedFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classOverloadedFunction/");
-    }
-
-    @TestMetadata("classPropertyInConstructor")
-    public void testClassPropertyInConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classPropertyInConstructor/");
-    }
-
-    @TestMetadata("classSomeProperties")
-    public void testClassSomeProperties() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classSomeProperties/");
-    }
-
-    @TestMetadata("classWithBase")
-    public void testClassWithBase() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classWithBase/");
-    }
-
-    @TestMetadata("classWithIncompilableFunction")
-    public void testClassWithIncompilableFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classWithIncompilableFunction/");
-    }
-
-    @TestMetadata("classWithJdk")
-    public void testClassWithJdk() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/classWithJdk/");
-    }
-
-    @TestMetadata("companionAbsence")
-    public void testCompanionAbsence() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/companionAbsence/");
-    }
-
-    @TestMetadata("constructorWithDelegation")
-    public void testConstructorWithDelegation() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/constructorWithDelegation/");
-    }
-
-    @TestMetadata("constructorWithJdk")
-    public void testConstructorWithJdk() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/constructorWithJdk/");
-    }
-
-    @TestMetadata("convertActualEnumToSealedClass")
-    public void testConvertActualEnumToSealedClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertActualEnumToSealedClass/");
-    }
-
-    @TestMetadata("convertActualSealedClassToEnum")
-    public void testConvertActualSealedClassToEnum() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertActualSealedClassToEnum/");
-    }
-
-    @TestMetadata("convertExpectEnumToSealedClass")
-    public void testConvertExpectEnumToSealedClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertExpectEnumToSealedClass/");
-    }
-
-    @TestMetadata("convertExpectSealedClassToEnum")
-    public void testConvertExpectSealedClassToEnum() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertExpectSealedClassToEnum/");
-    }
-
-    @TestMetadata("convertPropertyGetterToInitializer")
-    public void testConvertPropertyGetterToInitializer() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertPropertyGetterToInitializer/");
-    }
-
-    @TestMetadata("convertPropertyToFunction")
-    public void testConvertPropertyToFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/convertPropertyToFunction/");
-    }
-
-    @TestMetadata("createActualClassWithSuperTypeFromOtherPackage")
-    public void testCreateActualClassWithSuperTypeFromOtherPackage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createActualClassWithSuperTypeFromOtherPackage/");
-    }
-
-    @TestMetadata("createActualWithRootPackage")
-    public void testCreateActualWithRootPackage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createActualWithRootPackage/");
-    }
-
-    @TestMetadata("createClassFromUsageImport")
-    public void testCreateClassFromUsageImport() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageImport/");
-    }
-
-    @TestMetadata("createClassFromUsageRef")
-    public void testCreateClassFromUsageRef() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createClassFromUsageRef/");
-    }
-
-    @TestMetadata("createExpectClassWithSuperTypeFromOtherPackage")
-    public void testCreateExpectClassWithSuperTypeFromOtherPackage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createExpectClassWithSuperTypeFromOtherPackage/");
-    }
-
-    @TestMetadata("createExpectWithRootPackage")
-    public void testCreateExpectWithRootPackage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createExpectWithRootPackage/");
-    }
-
-    @TestMetadata("createFunInExpectClass")
-    public void testCreateFunInExpectClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createFunInExpectClass/");
-    }
-
-    @TestMetadata("createTestOnExpect")
-    public void testCreateTestOnExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createTestOnExpect/");
-    }
-
-    @TestMetadata("createValInExpectClass")
-    public void testCreateValInExpectClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createValInExpectClass/");
-    }
-
-    @TestMetadata("createVarInExpectClass")
-    public void testCreateVarInExpectClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/createVarInExpectClass/");
-    }
-
-    @TestMetadata("defaultParameterInExpected")
-    public void testDefaultParameterInExpected() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpected/");
-    }
-
-    @TestMetadata("defaultParameterInExpectedClass")
-    public void testDefaultParameterInExpectedClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedClass/");
-    }
-
-    @TestMetadata("defaultParameterInExpectedConstructor")
-    public void testDefaultParameterInExpectedConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/defaultParameterInExpectedConstructor/");
-    }
-
-    @TestMetadata("deprecatedHeader")
-    public void testDeprecatedHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/deprecatedHeader/");
-    }
-
-    @TestMetadata("deprecatedHeaderImpl")
-    public void testDeprecatedHeaderImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/deprecatedHeaderImpl/");
-    }
-
-    @TestMetadata("deprecatedImpl")
-    public void testDeprecatedImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/deprecatedImpl/");
-    }
-
-    @TestMetadata("deprecatedImplHeader")
-    public void testDeprecatedImplHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/deprecatedImplHeader/");
-    }
-
-    @TestMetadata("enum")
-    public void testEnum() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/enum/");
-    }
-
-    @TestMetadata("expectAnnotation")
-    public void testExpectAnnotation() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectAnnotation/");
-    }
-
-    @TestMetadata("expectAnnotation2")
-    public void testExpectAnnotation2() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectAnnotation2/");
-    }
-
-    @TestMetadata("expectClass")
-    public void testExpectClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClass/");
-    }
-
-    @TestMetadata("expectClassCommented")
-    public void testExpectClassCommented() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassCommented/");
-    }
-
-    @TestMetadata("expectClassFunction")
-    public void testExpectClassFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassFunction/");
-    }
-
-    @TestMetadata("expectClassNoAccessOnMember")
-    public void testExpectClassNoAccessOnMember() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassNoAccessOnMember/");
-    }
-
-    @TestMetadata("expectClassOnMember")
-    public void testExpectClassOnMember() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassOnMember/");
-    }
-
-    @TestMetadata("expectClassProperty")
-    public void testExpectClassProperty() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassProperty/");
-    }
-
-    @TestMetadata("expectClassPropertyInConstructor")
-    public void testExpectClassPropertyInConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassPropertyInConstructor/");
-    }
-
-    @TestMetadata("expectClassWithAliases")
-    public void testExpectClassWithAliases() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithAliases/");
-    }
-
-    @TestMetadata("expectClassWithConstructorWithParametersWithoutValVar")
-    public void testExpectClassWithConstructorWithParametersWithoutValVar() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithConstructorWithParametersWithoutValVar/");
-    }
-
-    @TestMetadata("expectClassWithInitializer")
-    public void testExpectClassWithInitializer() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithInitializer/");
-    }
-
-    @TestMetadata("expectClassWithPlatformNested")
-    public void testExpectClassWithPlatformNested() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithPlatformNested/");
-    }
-
-    @TestMetadata("expectClassWithSecondaryConstructor")
-    public void testExpectClassWithSecondaryConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithSecondaryConstructor/");
-    }
-
-    @TestMetadata("expectClassWithSecondaryConstructor2")
-    public void testExpectClassWithSecondaryConstructor2() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithSecondaryConstructor2/");
-    }
-
-    @TestMetadata("expectClassWithSupertype")
-    public void testExpectClassWithSupertype() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithSupertype/");
-    }
-
-    @TestMetadata("expectClassWithVararg")
-    public void testExpectClassWithVararg() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectClassWithVararg/");
-    }
-
-    @TestMetadata("expectCompanion")
-    public void testExpectCompanion() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectCompanion/");
-    }
-
-    @TestMetadata("expectDataClass")
-    public void testExpectDataClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectDataClass/");
-    }
-
-    @TestMetadata("expectEnum")
-    public void testExpectEnum() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectEnum/");
-    }
-
-    @TestMetadata("expectEnumComplex")
-    public void testExpectEnumComplex() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectEnumComplex/");
-    }
-
-    @TestMetadata("expectEnumEmpty")
-    public void testExpectEnumEmpty() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectEnumEmpty/");
-    }
-
-    @TestMetadata("expectFunWithAccessibleAlias")
-    public void testExpectFunWithAccessibleAlias() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleAlias/");
-    }
-
-    @TestMetadata("expectFunWithAccessibleExpansion")
-    public void testExpectFunWithAccessibleExpansion() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleExpansion/");
-    }
-
-    @TestMetadata("expectFunWithAccessibleParameter")
-    public void testExpectFunWithAccessibleParameter() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleParameter/");
-    }
-
-    @TestMetadata("expectFunWithAccessibleTypeFromCommon")
-    public void testExpectFunWithAccessibleTypeFromCommon() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithAccessibleTypeFromCommon/");
-    }
-
-    @TestMetadata("expectFunWithInaccessibleBounds")
-    public void testExpectFunWithInaccessibleBounds() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleBounds/");
-    }
-
-    @TestMetadata("expectFunWithInaccessibleParameter")
-    public void testExpectFunWithInaccessibleParameter() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleParameter/");
-    }
-
-    @TestMetadata("expectFunWithInaccessibleTypeParameter")
-    public void testExpectFunWithInaccessibleTypeParameter() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithInaccessibleTypeParameter/");
-    }
-
-    @TestMetadata("expectFunWithJdk")
-    public void testExpectFunWithJdk() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunWithJdk/");
-    }
-
-    @TestMetadata("expectFunction")
-    public void testExpectFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectFunction/");
-    }
-
-    @TestMetadata("expectInlineClass")
-    public void testExpectInlineClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectInlineClass/");
-    }
-
-    @TestMetadata("expectInlineClass2")
-    public void testExpectInlineClass2() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectInlineClass2/");
-    }
-
-    @TestMetadata("expectInnerEnum")
-    public void testExpectInnerEnum() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectInnerEnum/");
-    }
-
-    @TestMetadata("expectNestedClass")
-    public void testExpectNestedClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectNestedClass/");
-    }
-
-    @TestMetadata("expectPrimaryConstructor")
-    public void testExpectPrimaryConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectPrimaryConstructor/");
-    }
-
-    @TestMetadata("expectProperty")
-    public void testExpectProperty() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectProperty/");
-    }
-
-    @TestMetadata("expectSealedClass")
-    public void testExpectSealedClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectSealedClass/");
-    }
-
-    @TestMetadata("expectTypeAlias")
-    public void testExpectTypeAlias() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectTypeAlias/");
-    }
-
-    @TestMetadata("expectWithAnnotations")
-    public void testExpectWithAnnotations() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/expectWithAnnotations/");
-    }
-
-    @TestMetadata("function")
-    public void testFunction() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/function/");
-    }
-
-    @TestMetadata("functionSameFile")
-    public void testFunctionSameFile() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/functionSameFile/");
-    }
-
-    @TestMetadata("functionTypeParameterToReceiverByHeader")
-    public void testFunctionTypeParameterToReceiverByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByHeader/");
-    }
-
-    @TestMetadata("functionTypeParameterToReceiverByImpl")
-    public void testFunctionTypeParameterToReceiverByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/functionTypeParameterToReceiverByImpl/");
-    }
-
-    @TestMetadata("functionTypeReceiverToParameterByHeader")
-    public void testFunctionTypeReceiverToParameterByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByHeader/");
-    }
-
-    @TestMetadata("functionTypeReceiverToParameterByImpl")
-    public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/functionTypeReceiverToParameterByImpl/");
-    }
-
-    @TestMetadata("generateEqualsInExpect")
-    public void testGenerateEqualsInExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/generateEqualsInExpect/");
-    }
-
-    @TestMetadata("generateHashCodeInExpect")
-    public void testGenerateHashCodeInExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/generateHashCodeInExpect/");
-    }
-
-    @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")
-    public void testImplementAbstractExpectMemberInheritedFromInterface() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/implementAbstractExpectMemberInheritedFromInterface/");
-    }
-
-    @TestMetadata("implementMembersInActualClassNoExpectMember")
-    public void testImplementMembersInActualClassNoExpectMember() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/implementMembersInActualClassNoExpectMember/");
-    }
-
-    @TestMetadata("implementMembersInImplClassNonImplInheritor")
-    public void testImplementMembersInImplClassNonImplInheritor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/implementMembersInImplClassNonImplInheritor/");
-    }
-
-    @TestMetadata("importClassInCommon")
-    public void testImportClassInCommon() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importClassInCommon/");
-    }
-
-    @TestMetadata("importClassInFromProductionInCommonTests")
-    public void testImportClassInFromProductionInCommonTests() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importClassInFromProductionInCommonTests/");
-    }
-
-    @TestMetadata("importCommonClassInJs")
-    public void testImportCommonClassInJs() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importCommonClassInJs/");
-    }
-
-    @TestMetadata("importCommonClassInJvm")
-    public void testImportCommonClassInJvm() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importCommonClassInJvm/");
-    }
-
-    @TestMetadata("importCommonFunInJvm")
-    public void testImportCommonFunInJvm() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importCommonFunInJvm/");
-    }
-
-    @TestMetadata("importExpectClassWithActualInJvm")
-    public void testImportExpectClassWithActualInJvm() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importExpectClassWithActualInJvm/");
-    }
-
-    @TestMetadata("importExpectClassWithoutActualInJvm")
-    public void testImportExpectClassWithoutActualInJvm() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importExpectClassWithoutActualInJvm/");
-    }
-
-    @TestMetadata("importFunInCommon")
-    public void testImportFunInCommon() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/importFunInCommon/");
-    }
-
-    @TestMetadata("inlineClass")
-    public void testInlineClass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/inlineClass/");
-    }
-
-    @TestMetadata("interface")
-    public void testInterface() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/interface/");
-    }
-
-    @TestMetadata("makeInlineFromExpect")
-    public void testMakeInlineFromExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/makeInlineFromExpect/");
-    }
-
-    @TestMetadata("makeInternalFromExpect")
-    public void testMakeInternalFromExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/makeInternalFromExpect/");
-    }
-
-    @TestMetadata("makeOpenFromActual")
-    public void testMakeOpenFromActual() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/makeOpenFromActual/");
-    }
-
-    @TestMetadata("makeOpenFromExpect")
-    public void testMakeOpenFromExpect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/makeOpenFromExpect/");
-    }
-
-    @TestMetadata("mayBeConstantWithActual")
-    public void testMayBeConstantWithActual() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/mayBeConstantWithActual/");
-    }
-
-    @TestMetadata("memberFunParameterToReceiverByHeader")
-    public void testMemberFunParameterToReceiverByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByHeader/");
-    }
-
-    @TestMetadata("memberFunParameterToReceiverByImpl")
-    public void testMemberFunParameterToReceiverByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunParameterToReceiverByImpl/");
-    }
-
-    @TestMetadata("memberFunReceiverToParameterByHeader")
-    public void testMemberFunReceiverToParameterByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByHeader/");
-    }
-
-    @TestMetadata("memberFunReceiverToParameterByImpl")
-    public void testMemberFunReceiverToParameterByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunReceiverToParameterByImpl/");
-    }
-
-    @TestMetadata("memberFunToExtensionByHeader")
-    public void testMemberFunToExtensionByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunToExtensionByHeader/");
-    }
-
-    @TestMetadata("memberFunToExtensionByImpl")
-    public void testMemberFunToExtensionByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberFunToExtensionByImpl/");
-    }
-
-    @TestMetadata("memberValToExtensionByHeader")
-    public void testMemberValToExtensionByHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByHeader/");
-    }
-
-    @TestMetadata("memberValToExtensionByHeaderWithInapplicableImpl")
-    public void testMemberValToExtensionByHeaderWithInapplicableImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByHeaderWithInapplicableImpl/");
-    }
-
-    @TestMetadata("memberValToExtensionByImpl")
-    public void testMemberValToExtensionByImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/memberValToExtensionByImpl/");
-    }
-
-    @TestMetadata("nested")
-    public void testNested() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/nested/");
-    }
-
-    @TestMetadata("object")
-    public void testObject() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/object/");
-    }
-
-    @TestMetadata("orderHeader")
-    public void testOrderHeader() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/orderHeader/");
-    }
-
-    @TestMetadata("orderImpl")
-    public void testOrderImpl() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/orderImpl/");
-    }
-
-    @TestMetadata("package")
-    public void testPackage() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/package/");
-    }
-
-    @TestMetadata("packageIncorrect")
-    public void testPackageIncorrect() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/packageIncorrect/");
-    }
-
-    @TestMetadata("packageIncorrectEmpty")
-    public void testPackageIncorrectEmpty() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/packageIncorrectEmpty/");
-    }
-
-    @TestMetadata("primaryConstructor")
-    public void testPrimaryConstructor() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/primaryConstructor/");
-    }
-
-    @TestMetadata("primaryConstructorAbsence")
-    public void testPrimaryConstructorAbsence() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/primaryConstructorAbsence/");
-    }
-
-    @TestMetadata("property")
-    public void testProperty() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/property/");
-    }
-
-    @TestMetadata("safeDeleteForbiddenFromActual")
-    public void testSafeDeleteForbiddenFromActual() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/safeDeleteForbiddenFromActual/");
-    }
-
-    @TestMetadata("safeDeleteFromActual")
-    public void testSafeDeleteFromActual() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/safeDeleteFromActual/");
-    }
-
-    @TestMetadata("safeDeleteUsedInAnotherPlatform")
-    public void testSafeDeleteUsedInAnotherPlatform() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/safeDeleteUsedInAnotherPlatform/");
-    }
-
-    @TestMetadata("sealed")
-    public void testSealed() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/sealed/");
-    }
-
-    @TestMetadata("sealedSubclass")
-    public void testSealedSubclass() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/sealedSubclass/");
-    }
-
-    @TestMetadata("secondaryConstructorAbsence")
-    public void testSecondaryConstructorAbsence() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/secondaryConstructorAbsence/");
-    }
-
-    @TestMetadata("withFakeJvm")
-    public void testWithFakeJvm() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/withFakeJvm/");
-    }
-
-    @TestMetadata("withTest")
-    public void testWithTest() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/withTest/");
-    }
-
-    @TestMetadata("withTestDummy")
-    public void testWithTestDummy() throws Exception {
-        runTest("idea/testData/multiModuleQuickFix/withTestDummy/");
+        KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+    }
+
+    @TestMetadata("idea/testData/multiModuleQuickFix/createActual")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CreateActual extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("abstract")
+        public void testAbstract() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/abstract/");
+        }
+
+        @TestMetadata("abstractClassWithJdk")
+        public void testAbstractClassWithJdk() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/abstractClassWithJdk/");
+        }
+
+        public void testAllFilesPresentInCreateActual() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createActual"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotation")
+        public void testAnnotation() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/annotation/");
+        }
+
+        @TestMetadata("annotationOptionalExpectation")
+        public void testAnnotationOptionalExpectation() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/annotationOptionalExpectation/");
+        }
+
+        @TestMetadata("annotationOptionalExpectationNoDir")
+        public void testAnnotationOptionalExpectationNoDir() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/annotationOptionalExpectationNoDir/");
+        }
+
+        @TestMetadata("class")
+        public void testClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/class/");
+        }
+
+        @TestMetadata("classWithBase")
+        public void testClassWithBase() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/classWithBase/");
+        }
+
+        @TestMetadata("classWithJdk")
+        public void testClassWithJdk() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/classWithJdk/");
+        }
+
+        @TestMetadata("classWithSuperTypeFromOtherPackage")
+        public void testClassWithSuperTypeFromOtherPackage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/classWithSuperTypeFromOtherPackage/");
+        }
+
+        @TestMetadata("constructorWithDelegation")
+        public void testConstructorWithDelegation() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/constructorWithDelegation/");
+        }
+
+        @TestMetadata("constructorWithJdk")
+        public void testConstructorWithJdk() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/constructorWithJdk/");
+        }
+
+        @TestMetadata("defaultParameterInExpected")
+        public void testDefaultParameterInExpected() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/defaultParameterInExpected/");
+        }
+
+        @TestMetadata("defaultParameterInExpectedClass")
+        public void testDefaultParameterInExpectedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/defaultParameterInExpectedClass/");
+        }
+
+        @TestMetadata("defaultParameterInExpectedConstructor")
+        public void testDefaultParameterInExpectedConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/defaultParameterInExpectedConstructor/");
+        }
+
+        @TestMetadata("enum")
+        public void testEnum() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/enum/");
+        }
+
+        @TestMetadata("function")
+        public void testFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/function/");
+        }
+
+        @TestMetadata("functionSameFile")
+        public void testFunctionSameFile() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/functionSameFile/");
+        }
+
+        @TestMetadata("inlineClass")
+        public void testInlineClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/inlineClass/");
+        }
+
+        @TestMetadata("interface")
+        public void testInterface() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/interface/");
+        }
+
+        @TestMetadata("nested")
+        public void testNested() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/nested/");
+        }
+
+        @TestMetadata("object")
+        public void testObject() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/object/");
+        }
+
+        @TestMetadata("package")
+        public void testPackage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/package/");
+        }
+
+        @TestMetadata("packageIncorrect")
+        public void testPackageIncorrect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/packageIncorrect/");
+        }
+
+        @TestMetadata("packageIncorrectEmpty")
+        public void testPackageIncorrectEmpty() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/packageIncorrectEmpty/");
+        }
+
+        @TestMetadata("primaryConstructor")
+        public void testPrimaryConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/primaryConstructor/");
+        }
+
+        @TestMetadata("property")
+        public void testProperty() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/property/");
+        }
+
+        @TestMetadata("sealed")
+        public void testSealed() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/sealed/");
+        }
+
+        @TestMetadata("sealedSubclass")
+        public void testSealedSubclass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/sealedSubclass/");
+        }
+
+        @TestMetadata("withFakeJvm")
+        public void testWithFakeJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/withFakeJvm/");
+        }
+
+        @TestMetadata("withRootPackage")
+        public void testWithRootPackage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/withRootPackage/");
+        }
+
+        @TestMetadata("withTest")
+        public void testWithTest() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/withTest/");
+        }
+
+        @TestMetadata("withTestDummy")
+        public void testWithTestDummy() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/withTestDummy/");
+        }
+    }
+
+    @TestMetadata("idea/testData/multiModuleQuickFix/createExpect")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class CreateExpect extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInCreateExpect() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/createExpect"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("annotation")
+        public void testAnnotation() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/annotation/");
+        }
+
+        @TestMetadata("annotation2")
+        public void testAnnotation2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/annotation2/");
+        }
+
+        @TestMetadata("class")
+        public void testClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/class/");
+        }
+
+        @TestMetadata("classWithSuperTypeFromOtherPackage")
+        public void testClassWithSuperTypeFromOtherPackage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/classWithSuperTypeFromOtherPackage/");
+        }
+
+        @TestMetadata("commented")
+        public void testCommented() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/commented/");
+        }
+
+        @TestMetadata("companion")
+        public void testCompanion() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/companion/");
+        }
+
+        @TestMetadata("dataClass")
+        public void testDataClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/dataClass/");
+        }
+
+        @TestMetadata("enum")
+        public void testEnum() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/enum/");
+        }
+
+        @TestMetadata("enumComplex")
+        public void testEnumComplex() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/enumComplex/");
+        }
+
+        @TestMetadata("enumEmpty")
+        public void testEnumEmpty() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/enumEmpty/");
+        }
+
+        @TestMetadata("funWithAccessibleAlias")
+        public void testFunWithAccessibleAlias() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithAccessibleAlias/");
+        }
+
+        @TestMetadata("funWithAccessibleExpansion")
+        public void testFunWithAccessibleExpansion() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithAccessibleExpansion/");
+        }
+
+        @TestMetadata("funWithAccessibleParameter")
+        public void testFunWithAccessibleParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithAccessibleParameter/");
+        }
+
+        @TestMetadata("funWithAccessibleTypeFromCommon")
+        public void testFunWithAccessibleTypeFromCommon() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithAccessibleTypeFromCommon/");
+        }
+
+        @TestMetadata("funWithInaccessibleBounds")
+        public void testFunWithInaccessibleBounds() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleBounds/");
+        }
+
+        @TestMetadata("funWithInaccessibleParameter")
+        public void testFunWithInaccessibleParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleParameter/");
+        }
+
+        @TestMetadata("funWithInaccessibleTypeParameter")
+        public void testFunWithInaccessibleTypeParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleTypeParameter/");
+        }
+
+        @TestMetadata("funWithJdk")
+        public void testFunWithJdk() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithJdk/");
+        }
+
+        @TestMetadata("function")
+        public void testFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/function/");
+        }
+
+        @TestMetadata("function2")
+        public void testFunction2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/function2/");
+        }
+
+        @TestMetadata("inlineClass")
+        public void testInlineClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/inlineClass/");
+        }
+
+        @TestMetadata("inlineClass2")
+        public void testInlineClass2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/inlineClass2/");
+        }
+
+        @TestMetadata("innerEnum")
+        public void testInnerEnum() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/innerEnum/");
+        }
+
+        @TestMetadata("nestedClass")
+        public void testNestedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/nestedClass/");
+        }
+
+        @TestMetadata("noAccessOnMember")
+        public void testNoAccessOnMember() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/noAccessOnMember/");
+        }
+
+        @TestMetadata("onMember")
+        public void testOnMember() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/onMember/");
+        }
+
+        @TestMetadata("primaryConstructor")
+        public void testPrimaryConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/primaryConstructor/");
+        }
+
+        @TestMetadata("property")
+        public void testProperty() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/property/");
+        }
+
+        @TestMetadata("property2")
+        public void testProperty2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/property2/");
+        }
+
+        @TestMetadata("propertyInConstructor")
+        public void testPropertyInConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/propertyInConstructor/");
+        }
+
+        @TestMetadata("sealedClass")
+        public void testSealedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/sealedClass/");
+        }
+
+        @TestMetadata("typeAlias")
+        public void testTypeAlias() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/typeAlias/");
+        }
+
+        @TestMetadata("withAliases")
+        public void testWithAliases() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withAliases/");
+        }
+
+        @TestMetadata("withAnnotations")
+        public void testWithAnnotations() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withAnnotations/");
+        }
+
+        @TestMetadata("withConstructorWithParametersWithoutValVar")
+        public void testWithConstructorWithParametersWithoutValVar() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withConstructorWithParametersWithoutValVar/");
+        }
+
+        @TestMetadata("withInitializer")
+        public void testWithInitializer() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withInitializer/");
+        }
+
+        @TestMetadata("withPlatformNested")
+        public void testWithPlatformNested() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withPlatformNested/");
+        }
+
+        @TestMetadata("withRootPackage")
+        public void testWithRootPackage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withRootPackage/");
+        }
+
+        @TestMetadata("withSecondaryConstructor")
+        public void testWithSecondaryConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withSecondaryConstructor/");
+        }
+
+        @TestMetadata("withSecondaryConstructor2")
+        public void testWithSecondaryConstructor2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withSecondaryConstructor2/");
+        }
+
+        @TestMetadata("withSupertype")
+        public void testWithSupertype() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withSupertype/");
+        }
+
+        @TestMetadata("withVararg")
+        public void testWithVararg() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/withVararg/");
+        }
+    }
+
+    @TestMetadata("idea/testData/multiModuleQuickFix/other")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Other extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        @TestMetadata("actualImplementAsConstructorParam")
+        public void testActualImplementAsConstructorParam() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/actualImplementAsConstructorParam/");
+        }
+
+        @TestMetadata("actualNoImplementAsConstructorParam")
+        public void testActualNoImplementAsConstructorParam() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/actualNoImplementAsConstructorParam/");
+        }
+
+        @TestMetadata("actualWithoutExpect")
+        public void testActualWithoutExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/actualWithoutExpect/");
+        }
+
+        @TestMetadata("addActualToClass")
+        public void testAddActualToClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addActualToClass/");
+        }
+
+        @TestMetadata("addActualToClassMember")
+        public void testAddActualToClassMember() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addActualToClassMember/");
+        }
+
+        @TestMetadata("addActualToTopLevelMember")
+        public void testAddActualToTopLevelMember() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addActualToTopLevelMember/");
+        }
+
+        @TestMetadata("addFunctionToCommonClassFromJavaUsage")
+        public void testAddFunctionToCommonClassFromJavaUsage() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addFunctionToCommonClassFromJavaUsage/");
+        }
+
+        @TestMetadata("addOperatorByActual")
+        public void testAddOperatorByActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addOperatorByActual/");
+        }
+
+        @TestMetadata("addOperatorByExpect")
+        public void testAddOperatorByExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/addOperatorByExpect/");
+        }
+
+        public void testAllFilesPresentInOther() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/other"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classFunction")
+        public void testClassFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classFunction/");
+        }
+
+        @TestMetadata("classFunctionSameSignature")
+        public void testClassFunctionSameSignature() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classFunctionSameSignature/");
+        }
+
+        @TestMetadata("classFunctionWithConstructor")
+        public void testClassFunctionWithConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithConstructor/");
+        }
+
+        @TestMetadata("classFunctionWithConstructorAndParameters")
+        public void testClassFunctionWithConstructorAndParameters() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithConstructorAndParameters/");
+        }
+
+        @TestMetadata("classFunctionWithIncompatibleConstructor")
+        public void testClassFunctionWithIncompatibleConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classFunctionWithIncompatibleConstructor/");
+        }
+
+        @TestMetadata("classOverloadedFunction")
+        public void testClassOverloadedFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classOverloadedFunction/");
+        }
+
+        @TestMetadata("classPropertyInConstructor")
+        public void testClassPropertyInConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classPropertyInConstructor/");
+        }
+
+        @TestMetadata("classSomeProperties")
+        public void testClassSomeProperties() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classSomeProperties/");
+        }
+
+        @TestMetadata("classWithIncompilableFunction")
+        public void testClassWithIncompilableFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/classWithIncompilableFunction/");
+        }
+
+        @TestMetadata("companionAbsence")
+        public void testCompanionAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/companionAbsence/");
+        }
+
+        @TestMetadata("convertActualEnumToSealedClass")
+        public void testConvertActualEnumToSealedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertActualEnumToSealedClass/");
+        }
+
+        @TestMetadata("convertActualSealedClassToEnum")
+        public void testConvertActualSealedClassToEnum() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertActualSealedClassToEnum/");
+        }
+
+        @TestMetadata("convertExpectEnumToSealedClass")
+        public void testConvertExpectEnumToSealedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertExpectEnumToSealedClass/");
+        }
+
+        @TestMetadata("convertExpectSealedClassToEnum")
+        public void testConvertExpectSealedClassToEnum() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertExpectSealedClassToEnum/");
+        }
+
+        @TestMetadata("convertPropertyGetterToInitializer")
+        public void testConvertPropertyGetterToInitializer() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertPropertyGetterToInitializer/");
+        }
+
+        @TestMetadata("convertPropertyToFunction")
+        public void testConvertPropertyToFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/convertPropertyToFunction/");
+        }
+
+        @TestMetadata("createClassFromUsageImport")
+        public void testCreateClassFromUsageImport() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createClassFromUsageImport/");
+        }
+
+        @TestMetadata("createClassFromUsageRef")
+        public void testCreateClassFromUsageRef() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createClassFromUsageRef/");
+        }
+
+        @TestMetadata("createFunInExpectClass")
+        public void testCreateFunInExpectClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createFunInExpectClass/");
+        }
+
+        @TestMetadata("createTestOnExpect")
+        public void testCreateTestOnExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createTestOnExpect/");
+        }
+
+        @TestMetadata("createValInExpectClass")
+        public void testCreateValInExpectClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createValInExpectClass/");
+        }
+
+        @TestMetadata("createVarInExpectClass")
+        public void testCreateVarInExpectClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/createVarInExpectClass/");
+        }
+
+        @TestMetadata("deprecatedHeader")
+        public void testDeprecatedHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/deprecatedHeader/");
+        }
+
+        @TestMetadata("deprecatedHeaderImpl")
+        public void testDeprecatedHeaderImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/deprecatedHeaderImpl/");
+        }
+
+        @TestMetadata("deprecatedImpl")
+        public void testDeprecatedImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/deprecatedImpl/");
+        }
+
+        @TestMetadata("deprecatedImplHeader")
+        public void testDeprecatedImplHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/deprecatedImplHeader/");
+        }
+
+        @TestMetadata("functionTypeParameterToReceiverByHeader")
+        public void testFunctionTypeParameterToReceiverByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/functionTypeParameterToReceiverByHeader/");
+        }
+
+        @TestMetadata("functionTypeParameterToReceiverByImpl")
+        public void testFunctionTypeParameterToReceiverByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/functionTypeParameterToReceiverByImpl/");
+        }
+
+        @TestMetadata("functionTypeReceiverToParameterByHeader")
+        public void testFunctionTypeReceiverToParameterByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/functionTypeReceiverToParameterByHeader/");
+        }
+
+        @TestMetadata("functionTypeReceiverToParameterByImpl")
+        public void testFunctionTypeReceiverToParameterByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/functionTypeReceiverToParameterByImpl/");
+        }
+
+        @TestMetadata("generateEqualsInExpect")
+        public void testGenerateEqualsInExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/generateEqualsInExpect/");
+        }
+
+        @TestMetadata("generateHashCodeInExpect")
+        public void testGenerateHashCodeInExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/generateHashCodeInExpect/");
+        }
+
+        @TestMetadata("implementAbstractExpectMemberInheritedFromInterface")
+        public void testImplementAbstractExpectMemberInheritedFromInterface() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/implementAbstractExpectMemberInheritedFromInterface/");
+        }
+
+        @TestMetadata("implementMembersInActualClassNoExpectMember")
+        public void testImplementMembersInActualClassNoExpectMember() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/implementMembersInActualClassNoExpectMember/");
+        }
+
+        @TestMetadata("implementMembersInImplClassNonImplInheritor")
+        public void testImplementMembersInImplClassNonImplInheritor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/implementMembersInImplClassNonImplInheritor/");
+        }
+
+        @TestMetadata("importClassInCommon")
+        public void testImportClassInCommon() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importClassInCommon/");
+        }
+
+        @TestMetadata("importClassInFromProductionInCommonTests")
+        public void testImportClassInFromProductionInCommonTests() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importClassInFromProductionInCommonTests/");
+        }
+
+        @TestMetadata("importCommonClassInJs")
+        public void testImportCommonClassInJs() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importCommonClassInJs/");
+        }
+
+        @TestMetadata("importCommonClassInJvm")
+        public void testImportCommonClassInJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importCommonClassInJvm/");
+        }
+
+        @TestMetadata("importCommonFunInJvm")
+        public void testImportCommonFunInJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importCommonFunInJvm/");
+        }
+
+        @TestMetadata("importExpectClassWithActualInJvm")
+        public void testImportExpectClassWithActualInJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importExpectClassWithActualInJvm/");
+        }
+
+        @TestMetadata("importExpectClassWithoutActualInJvm")
+        public void testImportExpectClassWithoutActualInJvm() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importExpectClassWithoutActualInJvm/");
+        }
+
+        @TestMetadata("importFunInCommon")
+        public void testImportFunInCommon() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/importFunInCommon/");
+        }
+
+        @TestMetadata("makeInlineFromExpect")
+        public void testMakeInlineFromExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/makeInlineFromExpect/");
+        }
+
+        @TestMetadata("makeInternalFromExpect")
+        public void testMakeInternalFromExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/makeInternalFromExpect/");
+        }
+
+        @TestMetadata("makeOpenFromActual")
+        public void testMakeOpenFromActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/makeOpenFromActual/");
+        }
+
+        @TestMetadata("makeOpenFromExpect")
+        public void testMakeOpenFromExpect() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/makeOpenFromExpect/");
+        }
+
+        @TestMetadata("mayBeConstantWithActual")
+        public void testMayBeConstantWithActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/mayBeConstantWithActual/");
+        }
+
+        @TestMetadata("memberFunParameterToReceiverByHeader")
+        public void testMemberFunParameterToReceiverByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunParameterToReceiverByHeader/");
+        }
+
+        @TestMetadata("memberFunParameterToReceiverByImpl")
+        public void testMemberFunParameterToReceiverByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunParameterToReceiverByImpl/");
+        }
+
+        @TestMetadata("memberFunReceiverToParameterByHeader")
+        public void testMemberFunReceiverToParameterByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunReceiverToParameterByHeader/");
+        }
+
+        @TestMetadata("memberFunReceiverToParameterByImpl")
+        public void testMemberFunReceiverToParameterByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunReceiverToParameterByImpl/");
+        }
+
+        @TestMetadata("memberFunToExtensionByHeader")
+        public void testMemberFunToExtensionByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunToExtensionByHeader/");
+        }
+
+        @TestMetadata("memberFunToExtensionByImpl")
+        public void testMemberFunToExtensionByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberFunToExtensionByImpl/");
+        }
+
+        @TestMetadata("memberValToExtensionByHeader")
+        public void testMemberValToExtensionByHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberValToExtensionByHeader/");
+        }
+
+        @TestMetadata("memberValToExtensionByHeaderWithInapplicableImpl")
+        public void testMemberValToExtensionByHeaderWithInapplicableImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberValToExtensionByHeaderWithInapplicableImpl/");
+        }
+
+        @TestMetadata("memberValToExtensionByImpl")
+        public void testMemberValToExtensionByImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/memberValToExtensionByImpl/");
+        }
+
+        @TestMetadata("orderHeader")
+        public void testOrderHeader() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/orderHeader/");
+        }
+
+        @TestMetadata("orderImpl")
+        public void testOrderImpl() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/orderImpl/");
+        }
+
+        @TestMetadata("primaryConstructorAbsence")
+        public void testPrimaryConstructorAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/primaryConstructorAbsence/");
+        }
+
+        @TestMetadata("safeDeleteForbiddenFromActual")
+        public void testSafeDeleteForbiddenFromActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/safeDeleteForbiddenFromActual/");
+        }
+
+        @TestMetadata("safeDeleteFromActual")
+        public void testSafeDeleteFromActual() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/safeDeleteFromActual/");
+        }
+
+        @TestMetadata("safeDeleteUsedInAnotherPlatform")
+        public void testSafeDeleteUsedInAnotherPlatform() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/safeDeleteUsedInAnotherPlatform/");
+        }
+
+        @TestMetadata("secondaryConstructorAbsence")
+        public void testSecondaryConstructorAbsence() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/other/secondaryConstructorAbsence/");
+        }
     }
 }
