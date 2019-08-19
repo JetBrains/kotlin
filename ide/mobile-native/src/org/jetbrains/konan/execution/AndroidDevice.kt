@@ -26,7 +26,7 @@ import java.io.File
 
 class AndroidDevice(private val raw: IDevice) : Device(
     raw.serialNumber,
-    raw.avdName?.replace('_', ' ') ?: "Unknown",
+    raw.displayName,
     "Android",
     raw.version.apiString
 ) {
@@ -63,6 +63,13 @@ class AndroidDevice(private val raw: IDevice) : Device(
             launch(appId, activity)
         }
         return handler
+    }
+
+    companion object {
+        private val IDevice.displayName: String
+            get() =
+                if (isEmulator) avdName?.replace('_', ' ') ?: "Unknown Emulator"
+                else getProperty(IDevice.PROP_DEVICE_MODEL) ?: "Unknown Device"
     }
 }
 
