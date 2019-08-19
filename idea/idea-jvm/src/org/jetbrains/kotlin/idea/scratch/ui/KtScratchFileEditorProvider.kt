@@ -51,21 +51,29 @@ class KtScratchFileEditorProvider : FileEditorProvider, DumbAware {
 
 class KtScratchFileEditorWithPreview private constructor(
     val scratchFile: ScratchFile,
-    editor: TextEditor,
-    preview: TextEditor
-) : TextEditorWithPreview(editor, preview), TextEditor {
+    sourceTextEditor: TextEditor,
+    private val previewTextEditor: TextEditor
+) : TextEditorWithPreview(sourceTextEditor, previewTextEditor), TextEditor {
+
 
     private val toolWindowHandler: ScratchOutputHandler = requestToolWindowHandler()
-    private val inlayOutputHandler = InlayScratchOutputHandler(editor, toolWindowHandler)
+    private val inlayScratchOutputHandler = InlayScratchOutputHandler(sourceTextEditor, toolWindowHandler)
+    private val previewEditorScratchOutputHandler = PreviewEditorScratchOutputHandler(previewTextEditor, toolWindowHandler)
+    private val commonPreviewOutputHandler = LayoutDependantOutputHandler(
+        inlayScratchOutputHandler,
+        previewEditorScratchOutputHandler,
+        ::getLayout
+    )
+
     private val scratchTopPanel = ScratchTopPanel(scratchFile)
 
     init {
-        editor.parentScratchEditorWithPreview = this
+        sourceTextEditor.parentScratchEditorWithPreview = this
 
-        scratchFile.compilingScratchExecutor?.addOutputHandler(inlayOutputHandler)
-        scratchFile.replScratchExecutor?.addOutputHandler(inlayOutputHandler)
+        scratchFile.compilingScratchExecutor?.addOutputHandler(commonPreviewOutputHandler)
+        scratchFile.replScratchExecutor?.addOutputHandler(commonPreviewOutputHandler)
 
-        ScratchFileAutoRunner.addListener(scratchFile.project, editor)
+        ScratchFileAutoRunner.addListener(scratchFile.project, sourceTextEditor)
     }
 
     override fun dispose() {
@@ -87,12 +95,23 @@ class KtScratchFileEditorWithPreview private constructor(
         return myEditor.editor
     }
 
-    override fun createToolbar(): ActionToolbar? {
+    override fun createToolbar(): ActionToolbar {
         return scratchTopPanel.actionsToolbar
     }
 
     fun clearOutputHandlers() {
-        inlayOutputHandler.clear(scratchFile)
+        commonPreviewOutputHandler.clear(scratchFile)
+    }
+
+    override fun setLayout(newLayout: Layout) {
+        val previous = layout
+        super.setLayout(newLayout)
+        val current = layout
+
+        when {
+            previous == Layout.SHOW_EDITOR && current != Layout.SHOW_EDITOR -> clearOutputHandlers()
+            previous != Layout.SHOW_EDITOR && current == Layout.SHOW_EDITOR -> clearOutputHandlers()
+        }
     }
 
     @TestOnly
@@ -144,4 +163,43 @@ private fun setupCodeAnalyzerRestarterOutputHandler(project: Project, scratchFil
             }
         }
     })
+}
+
+/**
+ * Redirects output to [noPreviewOutputHandler] or [previewOutputHandler] depending on the result of [layoutProvider] call.
+ *
+ * However, clears both handlers to simplify clearing when switching between layouts.
+ */
+private class LayoutDependantOutputHandler(
+    private val noPreviewOutputHandler: ScratchOutputHandler,
+    private val previewOutputHandler: ScratchOutputHandler,
+    private val layoutProvider: () -> TextEditorWithPreview.Layout
+) : ScratchOutputHandler {
+
+    override fun onStart(file: ScratchFile) {
+        targetHandler.onStart(file)
+    }
+
+    override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
+        targetHandler.handle(file, expression, output)
+    }
+
+    override fun error(file: ScratchFile, message: String) {
+        targetHandler.error(file, message)
+    }
+
+    override fun onFinish(file: ScratchFile) {
+        targetHandler.onFinish(file)
+    }
+
+    override fun clear(file: ScratchFile) {
+        noPreviewOutputHandler.clear(file)
+        previewOutputHandler.clear(file)
+    }
+
+    private val targetHandler
+        get() = when (layoutProvider()) {
+            TextEditorWithPreview.Layout.SHOW_EDITOR -> noPreviewOutputHandler
+            else -> previewOutputHandler
+        }
 }
