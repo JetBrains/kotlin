@@ -18,7 +18,7 @@ FILE: cast.kt
     }
 
         public get(): R|kotlin/Function1<kotlin/String, kotlin/Boolean>|
-    public final val hError: R|kotlin/Function1<class error: No type for parameter, kotlin/Boolean>| = fun <anonymous>(_: R|class error: No type for parameter|): R|kotlin/Boolean| {
+    public final val hError: R|kotlin/Function1<class error: No type for parameter, kotlin/Boolean>| = fun <anonymous>(_: <implicit>): R|kotlin/Boolean| {
         Boolean(true)
     }
 
