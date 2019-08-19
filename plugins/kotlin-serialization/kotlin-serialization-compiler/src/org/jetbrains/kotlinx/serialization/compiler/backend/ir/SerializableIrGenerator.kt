@@ -15,6 +15,9 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
+import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrTypeProjection
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.TypeTranslator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
@@ -111,13 +114,24 @@ class SerializableIrGenerator(
         val suitableCtor = superClass.constructors.singleOrNull { it.valueParameters.size == 0 }
             ?: throw IllegalArgumentException("Non-serializable parent of serializable $serializableDescriptor must have no arg constructor")
         val ctorRef = compilerContext.externalSymbols.referenceConstructor(suitableCtor)
-        +IrDelegatingConstructorCallImpl(
+        val call = IrDelegatingConstructorCallImpl(
             startOffset,
             endOffset,
             compilerContext.irBuiltIns.unitType,
             ctorRef,
             suitableCtor
         )
+        call.insertTypeArgumentsForSuperClass(superClass)
+        +call
+    }
+
+    private fun IrDelegatingConstructorCallImpl.insertTypeArgumentsForSuperClass(superClass: ClassDescriptor) {
+        val superTypeCallArguments = (irClass.superTypes.find { it.classOrNull?.descriptor == superClass } as? IrSimpleType)?.arguments
+        superTypeCallArguments?.forEachIndexed { index, irTypeArgument ->
+            val argType =
+                irTypeArgument as? IrTypeProjection ?: throw IllegalStateException("Star projection in immediate argument for supertype")
+            putTypeArgument(index, argType.type)
+        }
     }
 
     // returns offset in serializable properties array
@@ -141,6 +155,7 @@ class SerializableIrGenerator(
             superCtorRef.owner.descriptor
         )
         arguments.forEachIndexed { index, parameter -> call.putValueArgument(index, irGet(parameter)) }
+        call.insertTypeArgumentsForSuperClass(superClass)
         +call
         return superProperties.size
     }
