@@ -160,7 +160,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = SOURCE_LIBRARY_ARG,
         valueDescription = "<path>",
-        description = "A library to be processed in the same manner as source files (test processing, ObjC export etc).\n" +
+        description = "A library to be processed in the same manner as source files.\n" +
                 "Must be one of libraries passed with '-library'"
     )
     var sourceLibraries: Array<String>? = null
@@ -193,7 +193,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(
             value = "-Xlibrary-to-cover",
             valueDescription = "<path>",
-            description = "A library that should be covered.\n" +
+            description = "Provide code coverage for the given library.\n" +
                     "Must be one of libraries passed with '-library'",
             delimiter = ""
     )

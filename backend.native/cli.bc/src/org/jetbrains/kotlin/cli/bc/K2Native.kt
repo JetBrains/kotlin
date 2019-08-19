@@ -190,11 +190,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                     else -> put(GENERATE_TEST_RUNNER, TestRunnerKind.NONE)
                 }
                 // We need to download dependencies only if we use them ( = there are files to compile).
-                put(CHECK_DEPENDENCIES, if (configuration.kotlinSourceRoots.isNotEmpty() || !arguments.sourceLibraries.isNullOrEmpty()) {
-                    true
-                } else {
-                    arguments.checkDependencies
-                })
+                put(
+                    CHECK_DEPENDENCIES,
+                    configuration.kotlinSourceRoots.isNotEmpty()
+                            || !arguments.sourceLibraries.isNullOrEmpty()
+                            || arguments.checkDependencies
+                )
                 if (arguments.friendModules != null)
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
@@ -310,8 +311,11 @@ private fun selectSourceLibraries(
     val produceBinaryOrBitcode = outputKind.let { it.isNativeBinary || it == CompilerOutputKind.BITCODE }
 
     return if (sourceLibraries.isNotEmpty() && !produceBinaryOrBitcode) {
-        configuration.report(ERROR, "The $SOURCE_LIBRARY_ARG flag is only supported when producing native binaries or bitcode files, " +
-                "but the compiler is producing ${outputKind.name.toLowerCase()}")
+        configuration.report(
+            ERROR,
+            "The $SOURCE_LIBRARY_ARG flag is only supported when producing native binaries or bitcode files, " +
+                    "but the compiler is producing ${outputKind.name.toLowerCase()}"
+        )
         emptyList()
     } else {
         sourceLibraries

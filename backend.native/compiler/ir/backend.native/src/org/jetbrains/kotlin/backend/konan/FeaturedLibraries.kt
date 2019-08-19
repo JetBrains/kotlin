@@ -80,7 +80,11 @@ private sealed class FeaturedLibrariesReporter {
         protected abstract fun notIncludedLibraryMessageTitle(): String
 
         override fun reportIllegalKind(library: KonanLibrary) {
-            val kind = if (library.isInterop) "Interop" else "Default"
+            val kind = when {
+                library.isInterop -> "Interop"
+                library.isDefault -> "Default"
+                else -> "Unknown kind"
+            }
             configuration.report(CompilerMessageSeverity.STRONG_WARNING, illegalKindMessage(kind, library.libraryName))
         }
 
@@ -115,10 +119,10 @@ private sealed class FeaturedLibrariesReporter {
 
     private class CoveredLibraryReporter(configuration: CompilerConfiguration): BaseReporter(configuration) {
         override fun illegalKindMessage(kind: String, libraryName: String): String =
-            "$kind library $libraryName can't be covered"
+            "Cannot provide the code coverage for the $kind library $libraryName."
 
         override fun notIncludedLibraryMessageTitle(): String =
-            "Following libraries are specified to be covered with -Xlibrary-to-cover, but not included to the build:"
+            "The code coverage is enabled for the following libraries, but they are not included to the build:"
     }
 
     companion object {

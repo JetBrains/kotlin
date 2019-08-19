@@ -95,7 +95,7 @@ class KonanConfigKeys {
         val RUNTIME_FILE: CompilerConfigurationKey<String?> 
                 = CompilerConfigurationKey.create("override default runtime file path")
         val SOURCE_LIBRARIES: CompilerConfigurationKey<List<String>>
-                = CompilerConfigurationKey("a klibraries used to produce the final binaries instead of source code") // TODO: Better description.
+                = CompilerConfigurationKey("libraries used to be processed in the same manner as source files")
         val SOURCE_MAP: CompilerConfigurationKey<List<String>> 
                 = CompilerConfigurationKey.create("generate source map")
         val STATIC_FRAMEWORK: CompilerConfigurationKey<Boolean>
