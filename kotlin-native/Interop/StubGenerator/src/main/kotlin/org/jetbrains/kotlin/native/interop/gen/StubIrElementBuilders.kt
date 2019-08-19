@@ -80,6 +80,17 @@ internal class StructStubBuilder(
         }
         val classifier = context.getKotlinClassForPointed(decl)
 
+        var methods: List<FunctionStub> =
+            def.methods
+                    .filter { it.isCxxInstanceMethod }
+                    .map { func ->
+                        try {
+                            (FunctionStubBuilder(context, func).build() as List<FunctionStub>).single()
+                        } catch (e: Throwable) {
+                            null
+                        }
+                    }.filterNotNull()
+
         val fields: List<PropertyStub?> = def.fields.map { field ->
             try {
                 assert(field.name.isNotEmpty())
@@ -179,18 +190,33 @@ internal class StructStubBuilder(
         val annotation = AnnotationStub.CStruct.VarType(def.size, def.align).takeIf {
             context.generationMode == GenerationMode.METADATA
         }
-        val companion = ClassStub.Companion(
-                companionClassifier,
-                superClassInit = companionSuperInit,
-                annotations = listOfNotNull(annotation, AnnotationStub.Deprecated.deprecatedCVariableCompanion)
-        )
 
+        var classMethods: List<FunctionStub> =
+                def.methods
+                        .filter { !it.isCxxInstanceMethod }
+                        .map { func ->
+                            try {
+                                (FunctionStubBuilder(context, func).build() as List<FunctionStub>).single()
+                            } catch (e: Throwable) {
+                                null
+                            }
+                        }.filterNotNull()
+        val classFields = def.staticFields
+                .map { field -> (GlobalStubBuilder(context, field).build() as List<PropertyStub>).single() }
+
+        val companion = ClassStub.Companion(
+            companionClassifier,
+            superClassInit = companionSuperInit,
+            annotations = listOfNotNull(annotation, AnnotationStub.Deprecated.deprecatedCVariableCompanion),
+            properties = classFields,
+            methods = classMethods
+        )
         return listOf(ClassStub.Simple(
                 classifier,
                 origin = origin,
                 properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
                 constructors = listOf(primaryConstructor),
-                methods = emptyList(),
+                methods = methods,
                 modality = ClassStubModality.NONE,
                 annotations = listOfNotNull(structAnnotation),
                 superClassInit = superClassInit,
@@ -628,12 +654,12 @@ internal class GlobalStubBuilder(
             val getter = when (context.platform) {
                 KotlinPlatform.JVM -> {
                     PropertyAccessor.Getter.SimpleGetter().also {
-                        val extra = BridgeGenerationInfo(global.name, mirror.info)
+                        val extra = BridgeGenerationInfo(global.fullName, mirror.info)
                         context.bridgeComponentsBuilder.arrayGetterBridgeInfo[it] = extra
                     }
                 }
                 KotlinPlatform.NATIVE -> {
-                    val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_getter")
+                    val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                     PropertyAccessor.Getter.ExternalGetter(listOf(cCallAnnotation)).also {
                         context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
                     }
@@ -647,12 +673,12 @@ internal class GlobalStubBuilder(
                     val getter = when (context.platform) {
                         KotlinPlatform.JVM -> {
                             PropertyAccessor.Getter.SimpleGetter().also {
-                                val getterExtra = BridgeGenerationInfo(global.name, mirror.info)
+                                val getterExtra = BridgeGenerationInfo(global.fullName, mirror.info)
                                 context.bridgeComponentsBuilder.getterToBridgeInfo[it] = getterExtra
                             }
                         }
                         KotlinPlatform.NATIVE -> {
-                            val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_getter")
+                            val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             PropertyAccessor.Getter.ExternalGetter(listOf(cCallAnnotation)).also {
                                 context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global)
                             }
@@ -664,12 +690,12 @@ internal class GlobalStubBuilder(
                         val setter = when (context.platform) {
                             KotlinPlatform.JVM -> {
                                 PropertyAccessor.Setter.SimpleSetter().also {
-                                    val setterExtra = BridgeGenerationInfo(global.name, mirror.info)
+                                    val setterExtra = BridgeGenerationInfo(global.fullName, mirror.info)
                                     context.bridgeComponentsBuilder.setterToBridgeInfo[it] = setterExtra
                                 }
                             }
                             KotlinPlatform.NATIVE -> {
-                                val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_setter")
+                                val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
                                 PropertyAccessor.Setter.ExternalSetter(listOf(cCallAnnotation)).also {
                                     context.wrapperComponentsBuilder.setterToWrapperInfo[it] = WrapperGenerationInfo(global)
                                 }
@@ -682,10 +708,10 @@ internal class GlobalStubBuilder(
                     kotlinType = mirror.pointedType
                     val getter = when (context.generationMode) {
                         GenerationMode.SOURCE_CODE -> {
-                            PropertyAccessor.Getter.InterpretPointed(global.name, kotlinType.toStubIrType())
+                            PropertyAccessor.Getter.InterpretPointed(global.fullName, kotlinType.toStubIrType())
                         }
                         GenerationMode.METADATA -> {
-                            val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.name}_getter")
+                            val cCallAnnotation = AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
                             PropertyAccessor.Getter.ExternalGetter(listOf(cCallAnnotation)).also {
                                 context.wrapperComponentsBuilder.getterToWrapperInfo[it] = WrapperGenerationInfo(global, passViaPointer = true)
                             }

@@ -3823,6 +3823,14 @@ createInterop("leakMemoryWithRunningThread") {
     it.extraOpts "-Xcompile-source", "$projectDir/interop/leakMemoryWithRunningThread/leakMemory.cpp"
 }
 
+createInterop("cppClass") {
+    it.defFile 'interop/cpp/cppClass.def'
+}
+
+createInterop("cppTypes") {
+    it.defFile 'interop/cpp/types.def'
+}
+
 if (PlatformInfo.isAppleTarget(project)) {
     createInterop("objcSmoke") {
         it.defFile 'interop/objc/objcSmoke.def'
@@ -4180,6 +4188,18 @@ task interop_convert(type: KonanLocalTest) {
 
 task interop_sourceCodeStruct(type: KonanLocalTest) {
     source = "codegen/intrinsics/interop_sourceCodeStruct.kt"
+}
+
+interopTest("interop_cppClass") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/cpp/cppClass.kt"
+    interop = 'cppClass'
+}
+
+interopTest("interop_cppTypes") {
+    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    source = "interop/cpp/types.kt"
+    interop = 'cppTypes'
 }
 
 /*

@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 fun tryRenderStructOrUnion(def: StructDef): String? = when (def.kind) {
     StructDef.Kind.STRUCT -> tryRenderStruct(def)
     StructDef.Kind.UNION -> tryRenderUnion(def)
+    StructDef.Kind.CLASS -> tryRenderStruct(def)
 }
 
 private fun tryRenderStruct(def: StructDef): String? {

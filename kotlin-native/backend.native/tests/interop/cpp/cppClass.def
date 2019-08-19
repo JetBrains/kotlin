@@ -1,0 +1,42 @@
+language = C++
+compilerOpts = -std=c++14
+
+
+---
+class CppTest {
+public:
+	CppTest()  { ++counter; }
+
+	CppTest(const CppTest&) = default;
+
+	explicit CppTest(int i, double j = 3.14) : iPub(i + int(j + 0.5)) {}
+
+	~CppTest() { --counter; }
+
+	int iPub = 42;
+
+	virtual int foo() { return iPub; }
+
+    static int counter;
+    static int s_fun() { return counter; }
+
+	class Nested {
+	public:
+		int nestedFoo() { return -2; }
+	} nested;
+
+// not supported yet
+	operator CppTest::Nested() const;
+	template <class X> void fooTmplMember() const;
+
+private:
+	CppTest* funPrivate() const;
+	static int s_funPrivate();
+	int iPriv;
+};
+
+int CppTest::counter;
+
+CppTest retByValue(CppTest* s) {
+	return  s ? *s : CppTest();
+}

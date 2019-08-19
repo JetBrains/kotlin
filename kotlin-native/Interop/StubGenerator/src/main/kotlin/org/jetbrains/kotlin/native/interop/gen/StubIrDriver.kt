@@ -28,12 +28,15 @@ class StubIrContext(
                 if (platform == KotlinPlatform.JVM) {
                     add("jni.h")
                 }
+                if (configuration.library.language == Language.CPP) {
+                    add("new")
+                }
                 addAll(configuration.library.includes)
             },
             compilerArgs = configuration.library.compilerArgs,
             additionalPreambleLines = configuration.library.additionalPreambleLines +
                     when (configuration.library.language) {
-                        Language.C -> emptyList()
+                        Language.C, Language.CPP -> emptyList()
                         Language.OBJECTIVE_C -> listOf("void objc_terminate();")
                     }
     ).precompileHeaders()

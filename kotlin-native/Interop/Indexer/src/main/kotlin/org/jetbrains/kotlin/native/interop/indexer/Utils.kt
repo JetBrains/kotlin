@@ -36,6 +36,46 @@ internal val CValue<CXType>.name: String get() = clang_getTypeSpelling(this).con
 internal val CXTypeKind.spelling: String get() = clang_getTypeKindSpelling(this).convertAndDispose()
 internal val CXCursorKind.spelling: String get() = clang_getCursorKindSpelling(this).convertAndDispose()
 
+internal val CValue<CXCursor>.isPublic: Boolean get() {
+    val access = clang_getCXXAccessSpecifier(this)
+    return access != CX_CXXAccessSpecifier.CX_CXXProtected && access != CX_CXXAccessSpecifier.CX_CXXPrivate
+}
+
+
+/**
+ * TODO Accessibility needs better support
+ * Currently we provide binding (access) to static vars (= internal linkage)
+ * (i.e. following C policy, as the C header would be included into kotlin impl file
+ * Consistent approach to C++ would be:
+ *  - Kotlin class inherits from C++ allowing overriding and protected access
+ *  - namespace mapped to package
+ *  - anon namespace members mapped to "internal" allowing access from the current translation unit
+ *  To make this working we have to derive a complete C++ "proxy" class for each original one and declare C wrappers as friends
+ *  BTW Such derived C++ proxy class is the only way to allow Kotlin to override the private virtual C++ methods (which is OK in C++)
+ *  Without that C++ style callbacks via overriding would be limited or not supported
+ */
+internal fun CValue<CXCursor>.isRecursivelyPublic(): Boolean {
+    when {
+        clang_isDeclaration(kind) == 0 ->
+            return true  // got the topmost declaration already
+        !isPublic ->
+            return false
+        kind == CXCursorKind.CXCursor_Namespace && getCursorSpelling(this).isEmpty() ->
+            return false
+
+        /*
+         * TODO FIXME In the current design we allow binding to static vars, but this won't work for anon namespaces and private members
+         * Need better (consistent( decision wrt accessibility.
+         */
+     //   clang_getCursorLinkage(this) == CXLinkageKind.CXLinkage_Internal ->
+            // return false;  // check disabled for a while
+
+        else ->
+            return clang_getCursorSemanticParent(this).isRecursivelyPublic()
+    }
+}
+
+
 internal fun CValue<CXString>.convertAndDispose(): String {
     try {
         return clang_getCString(this)!!.toKString()
