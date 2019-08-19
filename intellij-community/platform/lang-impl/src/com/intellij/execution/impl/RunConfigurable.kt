@@ -128,11 +128,8 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
 
     fun configurationTypeSorted(project: Project,
                                 showApplicableTypesOnly: Boolean,
-                                allTypes: List<ConfigurationType>): MutableList<ConfigurationType?> {
-      val configurationTypes: MutableList<ConfigurationType?> = getTypesToShow(project, showApplicableTypesOnly, allTypes).toMutableList()
-      configurationTypes.sortWith(kotlin.Comparator { type1, type2 -> compareTypesForUi(type1!!, type2!!) })
-      return configurationTypes
-    }
+                                allTypes: List<ConfigurationType>): List<ConfigurationType> =
+      getTypesToShow(project, showApplicableTypesOnly, allTypes).sortedWith(kotlin.Comparator { type1, type2 -> compareTypesForUi(type1!!, type2!!) })
 
     private fun getTypesToShow(project: Project, showApplicableTypesOnly: Boolean, allTypes: List<ConfigurationType>): List<ConfigurationType> {
       if (showApplicableTypesOnly) {
@@ -943,7 +940,7 @@ open class RunConfigurable @JvmOverloads constructor(protected val project: Proj
 
     private fun showAddPopup(showApplicableTypesOnly: Boolean) {
       val allTypes = ConfigurationType.CONFIGURATION_TYPE_EP.extensionList
-      val configurationTypes: MutableList<ConfigurationType?> = configurationTypeSorted(project, showApplicableTypesOnly, allTypes)
+      val configurationTypes: MutableList<ConfigurationType?> = configurationTypeSorted(project, showApplicableTypesOnly, allTypes).toMutableList()
       val hiddenCount = allTypes.size - configurationTypes.size
       if (hiddenCount > 0) {
         configurationTypes.add(null)
