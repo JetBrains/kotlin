@@ -428,6 +428,7 @@ class SignatureEnhancement(
             // Do not use bounds from Kotlin-defined type parameters
             if (this !is LazyJavaTypeParameterDescriptor) return null
             return when {
+                upperBounds.all(KotlinType::isError) -> null
                 upperBounds.all(KotlinType::isNullabilityFlexible) -> null
                 upperBounds.any { !it.isNullable() } -> NullabilityQualifier.NOT_NULL
                 else -> NullabilityQualifier.NULLABLE
