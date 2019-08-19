@@ -16,10 +16,7 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-import org.jetbrains.kotlin.native.interop.indexer.RecordType
-import org.jetbrains.kotlin.native.interop.indexer.Type
-import org.jetbrains.kotlin.native.interop.indexer.VoidType
-import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
+import org.jetbrains.kotlin.native.interop.indexer.*
 
 /**
  * The [MappingBridgeGenerator] implementation which uses [SimpleBridgeGenerator] as the backend and
@@ -27,7 +24,8 @@ import org.jetbrains.kotlin.native.interop.indexer.unwrapTypedefs
  */
 class MappingBridgeGeneratorImpl(
         val declarationMapper: DeclarationMapper,
-        val simpleBridgeGenerator: SimpleBridgeGenerator
+        val simpleBridgeGenerator: SimpleBridgeGenerator,
+        val language: Language
 ) : MappingBridgeGenerator {
 
     override fun kotlinToNative(
@@ -40,7 +38,12 @@ class MappingBridgeGeneratorImpl(
     ): KotlinExpression {
         val bridgeArguments = mutableListOf<BridgeTypedKotlinValue>()
 
-        kotlinValues.forEach { (type, value) ->
+        if (nativeBacked is FunctionStub && nativeBacked.isCxxInstanceMember()) {
+            bridgeArguments.add(BridgeTypedKotlinValue(BridgedType.NATIVE_PTR, "rawPtr"))
+            kotlinValues.drop(1)
+        } else {
+            kotlinValues
+        }.forEach { (type, value) ->
             if (type.unwrapTypedefs() is RecordType) {
                 builder.pushMemScoped()
                 val bridgeArgument = "$value.getPointer(memScope).rawValue"
@@ -79,6 +82,25 @@ class MappingBridgeGeneratorImpl(
                 val unwrappedType = type.unwrapTypedefs()
                 if (unwrappedType is RecordType) {
                     nativeValues.add("*(${unwrappedType.decl.spelling}*)${bridgeNativeValues[index]}")
+                } else if (language == Language.CPP) {
+                    // C++ is more restrictive wrt type conversion
+                    val cppRefTypePrefix = if (unwrappedType is PointerType && unwrappedType.isLVReference) "*" else ""
+                    when { /// TODO Move this cludge to mirror()
+                        type is Typedef ->
+                            nativeValues.add("(${type.def.name})${bridgeNativeValues[index]}")
+                        type is PointerType && type.spelling != null ->
+                            nativeValues.add("(${type.spelling})$cppRefTypePrefix${bridgeNativeValues[index]}")
+                        unwrappedType is EnumType ->
+                            nativeValues.add("(${unwrappedType.def.spelling})${bridgeNativeValues[index]}")
+                        unwrappedType is RecordType ->
+                            nativeValues.add("*(${unwrappedType.decl.spelling}*)${bridgeNativeValues[index]}")
+                        else ->
+                            nativeValues.add(cppRefTypePrefix +
+                                    mirror(declarationMapper, type).info.cFromBridged(
+                                            bridgeNativeValues[index], scope, nativeBacked
+                                    )
+                            )
+                    }
                 } else {
                     nativeValues.add(
                             mirror(declarationMapper, type).info.cFromBridged(
@@ -90,18 +112,27 @@ class MappingBridgeGeneratorImpl(
 
             val nativeResult = block(nativeValues)
 
-            when (unwrappedReturnType) {
-                is VoidType -> {
+            when {
+                unwrappedReturnType is VoidType -> {
                     out(nativeResult + ";")
                     ""
                 }
-                is RecordType -> {
+                unwrappedReturnType is RecordType -> {
                     val kniStructResult = "kniStructResult"
 
-                    out("${unwrappedReturnType.decl.spelling} $kniStructResult = $nativeResult;")
-                    out("memcpy(${bridgeNativeValues.last()}, &$kniStructResult, sizeof($kniStructResult));")
+                    if (language == Language.CPP) {
+                        // use copy/move constructor to create object in place.
+                        out("new(${bridgeNativeValues.last()}) ${unwrappedReturnType.decl.spelling}($nativeResult);")
+                    } else {
+                        out("${unwrappedReturnType.decl.spelling} $kniStructResult = $nativeResult;")
+                        out("memcpy(${bridgeNativeValues.last()}, &$kniStructResult, sizeof($kniStructResult));")
+                        //    The following would be better, but won't work in case of const fields: C99 6.3.2.1p1
+                        //    out("*(${unwrappedReturnType.decl.spelling}*) ${bridgeNativeValues.last()} = $nativeResult;")
+                    }
                     ""
                 }
+                unwrappedReturnType is PointerType && unwrappedReturnType.isLVReference ->
+                    "&$nativeResult"
                 else -> {
                     nativeResult
                 }
