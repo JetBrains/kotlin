@@ -3,18 +3,19 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.codegen
+package org.jetbrains.kotlin.spec.codegen
 
 import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.TestExceptionsComparator
-import org.jetbrains.kotlin.spec.models.AbstractSpecTest
-import org.jetbrains.kotlin.spec.parsers.CommonParser
-import org.jetbrains.kotlin.spec.parsers.CommonPatterns.packagePattern
+import org.jetbrains.kotlin.codegen.AbstractBlackBoxCodegenTest
 import org.jetbrains.kotlin.spec.utils.GeneralConfiguration.TESTDATA_PATH
-import org.jetbrains.kotlin.spec.validators.BlackBoxTestTypeValidator
-import org.jetbrains.kotlin.spec.validators.SpecTestValidationException
+import org.jetbrains.kotlin.spec.utils.models.AbstractSpecTest
+import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
+import org.jetbrains.kotlin.spec.utils.parsers.CommonPatterns.packagePattern
+import org.jetbrains.kotlin.spec.utils.validators.BlackBoxTestTypeValidator
+import org.jetbrains.kotlin.spec.utils.validators.SpecTestValidationException
 import org.junit.Assert
-import java.io.File
+import java.io.*
 
 abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
     companion object {
@@ -61,12 +62,12 @@ abstract class AbstractBlackBoxCodegenTestSpec : AbstractBlackBoxCodegenTest() {
 
         includeHelpers(wholeFile, files, specTest)
 
+        val runTest = { super.doMultiFileTest(wholeFile, files, specTest.unexpectedBehavior) }
+
         if (specTest.exception == null) {
-            super.doMultiFileTest(wholeFile, files)
+            runTest()
         } else {
-            TestExceptionsComparator(wholeFile).run(specTest.exception) {
-                super.doMultiFileTest(wholeFile, files)
-            }
+            TestExceptionsComparator(wholeFile).run(specTest.exception, runTest)
         }
     }
 }
