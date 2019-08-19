@@ -184,7 +184,8 @@ class StubIrTextEmitter(
             if (element in bridgeBuilderResult.excludedStubs) return
 
             val header = run {
-                val parameters = element.parameters.joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
+                val parameters = (if (element.isCxxInstanceMember()) element.parameters.drop(1) else element.parameters).
+                    joinToString(prefix = "(", postfix = ")") { renderFunctionParameter(it) }
                 val receiver = element.receiver?.let { renderFunctionReceiver(it) + "." } ?: ""
                 val typeParameters = renderTypeParameters(element.typeParameters)
                 val override = if (element.isOverride) "override " else ""
