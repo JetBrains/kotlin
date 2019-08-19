@@ -130,7 +130,10 @@ class CreateExpectedClassFix(
 
     if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
 
-    val membersForSelection = members.filterNot(KtNamedDeclaration::isAlwaysActual)
+    val membersForSelection = members.filter {
+        !it.isAlwaysActual() && if (it is KtParameter) it.hasValOrVar() else true
+    }
+
     val selectedElements = when {
         membersForSelection.all(KtDeclaration::hasActualModifier) -> membersForSelection
         ApplicationManager.getApplication().isUnitTestMode -> membersForSelection.filter(KtDeclaration::hasActualModifier)
@@ -138,9 +141,9 @@ class CreateExpectedClassFix(
             val prefix = klass.fqName?.asString()?.plus(".") ?: ""
             chooseMembers(project, membersForSelection, prefix) ?: return@block null
         }
-    }.asSequence().plus(members.filter(KtNamedDeclaration::isAlwaysActual)).flatMap(KtNamedDeclaration::selected).toSet()
+    }.asSequence().plus(klass).plus(members.filter(KtNamedDeclaration::isAlwaysActual)).flatMap(KtNamedDeclaration::selected).toSet()
 
-    val selectedClasses = findClasses(selectedElements + klass, commonModule)
+    val selectedClasses = findClasses(selectedElements, commonModule)
     val resultDeclarations = if (selectedClasses != existingClasses) {
         if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
             showUnknownTypesError(element)
@@ -258,7 +261,7 @@ private fun repairActualModifiers(
     originalElements: Collection<KtNamedDeclaration>,
     selectedElements: Collection<KtNamedDeclaration>
 ) {
-    if (originalElements.size == selectedElements.size)
+    if (originalElements == selectedElements)
         for (original in originalElements) {
             original.makeActualWithParents()
         }

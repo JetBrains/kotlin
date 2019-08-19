@@ -1,5 +1,5 @@
 // "Create expected function in common module testModule_Common" "true"
-// SHOULD_FAIL_WITH: Cannot generate expected function: Type Some is not accessible from common code
+// SHOULD_FAIL_WITH: You cannot create the expect declaration from:,fun foo(some: List<Some>){...}
 // DISABLE-ERRORS
 
 class Some
