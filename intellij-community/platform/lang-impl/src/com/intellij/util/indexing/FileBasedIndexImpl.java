@@ -725,6 +725,9 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     ProgressManager.checkCanceled();
     myChangedFilesCollector.ensureUpToDate();
     ApplicationManager.getApplication().assertReadAccessAllowed();
+
+    NoAccessDuringPsiEvents.checkCallContext();
+
     if (!needsFileContentLoading(indexId)) {
       return; //indexed eagerly in foreground while building unindexed file list
     }
@@ -734,8 +737,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     if (ActionUtil.isDumbMode(project)) {
       handleDumbMode(project);
     }
-
-    NoAccessDuringPsiEvents.checkCallContext();
 
     if (myReentrancyGuard.get().booleanValue()) {
       //assert false : "ensureUpToDate() is not reentrant!";
