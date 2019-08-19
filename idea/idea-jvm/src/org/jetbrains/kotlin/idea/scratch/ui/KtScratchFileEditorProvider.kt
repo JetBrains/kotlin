@@ -23,6 +23,7 @@ import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiManager
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.*
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
@@ -91,6 +92,11 @@ class KtScratchFileEditorWithPreview private constructor(
 
     fun clearOutputHandlers() {
         inlayOutputHandler.clear(scratchFile)
+    }
+
+    @TestOnly
+    fun setPreviewEnabled(isPreviewEnabled: Boolean) {
+        layout = if (isPreviewEnabled) Layout.SHOW_EDITOR_AND_PREVIEW else Layout.SHOW_EDITOR
     }
 
     companion object {
