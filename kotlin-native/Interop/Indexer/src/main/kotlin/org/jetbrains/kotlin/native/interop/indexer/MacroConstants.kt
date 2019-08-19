@@ -171,7 +171,7 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
 
         names.forEach { name ->
             val codeSnippetLines = when (library.language) {
-                Language.C, Language.OBJECTIVE_C ->
+                Language.C, Language.CPP, Language.OBJECTIVE_C ->
                     listOf("void $CODE_SNIPPET_FUNCTION_NAME_PREFIX$name() {",
                             "    __auto_type KNI_INDEXER_VARIABLE_$name = $name;",
                             "}")

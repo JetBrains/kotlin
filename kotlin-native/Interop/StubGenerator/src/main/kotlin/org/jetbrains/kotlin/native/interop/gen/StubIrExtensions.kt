@@ -12,6 +12,17 @@ private val StubOrigin.ObjCMethod.isOptional: Boolean
 fun FunctionStub.isOptionalObjCMethod(): Boolean = this.origin is StubOrigin.ObjCMethod &&
         this.origin.isOptional
 
+fun FunctionStub.isCxxInstanceMember(): Boolean = this.origin is StubOrigin.Function &&
+        this.origin.function.isCxxInstanceMethod
+
+fun FunctionStub.qualifiedName(): String =
+        if (this.origin is StubOrigin.Function && !this.origin.function.isCxxMethod) {
+            this.origin.function.fullName
+        } else {
+            name
+        }
+
+
 val StubContainer.isInterface: Boolean
     get() = if (this is ClassStub.Simple) {
         modality == ClassStubModality.INTERFACE

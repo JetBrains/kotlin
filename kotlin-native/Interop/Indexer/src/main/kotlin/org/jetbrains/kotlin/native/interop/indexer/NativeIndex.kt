@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.native.interop.indexer
 
 enum class Language(val sourceFileExtension: String) {
     C("c"),
+    CPP("cpp"),
     OBJECTIVE_C("m")
 }
 
@@ -156,10 +157,12 @@ abstract class StructDecl(val spelling: String) : TypeDeclaration {
 abstract class StructDef(val size: Long, val align: Int, val decl: StructDecl) {
 
     enum class Kind {
-        STRUCT, UNION
+        STRUCT, UNION, CLASS
     }
 
+    abstract val methods: List<FunctionDecl>
     abstract val members: List<StructMember>
+    abstract val staticFields: List<GlobalDecl>
     abstract val kind: Kind
 
     val fields: List<Field> get() = members.filterIsInstance<Field>()
@@ -224,11 +227,53 @@ abstract class ObjCCategory(val name: String, val clazz: ObjCClass) : ObjCContai
  */
 data class Parameter(val name: String?, val type: Type, val nsConsumed: Boolean)
 
+
+enum class CxxMethodKind {
+    None, // not supported yet?
+    Constructor,
+    Destructor,
+    StaticMethod,
+    InstanceMethod  // virtual or non-virtual instance member method (non-static)
+                    // do we need operators here?
+                    // do we need to distinguish virtual and non-virtual? Static? Final?
+}
+
+/**
+ * C++ class method, constructor or destructor details
+ */
+class CxxMethodInfo(val receiverType: PointerType, val kind: CxxMethodKind = CxxMethodKind.InstanceMethod)
+
+fun CxxMethodInfo.isConst() : Boolean = receiverType.pointeeIsConst
+
+
 /**
  * C function declaration.
  */
 class FunctionDecl(val name: String, val parameters: List<Parameter>, val returnType: Type, val binaryName: String,
-                   val isDefined: Boolean, val isVararg: Boolean)
+                   val isDefined: Boolean, val isVararg: Boolean,
+                   val parentName: String? = null, val cxxMethod: CxxMethodInfo? = null) {
+
+    val fullName: String = parentName?.let { "$parentName::$name" } ?: name
+
+    // C++ virtual or non-virtual instance member, i.e. has "this" receiver
+    val isCxxInstanceMethod: Boolean = cxxMethod != null  && cxxMethod.kind == CxxMethodKind.InstanceMethod
+
+    /**
+     * C++ class or instance member function, i.e. any function in the scope of class/struct: method, static, ctor, dtor, cast operator, etc
+     */
+    val isCxxMethod: Boolean = cxxMethod != null
+            && this.cxxMethod.kind != CxxMethodKind.None
+
+    val isCxxConstructor: Boolean = cxxMethod != null  && this.cxxMethod.kind == CxxMethodKind.Constructor
+    val isCxxDestructor: Boolean = cxxMethod != null  && this.cxxMethod.kind == CxxMethodKind.Destructor
+    val cxxReceiverType: PointerType? = cxxMethod?.receiverType
+    val cxxReceiverClass: StructDecl? = cxxMethod?. let { (this.cxxMethod.receiverType.pointeeType as RecordType).decl }
+}
+
+class Namespace(val name: String, val parent: String? = null) {
+    val fullName: String = parent?.let { "$parent::$name" } ?: name
+}
+
 
 /**
  * C typedef definition.
@@ -248,7 +293,9 @@ class StringConstantDef(name: String, type: Type, val value: String) : ConstantD
 
 class WrappedMacroDef(name: String, val type: Type) : MacroDef(name)
 
-class GlobalDecl(val name: String, val type: Type, val isConst: Boolean)
+class GlobalDecl(val name: String, val type: Type, val isConst: Boolean, val parentName: String? = null) {
+    val fullName: String = parentName?.let { "$it::$name" } ?: name
+}
 
 /**
  * C type.
@@ -279,7 +326,9 @@ data class RecordType(val decl: StructDecl) : Type
 
 data class EnumType(val def: EnumDef) : Type
 
-data class PointerType(val pointeeType: Type, val pointeeIsConst: Boolean = false) : Type
+// when pointer type is provided by clang we'll use ots correct spelling
+data class PointerType(val pointeeType: Type, val pointeeIsConst: Boolean = false,
+                       val isLVReference: Boolean = false, val spelling: String? = null) : Type
 // TODO: refactor type representation and support type modifiers more generally.
 
 data class FunctionType(val parameterTypes: List<Type>, val returnType: Type) : Type
