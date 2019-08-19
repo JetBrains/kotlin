@@ -14,6 +14,7 @@ import com.intellij.openapi.fileEditor.impl.LoadTextUtil
 import com.intellij.openapi.util.JDOMUtil
 import com.intellij.openapi.util.io.BufferExposingByteArrayOutputStream
 import com.intellij.openapi.util.io.FileUtilRt
+import com.intellij.openapi.vfs.SavingRequestor
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ArrayUtil
 import com.intellij.util.LineSeparator
@@ -76,7 +77,7 @@ open class FileBasedStorage(file: Path,
   override fun createSaveSession(states: StateMap) = FileSaveSession(states, this)
 
   protected open class FileSaveSession(storageData: StateMap, storage: FileBasedStorage) :
-    XmlElementStorage.XmlElementStorageSaveSession<FileBasedStorage>(storageData, storage) {
+    XmlElementStorage.XmlElementStorageSaveSession<FileBasedStorage>(storageData, storage), SavingRequestor {
 
     final override fun isSaveAllowed(): Boolean {
       if (!super.isSaveAllowed()) {
