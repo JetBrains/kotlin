@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.ScratchCompilationSupport
 import org.jetbrains.kotlin.idea.scratch.output.InlayScratchFileRenderer
 import org.jetbrains.kotlin.idea.scratch.output.getInlays
-import org.jetbrains.kotlin.idea.scratch.ui.ScratchTopPanel
 import org.jetbrains.kotlin.idea.test.KotlinLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.KotlinWithJdkAndRuntimeLightProjectDescriptor
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -163,8 +162,8 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         return inlineElementsInRange.map { it.renderer as InlayScratchFileRenderer }
     }
 
-    protected fun configureScratchByText(name: String, text: String): ScratchTopPanel {
-        val scratchFile = ScratchRootType.getInstance().createScratchFile(
+    protected fun configureScratchByText(name: String, text: String): ScratchFile {
+        val scratchVirtualFile = ScratchRootType.getInstance().createScratchFile(
             project,
             name,
             KotlinLanguage.INSTANCE,
@@ -172,31 +171,31 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
             ScratchFileService.Option.create_if_missing
         ) ?: error("Couldn't create scratch file")
 
-        myFixture.openFileInEditor(scratchFile)
+        myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchFile, project)
+        ScriptDependenciesManager.updateScriptDependenciesSynchronously(scratchVirtualFile, project)
 
-        val scratchPanel= getScratchPanelFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
-            ?: error("Couldn't find scratch panel")
+        val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
+            ?: error("Couldn't find scratch file")
 
-        configureOptions(scratchPanel.scratchFile, text, myFixture.module)
+        configureOptions(scratchFile, text, myFixture.module)
 
-        return scratchPanel
+        return scratchFile
     }
 
-    protected fun configureWorksheetByText(name: String, text: String): ScratchTopPanel {
+    protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
         val worksheetFile = myFixture.configureByText(name, text).virtualFile
 
         ScriptDependenciesManager.updateScriptDependenciesSynchronously(worksheetFile, project)
 
-        val scratchPanel = getScratchPanelFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
+        val scratchFile = getScratchFileFromEditorSelectedForFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")
 
         // We want to check that correct module is selected automatically,
         // that's why we set `module` to null so it wouldn't be changed
-        configureOptions(scratchPanel.scratchFile, text, null)
+        configureOptions(scratchFile, text, null)
 
-        return scratchPanel
+        return scratchFile
     }
 
 
@@ -210,12 +209,6 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
         action.beforeActionPerformedUpdate(e)
         Assert.assertTrue(e.presentation.isEnabled && e.presentation.isVisible)
         action.actionPerformed(e)
-    }
-
-    protected fun getActionVisibility(action: AnAction): Boolean {
-        val e = getActionEvent(myFixture.file.virtualFile, action)
-        action.beforeActionPerformedUpdate(e)
-        return e.presentation.isVisible
     }
 
     protected fun waitUntilScratchFinishes(shouldStopRepl: Boolean = true) {

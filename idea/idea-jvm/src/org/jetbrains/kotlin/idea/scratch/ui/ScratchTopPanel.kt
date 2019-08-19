@@ -79,24 +79,6 @@ class ScratchTopPanel(val scratchFile: ScratchFile) : Disposable {
         }
     }
 
-    @TestOnly
-    fun setReplMode(isSelected: Boolean) {
-        scratchFile.saveOptions { copy(isRepl = isSelected) }
-    }
-
-    @TestOnly
-    fun setMakeBeforeRun(isSelected: Boolean) {
-        scratchFile.saveOptions { copy(isMakeBeforeRun = isSelected) }
-    }
-
-    @TestOnly
-    fun setInteractiveMode(isSelected: Boolean) {
-        scratchFile.saveOptions { copy(isInteractiveMode = isSelected) }
-    }
-
-    @TestOnly
-    fun getModuleSelectorAction(): AnAction = moduleChooserAction
-
     private fun updateToolbar() {
         ApplicationManager.getApplication().invokeLater {
             actionsToolbar.updateActionsImmediately()
@@ -144,13 +126,5 @@ class ScratchTopPanel(val scratchFile: ScratchFile) : Disposable {
                 scratchFile.replScratchExecutor?.stop()
             }
         }
-    }
-}
-
-interface ScratchPanelListener {
-    fun panelAdded(panel: ScratchTopPanel)
-
-    companion object {
-        val TOPIC = Topic.create("ScratchPanelListener", ScratchPanelListener::class.java)
     }
 }

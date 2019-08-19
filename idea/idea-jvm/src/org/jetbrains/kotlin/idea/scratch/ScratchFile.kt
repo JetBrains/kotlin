@@ -26,7 +26,7 @@ import com.intellij.util.messages.Topic
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.scratch.ui.scratchFileOptions
 
-abstract class ScratchFile(val project: Project, private val file: VirtualFile) {
+abstract class ScratchFile(val project: Project, val file: VirtualFile) {
     var replScratchExecutor: SequentialScratchExecutor? = null
     var compilingScratchExecutor: ScratchExecutor? = null
 

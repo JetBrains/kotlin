@@ -15,6 +15,7 @@ import com.intellij.openapi.module.ModuleType
 import com.intellij.openapi.project.DumbAwareAction
 import com.intellij.openapi.vcs.changes.committed.LabeledComboBoxAction
 import com.intellij.util.ui.UIUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.productionSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.testSourceInfo
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
@@ -54,8 +55,12 @@ class ModulesComboBoxAction(private val scratchFile: ScratchFile) : LabeledCombo
             text = selectedModule?.name ?: ConfigurationModuleSelector.NO_MODULE_TEXT
         }
 
-        val isWorksheetFile = scratchFile.getPsiFile()?.virtualFile?.isKotlinWorksheet == true
-        e.presentation.isVisible = !isWorksheetFile
+        e.presentation.isVisible = isModuleSelectorVisible()
+    }
+
+    @TestOnly
+    fun isModuleSelectorVisible(): Boolean {
+        return !scratchFile.file.isKotlinWorksheet
     }
 
     private inner class ModuleIsNotSelectedAction(placeholder: String) : DumbAwareAction(placeholder) {

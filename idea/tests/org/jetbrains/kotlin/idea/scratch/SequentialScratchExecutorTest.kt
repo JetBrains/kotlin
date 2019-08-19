@@ -39,7 +39,7 @@ class SequentialScratchExecutorTest : AbstractScratchRunActionTest() {
     }
 
     fun doTest(expression: List<Pair<String, String>>) {
-        val scratchPanel = configureScratchByText("scratch_1.kts", testScratchText().inlinePropertiesValues(isRepl = true))
+        configureScratchByText("scratch_1.kts", testScratchText().inlinePropertiesValues(isRepl = true))
 
         myFixture.editor.caretModel.moveToOffset(myFixture.file.textLength)
 
