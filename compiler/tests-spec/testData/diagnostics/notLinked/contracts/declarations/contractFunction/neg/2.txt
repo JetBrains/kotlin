@@ -14,8 +14,8 @@ public final class Class {
     public final val prop_11: kotlin.Int = 10
     public final var prop_12: kotlin.String
     public final val prop_13: kotlin.Any? = ""
-    public final val prop_14: kotlin.Comparable<*>? = ""
-    public final val prop_15: kotlin.collections.Iterable<*>? = ""
+    public final val prop_14: kotlin.Comparable<*>? = null
+    public final val prop_15: kotlin.collections.Iterable<*>? = null
     public final val prop_2: kotlin.Int = 2
     public final val prop_3: kotlin.Int = 3
     public final val prop_4: kotlin.Float? = 3.0.toFloat()
@@ -39,7 +39,7 @@ public final class Class {
     public final fun getLongArray(): kotlin.LongArray
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final operator fun invoke(): kotlin.Unit
-    public final operator fun invoke(/*0*/ x: [ERROR : Type annotation was missing for parameter x]): (kotlin.Any) -> kotlin.Any
+    public final operator fun invoke(/*0*/ x: kotlin.Any): (kotlin.Any) -> kotlin.Any
     public final operator fun invoke(/*0*/ x: kotlin.Any, /*1*/ y: kotlin.Any): kotlin.Unit
     public final operator fun set(/*0*/ i1: kotlin.Int, /*1*/ el: kotlin.Int): kotlin.Unit
     public final operator fun set(/*0*/ i1: kotlin.Int, /*1*/ i2: kotlin.Int, /*2*/ el: kotlin.Int): kotlin.Unit
@@ -209,7 +209,7 @@ public open class ClassWithTwoTypeParameters</*0*/ K, /*1*/ L> {
     public constructor ClassWithTwoTypeParameters</*0*/ K, /*1*/ L>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public final fun test1(): [ERROR : T]?
+    public final fun test1(): L?
     public final fun test2(): K?
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
@@ -224,7 +224,7 @@ public final class EmptyClass {
 public final class In</*0*/ in T> {
     public constructor In</*0*/ in T>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
-    public final fun </*0*/ K : T> getWithUpperBoundT(): K
+    public final fun </*0*/ K : T> getWithUpperBoundT(/*0*/ x: T): K
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public final fun put(/*0*/ x: T): kotlin.Unit
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
@@ -248,7 +248,7 @@ public final class Inv</*0*/ T> {
 
 public final class Out</*0*/ out T> {
     public constructor Out</*0*/ out T>(/*0*/ x: T = ...)
-    public final val prop_1: Inv<T>? = null
+    public final val prop_1: Inv<out T>? = null
     public final val prop_2: T? = null
     public final val x: T
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean

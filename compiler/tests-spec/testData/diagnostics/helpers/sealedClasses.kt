@@ -12,7 +12,7 @@ sealed class SealedClassSingle
 data class SealedSingleChild1(val number: Int) : SealedClassSingle()
 
 sealed class SealedClassSingleWithObject
-object SealedSingleWithObjectChild1: Expr3() {}
+object SealedSingleWithObjectChild1: SealedClassSingleWithObject() {}
 
 sealed class SealedClassEmpty
 

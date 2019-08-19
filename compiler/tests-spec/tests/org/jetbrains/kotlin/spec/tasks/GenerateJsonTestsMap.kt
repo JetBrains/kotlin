@@ -16,7 +16,7 @@ import java.io.File
 private const val OUT_DIR = "out"
 private const val OUT_FILENAME = "testsMap.json"
 
-fun main(args: Array<String>) {
+fun main() {
     val testsMap = JsonObject()
 
     File(TESTDATA_PATH).walkTopDown().forEach {

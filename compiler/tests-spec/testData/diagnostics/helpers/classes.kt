@@ -12,8 +12,8 @@ class Class {
     val prop_11: Int = 10
     var prop_12: String = ""
     val prop_13: Any? = ""
-    val prop_14: Comparable<*>? = ""
-    val prop_15: Iterable<*>? = ""
+    val prop_14: Comparable<*>? = null
+    val prop_15: Iterable<*>? = null
 
     fun fun_1(): (Int) -> (Int) -> Int = {number: Int -> { number * 5 }}
     fun fun_2(value_1: Int): Int = value_1 * 2
@@ -25,7 +25,7 @@ class Class {
     operator fun get(i1: Int) = 10
     operator fun set(i1: Int, el: Int) {}
     operator fun invoke() {}
-    operator fun invoke(x) = { x: Any -> x }
+    operator fun invoke(x: Any) = { x: Any -> x }
     operator fun invoke(x: Any, y: Any) {}
     operator fun contains(a: Int) = a > 30
     operator fun contains(a: Long) = a > 30L
@@ -90,29 +90,29 @@ class ClassLevel6: ClassLevel5() {
 class Inv<T>(val x: T = null as T) {
     val prop_1: Inv<T>? = null
     val prop_2: T? = null
-    val prop_3: T = null
+    val prop_3: T = null as T
     val prop_4 = 10
 
     fun test() {}
     fun get() = x
     fun put(x: T) {}
-    fun getNullable(): T? = select(x, null)
+    fun getNullable(): T? = if (true) x else null
 }
 
 class In<in T>() {
     fun put(x: T) {}
-    fun <K : T> getWithUpperBoundT(): K = x <!UNCHECKED_CAST!>as K<!>
+    fun <K : T> getWithUpperBoundT(x: T): K = x as K
 }
 
 class Out<out T>(val x: T = null as T) {
-    val prop_1: Inv<T>? = null
+    val prop_1: Inv<out T>? = null
     val prop_2: T? = null
 
     fun get() = x
 }
 
 open class ClassWithTwoTypeParameters<K, L> {
-    fun test1(): T? { return null }
+    fun test1(): L? { return null }
     fun test2(): K? { return null }
 }
 

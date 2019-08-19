@@ -40,7 +40,7 @@ class LinkedSpecTest(
     testArea: TestArea,
     testType: TestType,
     val place: SpecPlace,
-    private val relevantPlaces: List<SpecPlace>?,
+    val relevantPlaces: List<SpecPlace>?,
     testNumber: Int,
     description: String,
     cases: SpecTestCasesSet,

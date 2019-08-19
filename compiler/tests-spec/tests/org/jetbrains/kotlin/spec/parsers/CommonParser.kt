@@ -28,7 +28,13 @@ object CommonParser {
     fun String.withSpaces() = replace("_", " ")
 
     private fun isPathMatched(pathPartRegex: String, testFilePath: String) =
-        Pattern.compile(testPathBaseRegexTemplate.format(pathPartRegex)).matcher(testFilePath).find()
+        parseBasePath(pathPartRegex, testFilePath).find()
+
+    private fun parseBasePath(pathPartRegex: String, testFilePath: String) =
+        Pattern.compile(testPathBaseRegexTemplate.format(pathPartRegex)).matcher(testFilePath)
+
+    fun parsePath(pathPartRegex: String, testFilePath: String) =
+        Pattern.compile(testPathBaseRegexTemplate.format(pathPartRegex)).matcher(testFilePath)
 
     fun parseSpecTest(testFilePath: String, files: TestFiles) = when {
         isPathMatched(LinkedSpecTestPatterns.pathPartRegex, testFilePath) ->

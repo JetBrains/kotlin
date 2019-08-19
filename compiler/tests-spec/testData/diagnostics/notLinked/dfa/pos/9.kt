@@ -628,7 +628,7 @@ fun case_29(a: Inv<in Nothing>) {
 // TESTCASE NUMBER: 30
 fun case_30() {
     val a = In<Number?>()
-    val b = a.getWithUpperBoundT<Int?>()
+    val b = a.getWithUpperBoundT<Int?>(10)
 
     if (b != null) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int & kotlin.Int?")!>b<!>

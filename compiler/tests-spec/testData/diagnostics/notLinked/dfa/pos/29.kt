@@ -90,10 +90,13 @@ fun <T>case_8(x: Inv<T>?) {
     }
 }
 
-// TESTCASE NUMBER: 9
+/*
+ * TESTCASE NUMBER: 9
+ * UNEXPECTED BEHAVIOUR
+ */
 inline fun <reified T>case_9(x: Out<T>?) {
     if (x?.prop_1?.prop_1?.prop_1?.prop_1 != null) {
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T> & Inv<T>?")!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_1<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<T>"), DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1<!>.prop_1<!>.prop_1<!>.prop_1<!>.equals(10)
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_1<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("Inv<out T>?")!><!DEBUG_INFO_SMARTCAST!>x<!>.prop_1.prop_1<!UNSAFE_CALL!>.<!>prop_1<!UNSAFE_CALL!>.<!>prop_1<!><!UNSAFE_CALL!>.<!>equals(10)
     }
 }

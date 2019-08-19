@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.spec.generators.templates.Feature
 import org.jetbrains.kotlin.spec.generators.templates.generationLinkedSpecTestDataConfig
 import org.jetbrains.kotlin.spec.generators.templates.generationSpecTestDataConfigGroup
 
-fun main(args: Array<String>) {
+fun main() {
     generationSpecTestDataConfigGroup(regenerateTests = true) {
         generationLinkedSpecTestDataConfig {
             testArea = TestArea.PSI
