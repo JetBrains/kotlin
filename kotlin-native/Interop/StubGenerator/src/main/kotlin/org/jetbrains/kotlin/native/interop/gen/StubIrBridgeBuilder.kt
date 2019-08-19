@@ -63,7 +63,7 @@ class StubIrBridgeBuilder(
             )
 
     private val mappingBridgeGenerator: MappingBridgeGenerator =
-            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator)
+            MappingBridgeGeneratorImpl(declarationMapper, simpleBridgeGenerator, context.libraryForCStubs.language)
 
     private val propertyAccessorBridgeBodies = mutableMapOf<PropertyAccessor, String>()
     private val functionBridgeBodies = mutableMapOf<FunctionStub, List<String>>()
@@ -260,6 +260,9 @@ class StubIrBridgeBuilder(
             isVararg = isVararg or parameter.isVararg
             val parameterName = parameter.name.asSimpleName()
             val bridgeArgument = when {
+                function.isCxxInstanceMember() && index == 0 -> {
+                    "rawPtr"
+                }
                 parameter in builderResult.bridgeGenerationComponents.cStringParameters -> {
                     bodyGenerator.pushMemScoped()
                     "$parameterName?.cstr?.getPointer(memScope)"
@@ -289,7 +292,18 @@ class StubIrBridgeBuilder(
                 bridgeArguments,
                 independent = false
         ) { nativeValues ->
-            "${origin.function.name}(${nativeValues.joinToString()})"
+            with (origin.function) {
+                when  {
+                    isCxxInstanceMethod ->
+                        "(${nativeValues[0]})->${name}(${nativeValues.drop(1).joinToString()})"
+                    isCxxConstructor ->
+                        "new(${nativeValues[0]}) ${cxxReceiverClass!!.spelling}(${nativeValues.drop(1).joinToString()})"
+                    isCxxDestructor ->
+                        "(${nativeValues[0]})->~${cxxReceiverClass!!.spelling?.substringAfterLast(':')}()"
+                    else ->
+                        "${fullName}(${nativeValues.joinToString()})"
+                }
+            }
         }
         bodyGenerator.returnResult(result)
         functionBridgeBodies[function] = bodyGenerator.build()

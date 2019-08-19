@@ -1,0 +1,24 @@
+language = C++
+compilerOpts = -std=c++14
+package = cpptypes
+
+---
+
+class CppTest {
+public:
+	explicit CppTest(int m) : n(m) {}
+	int n = 11;
+	virtual int get() const { return n; }
+	virtual void set(int m) { n = m; }
+};
+
+CppTest retByValue(int k) { return CppTest(k); }
+CppTest* retByPtr(int k) { return new CppTest(k); } // Leak is intentional
+CppTest const* retByPtrConst(int k) { return new CppTest(k); } // Leak is intentional
+CppTest& retByRef(int k) { return * new CppTest(k); } // Leak is intentional
+CppTest const& retByRefConst(int k) { return * new CppTest(k); } // Leak is intentional
+int paramByValue(CppTest x) { return x.get(); }
+int paramByPtr(CppTest* x) { return x? x->get() : 0; }
+int paramByPtrConst(CppTest const* x) { return x? x->get() : 0; }
+int paramByRef(CppTest& x) { return x.get(); }
+int paramByRefConst(CppTest const& x) { return x.get(); }

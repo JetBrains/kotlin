@@ -121,16 +121,20 @@ private fun Properties.putAndRunOnReplace(key: Any, newValue: Any, beforeReplace
     this[key] = newValue
 }
 
-private fun selectNativeLanguage(config: DefFile.DefFileConfig): Language {
+private fun selectNativeLanguage(config: DefFile.DefFileConfig, hintIsCPP: Boolean = false): Language {
     val languages = mapOf(
             "C" to Language.C,
+            "C++" to Language.CPP,
             "Objective-C" to Language.OBJECTIVE_C
     )
 
-    val language = config.language ?: return Language.C
+    val lang = config.language?.let {
+        languages[it]
+                ?: error("Unexpected language '${config.language}'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
+    } ?: Language.C
 
-    return languages[language] ?:
-            error("Unexpected language '$language'. Possible values are: ${languages.keys.joinToString { "'$it'" }}")
+    return if (lang == Language.C && hintIsCPP) Language.CPP else lang
+
 }
 
 private fun parseImports(dependencies: List<KotlinLibrary>): ImportsImpl =
@@ -220,8 +224,6 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
             cinteropArguments.linkerOptions.value.toTypedArray()
     val verbose = cinteropArguments.verbose
 
-    val language = selectNativeLanguage(def.config)
-
     val entryPoint = def.config.entryPoints.atMostOne()
     val linkerOpts =
             def.config.linkerOpts.toTypedArray() + 
@@ -294,7 +296,7 @@ private fun processCLib(flavor: KotlinPlatform, cinteropArguments: CInteropArgum
 
 
     File(nativeLibsDir).mkdirs()
-    val outCFile = tempFiles.create(libName, ".${language.sourceFileExtension}")
+    val outCFile = tempFiles.create(libName, ".${library.language.sourceFileExtension}")
 
     val logger = if (verbose) {
         { message: String -> println(message) }
@@ -451,6 +453,14 @@ internal fun prepareTool(target: String?, flavor: KotlinPlatform): ToolConfig {
     return tool
 }
 
+private fun isCxxOptions(opts: List<String>) : Boolean {
+    if (opts.size >= 2)  opts.reduce args@{ prev, that ->
+        if (prev == "-x" && that == "c++") return@isCxxOptions true
+        return@args that
+    }
+    return false
+}
+
 internal fun buildNativeLibrary(
         tool: ToolConfig,
         def: DefFile,
@@ -462,7 +472,8 @@ internal fun buildNativeLibrary(
             arguments.compilerOptions + arguments.compilerOption).toTypedArray()
 
     val headerFiles = def.config.headers + additionalHeaders
-    val language = selectNativeLanguage(def.config)
+    val cppOptions = isCxxOptions(def.config.compilerOpts + additionalCompilerOpts)
+    val language = selectNativeLanguage(def.config, cppOptions)
     val compilerOpts: List<String> = mutableListOf<String>().apply {
         addAll(def.config.compilerOpts)
         addAll(tool.defaultCompilerOpts)
@@ -476,6 +487,7 @@ internal fun buildNativeLibrary(
         addAll(getCompilerFlagsForVfsOverlay(arguments.headerFilterPrefix.toTypedArray(), def))
         addAll(when (language) {
             Language.C -> emptyList()
+            Language.CPP -> if (cppOptions) emptyList() else listOf("-x", "c++")
             Language.OBJECTIVE_C -> {
                 // "Objective-C" within interop means "Objective-C with ARC":
                 listOf("-fobjc-arc")

@@ -41,7 +41,7 @@ typealias KotlinExpression = String
 fun String.asSimpleName(): String = if (this in kotlinKeywords || this.contains("$")) {
     "`$this`"
 } else {
-    this
+    this.replace(':', '_')
 }
 
 /**
