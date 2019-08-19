@@ -79,7 +79,7 @@ abstract class AbstractLineMarkersTestInLibrarySources : AbstractLineMarkersTest
                     throw AssertionError("File ${myFixture.file.virtualFile.path} should be in library sources!")
                 }
 
-                doAndCheckHighlighting(document, data, file)
+                doAndCheckHighlighting(myFixture.project, document, data, file)
             }
         }
     }
