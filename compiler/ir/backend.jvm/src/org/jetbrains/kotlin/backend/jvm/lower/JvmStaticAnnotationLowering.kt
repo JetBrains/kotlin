@@ -51,10 +51,8 @@ internal val jvmStaticAnnotationPhase = makeIrFilePhase(
 private class JvmStaticAnnotationLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), FileLoweringPass {
     override fun lower(irFile: IrFile) {
         CompanionObjectJvmStaticLowering(context).runOnFilePostfix(irFile)
-
-        val functionsMadeStatic =
-            SingletonObjectJvmStaticLowering(context).apply { runOnFilePostfix(irFile) }.functionsMadeStatic
-        irFile.transformChildrenVoid(MakeCallsStatic(context, functionsMadeStatic))
+        SingletonObjectJvmStaticLowering(context).runOnFilePostfix(irFile)
+        irFile.transformChildrenVoid(MakeCallsStatic(context))
     }
 }
 
@@ -167,8 +165,6 @@ private class CompanionObjectJvmStaticLowering(val context: JvmBackendContext) :
 private class SingletonObjectJvmStaticLowering(
     val context: JvmBackendContext
 ) : ClassLoweringPass {
-    val functionsMadeStatic: MutableSet<IrFunctionSymbol> = mutableSetOf()
-
     override fun lower(irClass: IrClass) {
         if (!irClass.isObject || irClass.isCompanion) return
 
@@ -178,7 +174,6 @@ private class SingletonObjectJvmStaticLowering(
             jvmStaticFunction.dispatchReceiverParameter?.let { oldDispatchReceiverParameter ->
                 jvmStaticFunction.dispatchReceiverParameter = null
                 modifyBody(jvmStaticFunction, irClass, oldDispatchReceiverParameter)
-                functionsMadeStatic.add(jvmStaticFunction.symbol)
             }
         }
     }
@@ -188,12 +183,16 @@ private class SingletonObjectJvmStaticLowering(
     }
 }
 
+private fun IrFunction.isJvmStaticInSingleton(): Boolean {
+    val parentClass = parent as? IrClass ?: return false
+    return isJvmStaticFunction(this) && parentClass.isObject && !parentClass.isCompanion
+}
+
 private class MakeCallsStatic(
-    val context: JvmBackendContext,
-    val functionsMadeStatic: Set<IrFunctionSymbol>
+    val context: JvmBackendContext
 ) : IrElementTransformerVoid() {
     override fun visitCall(expression: IrCall): IrExpression {
-        if (functionsMadeStatic.contains(expression.symbol)) {
+        if (expression.symbol.owner.isJvmStaticInSingleton() && expression.dispatchReceiver != null) {
             return context.createIrBuilder(expression.symbol, expression.startOffset, expression.endOffset).irBlock(expression) {
                 // OldReceiver has to be evaluated for its side effects.
                 val oldReceiver = super.visitExpression(expression.dispatchReceiver!!)
