@@ -9,6 +9,7 @@ dependencies {
         testCompileOnly(intellijCoreDep()) { includeJars("intellij-core") }
         testRuntimeOnly(intellijPluginDep("java"))
     }
+    compile("org.jsoup:jsoup:1.10.3")
 }
 
 sourceSets {
@@ -43,5 +44,13 @@ val remoteRunTests by task<Test> {
 
     filter {
         includeTests.forEach { includeTestsMatching(packagePrefix + it) }
+    }
+}
+
+val specConsistencyTests by task<Test> {
+    workingDir = rootDir
+
+    filter {
+        includeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
 }
