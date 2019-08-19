@@ -95,6 +95,7 @@
                      description="Add all transitive dependencies on MPP modules when Android project is imported"
                      defaultValue="true"
                      restartRequired="false"/>
+            <fileEditorProvider implementation="org.jetbrains.kotlin.idea.scratch.ui.KtScratchFileEditorProvider"/>
 
     </extensions>
 </idea-plugin>
