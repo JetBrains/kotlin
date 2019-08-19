@@ -16,6 +16,7 @@
 package com.intellij.uiDesigner.core;
 
 import com.intellij.uiDesigner.compiler.GridBagConverter;
+import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
 
 import javax.swing.*;
@@ -534,10 +535,12 @@ public class GridBagConverterTest extends TestCase {
 
     applyConversionResults(panel, converter);
 
-    assertEquals(100, textArea.getPreferredSize().width);
+    int textAreaWidth = JavaVersion.current().feature >= 9 ? 101 : 100;
+
+    assertEquals(textAreaWidth, textArea.getPreferredSize().width);
 
     final Dimension initialPreferredSize = panel.getPreferredSize();
-    assertEquals(new Dimension(100,20 + textArea.getPreferredSize().height), initialPreferredSize);
+    assertEquals(new Dimension(textAreaWidth, 20 + textArea.getPreferredSize().height), initialPreferredSize);
 
     panel.setSize(initialPreferredSize);
     panel.invalidate();
