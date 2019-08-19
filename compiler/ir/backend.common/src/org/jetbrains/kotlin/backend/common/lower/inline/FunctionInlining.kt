@@ -275,7 +275,7 @@ class FunctionInlining(val context: CommonBackendContext) : IrElementTransformer
         //-------------------------------------------------------------------------//
 
         private fun IrValueParameter.isInlineParameter() =
-            !isNoinline && !type.isNullable() && type.isFunctionOrKFunction()
+            !isNoinline && !type.isNullable() && (type.isFunction() || type.isSuspendFunction())
 
         private inner class ParameterToArgument(
             val parameter: IrValueParameter,
