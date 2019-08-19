@@ -197,16 +197,6 @@ final class TestEditorManagerImpl extends FileEditorManagerEx implements Disposa
   }
 
   @Override
-  public void flipTabs() {
-
-  }
-
-  @Override
-  public boolean tabsMode() {
-    return false;
-  }
-
-  @Override
   public boolean isInSplitter() {
     return false;
   }
