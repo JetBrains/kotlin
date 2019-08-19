@@ -276,4 +276,32 @@ public class ScratchRunActionTestGenerated extends AbstractScratchRunActionTest 
             runTest("idea/testData/worksheet/multiFile/javaDepScriptRuntime/");
         }
     }
+
+    @TestMetadata("idea/testData/scratch/rightPanelOutput")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class ScratchRightPanelOutput extends AbstractScratchRunActionTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doRightPreviewPanelOutputTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInScratchRightPanelOutput() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/scratch/rightPanelOutput"), Pattern.compile("^(.+)\\.kts$"), TargetBackend.ANY, false);
+        }
+
+        @TestMetadata("bigSequentialOutputs.kts")
+        public void testBigSequentialOutputs() throws Exception {
+            runTest("idea/testData/scratch/rightPanelOutput/bigSequentialOutputs.kts");
+        }
+
+        @TestMetadata("shortExpression.longOutput.singleTop.kts")
+        public void testShortExpression_longOutput_singleTop() throws Exception {
+            runTest("idea/testData/scratch/rightPanelOutput/shortExpression.longOutput.singleTop.kts");
+        }
+
+        @TestMetadata("shortExpression.shortOutput.singleTop.kts")
+        public void testShortExpression_shortOutput_singleTop() throws Exception {
+            runTest("idea/testData/scratch/rightPanelOutput/shortExpression.shortOutput.singleTop.kts");
+        }
+    }
 }

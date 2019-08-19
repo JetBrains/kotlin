@@ -787,9 +787,15 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractScratchRunActionTest> {
-            model("scratch", extension = "kts", testMethod = "doCompilingTest", testClassName = "Compiling", recursive = false)
-            model("scratch", extension = "kts", testMethod = "doReplTest", testClassName = "Repl", recursive = false)
-            model("scratch/multiFile", extension = null, testMethod = "doMultiFileTest", recursive = false)
+            model("scratch", extension = "kts", testMethod = "doScratchCompilingTest", testClassName = "ScratchCompiling", recursive = false)
+            model("scratch", extension = "kts", testMethod = "doScratchReplTest", testClassName = "ScratchRepl", recursive = false)
+            model("scratch/multiFile", extension = null, testMethod = "doScratchMultiFileTest", testClassName = "ScratchMultiFile", recursive = false)
+
+            model("worksheet", extension = "ws.kts", testMethod = "doWorksheetCompilingTest", testClassName = "WorksheetCompiling", recursive = false)
+            model("worksheet", extension = "ws.kts", testMethod = "doWorksheetReplTest", testClassName = "WorksheetRepl", recursive = false)
+            model("worksheet/multiFile", extension = null, testMethod = "doWorksheetMultiFileTest", testClassName = "WorksheetMultiFile", recursive = false)
+
+            model("scratch/rightPanelOutput", extension = "kts", testMethod = "doRightPreviewPanelOutputTest", testClassName = "ScratchRightPanelOutput", recursive = false)
         }
 
         testClass<AbstractScratchLineMarkersTest> {

@@ -119,6 +119,9 @@ class KtScratchFileEditorWithPreview private constructor(
         layout = if (isPreviewEnabled) Layout.SHOW_EDITOR_AND_PREVIEW else Layout.SHOW_EDITOR
     }
 
+    @TestOnly
+    fun getPreviewEditor(): TextEditor = previewTextEditor
+
     companion object {
         fun create(scratchFile: ScratchFile): KtScratchFileEditorWithPreview {
             val textEditorProvider = TextEditorProvider.getInstance()
