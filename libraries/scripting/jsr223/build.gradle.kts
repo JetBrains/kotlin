@@ -1,9 +1,16 @@
 
 plugins {
+    maven
     kotlin("jvm")
 }
 
 jvmTarget = "1.6"
+
+val publishedRuntime by configurations.creating {
+    the<MavenPluginConvention>()
+        .conf2ScopeMappings
+        .addMapping(0, this, Conf2ScopeMappingContainer.RUNTIME)
+}
 
 dependencies {
     compile(project(":kotlin-script-runtime"))
@@ -15,6 +22,8 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
+    publishedRuntime(project(":kotlin-compiler"))
+    publishedRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {
