@@ -1493,29 +1493,19 @@ class KotlinTypeMapper @JvmOverloads constructor(
         private fun findSuperDeclaration(descriptor: FunctionDescriptor, isSuperCall: Boolean): FunctionDescriptor {
             var current = descriptor
             while (current.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
-                val overridden = current.overriddenDescriptors
-                if (overridden.isEmpty()) {
-                    throw IllegalStateException("Fake override should have at least one overridden descriptor: $current")
-                }
-
-                var classCallable: FunctionDescriptor? = null
-                for (overriddenFunction in overridden) {
-                    if (!isInterface(overriddenFunction.containingDeclaration)) {
-                        classCallable = overriddenFunction
-                        break
-                    }
-                }
-
+                val classCallable = current.overriddenDescriptors.firstOrNull { !isInterface(it.containingDeclaration) }
                 if (classCallable != null) {
                     //prefer class callable cause of else branch
                     current = classCallable
                     continue
-                } else if (isSuperCall && !current.hasJvmDefaultAnnotation() && !isInterface(current.containingDeclaration)) {
+                }
+                if (isSuperCall && !current.hasJvmDefaultAnnotation() && !isInterface(current.containingDeclaration)) {
                     //Don't unwrap fake overrides from class to interface cause substituted override would be implicitly generated
                     return current
                 }
 
-                current = overridden.iterator().next()
+                current = current.overriddenDescriptors.firstOrNull()
+                    ?: error("Fake override should have at least one overridden descriptor: $current")
             }
             return current
         }

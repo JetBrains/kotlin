@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.OBJECT_TYPE
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.kotlin.utils.keysToMap
@@ -320,8 +321,7 @@ class ExpressionCodegen(
         classCodegen.context.irIntrinsics.getIntrinsic(expression.symbol)
             ?.invoke(expression, this, data)?.let { return it.coerce(expression.type) }
 
-        val isSuperCall = (expression as? IrCall)?.superQualifier != null
-        val callable = methodSignatureMapper.mapToCallableMethod(expression, isSuperCall)
+        val callable = methodSignatureMapper.mapToCallableMethod(expression)
         val callee = expression.symbol.owner
         val callGenerator = getOrCreateCallGenerator(expression, data)
         val asmType = if (expression is IrConstructorCall) typeMapper.mapTypeAsDeclaration(expression.type) else expression.asmType
@@ -357,24 +357,14 @@ class ExpressionCodegen(
         }
 
         expression.dispatchReceiver?.let { receiver ->
-            callGenerator.genValueAndPut(
-                callee.dispatchReceiverParameter!!,
-                receiver,
-                if (isSuperCall) receiver.asmType else callable.dispatchReceiverType
-                    ?: throw AssertionError("No dispatch receiver type: ${expression.render()}"),
-                this,
-                data
-            )
+            val type = if ((expression as? IrCall)?.superQualifier != null) receiver.asmType else callable.owner
+            callGenerator.genValueAndPut(callee.dispatchReceiverParameter!!, receiver, type, this, data)
         }
 
         expression.extensionReceiver?.let { receiver ->
-            callGenerator.genValueAndPut(
-                callee.extensionReceiverParameter!!,
-                receiver,
-                callable.extensionReceiverType!!,
-                this,
-                data
-            )
+            val type = callable.signature.valueParameters.singleOrNull { it.kind == JvmMethodParameterKind.RECEIVER }?.asmType
+                ?: error("No single extension receiver parameter: ${callable.signature.valueParameters}")
+            callGenerator.genValueAndPut(callee.extensionReceiverParameter!!, receiver, type, this, data)
         }
 
         callGenerator.beforeValueParametersStart()

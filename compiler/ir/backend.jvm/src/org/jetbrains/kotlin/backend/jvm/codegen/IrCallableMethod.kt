@@ -5,19 +5,23 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodParameterKind
+import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.util.Printer
 
 class IrCallableMethod(
     val owner: Type,
-    val valueParameterTypes: List<Type>,
     val invokeOpcode: Int,
-    val asmMethod: Method,
-    val dispatchReceiverType: Type?,
-    val extensionReceiverType: Type?,
+    val signature: JvmMethodSignature,
     val isInterfaceMethod: Boolean
 ) {
+    val asmMethod: Method = signature.asmMethod
+
+    val valueParameterTypes: List<Type> =
+        signature.valueParameters.filter { it.kind == JvmMethodParameterKind.VALUE }.map { it.asmType }
+
     override fun toString(): String =
         "${Printer.OPCODES[invokeOpcode]} $owner.$asmMethod" + (if (isInterfaceMethod) " (itf)" else "")
 }
