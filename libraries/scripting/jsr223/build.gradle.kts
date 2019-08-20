@@ -5,6 +5,8 @@ plugins {
 
 jvmTarget = "1.6"
 
+publish()
+
 dependencies {
     compile(project(":kotlin-script-runtime"))
     compile(kotlinStdlib())
@@ -15,14 +17,14 @@ dependencies {
     compileOnly(project(":compiler:cli-common"))
     compileOnly(project(":kotlin-reflect-api"))
     compileOnly(intellijCoreDep())
+    publishedRuntime(project(":kotlin-compiler"))
+    publishedRuntime(project(":kotlin-reflect"))
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" {}
 }
-
-publish()
 
 standardPublicJars()
 

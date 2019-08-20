@@ -4,9 +4,10 @@ import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.gradle.api.artifacts.maven.Conf2ScopeMappingContainer
 import org.gradle.api.artifacts.maven.MavenDeployment
 import org.gradle.api.artifacts.maven.MavenResolver
-
+import org.gradle.api.plugins.MavenPluginConvention
 import org.gradle.api.plugins.MavenRepositoryHandlerConvention
 import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.Upload
@@ -29,6 +30,12 @@ open class PublishedKotlinModule : Plugin<Project> {
         project.run {
 
             plugins.apply("maven")
+
+            val publishedRuntime by configurations.creating {
+                the<MavenPluginConvention>()
+                    .conf2ScopeMappings
+                    .addMapping(0, this, Conf2ScopeMappingContainer.RUNTIME)
+            }
 
             if (!project.hasProperty("prebuiltJar")) {
                 plugins.apply("signing")
