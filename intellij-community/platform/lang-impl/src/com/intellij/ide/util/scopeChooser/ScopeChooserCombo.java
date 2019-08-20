@@ -80,8 +80,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
 
     NamedScopesHolder.ScopeListener scopeListener = () -> {
       SearchScope selectedScope = getSelectedScope();
-      rebuildModel();
-      selectItem(selectedScope);
+      rebuildModelAndSelectScopeOnSuccess(selectedScope);
     };
     myScopeFilter = scopeFilter;
     NamedScopeManager.getInstance(project).addScopeListener(scopeListener, this);
@@ -93,9 +92,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     combo.setRenderer(createDefaultRenderer());
     combo.setSwingPopup(false);
 
-    rebuildModel();
-
-    selectItem(selection);
+    rebuildModelAndSelectScopeOnSuccess(selection);
   }
 
   @NotNull
@@ -141,17 +138,10 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     if (myBrowseListener != null) myBrowseListener.onBeforeBrowseStarted();
     EditScopesDialog dlg = EditScopesDialog.showDialog(myProject, selection);
     if (dlg.isOK()){
-      rebuildModel();
       NamedScope namedScope = dlg.getSelectedScope();
-      if (namedScope != null) {
-        selectItem(namedScope.getName());
-      }
+      rebuildModelAndSelectScopeOnSuccess(namedScope == null ? null : namedScope.getName());
     }
     if (myBrowseListener != null) myBrowseListener.onAfterBrowseFinished();
-  }
-
-  private void rebuildModel() {
-    getComboBox().setModel(createModel());
   }
 
   public static boolean processScopes(@NotNull Project project,
@@ -191,8 +181,7 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
     return true;
   }
 
-  @NotNull
-  private DefaultComboBoxModel<ScopeDescriptor> createModel() {
+  private void rebuildModelAndSelectScopeOnSuccess(@Nullable Object selection) {
     DefaultComboBoxModel<ScopeDescriptor> model = new DefaultComboBoxModel<>();
     Promise<DataContext> promise = DataManager.getInstance().getDataContextFromFocusAsync();
     promise.onSuccess(c -> {
@@ -202,8 +191,9 @@ public class ScopeChooserCombo extends ComboboxWithBrowseButton implements Dispo
         }
         return true;
       });
+      selectItem(selection);
     });
-    return model;
+    getComboBox().setModel(model);
   }
 
   @Override
