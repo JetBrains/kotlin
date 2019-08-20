@@ -59,14 +59,19 @@ class KtScratchFileEditorWithPreview private constructor(
     private val previewTextEditor: TextEditor
 ) : TextEditorWithPreview(sourceTextEditor, previewTextEditor), TextEditor {
 
+    private val previewOutputManager: PreviewOutputBlocksManager = PreviewOutputBlocksManager(previewTextEditor.editor)
 
     private val toolWindowHandler: ScratchOutputHandler = requestToolWindowHandler()
     private val inlayScratchOutputHandler = InlayScratchOutputHandler(sourceTextEditor, toolWindowHandler)
-    private val previewEditorScratchOutputHandler = PreviewEditorScratchOutputHandler(previewTextEditor, toolWindowHandler)
+    private val previewEditorScratchOutputHandler = PreviewEditorScratchOutputHandler(
+        previewOutputManager,
+        toolWindowHandler,
+        previewTextEditor as Disposable
+    )
     private val commonPreviewOutputHandler = LayoutDependantOutputHandler(
-        inlayScratchOutputHandler,
-        previewEditorScratchOutputHandler,
-        ::getLayout
+        noPreviewOutputHandler = inlayScratchOutputHandler,
+        previewOutputHandler = previewEditorScratchOutputHandler,
+        layoutProvider = ::getLayout
     )
 
     private val scratchTopPanel = ScratchTopPanel(scratchFile)
@@ -90,7 +95,7 @@ class KtScratchFileEditorWithPreview private constructor(
             override fun processHelper(helper: ScrollHelper) {
                 if (!helper.process(0, 0)) return
 
-                val alignments = previewEditorScratchOutputHandler.sourceToPreviewAlignments
+                val alignments = previewOutputManager.computeSourceToPreviewAlignments()
 
                 for ((fromSource, fromPreview) in alignments) {
                     if (!helper.process(fromSource, fromPreview)) return

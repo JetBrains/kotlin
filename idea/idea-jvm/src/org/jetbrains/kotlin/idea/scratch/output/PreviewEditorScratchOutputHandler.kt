@@ -6,7 +6,8 @@
 package org.jetbrains.kotlin.idea.scratch.output
 
 import com.intellij.diff.util.DiffUtil
-import com.intellij.openapi.application.TransactionGuard
+import com.intellij.openapi.Disposable
+ import com.intellij.openapi.application.TransactionGuard
 import com.intellij.openapi.application.runWriteAction
 import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.Editor
@@ -15,7 +16,6 @@ import com.intellij.openapi.editor.FoldingModel
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.MarkupModel
-import com.intellij.openapi.fileEditor.TextEditor
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
@@ -23,20 +23,15 @@ import java.util.*
 import kotlin.math.max
 
 /**
- * Output handler to print scratch output to separate [previewTextEditor] window.
+ * Output handler to print scratch output to separate window using [previewOutputBlocksManager].
  *
  * Multiline outputs from single expressions are folded.
  */
 class PreviewEditorScratchOutputHandler(
-    private val previewTextEditor: TextEditor,
-    private val toolwindowHandler: ScratchOutputHandler
+    private val previewOutputBlocksManager: PreviewOutputBlocksManager,
+    private val toolwindowHandler: ScratchOutputHandler,
+    private val parentDisposable: Disposable
 ) : ScratchOutputHandler {
-    private val previewOutputBlocksManager: PreviewOutputBlocksManager = PreviewOutputBlocksManager(previewTextEditor.editor)
-
-    /**
-     * Returns pairs of line numbers which should be on the same visual positions during scrolling.
-     */
-    val sourceToPreviewAlignments: Sequence<Pair<Int, Int>> get() = previewOutputBlocksManager.alignments
 
     override fun onStart(file: ScratchFile) {
         toolwindowHandler.onStart(file)
@@ -57,25 +52,19 @@ class PreviewEditorScratchOutputHandler(
     override fun clear(file: ScratchFile) {
         toolwindowHandler.clear(file)
 
-        previewOutputBlocksManager.clear()
-
-        clearPreviewEditor()
+        clearOutputManager()
     }
 
     private fun printToPreviewEditor(expression: ScratchExpression, output: ScratchOutput) {
-        TransactionGuard.submitTransaction(previewTextEditor, Runnable {
+        TransactionGuard.submitTransaction(parentDisposable, Runnable {
             val targetCell = previewOutputBlocksManager.getBlock(expression) ?: previewOutputBlocksManager.addBlockToTheEnd(expression)
             targetCell.addOutput(output)
         })
     }
 
-    private fun clearPreviewEditor() {
-        TransactionGuard.submitTransaction(previewTextEditor, Runnable {
-            runWriteAction {
-                executeCommand {
-                    previewTextEditor.editor.document.setText("")
-                }
-            }
+    private fun clearOutputManager() {
+        TransactionGuard.submitTransaction(parentDisposable, Runnable {
+            previewOutputBlocksManager.clear()
         })
     }
 }
@@ -83,13 +72,13 @@ class PreviewEditorScratchOutputHandler(
 private val ScratchExpression.height: Int get() = lineEnd - lineStart + 1
 
 class PreviewOutputBlocksManager(editor: Editor) {
-    val targetDocument: Document = editor.document
-    val foldingModel: FoldingModel = editor.foldingModel
-    val markupModel: MarkupModel = editor.markupModel
+    private val targetDocument: Document = editor.document
+    private val foldingModel: FoldingModel = editor.foldingModel
+    private val markupModel: MarkupModel = editor.markupModel
 
-    val blocks: NavigableMap<ScratchExpression, OutputBlock> = TreeMap(Comparator.comparingInt { it.lineStart })
+    private val blocks: NavigableMap<ScratchExpression, OutputBlock> = TreeMap(Comparator.comparingInt { it.lineStart })
 
-    val alignments: Sequence<Pair<Int, Int>> get() = blocks.values.asSequence().map { it.sourceExpression.lineStart to it.lineStart }
+    fun computeSourceToPreviewAlignments(): List<Pair<Int, Int>> = blocks.values.map { it.sourceExpression.lineStart to it.lineStart }
 
     fun getBlock(expression: ScratchExpression): OutputBlock? = blocks[expression]
 
@@ -101,6 +90,11 @@ class PreviewOutputBlocksManager(editor: Editor) {
 
     fun clear() {
         blocks.clear()
+        runWriteAction {
+            executeCommand {
+                targetDocument.setText("")
+            }
+        }
     }
 
     inner class OutputBlock(val sourceExpression: ScratchExpression) {
