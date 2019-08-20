@@ -37,7 +37,8 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
     searchInComments: Boolean,
     searchInNonJavaFiles: Boolean,
     moveCallback: MoveCallback?,
-    prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE
+    prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE,
+    private val throwOnConflicts: Boolean = false
 ) : MoveFilesOrDirectoriesProcessor(
     project,
     arrayOf(sourceFile),
@@ -57,6 +58,11 @@ class MoveToKotlinFileProcessor @JvmOverloads constructor(
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val (conflicts, usages) = preprocessConflictUsages(refUsages)
         return showConflicts(conflicts, usages)
+    }
+
+    override fun showConflicts(conflicts: MultiMap<PsiElement, String>, usages: Array<out UsageInfo>?): Boolean {
+        if (throwOnConflicts && !conflicts.isEmpty) throw RefactoringConflictsFoundException()
+        return super.showConflicts(conflicts, usages)
     }
 
     // Assign a temporary name to file-under-move to avoid naming conflict during the refactoring

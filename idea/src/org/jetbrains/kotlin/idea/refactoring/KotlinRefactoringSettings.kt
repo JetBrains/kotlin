@@ -43,6 +43,7 @@ class KotlinRefactoringSettings : PersistentStateComponent<KotlinRefactoringSett
     @JvmField var MOVE_PREVIEW_USAGES = true
     @JvmField var MOVE_SEARCH_IN_COMMENTS = true
     @JvmField var MOVE_SEARCH_FOR_TEXT = true
+    @JvmField var MOVE_DELETE_EMPTY_SOURCE_FILES = true
 
     @JvmField var EXTRACT_INTERFACE_JAVADOC: Int = 0
     @JvmField var EXTRACT_SUPERCLASS_JAVADOC: Int = 0

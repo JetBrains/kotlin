@@ -5,53 +5,35 @@
 
 package org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
-import com.intellij.openapi.util.Comparing;
-import com.intellij.openapi.util.NullableComputable;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.*;
+import com.intellij.psi.PsiDirectory;
+import com.intellij.psi.PsiElement;
 import com.intellij.refactoring.HelpID;
-import com.intellij.refactoring.PackageWrapper;
 import com.intellij.refactoring.RefactoringBundle;
 import com.intellij.refactoring.move.MoveDialogBase;
-import com.intellij.refactoring.move.moveClassesOrPackages.MoveClassesOrPackagesUtil;
-import com.intellij.refactoring.move.moveInner.MoveInnerImpl;
 import com.intellij.refactoring.ui.NameSuggestionsField;
 import com.intellij.refactoring.ui.PackageNameReferenceEditorCombo;
-import com.intellij.refactoring.util.CommonRefactoringUtil;
-import com.intellij.refactoring.util.RefactoringMessageUtil;
-import com.intellij.refactoring.util.RefactoringUtil;
 import com.intellij.ui.EditorTextField;
 import com.intellij.util.ArrayUtil;
-import com.intellij.util.IncorrectOperationException;
 import kotlin.jvm.functions.Function1;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.descriptors.ClassDescriptor;
-import org.jetbrains.kotlin.descriptors.ClassifierDescriptor;
-import org.jetbrains.kotlin.idea.KotlinFileType;
 import org.jetbrains.kotlin.idea.caches.resolve.ResolutionUtils;
 import org.jetbrains.kotlin.idea.core.CollectingNameValidator;
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester;
 import org.jetbrains.kotlin.idea.core.NewDeclarationNameValidator;
-import org.jetbrains.kotlin.idea.core.PackageUtilsKt;
 import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringSettings;
-import org.jetbrains.kotlin.idea.refactoring.KotlinRefactoringUtilKt;
 import org.jetbrains.kotlin.idea.refactoring.move.MoveUtilsKt;
-import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.*;
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation;
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.MoveKotlinDeclarationsProcessor;
 import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.name.Name;
-import org.jetbrains.kotlin.psi.*;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.resolve.DescriptorUtils;
+import org.jetbrains.kotlin.psi.KtClass;
+import org.jetbrains.kotlin.psi.KtClassBody;
+import org.jetbrains.kotlin.psi.KtClassOrObject;
 import org.jetbrains.kotlin.resolve.lazy.BodyResolveMode;
 import org.jetbrains.kotlin.types.KotlinType;
-import static org.jetbrains.kotlin.idea.roots.ProjectRootUtilsKt.getSuitableDestinationSourceRoots;
 
 import javax.swing.*;
 import java.awt.*;
@@ -96,16 +78,6 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         openInEditorPanel.add(initOpenInEditorCb(), BorderLayout.EAST);
     }
 
-    @Nullable
-    private static FqName getTargetPackageFqName(PsiElement targetContainer) {
-        if (targetContainer instanceof PsiDirectory) {
-            PsiPackage targetPackage = PackageUtilsKt.getPackage((PsiDirectory) targetContainer);
-            return targetPackage != null ? new FqName(targetPackage.getQualifiedName()) : null;
-        }
-        if (targetContainer instanceof KtFile) return ((KtFile) targetContainer).getPackageFqName();
-        return null;
-    }
-
     private void createUIComponents() {
         parameterField = new NameSuggestionsField(project);
         packageNameField = new PackageNameReferenceEditorCombo("", project, RECENTS_KEY,
@@ -127,14 +99,6 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         return "Open moved member in editor";
     }
 
-    public boolean isSearchInComments() {
-        return searchInCommentsCheckBox.isSelected();
-    }
-
-    public boolean isSearchInNonJavaFiles() {
-        return searchForTextOccurrencesCheckBox.isSelected();
-    }
-
     public String getClassName() {
         return classNameField.getText().trim();
     }
@@ -150,7 +114,7 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
 
     @Nullable
     private FqName getTargetPackageFqName() {
-        return getTargetPackageFqName(targetContainer);
+        return MoveUtilsKt.getTargetPackageFqName(targetContainer);
     }
 
     @NotNull
@@ -236,127 +200,30 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         return null;
     }
 
-    @Nullable
-    private PsiElement getTargetContainer() {
-        if (targetContainer instanceof PsiDirectory) {
-            PsiDirectory psiDirectory = (PsiDirectory) targetContainer;
-            FqName oldPackageFqName = getTargetPackageFqName();
-            String targetName = packageNameField.getText();
-            if (!Comparing.equal(oldPackageFqName != null ? oldPackageFqName.asString() : null, targetName)) {
-                ProjectRootManager projectRootManager = ProjectRootManager.getInstance(project);
-
-                List<VirtualFile> contentSourceRoots = getSuitableDestinationSourceRoots(project);
-                PackageWrapper newPackage = new PackageWrapper(PsiManager.getInstance(project), targetName);
-                VirtualFile targetSourceRoot;
-
-                if (contentSourceRoots.size() > 1) {
-                    PsiDirectory initialDir = null;
-                    PsiPackage oldPackage = oldPackageFqName != null
-                                            ? JavaPsiFacade.getInstance(project).findPackage(oldPackageFqName.asString())
-                                            : null;
-                    if (oldPackage != null) {
-                        PsiDirectory[] directories = oldPackage.getDirectories();
-                        VirtualFile root = projectRootManager.getFileIndex().getContentRootForFile(psiDirectory.getVirtualFile());
-                        for (PsiDirectory dir : directories) {
-                            if (Comparing.equal(projectRootManager.getFileIndex().getContentRootForFile(dir.getVirtualFile()), root)) {
-                                initialDir = dir;
-                            }
-                        }
-                    }
-                    VirtualFile sourceRoot = MoveClassesOrPackagesUtil.chooseSourceRoot(newPackage, contentSourceRoots, initialDir);
-                    if (sourceRoot == null) return null;
-                    targetSourceRoot = sourceRoot;
-                }
-                else {
-                    targetSourceRoot = contentSourceRoots.get(0);
-                }
-                PsiDirectory dir = RefactoringUtil.findPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
-                if (dir == null) {
-                    dir = ApplicationManager.getApplication().runWriteAction((NullableComputable<PsiDirectory>) () -> {
-                        try {
-                            return RefactoringUtil.createPackageDirectoryInSourceRoot(newPackage, targetSourceRoot);
-                        }
-                        catch (IncorrectOperationException e) {
-                            return null;
-                        }
-                    });
-                }
-                return dir;
-            }
-
-            return targetContainer;
-        }
-
-        if (targetContainer instanceof KtFile || targetContainer instanceof KtClassOrObject) return targetContainer;
-
-        return null;
+    private Model<MoveKotlinDeclarationsProcessor> getModel() {
+        return new MoveKotlinNestedClassesToUpperLevelModel(
+                project,
+                innerClass,
+                targetContainer,
+                getParameterName(),
+                getClassName(),
+                passOuterClassCheckBox.isSelected(),
+                searchInCommentsCheckBox.isSelected(),
+                searchForTextOccurrencesCheckBox.isSelected(),
+                packageNameField.getText(),
+                isOpenInEditor());
     }
 
-    @Nullable
-    private PsiElement getTargetContainerWithValidation() throws ConfigurationException {
-        String className = getClassName();
-        String parameterName = getParameterName();
-
-        if (className != null && className.isEmpty()) {
-            throw new ConfigurationException(RefactoringBundle.message("no.class.name.specified"));
-        }
-        if (!KtPsiUtilKt.isIdentifier(className)) {
-            throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(className));
-        }
-
-        if (passOuterClassCheckBox.isSelected()) {
-            if (parameterName != null && parameterName.isEmpty()) {
-                throw new ConfigurationException(RefactoringBundle.message("no.parameter.name.specified"));
-            }
-            if (!KtPsiUtilKt.isIdentifier(parameterName)) {
-                throw new ConfigurationException(RefactoringMessageUtil.getIncorrectIdentifierMessage(parameterName));
-            }
-        }
-
-        PsiElement targetContainer = getTargetContainer();
-
-        if (targetContainer instanceof KtClassOrObject) {
-            KtClassOrObject targetClass = (KtClassOrObject) targetContainer;
-            for (KtDeclaration member : targetClass.getDeclarations()) {
-                if (member instanceof KtClassOrObject && className != null && className.equals(member.getName())) {
-                    throw new ConfigurationException(RefactoringBundle.message("inner.class.exists", className, targetClass.getName()));
-                }
-            }
-        }
-
-        if (targetContainer instanceof PsiDirectory || targetContainer instanceof KtFile) {
-            FqName targetPackageFqName = getTargetPackageFqName();
-            if (targetPackageFqName == null) throw new ConfigurationException("No package corresponds to this directory");
-
-            //noinspection ConstantConditions
-            ClassifierDescriptor existingClass = DescriptorUtils
-                    .getContainingModule(innerClassDescriptor)
-                    .getPackage(targetPackageFqName)
-                    .getMemberScope()
-                    .getContributedClassifier(Name.identifier(className), NoLookupLocation.FROM_IDE);
-            if (existingClass != null) {
-                throw new ConfigurationException("Class " + className + " already exists in package " + targetPackageFqName);
-            }
-
-            PsiDirectory targetDir = targetContainer instanceof PsiDirectory
-                                     ? (PsiDirectory) targetContainer
-                                     : targetContainer.getContainingFile().getContainingDirectory();
-            String message = RefactoringMessageUtil.checkCanCreateFile(targetDir, className + ".kt");
-            if (message != null) throw new ConfigurationException(message);
-        }
-
-        return targetContainer;
-    }
 
     @Override
     protected void doAction() {
-        PsiElement target;
+
+        MoveKotlinDeclarationsProcessor processor;
         try {
-            target = getTargetContainerWithValidation();
-            if (target == null) return;
+            processor = getModel().computeModelResult();
         }
         catch (ConfigurationException e) {
-            CommonRefactoringUtil.showErrorMessage(MoveInnerImpl.REFACTORING_NAME, e.getMessage(), HelpID.MOVE_INNER_UPPER, project);
+            setErrorText(e.getMessage());
             return;
         }
 
@@ -364,45 +231,8 @@ public class MoveKotlinNestedClassesToUpperLevelDialog extends MoveDialogBase {
         settings.MOVE_TO_UPPER_LEVEL_SEARCH_FOR_TEXT = searchForTextOccurrencesCheckBox.isSelected();
         settings.MOVE_TO_UPPER_LEVEL_SEARCH_IN_COMMENTS = searchInCommentsCheckBox.isSelected();
 
-        String newClassName = getClassName();
-
-        KotlinMoveTarget moveTarget;
-        if (target instanceof PsiDirectory) {
-            PsiDirectory targetDir = (PsiDirectory) target;
-
-            FqName targetPackageFqName = getTargetPackageFqName(target);
-            if (targetPackageFqName == null) return;
-
-            String targetFileName = KotlinNameSuggester.INSTANCE.suggestNameByName(
-                    newClassName,
-                    s -> targetDir.findFile(s + "." + KotlinFileType.EXTENSION) == null
-            ) + "." + KotlinFileType.EXTENSION;
-            moveTarget = new KotlinMoveTargetForDeferredFile(
-                    targetPackageFqName,
-                    targetDir,
-                    null,
-                    originalFile -> KotlinRefactoringUtilKt.createKotlinFile(targetFileName, targetDir, targetPackageFqName.asString())
-            );
-        }
-        else {
-            moveTarget = new KotlinMoveTargetForExistingElement((KtElement) target);
-        }
-
-        String outerInstanceParameterName = passOuterClassCheckBox.isSelected() ? getParameterName() : null;
-        MoveDeclarationsDelegate delegate = new MoveDeclarationsDelegate.NestedClass(newClassName, outerInstanceParameterName);
-        MoveDeclarationsDescriptor moveDescriptor = new MoveDeclarationsDescriptor(
-                project,
-                MoveKotlinDeclarationsProcessorKt.MoveSource(innerClass),
-                moveTarget,
-                delegate,
-                isSearchInComments(),
-                isSearchInNonJavaFiles(),
-                false,
-                null,
-                isOpenInEditor()
-        );
         saveOpenInEditorOption();
 
-        invokeRefactoring(new MoveKotlinDeclarationsProcessor(moveDescriptor, Mover.Default.INSTANCE));
+        invokeRefactoring(processor);
     }
 }
