@@ -95,7 +95,9 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
         } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes) + sequenceOf(fqNameOrNull())
         is CallableDescriptor -> {
             val returnType = returnType ?: return sequenceOf(null)
-            returnType.collectAllTypes() + explicitParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
+            returnType.collectAllTypes() +
+                    explicitParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes) +
+                    typeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
         }
         is TypeParameterDescriptor -> {
             val upperBounds = upperBounds
