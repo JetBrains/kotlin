@@ -435,29 +435,39 @@ class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
         get() = "Type ${type.getJetTypeFqName(true)} is not accessible from common code"
 }
 
+fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existingClasses: Set<String> = emptySet()): Boolean {
+    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existingClasses) == true
+}
+
 fun DeclarationDescriptor.checkTypeAccessibilityInModule(
     project: Project,
     module: Module,
     existingClasses: Set<String> = emptySet()
-): Boolean = checkTypeInSequence(collectAllTypes(), project, module, additionalClasses(existingClasses))
+): Boolean = incorrectTypesInSequence(collectAllTypes(), project, module, additionalClasses(existingClasses)).isEmpty()
 
 fun KotlinType.checkTypeAccessibilityInModule(
     project: Project,
     module: Module,
     existingClasses: Set<String> = emptySet()
-): Boolean = checkTypeInSequence(collectAllTypes(), project, module, existingClasses)
+): Boolean = incorrectTypesInSequence(collectAllTypes(), project, module, existingClasses).isEmpty()
 
-private fun checkTypeInSequence(sequence: Sequence<FqName?>, project: Project, module: Module, existingClasses: Set<String>): Boolean {
+private fun incorrectTypesInSequence(
+    sequence: Sequence<FqName?>,
+    project: Project,
+    module: Module,
+    existingClasses: Set<String>,
+    lazy: Boolean = true
+): List<FqName?> {
     val builtInsModule = module.toDescriptor()
     val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, module.isTestModule)
-    return sequence.all { fqName ->
-        if (fqName == null) return false
-        builtInsModule?.resolveClassByFqName(fqName, NoLookupLocation.FROM_BUILTINS) != null || fqName.canFindClassInModule(
-            project,
-            scope,
-            existingClasses
-        )
-    }
+    fun predicate(fqName: FqName?): Boolean = fqName != null
+            && (builtInsModule?.resolveClassByFqName(fqName, NoLookupLocation.FROM_BUILTINS) != null
+            || fqName.canFindClassInModule(project, scope, existingClasses))
+
+    return if (lazy) {
+        for (fqName in sequence) if (!predicate(fqName)) return listOf(fqName)
+        emptyList()
+    } else sequence.filterNot(::predicate).toList()
 }
 
 private tailrec fun DeclarationDescriptor.additionalClasses(existingClasses: Set<String> = emptySet()): Set<String> = when (this) {
@@ -498,10 +508,6 @@ private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName)
 
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
     ?.mustHaveValOrVar() ?: false
-
-fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existingClasses: Set<String> = emptySet()): Boolean {
-    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existingClasses) == true
-}
 
 val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()
 
