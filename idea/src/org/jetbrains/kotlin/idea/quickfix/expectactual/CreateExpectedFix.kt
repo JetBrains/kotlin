@@ -12,6 +12,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.showOkNoDialog
+import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -180,10 +181,12 @@ private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(element
 private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean =
     declarationsWithNonExistentClasses.isEmpty() || showOkNoDialog(
         "Unknown types",
-        declarationsWithNonExistentClasses.joinToString(
-            prefix = "These declarations cannot be transformed:\n",
-            separator = "\n",
-            transform = ::getExpressionShortText
+        StringUtil.escapeXmlEntities(
+            declarationsWithNonExistentClasses.joinToString(
+                prefix = "These declarations cannot be transformed:\n",
+                separator = "\n",
+                transform = ::getExpressionShortText
+            )
         ),
         project
     )
@@ -193,7 +196,7 @@ private fun showUnknownTypesError(element: KtNamedDeclaration) {
         showErrorHint(
             element.project,
             editor,
-            "You cannot create the expect declaration from:\n${getExpressionShortText(element)}",
+            "You cannot create the expect declaration from:\n${StringUtil.escapeXmlEntities(getExpressionShortText(element))}",
             "Unknown types"
         )
     }
