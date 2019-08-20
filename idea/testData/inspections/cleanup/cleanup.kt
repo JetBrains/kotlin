@@ -75,7 +75,7 @@ fun yield(yield: Int) {
     val foo = yield + yield
     val foo2 = yield
 
-    bar(yield = 5)
+    // bar(yield = 5) //this is different in old and new inference, should be tested in compiler
 
     yield(4)
     yield {}
