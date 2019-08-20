@@ -196,8 +196,8 @@ public abstract class KeymapsTestCaseBase extends LightPlatformTestCase {
 
 
     for (String keymap : ContainerUtil.sorted(allKeymaps)) {
-      Map<Shortcut, List<String>> actual = actualDuplicates.get(keymap);
-      Map<Shortcut, List<String>> expected = expectedDuplicates.get(keymap);
+      Map<Shortcut, List<String>> actual = ContainerUtil.notNullize(actualDuplicates.get(keymap));
+      Map<Shortcut, List<String>> expected = ContainerUtil.notNullize(expectedDuplicates.get(keymap));
 
       StringBuilder keymapFailure = new StringBuilder();
       for (Shortcut shortcut : ContainerUtil.union(actual.keySet(), expected.keySet())) {
