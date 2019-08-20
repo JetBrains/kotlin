@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
 import kotlin.reflect.jvm.internal.components.RuntimeModuleData
+import kotlin.reflect.jvm.internal.components.tryLoadClass
 import kotlin.reflect.jvm.internal.structure.createArrayType
 import kotlin.reflect.jvm.internal.structure.safeClassLoader
 import kotlin.reflect.jvm.internal.structure.wrapperByPrimitive
@@ -165,26 +166,30 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
         return functions.single()
     }
 
-    private fun Class<*>.lookupMethod(name: String, parameterTypes: List<Class<*>>, returnType: Class<*>): Method? {
-        lookupMethod(name, parameterTypes.toTypedArray(), returnType)?.let { return it }
-
-        // Methods from java.lang.Object (equals, hashCode, toString) cannot be found in the interface via
-        // Class.getMethod/getDeclaredMethod, so for interfaces, we also look in java.lang.Object.
-        if (isInterface) {
-            Any::class.java.lookupMethod(name, parameterTypes.toTypedArray(), returnType)?.let { return it }
+    private fun Class<*>.lookupMethod(
+        name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>, isStaticDefault: Boolean
+    ): Method? {
+        // Static "$default" method in any class takes an instance of that class as the first parameter.
+        if (isStaticDefault) {
+            parameterTypes[0] = this
         }
 
-        return null
-    }
-
-    private fun Class<*>.lookupMethod(name: String, parameterTypes: Array<Class<*>>, returnType: Class<*>): Method? {
         tryGetMethod(name, parameterTypes, returnType)?.let { return it }
 
-        superclass?.lookupMethod(name, parameterTypes, returnType)?.let { return it }
+        superclass?.lookupMethod(name, parameterTypes, returnType, isStaticDefault)?.let { return it }
 
         // TODO: avoid exponential complexity here
         for (superInterface in interfaces) {
-            superInterface.lookupMethod(name, parameterTypes, returnType)?.let { return it }
+            superInterface.lookupMethod(name, parameterTypes, returnType, isStaticDefault)?.let { return it }
+
+            // Static "$default" methods should be looked up in each DefaultImpls class, see KT-33430
+            if (isStaticDefault) {
+                val defaultImpls = superInterface.classLoader.tryLoadClass(superInterface.name + JvmAbi.DEFAULT_IMPLS_SUFFIX)
+                if (defaultImpls != null) {
+                    parameterTypes[0] = superInterface
+                    defaultImpls.tryGetMethod(name, parameterTypes, returnType)?.let { return it }
+                }
+            }
         }
 
         return null
@@ -220,7 +225,17 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     fun findMethodBySignature(name: String, desc: String): Method? {
         if (name == "<init>") return null
 
-        return methodOwner.lookupMethod(name, loadParameterTypes(desc), loadReturnType(desc))
+        val parameterTypes = loadParameterTypes(desc).toTypedArray()
+        val returnType = loadReturnType(desc)
+        methodOwner.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
+
+        // Methods from java.lang.Object (equals, hashCode, toString) cannot be found in the interface via
+        // Class.getMethod/getDeclaredMethod, so for interfaces, we also look in java.lang.Object.
+        if (methodOwner.isInterface) {
+            Any::class.java.lookupMethod(name, parameterTypes, returnType, false)?.let { return it }
+        }
+
+        return null
     }
 
     fun findDefaultMethod(name: String, desc: String, isMember: Boolean): Method? {
@@ -228,11 +243,14 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
 
         val parameterTypes = arrayListOf<Class<*>>()
         if (isMember) {
+            // Note that this value is replaced inside the lookupMethod call below, for each class/interface in the hierarchy.
             parameterTypes.add(jClass)
         }
         addParametersAndMasks(parameterTypes, desc, false)
 
-        return methodOwner.lookupMethod(name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes, loadReturnType(desc))
+        return methodOwner.lookupMethod(
+            name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX, parameterTypes.toTypedArray(), loadReturnType(desc), isStaticDefault = isMember
+        )
     }
 
     fun findConstructorBySignature(desc: String): Constructor<*>? =
