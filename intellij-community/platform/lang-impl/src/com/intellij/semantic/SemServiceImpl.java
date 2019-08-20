@@ -1,7 +1,6 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.semantic;
 
-import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.LowMemoryWatcher;
@@ -39,22 +38,17 @@ public class SemServiceImpl extends SemService {
   private volatile  MultiMap<SemKey<?>, NullableFunction<PsiElement, Collection<? extends SemElement>>> myProducers;
   private final Project myProject;
 
-  private boolean myBulkChange = false;
   private final AtomicInteger myCreatingSem = new AtomicInteger(0);
 
   public SemServiceImpl(Project project) {
     myProject = project;
     final MessageBusConnection connection = project.getMessageBus().connect();
     connection.subscribe(PsiModificationTracker.TOPIC, () -> {
-      if (!isInsideAtomicChange()) {
-        clearCache();
-      }
+      clearCache();
     });
 
     PsiManagerEx.getInstanceEx(project).registerRunnableToRunOnChange(() -> {
-      if (!isInsideAtomicChange()) {
-        clearCache();
-      }
+      clearCache();
     });
 
 
@@ -115,28 +109,6 @@ public class SemServiceImpl extends SemService {
   @Override
   public void clearCache() {
     myCache.set(null);
-  }
-
-  @Override
-  public void performAtomicChange(@NotNull Runnable change) {
-    ApplicationManager.getApplication().assertWriteAccessAllowed();
-
-    final boolean oldValue = myBulkChange;
-    myBulkChange = true;
-    try {
-      change.run();
-    }
-    finally {
-      myBulkChange = oldValue;
-      if (!oldValue) {
-        clearCache();
-      }
-    }
-  }
-
-  @Override
-  public boolean isInsideAtomicChange() {
-    return myBulkChange;
   }
 
   @Override
