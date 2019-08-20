@@ -13,8 +13,8 @@ FILE: extension.kt
         public final val x: R|kotlin/Int| = Int(0)
             public get(): R|kotlin/Int|
 
-        public final fun foo(): R|kotlin/Unit| {
-            ^foo R|/x|()
+        public final fun foo(): R|Foo| {
+            ^foo R|/Foo.x|.R|/Foo.invoke|()
         }
 
     }

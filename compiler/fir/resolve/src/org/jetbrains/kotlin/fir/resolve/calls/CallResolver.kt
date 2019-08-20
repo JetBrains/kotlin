@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 
 enum class TowerDataKind {
     EMPTY,
@@ -17,10 +18,10 @@ enum class TowerDataKind {
 class CallResolver(
     val typeCalculator: ReturnTypeCalculator,
     val components: InferenceComponents,
-    val resolutionStageRunner: ResolutionStageRunner
+    val resolutionStageRunner: ResolutionStageRunner,
+    val topLevelScopes: List<FirScope>,
+    val localScopes: List<FirLocalScope>
 ) {
-    var callInfo: CallInfo? = null
-    var scopes: List<FirScope>? = null
 
     val session: FirSession get() = components.session
 
@@ -44,10 +45,39 @@ class CallResolver(
             group++
         )
 
-        for (scope in scopes!!) {
+        for (scope in localScopes) {
             towerDataConsumer.consume(
                 TowerDataKind.TOWER_LEVEL,
-                ScopeTowerLevel(session, scope, implicitReceiverValue),
+                ScopeTowerLevel(session, scope, implicitExtensionReceiver = implicitReceiverValue),
+                group++
+            )
+        }
+
+        for (implicitDispatchReceiverValue in implicitReceiverValues) {
+            val implicitScope = implicitDispatchReceiverValue.implicitScope
+            if (implicitScope != null) {
+                towerDataConsumer.consume(
+                    TowerDataKind.TOWER_LEVEL,
+                    ScopeTowerLevel(session, implicitScope, implicitExtensionReceiver = implicitReceiverValue),
+                    group++
+                )
+            }
+            if (implicitDispatchReceiverValue is ImplicitDispatchReceiverValue) {
+                val implicitCompanionScope = implicitDispatchReceiverValue.implicitCompanionScope
+                if (implicitCompanionScope != null) {
+                    towerDataConsumer.consume(
+                        TowerDataKind.TOWER_LEVEL,
+                        ScopeTowerLevel(session, implicitCompanionScope, implicitExtensionReceiver = implicitReceiverValue),
+                        group++
+                    )
+                }
+            }
+        }
+
+        for (scope in topLevelScopes) {
+            towerDataConsumer.consume(
+                TowerDataKind.TOWER_LEVEL,
+                ScopeTowerLevel(session, scope, implicitExtensionReceiver = implicitReceiverValue),
                 group++
             )
         }
@@ -64,15 +94,27 @@ class CallResolver(
         towerDataConsumer = consumer
 
         var group = 0
+        // Member of explicit receiver' type
         towerDataConsumer.consume(TowerDataKind.EMPTY, TowerScopeLevel.Empty, group++)
 
-        for (scope in scopes!!) {
+        // Member of local scope
+        for (scope in localScopes) {
             towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, scope), group++)
         }
 
         var blockDispatchReceivers = false
+
+        // Member of implicit receiver' type
         for (implicitReceiverValue in implicitReceiverValues) {
+            val implicitScope = implicitReceiverValue.implicitScope
+            if (implicitScope != null) {
+                towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, implicitScope), group++)
+            }
             if (implicitReceiverValue is ImplicitDispatchReceiverValue) {
+                val implicitCompanionScope = implicitReceiverValue.implicitCompanionScope
+                if (implicitCompanionScope != null) {
+                    towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, implicitCompanionScope), group++)
+                }
                 if (blockDispatchReceivers) {
                     continue
                 }
@@ -81,6 +123,11 @@ class CallResolver(
                 }
             }
             group = processImplicitReceiver(towerDataConsumer, implicitReceiverValue, collector, group)
+        }
+
+        // Member of top-level scope
+        for (scope in topLevelScopes) {
+            towerDataConsumer.consume(TowerDataKind.TOWER_LEVEL, ScopeTowerLevel(session, scope), group++)
         }
 
         return collector

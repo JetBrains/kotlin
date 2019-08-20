@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.resolve.typeFromCallee
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeSymbol
@@ -36,8 +37,8 @@ import org.jetbrains.kotlin.resolve.calls.results.TypeSpecificityComparator
 
 class FirCallResolver(
     private val transformer: FirBodyResolveTransformer,
-    private val scopes: List<FirScope>,
-    private val localScopes: List<FirScope>,
+    private val topLevelScopes: List<FirScope>,
+    private val localScopes: List<FirLocalScope>,
     private val implicitReceiverStack: List<ImplicitReceiverValue>,
     private val qualifiedResolver: FirQualifiedNameResolver
 ) : BodyResolveComponents by transformer {
@@ -64,9 +65,11 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(returnTypeCalculator, inferenceComponents, resolutionStageRunner)
-        resolver.callInfo = info
-        resolver.scopes = (scopes + localScopes).asReversed()
+        val resolver = CallResolver(
+            returnTypeCalculator, inferenceComponents, resolutionStageRunner,
+            topLevelScopes = topLevelScopes.asReversed(),
+            localScopes = localScopes.asReversed()
+        )
 
         val consumer = createFunctionConsumer(session, name, info, inferenceComponents, resolver.collector, resolver)
         val result = resolver.runTowerResolver(consumer, implicitReceiverStack.asReversed())
@@ -154,9 +157,11 @@ class FirCallResolver(
             file,
             transformer.container
         ) { it.resultType }
-        val resolver = CallResolver(returnTypeCalculator, inferenceComponents, resolutionStageRunner)
-        resolver.callInfo = info
-        resolver.scopes = (scopes + localScopes).asReversed()
+        val resolver = CallResolver(
+            returnTypeCalculator, inferenceComponents, resolutionStageRunner,
+            topLevelScopes = topLevelScopes.asReversed(),
+            localScopes = localScopes.asReversed()
+        )
 
         val consumer = createVariableAndObjectConsumer(
             session,

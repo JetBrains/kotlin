@@ -37,11 +37,11 @@ FILE: access.kt
         }
 
         public final fun R|Foo|.check(): <ERROR TYPE REF: Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]> {
-            ^check R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|/bar|())
+            ^check R|/Foo.abc|().<Inapplicable(INAPPLICABLE): [kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus, kotlin/Int.plus]>#(R|/Bar.bar|())
         }
 
         public final fun R|Foo|.check2(): R|kotlin/String| {
-            ^check2 String().R|kotlin/String.plus|(R|/bar|())
+            ^check2 String().R|kotlin/String.plus|(R|/Bar.bar|())
         }
 
     }

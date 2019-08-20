@@ -18,3 +18,23 @@ FILE: explicitReceiver.kt
         }
 
     }
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun x(): R|kotlin/Unit| {
+        }
+
+        public final val x: R|Bar| = R|/Bar.Bar|()
+            public get(): R|Bar|
+
+        public final operator fun invoke(): R|Bar| {
+            ^invoke this#
+        }
+
+        public final fun baz(): R|kotlin/Unit| {
+            R|/Bar.x|()
+        }
+
+    }
