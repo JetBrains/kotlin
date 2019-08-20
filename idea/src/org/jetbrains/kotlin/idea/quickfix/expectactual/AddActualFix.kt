@@ -57,14 +57,15 @@ class AddActualFix(
         }
 
         val module = element.module ?: return
+        val checker = TypeAccessibilityChecker.create(project, module)
         for (missedDeclaration in missedDeclarationPointers.mapNotNull { it.element }) {
             val actualDeclaration = when (missedDeclaration) {
-                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, module, listOf(element))
+                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, checker, listOf(element))
                 is KtFunction -> missedDeclaration.toDescriptor()?.safeAs<FunctionDescriptor>()?.let {
-                    generateFunction(project, false, missedDeclaration, it, element, targetModule = module)
+                    generateFunction(project, false, missedDeclaration, it, element, checker = checker)
                 }
                 is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<PropertyDescriptor>()?.let {
-                    generateProperty(project, false, missedDeclaration, it, element, targetModule = module)
+                    generateProperty(project, false, missedDeclaration, it, element, checker = checker)
                 }
                 else -> null
             } ?: continue

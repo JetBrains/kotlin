@@ -38,7 +38,7 @@ sealed class CreateActualFix<D : KtNamedDeclaration>(
     declaration: D,
     actualModule: Module,
     private val actualPlatform: TargetPlatform,
-    generateIt: KtPsiFactory.(Project, D) -> D?
+    generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : AbstractCreateDeclarationFix<D>(declaration, actualModule, generateIt) {
 
     override fun getText() =
@@ -86,25 +86,25 @@ class CreateActualClassFix(
     klass: KtClassOrObject,
     actualModule: Module,
     actualPlatform: TargetPlatform
-) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, element ->
-    generateClassOrObject(project, false, element, targetModule = actualModule)
+) : CreateActualFix<KtClassOrObject>(klass, actualModule, actualPlatform, { project, checker, element ->
+    generateClassOrObject(project, false, element, checker = checker)
 })
 
 class CreateActualPropertyFix(
     property: KtProperty,
     actualModule: Module,
     actualPlatform: TargetPlatform
-) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, element ->
+) : CreateActualFix<KtProperty>(property, actualModule, actualPlatform, { project, checker, element ->
     val descriptor = element.toDescriptor() as? PropertyDescriptor
-    descriptor?.let { generateProperty(project, false, element, descriptor, targetModule = actualModule) }
+    descriptor?.let { generateProperty(project, false, element, descriptor, checker = checker) }
 })
 
 class CreateActualFunctionFix(
     function: KtFunction,
     actualModule: Module,
     actualPlatform: TargetPlatform
-) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, element ->
+) : CreateActualFix<KtFunction>(function, actualModule, actualPlatform, { project, checker, element ->
     val descriptor = element.toDescriptor() as? FunctionDescriptor
-    descriptor?.let { generateFunction(project, false, element, descriptor, targetModule = actualModule) }
+    descriptor?.let { generateFunction(project, false, element, descriptor, checker = checker) }
 })
 

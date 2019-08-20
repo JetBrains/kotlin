@@ -45,7 +45,7 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
     declaration: D,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module,
-    generateIt: KtPsiFactory.(Project, D) -> D?
+    generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : AbstractCreateDeclarationFix<D>(declaration, commonModule, generateIt) {
 
     private val targetExpectedClassPointer = targetExpectedClass?.createSmartPointer()
@@ -116,16 +116,16 @@ class CreateExpectedClassFix(
     klass: KtClassOrObject,
     outerExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, element ->
+) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
     val originalElements = element.collectDeclarations(withSelf = false).toList()
-    val existingClasses = findClasses(originalElements + klass, commonModule)
-    if (!element.checkTypeAccessibilityInModule(commonModule, existingClasses)) {
+    val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
+    if (!checker.checkAccessibility(element)) {
         showUnknownTypesError(element)
         return@block null
     }
 
     val (members, declarationsWithNonExistentClasses) = originalElements.partition {
-        it.checkTypeAccessibilityInModule(commonModule, existingClasses)
+        checker.checkAccessibility(it)
     }
 
     if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
@@ -143,15 +143,15 @@ class CreateExpectedClassFix(
         }
     }.asSequence().plus(klass).plus(members.filter(KtNamedDeclaration::isAlwaysActual)).flatMap(KtNamedDeclaration::selected).toSet()
 
-    val selectedClasses = findClasses(selectedElements, commonModule)
+    val selectedClasses = checker.findAndApplyExistingClasses(selectedElements)
     val resultDeclarations = if (selectedClasses != existingClasses) {
-        if (!element.checkTypeAccessibilityInModule(commonModule, selectedClasses)) {
+        if (!checker.checkAccessibility(element)) {
             showUnknownTypesError(element)
             return@block null
         }
 
         val (resultDeclarations, withErrors) = selectedElements.partition {
-            it.checkTypeAccessibilityInModule(commonModule, selectedClasses)
+            checker.checkAccessibility(it)
         }
         if (!showUnknownTypesDialog(project, withErrors)) return@block null
         resultDeclarations
@@ -164,18 +164,20 @@ class CreateExpectedClassFix(
         }
     }
 
-    generateClassOrObject(project, true, element, commonModule, listOfNotNull(outerExpectedClass), selectedClasses)
+    generateClassOrObject(project, true, element, checker, listOfNotNull(outerExpectedClass))
 })
 
-private tailrec fun findClasses(elements: Collection<KtNamedDeclaration>, module: Module): HashSet<String> {
+private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
     val classes = elements.filterIsInstance<KtClassOrObject>()
     val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
-    val newExistingClasses = classes.filter { it.checkTypeAccessibilityInModule(module, existingNames) }
+    existingFqNames = existingNames
+
+    val newExistingClasses = classes.filter { checkAccessibility(it) }
     return if (classes.size == newExistingClasses.size) existingNames
-    else findClasses(newExistingClasses, module)
+    else findAndApplyExistingClasses(newExistingClasses)
 }
 
-private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: List<KtNamedDeclaration>): Boolean =
+private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean =
     declarationsWithNonExistentClasses.isEmpty() || showOkNoDialog(
         "Unknown types",
         declarationsWithNonExistentClasses.joinToString(
@@ -290,12 +292,13 @@ class CreateExpectedPropertyFix(
     property: KtNamedDeclaration,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, block@{ project, element ->
-    if (!element.checkTypeAccessibilityInModule(commonModule)) {
+) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, block@{ project, checker, element ->
+    if (!checker.checkAccessibility(element)) {
         showUnknownTypesError(element)
         return@block null
     }
     val descriptor = element.toDescriptor() as? PropertyDescriptor
+    checker.existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
         generateProperty(
             project,
@@ -303,8 +306,7 @@ class CreateExpectedPropertyFix(
             element,
             descriptor,
             targetExpectedClass,
-            existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty(),
-            targetModule = commonModule
+            checker = checker
         )
     }
 })
@@ -313,12 +315,13 @@ class CreateExpectedFunctionFix(
     function: KtFunction,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, block@{ project, element ->
-    if (!element.checkTypeAccessibilityInModule(commonModule)) {
+) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, block@{ project, checker, element ->
+    if (!checker.checkAccessibility(element)) {
         showUnknownTypesError(element)
         return@block null
     }
     val descriptor = element.toDescriptor() as? FunctionDescriptor
+    checker.existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
         generateFunction(
             project,
@@ -326,8 +329,7 @@ class CreateExpectedFunctionFix(
             element,
             descriptor,
             targetExpectedClass,
-            existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty(),
-            targetModule = commonModule
+            checker = checker
         )
     }
 })

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
     declaration: D,
     protected val module: Module,
-    protected val generateIt: KtPsiFactory.(Project, D) -> D?
+    protected val generateIt: KtPsiFactory.(Project, TypeAccessibilityChecker, D) -> D?
 ) : KotlinQuickFixAction<D>(declaration) {
 
     override fun getFamilyName(): String = "Create expect / actual declaration"
@@ -53,7 +53,7 @@ abstract class AbstractCreateDeclarationFix<D : KtNamedDeclaration>(
         val factory = KtPsiFactory(project)
         DumbService.getInstance(project).runWhenSmart {
             val generated = try {
-                factory.generateIt(project, element) ?: return@runWhenSmart
+                factory.generateIt(project, TypeAccessibilityChecker.create(project, module), element) ?: return@runWhenSmart
             } catch (e: KotlinTypeInaccessibleException) {
                 if (editor != null) {
                     showErrorHint(project, editor, "Cannot generate expected $elementType: " + e.message, e.message)

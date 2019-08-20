@@ -8,13 +8,9 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.JavaDirectoryService
-import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.idea.caches.project.implementedDescriptors
-import org.jetbrains.kotlin.idea.caches.project.isTestModule
-import org.jetbrains.kotlin.idea.caches.project.toDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -29,11 +25,8 @@ import org.jetbrains.kotlin.idea.core.overrideImplement.makeNotActual
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.project.platform
 import org.jetbrains.kotlin.idea.refactoring.createKotlinFile
-import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
-import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.util.*
 import org.jetbrains.kotlin.idea.util.application.runWriteAction
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
@@ -50,7 +43,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.kotlin.types.TypeProjection
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): KtFile? {
@@ -119,9 +111,8 @@ internal fun KtPsiFactory.generateClassOrObject(
     project: Project,
     generateExpectClass: Boolean,
     originalClass: KtClassOrObject,
-    targetModule: Module,
-    outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Set<String> = emptySet()
+    checker: TypeAccessibilityChecker,
+    outerClasses: List<KtClassOrObject> = emptyList()
 ): KtClassOrObject {
     val generatedClass = createClassHeaderCopyByText(originalClass)
     val context = originalClass.analyzeWithContent()
@@ -129,15 +120,13 @@ internal fun KtPsiFactory.generateClassOrObject(
         generatedClass,
         originalClass,
         generateExpectClass,
-        project,
-        targetModule,
-        existingFqNames,
+        checker,
         context
     )
 
     generatedClass.annotationEntries.zip(originalClass.annotationEntries).forEach { (generatedEntry, originalEntry) ->
         val annotationDescriptor = context.get(BindingContext.ANNOTATION, originalEntry)
-        if (annotationDescriptor?.isValidInModule(targetModule, existingFqNames, project) != true) {
+        if (annotationDescriptor?.isValidInModule(checker) != true) {
             generatedEntry.delete()
         }
     }
@@ -159,6 +148,7 @@ internal fun KtPsiFactory.generateClassOrObject(
         it.isEffectivelyActual(false)
     }.toList() + generatedClass + outerClasses
 
+    val existingFqNamesWithSuperTypes = (checker.existingFqNames + superNames).toSet()
     declLoop@ for (originalDeclaration in originalClass.declarations) {
         val descriptor = originalDeclaration.toDescriptor() ?: continue
         if (generateExpectClass && !originalDeclaration.isEffectivelyActual(false)) continue
@@ -167,30 +157,20 @@ internal fun KtPsiFactory.generateClassOrObject(
                 project,
                 generateExpectClass,
                 originalDeclaration,
-                targetModule,
-                existingClasses,
-                existingFqNames
+                checker,
+                existingClasses
             )
-            is KtFunction -> generateFunction(
-                project,
-                generateExpectClass,
-                originalDeclaration,
-                descriptor as FunctionDescriptor,
-                generatedClass,
-                existingClasses,
-                existingFqNames + superNames,
-                targetModule
-            )
-            is KtProperty -> generateProperty(
-                project,
-                generateExpectClass,
-                originalDeclaration,
-                descriptor as PropertyDescriptor,
-                generatedClass,
-                existingClasses,
-                existingFqNames + superNames,
-                targetModule
-            )
+            is KtFunction, is KtProperty -> checker.runInContext(existingFqNamesWithSuperTypes) {
+                generateCallable(
+                    project,
+                    generateExpectClass,
+                    originalDeclaration as KtCallableDeclaration,
+                    descriptor as CallableDescriptor,
+                    generatedClass,
+                    existingClasses,
+                    this
+                )
+            }
             else -> continue@declLoop
         }
         generatedClass.addDeclaration(generatedDeclaration)
@@ -199,17 +179,18 @@ internal fun KtPsiFactory.generateClassOrObject(
         for (originalProperty in originalClass.primaryConstructorParameters) {
             if (!originalProperty.hasValOrVar() || !originalProperty.hasActualModifier()) continue
             val descriptor = originalProperty.toDescriptor() as? PropertyDescriptor ?: continue
-            val generatedProperty = generateProperty(
-                project,
-                generateExpectClass,
-                originalProperty,
-                descriptor,
-                generatedClass,
-                outerClasses,
-                existingFqNames + superNames,
-                targetModule
-            )
-            generatedClass.addDeclaration(generatedProperty)
+            checker.runInContext(existingFqNamesWithSuperTypes) {
+                val generatedProperty = generateProperty(
+                    project,
+                    generateExpectClass,
+                    originalProperty,
+                    descriptor,
+                    generatedClass,
+                    outerClasses,
+                    this
+                )
+                generatedClass.addDeclaration(generatedProperty)
+            }
         }
     }
     val originalPrimaryConstructor = originalClass.primaryConstructor
@@ -220,17 +201,18 @@ internal fun KtPsiFactory.generateClassOrObject(
     ) {
         val descriptor = originalPrimaryConstructor.toDescriptor()
         if (descriptor is FunctionDescriptor) {
-            val expectedPrimaryConstructor = generateFunction(
-                project,
-                generateExpectClass,
-                originalPrimaryConstructor,
-                descriptor,
-                generatedClass,
-                outerClasses,
-                existingFqNames + superNames,
-                targetModule
-            )
-            generatedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
+            checker.runInContext(existingFqNamesWithSuperTypes) {
+                val expectedPrimaryConstructor = generateFunction(
+                    project,
+                    generateExpectClass,
+                    originalPrimaryConstructor,
+                    descriptor,
+                    generatedClass,
+                    outerClasses,
+                    this
+                )
+                generatedClass.createPrimaryConstructorIfAbsent().replace(expectedPrimaryConstructor)
+            }
         }
     }
 
@@ -241,19 +223,14 @@ private fun KtPsiFactory.repairSuperTypeList(
     generated: KtClassOrObject,
     original: KtClassOrObject,
     generateExpectClass: Boolean,
-    project: Project,
-    targetModule: Module?,
-    existingFqNames: Set<String>,
+    checker: TypeAccessibilityChecker,
     context: BindingContext
 ): Collection<String> {
     val superNames = linkedSetOf<String>()
     generated.superTypeListEntries.zip(original.superTypeListEntries).forEach { (generatedEntry, originalEntry) ->
         val superType = context[BindingContext.TYPE, originalEntry.typeReference]
         val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
-        if (generateExpectClass
-            && targetModule != null
-            && !superType.checkTypeAccessibilityInModule(project, targetModule, existingFqNames)
-        ) {
+        if (generateExpectClass && !checker.checkAccessibility(superType)) {
             generatedEntry.delete()
             return@forEach
         }
@@ -286,6 +263,36 @@ private val forbiddenAnnotationFqNames = setOf(
     ExperimentalUsageChecker.USE_EXPERIMENTAL_FQ_NAME
 )
 
+internal fun generateCallable(
+    project: Project,
+    generateExpect: Boolean,
+    originalDeclaration: KtCallableDeclaration,
+    descriptor: CallableDescriptor,
+    generatedClass: KtClassOrObject? = null,
+    outerClasses: List<KtClassOrObject> = emptyList(),
+    checker: TypeAccessibilityChecker
+) = when (originalDeclaration) {
+    is KtFunction -> generateFunction(
+        project,
+        generateExpect,
+        originalDeclaration,
+        descriptor as FunctionDescriptor,
+        generatedClass,
+        outerClasses,
+        checker
+    )
+    is KtProperty -> generateProperty(
+        project,
+        generateExpect,
+        originalDeclaration,
+        descriptor as PropertyDescriptor,
+        generatedClass,
+        outerClasses,
+        checker
+    )
+    else -> error("Unsupported operation for $originalDeclaration")
+}
+
 internal fun generateFunction(
     project: Project,
     generateExpect: Boolean,
@@ -293,8 +300,7 @@ internal fun generateFunction(
     descriptor: FunctionDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Set<String> = emptySet(),
-    targetModule: Module
+    checker: TypeAccessibilityChecker
 ): KtFunction {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -314,7 +320,7 @@ internal fun generateFunction(
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
     ).apply {
-        repair(generatedClass, descriptor, existingFqNames, targetModule, project)
+        repair(generatedClass, descriptor, checker)
     } as KtFunction
 }
 
@@ -325,8 +331,7 @@ internal fun generateProperty(
     descriptor: PropertyDescriptor,
     generatedClass: KtClassOrObject? = null,
     outerClasses: List<KtClassOrObject> = emptyList(),
-    existingFqNames: Set<String> = emptySet(),
-    targetModule: Module
+    checker: TypeAccessibilityChecker
 ): KtProperty {
     if (generateExpect) {
         val accessibleClasses = outerClasses + listOfNotNull(generatedClass)
@@ -343,46 +348,39 @@ internal fun generateProperty(
         project = project,
         mode = if (generateExpect) MemberGenerateMode.EXPECT else MemberGenerateMode.ACTUAL
     ).apply {
-        repair(generatedClass, descriptor, existingFqNames, targetModule, project)
+        repair(generatedClass, descriptor, checker)
     } as KtProperty
 }
 
 private fun KtCallableDeclaration.repair(
     generatedClass: KtClassOrObject?,
     descriptor: CallableDescriptor,
-    existingFqNames: Set<String>,
-    targetModule: Module,
-    project: Project
+    checker: TypeAccessibilityChecker
 ) {
-    if (generatedClass != null) repairOverride(descriptor, existingFqNames)
-    repairAnnotationEntries(descriptor, existingFqNames, targetModule, project)
+    if (generatedClass != null) repairOverride(descriptor, checker)
+    repairAnnotationEntries(descriptor, checker)
 }
 
-private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, existingFqNames: Set<String>) {
+private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, checker: TypeAccessibilityChecker) {
     if (!hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
     val superDescriptor = descriptor.overriddenDescriptors.firstOrNull()?.containingDeclaration
-    if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in existingFqNames) {
+    if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in checker.existingFqNames) {
         removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
 }
 
-private fun KtCallableDeclaration.repairAnnotationEntries(
-    descriptor: CallableDescriptor,
-    existingFqNames: Set<String>,
-    module: Module,
-    project: Project
-) {
+private fun KtCallableDeclaration.repairAnnotationEntries(descriptor: CallableDescriptor, checker: TypeAccessibilityChecker) {
     for (annotation in descriptor.annotations) {
-        if (annotation.isValidInModule(module, existingFqNames, project)) {
+        if (annotation.isValidInModule(checker)) {
             val entry = annotation.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtAnnotationEntry>() ?: continue
             addAnnotationEntry(entry)
         }
     }
 }
 
-private fun AnnotationDescriptor.isValidInModule(targetModule: Module, existingFqNames: Set<String>, project: Project): Boolean {
-    return fqName !in forbiddenAnnotationFqNames && type.checkTypeAccessibilityInModule(project, targetModule, existingFqNames)
+private fun AnnotationDescriptor.isValidInModule(checker: TypeAccessibilityChecker): Boolean {
+    return fqName !in forbiddenAnnotationFqNames && checker.checkAccessibility(type)
 }
 
 private fun CallableMemberDescriptor.checkTypeParameterBoundsAccessibility(accessibleClasses: List<KtClassOrObject>) {
@@ -435,83 +433,7 @@ class KotlinTypeInaccessibleException(val type: KotlinType) : Exception() {
         get() = "Type ${type.getJetTypeFqName(true)} is not accessible from common code"
 }
 
-fun KtNamedDeclaration.checkTypeAccessibilityInModule(module: Module, existingClasses: Set<String> = emptySet()): Boolean {
-    return !hasPrivateModifier() && descriptor?.checkTypeAccessibilityInModule(project, module, existingClasses) == true
-}
-
-fun DeclarationDescriptor.checkTypeAccessibilityInModule(
-    project: Project,
-    module: Module,
-    existingClasses: Set<String> = emptySet()
-): Boolean = incorrectTypesInSequence(collectAllTypes(), project, module, additionalClasses(existingClasses)).isEmpty()
-
-fun KotlinType.checkTypeAccessibilityInModule(
-    project: Project,
-    module: Module,
-    existingClasses: Set<String> = emptySet()
-): Boolean = incorrectTypesInSequence(collectAllTypes(), project, module, existingClasses).isEmpty()
-
-private fun incorrectTypesInSequence(
-    sequence: Sequence<FqName?>,
-    project: Project,
-    module: Module,
-    existingClasses: Set<String>,
-    lazy: Boolean = true
-): List<FqName?> {
-    val builtInsModule = module.toDescriptor()
-    val scope = GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(module, module.isTestModule)
-    fun predicate(fqName: FqName?): Boolean = fqName != null
-            && (builtInsModule?.resolveClassByFqName(fqName, NoLookupLocation.FROM_BUILTINS) != null
-            || fqName.canFindClassInModule(project, scope, existingClasses))
-
-    return if (lazy) {
-        for (fqName in sequence) if (!predicate(fqName)) return listOf(fqName)
-        emptyList()
-    } else sequence.filterNot(::predicate).toList()
-}
-
-private tailrec fun DeclarationDescriptor.additionalClasses(existingClasses: Set<String> = emptySet()): Set<String> = when (this) {
-    is ClassifierDescriptorWithTypeParameters -> {
-        val myParameters = existingClasses + declaredTypeParameters.map { it.fqNameOrNull()?.asString() ?: return emptySet() }
-        val containingDeclaration = containingDeclaration
-        if (isInner) containingDeclaration.additionalClasses(myParameters) else myParameters
-    }
-    is CallableDescriptor -> containingDeclaration.additionalClasses(existingClasses + typeParameters.map {
-        it.fqNameOrNull()?.asString() ?: return emptySet()
-    })
-    else ->
-        existingClasses
-}
-
-private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
-    return when (this) {
-        is ClassConstructorDescriptor -> valueParameters.asSequence().map(ValueParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
-        is ClassDescriptor -> if (isInline) unsubstitutedPrimaryConstructor?.collectAllTypes().orEmpty() else {
-            emptySequence()
-        } + declaredTypeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes) + sequenceOf(fqNameOrNull())
-        is CallableDescriptor -> {
-            val returnType = returnType ?: return sequenceOf(null)
-            returnType.collectAllTypes() + explicitParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes)
-        }
-        is TypeParameterDescriptor -> {
-            val upperBounds = upperBounds
-            if (upperBounds.isEmpty()) sequenceOf(fqNameOrNull())
-            else upperBounds.asSequence().flatMap(KotlinType::collectAllTypes)
-        }
-        else -> emptySequence()
-    }
-}
-
-private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName) + arguments.asSequence()
-    .map(TypeProjection::getType)
-    .flatMap(KotlinType::collectAllTypes)
-
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
     ?.mustHaveValOrVar() ?: false
 
 val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()
-
-private fun FqName.canFindClassInModule(project: Project, scope: GlobalSearchScope, existedClasses: Set<String>): Boolean {
-    val name = asString()
-    return name in existedClasses || KotlinFullClassNameIndex.getInstance()[name, project, scope].isNotEmpty()
-}
