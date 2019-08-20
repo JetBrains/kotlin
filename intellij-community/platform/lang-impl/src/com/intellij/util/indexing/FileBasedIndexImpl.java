@@ -1377,10 +1377,12 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
                               EditorHighlighterCache.getEditorHighlighterForCachesBuilding(document));
           }
 
+          markFileIndexed(vFile);
           try {
             getIndex(requestedIndexId).update(inputId, newFc).compute();
           }
           finally {
+            unmarkBeingIndexed();
             cleanFileContent(newFc, dominantContentFile);
           }
         }
@@ -1697,8 +1699,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     final UpdatableIndex<?, ?, FileContent> index = getIndex(indexId);
     assert index != null;
 
-    if (ourIndexedFile.get() != null) throw new AssertionError("Reentrant indexing");
-    ourIndexedFile.set(file);
+    markFileIndexed(file);
     boolean updateCalculated = false;
     try {
       // important: no hard referencing currentFC to avoid OOME, the methods introduced for this purpose!
@@ -1717,9 +1718,18 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       throw exception;
     }
     finally {
-      ourIndexedFile.remove();
+      unmarkBeingIndexed();
     }
     return true;
+  }
+
+  private static void markFileIndexed(@Nullable VirtualFile file) {
+    if (ourIndexedFile.get() != null) throw new AssertionError("Reentrant indexing");
+    ourIndexedFile.set(file);
+  }
+
+  private static void unmarkBeingIndexed() {
+    ourIndexedFile.remove();
   }
 
   @Override
