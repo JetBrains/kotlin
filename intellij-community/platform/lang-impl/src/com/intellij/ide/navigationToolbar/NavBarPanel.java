@@ -232,7 +232,8 @@ public class NavBarPanel extends JPanel implements DataProvider, PopupOwner, Dis
   }
 
   public void enter() {
-    navigateInsideBar(myModel.getSelectedValue());
+    int index = myModel.getSelectedIndex();
+    if (index != -1) ctrlClick(index);
   }
 
   public void moveHome() {
