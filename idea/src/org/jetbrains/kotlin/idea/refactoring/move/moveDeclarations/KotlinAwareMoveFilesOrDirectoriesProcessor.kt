@@ -29,7 +29,8 @@ class KotlinAwareMoveFilesOrDirectoriesProcessor @JvmOverloads constructor(
     searchInComments: Boolean,
     searchInNonJavaFiles: Boolean,
     moveCallback: MoveCallback?,
-    prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE
+    prepareSuccessfulCallback: Runnable = EmptyRunnable.INSTANCE,
+    private val throwOnConflicts: Boolean = false
 ) : MoveFilesOrDirectoriesProcessor(
     project,
     elementsToMove.toTypedArray(),
@@ -56,6 +57,11 @@ class KotlinAwareMoveFilesOrDirectoriesProcessor @JvmOverloads constructor(
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         val (conflicts, usages) = MoveToKotlinFileProcessor.preprocessConflictUsages(refUsages)
         return showConflicts(conflicts, usages)
+    }
+
+    override fun showConflicts(conflicts: MultiMap<PsiElement, String>, usages: Array<out UsageInfo>?): Boolean {
+        if (throwOnConflicts && !conflicts.isEmpty) throw RefactoringConflictsFoundException()
+        return super.showConflicts(conflicts, usages)
     }
 
     private fun markPsiFiles(mark: PsiFile.() -> Unit) {

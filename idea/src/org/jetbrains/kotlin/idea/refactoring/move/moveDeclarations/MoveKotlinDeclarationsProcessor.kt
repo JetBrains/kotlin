@@ -131,7 +131,8 @@ private object ElementHashingStrategy : TObjectHashingStrategy<PsiElement> {
 
 class MoveKotlinDeclarationsProcessor(
     val descriptor: MoveDeclarationsDescriptor,
-    val mover: Mover = Mover.Default
+    val mover: Mover = Mover.Default,
+    private val throwOnConflicts: Boolean = false
 ) : BaseRefactoringProcessor(descriptor.project) {
     companion object {
         private const val REFACTORING_NAME = "Move declarations"
@@ -267,6 +268,11 @@ class MoveKotlinDeclarationsProcessor(
 
     override fun preprocessUsages(refUsages: Ref<Array<UsageInfo>>): Boolean {
         return showConflicts(conflicts, refUsages.get())
+    }
+
+    override fun showConflicts(conflicts: MultiMap<PsiElement, String>, usages: Array<out UsageInfo>?): Boolean {
+        if (throwOnConflicts && !conflicts.isEmpty) throw RefactoringConflictsFoundException()
+        return super.showConflicts(conflicts, usages)
     }
 
     override fun performRefactoring(usages: Array<out UsageInfo>) = doPerformRefactoring(usages.toList())

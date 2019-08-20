@@ -7,13 +7,18 @@ package org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
 
 import com.intellij.openapi.actionSystem.DataContext
 import com.intellij.openapi.actionSystem.LangDataKeys
+import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.refactoring.move.MoveCallback
+import com.intellij.refactoring.move.MoveHandler
 import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesHandler
+import com.intellij.refactoring.move.moveFilesOrDirectories.MoveFilesOrDirectoriesUtil
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
-import org.jetbrains.kotlin.idea.refactoring.move.moveFilesOrDirectories
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesDialog
+import org.jetbrains.kotlin.idea.refactoring.move.moveDeclarations.ui.KotlinAwareMoveFilesOrDirectoriesModel
+import org.jetbrains.kotlin.idea.util.application.executeCommand
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -43,12 +48,30 @@ class KotlinMoveFilesOrDirectoriesHandler : MoveFilesOrDirectoriesHandler() {
     override fun doMove(project: Project, elements: Array<out PsiElement>, targetContainer: PsiElement?, callback: MoveCallback?) {
         if (!(targetContainer == null || targetContainer is PsiDirectory || targetContainer is PsiDirectoryContainer)) return
 
-        moveFilesOrDirectories(
-            project,
-            adjustForMove(project, elements, targetContainer) ?: return,
-            targetContainer,
-            callback?.let { MoveCallback { it.refactoringCompleted() } }
-        )
+        val adjustedElementsToMove = adjustForMove(project, elements, targetContainer)?.toList() ?: return
+
+        val targetDirectory = MoveFilesOrDirectoriesUtil.resolveToDirectory(project, targetContainer)
+        if (targetContainer != null && targetDirectory == null) return
+
+        val initialTargetDirectory = MoveFilesOrDirectoriesUtil.getInitialTargetDirectory(targetDirectory, elements)
+
+        if (ApplicationManager.getApplication().isUnitTestMode && initialTargetDirectory !== null) {
+            KotlinAwareMoveFilesOrDirectoriesModel(
+                project,
+                adjustedElementsToMove,
+                initialTargetDirectory.virtualFile.presentableUrl,
+                updatePackageDirective = true,
+                searchReferences = true,
+                moveCallback = callback
+            ).run {
+                project.executeCommand(MoveHandler.REFACTORING_NAME) {
+                    computeModelResult().run()
+                }
+            }
+            return
+        }
+
+        KotlinAwareMoveFilesOrDirectoriesDialog(project, initialTargetDirectory, elements, callback).show()
     }
 
     override fun tryToMove(
