@@ -113,7 +113,7 @@ abstract class XmlElementStorage protected constructor(val fileSpec: String,
   abstract class XmlElementStorageSaveSession<T : XmlElementStorage>(private val originalStates: StateMap, protected val storage: T) : SaveSessionBase() {
     private var copiedStates: MutableMap<String, Any>? = null
 
-    private var newLiveStates: MutableMap<String, Element>? = THashMap<String, Element>()
+    private var newLiveStates: MutableMap<String, Element>? = THashMap()
 
     protected open fun isSaveAllowed() = !storage.checkIsSavingDisabled()
 
@@ -253,7 +253,7 @@ internal class XmlDataWriter(private val rootElementName: String?,
       }
 
       if (elements.isEmpty()) {
-        // see note in save() why elements here can be an empty list
+        // see note in the save() why elements here can be an empty list
         writer.append(" />")
         return
       }
@@ -298,7 +298,7 @@ private fun save(states: StateMap, newLiveStates: Map<String, Element>): Mutable
     val elementAttributes = element.attributes
     var nameAttribute = element.getAttribute(FileStorageCoreUtil.NAME)
     @Suppress("SuspiciousEqualsCombination")
-    if (nameAttribute != null && nameAttribute === elementAttributes.get(0) && componentName == nameAttribute.value) {
+    if (nameAttribute != null && nameAttribute === elementAttributes[0] && componentName == nameAttribute.value) {
       // all is OK
     }
     else {
@@ -308,7 +308,7 @@ private fun save(states: StateMap, newLiveStates: Map<String, Element>): Mutable
       }
       else {
         nameAttribute.value = componentName
-        if (elementAttributes.get(0) != nameAttribute) {
+        if (elementAttributes[0] != nameAttribute) {
           elementAttributes.remove(nameAttribute)
           elementAttributes.add(0, nameAttribute)
         }
@@ -337,7 +337,7 @@ internal fun Element.normalizeRootName(): Element {
   }
   else {
     if (parent != null) {
-      LOG.warn("State element must not have parent: ${JDOMUtil.writeElement(this)}")
+      LOG.warn("State element must not have a parent: ${JDOMUtil.writeElement(this)}")
       detach()
     }
     name = FileStorageCoreUtil.COMPONENT
@@ -394,7 +394,7 @@ interface DataWriterFilter {
 }
 
 interface DataWriter {
-  // LineSeparator cannot be used because custom (with indent) line separator can be used
+  // LineSeparator cannot be used because custom (with an indent) line separator can be used
   fun write(output: OutputStream, lineSeparator: String = LineSeparator.LF.separatorString, filter: DataWriterFilter? = null)
 
   fun hasData(filter: DataWriterFilter): Boolean
