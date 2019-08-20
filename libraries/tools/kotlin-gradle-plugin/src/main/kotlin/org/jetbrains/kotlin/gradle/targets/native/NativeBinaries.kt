@@ -58,7 +58,11 @@ sealed class NativeBinary(
     }
 
     /** Additional arguments passed to the Kotlin/Native compiler. */
-    var freeCompilerArgs: MutableList<String> = mutableListOf()
+    var freeCompilerArgs: List<String>
+        get() = linkTask.kotlinOptions.freeCompilerArgs
+        set(value) {
+            linkTask.kotlinOptions.freeCompilerArgs = value
+        }
 
     // Link task access.
     val linkTaskName: String

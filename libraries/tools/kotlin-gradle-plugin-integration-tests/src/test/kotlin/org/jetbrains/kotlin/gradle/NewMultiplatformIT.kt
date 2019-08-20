@@ -911,7 +911,6 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         // Remove outputs and check that they are rebuilt.
         assertTrue(projectDir.resolve(headerPaths[0]).delete())
-        assertTrue(projectDir.resolve(klibPath).delete())
         if (HostManager.hostIsMac) {
             assertTrue(projectDir.resolve(frameworkPaths[0]).deleteRecursively())
         }
@@ -919,8 +918,8 @@ class NewMultiplatformIT : BaseGradleIT() {
         build("assemble") {
             assertSuccessful()
             assertTasksUpToDate(linkTasks.drop(1))
+            assertTasksUpToDate(klibTask)
             assertTasksExecuted(linkTasks[0])
-            assertTasksExecuted(klibTask)
 
             if (HostManager.hostIsMac) {
                 assertTasksUpToDate(frameworkTasks.drop(1))
@@ -939,6 +938,16 @@ class NewMultiplatformIT : BaseGradleIT() {
         projectName: String,
         gradleVersionRequired: GradleVersionRequired = gradleVersion
     ) = with(transformProjectWithPluginsDsl(projectName, gradleVersionRequired, "new-mpp-native-binaries")) {
+
+        fun CompiledProject.checkCommandLineFor(vararg taskPaths: String, check: (String) -> Unit) = taskPaths.forEach { taskPath ->
+            val commandLine = output.lineSequence().dropWhile {
+                !it.contains("Executing actions for task '$taskPath'")
+            }.first {
+                it.contains("Run tool: konanc")
+            }
+            check(commandLine)
+        }
+
         val hostSuffix = nativeHostTargetName.capitalize()
         val binaries = mutableListOf(
             "debugExecutable" to "native-binary",
@@ -973,10 +982,14 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         val binariesTasks = arrayOf("${nativeHostTargetName}MainBinaries", "${nativeHostTargetName}TestBinaries")
 
+        val compileTask = "compileKotlin$hostSuffix"
+        val compileTestTask = "compileTestKotlin$hostSuffix"
+
         // Check that all link and run tasks are generated.
         build(*binariesTasks) {
             assertSuccessful()
             assertTasksExecuted(linkTasks.map { ":$it" })
+            assertTasksExecuted(":$compileTask", ":$compileTestTask")
             outputFiles.forEach {
                 assertFileExists(it)
             }
@@ -997,6 +1010,14 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertSuccessful()
         }
 
+        // Check that kotlinOptions work fine for a compilation.
+        build(compileTask) {
+            assertSuccessful()
+            checkCommandLineFor(":$compileTask") {
+                assertTrue(it.contains("-verbose"))
+            }
+        }
+
         // Check that run tasks work fine and an entry point can be specified.
         build("runDebugExecutable$hostSuffix") {
             assertSuccessful()
@@ -1010,6 +1031,13 @@ class NewMultiplatformIT : BaseGradleIT() {
 
         build("runTest2ReleaseExecutable$hostSuffix") {
             assertSuccessful()
+            assertTasksExecuted(":$compileTestTask")
+            checkCommandLineFor(":linkTest2ReleaseExecutable$hostSuffix") {
+                assertTrue(it.contains("-tr"))
+                assertTrue(it.contains("-Xtime"))
+                // Check that kotlinOptions of the compilation don't affect the binary.
+                assertFalse(it.contains("-verbose"))
+            }
             assertTrue(output.contains("tests.foo"))
         }
 
@@ -1019,13 +1047,6 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertTrue(output.contains("tests.foo"))
         }
 
-        fun CompiledProject.checkFrameworkCompilationCommandLine(check: (String) -> Unit) {
-            output.lineSequence().filter {
-                it.contains("Run tool: konanc") && it.contains("-p framework")
-            }.toList().also {
-                assertTrue(it.isNotEmpty())
-            }.forEach(check)
-        }
         if (HostManager.hostIsMac) {
 
             // Check dependency exporting and bitcode embedding in frameworks.
@@ -1036,7 +1057,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/releaseFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default release frameworks have bitcode embedded.
-                checkFrameworkCompilationCommandLine {
+                checkCommandLineFor(":linkReleaseFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode"))
                     assertTrue(it.contains("-opt"))
                 }
@@ -1049,7 +1070,7 @@ class NewMultiplatformIT : BaseGradleIT() {
                 fileInWorkingDir("build/bin/ios/debugFramework/native_binary.framework/Headers/native_binary.h")
                     .readText().contains("+ (int32_t)exported")
                 // Check that by default debug frameworks have bitcode marker embedded.
-                checkFrameworkCompilationCommandLine {
+                checkCommandLineFor(":linkDebugFrameworkIos") {
                     assertTrue(it.contains("-Xembed-bitcode-marker"))
                     assertTrue(it.contains("-g"))
                 }
@@ -1058,7 +1079,7 @@ class NewMultiplatformIT : BaseGradleIT() {
             // Check manual disabling bitcode embedding, custom command line args and building a static framework.
             build("linkCustomReleaseFrameworkIos") {
                 assertSuccessful()
-                checkFrameworkCompilationCommandLine {
+                checkCommandLineFor(":linkCustomReleaseFrameworkIos") {
                     assertTrue(it.contains("-linker-option -L."))
                     assertTrue(it.contains("-Xtime"))
                     assertTrue(it.contains("-Xstatic-framework"))
@@ -1072,17 +1093,20 @@ class NewMultiplatformIT : BaseGradleIT() {
                 assertSuccessful()
                 assertFileExists("build/bin/iosSim/releaseFramework/native_binary.framework")
                 assertFileExists("build/bin/iosSim/debugFramework/native_binary.framework")
-                checkFrameworkCompilationCommandLine {
+                checkCommandLineFor(":linkReleaseFrameworkIosSim", ":linkDebugFrameworkIosSim") {
                     assertFalse(it.contains("-Xembed-bitcode"))
                     assertFalse(it.contains("-Xembed-bitcode-marker"))
                 }
             }
 
-
             // Check that plugin doesn't allow exporting dependencies not added in the API configuration.
             val buildFile = listOf("build.gradle", "build.gradle.kts").map { projectDir.resolve(it) }.single { it.exists() }
             buildFile.modify {
                 it.replace("api(project(\":exported\"))", "")
+            }
+            projectDir.resolve("src/commonMain/kotlin/PackageMain.kt").modify {
+                // Remove usages of the ":exported" dependency to be able to compile the sources.
+                it.replace("import com.example.exported", "").replace("val exp = exported()", "val exp = 42")
             }
             build("linkReleaseFrameworkIos") {
                 assertFailed()

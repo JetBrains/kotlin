@@ -27,7 +27,7 @@ kotlin {
     val windows = mingwX64("mingw64")
 
     configure(listOf(macos, linux, windows)) {
-
+        compilations["main"].kotlinOptions.verbose = true
         binaries {
 
             executable()                       // Executable with default name.
@@ -45,6 +45,9 @@ kotlin {
             executable("test2") {
                 compilation = compilations["test"]
                 freeCompilerArgs.add("-tr")
+                linkTask.kotlinOptions {
+                    freeCompilerArgs += "-Xtime"
+                }
             }
 
             sharedLib(listOf(RELEASE))
