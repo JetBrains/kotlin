@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.psi.psiUtil.getQualifiedElementSelector
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.resolve.BindingContext
-import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.BindingTrace
 import org.jetbrains.kotlin.resolve.CompileTimeConstantUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getEnclosingFunctionDescriptor
@@ -879,12 +878,14 @@ class ControlFlowProcessor(
                 if (loop == null) {
                     trace.report(BREAK_OR_CONTINUE_OUTSIDE_A_LOOP.on(expression))
                 } else {
-                    val whenExpression = PsiTreeUtil.getParentOfType(
-                        expression, KtWhenExpression::class.java, true,
-                        KtLoopExpression::class.java
-                    )
-                    if (whenExpression != null) {
-                        trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression))
+                    if (true != languageVersionSettings?.supportsFeature(LanguageFeature.AllowBreakAndContinueInsideWhen)) {
+                        val whenExpression = PsiTreeUtil.getParentOfType(
+                            expression, KtWhenExpression::class.java, true,
+                            KtLoopExpression::class.java
+                        )
+                        if (whenExpression != null) {
+                            trace.report(BREAK_OR_CONTINUE_IN_WHEN.on(expression))
+                        }
                     }
                 }
             }

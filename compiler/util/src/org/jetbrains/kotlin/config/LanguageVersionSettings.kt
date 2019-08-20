@@ -106,6 +106,7 @@ enum class LanguageFeature(
     ProhibitGenericArrayClassLiteral(KOTLIN_1_4),
     NonParenthesizedAnnotationsOnFunctionalTypes(KOTLIN_1_4),
     UseGetterNameForPropertyAnnotationsMethodOnJvm(KOTLIN_1_4),
+    AllowBreakAndContinueInsideWhen(KOTLIN_1_4),
 
     ProperVisibilityForCompanionObjectInstanceField(sinceVersion = null, kind = BUG_FIX),
     // Temporarily disabled, see KT-27084/KT-22379

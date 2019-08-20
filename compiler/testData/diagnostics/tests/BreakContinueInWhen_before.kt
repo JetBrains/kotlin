@@ -1,3 +1,5 @@
+// !LANGUAGE: -AllowBreakAndContinueInsideWhen
+
 fun breakContinueInWhen(i: Int) {
     for (y in 0..10) {
         when(i) {
