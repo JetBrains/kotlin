@@ -244,7 +244,8 @@ sealed class EmitOrCallNode {
                         name = param.name.asString(),
                         type = param.type,
                         descriptor = param,
-                        isChildren = param.hasChildrenAnnotation() || it.valueParameters.size-1 == index
+                        isChildren = param.hasChildrenAnnotation() ||
+                                it.valueParameters.size - 1 == index
                     )
                 )
             }
@@ -357,6 +358,12 @@ class ResolvedKtxElementCall(
     val emitCompoundUpperBoundTypes: Set<KotlinType>,
     val infixOrCall: ResolvedCall<*>?,
     val attributeInfos: Map<String, AttributeInfo>
+)
+
+class ResolvedRestartCalls(
+    val composer: ResolvedCall<*>,
+    val startRestartGroup: ResolvedCall<*>,
+    val endRestartGroup: ResolvedCall<*>
 )
 
 fun ComposerCallInfo?.consumedAttributes(): List<AttributeNode> {

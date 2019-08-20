@@ -16,6 +16,7 @@
 
 package androidx.compose.plugins.kotlin
 
+import androidx.compose.plugins.kotlin.analysis.ComposeWritableSlices
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -100,6 +101,7 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
         // Ensure we are in a composable context
         var walker: PsiElement? = element
         var isComposableContext = false
+        var composableDescriptor: SimpleFunctionDescriptor? = null
         val facade = CallResolutionInterceptorExtension.facade.get().peek()
         while (walker != null) {
             val descriptor = try {
@@ -114,6 +116,7 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
                 )
                 isComposableContext =
                         composability != ComposableAnnotationChecker.Composability.NOT_COMPOSABLE
+                if (isComposableContext) composableDescriptor = descriptor
 
                 // If the descriptor is for an inlined lambda, infer composability from the
                 // outer scope
@@ -231,6 +234,43 @@ class ComposeCallResolutionInterceptorExtension : CallResolutionInterceptorExten
                     SourceElement.NO_SOURCE
                 )
             )
+        }
+
+        // Once we know we have a valid binding to a composable function call see if the scope need
+        // the startRestartGroup and endRestartGroup information
+        val trace = temporaryTraceForKtxCall.trace
+        if (trace.get(
+                ComposeWritableSlices.RESTART_CALLS_NEEDED,
+                composableDescriptor!!
+            ) != false) {
+            val recordingContext = TemporaryTraceAndCache.create(
+                context,
+                "trace to resolve ktx call", element
+            )
+            val recordingTrace = recordingContext.trace
+            recordingTrace.record(
+                ComposeWritableSlices.RESTART_CALLS_NEEDED,
+                composableDescriptor,
+                false
+            )
+
+            val startRestartGroup = ktxCallResolver.resolveStartRestartGroup(
+                call,
+                temporaryForKtxCall
+            )
+            val endRestartGroup = ktxCallResolver.resolveEndRestartGroup(call, temporaryForKtxCall)
+            val composerCall = ktxCallResolver.resolveComposerCall()
+            if (startRestartGroup != null && endRestartGroup != null && composerCall != null) {
+                recordingTrace.record(
+                    ComposeWritableSlices.RESTART_CALLS, composableDescriptor,
+                    ResolvedRestartCalls(
+                        startRestartGroup = startRestartGroup,
+                        endRestartGroup = endRestartGroup,
+                        composer = composerCall
+                    )
+                )
+            }
+            recordingTrace.commit()
         }
 
         descriptor.initialize(

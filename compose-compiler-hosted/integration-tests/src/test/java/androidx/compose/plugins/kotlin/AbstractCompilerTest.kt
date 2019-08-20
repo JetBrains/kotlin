@@ -128,6 +128,27 @@ abstract class AbstractCompilerTest : TestCase() {
         }
     }
 
+    private fun reportProblem(e: Throwable) {
+        e.printStackTrace()
+        System.err.println("Generating instructions as text...")
+        try {
+            System.err.println(classFileFactory?.createText()
+                ?: "Cannot generate text: exception was thrown during generation")
+        } catch (e1: Throwable) {
+            System.err.println(
+                "Exception thrown while trying to generate text, " +
+                        "the actual exception follows:"
+            )
+            e1.printStackTrace()
+            System.err.println(
+                "------------------------------------------------------------------" +
+                        "-----------"
+            )
+        }
+
+        System.err.println("See exceptions above")
+    }
+
     protected fun generateClassesInFile(reportProblems: Boolean = true): ClassFileFactory {
         return classFileFactory ?: run {
             try {
@@ -140,29 +161,13 @@ abstract class AbstractCompilerTest : TestCase() {
                 generationState.factory.also { classFileFactory = it }
             } catch (e: TestsCompilerError) {
                 if (reportProblems) {
-                    e.original.printStackTrace()
-                    System.err.println("Generating instructions as text...")
-                    try {
-                        System.err.println(classFileFactory?.createText()
-                            ?: "Cannot generate text: exception was thrown during generation")
-                    } catch (e1: Throwable) {
-                        System.err.println(
-                            "Exception thrown while trying to generate text, " +
-                                    "the actual exception follows:"
-                        )
-                        e1.printStackTrace()
-                        System.err.println(
-                            "------------------------------------------------------------------" +
-                                    "-----------"
-                        )
-                    }
-
-                    System.err.println("See exceptions above")
+                    reportProblem(e.original)
                 } else {
                     System.err.println("Compilation failure")
                 }
                 throw e
             } catch (e: Throwable) {
+                if (reportProblems) reportProblem(e)
                 throw TestsCompilerError(e)
             }
         }
