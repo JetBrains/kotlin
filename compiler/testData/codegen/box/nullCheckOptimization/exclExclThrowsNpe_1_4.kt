@@ -1,6 +1,5 @@
 // !API_VERSION: LATEST
 // TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
 
 fun box(): String {
     val s: String? = null
