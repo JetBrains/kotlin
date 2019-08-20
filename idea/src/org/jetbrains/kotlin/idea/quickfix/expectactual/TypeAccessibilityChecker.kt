@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.idea.quickfix.expectactual
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -33,5 +34,9 @@ interface TypeAccessibilityChecker {
             targetModule: Module,
             existingFqNames: Collection<String> = emptyList()
         ): TypeAccessibilityChecker = TypeAccessibilityCheckerImpl(project, targetModule, existingFqNames)
+
+        @get:TestOnly
+        @set:TestOnly
+        var testLog: StringBuilder? = null
     }
 }

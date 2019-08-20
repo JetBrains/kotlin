@@ -178,18 +178,23 @@ private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(element
     else findAndApplyExistingClasses(newExistingClasses)
 }
 
-private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean =
-    declarationsWithNonExistentClasses.isEmpty() || showOkNoDialog(
+private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean {
+    if (declarationsWithNonExistentClasses.isEmpty()) return true
+    val message = StringUtil.escapeXmlEntities(
+        declarationsWithNonExistentClasses.joinToString(
+            prefix = "These declarations cannot be transformed:\n",
+            separator = "\n",
+            transform = ::getExpressionShortText
+        )
+    )
+
+    TypeAccessibilityChecker.testLog?.append("$message\n")
+    return ApplicationManager.getApplication().isUnitTestMode || showOkNoDialog(
         "Unknown types",
-        StringUtil.escapeXmlEntities(
-            declarationsWithNonExistentClasses.joinToString(
-                prefix = "These declarations cannot be transformed:\n",
-                separator = "\n",
-                transform = ::getExpressionShortText
-            )
-        ),
+        message,
         project
     )
+}
 
 private fun showUnknownTypesError(element: KtNamedDeclaration) {
     element.findExistingEditor()?.let { editor ->

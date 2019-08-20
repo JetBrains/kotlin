@@ -14,6 +14,7 @@ import junit.framework.ComparisonFailure
 import junit.framework.TestCase
 import org.jetbrains.kotlin.idea.inspections.findExistingEditor
 import org.jetbrains.kotlin.idea.multiplatform.setupMppProjectFromDirStructure
+import org.jetbrains.kotlin.idea.quickfix.expectactual.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.stubs.AbstractMultiModuleTest
 import org.jetbrains.kotlin.idea.test.DirectiveBasedActionUtils
 import org.jetbrains.kotlin.idea.test.PluginTestCaseBase
@@ -54,10 +55,16 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                 expectedErrorMessage = InTextDirectivesUtils.findListWithPrefixes(actionFileText, "// SHOULD_FAIL_WITH: ")
                     .joinToString(separator = "\n")
 
-                AbstractQuickFixMultiFileTest.doAction(
-                    text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
-                    InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
-                )
+                TypeAccessibilityChecker.testLog = StringBuilder()
+                val log = try {
+                    AbstractQuickFixMultiFileTest.doAction(
+                        text, file, editor, actionShouldBeAvailable, actionFileName, this::availableActions, this::doHighlighting,
+                        InTextDirectivesUtils.isDirectiveDefined(actionFile.text, "// SHOULD_BE_AVAILABLE_AFTER_EXECUTION")
+                    )
+                    TypeAccessibilityChecker.testLog.toString()
+                } finally {
+                    TypeAccessibilityChecker.testLog = null
+                }
 
                 if (actionFile is KtFile) {
                     DirectiveBasedActionUtils.checkForUnexpectedErrors(actionFile)
@@ -66,7 +73,15 @@ abstract class AbstractQuickFixMultiModuleTest : AbstractMultiModuleTest(), Quic
                 if (actionShouldBeAvailable) {
                     compareToExpected(dirPath)
                 }
+
                 UsefulTestCase.assertEmpty(expectedErrorMessage)
+                val logFile = File("${dirPath}log.log")
+                if (log.isNotEmpty()) {
+                    KotlinTestUtils.assertEqualsToFile(logFile, log)
+                } else {
+                    TestCase.assertFalse(logFile.exists())
+                }
+
             } catch (e: ComparisonFailure) {
                 throw e
             } catch (e: AssertionError) {
