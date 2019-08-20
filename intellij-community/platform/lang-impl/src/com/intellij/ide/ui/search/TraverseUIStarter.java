@@ -6,10 +6,7 @@ import com.intellij.ide.fileTemplates.FileTemplate;
 import com.intellij.ide.fileTemplates.FileTemplateManager;
 import com.intellij.ide.fileTemplates.impl.AllFileTemplatesConfigurable;
 import com.intellij.ide.fileTemplates.impl.BundledFileTemplate;
-import com.intellij.ide.plugins.AvailablePluginsManagerMain;
-import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
-import com.intellij.ide.plugins.PluginManagerConfigurableProxy;
+import com.intellij.ide.plugins.*;
 import com.intellij.openapi.actionSystem.ActionGroup;
 import com.intellij.openapi.actionSystem.ActionManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -286,7 +283,7 @@ public class TraverseUIStarter implements ApplicationStarter {
     final ActionManager actionManager = ActionManager.getInstance();
     final PluginId id = actionToPluginId.get(actionManager.getId(rootAction));
     if (id != null) {
-      final IdeaPluginDescriptor plugin = PluginManager.getPlugin(id);
+      final IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(id);
       if (plugin != null && !plugin.getName().equals("IDEA CORE")) {
         return PathUtil.getFileName(plugin.getPath().getPath());
       }

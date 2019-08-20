@@ -2,7 +2,6 @@
 package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.openapi.application.ApplicationInfo;
 import com.intellij.openapi.components.*;
@@ -67,7 +66,7 @@ class ResourceVersions implements PersistentStateComponent<ResourceVersions.Stat
     public void forgetDisabledPlugins() {
       Map<String, String> newMapping = new HashMap<>();
       for (String pluginIdString : myPluginIdToVersion.keySet()) {
-        IdeaPluginDescriptor plugin = PluginManager.getPlugin(PluginId.findId(pluginIdString));
+        IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(PluginId.findId(pluginIdString));
         if (plugin != null && plugin.isEnabled()) {
           newMapping.put(pluginIdString, myPluginIdToVersion.get(pluginIdString));
         }

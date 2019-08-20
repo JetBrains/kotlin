@@ -2,7 +2,6 @@
 package com.intellij.ide.extensionResources;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
 import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.RootType;
 import com.intellij.ide.scratch.ScratchFileService;
@@ -160,7 +159,7 @@ public class ExtensionsRootType extends RootType {
       return PlatformUtils.getPlatformPrefix();
     }
 
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(ownerPluginId);
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(ownerPluginId);
     if (plugin != null) {
       return plugin.getName();
     }
@@ -192,7 +191,7 @@ public class ExtensionsRootType extends RootType {
   @NotNull
   private static List<URL> getBundledResourceUrls(@NotNull PluginId pluginId, @NotNull String path) throws IOException {
     String resourcesPath = EXTENSIONS_PATH + "/" + path;
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
     if (plugin == null) return ContainerUtil.emptyList();
     ClassLoader pluginClassLoader = plugin.getPluginClassLoader();
     final Enumeration<URL> resources = pluginClassLoader.getResources(resourcesPath);
@@ -202,7 +201,7 @@ public class ExtensionsRootType extends RootType {
     final Set<URL> urls = new LinkedHashSet<>(ContainerUtil.toList(resources));
     // exclude parent classloader resources from list
     final List<ClassLoader> dependentPluginClassLoaders = StreamEx.of(plugin.getDependentPluginIds())
-      .map(PluginManager::getPlugin)
+      .map(id -> PluginManagerCore.getPlugin(id))
       .nonNull()
       .map(PluginDescriptor::getPluginClassLoader)
       .without(pluginClassLoader)
@@ -281,7 +280,7 @@ public class ExtensionsRootType extends RootType {
   private void extractBundledExtensionsIfNeeded(@NotNull PluginId pluginId) throws IOException {
     if (!ApplicationManager.getApplication().isDispatchThread()) return;
 
-    IdeaPluginDescriptor plugin = PluginManager.getPlugin(pluginId);
+    IdeaPluginDescriptor plugin = PluginManagerCore.getPlugin(pluginId);
     if (plugin == null || !ResourceVersions.getInstance().shouldUpdateResourcesOf(plugin)) return;
 
     extractBundledResources(pluginId, "");

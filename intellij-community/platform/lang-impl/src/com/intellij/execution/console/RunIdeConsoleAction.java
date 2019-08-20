@@ -11,7 +11,7 @@ import com.intellij.execution.ui.ConsoleViewContentType;
 import com.intellij.execution.ui.RunContentDescriptor;
 import com.intellij.execution.ui.actions.CloseAction;
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
-import com.intellij.ide.plugins.PluginManager;
+import com.intellij.ide.plugins.PluginManagerCore;
 import com.intellij.ide.scratch.ScratchFileService;
 import com.intellij.ide.script.IdeConsoleScriptBindings;
 import com.intellij.ide.script.IdeScriptEngine;
@@ -100,7 +100,7 @@ public class RunIdeConsoleAction extends DumbAwareAction {
       if (StringUtil.toLowerCase(lang).equals(lang)) lang = StringUtil.capitalize(lang);
       if (StringUtil.toLowerCase(eng).equals(eng)) eng = StringUtil.capitalize(eng);
       String name = lang + " (" + eng + ")";
-      IdeaPluginDescriptor plugin = engineInfo.pluginId == null ? null : PluginManager.getPlugin(engineInfo.pluginId);
+      IdeaPluginDescriptor plugin = engineInfo.pluginId == null ? null : PluginManagerCore.getPlugin(engineInfo.pluginId);
       String description = lang + " (engine: " + eng +
                            (plugin == null ? "" : ", plugin: " + plugin.getName()) + ")";
       return new DumbAwareAction(name, description, null) {
