@@ -3,13 +3,18 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.perf
+package org.jetbrains.kotlin.idea.testFramework
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.editor.Document
+import com.intellij.openapi.fileEditor.FileDocumentManager
+import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.project.ex.ProjectManagerEx
 import com.intellij.psi.PsiDocumentManager
 import com.intellij.psi.impl.PsiDocumentManagerBase
 import com.intellij.testFramework.EdtTestUtil
+import com.intellij.testFramework.runInEdtAndWait
 import com.intellij.util.ThrowableRunnable
 import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.idea.parameterInfo.HintType
@@ -33,14 +38,16 @@ fun commitDocument(project: Project, document: Document) {
     })
 }
 
+fun saveDocument(document: Document) {
+    val fileDocumentManager = FileDocumentManager.getInstance()
+
+    runInEdtAndWait {
+        fileDocumentManager.saveDocument(document)
+    }
+}
+
 fun enableHints(enable: Boolean) =
     HintType.values().forEach { it.option.set(enable) }
-
-fun runInEdtAndWait(block: () -> Unit) {
-    EdtTestUtil.runInEdtAndWait(ThrowableRunnable {
-        block()
-    })
-}
 
 fun dispatchAllInvocationEvents() {
     runInEdtAndWait {
@@ -55,5 +62,9 @@ fun closeProject(project: Project) {
 }
 
 fun waitForAllEditorsFinallyLoaded(project: Project) {
+ // 182 does not have this public api
+}
+
+fun replaceWithCustomHighlighter(parentDisposable: Disposable, fromImplementationClass: String, toImplementationClass: String) {
  // 182 does not have this public api
 }

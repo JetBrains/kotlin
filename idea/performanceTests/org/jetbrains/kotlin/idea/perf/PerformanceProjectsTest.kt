@@ -6,21 +6,16 @@
 package org.jetbrains.kotlin.idea.perf
 
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
-import com.intellij.lang.LanguageAnnotators
-import com.intellij.lang.LanguageExtensionPoint
 import com.intellij.lang.annotation.AnnotationHolder
-import com.intellij.lang.annotation.Annotator
 import com.intellij.openapi.editor.EditorFactory
-import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
-import com.intellij.testFramework.PlatformTestUtil
-import com.intellij.testFramework.fixtures.EditorTestFixture
 import com.intellij.testFramework.propertyBased.MadTestingUtil
 import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
+import org.jetbrains.kotlin.idea.testFramework.Fixture
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertNotEquals
 
@@ -244,34 +239,24 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     }
 
     private fun replaceWithCustomHighlighter() {
-        val pointName = ExtensionPointName.create<LanguageExtensionPoint<Annotator>>(LanguageAnnotators.EP_NAME)
-        val extensionPoint = pointName.getPoint(null)
-
-        val point = LanguageExtensionPoint<Annotator>()
-        point.language = "kotlin"
-        point.implementationClass = TestKotlinPsiChecker::class.java.name
-
-        val extensions = extensionPoint.extensions
-        val filteredExtensions =
-            extensions.filter { it.language != "kotlin" || it.implementationClass != KotlinPsiCheckerAndHighlightingUpdater::class.java.name }
-                .toList()
-        // custom highlighter is already registered if filteredExtensions has the same size as extensions
-        if (filteredExtensions.size < extensions.size) {
-            PlatformTestUtil.maskExtensions(pointName, filteredExtensions + listOf(point), testRootDisposable)
-        }
+        org.jetbrains.kotlin.idea.testFramework.replaceWithCustomHighlighter(
+            testRootDisposable,
+            KotlinPsiCheckerAndHighlightingUpdater::class.java.name,
+            TestKotlinPsiChecker::class.java.name
+        )
     }
 
     fun perfKtsFileAnalysisSetUp(
         project: Project,
         fileName: String
-    ): (TestData<FixtureEditorFile, Pair<Long, List<HighlightInfo>>>) -> Unit {
+    ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
             val fileInEditor = openFileInEditor(project, fileName)
 
             val file = fileInEditor.psiFile
             val virtualFile = file.virtualFile
             val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
-            val fixture = EditorTestFixture(project, editor, virtualFile)
+            val fixture = Fixture(project, editor, virtualFile)
 
             // Note: Kotlin scripts require dependencies to be loaded
             if (isAKotlinScriptFile(fileName)) {
@@ -279,14 +264,14 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
             }
 
             resetTimestamp()
-            it.setUpValue = FixtureEditorFile(file, editor.document, fixture)
+            it.setUpValue = fixture
         }
     }
 
-    fun perfKtsFileAnalysisTest(): (TestData<FixtureEditorFile, Pair<Long, List<HighlightInfo>>>) -> Unit {
+    fun perfKtsFileAnalysisTest(): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
-            it.value = it.setUpValue?.let { fef ->
-                Pair(System.nanoTime(), fef.fixture.doHighlighting())
+            it.value = it.setUpValue?.let { fixture ->
+                Pair(System.nanoTime(), fixture.doHighlighting())
             }
         }
     }
@@ -294,9 +279,9 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
     fun perfKtsFileAnalysisTearDown(
         extraTimingsNs: MutableList<Long>,
         project: Project
-    ): (TestData<FixtureEditorFile, Pair<Long, List<HighlightInfo>>>) -> Unit {
+    ): (TestData<Fixture, Pair<Long, List<HighlightInfo>>>) -> Unit {
         return {
-            it.setUpValue?.let { fef ->
+            it.setUpValue?.let { fixture ->
                 it.value?.let { v ->
                     assertTrue(v.second.isNotEmpty())
                     assertNotEquals(0, timer.get())
@@ -304,7 +289,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
                     extraTimingsNs.add(timer.get() - v.first)
 
                 }
-                cleanupCaches(project, fef.psiFile.virtualFile)
+                cleanupCaches(project, fixture.vFile)
             }
         }
     }

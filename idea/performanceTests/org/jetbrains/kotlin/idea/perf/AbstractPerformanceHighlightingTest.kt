@@ -10,6 +10,7 @@ import com.intellij.openapi.application.runWriteAction
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl.ensureIndexesUpToDate
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.idea.test.KotlinLightCodeInsightFixtureTestCase
+import org.jetbrains.kotlin.idea.testFramework.commitAllDocuments
 
 /**
  * inspired by @see AbstractHighlightingTest

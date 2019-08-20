@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.idea.perf
 
-import com.intellij.codeInsight.completion.CompletionType
 import com.intellij.codeInsight.daemon.*
 import com.intellij.codeInsight.daemon.impl.DaemonCodeAnalyzerImpl
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
@@ -58,7 +57,6 @@ import com.intellij.psi.search.FilenameIndex
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.xml.XmlFileNSInfoProvider
 import com.intellij.testFramework.*
-import com.intellij.testFramework.fixtures.EditorTestFixture
 import com.intellij.testFramework.fixtures.impl.CodeInsightTestFixtureImpl
 import com.intellij.util.ArrayUtilRt
 import com.intellij.util.ThrowableRunnable
@@ -75,6 +73,7 @@ import org.jetbrains.kotlin.idea.framework.KotlinSdkType
 import org.jetbrains.kotlin.idea.project.getAndCacheLanguageLevelByDependencies
 import org.jetbrains.kotlin.idea.test.ConfigLibraryUtil
 import org.jetbrains.kotlin.idea.test.invalidateLibraryCache
+import org.jetbrains.kotlin.idea.testFramework.*
 import org.jetbrains.plugins.gradle.service.project.GradleProjectOpenProcessor
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import java.io.File
@@ -319,7 +318,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         val fileInEditor = openFileInEditor(project, fileName)
         val virtualFile = fileInEditor.psiFile.virtualFile
         val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
-        val editorFixture = EditorTestFixture(project, editor, virtualFile)
+        val fixture = Fixture(project, editor, virtualFile)
 
         val initialText = editor.document.text
         try {
@@ -336,10 +335,10 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             }
 
             editor.caretModel.moveToOffset(editor.caretModel.offset - 1)
-            editorFixture.type(insertString)
+            fixture.type(insertString)
 
             if (lookupElements.isNotEmpty()) {
-                val elements = editorFixture.complete(CompletionType.BASIC, 1) ?: emptyArray()
+                val elements = fixture.complete()
                 val items = elements.map { it.lookupString }.toList()
                 for (lookupElement in lookupElements) {
                     assertTrue("'$lookupElement' has to be present in items", items.contains(lookupElement))
@@ -347,7 +346,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             }
         } finally {
             // TODO: [VD] revert ?
-            //editorFixture.performEditorAction(IdeActions.SELECTED_CHANGES_ROLLBACK)
+            //fixture.performEditorAction(IdeActions.SELECTED_CHANGES_ROLLBACK)
             if (revertChangesAtTheEnd) {
                 runWriteAction {
                     editor.document.setText(initialText)
@@ -386,7 +385,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         note: String = ""
     ) {
         assertTrue("lookupElements has to be not empty", lookupElements.isNotEmpty())
-        stats.perfTest<Pair<String, FixtureEditorFile>, Array<LookupElement>>(
+        stats.perfTest<Pair<String, Fixture>, Array<LookupElement>>(
             warmUpIterations = 8,
             iterations = 15,
             testName = "typeAndAutocomplete ${notePrefix(note)}$fileName",
@@ -395,7 +394,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 val file = fileInEditor.psiFile
                 val virtualFile = file.virtualFile
                 val editor = EditorFactory.getInstance().getEditors(fileInEditor.document, project)[0]
-                val fixture = EditorTestFixture(project, editor, virtualFile)
+                val fixture = Fixture(project, editor, virtualFile)
                 val initialText = editor.document.text
                 if (isAKotlinScriptFile(fileName)) {
                     runAndMeasure("update script dependencies for $fileName") {
@@ -426,11 +425,11 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
 
                 fixture.type(insertString)
 
-                it.setUpValue = Pair(initialText, FixtureEditorFile(file, editor.document, fixture))
+                it.setUpValue = Pair(initialText, fixture)
             },
             test = {
-                val fixture = it.setUpValue!!.second.fixture
-                it.value = fixture.complete(CompletionType.BASIC, 1) ?: emptyArray()
+                val fixture = it.setUpValue!!.second
+                it.value = fixture.complete()
             },
             tearDown = {
                 val items = it.value?.map { e -> e.lookupString }?.toList() ?: emptyList()
@@ -441,7 +440,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 } finally {
                     it.setUpValue?.let { pair ->
                         val document = pair.second.document
-                        val file = pair.second.psiFile
+                        val file = pair.second.vFile
                         val text = pair.first
 
                         try {
@@ -456,7 +455,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                                 dispatchAllInvocationEvents()
                             }
                         } finally {
-                            cleanupCaches(project, file.virtualFile)
+                            cleanupCaches(project, file)
                         }
                     }
                     commitAllDocuments()
@@ -663,8 +662,6 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         )
         return virtualFiles.iterator().next().toPsiFile(project)!!
     }
-
-    data class FixtureEditorFile(val psiFile: PsiFile, val document: Document, val fixture: EditorTestFixture)
 
     data class EditorFile(val psiFile: PsiFile, val document: Document)
 
