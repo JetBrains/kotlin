@@ -7,6 +7,9 @@ object KtxNameConventions {
     val EMIT = Name.identifier("emit")
     val CALL = Name.identifier("call")
     val JOINKEY = Name.identifier("joinKey")
+    val STARTRESTARTGROUP = Name.identifier("startRestartGroup")
+    val ENDRESTARTGROUP = Name.identifier("endRestartGroup")
+    val UPDATE_SCOPE = Name.identifier("updateScope")
 
     val EMIT_KEY_PARAMETER = Name.identifier("key")
     val EMIT_CTOR_PARAMETER = Name.identifier("ctor")

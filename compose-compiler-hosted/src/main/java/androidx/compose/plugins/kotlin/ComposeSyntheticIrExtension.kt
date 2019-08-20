@@ -1144,7 +1144,7 @@ private fun StatementGenerator.buildCtorCall(
     }) as IrConstructorCall
 }
 
-private fun getKeyValue(descriptor: DeclarationDescriptor, startOffset: Int): Int =
+internal fun getKeyValue(descriptor: DeclarationDescriptor, startOffset: Int): Int =
     descriptor.fqNameSafe.toString().hashCode() xor startOffset
 
 private fun buildLambda(

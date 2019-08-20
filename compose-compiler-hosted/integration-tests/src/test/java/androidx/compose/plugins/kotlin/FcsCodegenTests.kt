@@ -163,10 +163,6 @@ class FcsCodegenTests : AbstractCodegenTest() {
     fun testObservableLambda(): Unit = ensureSetup {
         compose(
             """
-                import android.widget.*
-                import androidx.compose.*
-                import androidx.ui.androidview.adapters.setOnClick
-
                 @Model
                 class FancyButtonCount() {
                     var count = 0
@@ -184,11 +180,11 @@ class FcsCodegenTests : AbstractCodegenTest() {
                 }
 
                 @Composable
-                fun FancyBox2(@Children children: ()->Unit) {
+                fun FancyBox2(@Children children: @Composable() ()->Unit) {
                     children()
                 }
             """,
-            { mapOf<String, String>() },
+            { emptyMap<String, String>() },
             "SimpleComposable(state=+memo { FancyButtonCount() })"
         ).then { activity ->
             val button = activity.findViewById(42) as Button
@@ -198,6 +194,222 @@ class FcsCodegenTests : AbstractCodegenTest() {
         }.then { activity ->
             val button = activity.findViewById(42) as Button
             assertEquals("Button clicked 3 times", button.text)
+        }
+    }
+
+    @Test
+    fun testObservableGenericFunction(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            @Composable
+            fun <T> SimpleComposable(state: Counter, value: T) {
+                Button(
+                  text=("Button clicked "+state.count+" times: " + value),
+                  onClick={state.count++},
+                  id=42
+                )
+            }
+        """,
+            { emptyMap<String, String>() },
+            "SimpleComposable(state=+memo { Counter() }, value=\"Value\")"
+        ).then { activity ->
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            assertEquals("Button clicked 3 times: Value", button.text)
+        }
+    }
+
+    @Test
+    fun testObservableExtension(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            @Composable
+            fun Counter.Composable() {
+                Button(
+                    text="Button clicked "+count+" times",
+                    onClick={count++},
+                    id=42
+                )
+            }
+
+            val myCounter = Counter()
+            """,
+            { emptyMap<String, String>() },
+            "myCounter.Composable()"
+        ).then { activity ->
+            val button = activity.findViewById<Button>(42)
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById<Button>(42)
+            assertEquals("Button clicked 3 times", button.text)
+        }
+    }
+
+    @Test
+    fun testObserverableExpressionBody(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            @Composable
+            fun SimpleComposable(counter: Counter) =
+                Button(
+                    text="Button clicked "+counter.count+" times",
+                    onClick={counter.count++},
+                    id=42
+                )
+
+            @Composable
+            fun SimpleWrapper(counter: Counter) = SimpleComposable(counter = counter)
+
+            val myCounter = Counter()
+            """,
+            { emptyMap<String, String>() },
+            "SimpleWrapper(counter = myCounter)"
+        ).then { activity ->
+            val button = activity.findViewById<Button>(42)
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById<Button>(42)
+            assertEquals("Button clicked 3 times", button.text)
+        }
+    }
+
+    @Test
+    fun testObservableInlineWrapper(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            var inWrapper = false
+            val counter = Counter()
+
+            inline fun wrapper(block: () -> Unit) {
+              inWrapper = true
+              try {
+                block()
+              } finally {
+                inWrapper = false
+              }
+            }
+
+            @Composable
+            fun SimpleComposable(state: Counter) {
+                wrapper {
+                    Button(
+                      text=("Button clicked "+state.count+" times"),
+                      onClick={state.count++},
+                      id=42
+                    )
+                }
+            }
+        """,
+            { emptyMap<String, String>() },
+            "SimpleComposable(state=counter)"
+        ).then { activity ->
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            assertEquals("Button clicked 3 times", button.text)
+        }
+    }
+
+    @Test
+    fun testObservableDefaultParameter(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            val counter = Counter()
+
+            @Composable
+            fun SimpleComposable(state: Counter, a: Int = 1, b: Int = 2) {
+                Button(
+                  text=("State: ${'$'}{state.count} a = ${'$'}a b = ${'$'}b"),
+                  onClick={state.count++},
+                  id=42
+                )
+            }
+        """,
+            { emptyMap<String, String>() },
+            "SimpleComposable(state=counter, b = 4)"
+        ).then { activity ->
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById(42) as Button
+            assertEquals("State: 3 a = 1 b = 4", button.text)
+        }
+    }
+
+    @Test
+    fun testObservableEarlyReturn(): Unit = ensureSetup {
+        compose("""
+            @Model
+            class Counter() {
+                var count = 0
+            }
+
+            val counter = Counter()
+
+            @Composable
+            fun SimpleComposable(state: Counter) {
+                Button(
+                  text=("State: ${'$'}{state.count}"),
+                  onClick={state.count++},
+                  id=42
+                )
+
+                if (state.count > 2) return
+
+                TextView(
+                  text="Included text",
+                  id=43
+                )
+            }
+        """,
+            { emptyMap<String, String>() },
+            "SimpleComposable(state=counter)"
+        ).then { activity ->
+            // Check that the text view is in the view
+            assertNotNull(activity.findViewById(43))
+            val button = activity.findViewById(42) as Button
+            button.performClick()
+            button.performClick()
+            button.performClick()
+        }.then { activity ->
+            val button = activity.findViewById<Button>(42)
+            assertEquals("State: 3", button.text)
+
+            // Assert that the text view is no longer in the view
+            assertNull(activity.findViewById<Button>(43))
         }
     }
 
@@ -711,8 +923,7 @@ class FcsCodegenTests : AbstractCodegenTest() {
             { mapOf("text" to text) },
             """
              Foo(text=text)
-        """,
-            true
+        """
         ).then { activity ->
             val textView = activity.findViewById(tvId) as TextView
 

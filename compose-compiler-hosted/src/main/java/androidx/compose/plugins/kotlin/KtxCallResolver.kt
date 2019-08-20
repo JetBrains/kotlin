@@ -664,6 +664,34 @@ class KtxCallResolver(
         return result
     }
 
+    fun resolveStartRestartGroup(
+        call: Call,
+        context: ExpressionTypingContext
+    ): ResolvedCall<*>? {
+        return resolveSubstitutableComposerMethod(
+            KtxNameConventions.STARTRESTARTGROUP,
+            listOf(builtIns.intType),
+            null,
+            call.calleeExpression ?: error("Could not find call expression"),
+            context
+        )
+    }
+
+    fun resolveEndRestartGroup(
+        call: Call,
+        context: ExpressionTypingContext
+    ): ResolvedCall<*>? {
+        return resolveSubstitutableComposerMethod(
+            KtxNameConventions.ENDRESTARTGROUP,
+            emptyList(),
+            null,
+            call.calleeExpression ?: error("Could not find call expression"),
+            context
+        )
+    }
+
+    fun resolveComposerCall() = composerResolvedCall
+
     /**
      * This call is the main function of this class, and will take in a KtxElement and return an object with all of the information
      * necessary to generate the code for the KTX tag. This method will always return a result, but the result may contain errors
