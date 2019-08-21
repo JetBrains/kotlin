@@ -43,7 +43,7 @@ val Module.isTestModule: Boolean
     get() = facetSettings?.isTestModule ?: false
 
 val KotlinFacetSettings.isMPPModule: Boolean
-    get() = targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() || kind.isNewMPP
+    get() = this.mppVersion?.isMPPModule ?: false
 
 private val Module.facetSettings get() = KotlinFacet.get(this)?.configuration?.settings
 
