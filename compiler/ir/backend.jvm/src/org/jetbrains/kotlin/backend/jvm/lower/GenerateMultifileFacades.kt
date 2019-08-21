@@ -32,10 +32,14 @@ import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetField
+import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.transformFlat
@@ -55,9 +59,17 @@ internal val generateMultifileFacadesPhase = namedIrModulePhase(
             input: IrModuleFragment
         ): IrModuleFragment {
             val movedFields = mutableMapOf<IrFieldSymbol, IrFieldSymbol>()
-            input.files.addAll(generateMultifileFacades(input.descriptor, context, movedFields))
+            val functionDelegates = mutableMapOf<IrFunctionSymbol, IrFunctionSymbol>()
+
+            input.files.addAll(generateMultifileFacades(input.descriptor, context, movedFields, functionDelegates))
+
             UpdateFieldCallSites(movedFields).lower(input)
+            UpdateFunctionCallSites(functionDelegates).lower(input)
+
             context.multifileFacadesToAdd.clear()
+
+            functionDelegates.entries.associateTo(context.multifileFacadeMemberToPartMember) { (member, newMember) -> newMember to member }
+
             return input
         }
     }
@@ -86,7 +98,8 @@ internal class MultifileFacadeFileEntry(
 private fun generateMultifileFacades(
     module: ModuleDescriptor,
     context: JvmBackendContext,
-    movedFields: MutableMap<IrFieldSymbol, IrFieldSymbol>
+    movedFields: MutableMap<IrFieldSymbol, IrFieldSymbol>,
+    functionDelegates: MutableMap<IrFunctionSymbol, IrFunctionSymbol>
 ): List<IrFile> =
     context.multifileFacadesToAdd.map { (jvmClassName, partClasses) ->
         val fileEntry = MultifileFacadeFileEntry(jvmClassName, partClasses.map(IrClass::fileParent))
@@ -106,7 +119,12 @@ private fun generateMultifileFacades(
             moveFieldsOfConstProperties(partClass, facadeClass, movedFields)
 
             for (member in partClass.declarations) {
-                member.createMultifileDelegateIfNeeded(context, facadeClass)
+                if (member is IrFunction) {
+                    val newMember = member.createMultifileDelegateIfNeeded(context, facadeClass)
+                    if (newMember != null) {
+                        functionDelegates[member.symbol] = newMember.symbol
+                    }
+                }
             }
         }
 
@@ -135,12 +153,11 @@ private fun IrField.shouldMoveToFacade(): Boolean {
     return property != null && property.isConst && !Visibilities.isPrivate(visibility)
 }
 
-private fun IrDeclaration.createMultifileDelegateIfNeeded(context: JvmBackendContext, facadeClass: IrClass) {
-    if (this !is IrFunction ||
-        Visibilities.isPrivate(visibility) ||
+private fun IrFunction.createMultifileDelegateIfNeeded(context: JvmBackendContext, facadeClass: IrClass): IrFunction? {
+    if (Visibilities.isPrivate(visibility) ||
         name == InitializersLowering.clinitName ||
         origin == JvmLoweredDeclarationOrigin.SYNTHETIC_ACCESSOR
-    ) return
+    ) return null
 
     // TODO: perform copy of the signature only, without body
     val function = deepCopyWithSymbols(facadeClass)
@@ -158,6 +175,8 @@ private fun IrDeclaration.createMultifileDelegateIfNeeded(context: JvmBackendCon
     function.origin = JvmLoweredDeclarationOrigin.MULTIFILE_BRIDGE
 
     facadeClass.declarations.add(function)
+
+    return function
 }
 
 // This deep copy is needed while we still use KotlinTypeMapper to map signatures in method calls. Without it, KotlinTypeMapper takes
@@ -187,6 +206,27 @@ private class UpdateFieldCallSites(
         val newField = movedFields[expression.symbol] ?: return super.visitGetField(expression)
         return expression.run {
             IrGetFieldImpl(startOffset, endOffset, newField, type, receiver, origin, superQualifierSymbol)
+        }
+    }
+}
+
+private class UpdateFunctionCallSites(
+    private val functionDelegates: MutableMap<IrFunctionSymbol, IrFunctionSymbol>
+) : FileLoweringPass, IrElementTransformerVoid() {
+    override fun lower(irFile: IrFile) {
+        irFile.transformChildrenVoid(this)
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression {
+        val newFunction = functionDelegates[expression.symbol] ?: return super.visitCall(expression)
+        return expression.run {
+            IrCallImpl(startOffset, endOffset, type, newFunction).apply {
+                copyTypeArgumentsFrom(expression)
+                extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
+                for (i in 0 until valueArgumentsCount) {
+                    putValueArgument(i, expression.getValueArgument(i)?.transform(this@UpdateFunctionCallSites, null))
+                }
+            }
         }
     }
 }

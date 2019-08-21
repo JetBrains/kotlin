@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.backend.common.ir.ir2string
+import org.jetbrains.kotlin.backend.jvm.lower.MultifileFacadeFileEntry
 import org.jetbrains.kotlin.codegen.BaseExpressionCodegen
 import org.jetbrains.kotlin.codegen.ClassBuilder
 import org.jetbrains.kotlin.codegen.OwnerKind
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -102,14 +104,20 @@ class IrSourceCompilerForInline(
 
     private fun getFunctionToInline(call: IrCall, jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
         val callee = call.symbol.owner
+        val parent = callee.parentAsClass
         if (callDefault) {
             /*TODO: get rid of hack*/
-            return callee.parentAsClass.declarations.filterIsInstance<IrFunction>().single {
+            return parent.declarations.filterIsInstance<IrFunction>().single {
                 it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
                         codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(callee).asmMethod.descriptor.startsWith(
                             jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
                         )
             }
+        }
+
+        if (parent.fileParent.fileEntry is MultifileFacadeFileEntry) {
+            return (codegen.context.multifileFacadeMemberToPartMember[callee.symbol]
+                ?: error("Function from a multi-file facade without the link to the function in the part: ${callee.render()}")).owner
         }
 
         return callee
