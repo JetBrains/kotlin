@@ -11,6 +11,7 @@ import com.intellij.codeInsight.documentation.QuickDocUtil;
 import com.intellij.codeInsight.hint.LineTooltipRenderer;
 import com.intellij.codeInsight.hint.TooltipGroup;
 import com.intellij.codeInsight.hint.TooltipRenderer;
+import com.intellij.ui.WidthBasedLayout;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.ide.IdeEventQueue;
 import com.intellij.openapi.Disposable;
@@ -508,7 +509,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       Ref<LightweightHint> mockHintRef = new Ref<>();
       HintHint hintHint = new HintHint().setAwtTooltip(true).setRequestFocus(requestFocus);
       LightweightHint hint =
-        renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, true, highlightActions, expand -> {
+        renderer.createHint(editor, new Point(), false, EDITOR_INFO_GROUP, hintHint, true, highlightActions, false, expand -> {
           LineTooltipRenderer newRenderer = renderer.createRenderer(renderer.getText(), expand ? 1 : 0);
           JComponent newComponent = createHighlightInfoComponent(editor, newRenderer, highlightActions, popupBridge, requestFocus);
           AbstractPopup popup = popupBridge.getPopup();
@@ -523,7 +524,9 @@ public final class EditorMouseHoverPopupManager implements Disposable {
       if (hint == null) return null;
       mockHintRef.set(hint);
       bindHintHiding(hint, popupBridge);
-      WrapperPanel wrapper = new WrapperPanel(hint.getComponent());
+      JComponent component = hint.getComponent();
+      LOG.assertTrue(component instanceof WidthBasedLayout, "Unexpected type of tooltip component: " + component.getClass());
+      WrapperPanel wrapper = new WrapperPanel(component);
       wrapperPanelRef.set(wrapper);
       // emulating LightweightHint+IdeTooltipManager+BalloonImpl - they use the same background
       wrapper.setBackground(hintHint.getTextBackground());
@@ -671,7 +674,7 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     }
   }
 
-  private static class WrapperPanel extends JPanel {
+  private static class WrapperPanel extends JPanel implements WidthBasedLayout {
     private WrapperPanel(JComponent content) {
       super(new BorderLayout());
       setBorder(null);
@@ -681,6 +684,20 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     private void setContent(JComponent content) {
       removeAll();
       add(content, BorderLayout.CENTER);
+    }
+
+    private JComponent getComponent() {
+      return (JComponent)getComponent(0);
+    }
+
+    @Override
+    public int getPreferredWidth() {
+      return WidthBasedLayout.getPreferredWidth(getComponent());
+    }
+
+    @Override
+    public int getPreferredHeight(int width) {
+      return WidthBasedLayout.getPreferredHeight(getComponent(), width);
     }
   }
 
@@ -701,11 +718,12 @@ public final class EditorMouseHoverPopupManager implements Disposable {
 
     @Override
     public Dimension preferredLayoutSize(Container parent) {
-      Dimension d1 = highlightInfoComponent == null ? new Dimension() : highlightInfoComponent.getPreferredSize();
-      int w2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredWidth();
-      int preferredWidth = Math.min(JBUI.scale(MAX_POPUP_WIDTH), Math.max(d1.width, w2));
-      int h2 = quickDocComponent == null ? 0 : quickDocComponent.getPreferredHeight(preferredWidth);
-      return new Dimension(preferredWidth, d1.height + h2);
+      int w1 = WidthBasedLayout.getPreferredWidth(highlightInfoComponent);
+      int w2 = WidthBasedLayout.getPreferredWidth(quickDocComponent);
+      int preferredWidth = Math.min(JBUI.scale(MAX_POPUP_WIDTH), Math.max(w1, w2));
+      int h1 = WidthBasedLayout.getPreferredHeight(highlightInfoComponent, preferredWidth);
+      int h2 = WidthBasedLayout.getPreferredHeight(quickDocComponent, preferredWidth);
+      return new Dimension(preferredWidth, h1 + h2);
     }
 
     @Override
@@ -719,11 +737,15 @@ public final class EditorMouseHoverPopupManager implements Disposable {
     public void layoutContainer(Container parent) {
       int width = parent.getWidth();
       int height = parent.getHeight();
-      int h1 = highlightInfoComponent == null ? 0 : Math.min(height, highlightInfoComponent.getPreferredSize().height);
-      if (highlightInfoComponent != null) {
-        highlightInfoComponent.setBounds(0, 0, width, h1);
+      if (highlightInfoComponent == null) {
+        if (quickDocComponent != null) quickDocComponent.setBounds(0, 0, width, height);
       }
-      if (quickDocComponent != null) {
+      else if (quickDocComponent == null) {
+        highlightInfoComponent.setBounds(0, 0, width, height);
+      }
+      else {
+        int h1 = Math.min(height, highlightInfoComponent.getPreferredSize().height);
+        highlightInfoComponent.setBounds(0, 0, width, h1);
         quickDocComponent.setBounds(0, h1, width, height - h1);
       }
     }

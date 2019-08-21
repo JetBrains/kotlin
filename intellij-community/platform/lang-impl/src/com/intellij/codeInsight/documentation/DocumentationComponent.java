@@ -4,6 +4,7 @@ package com.intellij.codeInsight.documentation;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.hint.HintManagerImpl;
+import com.intellij.ui.WidthBasedLayout;
 import com.intellij.codeInsight.lookup.LookupEx;
 import com.intellij.codeInsight.lookup.LookupManager;
 import com.intellij.icons.AllIcons;
@@ -107,7 +108,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.*;
 
-public class DocumentationComponent extends JPanel implements Disposable, DataProvider {
+public class DocumentationComponent extends JPanel implements Disposable, DataProvider, WidthBasedLayout {
 
   private static final Logger LOG = Logger.getInstance(DocumentationComponent.class);
   private static final String DOCUMENTATION_TOPIC_ID = "reference.toolWindows.Documentation";
@@ -876,6 +877,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return new Dimension(width, height);
   }
 
+  @Override
   public int getPreferredWidth() {
     int minWidth = JBUIScale.scale(300);
     int maxWidth = getPopupAnchor() != null ? JBUIScale.scale(435) : MAX_DEFAULT.width;
@@ -891,6 +893,7 @@ public class DocumentationComponent extends JPanel implements Disposable, DataPr
     return Math.min(maxWidth, Math.max(minWidth, width)) + insets.left + insets.right;
   }
 
+  @Override
   public int getPreferredHeight(int width) {
     myEditorPane.setBounds(0, 0, width, MAX_DEFAULT.height);
     myEditorPane.setText(myDecoratedText);

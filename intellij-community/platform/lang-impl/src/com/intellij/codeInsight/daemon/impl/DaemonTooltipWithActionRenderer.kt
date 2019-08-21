@@ -96,10 +96,11 @@ internal class DaemonTooltipWithActionRenderer(text: String?,
                           hintHint: HintHint,
                           newLayout: Boolean,
                           highlightActions: Boolean,
+                          limitWidthToScreen: Boolean,
                           tooltipReloader: TooltipReloader?): LightweightHint {
     return super.createHint(editor, p, alignToRight, group, hintHint, newLayout,
                             highlightActions || !(isShowActions() && tooltipAction != null && hintHint.isAwtTooltip),
-                            tooltipReloader)
+                            limitWidthToScreen, tooltipReloader)
   }
 
   override fun fillPanel(editor: Editor,
