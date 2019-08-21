@@ -19,6 +19,9 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 
 interface ReceiverValue {
     val type: ConeKotlinType
+
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? =
+        type.scope(useSiteSession, scopeSession)
 }
 
 class ClassDispatchReceiverValue(val klassSymbol: FirClassSymbol) : ReceiverValue {
@@ -44,6 +47,8 @@ abstract class ImplicitReceiverValue(
     scopeSession: ScopeSession
 ) : ReceiverValue {
     val implicitScope: FirScope? = type.scope(useSiteSession, scopeSession)
+
+    override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirScope? = implicitScope
 }
 
 class ImplicitDispatchReceiverValue(
