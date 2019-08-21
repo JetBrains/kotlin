@@ -162,6 +162,15 @@ public class PsiElementRenameHandler implements RenameHandler {
 
   public static void rename(@NotNull PsiElement element, @NotNull Project project, PsiElement nameSuggestionContext, Editor editor, String defaultName) {
     RenamePsiElementProcessor processor = RenamePsiElementProcessor.forElement(element);
+    rename(element, project, nameSuggestionContext, editor, defaultName, processor);
+  }
+
+  public static void rename(@NotNull PsiElement element,
+                            @NotNull Project project,
+                            PsiElement nameSuggestionContext,
+                            Editor editor,
+                            String defaultName,
+                            RenamePsiElementProcessor processor) {
     PsiElement substituted = processor.substituteElementToRename(element, editor);
     if (substituted == null || !canRename(project, editor, substituted)) return;
 
