@@ -89,7 +89,9 @@ fun IrClass.companionObject() = this.declarations.filterIsInstance<IrClass>().at
 
 fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: Int,
                           annotationClass: IrClass, vararg args: String): IrConstructorCall {
-    val constructor = annotationClass.constructors.single()
+    val constructor = annotationClass.constructors.let {
+        it.singleOrNull() ?: it.single { ctor -> ctor.valueParameters.size == args.size }
+    }
     return IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, constructor.returnType, constructor.symbol).apply {
         args.forEachIndexed { index, arg ->
             assert(constructor.valueParameters[index].type == irBuiltIns.stringType) {

@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.descriptors.konan.isKonanStdlib
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
@@ -320,6 +322,20 @@ internal val dependenciesLowerPhase = SameTypeNamedPhaseWrapper(
             }
         })
 
+internal val entryPointPhase = SameTypeNamedPhaseWrapper(
+        name = "addEntryPoint",
+        description = "Add entry point for program",
+        prerequisite = emptySet(),
+        lower = object : CompilerPhase<Context, IrModuleFragment, IrModuleFragment> {
+            override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState<IrModuleFragment>,
+                                context: Context, input: IrModuleFragment): IrModuleFragment {
+                assert(context.config.produce == CompilerOutputKind.PROGRAM)
+                context.ir.symbols.entryPoint!!.owner.file.addChild(makeEntryPoint(context))
+                return input
+            }
+        }
+)
+
 internal val bitcodePhase = namedIrModulePhase(
         name = "Bitcode",
         description = "LLVM Bitcode generation",
@@ -357,6 +373,7 @@ val toplevelPhase: CompilerPhase<*, Unit, Unit> = namedUnitPhase(
                                 allLoweringsPhase then // Lower current module first.
                                 dependenciesLowerPhase then // Then lower all libraries in topological order.
                                                             // With that we guarantee that inline functions are unlowered while being inlined.
+                                entryPointPhase then
                                 bitcodePhase then
                                 verifyBitcodePhase then
                                 printBitcodePhase then
@@ -384,6 +401,7 @@ internal fun PhaseConfig.konanPhasesConfig(config: KonanConfig) {
         // Don't serialize anything to a final executable.
         disableUnless(serializerPhase, config.produce == CompilerOutputKind.LIBRARY)
         disableIf(dependenciesLowerPhase, config.produce == CompilerOutputKind.LIBRARY)
+        disableUnless(entryPointPhase, config.produce == CompilerOutputKind.PROGRAM)
         disableIf(bitcodePhase, config.produce == CompilerOutputKind.LIBRARY)
         disableUnless(linkPhase, config.produce.isNativeBinary)
         disableIf(testProcessorPhase, getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER) == TestRunnerKind.NONE)

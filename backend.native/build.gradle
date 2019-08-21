@@ -178,8 +178,7 @@ final List<File> stdLibSrc = [
         project(':Interop:Runtime').file('src/main/kotlin'),
         project(':Interop:Runtime').file('src/native/kotlin'),
         project(':Interop:JsRuntime').file('src/main/kotlin'),
-        project(':runtime').file('src/main/kotlin'),
-        project(':runtime').file('src/launcher/kotlin')
+        project(':runtime').file('src/main/kotlin')
 ]
 
 // These files are built before the 'dist' is complete,
