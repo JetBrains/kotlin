@@ -1014,8 +1014,8 @@ internal class Fir2IrVisitor(
             ).apply {
                 loopMap[doWhileLoop] = this
                 label = doWhileLoop.label?.name
-                condition = doWhileLoop.condition.toIrExpression()
                 body = doWhileLoop.block.convertToIrExpressionOrBlock()
+                condition = doWhileLoop.condition.toIrExpression()
                 loopMap.remove(doWhileLoop)
             }
         }
