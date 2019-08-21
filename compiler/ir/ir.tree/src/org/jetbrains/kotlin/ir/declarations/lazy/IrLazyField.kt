@@ -65,7 +65,11 @@ class IrLazyField(
 
     override val descriptor: PropertyDescriptor = symbol.descriptor
 
-    override val overriddenSymbols: MutableList<IrFieldSymbol> = mutableListOf()
+    override val overriddenSymbols: MutableList<IrFieldSymbol> by lazy {
+        symbol.descriptor.overriddenDescriptors.map {
+            stubGenerator.generateFieldStub(it.original).symbol
+        }.toMutableList()
+    }
 
     override var type: IrType by lazyVar {
         descriptor.type.toIrType()
