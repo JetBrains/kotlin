@@ -210,8 +210,10 @@ object AbstractTypeChecker {
     private fun AbstractTypeCheckerContext.checkSubtypeForIntegerLiteralType(subType: SimpleTypeMarker, superType: SimpleTypeMarker): Boolean? {
         if (!subType.isIntegerLiteralType() && !superType.isIntegerLiteralType()) return null
 
-        fun typeInIntegerLiteralType(integerLiteralType: SimpleTypeMarker, type: SimpleTypeMarker): Boolean =
-            integerLiteralType.possibleIntegerTypes().any { it.typeConstructor() == type.typeConstructor() }
+        fun typeInIntegerLiteralType(integerLiteralType: SimpleTypeMarker, type: SimpleTypeMarker, checkSupertypes: Boolean): Boolean =
+            integerLiteralType.possibleIntegerTypes().any { possibleType ->
+                (possibleType.typeConstructor() == type.typeConstructor()) || (checkSupertypes && isSubtypeOf(this, type, possibleType))
+            }
 
         when {
             subType.isIntegerLiteralType() && superType.isIntegerLiteralType() -> {
@@ -219,13 +221,14 @@ object AbstractTypeChecker {
             }
 
             subType.isIntegerLiteralType() -> {
-                if (typeInIntegerLiteralType(subType, superType)) {
+                if (typeInIntegerLiteralType(subType, superType, checkSupertypes = false)) {
                     return true
                 }
             }
 
             superType.isIntegerLiteralType() -> {
-                if (typeInIntegerLiteralType(superType, subType)) {
+                // Here we also have to check supertypes for intersection types: { Int & String } <: IntegerLiteralTypes
+                if (typeInIntegerLiteralType(superType, subType, checkSupertypes = true)) {
                     return true
                 }
             }
