@@ -17,5 +17,17 @@
     <orderEntry type="module" module-name="intellij.statsCollector.logEvents" />
     <orderEntry type="library" name="fluent-hc" level="project" />
     <orderEntry type="module" module-name="intellij.statsCollector.completionRanker" />
+    <orderEntry type="module-library" exported="">
+      <library name="ngram-slp" type="repository">
+        <properties include-transitive-deps="false" maven-id="org.jetbrains.intellij.deps.completion:ngram-slp:0.0.1" />
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/../../../lib/ngram-slp-0.0.1.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/../../../lib/ngram-slp-0.0.1-sources.jar!/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>
