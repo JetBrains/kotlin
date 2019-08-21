@@ -96,6 +96,7 @@ public class GradleProjectResolverUtil {
       moduleData.setGroup(externalProject.getGroup());
       moduleData.setVersion(externalProject.getVersion());
       moduleData.setDescription(externalProject.getDescription());
+      moduleData.setModuleName(moduleName);
       if (!resolverCtx.isResolveModulePerSourceSet()) {
         moduleData.setArtifacts(externalProject.getArtifacts());
         moduleData.setPublication(new ProjectId(externalProject.getGroup(),
