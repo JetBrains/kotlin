@@ -1,9 +1,8 @@
 // Copyright 2000-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license that can be found in the LICENSE file.
 package com.intellij.largeFilesEditor.search;
 
-import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
-import com.intellij.largeFilesEditor.editor.EditorManagerAccessorImpl;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
+import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearchCallback;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -20,8 +19,8 @@ public class RangeSearchCreatorImpl implements RangeSearchCreator {
   public RangeSearch createContent(Project project,
                                    VirtualFile virtualFile,
                                    String titleName) {
-    EditorManagerAccessor editorManagerAccessor = new EditorManagerAccessorImpl();
-    RangeSearch rangeSearch = new RangeSearch(virtualFile, project, editorManagerAccessor);
+    RangeSearchCallback rangeSearchCallback = new RangeSearchCallbackImpl();
+    RangeSearch rangeSearch = new RangeSearch(virtualFile, project, rangeSearchCallback);
     Content content = UsageViewContentManager.getInstance(project).addContent(
       titleName, true, rangeSearch.getComponent(), false, true);
     rangeSearch.setContent(content);

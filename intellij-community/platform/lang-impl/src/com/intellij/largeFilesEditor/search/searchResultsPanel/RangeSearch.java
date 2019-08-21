@@ -3,8 +3,6 @@ package com.intellij.largeFilesEditor.search.searchResultsPanel;
 
 import com.intellij.largeFilesEditor.GuiUtils;
 import com.intellij.largeFilesEditor.Utils;
-import com.intellij.largeFilesEditor.editor.EditorManager;
-import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
 import com.intellij.largeFilesEditor.search.SearchResult;
 import com.intellij.largeFilesEditor.search.actions.FindFurtherAction;
 import com.intellij.largeFilesEditor.search.actions.StopRangeSearchAction;
@@ -61,7 +59,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   private final Project myProject;
   private final VirtualFile myVirtualFile;
-  private final EditorManagerAccessor myEditorManagerAccessor;
+  private final RangeSearchCallback myRangeSearchCallback;
 
   private final AtomicBoolean isScheduledUpdateCalled = new AtomicBoolean(false);
 
@@ -101,10 +99,10 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   public RangeSearch(@NotNull VirtualFile virtualFile,
                      @NotNull Project project,
-                     @NotNull EditorManagerAccessor editorManagerAccessor) {
+                     @NotNull RangeSearchCallback rangeSearchCallback) {
     myVirtualFile = virtualFile;
     myProject = project;
-    myEditorManagerAccessor = editorManagerAccessor;
+    myRangeSearchCallback = rangeSearchCallback;
 
     lblSearchStatusLeft = new SimpleColoredComponent();
     lblSearchStatusLeft.setBorder(JBUI.Borders.emptyLeft(5));
@@ -286,14 +284,14 @@ public class RangeSearch implements RangeSearchTask.Callback {
   @CalledInAwt
   private void updateInEdt() {
     try {
-      EditorManager editorManager =
-        myEditorManagerAccessor.getEditorManager(false, myProject, myVirtualFile);
+      FileDataProviderForSearch fileDataProviderForSearch
+        = myRangeSearchCallback.getFileDataProviderForSearch(false, myProject, myVirtualFile);
 
-      if (editorManager != null) {
+      if (fileDataProviderForSearch != null) {
         myShowingListModel.setSearchFurtherBtnsEnabled(
           false, canFindFurtherBackward());
         myShowingListModel.setSearchFurtherBtnsEnabled(
-          true, canFindFurtherForward(editorManager.getFileDataProviderForSearch()));
+          true, canFindFurtherForward(fileDataProviderForSearch));
       }
       else {
         myShowingListModel.setSearchFurtherBtnsEnabled(false, false);
@@ -322,9 +320,10 @@ public class RangeSearch implements RangeSearchTask.Callback {
   }
 
   private void launchSearchingFurther(boolean directionForward) {
-    EditorManager editorManager =
-      myEditorManagerAccessor.getEditorManager(true, myProject, myVirtualFile);
-    if (editorManager == null) {
+    FileDataProviderForSearch fileDataProviderForSearch =
+      myRangeSearchCallback.getFileDataProviderForSearch(true, myProject, myVirtualFile);
+
+    if (fileDataProviderForSearch == null) {
       logger.warn("Can't open Large File Editor for target file.");
       Messages.showWarningDialog("Can't open Large File Editor for target file.", "Error");
       return;
@@ -356,17 +355,18 @@ public class RangeSearch implements RangeSearchTask.Callback {
                          myLeftBorderPageNumber - 1, SearchTaskOptions.NO_LIMIT);
     }
 
-    runSearchTask(newOptions, editorManager.getFileDataProviderForSearch());
+    runSearchTask(newOptions, fileDataProviderForSearch);
   }
 
   private void updateStatusStringInfo() {
     lblSearchStatusLeft.clear();
 
     long pagesAmount = -1;
-    EditorManager editorManager = myEditorManagerAccessor.getEditorManager(false, myProject, myVirtualFile);
-    if (editorManager != null) {
+    FileDataProviderForSearch fileDataProviderForSearch =
+      myRangeSearchCallback.getFileDataProviderForSearch(false, myProject, myVirtualFile);
+    if (fileDataProviderForSearch != null) {
       try {
-        pagesAmount = editorManager.getFileDataProviderForSearch().getPagesAmount();
+        pagesAmount = fileDataProviderForSearch.getPagesAmount();
       }
       catch (IOException e) {
         logger.warn(e);
@@ -544,12 +544,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
     @Override
     public void onSelected() {
-      EditorManager editorManager =
-        myEditorManagerAccessor.getEditorManager(true, myProject, myVirtualFile);
-      if (editorManager != null) {
-        myEditorManagerAccessor.showEditorTab(editorManager);
-        editorManager.showSearchResult(mySearchResult);
-      }
+      myRangeSearchCallback.showResultInEditor(mySearchResult, myProject, myVirtualFile);
     }
   }
 
