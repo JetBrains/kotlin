@@ -220,7 +220,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: fromInterface>#' type=IrErrorType
+              arg0: ERROR_CALL 'Unresolved reference: <Inapplicable(WRONG_RECEIVER): [/I.fromInterface]>#' type=IrErrorType
               arg1: CONST Int type=kotlin.Int value=9
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="9"
@@ -237,8 +237,8 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         BRANCH
           if: CALL 'public final fun not (): kotlin.Boolean declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
             $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-              arg0: ERROR_CALL 'Unresolved reference: <Unresolved name: genericFromSuper>#' type=IrErrorType
-                CONST String type=kotlin.String value="11"
+              arg0: CALL 'public open fun genericFromSuper (g: kotlin.String): kotlin.String declared in <root>.I' type=kotlin.String origin=null
+                g: CONST String type=kotlin.String value="11"
               arg1: CONST String type=kotlin.String value="11"
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="11"
