@@ -101,4 +101,9 @@ public class ExternalModuleSettingsStep<S extends ExternalProjectSettings> exten
   public boolean isStepVisible() {
     return myContext == null || !Boolean.TRUE.equals(myContext.getUserData(SKIP_STEP_KEY));
   }
+
+  @Override
+  public String getHelpId() {
+    return myControl.getHelpId();
+  }
 }

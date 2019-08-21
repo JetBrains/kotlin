@@ -89,4 +89,12 @@ public interface ExternalSystemSettingsControl<S> {
    * @param show  flag which indicates if current control' components should be visible
    */
   void showUi(boolean show);
+
+  /**
+   * @return
+   */
+  @Nullable
+  default String getHelpId() {
+    return null;
+  }
 }
