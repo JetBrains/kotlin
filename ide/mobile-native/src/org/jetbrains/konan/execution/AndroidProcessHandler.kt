@@ -22,6 +22,8 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
     private var processClient: Client? = null
     private val logCatTask = LogCatReceiverTask(raw)
 
+    val debuggerPort: Int? get() = processClient?.debuggerListenPort
+
     private fun isRelevantEvent(device: IDevice, changeMask: Int, expectedMask: Int) =
         (changeMask and expectedMask) == expectedMask &&
                 device.serialNumber == raw.serialNumber
@@ -36,10 +38,7 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
                 ) {
                     processClient = client
                 }
-                notifyTextAvailable(
-                    MobileBundle.message("run.android.started", client.clientData.pid) + "\n",
-                    ProcessOutputType.SYSTEM
-                )
+                notifyTextAvailable(MobileBundle.message("run.android.started", client.clientData.pid) + "\n", ProcessOutputType.SYSTEM)
             }
         }
     }
@@ -86,10 +85,7 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
             override fun processTerminated(event: ProcessEvent) {
                 logCatTask.stop()
 
-                notifyTextAvailable(
-                    MobileBundle.message("run.android.finished") + "\n",
-                    ProcessOutputType.SYSTEM
-                )
+                notifyTextAvailable(MobileBundle.message("run.android.finished") + "\n", ProcessOutputType.SYSTEM)
 
                 AndroidDebugBridge.removeClientChangeListener(clientListener)
                 AndroidDebugBridge.removeDeviceChangeListener(deviceListener)

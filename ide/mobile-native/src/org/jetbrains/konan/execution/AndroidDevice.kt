@@ -5,21 +5,16 @@
 
 package org.jetbrains.konan.execution
 
-import com.android.ddmlib.*
+import com.android.ddmlib.CollectingOutputReceiver
+import com.android.ddmlib.IDevice
 import com.intellij.execution.ExecutionException
-import com.intellij.execution.configurations.CommandLineState
 import com.intellij.execution.configurations.GeneralCommandLine
-import com.intellij.execution.process.ProcessHandler
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.execution.util.ExecUtil
 import com.intellij.openapi.diagnostic.logger
 import com.intellij.openapi.progress.runBackgroundableTask
 import com.intellij.openapi.project.Project
-import com.intellij.xdebugger.XDebugProcess
-import com.intellij.xdebugger.XDebugSession
 import com.jetbrains.cidr.execution.CidrCommandLineState
-import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
-import com.jetbrains.cidr.execution.testing.CidrLauncher
 import org.jetbrains.konan.AndroidToolkit
 import org.jetbrains.konan.MobileBundle
 import java.io.File
@@ -45,7 +40,7 @@ class AndroidDevice(private val raw: IDevice) : Device(
         log.debug("Launched app with output: ${receiver.output}")
     }
 
-    fun installAndLaunch(apk: File, project: Project): ProcessHandler {
+    fun installAndLaunch(apk: File, project: Project): AndroidProcessHandler {
         val handler = AndroidProcessHandler(raw)
         runBackgroundableTask(MobileBundle.message("run.preparing"), project, cancellable = false) { indicator ->
             indicator.isIndeterminate = false
@@ -66,26 +61,12 @@ class AndroidDevice(private val raw: IDevice) : Device(
     }
 
     companion object {
+        private val log = logger<AndroidDevice>()
+
         private val IDevice.displayName: String
             get() =
                 if (isEmulator) avdName?.replace('_', ' ') ?: "Unknown Emulator"
                 else getProperty(IDevice.PROP_DEVICE_MODEL) ?: "Unknown Device"
-    }
-}
-
-private class AndroidCommandLineState(
-    val configuration: MobileRunConfiguration,
-    environment: ExecutionEnvironment
-) : CidrCommandLineState(environment, FakeLauncher()) {
-    private val device = environment.executionTarget as AndroidDevice
-    private val apk = configuration.getProductBundle(environment)
-
-    override fun startProcess(): ProcessHandler {
-        return device.installAndLaunch(apk, configuration.project)
-    }
-
-    override fun startDebugProcess(session: XDebugSession): XDebugProcess {
-        TODO("not implemented")
     }
 }
 
@@ -104,13 +85,3 @@ private fun getAppMetadata(apk: File): Pair<String, String> {
         .substringBefore('\'')
     return appId to mainActivity
 }
-
-private class FakeLauncher : CidrLauncher() {
-    private fun error(): Nothing = throw IllegalStateException("this function should never be called")
-
-    override fun getProject(): Project = error()
-    override fun createProcess(state: CommandLineState): ProcessHandler = error()
-    override fun createDebugProcess(state: CommandLineState, session: XDebugSession): CidrDebugProcess = error()
-}
-
-private val log = logger<AndroidDevice>()
