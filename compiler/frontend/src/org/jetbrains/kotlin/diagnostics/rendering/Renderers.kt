@@ -111,8 +111,8 @@ object Renderers {
     }
 
     @JvmField
-    val CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM = ContextDependentRenderer<DeclarationDescriptor> { descriptor, context ->
-        val declarationWithNameAndKind = DECLARATION_NAME_WITH_KIND.render(descriptor, context)
+    val CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM = Renderer<DeclarationDescriptor> { descriptor ->
+        val declarationWithNameAndKind = DECLARATION_NAME_WITH_KIND.render(descriptor)
         val withPlatform = if (descriptor is MemberDescriptor && descriptor.isActual)
             "actual $declarationWithNameAndKind"
         else

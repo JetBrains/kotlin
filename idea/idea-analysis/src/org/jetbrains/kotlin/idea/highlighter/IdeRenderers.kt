@@ -86,8 +86,8 @@ object IdeRenderers {
     }
 
     @JvmField
-    val HTML_THROWABLE = ContextDependentRenderer<Throwable> { throwable, context ->
-        Renderers.THROWABLE.render(throwable, context).replace("\n", "<br/>")
+    val HTML_THROWABLE = Renderer<Throwable> { throwable ->
+        Renderers.THROWABLE.render(throwable).replace("\n", "<br/>")
     }
 
     @JvmField
