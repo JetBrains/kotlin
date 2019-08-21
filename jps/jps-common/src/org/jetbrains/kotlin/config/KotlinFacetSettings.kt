@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.platform.IdePlatformKind
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.TargetPlatformVersion
 import org.jetbrains.kotlin.platform.compat.toIdePlatform
+import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 
@@ -137,6 +138,21 @@ enum class KotlinModuleKind {
         get() = this != DEFAULT
 }
 
+enum class KotlinMultiplatformVersion(val version: Int) {
+    M1(1), // the first implementation of MPP. Aka 1.2.0 MPP
+    M2(2), // the "New" MPP. Aka 1.3.0 MPP
+    M3(3); // the "Hierarchical" MPP.
+
+    val isMPPModule: Boolean
+        get() = version >= 1
+
+    val isNewMPP: Boolean
+        get() = version >= 2
+
+    val isHMPP: Boolean
+        get() = version >= 3
+}
+
 class KotlinFacetSettings {
     companion object {
         // Increment this when making serialization-incompatible changes to configuration data
@@ -239,7 +255,17 @@ class KotlinFacetSettings {
     var isTestModule: Boolean = false
 
     var externalProjectId: String = ""
+
+    @Deprecated(message = "Use mppVersion.isHmppEnabled")
     var isHmppEnabled: Boolean = false
+
+    val mppVersion: KotlinMultiplatformVersion?
+        get() = when {
+            isHmppEnabled -> KotlinMultiplatformVersion.M3
+            kind.isNewMPP -> KotlinMultiplatformVersion.M2
+            targetPlatform.isCommon() || implementedModuleNames.isNotEmpty() || kind.isNewMPP -> KotlinMultiplatformVersion.M1
+            else -> null
+        }
 
     var pureKotlinSourceFolders: List<String> = emptyList()
 }
