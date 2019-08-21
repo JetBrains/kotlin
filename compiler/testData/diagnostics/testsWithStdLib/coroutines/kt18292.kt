@@ -1,9 +1,8 @@
-// !LANGUAGE: -NewInference
+// !WITH_NEW_INFERENCE
 // SKIP_TXT
 // WITH_RUNTIME
-// COMMON_COROUTINES_TEST
 
-import COROUTINES_PACKAGE.*
+import kotlin.coroutines.*
 
 interface Job : CoroutineContext.Element {}
 interface Deferred<out T> : Job {
