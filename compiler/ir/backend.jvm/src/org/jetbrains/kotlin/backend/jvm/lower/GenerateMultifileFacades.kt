@@ -220,6 +220,7 @@ private class UpdateFunctionCallSites(
     override fun visitCall(expression: IrCall): IrExpression {
         val newFunction = functionDelegates[expression.symbol] ?: return super.visitCall(expression)
         return expression.run {
+            // TODO: deduplicate this with ReplaceKFunctionInvokeWithFunctionInvoke
             IrCallImpl(startOffset, endOffset, type, newFunction).apply {
                 copyTypeArgumentsFrom(expression)
                 extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
