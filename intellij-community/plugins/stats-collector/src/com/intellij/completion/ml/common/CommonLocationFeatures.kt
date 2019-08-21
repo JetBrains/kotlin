@@ -14,7 +14,7 @@ class CommonLocationFeatures : ContextFeatureProvider {
   override fun getName(): String = "common"
 
   override fun calculateFeatures(lookup: LookupImpl): Map<String, MLFeatureValue> {
-    val editor = lookup.editor
+    val editor = lookup.topLevelEditor
     val caretOffset = lookup.lookupOriginalStart
     val logicalPosition = editor.offsetToLogicalPosition(caretOffset)
     val lineStartOffset = editor.document.getLineStartOffset(logicalPosition.line)
