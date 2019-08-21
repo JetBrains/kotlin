@@ -97,18 +97,18 @@ class CompletionTrackerInitializer(experimentHelper: WebServiceStatus) {
   }
 
   private fun processContextFactors(lookup: LookupImpl, lookupStorage: MutableLookupStorage) {
-    val element = lookup.psiElement
-    if (element != null) {
+    val file = lookup.psiFile
+    if (file != null) {
       val result = mutableMapOf<String, MLFeatureValue>()
-      for (provider in ContextFeatureProvider.forLanguage(element.language)) {
+      for (provider in ContextFeatureProvider.forLanguage(file.language)) {
         val providerName = provider.name
         for ((featureName, value) in provider.calculateFeatures(lookup)) {
           result["ml_ctx_${providerName}_$featureName"] = value
         }
       }
 
-      ContextFeatures.setContextFeatures(element, result)
-      Disposer.register(lookup, Disposable { ContextFeatures.clear(element) })
+      ContextFeatures.setContextFeatures(file, result)
+      Disposer.register(lookup, Disposable { ContextFeatures.clear(file) })
       lookupStorage.contextFactors = result.mapValues { it.value.toString() }
     }
   }

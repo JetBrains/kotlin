@@ -7,10 +7,10 @@ import com.intellij.codeInsight.lookup.LookupElement
 
 class MLCompletionWeigher : CompletionWeigher() {
   override fun weigh(element: LookupElement, location: CompletionLocation): Comparable<Nothing>? {
-    val originalPosition = location.completionParameters.originalPosition ?: return null
-    val contextFeatures = ContextFeatures.extract(originalPosition)
+    val psiFile = location.completionParameters.originalFile
+    val contextFeatures = ContextFeatures.extract(psiFile)
     val result = mutableMapOf<String, Any>()
-    for (provider in ElementFeatureProvider.forLanguage(originalPosition.language)) {
+    for (provider in ElementFeatureProvider.forLanguage(psiFile.language)) {
       val name = provider.name
       for ((featureName, featureValue) in provider.calculateFeatures(element, location, contextFeatures)) {
         result["${name}_$featureName"] = featureValue
