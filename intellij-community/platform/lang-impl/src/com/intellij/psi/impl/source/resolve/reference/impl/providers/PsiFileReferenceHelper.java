@@ -40,7 +40,7 @@ import org.jetbrains.jps.model.java.JavaModuleSourceRootTypes;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.intellij.psi.impl.source.resolve.reference.impl.providers.JpsFileTargetContextSorter.sortTargetContextsResourceFirst;
+import static com.intellij.psi.impl.source.resolve.reference.impl.providers.JpsFileTargetContextUtils.prepareTargetContexts;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 
@@ -95,7 +95,7 @@ public class PsiFileReferenceHelper extends FileReferenceHelper {
         fileTargetContexts.add(new FileTargetContext(context));
       }
     }
-    return sortTargetContextsResourceFirst(project, file, fileTargetContexts);
+    return prepareTargetContexts(project, file, fileTargetContexts);
   }
 
   private static String[] removeCommonStartPackages(String[] path, String packagePath) {

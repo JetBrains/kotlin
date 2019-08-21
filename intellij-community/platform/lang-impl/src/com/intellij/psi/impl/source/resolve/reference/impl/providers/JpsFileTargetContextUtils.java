@@ -21,16 +21,20 @@ import org.jetbrains.jps.model.module.JpsModuleSourceRootType;
 import java.util.Collection;
 import java.util.List;
 
-public final class JpsFileTargetContextSorter {
-  private JpsFileTargetContextSorter() {
+public final class JpsFileTargetContextUtils {
+  private JpsFileTargetContextUtils() {
   }
 
   /**
-   * Sorts target contexts depending on their {@link JpsModuleSourceRootType} and filters out generated source directories.
+   * Sorts and filters out contexts depending on their {@link JpsModuleSourceRootType} for Create File quick fixes.
+   *
+   * @see com.intellij.codeInsight.daemon.quickFix.CreateFilePathFix
+   * @see com.intellij.codeInsight.daemon.quickFix.FileReferenceQuickFixProvider
    */
-  public static Collection<FileTargetContext> sortTargetContextsResourceFirst(@NotNull Project project,
-                                                                              @NotNull VirtualFile file,
-                                                                              @NotNull Collection<FileTargetContext> targetContexts) {
+  @NotNull
+  public static Collection<FileTargetContext> prepareTargetContexts(@NotNull Project project,
+                                                                    @NotNull VirtualFile file,
+                                                                    @NotNull Collection<FileTargetContext> targetContexts) {
     // here we try to sort target locations depending on src/test origin
     if (targetContexts.size() <= 1) {
       return targetContexts;
@@ -68,11 +72,11 @@ public final class JpsFileTargetContextSorter {
     // if file is under sources root then src/resources directories at the top
     // if file is under test sources root then test/resources directories at the top
     if (projectFileIndex.isInTestSourceContent(file)) {
-      targetContextWrappers.sort(JpsFileTargetContextSorter::compareTargetsForTests);
+      targetContextWrappers.sort(JpsFileTargetContextUtils::compareTargetsForTests);
     }
     else {
       // it could be a file from web resource root, it is not in source content, thus we do not check isInSourceContent(file)
-      targetContextWrappers.sort(JpsFileTargetContextSorter::compareTargetsForProduction);
+      targetContextWrappers.sort(JpsFileTargetContextUtils::compareTargetsForProduction);
     }
     return ContainerUtil.map(targetContextWrappers, FileTargetContextWrapper::getTargetContext);
   }
