@@ -196,7 +196,6 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                         project.buildDir,
                         taskData.buildHistoryFile
                     )
-                    @Suppress("UnstableApiUsage")
                     dirToModule[taskData.destinationDir.get()] = module
 
                     taskData.javaOutputDir?.let { dirToModule[it] = module }

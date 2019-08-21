@@ -186,7 +186,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         val getConfigurationName = dependencyHolderClass.getMethodOrNull(configurationNameAccessor) ?: return emptyList()
         val configurationName = getConfigurationName(dependencyHolder) as? String ?: return emptyList()
         val configuration = project.configurations.findByName(configurationName) ?: return emptyList()
-        @Suppress("UnstableApiUsage")
         if (!configuration.isCanBeResolved) return emptyList()
 
         val dependencyAdjuster =
@@ -512,7 +511,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         return (getCompileClasspath(compileKotlinTask) as? Collection<File>)?.map { it.path } ?: emptyList()
     }
 
-    @Suppress("UnstableApiUsage")
     private fun buildCompilationOutput(
         gradleCompilation: Named,
         compileKotlinTask: Task
@@ -580,7 +578,6 @@ class KotlinMPPGradleModelBuilder : ModelBuilderService {
         }
     }
 
-    @Suppress("UnstableApiUsage")
     private class DependencyAdjuster(
         private val configuration: Configuration,
         private val scope: String,

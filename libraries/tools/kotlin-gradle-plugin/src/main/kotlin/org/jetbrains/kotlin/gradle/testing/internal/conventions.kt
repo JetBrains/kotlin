@@ -14,12 +14,11 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import java.io.File
 
-@Suppress("UnstableApiUsage")
 internal val Project.testResultsDir: File
     get() = project.buildDir.resolve(TestingBasePlugin.TEST_RESULTS_DIR_NAME)
 internal val Project.reportsDir: File
     get() = project.extensions.getByType(ReportingExtension::class.java).baseDir
-@Suppress("UnstableApiUsage")
+
 internal val Project.testReportsDir: File
     get() = reportsDir.resolve(TestingBasePlugin.TESTS_DIR_NAME)
 

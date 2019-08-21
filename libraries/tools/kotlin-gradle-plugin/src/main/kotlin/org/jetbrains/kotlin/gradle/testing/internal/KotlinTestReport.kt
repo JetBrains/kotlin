@@ -121,7 +121,6 @@ open class KotlinTestReport : TestReport() {
     }
 
     private fun reportOn(task: AbstractTestTask) {
-        @Suppress("UnstableApiUsage")
         reportOn(task.binResultsDir)
     }
 
@@ -240,10 +239,8 @@ open class KotlinTestReport : TestReport() {
             task.ignoreRunFailures = true
         }
 
-        @Suppress("UnstableApiUsage")
         task.reports.html.isEnabled = false
 
-        @Suppress("UnstableApiUsage")
         task.reports.junitXml.isEnabled = false
     }
 }

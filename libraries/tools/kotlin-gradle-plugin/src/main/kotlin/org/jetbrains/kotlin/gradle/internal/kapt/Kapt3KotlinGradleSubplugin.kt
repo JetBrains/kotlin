@@ -475,7 +475,6 @@ class Kapt3KotlinGradleSubplugin : KotlinGradleSubplugin<KotlinCompile> {
         val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
 
         KotlinCompileTaskData.register(kaptTaskName, KotlinCompileTaskData.get(project, kotlinCompile.name).compilation).apply {
-            @Suppress("UnstableApiUsage")
             useModuleDetection.set(KotlinCompileTaskData.get(project, kotlinCompile.name).useModuleDetection)
         }
 

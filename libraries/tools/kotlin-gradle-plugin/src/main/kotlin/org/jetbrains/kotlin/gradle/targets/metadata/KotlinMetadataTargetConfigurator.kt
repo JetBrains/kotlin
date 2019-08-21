@@ -270,7 +270,6 @@ class KotlinMetadataTargetConfigurator(kotlinPluginVersion: String) :
      * dependencies during the transformation. */
     private fun GranularMetadataTransformation.applyToConfiguration(configuration: Configuration) {
         // Run this action immediately before the configuration first takes part in dependency resolution:
-        @Suppress("UnstableApiUsage")
         configuration.withDependencies {
             val (unrequested, requested) = metadataDependencyResolutions
                 .partition { it is MetadataDependencyResolution.ExcludeAsUnrequested }

@@ -73,7 +73,6 @@ internal fun AbstractArchiveTask.setArchiveAppendixCompatible(appendixProvider: 
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() =
         if (isGradleVersionAtLeast(5, 1)) {
-            @Suppress("UnstableApiUsage")
             archiveFile.get().asFile
         } else {
             @Suppress("DEPRECATION")

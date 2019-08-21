@@ -85,7 +85,6 @@ internal abstract class KotlinSourceSetProcessor<T : AbstractKotlinCompile<*>>(
         logger.kotlinDebug("Creating kotlin compile task $name")
 
         KotlinCompileTaskData.register(name, kotlinCompilation).apply {
-            @Suppress("UnstableApiUsage")
             destinationDir.set(project.provider { defaultKotlinDestinationDir })
         }
 
@@ -920,7 +919,6 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
 
         KotlinCompileTaskData.register(kotlinTaskName, compilation).apply {
             // store kotlin classes in separate directory. They will serve as class-path to java compiler
-            @Suppress("UnstableApiUsage")
             destinationDir.set(project.provider { File(project.buildDir, "tmp/kotlin-classes/$variantDataName") })
         }
 

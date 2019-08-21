@@ -14,9 +14,7 @@ import java.io.File
 internal open class KotlinCompileTaskData(
     val taskName: String,
     val compilation: AbstractKotlinCompilation<*>,
-    @Suppress("UnstableApiUsage")
     val destinationDir: Property<File>,
-    @Suppress("UnstableApiUsage")
     val useModuleDetection: Property<Boolean>
 ) {
     private val taskBuildDirectory: File

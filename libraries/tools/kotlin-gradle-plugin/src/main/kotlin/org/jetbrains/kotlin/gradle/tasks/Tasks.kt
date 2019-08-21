@@ -142,7 +142,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     private val taskData: KotlinCompileTaskData
         get() = KotlinCompileTaskData.get(project, name)
 
-    @Suppress("UnstableApiUsage")
     @get:Input
     internal open var useModuleDetection: Boolean
         get() = taskData.useModuleDetection.get()
@@ -185,21 +184,17 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
         get() = project.extensions.findByType(KotlinProjectExtension::class.java)!!
 
     override fun getDestinationDir(): File =
-        @Suppress("UnstableApiUsage")
         taskData.destinationDir.get()
 
-    @Suppress("UnstableApiUsage")
     override fun setDestinationDir(provider: Provider<File>) {
         taskData.destinationDir.set(provider)
     }
 
     fun setDestinationDir(provider: () -> File) {
-        @Suppress("UnstableApiUsage")
         taskData.destinationDir.set(project.provider(provider))
     }
 
     override fun setDestinationDir(destinationDir: File) {
-        @Suppress("UnstableApiUsage")
         taskData.destinationDir.set(destinationDir)
     }
 
@@ -512,21 +507,21 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
 
 @CacheableTask
 internal open class KotlinCompileWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : KotlinCompile() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class Kotlin2JsCompileWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : Kotlin2JsCompile() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
 
 @CacheableTask
 internal open class KotlinCompileCommonWithWorkers @Inject constructor(
-    @Suppress("UnstableApiUsage") private val workerExecutor: WorkerExecutor
+    private val workerExecutor: WorkerExecutor
 ) : KotlinCompileCommon() {
     override fun compilerRunner() = GradleCompilerRunnerWithWorkers(this, workerExecutor)
 }
