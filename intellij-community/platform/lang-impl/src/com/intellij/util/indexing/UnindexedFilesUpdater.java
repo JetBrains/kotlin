@@ -50,6 +50,7 @@ public class UnindexedFilesUpdater extends DumbModeTask {
 
   private void updateUnindexedFiles(ProgressIndicator indicator) {
     if (!IndexInfrastructure.hasIndices()) return;
+
     PerformanceWatcher.Snapshot snapshot = PerformanceWatcher.takeSnapshot();
     myPusher.pushAllPropertiesNow();
     boolean trackResponsiveness = !ApplicationManager.getApplication().isUnitTestMode();
