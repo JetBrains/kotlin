@@ -82,10 +82,15 @@ object Renderers {
     @JvmField
     val MODULE_WITH_PLATFORM = Renderer<ModuleDescriptor> { module ->
         val platform = module.platform
-        val moduleName = module.moduleInfo?.unwrapPlatform()?.displayedName ?: ""
+        val moduleName = MODULE.render(module)
         val platformNameIfAny = if (platform == null || platform.isCommon()) "" else " for " + platform.single().platformName
 
         moduleName + platformNameIfAny
+    }
+
+    @JvmField
+    val MODULE = Renderer<ModuleDescriptor> { module ->
+        module.moduleInfo?.unwrapPlatform()?.displayedName ?: module.name.asString()
     }
     
     @JvmField

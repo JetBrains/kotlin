@@ -648,9 +648,9 @@ public interface Errors {
     DiagnosticFactory2<KtNamedDeclaration, MemberDescriptor,
             Map<Incompatible, Collection<MemberDescriptor>>> ACTUAL_WITHOUT_EXPECT =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
-    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<String>> AMBIGUOUS_ACTUALS =
+    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<ModuleDescriptor>> AMBIGUOUS_ACTUALS =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
-    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<String>> AMBIGUOUS_EXPECTS =
+    DiagnosticFactory2<KtNamedDeclaration, DeclarationDescriptor, Collection<ModuleDescriptor>> AMBIGUOUS_EXPECTS =
             DiagnosticFactory2.create(ERROR, INCOMPATIBLE_DECLARATION);
 
     DiagnosticFactory2<KtNamedDeclaration, ClassDescriptor,
