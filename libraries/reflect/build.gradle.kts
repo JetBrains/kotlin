@@ -11,7 +11,12 @@ description = "Kotlin Full Reflection Library"
 
 buildscript {
     repositories {
-        maven(url = "https://kotlin.bintray.com/kotlinx/")
+        val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
+        if (cacheRedirectorEnabled) {
+            maven(url = "https://cache-redirector.jetbrains.com/dl.bintray.com/kotlin/kotlinx")
+        } else {
+            maven(url = "https://dl.bintray.com/kotlin/kotlinx/")
+        }
     }
 
     dependencies {
