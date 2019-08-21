@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodGenericSignature
@@ -94,28 +94,25 @@ class IrSourceCompilerForInline(
         asmMethod: Method
     ): SMAPAndMethodNode {
         assert(callableDescriptor == callElement.descriptor.original)
-        val irFunction = (callElement as IrCall).symbol.owner.let { irFunction ->
-            if (!callDefault) irFunction
-            else {
-                /*TODO: get rid of hack*/
-                val parent = irFunction.parent
-                val irClass = if (parent is IrFile) parent.declarations.filterIsInstance<IrClass>().single {
-                    //find class for package part
-                    it.thisReceiver == null
-                }
-                else parent as IrClass
+        assert(codegen.lastLineNumber >= 0)
 
-                irClass.declarations.filterIsInstance<IrFunction>().single {
-                    it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
-                            codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(callElement.symbol.owner).asmMethod.descriptor.startsWith(
-                                jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
-                            )
-                }
+        val irFunction = getFunctionToInline(callElement as IrCall, jvmSignature, callDefault)
+        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), CallSiteMarker(codegen.lastLineNumber))
+    }
+
+    private fun getFunctionToInline(call: IrCall, jvmSignature: JvmMethodSignature, callDefault: Boolean): IrFunction {
+        val callee = call.symbol.owner
+        if (callDefault) {
+            /*TODO: get rid of hack*/
+            return callee.parentAsClass.declarations.filterIsInstance<IrFunction>().single {
+                it.descriptor.name.asString() == jvmSignature.asmMethod.name + JvmAbi.DEFAULT_PARAMS_IMPL_SUFFIX &&
+                        codegen.context.methodSignatureMapper.mapSignatureSkipGeneric(callee).asmMethod.descriptor.startsWith(
+                            jvmSignature.asmMethod.descriptor.substringBeforeLast(')')
+                        )
             }
         }
 
-        assert(codegen.lastLineNumber >= 0)
-        return makeInlineNode(irFunction, FakeClassCodegen(irFunction, codegen.classCodegen), CallSiteMarker(codegen.lastLineNumber))
+        return callee
     }
 
     override fun hasFinallyBlocks() = data.hasFinallyBlocks()
