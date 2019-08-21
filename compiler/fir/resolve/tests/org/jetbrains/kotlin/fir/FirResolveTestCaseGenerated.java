@@ -99,6 +99,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/intersectionTypes.kt");
     }
 
+    @TestMetadata("localObject.kt")
+    public void testLocalObject() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/localObject.kt");
+    }
+
     @TestMetadata("nestedClass.kt")
     public void testNestedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/nestedClass.kt");

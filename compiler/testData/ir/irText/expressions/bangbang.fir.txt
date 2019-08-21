@@ -63,10 +63,10 @@ FILE fqName:<root> fileName:/bangbang.kt
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
-          then: BLOCK type=kotlin.Unit origin=EXCLEXCL
+          then: BLOCK type=X of <root>.test4 origin=EXCLEXCL
             VAR name:<bangbang> type:X of <root>.test4 [val]
               GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null
-            WHEN type=kotlin.Unit origin=EXCLEXCL
+            WHEN type=X of <root>.test4 origin=EXCLEXCL
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                   arg0: GET_VAR 'val <bangbang>: X of <root>.test4 [val] declared in <root>.test4' type=X of <root>.test4 origin=null
@@ -76,7 +76,7 @@ FILE fqName:<root> fileName:/bangbang.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: GET_VAR 'val <bangbang>: X of <root>.test4 [val] declared in <root>.test4' type=X of <root>.test4 origin=null
-      WHEN type=kotlin.Unit origin=IF
+      WHEN type=IrErrorType origin=IF
         BRANCH
           if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.String?
             GET_VAR 'a: X of <root>.test4 declared in <root>.test4' type=X of <root>.test4 origin=null

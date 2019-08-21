@@ -41,9 +41,12 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 open class FirBodyResolveTransformer(
     final override val session: FirSession,
     phase: FirResolvePhase,
-    val implicitTypeOnly: Boolean,
+    implicitTypeOnly: Boolean,
     val scopeSession: ScopeSession = ScopeSession()
 ) : FirAbstractPhaseTransformer<Any?>(phase), BodyResolveComponents {
+    var implicitTypeOnly: Boolean = implicitTypeOnly
+        private set
+
     final override val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession)
     final override val labels: SetMultimap<Name, ConeKotlinType> = LinkedHashMultimap.create()
     final override val noExpectedType = FirImplicitTypeRefImpl(null)
@@ -554,17 +557,19 @@ open class FirBodyResolveTransformer(
         if ((returnTypeRef !is FirImplicitTypeRef) && implicitTypeOnly) {
             return namedFunction.compose()
         }
-        if (returnTypeRef is FirImplicitTypeRef) {
-            namedFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
-        }
-
-        val receiverTypeRef = namedFunction.receiverTypeRef
-        return if (receiverTypeRef != null) {
-            withLabelAndReceiverType(namedFunction.name, namedFunction, receiverTypeRef.coneTypeUnsafe()) {
-                transformFunctionWithGivenSignature(namedFunction, returnTypeRef, receiverTypeRef)
+        return withFullBodyResolve {
+            if (returnTypeRef is FirImplicitTypeRef) {
+                namedFunction.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
             }
-        } else {
-            transformFunctionWithGivenSignature(namedFunction, returnTypeRef)
+
+            val receiverTypeRef = namedFunction.receiverTypeRef
+            if (receiverTypeRef != null) {
+                withLabelAndReceiverType(namedFunction.name, namedFunction, receiverTypeRef.coneTypeUnsafe()) {
+                    transformFunctionWithGivenSignature(namedFunction, returnTypeRef, receiverTypeRef)
+                }
+            } else {
+                transformFunctionWithGivenSignature(namedFunction, returnTypeRef)
+            }
         }
     }
 
@@ -672,22 +677,24 @@ open class FirBodyResolveTransformer(
         if (returnTypeRef is FirImplicitTypeRef) {
             property.transformReturnTypeRef(StoreType, FirComputingImplicitTypeRef)
         }
-        return withScopeCleanup(localScopes) {
-            localScopes.addIfNotNull(primaryConstructorParametersScope)
-            withContainer(property) {
-                property.transformChildrenWithoutAccessors(this, returnTypeRef)
-                if (property.initializer != null) {
-                    storeVariableReturnType(property)
+        return withFullBodyResolve {
+            withScopeCleanup(localScopes) {
+                localScopes.addIfNotNull(primaryConstructorParametersScope)
+                withContainer(property) {
+                    property.transformChildrenWithoutAccessors(this, returnTypeRef)
+                    if (property.initializer != null) {
+                        storeVariableReturnType(property)
+                    }
+                    withScopeCleanup(localScopes) {
+                        localScopes.add(FirLocalScope().apply {
+                            storeBackingField(property)
+                        })
+                        property.transformAccessors()
+                    }
                 }
-                withScopeCleanup(localScopes) {
-                    localScopes.add(FirLocalScope().apply {
-                        storeBackingField(property)
-                    })
-                    property.transformAccessors()
-                }
+                property.resolvePhase = transformerPhase
+                property.compose()
             }
-            property.resolvePhase = transformerPhase
-            property.compose()
         }
     }
 
@@ -774,6 +781,16 @@ open class FirBodyResolveTransformer(
             repeat(size - sizeBefore) {
                 scopes.let { it.removeAt(it.size - 1) }
             }
+        }
+    }
+
+    private inline fun <T> withFullBodyResolve(crossinline l: () -> T): T {
+        if (!implicitTypeOnly) return l()
+        implicitTypeOnly = false
+        return try {
+            l()
+        } finally {
+            implicitTypeOnly = true
         }
     }
 
