@@ -37,12 +37,68 @@ import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
-
-fun getToolwindowHandler(parentDisposable: Disposable): ScratchOutputHandler {
+/**
+ * Method to retrieve shared instance of scratches ToolWindow output handler.
+ *
+ * [releaseToolWindowHandler] must be called for every output handler received from this method.
+ *
+ * Can be called from EDT only.
+ *
+ * @return new toolWindow output handler if one does not exist, otherwise returns the existing one. When application in test mode,
+ * returns [TestOutputHandler].
+ */
+fun requestToolWindowHandler(): ScratchOutputHandler {
     return if (ApplicationManager.getApplication().isUnitTestMode) {
         TestOutputHandler
     } else {
-        ToolWindowScratchOutputHandler(parentDisposable)
+        ScratchToolWindowHandlerKeeper.requestOutputHandler()
+    }
+}
+
+/**
+ * Should be called once with the output handler received from the [requestToolWindowHandler] call.
+ *
+ * When release is called for every request, the output handler is actually disposed.
+ *
+ * When application in test mode, does nothing.
+ *
+ * Can be called from EDT only.
+ */
+fun releaseToolWindowHandler(scratchOutputHandler: ScratchOutputHandler) {
+    if (!ApplicationManager.getApplication().isUnitTestMode) {
+        ScratchToolWindowHandlerKeeper.releaseOutputHandler(scratchOutputHandler)
+    }
+}
+
+/**
+ * Implements logic of shared pointer for the toolWindow output handler.
+ *
+ * Not thread safe! Can be used only from the EDT.
+ */
+private object ScratchToolWindowHandlerKeeper {
+    private var toolWindowHandler: ScratchOutputHandler? = null
+    private var toolWindowDisposable = Disposer.newDisposable()
+    private var counter = 0
+
+    fun requestOutputHandler(): ScratchOutputHandler {
+        if (counter == 0) {
+            toolWindowHandler = ToolWindowScratchOutputHandler(toolWindowDisposable)
+        }
+
+        counter += 1
+        return toolWindowHandler!!
+    }
+
+    fun releaseOutputHandler(scratchOutputHandler: ScratchOutputHandler) {
+        require(counter > 0) { "Counter is $counter, nothing to release!" }
+        require(toolWindowHandler === scratchOutputHandler) { "$scratchOutputHandler differs from stored $toolWindowHandler" }
+
+        counter -= 1
+        if (counter == 0) {
+            Disposer.dispose(toolWindowDisposable)
+            toolWindowDisposable = Disposer.newDisposable()
+            toolWindowHandler = null
+        }
     }
 }
 
@@ -130,12 +186,12 @@ private class ToolWindowScratchOutputHandler(private val parentDisposable: Dispo
     private fun createToolWindow(file: ScratchFile): ToolWindow {
         val project = file.project
         val toolWindowManager = ToolWindowManager.getInstance(project)
-        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, false, ToolWindowAnchor.BOTTOM)
+        toolWindowManager.registerToolWindow(ScratchToolWindowFactory.ID, true, ToolWindowAnchor.BOTTOM)
         val window = toolWindowManager.getToolWindow(ScratchToolWindowFactory.ID)
         ScratchToolWindowFactory().createToolWindowContent(project, window)
 
         Disposer.register(parentDisposable, Disposable {
-            window.setAvailable(false, null)
+            toolWindowManager.unregisterToolWindow(ScratchToolWindowFactory.ID)
         })
 
         return window

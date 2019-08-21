@@ -23,15 +23,16 @@ import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.idea.scratch.ScratchExpression
 import org.jetbrains.kotlin.idea.scratch.ScratchFile
 
-class InlayScratchOutputHandler(private val textEditor: TextEditor) : ScratchOutputHandler {
+class InlayScratchOutputHandler(
+    private val textEditor: TextEditor,
+    private val toolWindowHandler: ScratchOutputHandler
+) : ScratchOutputHandler {
     private val maxLineLength = 120
     private val maxInsertOffset = 60
     private val minSpaceCount = 4
 
-    private val toolwindowHandler = getToolwindowHandler(textEditor)
-
     override fun onStart(file: ScratchFile) {
-        toolwindowHandler.onStart(file)
+        toolWindowHandler.onStart(file)
     }
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -40,21 +41,21 @@ class InlayScratchOutputHandler(private val textEditor: TextEditor) : ScratchOut
         createInlay(file, expression, output)
 
         if (output.type == ScratchOutputType.ERROR) {
-            toolwindowHandler.handle(file, expression, output)
+            toolWindowHandler.handle(file, expression, output)
         }
     }
 
     override fun error(file: ScratchFile, message: String) {
-        toolwindowHandler.error(file, message)
+        toolWindowHandler.error(file, message)
     }
 
     override fun onFinish(file: ScratchFile) {
-        toolwindowHandler.onFinish(file)
+        toolWindowHandler.onFinish(file)
     }
 
     override fun clear(file: ScratchFile) {
         clearInlays(textEditor)
-        toolwindowHandler.clear(file)
+        toolWindowHandler.clear(file)
     }
 
     private fun createInlay(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
@@ -96,7 +97,7 @@ class InlayScratchOutputHandler(private val textEditor: TextEditor) : ScratchOut
 
     private fun printToToolWindow(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         if (output.type != ScratchOutputType.ERROR) {
-            toolwindowHandler.handle(file, expression, output)
+            toolWindowHandler.handle(file, expression, output)
         }
     }
 
