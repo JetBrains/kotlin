@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.Context
 import org.jetbrains.kotlin.fir.builder.generateAccessorsByDelegate
+import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
+import org.jetbrains.kotlin.fir.builder.generateCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -37,8 +39,6 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.fir.builder.generateCopyFunction
-import org.jetbrains.kotlin.fir.builder.generateComponentFunctions
 
 class DeclarationsConverter(
     session: FirSession,
@@ -888,7 +888,8 @@ class DeclarationsConverter(
             null,
             isGetter,
             modifiers.getVisibility(),
-            returnType ?: if (isGetter) propertyTypeRef else implicitUnitType
+            returnType ?: if (isGetter) propertyTypeRef else implicitUnitType,
+            FirPropertyAccessorSymbol()
         )
         context.firFunctions += firAccessor
         firAccessor.annotations += modifiers.annotations
@@ -971,7 +972,7 @@ class DeclarationsConverter(
         val parentNode = functionDeclaration.getParent()
         val isLocal = !(parentNode?.tokenType == KT_FILE || parentNode?.tokenType == CLASS_BODY)
         val firFunction = if (identifier == null) {
-            FirAnonymousFunctionImpl(session, null, returnType!!, receiverType)
+            FirAnonymousFunctionImpl(session, null, returnType!!, receiverType, FirAnonymousFunctionSymbol())
         } else {
             val functionName = identifier.nameAsSafeName()
             FirMemberFunctionImpl(

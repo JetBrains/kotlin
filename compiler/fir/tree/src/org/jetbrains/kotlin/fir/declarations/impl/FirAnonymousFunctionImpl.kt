@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
@@ -18,8 +19,13 @@ class FirAnonymousFunctionImpl(
     session: FirSession,
     psi: PsiElement?,
     override var returnTypeRef: FirTypeRef,
-    override var receiverTypeRef: FirTypeRef?
-) : FirAnonymousFunction(session, psi), FirModifiableFunction {
+    override var receiverTypeRef: FirTypeRef?,
+    override val symbol: FirAnonymousFunctionSymbol
+) : FirAnonymousFunction(session, psi), FirModifiableFunction<FirAnonymousFunction> {
+    init {
+        symbol.bind(this)
+    }
+
     override var label: FirLabel? = null
 
     override val valueParameters = mutableListOf<FirValueParameter>()

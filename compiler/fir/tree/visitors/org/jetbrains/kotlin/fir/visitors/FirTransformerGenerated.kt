@@ -6,9 +6,7 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -42,7 +40,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclarationWithBody(anonymousInitializer, data)
     }
 
-    open fun transformFunction(function: FirFunction, data: D): CompositeTransformResult<FirDeclaration> {
+    open fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: D): CompositeTransformResult<FirDeclaration> {
         return transformDeclarationWithBody(function, data)
     }
 
@@ -62,16 +60,12 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformMemberFunction(namedFunction, data)
     }
 
-    open fun transformModifiableFunction(modifiableFunction: FirModifiableFunction, data: D): CompositeTransformResult<FirDeclaration> {
+    open fun <F : FirFunction<F>> transformModifiableFunction(modifiableFunction: FirModifiableFunction<F>, data: D): CompositeTransformResult<FirDeclaration> {
         return transformFunction(modifiableFunction, data)
     }
 
     open fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): CompositeTransformResult<FirDeclaration> {
         return transformFunction(propertyAccessor, data)
-    }
-
-    open fun transformDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): CompositeTransformResult<FirDeclaration> {
-        return transformPropertyAccessor(defaultPropertyAccessor, data)
     }
 
     open fun transformErrorDeclaration(errorDeclaration: FirErrorDeclaration, data: D): CompositeTransformResult<FirDeclaration> {
@@ -582,10 +576,6 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformDeclarationWithBody(declarationWithBody, data)
     }
 
-    final override fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): CompositeTransformResult<FirElement> {
-        return transformDefaultPropertyAccessor(defaultPropertyAccessor, data)
-    }
-
     final override fun visitDelegateFieldReference(delegateFieldReference: FirDelegateFieldReference, data: D): CompositeTransformResult<FirElement> {
         return transformDelegateFieldReference(delegateFieldReference, data)
     }
@@ -638,7 +628,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformFile(file, data)
     }
 
-    final override fun visitFunction(function: FirFunction, data: D): CompositeTransformResult<FirElement> {
+    final override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: D): CompositeTransformResult<FirElement> {
         return transformFunction(function, data)
     }
 
@@ -698,7 +688,7 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
         return transformModifiableClass(modifiableClass, data)
     }
 
-    final override fun visitModifiableFunction(modifiableFunction: FirModifiableFunction, data: D): CompositeTransformResult<FirElement> {
+    final override fun <F : FirFunction<F>> visitModifiableFunction(modifiableFunction: FirModifiableFunction<F>, data: D): CompositeTransformResult<FirElement> {
         return transformModifiableFunction(modifiableFunction, data)
     }
 

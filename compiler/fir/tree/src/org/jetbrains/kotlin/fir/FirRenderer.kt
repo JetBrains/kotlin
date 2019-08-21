@@ -127,7 +127,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print(callableDeclaration.name)
         }
 
-        if (callableDeclaration is FirFunction) {
+        if (callableDeclaration is FirFunction<*>) {
             callableDeclaration.valueParameters.renderParameters()
         }
         print(": ")
@@ -382,7 +382,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         anonymousFunction.body?.renderBody()
     }
 
-    override fun visitFunction(function: FirFunction) {
+    override fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>) {
         function.valueParameters.renderParameters()
         visitDeclarationWithBody(function)
     }

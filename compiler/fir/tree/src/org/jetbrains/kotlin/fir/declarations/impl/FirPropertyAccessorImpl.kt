@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -21,22 +23,29 @@ class FirPropertyAccessorImpl(
     psi: PsiElement?,
     override val isGetter: Boolean,
     visibility: Visibility,
-    override var returnTypeRef: FirTypeRef
-) : FirAbstractFunction(session, psi), FirPropertyAccessor {
+    override var returnTypeRef: FirTypeRef,
+    symbol: FirPropertyAccessorSymbol
+) : FirAbstractPropertyAccessor(session, psi, symbol) {
     override var status = FirDeclarationStatusImpl(visibility, Modality.FINAL)
+
+    override var body: FirBlock? = null
+
+    override val valueParameters = mutableListOf<FirValueParameter>()
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
+        valueParameters.transformInplace(transformer, data)
+        body = body?.transformSingle(transformer, data)
         status = status.transformSingle(transformer, data)
 
-        return super<FirAbstractFunction>.transformChildren(transformer, data)
+        return super.transformChildren(transformer, data)
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessorImpl {
         return this
     }
 }

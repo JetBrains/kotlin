@@ -52,7 +52,7 @@ fun FirAnonymousFunction.copy(
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label
 ): FirAnonymousFunction {
-    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef).apply {
+    return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef, symbol).apply {
         this.valueParameters.addAll(valueParameters)
         this.body = body
         this.annotations.addAll(annotations)

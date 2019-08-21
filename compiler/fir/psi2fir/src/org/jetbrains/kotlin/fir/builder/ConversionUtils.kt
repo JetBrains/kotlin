@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.references.FirDelegateFieldReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReferenceImpl
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -317,7 +318,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
     }
     if (stubMode) return
     getter = (getter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(null)).apply Accessor@{
+        ?: FirPropertyAccessorImpl(session, null, true, Visibilities.UNKNOWN, FirImplicitTypeRefImpl(null), FirPropertyAccessorSymbol()).apply Accessor@{
             body = FirSingleExpressionBlock(
                 FirReturnExpressionImpl(
                     null,
@@ -334,7 +335,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
             )
         }
     setter = (setter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, FirImplicitUnitTypeRef(null)).apply {
+        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, FirImplicitUnitTypeRef(null), FirPropertyAccessorSymbol()).apply {
             val parameter = FirValueParameterImpl(
                 session, null, DELEGATED_SETTER_PARAM,
                 FirImplicitTypeRefImpl(null),

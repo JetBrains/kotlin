@@ -11,20 +11,21 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
-import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirWhenSubject
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.labels.FirLabelImpl
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
@@ -205,7 +206,8 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
                     returnTypeReference?.convertSafe() ?: propertyTypeRef
                 } else {
                     returnTypeReference.toFirOrUnitType()
-                }
+                },
+                FirPropertyAccessorSymbol()
             )
             this@RawFirBuilder.context.firFunctions += firAccessor
             extractAnnotationsTo(firAccessor)
@@ -284,7 +286,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
         }
 
         private fun KtDeclarationWithBody.extractValueParametersTo(
-            container: FirFunction,
+            container: FirFunction<*>,
             defaultTypeRef: FirTypeRef? = null
         ) {
             for (valueParameter in valueParameters) {
@@ -543,7 +545,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             }
             val receiverType = function.receiverTypeReference.convertSafe<FirTypeRef>()
             val firFunction = if (function.name == null) {
-                FirAnonymousFunctionImpl(session, function, returnType, receiverType)
+                FirAnonymousFunctionImpl(session, function, returnType, receiverType, FirAnonymousFunctionSymbol())
             } else {
 
                 FirMemberFunctionImpl(
@@ -583,7 +585,7 @@ class RawFirBuilder(session: FirSession, val stubMode: Boolean) : BaseFirBuilder
             val literal = expression.functionLiteral
             val returnType = FirImplicitTypeRefImpl(literal)
             val receiverType = FirImplicitTypeRefImpl(literal)
-            return FirAnonymousFunctionImpl(session, literal, returnType, receiverType).apply {
+            return FirAnonymousFunctionImpl(session, literal, returnType, receiverType, FirAnonymousFunctionSymbol()).apply {
                 context.firFunctions += this
                 var destructuringBlock: FirExpression? = null
                 for (valueParameter in literal.valueParameters) {

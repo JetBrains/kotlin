@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
@@ -55,7 +54,7 @@ class FirJavaConstructor(
 
     override val valueParameters = mutableListOf<FirValueParameter>()
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
         return this
     }

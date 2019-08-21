@@ -8,25 +8,24 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.transformInplace
-import org.jetbrains.kotlin.fir.transformSingle
+import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 
-abstract class FirAbstractFunction(
+abstract class FirAbstractPropertyAccessor(
     session: FirSession,
-    psi: PsiElement?
-) : FirAbstractAnnotatedDeclaration(session, psi), FirFunction {
-    final override val valueParameters = mutableListOf<FirValueParameter>()
+    psi: PsiElement?,
+    final override val symbol: FirPropertyAccessorSymbol
+) : FirAbstractAnnotatedDeclaration(session, psi), @VisitedSupertype FirPropertyAccessor {
+    init {
+        symbol.bind(this)
+    }
 
-    final override var body: FirBlock? = null
+    final override val receiverTypeRef: FirTypeRef? get() = null
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
-        valueParameters.transformInplace(transformer, data)
-        body = body?.transformSingle(transformer, data)
-
         return super<FirAbstractAnnotatedDeclaration>.transformChildren(transformer, data)
     }
 }

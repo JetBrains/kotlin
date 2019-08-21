@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.resolve
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccess
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
@@ -192,7 +192,7 @@ fun <T : ConeKotlinType> T.withArguments(arguments: Array<out ConeKotlinTypeProj
     }
 }
 
-fun FirFunction.constructFunctionalTypeRef(session: FirSession): FirResolvedTypeRef {
+fun FirFunction<*>.constructFunctionalTypeRef(session: FirSession): FirResolvedTypeRef {
     val receiverTypeRef = when (this) {
         is FirNamedFunction -> receiverTypeRef
         is FirAnonymousFunction -> receiverTypeRef

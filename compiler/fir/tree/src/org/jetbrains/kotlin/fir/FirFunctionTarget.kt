@@ -9,4 +9,4 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 
 class FirFunctionTarget(
     labelName: String?
-) : FirAbstractTarget<FirFunction>(labelName)
+) : FirAbstractTarget<FirFunction<*>>(labelName)

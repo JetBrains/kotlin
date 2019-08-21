@@ -17,7 +17,7 @@ class Context {
     var className: FqName = FqName.ROOT
     val currentClassId get() = ClassId(packageFqName, className, false)
 
-    val firFunctions = mutableListOf<FirFunction>()
+    val firFunctions = mutableListOf<FirFunction<*>>()
     val firFunctionCalls = mutableListOf<FirFunctionCall>()
     val firLabels = mutableListOf<FirLabel>()
     val firLoops = mutableListOf<FirLoop>()

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 
-interface FirModifiableFunction : FirFunction {
+interface FirModifiableFunction<F : FirFunction<F>> : FirFunction<F> {
     override var body: FirBlock?
 
     override val valueParameters: MutableList<FirValueParameter>

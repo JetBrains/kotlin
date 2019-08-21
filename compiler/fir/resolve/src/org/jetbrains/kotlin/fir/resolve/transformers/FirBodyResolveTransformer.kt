@@ -545,7 +545,7 @@ open class FirBodyResolveTransformer(
         return (annotationCall.transformChildren(this, data) as FirStatement).compose()
     }
 
-    override fun transformFunction(function: FirFunction, data: Any?): CompositeTransformResult<FirDeclaration> {
+    override fun <F : FirFunction<F>> transformFunction(function: FirFunction<F>, data: Any?): CompositeTransformResult<FirDeclaration> {
         return withScopeCleanup(localScopes) {
             localScopes += FirLocalScope()
             super.transformFunction(function, data)
@@ -553,7 +553,7 @@ open class FirBodyResolveTransformer(
     }
 
     private fun transformFunctionWithGivenSignature(
-        function: FirFunction,
+        function: FirFunction<*>,
         returnTypeRef: FirTypeRef,
         receiverTypeRef: FirTypeRef? = null
     ): CompositeTransformResult<FirDeclaration> {
@@ -563,7 +563,7 @@ open class FirBodyResolveTransformer(
         return withScopeCleanup(scopes) {
             scopes.addIfNotNull(receiverTypeRef?.coneTypeSafe<ConeKotlinType>()?.scope(session, scopeSession))
 
-            val result = transformFunction(function, returnTypeRef).single as FirFunction
+            val result = transformFunction(function, returnTypeRef).single as FirFunction<*>
             val body = result.body
             if (result is FirTypedDeclaration && result.returnTypeRef is FirImplicitTypeRef && body != null) {
                 result.transformReturnTypeRef(this, body.resultType)
@@ -782,7 +782,7 @@ open class FirBodyResolveTransformer(
         labels.put(labelName, type)
         when (owner) {
             is FirRegularClass -> implicitReceiverStack += ImplicitDispatchReceiverValue(owner.symbol, type)
-            is FirFunction -> implicitReceiverStack += ImplicitExtensionReceiverValue(type)
+            is FirFunction<*> -> implicitReceiverStack += ImplicitExtensionReceiverValue(type)
             else -> throw IllegalArgumentException("Incorrect label & receiver owner: ${owner.javaClass}")
         }
         val result = block()

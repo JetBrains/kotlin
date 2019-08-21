@@ -280,7 +280,7 @@ internal class Fir2IrVisitor(
 
     private fun <T : IrFunction> T.setFunctionContent(
         descriptor: FunctionDescriptor,
-        firFunction: FirFunction,
+        firFunction: FirFunction<*>,
         firOverriddenSymbol: FirNamedFunctionSymbol? = null
     ): T {
         setParentByParentStack()

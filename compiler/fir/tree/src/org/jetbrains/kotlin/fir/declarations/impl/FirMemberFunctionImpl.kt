@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 
-open class FirMemberFunctionImpl : FirAbstractCallableMember<FirNamedFunction>, FirNamedFunction, FirModifiableFunction {
+open class FirMemberFunctionImpl : FirAbstractCallableMember<FirNamedFunction>, FirNamedFunction, FirModifiableFunction<FirNamedFunction> {
 
     // NB: FirAccessorSymbol can be here
     override val symbol: FirFunctionSymbol<FirNamedFunction>
@@ -81,7 +81,7 @@ open class FirMemberFunctionImpl : FirAbstractCallableMember<FirNamedFunction>, 
         return super<FirAbstractCallableMember>.transformChildren(transformer, data)
     }
 
-    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirFunction {
+    override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirMemberFunctionImpl {
         valueParameters.transformInplace(transformer, data)
         return this
     }

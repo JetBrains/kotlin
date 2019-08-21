@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.references.FirExplicitSuperReference
 import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
@@ -115,7 +116,7 @@ class ExpressionsConverter(
             }
         }
 
-        return FirAnonymousFunctionImpl(session, null, implicitType, implicitType).apply {
+        return FirAnonymousFunctionImpl(session, null, implicitType, implicitType, FirAnonymousFunctionSymbol()).apply {
             context.firFunctions += this
             var destructuringBlock: FirExpression? = null
             for (valueParameter in valueParameterList) {

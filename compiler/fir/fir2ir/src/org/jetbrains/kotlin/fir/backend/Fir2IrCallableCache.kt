@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirVariable
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.IrVariable
 
 class Fir2IrCallableCache {
     private val parameterCache = mutableMapOf<FirValueParameter, IrValueParameter>()
@@ -17,7 +20,7 @@ class Fir2IrCallableCache {
 
     private val localClassCache = mutableMapOf<FirClass, IrClass>()
 
-    private val localFunctionCache = mutableMapOf<FirFunction, IrSimpleFunction>()
+    private val localFunctionCache = mutableMapOf<FirFunction<*>, IrSimpleFunction>()
 
     fun getParameter(parameter: FirValueParameter): IrValueParameter? = parameterCache[parameter]
 
@@ -38,9 +41,9 @@ class Fir2IrCallableCache {
         localClassCache[localClass] = irClass
     }
 
-    fun getLocalFunction(localFunction: FirFunction): IrSimpleFunction? = localFunctionCache[localFunction]
+    fun getLocalFunction(localFunction: FirFunction<*>): IrSimpleFunction? = localFunctionCache[localFunction]
 
-    fun putLocalFunction(localFunction: FirFunction, irFunction: IrSimpleFunction) {
+    fun putLocalFunction(localFunction: FirFunction<*>, irFunction: IrSimpleFunction) {
         require(localFunction !is FirNamedFunction || localFunction.visibility == Visibilities.LOCAL)
         localFunctionCache[localFunction] = irFunction
     }

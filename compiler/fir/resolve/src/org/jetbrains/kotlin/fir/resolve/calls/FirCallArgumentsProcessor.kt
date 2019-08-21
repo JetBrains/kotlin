@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedArgumentExpression
 import org.jetbrains.kotlin.fir.render
 
 class FirCallArgumentsProcessor(
-    private val function: FirFunction,
+    private val function: FirFunction<*>,
     private val arguments: List<FirExpression>
 ) {
     class Result(val argumentMapping: Map<FirExpression, FirValueParameter>, val isSuccess: Boolean)

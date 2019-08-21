@@ -6,9 +6,7 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
-import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
+import org.jetbrains.kotlin.fir.declarations.impl.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.types.*
@@ -42,7 +40,7 @@ abstract class FirVisitor<out R, in D> {
         return visitDeclarationWithBody(anonymousInitializer, data)
     }
 
-    open fun visitFunction(function: FirFunction, data: D): R {
+    open fun <F : FirFunction<F>> visitFunction(function: FirFunction<F>, data: D): R {
         return visitDeclarationWithBody(function, data)
     }
 
@@ -62,16 +60,12 @@ abstract class FirVisitor<out R, in D> {
         return visitMemberFunction(namedFunction, data)
     }
 
-    open fun visitModifiableFunction(modifiableFunction: FirModifiableFunction, data: D): R {
+    open fun <F : FirFunction<F>> visitModifiableFunction(modifiableFunction: FirModifiableFunction<F>, data: D): R {
         return visitFunction(modifiableFunction, data)
     }
 
     open fun visitPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: D): R {
         return visitFunction(propertyAccessor, data)
-    }
-
-    open fun visitDefaultPropertyAccessor(defaultPropertyAccessor: FirDefaultPropertyAccessor, data: D): R {
-        return visitPropertyAccessor(defaultPropertyAccessor, data)
     }
 
     open fun visitErrorDeclaration(errorDeclaration: FirErrorDeclaration, data: D): R {

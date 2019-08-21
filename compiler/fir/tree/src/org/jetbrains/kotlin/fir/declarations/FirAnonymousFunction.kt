@@ -10,26 +10,24 @@ import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAnonymousFunction(
     final override val session: FirSession,
     psi: PsiElement?
-) : @VisitedSupertype FirFunction, FirUnknownTypeExpression(psi), FirTypedDeclaration, FirLabeledElement {
-    abstract val receiverTypeRef: FirTypeRef?
+) : @VisitedSupertype FirFunction<FirAnonymousFunction>, FirUnknownTypeExpression(psi), FirLabeledElement {
+    abstract override val receiverTypeRef: FirTypeRef?
+
+    abstract override val symbol: FirAnonymousFunctionSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
-        super<FirTypedDeclaration>.acceptChildren(visitor, data)
+        super<FirFunction>.acceptChildren(visitor, data)
         super<FirLabeledElement>.acceptChildren(visitor, data)
-        receiverTypeRef?.accept(visitor, data)
-        for (parameter in valueParameters) {
-            parameter.accept(visitor, data)
-        }
-        body?.accept(visitor, data)
         typeRef.accept(visitor, data)
         // Don't call super<FirExpression>.acceptChildren (annotations & typeRef are already processed)
     }
