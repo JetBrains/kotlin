@@ -2,9 +2,9 @@ package test
 
 public open class A {
     public constructor A()
-    public open fun bar(/*0*/ l: test.L<*, kotlin.Int>): kotlin.Unit
+    public open fun bar(/*0*/ l: test.L<out kotlin.collections.(Mutable)Map<kotlin.String!, *>, kotlin.Int>): kotlin.Unit
     public open fun baz1(): test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>
-    public open fun baz2(): test.L<*, kotlin.Int>
+    public open fun baz2(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String!, *>, kotlin.Int>
     public open fun baz3(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, kotlin.Int>
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open fun foo(/*0*/ l: test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>): kotlin.Unit
@@ -48,9 +48,9 @@ package test {
 
     public open class A {
         public constructor A()
-        public open fun bar(/*0*/ l: test.L<*, kotlin.Int>): kotlin.Unit
+        public open fun bar(/*0*/ l: test.L<out kotlin.collections.(Mutable)Map<kotlin.String!, *>, kotlin.Int>): kotlin.Unit
         public open fun baz1(): test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>
-        public open fun baz2(): test.L<*, kotlin.Int>
+        public open fun baz2(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String!, *>, kotlin.Int>
         public open fun baz3(): test.L<out kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, kotlin.Int>
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open fun foo(/*0*/ l: test.L<kotlin.collections.(Mutable)Map<kotlin.String, kotlin.Int>, @spr.Nullable kotlin.Int?>): kotlin.Unit
