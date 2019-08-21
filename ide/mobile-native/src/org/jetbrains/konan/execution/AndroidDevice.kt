@@ -32,15 +32,16 @@ class AndroidDevice(private val raw: IDevice) : Device(
         raw.installPackage(apk.absolutePath, true)
     }
 
-    fun launch(appId: String, activity: String) {
+    fun launch(appId: String, activity: String, waitForDebugger: Boolean) {
         val receiver = CollectingOutputReceiver()
+        val options = if (waitForDebugger) "-D" else ""
         raw.executeShellCommand(
-            "am start -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
+            "am start $options -n \"$appId/$activity\" -a android.intent.action.MAIN -c android.intent.category.LAUNCHER", receiver
         )
         log.debug("Launched app with output: ${receiver.output}")
     }
 
-    fun installAndLaunch(apk: File, project: Project): AndroidProcessHandler {
+    fun installAndLaunch(apk: File, project: Project, waitForDebugger: Boolean = false): AndroidProcessHandler {
         val handler = AndroidProcessHandler(raw)
         runBackgroundableTask(MobileBundle.message("run.preparing"), project, cancellable = false) { indicator ->
             indicator.isIndeterminate = false
@@ -55,7 +56,7 @@ class AndroidDevice(private val raw: IDevice) : Device(
 
             indicator.fraction = 0.8
             indicator.text = MobileBundle.message("run.starting")
-            launch(appId, activity)
+            launch(appId, activity, waitForDebugger)
         }
         return handler
     }

@@ -34,7 +34,7 @@ class AndroidCommandLineState(
 
     override fun startDebugProcess(session: XDebugSession): XDebugProcess {
         val console = TextConsoleBuilderFactory.getInstance().createBuilder(configuration.project).console
-        val handler = device.installAndLaunch(apk, configuration.project)
+        val handler = device.installAndLaunch(apk, configuration.project, waitForDebugger = true)
         console.attachToProcess(handler)
 
         while (handler.debuggerPort == null) Thread.sleep(100) // FIXME
