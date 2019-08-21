@@ -952,6 +952,7 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       if (component instanceof JComponent) {
         ((JComponent)component).setBorder(JBUI.Borders.empty(1, 2));
       }
+      AppUIUtil.targetToDevice(component, list);
       component.setPreferredSize(UIUtil.updateListRowHeight(component.getPreferredSize()));
       if (isAllTabSelected() && myListModel.isGroupFirstItem(index)) {
         component = myGroupTitleRenderer.withDisplayedData(contributor.getFullGroupName(), component);
