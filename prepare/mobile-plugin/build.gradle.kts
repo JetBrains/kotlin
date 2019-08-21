@@ -48,13 +48,13 @@ val preparePluginXmlTask: Task = preparePluginXml(
 
 val pluginJarTask: Task = pluginJar(project, cidrPlugin, listOf(preparePluginXmlTask))
 
-val copyNativeDeps: Task by task<Copy> {
+val copyNativeDeps: Task by tasks.creating(Copy::class) {
     from(clionCocoaCommonPluginDir)
     into(mobilePluginDir)
     include("native/**")
 }
 
-val copyRuntimeDeps: Task by task<Copy> {
+val copyRuntimeDeps: Task by tasks.creating(Copy::class) {
     from(configurations.runtime)
     into(File(mobilePluginDir, "lib"))
 }
