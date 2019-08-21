@@ -272,6 +272,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/companion.kt");
         }
 
+        @TestMetadata("companionExtension.kt")
+        public void testCompanionExtension() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/companionExtension.kt");
+        }
+
         @TestMetadata("constructor.kt")
         public void testConstructor() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/constructor.kt");
@@ -290,6 +295,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("lambda.kt")
         public void testLambda() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/lambda.kt");
+        }
+
+        @TestMetadata("localExtension.kt")
+        public void testLocalExtension() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/localExtension.kt");
         }
 
         @TestMetadata("localImplicitBodies.kt")
@@ -312,6 +322,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/objects.kt");
         }
 
+        @TestMetadata("outerObject.kt")
+        public void testOuterObject() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/outerObject.kt");
+        }
+
         @TestMetadata("qualifiedExpressions.kt")
         public void testQualifiedExpressions() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/qualifiedExpressions.kt");
@@ -320,6 +335,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         @TestMetadata("receiverConsistency.kt")
         public void testReceiverConsistency() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/expresssions/receiverConsistency.kt");
+        }
+
+        @TestMetadata("sameReceiver.kt")
+        public void testSameReceiver() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/expresssions/sameReceiver.kt");
         }
 
         @TestMetadata("simple.kt")
