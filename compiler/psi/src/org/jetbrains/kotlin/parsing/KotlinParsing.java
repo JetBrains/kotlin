@@ -2026,11 +2026,6 @@ public class KotlinParsing extends AbstractKotlinParsing {
     // on expression-indicating symbols or not
     private PsiBuilder.Marker parseTypeRefContents(TokenSet extraRecoverySet) {
         PsiBuilder.Marker typeRefMarker = mark();
-
-        // spread operator
-        if (at(MUL)) {
-            advance(); // MUL
-        }
         parseTypeModifierList();
 
         PsiBuilder.Marker typeElementMarker = mark();
@@ -2038,6 +2033,13 @@ public class KotlinParsing extends AbstractKotlinParsing {
         IElementType lookahead = lookahead(1);
         IElementType lookahead2 = lookahead(2);
         boolean typeBeforeDot = true;
+
+        PsiBuilder.Marker tupleTypeMarker = mark();
+        boolean spreadOperatorPresent = false;
+        if (at(MUL)) {
+            spreadOperatorPresent = true;
+            advance(); // MUL
+        }
         if (at(IDENTIFIER) && !(lookahead == DOT && lookahead2 == IDENTIFIER) && lookahead != LT && at(DYNAMIC_KEYWORD)) {
             PsiBuilder.Marker dynamicType = mark();
             advance(); // DYNAMIC_KEYWORD
@@ -2113,6 +2115,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
             }
 
             functionType.done(FUNCTION_TYPE);
+        }
+
+        if (spreadOperatorPresent) {
+            tupleTypeMarker.done(TUPLE_TYPE);
+        } else {
+            tupleTypeMarker.drop();
         }
 
         typeElementMarker.drop();

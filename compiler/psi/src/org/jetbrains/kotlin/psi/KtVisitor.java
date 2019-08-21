@@ -402,6 +402,10 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
         return visitTypeElement(nullableType, data);
     }
 
+    public R visitTupleType(@NotNull KtTupleType tupleType, D data) {
+        return visitTypeElement(tupleType, data);
+    }
+
     public R visitTypeProjection(@NotNull KtTypeProjection typeProjection, D data) {
         return visitKtElement(typeProjection, data);
     }
