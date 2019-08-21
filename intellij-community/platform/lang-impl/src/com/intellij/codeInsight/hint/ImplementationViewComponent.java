@@ -50,11 +50,13 @@ import java.util.*;
 public class ImplementationViewComponent extends JPanel {
   @NonNls private static final String TEXT_PAGE_KEY = "Text";
   @NonNls private static final String BINARY_PAGE_KEY = "Binary";
+  private final EditorFactory factory;
+  private final Project project;
 
   private ImplementationViewElement[] myElements;
   private int myIndex;
 
-  private final Editor myEditor;
+  private EditorEx myEditor;
   private volatile boolean myEditorReleased;
   private final JPanel myViewingPanel;
   private final JLabel myLocationLabel;
@@ -91,25 +93,15 @@ public class ImplementationViewComponent extends JPanel {
   public ImplementationViewComponent(Collection<ImplementationViewElement> elements, final int index) {
     super(new BorderLayout());
 
-    final Project project = elements.size() > 0 ? elements.iterator().next().getProject() : null;
-    EditorFactory factory = EditorFactory.getInstance();
+    project = elements.size() > 0 ? elements.iterator().next().getProject() : null;
+    factory = EditorFactory.getInstance();
     Document doc = factory.createDocument("");
     doc.setReadOnly(true);
-    myEditor = factory.createEditor(doc, project);
-    ((EditorEx)myEditor).setBackgroundColor(EditorFragmentComponent.getBackgroundColor(myEditor));
-
-    final EditorSettings settings = myEditor.getSettings();
-    settings.setAdditionalLinesCount(1);
-    settings.setAdditionalColumnsCount(1);
-    settings.setLineMarkerAreaShown(false);
-    settings.setIndentGuidesShown(false);
-    settings.setLineNumbersShown(false);
-    settings.setFoldingOutlineShown(false);
+    myEditor = (EditorEx) factory.createEditor(doc, project);
+    tuneEditor(null);
 
     myBinarySwitch = new CardLayout();
     myViewingPanel = new JPanel(myBinarySwitch);
-    myEditor.setBorder(null);
-    ((EditorEx)myEditor).getScrollPane().setViewportBorder(JBScrollPane.createIndentBorder());
     myViewingPanel.add(myEditor.getComponent(), TEXT_PAGE_KEY);
 
     myBinaryPanel = new JPanel(new BorderLayout());
@@ -138,7 +130,7 @@ public class ImplementationViewComponent extends JPanel {
 
       if (virtualFile != null) {
         EditorHighlighter highlighter = HighlighterFactory.createHighlighter(project, virtualFile);
-        ((EditorEx)myEditor).setHighlighter(highlighter);
+        myEditor.setHighlighter(highlighter);
       }
 
       gc.fill = GridBagConstraints.HORIZONTAL;
@@ -185,6 +177,26 @@ public class ImplementationViewComponent extends JPanel {
     });
   }
 
+  private void tuneEditor(VirtualFile virtualFile){
+    myEditor.setBackgroundColor(EditorFragmentComponent.getBackgroundColor(myEditor));
+
+    final EditorSettings settings = myEditor.getSettings();
+    settings.setAdditionalLinesCount(1);
+    settings.setAdditionalColumnsCount(1);
+    settings.setLineMarkerAreaShown(false);
+    settings.setIndentGuidesShown(false);
+    settings.setLineNumbersShown(false);
+    settings.setFoldingOutlineShown(false);
+
+    myEditor.setBorder(null);
+    myEditor.getScrollPane().setViewportBorder(JBScrollPane.createIndentBorder());
+
+    if (virtualFile != null) {
+      EditorHighlighter highlighter = HighlighterFactory.createHighlighter(project, virtualFile);
+      myEditor.setHighlighter(highlighter);
+    }
+  }
+
   private void updateRenderer(final Project project) {
     myFileChooser.setRenderer(SimpleListCellRenderer.create((label, value, index) -> {
       VirtualFile file = value.myFile;
@@ -196,10 +208,10 @@ public class ImplementationViewComponent extends JPanel {
 
   @TestOnly
   public String[] getVisibleFiles() {
-    final ComboBoxModel model = myFileChooser.getModel();
+    final ComboBoxModel<FileDescriptor> model = myFileChooser.getModel();
     String[] result = new String[model.getSize()];
     for (int i = 0; i < model.getSize(); i++) {
-      FileDescriptor o = (FileDescriptor)model.getElementAt(i);
+      FileDescriptor o = model.getElementAt(i);
       result[i] = o.myPresentableText;
     }
     return result;
@@ -219,7 +231,7 @@ public class ImplementationViewComponent extends JPanel {
       EditorHighlighter highlighter;
       if (virtualFile != null) {
         highlighter = HighlighterFactory.createHighlighter(project, virtualFile);
-        ((EditorEx)myEditor).setHighlighter(highlighter);
+        myEditor.setHighlighter(highlighter);
       }
 
       if (myElements.length > 1) {
@@ -309,6 +321,15 @@ public class ImplementationViewComponent extends JPanel {
     final Project project = foundElement.getProject();
     final VirtualFile vFile = foundElement.getContainingFile();
     if (vFile == null) return;
+
+    for (ImplementationViewDocumentFactory documentFactory : ImplementationViewDocumentFactory.EP_NAME.getExtensions()) {
+      Document document = documentFactory.createDocument(foundElement);
+      if (document != null) {
+        replaceEditor(project, vFile, documentFactory, document);
+        return;
+      }
+    }
+
     final FileEditorProvider[] providers = FileEditorProviderManager.getInstance().getProviders(project, vFile);
     for (FileEditorProvider provider : providers) {
       if (provider instanceof TextEditorProvider) {
@@ -325,6 +346,19 @@ public class ImplementationViewComponent extends JPanel {
         break;
       }
     }
+  }
+
+  private void replaceEditor(Project project, VirtualFile vFile, ImplementationViewDocumentFactory documentFactory, Document document) {
+    myViewingPanel.remove(myEditor.getComponent());
+    factory.releaseEditor(myEditor);
+    myEditor = (EditorEx)factory.createEditor(document, project);
+    tuneEditor(vFile);
+    documentFactory.tuneEditor(myEditor);
+
+    myViewingPanel.add(myEditor.getComponent(), TEXT_PAGE_KEY);
+    myBinarySwitch.show(myViewingPanel, TEXT_PAGE_KEY);
+
+    myEditor.getComponent().requestFocus();
   }
 
   private void disposeNonTextEditor() {
@@ -534,3 +568,4 @@ public class ImplementationViewComponent extends JPanel {
     return PsiUtilCore.toPsiElementArray(result);
   }
 }
+
