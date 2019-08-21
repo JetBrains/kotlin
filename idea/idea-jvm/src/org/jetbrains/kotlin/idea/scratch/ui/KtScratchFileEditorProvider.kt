@@ -25,8 +25,7 @@ import com.intellij.pom.Navigatable
 import com.intellij.psi.PsiManager
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.scratch.*
-import org.jetbrains.kotlin.idea.scratch.output.InlayScratchOutputHandler
-import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandlerAdapter
+import org.jetbrains.kotlin.idea.scratch.output.*
 import org.jetbrains.kotlin.psi.UserDataProperty
 
 private const val KTS_SCRATCH_EDITOR_PROVIDER: String = "KtsScratchFileEditorProvider"
@@ -56,7 +55,8 @@ class KtScratchFileEditorWithPreview private constructor(
     preview: TextEditor
 ) : TextEditorWithPreview(editor, preview), TextEditor {
 
-    private val inlayOutputHandler = InlayScratchOutputHandler(editor)
+    private val toolWindowHandler: ScratchOutputHandler = requestToolWindowHandler()
+    private val inlayOutputHandler = InlayScratchOutputHandler(editor, toolWindowHandler)
     private val scratchTopPanel = ScratchTopPanel(scratchFile)
 
     init {
@@ -71,6 +71,7 @@ class KtScratchFileEditorWithPreview private constructor(
     override fun dispose() {
         scratchFile.replScratchExecutor?.stop()
         scratchFile.compilingScratchExecutor?.stop()
+        releaseToolWindowHandler(toolWindowHandler)
         super.dispose()
     }
 
