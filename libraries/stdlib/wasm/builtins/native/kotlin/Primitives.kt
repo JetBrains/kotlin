@@ -11,7 +11,8 @@ import kotlin.wasm.internal.*
 /**
  * Represents a 8-bit signed integer.
  */
-public class Byte private constructor() : Number(), Comparable<Byte> {
+@SkipRTTI
+public class Byte @ExcludedFromCodegen private constructor() : Number(), Comparable<Byte> {
     @ExcludedFromCodegen
     companion object {
         /**
@@ -310,7 +311,10 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
         wasm_i32_eq(this.toInt(), other.toInt()).reinterpretAsBoolean()
 
     // TODO: Implement Byte.toString()
-    // public override fun toString(): String
+
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -319,7 +323,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
 /**
  * Represents a 16-bit signed integer.
  */
-public class Short private constructor() : Number(), Comparable<Short> {
+@SkipRTTI
+public class Short @ExcludedFromCodegen private constructor() : Number(), Comparable<Short> {
     @ExcludedFromCodegen
     companion object {
         /**
@@ -621,7 +626,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
 //        other is Short && wasm_i32_eq(this.toInt(), other.toInt()).reinterpretAsBoolean()
 
     // TODO: Implement Short.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String = implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -630,7 +636,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
 /**
  * Represents a 32-bit signed integer.
  */
-public class Int private constructor() : Number(), Comparable<Int> {
+@SkipRTTI
+public class Int @ExcludedFromCodegen private constructor() : Number(), Comparable<Int> {
 
     @ExcludedFromCodegen
     companion object {
@@ -971,8 +978,9 @@ public class Int private constructor() : Number(), Comparable<Int> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Int && wasm_i32_eq(this, other).reinterpretAsBoolean()
 
-    // TODO: Implement Int.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this
@@ -1001,7 +1009,8 @@ public class Int private constructor() : Number(), Comparable<Int> {
 /**
  * Represents a 64-bit signed integer.
  */
-public class Long private constructor() : Number(), Comparable<Long> {
+@SkipRTTI
+public class Long @ExcludedFromCodegen private constructor() : Number(), Comparable<Long> {
 
     @ExcludedFromCodegen
     companion object {
@@ -1342,8 +1351,9 @@ public class Long private constructor() : Number(), Comparable<Long> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Long && wasm_i64_eq(this, other).reinterpretAsBoolean()
 
-    // TODO: Implement Long.toString()
-    // public override fun toString(): String
+    // TODO: Implement proper Long.toString
+    public override fun toString(): String = 
+        toDouble().toString()
 
     public override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
@@ -1352,7 +1362,8 @@ public class Long private constructor() : Number(), Comparable<Long> {
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
-public class Float private constructor() : Number(), Comparable<Float> {
+@SkipRTTI
+public class Float @ExcludedFromCodegen private constructor() : Number(), Comparable<Float> {
 
     @ExcludedFromCodegen
     companion object {
@@ -1643,8 +1654,9 @@ public class Float private constructor() : Number(), Comparable<Float> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Float && this.equals(other)
 
-    // TODO: Implement Float.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         bits()
@@ -1657,7 +1669,8 @@ public class Float private constructor() : Number(), Comparable<Float> {
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
-public class Double private constructor() : Number(), Comparable<Double> {
+@SkipRTTI
+public class Double @ExcludedFromCodegen private constructor() : Number(), Comparable<Double> {
 
     @ExcludedFromCodegen
     companion object {
@@ -1952,7 +1965,9 @@ public class Double private constructor() : Number(), Comparable<Double> {
 //        other is Double && this.bits() == other.bits()
 
     // TODO: Implement Double.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int = bits().hashCode()
 

@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.backend.wasm.lower
 import org.jetbrains.kotlin.backend.common.ir.addChild
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.name.FqName
 
 private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.Nothing",
     "kotlin.Array",
-    "kotlin.Any",
     "kotlin.ByteArray",
     "kotlin.CharArray",
     "kotlin.ShortArray",
@@ -24,7 +26,6 @@ private val BODILESS_BUILTIN_CLASSES = listOf(
     "kotlin.FloatArray",
     "kotlin.DoubleArray",
     "kotlin.BooleanArray",
-    "kotlin.Boolean",
     "kotlin.Function",
     "kotlin.Throwable",
     "kotlin.Suppress",

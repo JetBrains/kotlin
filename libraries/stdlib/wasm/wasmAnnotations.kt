@@ -8,9 +8,16 @@ package kotlin.wasm.internal
 import kotlin.annotation.AnnotationTarget.*
 
 // Exclude declaration or file from lowerings and code generation
-@Target(FILE, CLASS, FUNCTION, PROPERTY)
+@Target(FILE, CLASS, FUNCTION, CONSTRUCTOR, PROPERTY)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class ExcludedFromCodegen
+
+// Don't generate runtime type information for given class.
+// This is a temporary measures until runtime type info is fully supported.
+@Target(CLASS)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class SkipRTTI
+
 
 @ExcludedFromCodegen
 @Target(FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER)
@@ -165,6 +172,11 @@ internal annotation class WasmInstruction(val mnemonic: String) {
         const val F32_CONST_MINUS_INF = "f32.const -inf"
         const val F64_CONST_PLUS_INF = "f64.const +inf"
         const val F64_CONST_MINUS_INF = "f64.const -inf"
+
+        const val REF_EQ = "ref.eq"
+        const val REF_IS_NULL = "ref.is_null"
+
+        const val I32_LOAD = "i32.load"
     }
 }
 

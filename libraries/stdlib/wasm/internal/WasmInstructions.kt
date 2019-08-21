@@ -395,3 +395,8 @@ external fun wasm_f64_const_plus_inf(): Float
 @WasmInstruction(WasmInstruction.F64_CONST_MINUS_INF)
 external fun wasm_f64_const_minus_inf(): Float
 
+@WasmInstruction(WasmInstruction.I32_LOAD)
+external fun wasm_i32_load(a: Int): Int
+
+fun <From, To> wasm_struct_narrow(a: From): To =
+    implementedAsIntrinsic

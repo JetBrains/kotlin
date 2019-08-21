@@ -13,3 +13,5 @@ object WasmF32 : WasmValueType("f32")
 object WasmF64 : WasmValueType("f64")
 
 object WasmAnyRef : WasmValueType("anyref")
+
+class WasmRef(name: String) : WasmValueType("(ref $$name)")

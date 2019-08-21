@@ -39,6 +39,6 @@ class SpiderMonkeyEngine(
     private val jsShell = ExternalTool(jsShellPath)
 
     fun runFile(file: String) {
-        jsShell.run(file)
+        jsShell.run("--wasm-gc", file)
     }
 }

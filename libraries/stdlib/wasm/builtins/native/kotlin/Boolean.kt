@@ -13,6 +13,7 @@
 
 package kotlin
 
+import kotlin.wasm.internal.ExcludedFromCodegen
 import kotlin.wasm.internal.WasmInstruction
 import kotlin.wasm.internal.wasm_i32_compareTo
 
@@ -20,7 +21,7 @@ import kotlin.wasm.internal.wasm_i32_compareTo
  * Represents a value which is either `true` or `false`. On the JVM, non-nullable values of this type are
  * represented as values of the primitive type `boolean`.
  */
-public class Boolean private constructor() : Comparable<Boolean> {
+public class Boolean @ExcludedFromCodegen private constructor() : Comparable<Boolean> {
     /**
      * Returns the inverse of this boolean.
      */
@@ -50,9 +51,13 @@ public class Boolean private constructor() : Comparable<Boolean> {
     public override fun compareTo(other: Boolean): Int =
         wasm_i32_compareTo(this.asInt(), other.asInt())
 
+    override fun toString(): String =
+        if (this) "true" else "false"
+
     @WasmInstruction(WasmInstruction.NOP)
     internal fun asInt(): Int
 
     @SinceKotlin("1.3")
+    @ExcludedFromCodegen
     companion object {}
 }

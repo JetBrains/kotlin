@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.utils
 
 import org.jetbrains.kotlin.ir.backend.js.utils.getSingleConstStringArgument
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
@@ -14,6 +15,9 @@ import org.jetbrains.kotlin.name.FqName
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
+
+fun IrClass.hasSkipRTTIAnnotation(): Boolean =
+    hasAnnotation(FqName("kotlin.wasm.internal.SkipRTTI")) || hasExcludedFromCodegenAnnotation()
 
 fun IrAnnotationContainer.getWasmInstructionAnnotation(): String? =
     getAnnotation(FqName("kotlin.wasm.internal.WasmInstruction"))?.getSingleConstStringArgument()
