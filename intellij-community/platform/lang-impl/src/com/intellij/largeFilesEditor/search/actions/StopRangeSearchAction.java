@@ -2,17 +2,11 @@
 package com.intellij.largeFilesEditor.search.actions;
 
 import com.intellij.icons.AllIcons;
-import com.intellij.largeFilesEditor.editor.EditorManager;
-import com.intellij.largeFilesEditor.editor.EditorManagerAccessor;
-import com.intellij.largeFilesEditor.search.SearchManager;
 import com.intellij.largeFilesEditor.search.searchResultsPanel.RangeSearch;
 import com.intellij.largeFilesEditor.search.searchTask.RangeSearchTask;
-import com.intellij.largeFilesEditor.search.searchTask.SearchTaskBase;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
-import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
@@ -25,12 +19,9 @@ public class StopRangeSearchAction extends AnAction implements DumbAware {
   private static final Icon ICON = AllIcons.Actions.Suspend;
 
   private final RangeSearch myRangeSearch;
-  private final EditorManagerAccessor editorManagerAccessor;
 
-  public StopRangeSearchAction(@NotNull RangeSearch rangeSearch,
-                               @NotNull EditorManagerAccessor editorManagerAccessor) {
+  public StopRangeSearchAction(@NotNull RangeSearch rangeSearch) {
     this.myRangeSearch = rangeSearch;
-    this.editorManagerAccessor = editorManagerAccessor;
     getTemplatePresentation().setText(TEXT);
     getTemplatePresentation().setIcon(ICON);
   }

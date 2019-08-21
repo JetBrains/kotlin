@@ -155,7 +155,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
     actionGroup.add(new FindFurtherAction(false, this));
     actionGroup.add(new FindFurtherAction(true, this));
     actionGroup.add(new Separator());
-    actionGroup.add(new StopRangeSearchAction(this, editorManagerAccessor));
+    actionGroup.add(new StopRangeSearchAction(this));
     myActionToolbar = ActionManager.getInstance().createActionToolbar(
       ACTION_TOOLBAR_PLACE_ID, actionGroup, false);
 
