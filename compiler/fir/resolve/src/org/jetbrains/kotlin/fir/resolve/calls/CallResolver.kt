@@ -72,6 +72,18 @@ class CallResolver(
                     )
                 }
             }
+            if (implicitDispatchReceiverValue !== implicitReceiverValue) {
+                // Two different implicit receivers
+                towerDataConsumer.consume(
+                    TowerDataKind.TOWER_LEVEL,
+                    MemberScopeTowerLevel(
+                        session, scopeSession = components.scopeSession,
+                        dispatchReceiver = implicitDispatchReceiverValue,
+                        implicitExtensionReceiver = implicitReceiverValue
+                    ),
+                    group++
+                )
+            }
         }
 
         for (scope in topLevelScopes) {

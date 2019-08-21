@@ -52,11 +52,11 @@ internal object CheckExplicitReceiverConsistency : ResolutionStage() {
 
 internal sealed class CheckReceivers : ResolutionStage() {
     object Dispatch : CheckReceivers() {
-        override fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean {
-            return this == EXTENSION_RECEIVER || this == NO_EXPLICIT_RECEIVER
+        override fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean {
+            return this == EXTENSION_RECEIVER // For NO_EXPLICIT_RECEIVER we can check extension receiver only
         }
 
-        override fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean {
+        override fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean {
             return this == DISPATCH_RECEIVER || this == BOTH_RECEIVERS
         }
 
@@ -66,11 +66,11 @@ internal sealed class CheckReceivers : ResolutionStage() {
     }
 
     object Extension : CheckReceivers() {
-        override fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean {
+        override fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean {
             return this == DISPATCH_RECEIVER || this == NO_EXPLICIT_RECEIVER
         }
 
-        override fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean {
+        override fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean {
             return this == EXTENSION_RECEIVER || this == BOTH_RECEIVERS
         }
 
@@ -88,9 +88,9 @@ internal sealed class CheckReceivers : ResolutionStage() {
 
     abstract fun Candidate.getReceiverValue(): ReceiverValue?
 
-    abstract fun ExplicitReceiverKind.shouldBeResolvedAsExplicit(): Boolean
+    abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstExplicit(): Boolean
 
-    abstract fun ExplicitReceiverKind.shouldBeResolvedAsImplicit(): Boolean
+    abstract fun ExplicitReceiverKind.shouldBeCheckedAgainstImplicit(): Boolean
 
     override suspend fun check(candidate: Candidate, sink: CheckerSink, callInfo: CallInfo) {
         val expectedReceiverParameterValue = candidate.getReceiverValue()
@@ -98,7 +98,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
         val explicitReceiverKind = candidate.explicitReceiverKind
 
         if (expectedReceiverParameterValue != null) {
-            if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeResolvedAsExplicit()) {
+            if (explicitReceiverExpression != null && explicitReceiverKind.shouldBeCheckedAgainstExplicit()) {
                 resolveArgumentExpression(
                     candidate.csBuilder,
                     argument = explicitReceiverExpression,
@@ -113,7 +113,7 @@ internal sealed class CheckReceivers : ResolutionStage() {
                 sink.yield()
             } else {
                 val argumentExtensionReceiverValue = candidate.implicitExtensionReceiverValue
-                if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeResolvedAsImplicit()) {
+                if (argumentExtensionReceiverValue != null && explicitReceiverKind.shouldBeCheckedAgainstImplicit()) {
                     resolvePlainArgumentType(
                         candidate.csBuilder,
                         argumentType = argumentExtensionReceiverValue.type,
