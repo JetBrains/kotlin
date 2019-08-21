@@ -1,0 +1,4 @@
+// To be implemented
+expect class A<T> {
+    fun a(): T
+}

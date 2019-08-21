@@ -1,0 +1,2 @@
+These declarations cannot be transformed:
+fun a() = TODO()

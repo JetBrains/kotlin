@@ -29,6 +29,99 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
     }
 
+    @TestMetadata("idea/testData/multiModuleQuickFix/accessibilityChecker")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class AccessibilityChecker extends AbstractQuickFixMultiModuleTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInAccessibilityChecker() throws Exception {
+            KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("idea/testData/multiModuleQuickFix/accessibilityChecker"), Pattern.compile("^([^\\.]+)$"), TargetBackend.ANY, true);
+        }
+
+        @TestMetadata("classPrimaryConstructor")
+        public void testClassPrimaryConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/classPrimaryConstructor/");
+        }
+
+        @TestMetadata("classSecondaryConstructor")
+        public void testClassSecondaryConstructor() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/classSecondaryConstructor/");
+        }
+
+        @TestMetadata("classUpperBounds")
+        public void testClassUpperBounds() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/classUpperBounds/");
+        }
+
+        @TestMetadata("memberFunction")
+        public void testMemberFunction() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/memberFunction/");
+        }
+
+        @TestMetadata("memberFunctionAndNestedClass")
+        public void testMemberFunctionAndNestedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/memberFunctionAndNestedClass/");
+        }
+
+        @TestMetadata("memberFunctionParentType")
+        public void testMemberFunctionParentType() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/memberFunctionParentType/");
+        }
+
+        @TestMetadata("memberFunctionParentType2")
+        public void testMemberFunctionParentType2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/memberFunctionParentType2/");
+        }
+
+        @TestMetadata("nestedClassWithTypeParam")
+        public void testNestedClassWithTypeParam() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/nestedClassWithTypeParam/");
+        }
+
+        @TestMetadata("topLevelFunParameter")
+        public void testTopLevelFunParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelFunParameter/");
+        }
+
+        @TestMetadata("topLevelFunReturnType")
+        public void testTopLevelFunReturnType() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelFunReturnType/");
+        }
+
+        @TestMetadata("topLevelFunTypeParameter")
+        public void testTopLevelFunTypeParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelFunTypeParameter/");
+        }
+
+        @TestMetadata("topLevelFunUpperBounds")
+        public void testTopLevelFunUpperBounds() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelFunUpperBounds/");
+        }
+
+        @TestMetadata("topLevelFunUpperBounds2")
+        public void testTopLevelFunUpperBounds2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelFunUpperBounds2/");
+        }
+
+        @TestMetadata("topLevelProperty")
+        public void testTopLevelProperty() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelProperty/");
+        }
+
+        @TestMetadata("topLevelPropertyTypeParam2")
+        public void testTopLevelPropertyTypeParam2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelPropertyTypeParam2/");
+        }
+
+        @TestMetadata("topLevelPropertyTypeParamBound")
+        public void testTopLevelPropertyTypeParamBound() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/accessibilityChecker/topLevelPropertyTypeParamBound/");
+        }
+    }
+
     @TestMetadata("idea/testData/multiModuleQuickFix/createActual")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)
@@ -94,6 +187,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("constructorWithJdk")
         public void testConstructorWithJdk() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createActual/constructorWithJdk/");
+        }
+
+        @TestMetadata("createWithImport")
+        public void testCreateWithImport() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/createWithImport/");
         }
 
         @TestMetadata("defaultParameterInExpected")
@@ -244,6 +342,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/companion/");
         }
 
+        @TestMetadata("createWithImport")
+        public void testCreateWithImport() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/createWithImport/");
+        }
+
         @TestMetadata("dataClass")
         public void testDataClass() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/dataClass/");
@@ -284,21 +387,6 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/funWithAccessibleTypeFromCommon/");
         }
 
-        @TestMetadata("funWithInaccessibleBounds")
-        public void testFunWithInaccessibleBounds() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleBounds/");
-        }
-
-        @TestMetadata("funWithInaccessibleParameter")
-        public void testFunWithInaccessibleParameter() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleParameter/");
-        }
-
-        @TestMetadata("funWithInaccessibleTypeParameter")
-        public void testFunWithInaccessibleTypeParameter() throws Exception {
-            runTest("idea/testData/multiModuleQuickFix/createExpect/funWithInaccessibleTypeParameter/");
-        }
-
         @TestMetadata("funWithJdk")
         public void testFunWithJdk() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/funWithJdk/");
@@ -324,9 +412,24 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/inlineClass2/");
         }
 
+        @TestMetadata("innerClassWithTypeParam")
+        public void testInnerClassWithTypeParam() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/innerClassWithTypeParam/");
+        }
+
+        @TestMetadata("innerClassWithTypeParam2")
+        public void testInnerClassWithTypeParam2() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/innerClassWithTypeParam2/");
+        }
+
         @TestMetadata("innerEnum")
         public void testInnerEnum() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/innerEnum/");
+        }
+
+        @TestMetadata("memberFunctionAndNestedClass")
+        public void testMemberFunctionAndNestedClass() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/memberFunctionAndNestedClass/");
         }
 
         @TestMetadata("nestedClass")
@@ -367,6 +470,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
         @TestMetadata("sealedClass")
         public void testSealedClass() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/sealedClass/");
+        }
+
+        @TestMetadata("topLevelPropertyWithTypeParam")
+        public void testTopLevelPropertyWithTypeParam() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/topLevelPropertyWithTypeParam/");
         }
 
         @TestMetadata("typeAlias")
