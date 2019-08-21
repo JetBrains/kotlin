@@ -28,6 +28,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.builtins.FunctionTypesKt;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.TupleType;
 import org.jetbrains.kotlin.config.LanguageFeature;
 import org.jetbrains.kotlin.config.LanguageVersionSettings;
 import org.jetbrains.kotlin.descriptors.*;
@@ -91,6 +92,7 @@ public class DescriptorResolver {
     private final DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer;
     private final DataFlowValueFactory dataFlowValueFactory;
     private final Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers;
+    private final ModuleDescriptor moduleDescriptor;
 
     public DescriptorResolver(
             @NotNull AnnotationResolver annotationResolver,
@@ -110,7 +112,8 @@ public class DescriptorResolver {
             @NotNull TypeApproximator approximator,
             @NotNull DeclarationReturnTypeSanitizer declarationReturnTypeSanitizer,
             @NotNull DataFlowValueFactory dataFlowValueFactory,
-            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers
+            @NotNull Iterable<DeclarationSignatureAnonymousTypeTransformer> anonymousTypeTransformers,
+            @NotNull ModuleDescriptor moduleDescriptor
     ) {
         this.annotationResolver = annotationResolver;
         this.builtIns = builtIns;
@@ -130,6 +133,7 @@ public class DescriptorResolver {
         this.declarationReturnTypeSanitizer = declarationReturnTypeSanitizer;
         this.dataFlowValueFactory = dataFlowValueFactory;
         this.anonymousTypeTransformers = anonymousTypeTransformers;
+        this.moduleDescriptor = moduleDescriptor;
     }
 
     public List<KotlinType> resolveSupertypes(
@@ -302,13 +306,20 @@ public class DescriptorResolver {
             int index,
             @NotNull KotlinType type,
             @NotNull BindingTrace trace,
-            @NotNull Annotations additionalAnnotations
+            @NotNull Annotations additionalAnnotations,
+            @Nullable KtTypeReference typeReference
     ) {
         KotlinType varargElementType = null;
         KotlinType variableType = type;
-        if (valueParameter.hasModifier(VARARG_KEYWORD)) {
-            varargElementType = type;
-            variableType = getVarargParameterType(type);
+        if (typeReference != null && valueParameter.hasModifier(VARARG_KEYWORD)) {
+            if (typeReference.getTypeElement() instanceof KtTupleType) {
+                assert type.getConstructor().getDeclarationDescriptor() == TupleType.getTupleClassDescriptor(moduleDescriptor)
+                        : "Tuple type has incorrect constructor descriptor";
+                varargElementType = type.getArguments().get(0).getType();
+            } else {
+                varargElementType = type;
+            }
+            variableType = getVarargParameterType(varargElementType, typeReference);
         }
 
         Annotations valueParameterAnnotations = resolveValueParameterAnnotations(scope, valueParameter, trace, additionalAnnotations);
@@ -402,12 +413,29 @@ public class DescriptorResolver {
     }
 
     @NotNull
-    private KotlinType getVarargParameterType(@NotNull KotlinType elementType) {
+    private KotlinType getVarargParameterType(@NotNull KotlinType elementType, @Nullable KtTypeReference typeReference) {
+        if (typeReference != null && typeReference.getTypeElement() instanceof KtTupleType) {
+            return getTupleVarargParameterType(elementType);
+        } else {
+            return getArrayVarargParameterType(elementType);
+        }
+    }
+
+    @NotNull
+    private KotlinType getArrayVarargParameterType(@NotNull KotlinType elementType) {
         KotlinType primitiveArrayType = builtIns.getPrimitiveArrayKotlinTypeByPrimitiveKotlinType(elementType);
         if (primitiveArrayType != null) {
             return primitiveArrayType;
         }
         return builtIns.getArrayType(Variance.OUT_VARIANCE, elementType);
+    }
+
+    @NotNull
+    private KotlinType getTupleVarargParameterType(@NotNull KotlinType elementType) {
+        ClassDescriptor tupleClassDescriptor = TupleType.getTupleClassDescriptor(moduleDescriptor);
+        assert tupleClassDescriptor != null : "Tuple descriptor is missing in module dependencies";
+        List<TypeProjectionImpl> types = Collections.singletonList(new TypeProjectionImpl(Variance.INVARIANT, elementType));
+        return KotlinTypeFactory.simpleNotNullType(Annotations.Companion.getEMPTY(), tupleClassDescriptor, types);
     }
 
     public List<TypeParameterDescriptorImpl> resolveTypeParametersForDescriptor(
@@ -682,7 +710,7 @@ public class DescriptorResolver {
             type = ErrorUtils.createErrorType("Annotation is absent");
         }
         if (parameter.hasModifier(VARARG_KEYWORD)) {
-            return getVarargParameterType(type);
+            return getVarargParameterType(type, typeReference);
         }
         return type;
     }
@@ -1102,7 +1130,8 @@ public class DescriptorResolver {
                 }
 
                 ValueParameterDescriptorImpl valueParameterDescriptor = resolveValueParameterDescriptor(
-                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace, parameterTargetedAnnotations
+                        scopeWithTypeParameters, setterDescriptor, parameter, 0, type, trace, parameterTargetedAnnotations,
+                        typeReference
                 );
                 setterDescriptor.initialize(valueParameterDescriptor);
             }
