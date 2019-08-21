@@ -16,6 +16,7 @@ import org.jetbrains.jps.model.java.JavaSourceRootType
 import org.jetbrains.jps.model.module.JpsModuleSourceRootType
 import org.jetbrains.plugins.gradle.model.data.GradleSourceSetData
 import org.jetbrains.plugins.gradle.util.GradleConstants
+import org.jetbrains.plugins.gradle.util.GradleUtil.findGradleModuleData
 
 class GradleDirectoryCompletionContributor : CreateDirectoryCompletionContributor {
   override fun getDescription() = "Gradle Source Sets"
@@ -43,7 +44,7 @@ class GradleDirectoryCompletionContributor : CreateDirectoryCompletionContributo
       }
     }
 
-    val moduleData = ExternalSystemApiUtil.findModuleData(module, GradleConstants.SYSTEM_ID) ?: return emptyList()
+    val moduleData = findGradleModuleData(module) ?: return emptyList()
     addAll(moduleData)
     for (eachSourceSetNode in ExternalSystemApiUtil.getChildren(moduleData, GradleSourceSetData.KEY)) {
       addAll(eachSourceSetNode)

@@ -2,21 +2,29 @@
 package org.jetbrains.plugins.gradle.util;
 
 import com.intellij.ide.util.PropertiesComponent;
+import com.intellij.openapi.externalSystem.model.DataNode;
 import com.intellij.openapi.externalSystem.model.ExternalSystemException;
+import com.intellij.openapi.externalSystem.model.ProjectKeys;
+import com.intellij.openapi.externalSystem.model.project.ModuleData;
+import com.intellij.openapi.externalSystem.model.project.ProjectData;
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil;
 import com.intellij.openapi.externalSystem.util.ExternalSystemConstants;
 import com.intellij.openapi.fileChooser.FileChooserDescriptor;
 import com.intellij.openapi.fileChooser.FileChooserDescriptorFactory;
 import com.intellij.openapi.fileChooser.FileTypeDescriptor;
+import com.intellij.openapi.module.Module;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileFilters;
 import com.intellij.openapi.util.io.FileUtil;
+import com.intellij.util.BooleanFunction;
 import com.intellij.util.containers.Stack;
 import org.gradle.tooling.model.GradleProject;
 import org.gradle.tooling.model.gradle.GradleScript;
 import org.gradle.util.GUtil;
 import org.gradle.wrapper.WrapperConfiguration;
 import org.gradle.wrapper.WrapperExecutor;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -239,5 +247,17 @@ public class GradleUtil {
       .filter(Objects::nonNull)
       .map(Path::toString)
       .anyMatch(name -> name.startsWith("settings.gradle"));
+  }
+
+  @ApiStatus.Experimental
+  @Nullable
+  public static DataNode<ModuleData> findGradleModuleData(@NotNull Module module) {
+    String projectPath = ExternalSystemApiUtil.getExternalProjectPath(module);
+    if (projectPath == null) return null;
+    Project project = module.getProject();
+    DataNode<ProjectData> projectNode = ExternalSystemApiUtil.findProjectData(project, GradleConstants.SYSTEM_ID, projectPath);
+    if (projectNode == null) return null;
+    BooleanFunction<DataNode<ModuleData>> predicate = node -> projectPath.equals(node.getData().getLinkedExternalProjectPath());
+    return ExternalSystemApiUtil.find(projectNode, ProjectKeys.MODULE, predicate);
   }
 }

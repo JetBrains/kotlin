@@ -34,6 +34,7 @@ import org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil;
 import org.jetbrains.plugins.gradle.settings.GradleProjectSettings;
 import org.jetbrains.plugins.gradle.settings.TestRunner;
 import org.jetbrains.plugins.gradle.util.GradleConstants;
+import org.jetbrains.plugins.gradle.util.GradleUtil;
 import org.jetbrains.plugins.gradle.util.TasksToRun;
 
 import java.util.*;
@@ -168,7 +169,7 @@ public abstract class GradleTestRunConfigurationProducer extends RunConfiguratio
         testTasks.add(new TasksToRun.Impl(testName, tasks));
       }
     }
-    DataNode<ModuleData> moduleDataNode = ExternalSystemApiUtil.findModuleData(module, GradleConstants.SYSTEM_ID);
+    DataNode<ModuleData> moduleDataNode = GradleUtil.findGradleModuleData(module);
     if (moduleDataNode == null) return testTasks;
     Collection<DataNode<TestData>> testsData = ExternalSystemApiUtil.findAll(moduleDataNode, ProjectKeys.TEST);
     for (DataNode<TestData> testDataNode : testsData) {
