@@ -58,18 +58,20 @@ public class PsiFileNode extends BasePsiNode<PsiFile> implements NavigatableWith
   @Override
   protected void updateImpl(@NotNull PresentationData data) {
     PsiFile value = getValue();
-    data.setPresentableText(value.getName());
-    data.setIcon(value.getIcon(Iconable.ICON_FLAG_READ_STATUS));
+    if (value != null) {
+      data.setPresentableText(value.getName());
+      data.setIcon(value.getIcon(Iconable.ICON_FLAG_READ_STATUS));
 
-    VirtualFile file = getVirtualFile();
-    if (file != null && file.is(VFileProperty.SYMLINK)) {
-      String target = file.getCanonicalPath();
-      if (target == null) {
-        data.setAttributesKey(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES);
-        data.setTooltip(IdeBundle.message("node.project.view.bad.link"));
-      }
-      else {
-        data.setTooltip(FileUtil.toSystemDependentName(target));
+      VirtualFile file = getVirtualFile();
+      if (file != null && file.is(VFileProperty.SYMLINK)) {
+        String target = file.getCanonicalPath();
+        if (target == null) {
+          data.setAttributesKey(CodeInsightColors.WRONG_REFERENCES_ATTRIBUTES);
+          data.setTooltip(IdeBundle.message("node.project.view.bad.link"));
+        }
+        else {
+          data.setTooltip(FileUtil.toSystemDependentName(target));
+        }
       }
     }
   }
@@ -126,11 +128,7 @@ public class PsiFileNode extends BasePsiNode<PsiFile> implements NavigatableWith
   @Override
   public String getTitle() {
     VirtualFile file = getVirtualFile();
-    if (file != null) {
-      return FileUtil.getLocationRelativeToUserHome(file.getPresentableUrl());
-    }
-
-    return super.getTitle();
+    return file != null ? FileUtil.getLocationRelativeToUserHome(file.getPresentableUrl()) : super.getTitle();
   }
 
   @Override
@@ -139,7 +137,7 @@ public class PsiFileNode extends BasePsiNode<PsiFile> implements NavigatableWith
   }
 
   @Override
-  public Comparable getTypeSortKey() {
+  public Comparable<ExtensionSortKey> getTypeSortKey() {
     String extension = extension(getValue());
     return extension == null ? null : new ExtensionSortKey(extension);
   }
@@ -156,18 +154,16 @@ public class PsiFileNode extends BasePsiNode<PsiFile> implements NavigatableWith
     return null;
   }
 
-  public static class ExtensionSortKey implements Comparable {
+  public static class ExtensionSortKey implements Comparable<ExtensionSortKey> {
     private final String myExtension;
 
-    public ExtensionSortKey(final String extension) {
+    public ExtensionSortKey(@NotNull String extension) {
       myExtension = extension;
     }
 
     @Override
-    public int compareTo(final Object o) {
-      if (!(o instanceof ExtensionSortKey)) return 0;
-      ExtensionSortKey rhs = (ExtensionSortKey) o;
-      return myExtension.compareTo(rhs.myExtension);
+    public int compareTo(ExtensionSortKey o) {
+      return o == null ? 0 : myExtension.compareTo(o.myExtension);
     }
   }
 
