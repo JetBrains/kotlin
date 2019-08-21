@@ -158,17 +158,17 @@ val checkRepositories: TaskProvider<Task> = tasks.register("checkRepositories") 
             testStarted(testName)
         }
 
-        repositories.filterIsInstance<IvyArtifactRepository>().forEach {
+        project.repositories.filterIsInstance<IvyArtifactRepository>().forEach {
             if (it.url == null) {
                 logInvalidIvyRepo(testName)
             }
         }
 
-        repositories.findNonCachedRepositories().forEach {
+        project.repositories.findNonCachedRepositories().forEach {
             logNonCachedRepo(testName, it)
         }
 
-        buildscript.repositories.findNonCachedRepositories().forEach {
+        project.buildscript.repositories.findNonCachedRepositories().forEach {
             logNonCachedRepo(testName, it)
         }
 
