@@ -159,10 +159,8 @@ class CreateExpectedClassFix(
     } else
         selectedElements
 
-    if (originalElements.isNotEmpty()) {
-        project.executeWriteCommand("Repair actual members") {
-            repairActualModifiers(originalElements, resultDeclarations.toSet())
-        }
+    project.executeWriteCommand("Repair actual members") {
+        repairActualModifiers(originalElements + klass, resultDeclarations.toSet())
     }
 
     generateClassOrObject(project, true, element, checker, listOfNotNull(outerExpectedClass))
@@ -271,7 +269,7 @@ private fun repairActualModifiers(
     originalElements: Collection<KtNamedDeclaration>,
     selectedElements: Collection<KtNamedDeclaration>
 ) {
-    if (originalElements == selectedElements)
+    if (originalElements.size == selectedElements.size)
         for (original in originalElements) {
             original.makeActualWithParents()
         }
