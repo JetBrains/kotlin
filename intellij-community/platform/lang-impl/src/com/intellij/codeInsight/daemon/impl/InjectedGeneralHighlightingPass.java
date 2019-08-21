@@ -19,17 +19,13 @@ package com.intellij.codeInsight.daemon.impl;
 import com.intellij.codeInsight.daemon.impl.analysis.HighlightInfoHolder;
 import com.intellij.concurrency.JobLauncher;
 import com.intellij.injected.editor.DocumentWindow;
-import com.intellij.lang.Language;
 import com.intellij.lang.injection.InjectedLanguageManager;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.HighlighterColors;
 import com.intellij.openapi.editor.colors.EditorColors;
-import com.intellij.openapi.editor.colors.TextAttributesKey;
 import com.intellij.openapi.editor.markup.TextAttributes;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
@@ -46,7 +42,6 @@ import com.intellij.psi.PsiLanguageInjectionHost;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl;
 import com.intellij.psi.impl.source.tree.injected.InjectedLanguageUtil;
 import com.intellij.psi.impl.source.tree.injected.Place;
-import com.intellij.psi.tree.IElementType;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.Processor;
 import com.intellij.util.Processors;
@@ -378,9 +373,6 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
     List<InjectedLanguageUtil.TokenInfo> tokens = InjectedLanguageUtil.getHighlightTokens(injectedPsi);
     if (tokens == null) return;
 
-    final Language injectedLanguage = injectedPsi.getLanguage();
-    Project project = injectedPsi.getProject();
-    SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(injectedLanguage, project, injectedPsi.getVirtualFile());
     final TextAttributes defaultAttrs = myGlobalScheme.getAttributes(HighlighterColors.TEXT);
 
     Place shreds = InjectedLanguageUtil.getShreds(injectedPsi);
@@ -388,7 +380,6 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
     int injectionHostTextRangeStart = -1;
     for (InjectedLanguageUtil.TokenInfo token : tokens) {
       ProgressManager.checkCanceled();
-      IElementType tokenType = token.type;
       TextRange range = token.rangeInsideInjectionHost;
       if (range.getLength() == 0) continue;
       if (shredIndex != token.shredIndex) {
@@ -400,15 +391,8 @@ public class InjectedGeneralHighlightingPass extends GeneralHighlightingPass {
       }
       TextRange annRange = range.shiftRight(injectionHostTextRangeStart);
 
-      TextAttributesKey[] keys = syntaxHighlighter.getTokenHighlights(tokenType);
       // force attribute colors to override host' ones
-      TextAttributes attributes = null;
-      for(TextAttributesKey key:keys) {
-        TextAttributes attrs2 = myGlobalScheme.getAttributes(key);
-        if (attrs2 != null) {
-          attributes = attributes == null ? attrs2 : TextAttributes.merge(attributes, attrs2);
-        }
-      }
+      TextAttributes attributes = token.attributes;
       TextAttributes forcedAttributes;
       if (attributes == null || attributes.isEmpty() || attributes.equals(defaultAttrs)) {
         forcedAttributes = TextAttributes.ERASE_MARKER;

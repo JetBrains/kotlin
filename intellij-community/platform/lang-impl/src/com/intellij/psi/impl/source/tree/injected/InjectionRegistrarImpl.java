@@ -7,12 +7,16 @@ import com.intellij.injected.editor.DocumentWindow;
 import com.intellij.injected.editor.VirtualFileWindow;
 import com.intellij.lang.*;
 import com.intellij.lang.injection.MultiHostRegistrar;
-import com.intellij.lexer.Lexer;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
 import com.intellij.openapi.editor.ex.DocumentEx;
+import com.intellij.openapi.editor.highlighter.EditorHighlighter;
+import com.intellij.openapi.editor.highlighter.HighlighterIterator;
 import com.intellij.openapi.fileEditor.impl.FileDocumentManagerImpl;
-import com.intellij.openapi.fileTypes.SyntaxHighlighter;
-import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory;
+import com.intellij.openapi.fileTypes.EditorHighlighterProvider;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.fileTypes.FileTypeEditorHighlighterProviders;
 import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.project.Project;
@@ -750,9 +754,13 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
                                          @NotNull VirtualFileWindow virtualFile,
                                          @NotNull Project project,
                                          @NotNull List<? extends PlaceInfo> placeInfos) {
-    SyntaxHighlighter syntaxHighlighter = SyntaxHighlighterFactory.getSyntaxHighlighter(language, project, (VirtualFile)virtualFile);
-    Lexer lexer = syntaxHighlighter.getHighlightingLexer();
-    lexer.start(outChars);
+    VirtualFile file = (VirtualFile)virtualFile;
+    FileType fileType = file.getFileType();
+    EditorHighlighterProvider provider = FileTypeEditorHighlighterProviders.INSTANCE.forFileType(fileType);
+    EditorColorsScheme scheme = EditorColorsManager.getInstance().getGlobalScheme();
+    EditorHighlighter highlighter = provider.getEditorHighlighter(project, fileType, file, scheme);
+    highlighter.setText(outChars);
+    HighlighterIterator iterator = highlighter.createIterator(0);
     int hostNum = -1;
     int prevHostEndOffset = 0;
     LiteralTextEscaper escaper = null;
@@ -761,8 +769,9 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
     TextRange rangeInsideHost = null;
     int shredEndOffset = -1;
     List<InjectedLanguageUtil.TokenInfo> tokens = new ArrayList<>(outChars.length()/5); // avg. token per 5 chars
-    for (IElementType tokenType = lexer.getTokenType(); tokenType != null; lexer.advance(), tokenType = lexer.getTokenType()) {
-      TextRange range = new ProperTextRange(lexer.getTokenStart(), lexer.getTokenEnd());
+    while (!iterator.atEnd()) {
+      IElementType tokenType = iterator.getTokenType();
+      TextRange range = new ProperTextRange(iterator.getStart(), iterator.getEnd());
       while (range != null && !range.isEmpty()) {
         if (range.getStartOffset() >= shredEndOffset) {
           hostNum++;
@@ -792,10 +801,11 @@ class InjectionRegistrarImpl extends MultiHostRegistrarImpl implements MultiHost
             prevHostEndOffset = shredEndOffset;
           }
           ProperTextRange rangeInHost = new ProperTextRange(start, end);
-          tokens.add(new InjectedLanguageUtil.TokenInfo(tokenType, rangeInHost,hostNum));
+          tokens.add(new InjectedLanguageUtil.TokenInfo(tokenType, rangeInHost, hostNum, iterator.getTextAttributes()));
         }
         range = spilled;
       }
+      iterator.advance();
     }
     return tokens;
   }

@@ -16,6 +16,7 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.editor.impl.EditorImpl;
+import com.intellij.openapi.editor.markup.TextAttributes;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.progress.ProgressIndicator;
@@ -82,11 +83,16 @@ public class InjectedLanguageUtil {
     @NotNull public final IElementType type;
     @NotNull public final ProperTextRange rangeInsideInjectionHost;
     public final int shredIndex;
+    public final TextAttributes attributes;
 
-    public TokenInfo(@NotNull IElementType type, @NotNull ProperTextRange rangeInsideInjectionHost, int shredIndex) {
+    public TokenInfo(@NotNull IElementType type,
+                     @NotNull ProperTextRange rangeInsideInjectionHost,
+                     int shredIndex,
+                     @NotNull TextAttributes attributes) {
       this.type = type;
       this.rangeInsideInjectionHost = rangeInsideInjectionHost;
       this.shredIndex = shredIndex;
+      this.attributes = attributes;
     }
   }
   static void setHighlightTokens(@NotNull PsiFile file, @NotNull List<TokenInfo> tokens) {
