@@ -1,0 +1,12 @@
+package
+
+public fun test(): kotlin.String
+public fun </*0*/ T, /*1*/ R, /*2*/ Ts> Box<T>.withOthers(/*0*/ vararg others: Box<Ts> /*kotlin.Tuple<Box<Ts>>*/, /*1*/ transform: (T, kotlin.Tuple<Ts>) -> R): Box<R>
+
+public final class Box</*0*/ T> {
+    public constructor Box</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

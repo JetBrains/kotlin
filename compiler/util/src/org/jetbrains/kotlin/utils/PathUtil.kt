@@ -96,6 +96,9 @@ object PathUtil {
     const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
     const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 
+    const val KOTLIN_VARIADIC_GENERICS_NAME = "$KOTLIN_JAVA_STDLIB_NAME-variadic-generics"
+    const val KOTLIN_VARIADIC_GENERICS_JAR = "$KOTLIN_VARIADIC_GENERICS_NAME.jar"
+
     @JvmField
     val KOTLIN_RUNTIME_JAR_PATTERN: Pattern = Pattern.compile("kotlin-(stdlib|runtime)(-\\d[\\d.]+(-.+)?)?\\.jar")
     val KOTLIN_STDLIB_JS_JAR_PATTERN: Pattern = Pattern.compile("kotlin-stdlib-js.*\\.jar")

@@ -81,6 +81,9 @@ interface KotlinPaths {
     val compilerPath: File
         get() = jar(Jar.Compiler)
 
+    val variadicGenericsPath: File
+        get() = jar(Jar.VariadicGenerics)
+
     enum class Jar(val baseName: String) {
         StdLib(PathUtil.KOTLIN_JAVA_STDLIB_NAME),
         Reflect(PathUtil.KOTLIN_JAVA_REFLECT_NAME),
@@ -100,6 +103,7 @@ interface KotlinPaths {
         CoroutinesCore(PathUtil.KOTLINX_COROUTINES_CORE_NAME),
         KotlinDaemon(PathUtil.KOTLIN_DAEMON_NAME),
         Ktor(PathUtil.KTOR_NAME),
+        VariadicGenerics(PathUtil.KOTLIN_VARIADIC_GENERICS_NAME)
     }
 
     // TODO: Maybe we need separate classpaths for compilers with and without the daemon

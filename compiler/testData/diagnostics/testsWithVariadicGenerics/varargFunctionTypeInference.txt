@@ -1,0 +1,4 @@
+package
+
+public fun test(): kotlin.Unit
+public fun </*0*/ Ts> variadicFn(/*0*/ first: kotlin.String, /*1*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit

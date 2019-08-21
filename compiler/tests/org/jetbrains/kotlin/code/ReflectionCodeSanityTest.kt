@@ -87,7 +87,7 @@ class ReflectionCodeSanityTest : TestCase() {
         val badClasses = linkedMapOf<Class<*>, Collection<Field>>()
         for ((className, maxAllowedFields) in classesWithMaxAllowedFields) {
             val klass = loadClass(className)
-            val fields = generateSequence(klass) { it.superclass }
+            val fields = generateSequence(klass) { it.superclass ?: null }
                     .flatMap { it.declaredFields.asSequence() }
                     .filterNot { Modifier.isStatic(it.modifiers) }
                     .toList()

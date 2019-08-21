@@ -1,0 +1,13 @@
+package
+
+public fun </*0*/ Ts> doubleWrapped(/*0*/ vararg args: Box<Box<Ts>> /*kotlin.Tuple<Box<Box<Ts>>>*/): kotlin.Unit
+public fun </*0*/ Ts> middleWrapped(/*0*/ vararg args: Box<kotlin.Tuple<Box<Ts>>> /*kotlin.Array<out Box<kotlin.Tuple<Box<Ts>>>>*/): kotlin.Unit
+public fun </*0*/ Ts> simple(/*0*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit
+public fun </*0*/ Ts> wrapped(/*0*/ vararg args: Box<Ts> /*kotlin.Tuple<Box<Ts>>*/): kotlin.Unit
+
+public final class Box</*0*/ T> {
+    public constructor Box</*0*/ T>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

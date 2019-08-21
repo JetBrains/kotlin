@@ -1,0 +1,5 @@
+package
+
+public fun </*0*/ T> materialize(): T
+public fun test(): kotlin.Unit
+public fun </*0*/ Ts> variadic(/*0*/ vararg args: Ts /*kotlin.Tuple<Ts>*/): kotlin.Unit
