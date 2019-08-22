@@ -400,7 +400,10 @@ open class FirBodyResolveTransformer(
         tryExpression.transformCatches(this, null)
 
         @Suppress("NAME_SHADOWING")
-        val tryExpression = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression) ?: return tryExpression.compose()
+        val tryExpression = syntheticCallGenerator.generateCalleeForTryExpression(tryExpression) ?: run {
+            tryExpression.resultType = FirErrorTypeRefImpl(null, "Inapplicable when expression")
+            return tryExpression.compose()
+        }
         val expectedTypeRef = data as FirTypeRef?
         val result = callCompleter.completeCall(tryExpression, expectedTypeRef)
 
@@ -482,7 +485,7 @@ open class FirBodyResolveTransformer(
 
             @Suppress("NAME_SHADOWING")
             val whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression) ?: run {
-                // TODO: bodies will be unresolved. Maybe run usual transform without completer?
+                whenExpression.resultType = FirErrorTypeRefImpl(null, "Inapplicable when expression")
                 return@with whenExpression.compose()
             }
 

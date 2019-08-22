@@ -1,0 +1,26 @@
+FILE: whenAsReceiver.kt
+    public final fun <T, R> R|T|.also(block: R|kotlin/Function0<R>|): R|R| {
+        when (lval <bangbang>: R|kotlin/Nothing?| = Null(null)) {
+            ==($subj$, Null(null)) ->  {
+                throw <Unresolved name: KotlinNullPointerException>#()
+            }
+            else ->  {
+                R|<local>/<bangbang>|!
+            }
+        }
+
+    }
+    public final fun foo(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval x: <ERROR TYPE REF: Inapplicable(WRONG_RECEIVER): [/also]> = when (R|<local>/b|) {
+            ==($subj$, Boolean(true)) ->  {
+                <Unresolved name: a>#
+            }
+            else ->  {
+                Null(null)
+            }
+        }
+        ?.<Inapplicable(WRONG_RECEIVER): [/also]>#(<L> = also@fun <implicit>.<anonymous>(): <implicit> {
+            Int(1)
+        }
+        )
+    }

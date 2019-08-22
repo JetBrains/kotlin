@@ -179,6 +179,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/typeParameterVsNested.kt");
     }
 
+    @TestMetadata("whenAsReceiver.kt")
+    public void testWhenAsReceiver() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/whenAsReceiver.kt");
+    }
+
     @TestMetadata("whenInference.kt")
     public void testWhenInference() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/whenInference.kt");
