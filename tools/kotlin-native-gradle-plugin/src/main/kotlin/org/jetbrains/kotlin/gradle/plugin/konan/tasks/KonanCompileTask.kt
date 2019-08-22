@@ -184,7 +184,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
         addAll(secondStageExtraOpts())
 
         addArg("-l", klibPath)
-        add("-Xsource-library=${klibPath}")
+        add("-Xinclude=${klibPath}")
     }
 
     /** Args passed to the compiler at both stages of the two-stage compilation and during the singe-stage compilation. */

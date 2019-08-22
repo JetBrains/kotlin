@@ -95,7 +95,7 @@ To update the blackbox compiler tests set TeamCity build number in `gradle.prope
         ./gradlew -Ptest_verbose :backend.native:tests:mpp_optional_expectation
         
 * **-Ptest_two_stage** enables two-stage compilation of tests. If two-stage compilation is enabled, test sources are compiled into a klibrary
-and then a final native binary is produced from this klibrary using the -Xsource-library compiler flag.
+and then a final native binary is produced from this klibrary using the -Xinclude compiler flag.
 
         ./gradlew -Ptest_two_stage backend.native:tests:array0
        

@@ -114,7 +114,7 @@ private sealed class FeaturedLibrariesReporter {
             "$kind library $libraryName can't be used as a source library"
 
         override fun notIncludedLibraryMessageTitle(): String =
-            "Following libraries are declared as source libraries with -Xsource-library, but not included to the build:"
+            "Following libraries are declared as source libraries with -Xinclude, but not included to the build:"
     }
 
     private class CoveredLibraryReporter(configuration: CompilerConfiguration): BaseReporter(configuration) {
