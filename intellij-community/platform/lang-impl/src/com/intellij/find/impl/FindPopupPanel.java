@@ -1089,10 +1089,16 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     final int hash = System.identityHashCode(myResultsPreviewSearchProgress);
 
     final DefaultTableModel model = new DefaultTableModel() {
+      private String firstResultPath = null;
+
       private final Comparator<Vector<UsageInfo2UsageAdapter>> COMPARATOR = (v1, v2) -> {
         UsageInfo2UsageAdapter u1 = v1.get(0);
         UsageInfo2UsageAdapter u2 = v2.get(0);
-        int c = u1.getFile().getPath().compareTo(u2.getFile().getPath());
+        String u2Path = u2.getFile().getPath();
+        final String u1Path = u1.getFile().getPath();
+        if (u1Path.equals(firstResultPath) && !u2Path.equals(firstResultPath)) return -1; // first result is always sorted first
+        if (!u1Path.equals(firstResultPath) && u2Path.equals(firstResultPath)) return 1;
+        int c = u1Path.compareTo(u2Path);
         if (c != 0) return c;
         c = Integer.compare(u1.getLine(), u2.getLine());
         if (c != 0) return c;
@@ -1109,18 +1115,15 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       //Inserts search results in sorted order
       public void addRow(Object[] rowData) {
         final Vector<UsageInfo2UsageAdapter> v = convertToVector(rowData);
-        final int p = Collections.binarySearch(dataVector, v, COMPARATOR);
-        assert p < 0 : "duplicate result found";
-
-        int row = -(p + 1);
-        boolean fixSelection = row == myResultsPreviewTable.getSelectedRow() && myResultsPreviewTable.getSelectedRowCount() == 1;
-        insertRow(row, v);
-
-        if (fixSelection) {
-          // Inserting a row at the selection position grows the selection by 1.
-          // Prevent that growing and set the selection back to the row only.
-          if (row != 0) row++; // non-default selection, keep the item
-          myResultsPreviewTable.setRowSelectionInterval(row, row);
+        if (dataVector.isEmpty()) {
+          dataVector.add(v);
+          firstResultPath = v.get(0).getFile().getPath();
+        }
+        else {
+          final int p = Collections.binarySearch(dataVector, v, COMPARATOR);
+          assert p < 0 : "duplicate result found";
+          int row = -(p + 1);
+          insertRow(row, v);
         }
       }
     };
