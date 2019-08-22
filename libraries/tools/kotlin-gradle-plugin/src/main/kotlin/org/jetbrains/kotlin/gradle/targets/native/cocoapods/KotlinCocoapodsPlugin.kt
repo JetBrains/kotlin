@@ -134,7 +134,8 @@ open class KotlinCocoapodsPlugin: Plugin<Project> {
 
         if (requestedTargetName == KOTLIN_TARGET_FOR_DEVICE) {
             // We create a fat framework only for device platforms: iosArm64 and iosArm32.
-            val devicePlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32)
+            val devicePlatforms = listOf(KonanTarget.IOS_ARM64, KonanTarget.IOS_ARM32,
+                    KonanTarget.WATCHOS_ARM64, KonanTarget.TVOS_ARM64)
             val deviceTargets = devicePlatforms.flatMap { kotlinExtension.targetsForPlatform(it) }
 
             if (deviceTargets.size == 1) {
