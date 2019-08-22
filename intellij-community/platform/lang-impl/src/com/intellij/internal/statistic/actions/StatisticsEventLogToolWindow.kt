@@ -27,9 +27,9 @@ import java.awt.BorderLayout
 import javax.swing.BorderFactory
 import javax.swing.JPanel
 
-const val eventLogToolWindowsId = "FUS Event Log"
+const val eventLogToolWindowsId = "Statistics Event Log"
 
-class StatisticsEventLogToolWindow(project: Project) : SimpleToolWindowPanel(false, true), Disposable {
+class StatisticsEventLogToolWindow(project: Project, private val recorderId: String) : SimpleToolWindowPanel(false, true), Disposable {
   private val consoleLog = StatisticsEventLogConsole(project, StatisticsLogFilterModel())
   private val eventLogListener: (LogEvent) -> Unit = { logEvent -> consoleLog.addLogLine(buildLogMessage(logEvent)) }
 
@@ -45,11 +45,11 @@ class StatisticsEventLogToolWindow(project: Project) : SimpleToolWindowPanel(fal
     toolbar = ActionManager.getInstance().createActionToolbar("FusEventLogToolWindow", actionGroup, false).component
 
     Disposer.register(this, consoleLog)
-    EventLogNotificationService.subscribe(eventLogListener)
+    EventLogNotificationService.subscribe(eventLogListener, recorderId)
   }
 
   override fun dispose() {
-    EventLogNotificationService.unsubscribe(eventLogListener)
+    EventLogNotificationService.unsubscribe(eventLogListener, recorderId)
   }
 
   companion object {
