@@ -25,6 +25,7 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.formatter.common.AbstractBlock;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,6 +49,8 @@ public abstract class TemplateLanguageFormattingModelBuilder implements Delegati
   }
 
   protected Block getRootBlock(PsiElement element, FileViewProvider viewProvider, CodeStyleSettings settings) {
+    viewProvider = InjectedLanguageManagerImpl.getOriginalProvider(viewProvider);
+
     ASTNode node = element.getNode();
     if (node == null) {
       return createDummyBlock(node);

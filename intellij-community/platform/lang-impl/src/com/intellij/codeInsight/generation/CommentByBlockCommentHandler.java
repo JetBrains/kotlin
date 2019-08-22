@@ -40,6 +40,7 @@ import com.intellij.openapi.util.Couple;
 import com.intellij.openapi.util.TextRange;
 import com.intellij.psi.*;
 import com.intellij.psi.codeStyle.CommonCodeStyleSettings;
+import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl;
 import com.intellij.psi.templateLanguages.MultipleLangCommentProvider;
 import com.intellij.psi.templateLanguages.OuterLanguageElement;
 import com.intellij.psi.templateLanguages.TemplateLanguageFileViewProvider;
@@ -360,7 +361,7 @@ public class CommentByBlockCommentHandler extends MultiCaretCodeInsightActionHan
   public static Commenter getCommenter(final PsiFile file, final Editor editor,
                                        final Language lineStartLanguage, final Language lineEndLanguage) {
 
-    final FileViewProvider viewProvider = file.getViewProvider();
+    final FileViewProvider viewProvider = InjectedLanguageManagerImpl.getOriginalProvider(file.getViewProvider());
 
     for (MultipleLangCommentProvider provider : MultipleLangCommentProvider.EP_NAME.getExtensions()) {
       if (provider.canProcess(file, viewProvider)) {
