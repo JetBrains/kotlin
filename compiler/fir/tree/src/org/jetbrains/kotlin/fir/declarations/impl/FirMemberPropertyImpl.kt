@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirPropertyAccessor
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -52,6 +54,8 @@ class FirMemberPropertyImpl(
 
     override var setter: FirPropertyAccessor? = null
 
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
+
     init {
         symbol.bind(this)
         backingFieldSymbol.bind(this)
@@ -68,6 +72,7 @@ class FirMemberPropertyImpl(
         typeParameters.transformInplace(transformer, data)
         status = status.transformSingle(transformer, data)
         annotations.transformInplace(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
     }
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
@@ -75,6 +80,11 @@ class FirMemberPropertyImpl(
         setter = setter?.transformSingle(transformer, data)
         transformChildrenWithoutAccessors(transformer, data)
         // Everything other (annotations, etc.) is done above
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirMemberPropertyImpl {
+        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 }

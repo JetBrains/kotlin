@@ -6,9 +6,11 @@ package org.jetbrains.kotlin.fir.visitors
 
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.impl.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableClass
+import org.jetbrains.kotlin.fir.declarations.impl.FirModifiableFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.*
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.types.*
 
 
@@ -150,6 +152,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     open fun <E : FirElement> transformReference(reference: E, data: D): CompositeTransformResult<E> {
         return transformElement(reference, data)
+    }
+
+    open fun transformControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): CompositeTransformResult<FirControlFlowGraphReference> {
+        return transformReference(controlFlowGraphReference, data)
     }
 
     open fun transformNamedReference(namedReference: FirNamedReference, data: D): CompositeTransformResult<FirNamedReference> {
@@ -562,6 +568,10 @@ abstract class FirTransformer<in D> : FirVisitor<CompositeTransformResult<FirEle
 
     final override fun visitContinueExpression(continueExpression: FirContinueExpression, data: D): CompositeTransformResult<FirElement> {
         return transformContinueExpression(continueExpression, data)
+    }
+
+    final override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference, data: D): CompositeTransformResult<FirElement> {
+        return transformControlFlowGraphReference(controlFlowGraphReference, data)
     }
 
     final override fun visitDeclaration(declaration: FirDeclaration, data: D): CompositeTransformResult<FirElement> {

@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
@@ -61,6 +63,8 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
 
     override var body: FirBlock? = null
 
+    override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         annotations.transformInplace(transformer, data)
         valueParameters.transformInplace(transformer, data)
@@ -68,6 +72,7 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
         status = status.transformSingle(transformer, data)
         delegatedConstructor?.transformSingle(transformer, data)
         body = body?.transformSingle(transformer, data)
+        transformControlFlowGraphReference(transformer, data)
 
         return this
     }
@@ -79,10 +84,16 @@ open class FirConstructorImpl : FirAbstractCallableMember<FirConstructor>, FirCo
         status.accept(visitor, data)
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
+        controlFlowGraphReference.accept(visitor, data)
     }
 
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirConstructorImpl {
+        controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
     }
 

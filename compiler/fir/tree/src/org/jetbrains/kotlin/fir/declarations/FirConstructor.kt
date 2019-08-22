@@ -31,5 +31,6 @@ interface FirConstructor : @VisitedSupertype FirMemberFunction<FirConstructor> {
         }
         returnTypeRef.accept(visitor, data)
         body?.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
     }
 }

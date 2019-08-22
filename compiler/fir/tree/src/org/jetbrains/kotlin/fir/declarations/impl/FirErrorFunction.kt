@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.FirSymbolOwner
 import org.jetbrains.kotlin.fir.symbols.impl.FirErrorFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -44,6 +46,8 @@ class FirErrorFunction(
     override val body: FirBlock?
         get() = null
 
+    override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
+
     override var resolvePhase = FirResolvePhase.BODY_RESOLVE
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -54,4 +58,8 @@ class FirErrorFunction(
     }
 
     override fun <D> transformReturnTypeRef(transformer: FirTransformer<D>, data: D) {}
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirErrorFunction {
+        return this
+    }
 }

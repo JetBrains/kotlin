@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnknownTypeExpression
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 abstract class FirAnonymousFunction(
@@ -21,6 +23,8 @@ abstract class FirAnonymousFunction(
     abstract override val receiverTypeRef: FirTypeRef?
 
     abstract override val symbol: FirAnonymousFunctionSymbol
+
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
@@ -33,4 +37,6 @@ abstract class FirAnonymousFunction(
     }
 
     abstract fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef)
+
+    abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

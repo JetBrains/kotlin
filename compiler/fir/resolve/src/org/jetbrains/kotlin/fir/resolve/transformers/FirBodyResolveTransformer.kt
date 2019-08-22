@@ -599,9 +599,9 @@ open class FirBodyResolveTransformer(
             localScopes += FirLocalScope()
             dataFlowAnalyzer.enterFunction(function)
             super.transformFunction(function, data).also {
-                val result = it.single
-                // TODO: handle graph
-                val controlFlowGraph = dataFlowAnalyzer.exitFunction(result as FirFunction<*>)
+                val result = it.single as FirFunction<*>
+                val controlFlowGraph = dataFlowAnalyzer.exitFunction(result)
+                result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
             }
         }
     }
@@ -765,8 +765,8 @@ open class FirBodyResolveTransformer(
                     }
                 }
                 property.resolvePhase = transformerPhase
-                // TODO: handle graph
                 val controlFlowGraph = dataFlowAnalyzer.exitProperty(property)
+                property.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
                 property.compose()
             }
         }

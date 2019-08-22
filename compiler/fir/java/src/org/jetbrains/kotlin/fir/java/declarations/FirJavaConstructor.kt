@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractCallableMember
 import org.jetbrains.kotlin.fir.declarations.impl.FirConstructorImpl.Companion.NAME
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
+import org.jetbrains.kotlin.fir.references.FirEmptyControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -54,8 +56,14 @@ class FirJavaConstructor(
 
     override val valueParameters = mutableListOf<FirValueParameter>()
 
+    override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
+
     override fun <D> transformValueParameters(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         valueParameters.transformInplace(transformer, data)
+        return this
+    }
+
+    override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirJavaConstructor {
         return this
     }
 }

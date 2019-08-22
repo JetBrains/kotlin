@@ -24,5 +24,6 @@ interface FirMemberFunction<F : FirMemberFunction<F>> :
             parameter.accept(visitor, data)
         }
         body?.accept(visitor, data)
+        controlFlowGraphReference?.accept(visitor, data)
     }
 }
