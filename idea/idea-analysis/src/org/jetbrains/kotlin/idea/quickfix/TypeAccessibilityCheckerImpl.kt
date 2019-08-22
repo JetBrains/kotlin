@@ -3,20 +3,20 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.idea.quickfix.expectactual
+package org.jetbrains.kotlin.idea.quickfix
 
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.backend.common.descriptors.explicitParameters
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.idea.caches.project.isTestModule
 import org.jetbrains.kotlin.idea.caches.project.toDescriptor
+import org.jetbrains.kotlin.idea.refactoring.fqName.fqName
 import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
-import org.jetbrains.kotlin.idea.util.hasPrivateModifier
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -48,7 +48,7 @@ class TypeAccessibilityCheckerImpl(
     override fun incorrectTypes(type: KotlinType): Collection<FqName?> = incorrectTypesInSequence(type.collectAllTypes(), false)
 
     override fun checkAccessibility(declaration: KtNamedDeclaration): Boolean =
-        !declaration.hasPrivateModifier() && declaration.descriptor?.let { checkAccessibility(it) } == true
+        !declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) && declaration.descriptor?.let { checkAccessibility(it) } == true
 
     override fun checkAccessibility(descriptor: DeclarationDescriptor): Boolean = incorrectTypesInDescriptor(descriptor, true).isEmpty()
 
@@ -130,3 +130,20 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
 private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName) + arguments.asSequence()
     .map(TypeProjection::getType)
     .flatMap(KotlinType::collectAllTypes)
+
+private val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
+    get() {
+        val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
+
+        this.dispatchReceiverParameter?.let {
+            result.add(it)
+        }
+
+        this.extensionReceiverParameter?.let {
+            result.add(it)
+        }
+
+        result.addAll(valueParameters)
+
+        return result
+    }

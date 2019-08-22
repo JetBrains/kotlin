@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.idea.refactoring.fqName
@@ -24,22 +13,22 @@ import org.jetbrains.kotlin.asJava.namedUnwrappedElement
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.resolve.ImportPath
+import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
+import org.jetbrains.kotlin.types.AbbreviatedType
+import org.jetbrains.kotlin.types.KotlinType
 
 /**
  * Returns FqName for given declaration (either Java or Kotlin)
  */
-fun PsiElement.getKotlinFqName(): FqName? {
-    val element = namedUnwrappedElement
-    return when (element) {
-        is PsiPackage -> FqName(element.qualifiedName)
-        is PsiClass -> element.qualifiedName?.let(::FqName)
-        is PsiMember -> element.getName()?.let { name ->
-            val prefix = element.containingClass?.qualifiedName
-            FqName(if (prefix != null) "$prefix.$name" else name)
-        }
-        is KtNamedDeclaration -> element.fqName
-        else -> null
+fun PsiElement.getKotlinFqName(): FqName? = when (val element = namedUnwrappedElement) {
+    is PsiPackage -> FqName(element.qualifiedName)
+    is PsiClass -> element.qualifiedName?.let(::FqName)
+    is PsiMember -> element.getName()?.let { name ->
+        val prefix = element.containingClass?.qualifiedName
+        FqName(if (prefix != null) "$prefix.$name" else name)
     }
+    is KtNamedDeclaration -> element.fqName
+    else -> null
 }
 
 fun FqName.isImported(importPath: ImportPath, skipAliasedImports: Boolean = true): Boolean {
@@ -59,3 +48,9 @@ private fun ImportPath.isImported(imports: Iterable<ImportPath>): Boolean = impo
 fun ImportPath.isImported(imports: Iterable<ImportPath>, excludedFqNames: Iterable<FqName>): Boolean {
     return isImported(imports) && (isAllUnder || this.fqName !in excludedFqNames)
 }
+
+val KotlinType.fqName: FqName?
+    get() = when (this) {
+        is AbbreviatedType -> abbreviation.fqName
+        else -> constructor.declarationDescriptor?.fqNameOrNull()
+    }
