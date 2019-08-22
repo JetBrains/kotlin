@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM
 // IGNORE_BACKEND: JVM_IR
 // WITH_COROUTINES
 // FILE: test.kt
@@ -14,25 +15,24 @@ fun test() {
     val other = Result.success("nope")
     if (result == other) println("==")
     if (result != other) println("!=")
-    if (result.equals(other)) println("equals")
-    if (!result.equals(other)) println("!equals")
+    if (result.equals(other)) println("equals") // Boxes (JVM, JVM_IR)
+    if (!result.equals(other)) println("!equals") // Boxes (JVM, JVM_IR)
 
     println(result.hashCode())
     println(result.toString())
-    println("$result")
+    println("$result") // Boxes (JVM_IR)
 
     val ans1 = runCatching { 42 }
-    println(ans1)
+    println(ans1) // Boxes (JVM, JVM_IR)
 
     val ans2 = 42.runCatching { this }
-    println(ans2)
+    println(ans2) // Boxes (JVM, JVM_IR)
 
     println(result.getOrElse { "oops" })
     println(result.getOrDefault("oops"))
 }
 
 // @TestKt.class:
-// 0 INVOKESTATIC Result.box-impl
-// 0 INVOKESTATIC Result.unbox-impl
+// 0 INVOKESTATIC kotlin/Result.box-impl
+// 0 INVOKEVIRTUAL kotlin/Result.unbox-impl
 // 0 Result\$Failure
-// 46 Result
