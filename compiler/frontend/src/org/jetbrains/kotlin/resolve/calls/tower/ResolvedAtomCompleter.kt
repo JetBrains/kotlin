@@ -238,12 +238,18 @@ class ResolvedAtomCompleter(
         val expectedArgumentSize = expectedLambdaValueParameters.size
         val lambdaArgumentSize = descriptor.valueParameters.size
         val argumentLengthDelta = lambdaArgumentSize - expectedArgumentSize
+        val variadicPackLength = argumentLengthDelta + 1
+
+        if (variadicPackLength < 0) {
+            return // TODO consider error descriptor
+        }
+
         val newValueParameters = mutableListOf<ValueParameterDescriptor>()
 
         var varargOffset = 0
         expectedLambdaValueParameters.forEachIndexed { index, typeProjection ->
             if (TupleType.isTupleType(typeProjection.type)) {
-                val varargParameters = descriptor.valueParameters.subList(index, index + argumentLengthDelta + 1)
+                val varargParameters = descriptor.valueParameters.subList(index, index + variadicPackLength)
                 val packArgument = ValueParameterDescriptorImpl.createWithVariadicComponents(
                     descriptor,
                     componentVariables = varargParameters,

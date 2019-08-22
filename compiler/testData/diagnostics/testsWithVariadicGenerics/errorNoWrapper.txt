@@ -1,0 +1,4 @@
+package
+
+public val something: [ERROR : Box<R>]<R>
+public fun </*0*/ R, /*1*/ Ts> variadic(/*0*/ vararg arguments: [ERROR : Box<Ts>]<Ts> /*kotlin.Tuple<[ERROR : Box<Ts>]<Ts>>*/, /*1*/ transform: (kotlin.Tuple<Ts>) -> R): [ERROR : Box<R>]<R>

@@ -1,0 +1,7 @@
+package
+
+public val mismatched: kotlin.Unit
+public val noIt: kotlin.Unit
+public val ok: kotlin.String
+public fun </*0*/ R, /*1*/ Ts> justOthers(/*0*/ vararg others: Ts /*kotlin.Tuple<Ts>*/, /*1*/ transform: (kotlin.Tuple<Ts>) -> R): R
+public fun </*0*/ T, /*1*/ R, /*2*/ Ts> T.receiverWithOthers(/*0*/ vararg others: Ts /*kotlin.Tuple<Ts>*/, /*1*/ transform: (T, kotlin.Tuple<Ts>) -> R): R

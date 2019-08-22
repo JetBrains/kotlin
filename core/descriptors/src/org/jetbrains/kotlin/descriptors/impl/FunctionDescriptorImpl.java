@@ -89,12 +89,17 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             }
         }
 
+        int variadicPackOffset = 0;
         for (int i = 0; i < unsubstitutedValueParameters.size(); ++i) {
             // TODO fill me
             int firstValueParameterOffset = 0; // receiverParameter.exists() ? 1 : 0;
             ValueParameterDescriptor valueParameterDescriptor = unsubstitutedValueParameters.get(i);
-            if (valueParameterDescriptor.getIndex() != i + firstValueParameterOffset) {
+            if (valueParameterDescriptor.getIndex() != i + firstValueParameterOffset + variadicPackOffset) {
                 throw new IllegalStateException(valueParameterDescriptor + "index is " + valueParameterDescriptor.getIndex() + " but position is " + i);
+            }
+            if (valueParameterDescriptor instanceof ValueParameterDescriptorImpl.WithVariadicComponents) {
+                variadicPackOffset = ((ValueParameterDescriptorImpl.WithVariadicComponents) valueParameterDescriptor)
+                        .getComponentVariables().size() - 1;
             }
         }
 

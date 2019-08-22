@@ -34,9 +34,14 @@ public class DiagnosticsTestWithVariadicGenericsGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/boxed.kt");
     }
 
-    @TestMetadata("InlineBootstrapTuple.kt")
-    public void testInlineBootstrapTuple() throws Exception {
-        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/InlineBootstrapTuple.kt");
+    @TestMetadata("emptyArgumentList.kt")
+    public void testEmptyArgumentList() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/emptyArgumentList.kt");
+    }
+
+    @TestMetadata("errorNoWrapper.kt")
+    public void testErrorNoWrapper() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/errorNoWrapper.kt");
     }
 
     @TestMetadata("materialize.kt")

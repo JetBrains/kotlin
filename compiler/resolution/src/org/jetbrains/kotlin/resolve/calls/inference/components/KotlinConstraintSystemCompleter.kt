@@ -249,7 +249,7 @@ class KotlinConstraintSystemCompleter(
     private fun findResolvedAtomBy(typeVariable: TypeVariableMarker, topLevelAtoms: List<ResolvedAtom>): ResolvedAtom? {
         fun ResolvedAtom.check(): ResolvedAtom? {
             val suitableCall = when (this) {
-                is ResolvedCallAtom -> typeVariable in substitutor.freshVariables
+                is ResolvedCallAtom -> typeVariable in substitutor.freshVariables + variadicTypeVariables
                 is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables?.let { typeVariable in it } ?: false
                 is ResolvedLambdaAtom -> typeVariable == typeVariableForLambdaReturnType
                 else -> false

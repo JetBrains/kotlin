@@ -294,6 +294,8 @@ val KotlinType.isVariadic: Boolean
     get() = constructor.declarationDescriptor.safeAs<TypeParameterDescriptor>()?.isVariadic ?: false
 
 fun KotlinType.substituteVariadicType(from: KotlinType, to: KotlinType): KotlinType {
+    if (this.contains { it.isError })
+        return this
     if (this == from) {
         return to
     }
