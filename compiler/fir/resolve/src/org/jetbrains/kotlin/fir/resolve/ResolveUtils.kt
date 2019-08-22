@@ -256,10 +256,17 @@ fun BodyResolveComponents.typeForQualifier(resolvedQualifier: FirResolvedQualifi
 
 fun <T : FirResolvable> BodyResolveComponents.typeFromCallee(access: T): FirResolvedTypeRef {
     val makeNullable: Boolean by lazy {
-        if (access is FirQualifiedAccess)
-            access.safe && access.explicitReceiver!!.resultType.coneTypeUnsafe<ConeKotlinType>().isNullable
-        else
+        if (access is FirQualifiedAccess && access.safe) {
+            val explicitReceiver = access.explicitReceiver!!
+            val receiverResultType = explicitReceiver.resultType
+            if (receiverResultType is FirResolvedTypeRef) {
+                receiverResultType.type.isNullable
+            } else {
+                throw AssertionError("Receiver ${explicitReceiver.render()} type is unresolved: ${receiverResultType.render()}")
+            }
+        } else {
             false
+        }
     }
 
     return when (val newCallee = access.calleeReference) {
