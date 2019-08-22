@@ -10,20 +10,28 @@ import com.intellij.internal.statistic.eventLog.FeatureUsageData
 import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesCollector
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.idea.KotlinPluginUtil
+import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.project.NewInferenceForIDEAnalysisComponent
 
 class IDESettingsFUSCollector : ProjectUsagesCollector() {
 
     override fun getUsages(project: Project): Set<UsageDescriptor> {
         val usages = mutableSetOf<UsageDescriptor>()
+
         @Suppress("DEPRECATION")
         val inferenceState = NewInferenceForIDEAnalysisComponent.isEnabledForV1(project)
-        val data = FeatureUsageData()
-            .addData("enabled", inferenceState)
-            .addData("pluginVersion", KotlinPluginUtil.getPluginVersion())
+        usages.add(UsageDescriptor("newInference", flagUsage(inferenceState)))
 
-        usages.add(UsageDescriptor("newInference", data))
+        val scriptingAutoReloadEnabled = KotlinScriptingSettings.getInstance(project).isAutoReloadEnabled
+        usages.add(UsageDescriptor("scriptingAutoReloadEnabled", flagUsage(scriptingAutoReloadEnabled)))
+
         return usages
+    }
+
+    private fun flagUsage(enabled: Boolean): FeatureUsageData {
+        return FeatureUsageData()
+            .addData("enabled", enabled)
+            .addData("pluginVersion", KotlinPluginUtil.getPluginVersion())
     }
 
     override fun getGroupId() = "kotlin.ide.settings"
