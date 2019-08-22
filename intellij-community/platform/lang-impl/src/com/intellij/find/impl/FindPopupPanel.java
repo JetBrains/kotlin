@@ -66,6 +66,7 @@ import com.intellij.usages.*;
 import com.intellij.usages.impl.UsagePreviewPanel;
 import com.intellij.util.*;
 import com.intellij.util.containers.ContainerUtil;
+import com.intellij.util.containers.JBIterable;
 import com.intellij.util.ui.*;
 import net.miginfocom.swing.MigLayout;
 import org.jetbrains.annotations.NotNull;
@@ -780,10 +781,10 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     };
 
     @SuppressWarnings("InspectionUniqueToolbarId")
-    ActionToolbarImpl checkboxesToolbar =
-      (ActionToolbarImpl)ActionManager.getInstance().createActionToolbar(ActionPlaces.UNKNOWN, new DefaultActionGroup(actions), true);
-    checkboxesToolbar.setForceShowFirstComponent(true);
-    checkboxesToolbar.setSkipWindowAdjustments(true);
+    ActionToolbarImpl checkboxesToolbar = (ActionToolbarImpl)ActionManager.getInstance().createActionToolbar(
+      ActionPlaces.UNKNOWN, new DefaultActionGroup(actions), true
+    );
+    checkboxesToolbar.setForceMinimumSize(true);
 
     add(myTitlePanel, "sx 2, growx, growx, growy");
     add(checkboxesToolbar, "gapright 8, growx 200, pushx, wmax pref, ax right");
@@ -810,18 +811,20 @@ public class FindPopupPanel extends JBPanel implements FindUI {
     add(bottomPanel, "pushx, growx, dock south, sx 10");
 
     MnemonicHelper.init(this);
-    setFocusCycleRoot(true);
-    setFocusTraversalPolicy(new LayoutFocusTraversalPolicy() {
-      @Override
-      public Component getFirstComponent(Container aContainer) {
-        return mySearchComponent;
-      }
 
-      @Override
-      public Component getComponentAfter(Container container, Component c) {
-        return c == myResultsPreviewTable ? mySearchComponent : super.getComponentAfter(container, c);
-      }
-    });
+    List<Component> focusOrder = new ArrayList<>();
+    focusOrder.add(mySearchComponent);
+    focusOrder.add(myReplaceComponent);
+    ContainerUtil.addAll(focusOrder, focusableComponents(myScopeDetailsPanel));
+    focusOrder.add(myCbCaseSensitive);
+    focusOrder.add(myCbPreserveCase);
+    focusOrder.add(myCbWholeWordsOnly);
+    focusOrder.add(myCbRegularExpressions);
+    focusOrder.add(myCbFileFilter);
+    focusOrder.add(editorComponent);
+    ContainerUtil.addAll(focusOrder, focusableComponents(bottomPanel));
+    setFocusCycleRoot(true);
+    setFocusTraversalPolicy(new ListFocusTraversalPolicy(focusOrder));
   }
 
   private void processCtrlEnter() {
@@ -911,7 +914,6 @@ public class FindPopupPanel extends JBPanel implements FindUI {
   private static StateRestoringCheckBox createCheckBox(String message, String featureId) {
     StateRestoringCheckBox checkBox = new StateRestoringCheckBox(FindBundle.message(message));
     checkBox.addActionListener(__ -> FUCounterUsageLogger.getInstance().logEvent("find", featureId));
-    checkBox.setFocusable(false);
     return checkBox;
   }
 
@@ -1029,11 +1031,9 @@ public class FindPopupPanel extends JBPanel implements FindUI {
 
   private void updateScopeDetailsPanel() {
     ((CardLayout)myScopeDetailsPanel.getLayout()).show(myScopeDetailsPanel, mySelectedScope.name);
-    Component firstFocusableComponent =
-      UIUtil.uiTraverser(myScopeDetailsPanel).bfsTraversal().find(c -> c.isFocusable() && c.isEnabled() && c.isShowing() &&
-                                                                       (c instanceof JComboBox ||
-                                                                        c instanceof AbstractButton ||
-                                                                        c instanceof JTextComponent));
+    Component firstFocusableComponent = focusableComponents(myScopeDetailsPanel).find(
+      c -> c.isFocusable() && c.isEnabled() && c.isShowing()
+    );
     myScopeDetailsPanel.revalidate();
     myScopeDetailsPanel.repaint();
     if (firstFocusableComponent != null) {
@@ -1535,6 +1535,13 @@ public class FindPopupPanel extends JBPanel implements FindUI {
       searchContext = FindModel.SearchContext.EXCEPT_COMMENTS_AND_STRING_LITERALS;
     }
     return searchContext;
+  }
+
+  @NotNull
+  private static JBIterable<Component> focusableComponents(@NotNull Component component) {
+    return UIUtil.uiTraverser(component)
+      .bfsTraversal()
+      .filter(c -> c instanceof JComboBox || c instanceof AbstractButton || c instanceof JTextComponent);
   }
 
   private static class MyOpenResultsInNewTabAction extends ToggleAction {
