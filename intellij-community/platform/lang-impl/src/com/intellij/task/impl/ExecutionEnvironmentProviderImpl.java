@@ -24,6 +24,7 @@ import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.execution.runners.ExecutionEnvironmentProvider;
 import com.intellij.openapi.diagnostic.Logger;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.task.ExecuteRunConfigurationTask;
 import com.intellij.task.ProjectTaskRunner;
@@ -54,6 +55,9 @@ public class ExecutionEnvironmentProviderImpl implements ExecutionEnvironmentPro
         if (projectTaskRunner.canRun(project, runTask)) {
           return projectTaskRunner.createExecutionEnvironment(project, runTask, executor);
         }
+      }
+      catch (ProcessCanceledException e) {
+        throw e;
       }
       catch (Exception e) {
         LOG.error("Broken project task runner: " + projectTaskRunner.getClass().getName(), e);

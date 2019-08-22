@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ModalityState;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.module.ModuleManager;
+import com.intellij.openapi.progress.ProcessCanceledException;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectFileIndex;
 import com.intellij.openapi.roots.ProjectModelBuildableElement;
@@ -135,6 +136,9 @@ public class ProjectTaskManagerImpl extends ProjectTaskManager {
           .filter(runner -> {
             try {
               return runner.canRun(myProject, aTask);
+            }
+            catch (ProcessCanceledException e) {
+              throw e;
             }
             catch (Exception e) {
               LOG.error("Broken project task runner: " + runner.getClass().getName(), e);
