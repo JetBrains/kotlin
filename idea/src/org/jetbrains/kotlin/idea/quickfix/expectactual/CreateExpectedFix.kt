@@ -13,10 +13,9 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.showOkNoDialog
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -90,10 +89,9 @@ sealed class CreateExpectedFix<D : KtNamedDeclaration>(
                 ?: return emptyList()
             return when (actualDeclaration) {
                 is KtClassOrObject -> expectedModules.map { CreateExpectedClassFix(actualDeclaration, expectedContainingClass, it) }
-                is KtFunction -> expectedModules.map { CreateExpectedFunctionFix(actualDeclaration, expectedContainingClass, it) }
-                is KtProperty, is KtParameter -> expectedModules.map {
-                    CreateExpectedPropertyFix(
-                        actualDeclaration,
+                is KtProperty, is KtParameter, is KtFunction -> expectedModules.map {
+                    CreateExpectedCallableMemberFix(
+                        actualDeclaration as KtCallableDeclaration,
                         expectedContainingClass,
                         it
                     )
@@ -163,7 +161,7 @@ class CreateExpectedClassFix(
         repairActualModifiers(originalElements + klass, resultDeclarations.toSet())
     }
 
-    generateClassOrObject(project, true, element, checker, listOfNotNull(outerExpectedClass))
+    generateClassOrObject(project, true, element, checker)
 })
 
 private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
@@ -294,42 +292,19 @@ private fun KtNamedDeclaration.selected(): Sequence<KtNamedDeclaration> {
     return sequenceOf(this) + additionalSequence + containingClassOrObject?.selected().orEmpty()
 }
 
-class CreateExpectedPropertyFix(
-    property: KtNamedDeclaration,
+class CreateExpectedCallableMemberFix(
+    declaration: KtCallableDeclaration,
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
-) : CreateExpectedFix<KtNamedDeclaration>(property, targetExpectedClass, commonModule, block@{ project, checker, element ->
+) : CreateExpectedFix<KtNamedDeclaration>(declaration, targetExpectedClass, commonModule, block@{ project, checker, element ->
     if (!checker.checkAccessibility(element)) {
         showUnknownTypesError(element)
         return@block null
     }
-    val descriptor = element.toDescriptor() as? PropertyDescriptor
+    val descriptor = element.toDescriptor() as? CallableMemberDescriptor
     checker.existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
-        generateProperty(
-            project,
-            true,
-            element,
-            descriptor,
-            targetExpectedClass,
-            checker = checker
-        )
-    }
-})
-
-class CreateExpectedFunctionFix(
-    function: KtFunction,
-    targetExpectedClass: KtClassOrObject?,
-    commonModule: Module
-) : CreateExpectedFix<KtFunction>(function, targetExpectedClass, commonModule, block@{ project, checker, element ->
-    if (!checker.checkAccessibility(element)) {
-        showUnknownTypesError(element)
-        return@block null
-    }
-    val descriptor = element.toDescriptor() as? FunctionDescriptor
-    checker.existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
-    descriptor?.let {
-        generateFunction(
+        generateCallable(
             project,
             true,
             element,

@@ -21,8 +21,7 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.codeStyle.CodeStyleManager
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticFactory
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -60,12 +59,9 @@ class AddActualFix(
         val checker = TypeAccessibilityChecker.create(project, module)
         for (missedDeclaration in missedDeclarationPointers.mapNotNull { it.element }) {
             val actualDeclaration = when (missedDeclaration) {
-                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, checker, listOf(element))
-                is KtFunction -> missedDeclaration.toDescriptor()?.safeAs<FunctionDescriptor>()?.let {
-                    generateFunction(project, false, missedDeclaration, it, element, checker = checker)
-                }
-                is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<PropertyDescriptor>()?.let {
-                    generateProperty(project, false, missedDeclaration, it, element, checker = checker)
+                is KtClassOrObject -> factory.generateClassOrObject(project, false, missedDeclaration, checker)
+                is KtFunction, is KtProperty -> missedDeclaration.toDescriptor()?.safeAs<CallableMemberDescriptor>()?.let {
+                    generateCallable(project, false, missedDeclaration, it, element, checker = checker)
                 }
                 else -> null
             } ?: continue
