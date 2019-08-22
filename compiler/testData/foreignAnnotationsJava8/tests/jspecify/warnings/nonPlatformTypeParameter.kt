@@ -2,7 +2,7 @@
 // CODE_ANALYSIS_STATE warn
 // FILE: A.java
 
-import jspecify.annotations.*;
+import org.jspecify.annotations.*;
 
 public class A<T extends @Nullable Object> {
     public void foo(T t) {}
@@ -11,7 +11,7 @@ public class A<T extends @Nullable Object> {
 
 // FILE: B.java
 
-import jspecify.annotations.*;
+import org.jspecify.annotations.*;
 
 @DefaultNullable
 public class B<T> {

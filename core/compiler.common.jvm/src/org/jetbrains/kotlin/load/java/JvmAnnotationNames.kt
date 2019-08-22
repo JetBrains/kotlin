@@ -18,13 +18,13 @@ package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.name.FqName
 
-val JSPECIFY_NULLABLE = FqName("jspecify.annotations.Nullable")
-val JSPECIFY_NOT_NULL = FqName("jspecify.annotations.NotNull")
-val JSPECIFY_NULLNESS_UNKNOWN = FqName("jspecify.annotations.NullnessUnknown")
+val JSPECIFY_NULLABLE = FqName("org.jspecify.annotations.Nullable")
+val JSPECIFY_NOT_NULL = FqName("org.jspecify.annotations.NotNull")
+val JSPECIFY_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.NullnessUnknown")
 
-val JSPECIFY_DEFAULT_NULLABLE = FqName("jspecify.annotations.DefaultNullable")
-val JSPECIFY_DEFAULT_NOT_NULL = FqName("jspecify.annotations.DefaultNotNull")
-val JSPECIFY_DEFAULT_NULLNESS_UNKNOWN = FqName("jspecify.annotations.DefaultNullnessUnknown")
+val JSPECIFY_DEFAULT_NULLABLE = FqName("org.jspecify.annotations.DefaultNullable")
+val JSPECIFY_DEFAULT_NOT_NULL = FqName("org.jspecify.annotations.DefaultNotNull")
+val JSPECIFY_DEFAULT_NULLNESS_UNKNOWN = FqName("org.jspecify.annotations.DefaultNullnessUnknown")
 
 val NULLABLE_ANNOTATIONS = listOf(
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,

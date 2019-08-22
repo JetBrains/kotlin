@@ -1,14 +1,14 @@
 // !DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
 // FILE: A.java
 
-import jspecify.annotations.*;
+import org.jspecify.annotations.*;
 
 public class A<T extends @NotNull Object, E extends @Nullable Object, F extends @NullnessUnknown Object> {
 }
 
 // FILE: B.java
 
-import jspecify.annotations.*;
+import org.jspecify.annotations.*;
 
 public class B {
     @DefaultNotNull

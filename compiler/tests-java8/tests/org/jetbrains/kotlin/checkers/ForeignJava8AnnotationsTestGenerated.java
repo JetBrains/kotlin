@@ -75,6 +75,11 @@ public class ForeignJava8AnnotationsTestGenerated extends AbstractForeignJava8An
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/nonPlatformTypeParameter.kt");
         }
 
+        @TestMetadata("selfType.kt")
+        public void testSelfType() throws Exception {
+            runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/selfType.kt");
+        }
+
         @TestMetadata("simple.kt")
         public void testSimple() throws Exception {
             runTest("compiler/testData/foreignAnnotationsJava8/tests/jspecify/simple.kt");
