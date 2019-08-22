@@ -17,6 +17,9 @@ package org.jetbrains.plugins.gradle.tooling.builder;
 
 import org.gradle.api.Project;
 import org.gradle.api.Task;
+import org.gradle.api.internal.tasks.DefaultTaskContainer;
+import org.gradle.api.tasks.TaskContainer;
+import org.gradle.util.GradleVersion;
 
 import java.util.*;
 
@@ -25,6 +28,17 @@ public class TasksFactory {
   private final Set<Project> processedRootProjects = new HashSet<Project>();
 
   private void collectTasks(Project root) {
+    // Refresh tasks
+    if (GradleVersion.current().compareTo(GradleVersion.version("5.0")) < 0) {
+      TaskContainer tasks = root.getTasks();
+      if (tasks instanceof DefaultTaskContainer) {
+        ((DefaultTaskContainer)tasks).discoverTasks();
+        SortedSet<String> taskNames = tasks.getNames();
+        for (String taskName : taskNames) {
+          tasks.findByName(taskName);
+        }
+      }
+    }
     allTasks.putAll(root.getAllTasks(true));
   }
 

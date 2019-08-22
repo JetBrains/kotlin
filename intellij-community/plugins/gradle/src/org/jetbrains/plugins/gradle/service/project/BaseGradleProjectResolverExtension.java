@@ -77,7 +77,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.intellij.openapi.util.Pair.pair;
-import static com.intellij.util.containers.ContainerUtil.set;
+import static com.intellij.util.containers.ContainerUtil.newLinkedHashSet;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.CONFIGURATION_ARTIFACTS;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolver.MODULES_OUTPUTS;
 import static org.jetbrains.plugins.gradle.service.project.GradleProjectResolverUtil.*;
@@ -736,7 +736,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   @NotNull
   @Override
   public Set<Class> getExtraProjectModelClasses() {
-    return set(
+    return newLinkedHashSet(
       BuildScriptClasspathModel.class,
       GradleExtensions.class,
       ExternalTestsModel.class,
@@ -748,13 +748,13 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
   @NotNull
   @Override
   public ProjectImportModelProvider getModelProvider() {
-    return new ClassSetImportModelProvider(getExtraProjectModelClasses(), set(ExternalProject.class, IdeaProject.class));
+    return new ClassSetImportModelProvider(getExtraProjectModelClasses(), newLinkedHashSet(ExternalProject.class, IdeaProject.class));
   }
 
   @NotNull
   @Override
   public Set<Class> getToolingExtensionsClasses() {
-    return set(
+    return newLinkedHashSet(
       // external-system-rt.jar
       ExternalSystemSourceType.class,
       // gradle-tooling-extension-api jar
@@ -776,7 +776,7 @@ public class BaseGradleProjectResolverExtension implements GradleProjectResolver
 
   @Override
   public Set<Class> getTargetTypes() {
-    return set(
+    return newLinkedHashSet(
       ExternalProjectDependency.class,
       ExternalLibraryDependency.class,
       FileCollectionDependency.class,
