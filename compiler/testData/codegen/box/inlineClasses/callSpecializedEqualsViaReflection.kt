@@ -15,11 +15,7 @@ fun box(): String {
         Simple::class.java.getDeclaredMethod(name, String::class.java, String::class.java)
             ?: return "$name not found"
 
-    val result = try {
-        specializedEquals.invoke(null, "a", "b")
-    } catch (e: InvocationTargetException) {
-        return if (e.targetException is NullPointerException) "OK" else "${e.targetException}"
-    }
-
-    return if (result == false) "OK" else "Fail"
+    if (specializedEquals.invoke(null, "a", "b") as Boolean)
+        return "Fail"
+    return "OK"
 }
