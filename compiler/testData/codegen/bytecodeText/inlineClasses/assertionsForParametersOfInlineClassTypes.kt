@@ -2,7 +2,7 @@
 
 inline class AsNonNullPrimitive(val i: Int)
 inline class AsNonNullReference(val s: String)
-// ^ JVM: 5 assertions (constructor, box method, erased constructor, 2 assertions in equals--impl)
+// ^ JVM: 3 assertions (constructor, box method, erased constructor)
 //   JVM IR: 1 assertion (erased constructor)
 
 fun nonNullPrimitive(a: AsNonNullPrimitive) {}
@@ -14,7 +14,7 @@ fun asNullablePrimitive(c: AsNonNullPrimitive?) {}
 fun asNullableReference(c: AsNonNullReference?) {}
 
 // JVM_TEMPLATES
-// 8 checkParameterIsNotNull
+// 6 checkParameterIsNotNull
 // 0 checkNotNullParameter
 
 // JVM_IR_TEMPLATES

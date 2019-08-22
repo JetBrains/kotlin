@@ -862,6 +862,33 @@ public class AsmUtil {
     }
 
     @NotNull
+    public static BranchedValue genTotalOrderEqualsForExpressionOnStack(
+            @NotNull StackValue left,
+            @NotNull StackValue right,
+            @NotNull Type asmType
+    ) {
+        return new BranchedValue(left, right, asmType, Opcodes.IFEQ) {
+            @Override
+            public void condJump(@NotNull Label jumpLabel, @NotNull InstructionAdapter iv, boolean jumpIfFalse) {
+                if (asmType.getSort() == Type.FLOAT) {
+                    left.put(asmType, kotlinType, iv);
+                    right.put(asmType, kotlinType, iv);
+                    iv.invokestatic("java/lang/Float", "compare", "(FF)I", false);
+                    iv.visitJumpInsn(patchOpcode(jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ, iv), jumpLabel);
+                } else if (asmType.getSort() == Type.DOUBLE) {
+                    left.put(asmType, kotlinType, iv);
+                    right.put(asmType, kotlinType, iv);
+                    iv.invokestatic("java/lang/Double", "compare", "(DD)I", false);
+                    iv.visitJumpInsn(patchOpcode(jumpIfFalse ? Opcodes.IFNE : Opcodes.IFEQ, iv), jumpLabel);
+                } else {
+                    StackValue value = genEqualsForExpressionsOnStack(KtTokens.EQEQ, left, right);
+                    BranchedValue.Companion.condJump(value, jumpLabel, jumpIfFalse, iv);
+                }
+            }
+        };
+    }
+
+    @NotNull
     public static StackValue genEqualsBoxedOnStack(@NotNull IElementType opToken) {
         return StackValue.operation(Type.BOOLEAN_TYPE, v -> genAreEqualCall(v, opToken));
     }
