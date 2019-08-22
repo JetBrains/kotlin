@@ -24,7 +24,8 @@ includeSubprojects(
         ":kotlin-ultimate:prepare:cidr-plugin",
         ":kotlin-ultimate:prepare:clion-plugin",
         ":kotlin-ultimate:prepare:appcode-plugin",
-        ":kotlin-ultimate:prepare:mobile-plugin"
+        ":kotlin-ultimate:prepare:mobile-plugin",
+        ":kotlin-ultimate:libraries:tools:apple-gradle-plugin"
 )
 
 // The root of Kotlin Ultimate has different Gradle paths in standalone and composite build modes.
