@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetVariableImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
@@ -246,13 +248,84 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             putValueArgument(0, argument)
         }
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        val function = expression.symbol.owner
-        if (!function.isInlineClassFieldGetter)
-            return super.visitCall(expression)
-        val arg = expression.dispatchReceiver!!.transform(this, null)
-        return coerceInlineClasses(arg, function.dispatchReceiverParameter!!.type, expression.type)
+    private fun IrExpression.coerceToUnboxed() =
+        coerceInlineClasses(this, this.type, this.type.unboxInlineClass())
+
+    private fun IrClass.getEqualsImpl(): IrFunction {
+        val equals = functions.single { it.name.asString() == "equals" && it.overriddenSymbols.isNotEmpty() }
+        return manager.getReplacementFunction(equals)!!.function
     }
+
+    private fun IrBuilderWithScope.specializeEqualsCall(left: IrExpression, right: IrExpression): IrExpression? {
+        // There's already special handling for null-comparisons in Equals.kt.
+        // We cannot specialize calls for which the first argument is already boxed.
+        if (left.isNullConst() || right.isNullConst() || left.type.unboxInlineClass() == left.type)
+            return null
+
+        // Unsigned types use primitive comparisons.
+        val rightIsUnboxed = right.type.unboxInlineClass() !== right.type
+        if (left.type.isUnsigned() && right.type.isUnsigned() && rightIsUnboxed)
+            return irEquals(left.coerceToUnboxed(), right.coerceToUnboxed())
+
+        val equalsMethod = if (rightIsUnboxed)
+            manager.getSpecializedEqualsMethod(left.type.classOrNull!!.owner, context.irBuiltIns)
+        else
+            left.type.classOrNull!!.owner.getEqualsImpl()
+
+        val leftNullCheck = left.type.isNullable()
+        val rightNullCheck = rightIsUnboxed && right.type.isNullable() // equals-impl has a nullable second argument
+        return if (leftNullCheck || rightNullCheck) {
+            irLetS(left) { leftVal ->
+                irLetS(right) { rightVal ->
+                    val equalsCall = irCall(equalsMethod).apply {
+                        putValueArgument(0, irGet(leftVal.owner))
+                        putValueArgument(1, irGet(rightVal.owner))
+                    }
+
+                    val equalsRight = if (rightNullCheck) {
+                        irIfNull(context.irBuiltIns.booleanType, irGet(rightVal.owner), irFalse(), equalsCall)
+                    } else {
+                        equalsCall
+                    }
+
+                    if (leftNullCheck) {
+                        irIfNull(context.irBuiltIns.booleanType, irGet(leftVal.owner), irEqualsNull(irGet(rightVal.owner)), equalsRight)
+                    } else {
+                        equalsRight
+                    }
+                }
+            }
+        } else {
+            irCall(equalsMethod).apply {
+                putValueArgument(0, left)
+                putValueArgument(1, right)
+            }
+        }
+    }
+
+    override fun visitCall(expression: IrCall): IrExpression =
+        when {
+            // Getting the underlying field of an inline class merely changes the IR type,
+            // since the underlying representations are the same.
+            expression.symbol.owner.isInlineClassFieldGetter -> {
+                val arg = expression.dispatchReceiver!!.transform(this, null)
+                coerceInlineClasses(arg, expression.symbol.owner.dispatchReceiverParameter!!.type, expression.type)
+            }
+            // Specialize calls to equals with at least one inline class argument to avoid boxing.
+            expression.isInlineClassEqEq -> {
+                expression.transformChildrenVoid()
+                context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+                    .specializeEqualsCall(expression.getValueArgument(0)!!, expression.getValueArgument(1)!!)
+                    ?: expression
+            }
+            else ->
+                super.visitCall(expression)
+        }
+
+    private val IrCall.isInlineClassEqEq: Boolean
+        get() = symbol == context.irBuiltIns.eqeqSymbol &&
+                (getValueArgument(0)?.type?.classOrNull?.owner?.isInline == true ||
+                        getValueArgument(1)?.type?.classOrNull?.owner?.isInline == true)
 
     override fun visitGetField(expression: IrGetField): IrExpression {
         val field = expression.symbol.owner

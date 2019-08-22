@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JVM_IR
 // !LANGUAGE: +InlineClasses
 
 @file:Suppress("RESERVED_MEMBER_INSIDE_INLINE_CLASS")
