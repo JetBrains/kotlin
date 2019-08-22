@@ -29,7 +29,6 @@ import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.openapi.vfs.newvfs.FileAttribute;
 import com.intellij.openapi.vfs.newvfs.NewVirtualFile;
-import com.intellij.openapi.vfs.newvfs.persistent.FSRecords;
 import com.intellij.psi.tree.IFileElementType;
 import com.intellij.psi.tree.IStubFileElementType;
 import com.intellij.util.BitUtil;
@@ -352,8 +351,6 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       }
     }
 
-    private static final FileAttribute VERSION_STAMP = new FileAttribute("stubIndex.versionStamp", 2, true);
-
     @NotNull
     @Override
     protected InputDataDiffBuilder<Integer, SerializedStubTree> getKeysDiffBuilderInMemoryMode(int inputId,
@@ -364,13 +361,12 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
     @Override
     public void setIndexedStateForFile(int fileId, @NotNull VirtualFile file) {
       super.setIndexedStateForFile(fileId, file);
-
-      try (DataOutputStream stream = FSRecords.writeAttribute(fileId, VERSION_STAMP)) {
-        DataInputOutputUtil.writeINT(stream, myStubVersionMap.getIndexingTimestampDiffForFileType(file.getFileType()));
-      }
-      catch (IOException e) {
+      try {
+        myStubVersionMap.persistIndexedState(fileId, file);
+      } catch (IOException e) {
         LOG.error(e);
       }
+
     }
 
     @Override
@@ -379,11 +375,7 @@ public class StubUpdatingIndex extends SingleEntryFileBasedIndexExtension<Serial
       if (!indexedStateForFile) return false;
 
       try {
-        DataInputStream stream = FSRecords.readAttributeWithLock(fileId, VERSION_STAMP);
-        int diff = stream != null ? DataInputOutputUtil.readINT(stream) : 0;
-        if (diff == 0) return false;
-        FileType fileType = myStubVersionMap.getFileTypeByIndexingTimestampDiff(diff);
-        return fileType != null && myStubVersionMap.getStamp(file.getFileType()) == myStubVersionMap.getStamp(fileType);
+        return myStubVersionMap.isIndexed(fileId, file);
       }
       catch (IOException e) {
         LOG.error(e);
