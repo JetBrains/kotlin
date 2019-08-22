@@ -230,6 +230,7 @@ public interface BindingContext {
      * @see BindingContextUtils#recordFunctionDeclarationToDescriptor(BindingTrace, PsiElement, SimpleFunctionDescriptor)}
      */
     WritableSlice<PsiElement, SimpleFunctionDescriptor> FUNCTION = Slices.createSimpleSlice();
+    WritableSlice<PsiElement, SimpleFunctionDescriptor> VARIADIC_LAMBDA = Slices.createSimpleSlice();
     WritableSlice<PsiElement, ConstructorDescriptor> CONSTRUCTOR = Slices.createSimpleSlice();
     WritableSlice<ConstructorDescriptor, ResolvedCall<ConstructorDescriptor>> CONSTRUCTOR_RESOLVED_DELEGATION_CALL =
             Slices.createSimpleSlice();

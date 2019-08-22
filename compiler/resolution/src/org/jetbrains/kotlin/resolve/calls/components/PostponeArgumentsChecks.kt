@@ -23,7 +23,9 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.NewTypeSubstituto
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.LHSArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableForLambdaReturnType
+import org.jetbrains.kotlin.resolve.calls.inference.model.VariadicTypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.model.*
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -58,19 +60,32 @@ private fun preprocessLambdaArgument(
     argument: LambdaKotlinCallArgument,
     expectedType: UnwrappedType?,
     forceResolution: Boolean = false
+// TODO add flag or check if there is no variadic type variables
 ): ResolvedAtom {
     if (expectedType != null && !forceResolution && csBuilder.isTypeVariable(expectedType)) {
         return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType)
     }
 
-    val resolvedArgument = extractLambdaInfoFromFunctionalType(expectedType, argument) ?: extraLambdaInfo(expectedType, argument, csBuilder)
+    val resolvedArgument = extractLambdaInfoFromFunctionalType(expectedType, argument, csBuilder)
+        ?: extraLambdaInfo(expectedType, argument, csBuilder)
 
     if (expectedType != null) {
         val lambdaType = createFunctionType(
             csBuilder.builtIns, Annotations.EMPTY, resolvedArgument.receiver,
             resolvedArgument.parameters, null, resolvedArgument.returnType, resolvedArgument.isSuspend
         )
-        csBuilder.addSubtypeConstraint(lambdaType, expectedType, ArgumentConstraintPosition(argument))
+        val modifiedExpectedType = if (expectedType.isFunctionType) {
+            val newParameters = expectedType.getValueParameterTypesFromFunctionType().flatMap {
+                it.type.replaceTupleTypes(csBuilder)
+            }
+            createFunctionType(
+                csBuilder.builtIns, expectedType.annotations, expectedType.getReceiverTypeFromFunctionType(),
+                newParameters, null, expectedType.getReturnTypeFromFunctionType(), expectedType.isSuspendFunctionType
+            )
+        } else {
+            expectedType // TODO also replace tuple types in non-function types
+        }
+        csBuilder.addSubtypeConstraint(lambdaType, modifiedExpectedType, ArgumentConstraintPosition(argument))
     }
 
     return resolvedArgument
@@ -110,9 +125,13 @@ private fun extraLambdaInfo(
     )
 }
 
-private fun extractLambdaInfoFromFunctionalType(expectedType: UnwrappedType?, argument: LambdaKotlinCallArgument): ResolvedLambdaAtom? {
+private fun extractLambdaInfoFromFunctionalType(
+    expectedType: UnwrappedType?,
+    argument: LambdaKotlinCallArgument,
+    csBuilder: ConstraintSystemBuilder
+): ResolvedLambdaAtom? {
     if (expectedType == null || !expectedType.isBuiltinFunctionalType) return null
-    val parameters = extractLambdaParameters(expectedType, argument)
+    val parameters = extractLambdaParameters(expectedType, argument, csBuilder)
 
     val argumentAsFunctionExpression = argument.safeAs<FunctionExpression>()
     val receiverType = argumentAsFunctionExpression?.receiverType ?: expectedType.getReceiverTypeFromFunctionType()?.unwrap()
@@ -129,19 +148,42 @@ private fun extractLambdaInfoFromFunctionalType(expectedType: UnwrappedType?, ar
     )
 }
 
-private fun extractLambdaParameters(expectedType: UnwrappedType, argument: LambdaKotlinCallArgument): List<UnwrappedType> {
+private fun extractLambdaParameters(
+    expectedType: UnwrappedType,
+    argument: LambdaKotlinCallArgument,
+    csBuilder: ConstraintSystemBuilder
+): List<UnwrappedType> {
     val parametersTypes = argument.parametersTypes
-    val expectedParameters = expectedType.getValueParameterTypesFromFunctionType()
+    val expectedParameters = expectedType
+        .getValueParameterTypesFromFunctionType()
+        .flatMap { it.type.replaceTupleTypes(csBuilder) }
     if (parametersTypes == null) {
-        return expectedParameters.map { it.type.unwrap() }
+        return expectedParameters.map { it.unwrap() }
     }
 
     return parametersTypes.mapIndexed { index, type ->
-        type ?: expectedParameters.getOrNull(index)?.type?.unwrap() ?: expectedType.builtIns.nullableAnyType
+        type ?: expectedParameters.getOrNull(index)?.unwrap() ?: expectedType.builtIns.nullableAnyType
     }
 }
 
-fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(csBuilder: ConstraintSystemBuilder): ResolvedLambdaAtom {
+// TODO deeply buried parameter pack
+// TODO Add errors with csBuilder
+fun KotlinType.replaceTupleTypes(csBuilder: ConstraintSystemBuilder): List<KotlinType> {
+    if (!TupleType.isTupleType(this)) return listOf(this)
+
+    val tupleTypeArgumentType = this.arguments.singleOrNull()?.type ?: return listOf(this)
+
+    val csTypeVariables = csBuilder.currentStorage().allTypeVariables
+    return csTypeVariables.values
+        .filter {
+            it.safeAs<VariadicTypeVariableFromCallableDescriptor>()?.packVariable?.defaultType == tupleTypeArgumentType
+        }
+        .map { (it as VariadicTypeVariableFromCallableDescriptor).defaultType }
+}
+
+fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
+    csBuilder: ConstraintSystemBuilder
+): ResolvedLambdaAtom {
     val fixedExpectedType = (csBuilder.buildCurrentSubstitutor() as NewTypeSubstitutor).safeSubstitute(expectedType)
     val resolvedLambdaAtom = preprocessLambdaArgument(csBuilder, atom, fixedExpectedType, forceResolution = true) as ResolvedLambdaAtom
 

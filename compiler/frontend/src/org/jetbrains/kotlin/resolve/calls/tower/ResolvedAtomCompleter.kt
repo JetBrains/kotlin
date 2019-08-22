@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.builtins.createFunctionType
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
-import org.jetbrains.kotlin.descriptors.FunctionDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.FunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ReceiverParameterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -201,6 +199,8 @@ class ResolvedAtomCompleter(
             lambda.isSuspend
         )
 
+        recordVariadicComponentsForTupleArguments(functionDescriptor, lambda, trace, ktFunction)
+
         trace.recordType(ktArgumentExpression, substitutedFunctionalType)
 
         // Mainly this is needed for builder-like inference, when we have type `SomeType<K, V>.() -> Unit` and now we want to update those K, V
@@ -220,6 +220,52 @@ class ResolvedAtomCompleter(
                 )
             }
         }
+    }
+
+    private fun recordVariadicComponentsForTupleArguments(
+        descriptor: FunctionDescriptorImpl,
+        atom: ResolvedLambdaAtom,
+        trace: BindingTrace,
+        ktFunction: KtElement
+    ) {
+        val expectedLambdaType = atom.expectedType ?: return
+        if (!expectedLambdaType.isFunctionType) return // TODO diagnostic
+        val tupleArguments = expectedLambdaType.arguments.filter { TupleType.isTupleType(it.type) }
+        if (tupleArguments.isEmpty()) return // TODO empty argument list handling
+        assert(tupleArguments.size == 1) { "Multiple parameter packs are forbidden" } // TODO: diagnostic
+
+        val expectedLambdaValueParameters = expectedLambdaType.getValueParameterTypesFromFunctionType()
+        val expectedArgumentSize = expectedLambdaValueParameters.size
+        val lambdaArgumentSize = descriptor.valueParameters.size
+        val argumentLengthDelta = lambdaArgumentSize - expectedArgumentSize
+        val newValueParameters = mutableListOf<ValueParameterDescriptor>()
+
+        var varargOffset = 0
+        expectedLambdaValueParameters.forEachIndexed { index, typeProjection ->
+            if (TupleType.isTupleType(typeProjection.type)) {
+                val varargParameters = descriptor.valueParameters.subList(index, index + argumentLengthDelta + 1)
+                val packArgument = ValueParameterDescriptorImpl.createWithVariadicComponents(
+                    descriptor,
+                    componentVariables = varargParameters,
+                    index = index,
+                    name = Name.identifier("variadicLambdaArguments"),
+                    outType = TupleType.createType(moduleDescriptor)
+                )
+                newValueParameters.add(packArgument)
+                varargOffset = argumentLengthDelta
+            } else {
+                newValueParameters.add(descriptor.valueParameters[index + varargOffset])
+            }
+        }
+
+        val copy = descriptor
+            .newCopyBuilder()
+            .setValueParameters(newValueParameters)
+            .setPreserveValueParametersUnsubstituted()
+            .build()
+            .safeAs<SimpleFunctionDescriptor>()
+            ?: error { "Vararg function descriptor copy for function $descriptor is null" }
+        trace.record(BindingContext.VARIADIC_LAMBDA, ktFunction, copy)
     }
 
     private fun completeCallableReference(

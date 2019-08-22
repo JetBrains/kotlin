@@ -82,7 +82,7 @@ class PostponedArgumentsAnalyzer(
         // Mostly, this is needed to report more specific diagnostics on lambda parameters
         val receiver = expectedOrActualType(lambda.expectedType.receiver(), lambda.receiver)
 
-        val expectedParameters = lambda.expectedType.valueParameters()
+        val expectedParameters = lambda.expectedType.valueParameters(c.getBuilder())
 
         val parameters =
             expectedParameters?.mapIndexed { index, expected ->
@@ -146,8 +146,14 @@ class PostponedArgumentsAnalyzer(
         return forFunctionalType { getReceiverTypeFromFunctionType()?.unwrap() }
     }
 
-    private fun UnwrappedType?.valueParameters(): List<UnwrappedType>? {
-        return forFunctionalType { getValueParameterTypesFromFunctionType().map { it.type.unwrap() } }
+    private fun UnwrappedType?.valueParameters(
+        csBuilder: ConstraintSystemBuilder
+    ): List<UnwrappedType>? {
+        return forFunctionalType {
+            getValueParameterTypesFromFunctionType()
+                .flatMap { it.type.replaceTupleTypes(csBuilder) }
+                .map { it.unwrap() }
+        }
     }
 
     private inline fun <T> UnwrappedType?.forFunctionalType(f: UnwrappedType.() -> T?): T? {

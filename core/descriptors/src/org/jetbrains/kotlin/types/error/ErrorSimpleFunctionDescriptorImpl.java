@@ -102,6 +102,12 @@ public class ErrorSimpleFunctionDescriptorImpl extends SimpleFunctionDescriptorI
 
             @NotNull
             @Override
+            public CopyBuilder<SimpleFunctionDescriptor> setPreserveValueParametersUnsubstituted() {
+                return this;
+            }
+
+            @NotNull
+            @Override
             public <V> CopyBuilder<SimpleFunctionDescriptor> putUserData(
                     @NotNull UserDataKey<V> userDataKey,
                     V value

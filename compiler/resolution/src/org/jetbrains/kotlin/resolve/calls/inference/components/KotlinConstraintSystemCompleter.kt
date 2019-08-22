@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableFromCallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -166,7 +167,7 @@ class KotlinConstraintSystemCompleter(
 
         fun ResolvedAtom.process(to: LinkedHashSet<TypeConstructor>) {
             val typeVariables = when (this) {
-                is ResolvedCallAtom -> substitutor.freshVariables
+                is ResolvedCallAtom -> substitutor.freshVariables + variadicTypeVariables
                 is ResolvedCallableReferenceAtom -> candidate?.freshSubstitutor?.freshVariables.orEmpty()
                 is ResolvedLambdaAtom -> listOfNotNull(typeVariableForLambdaReturnType)
                 else -> emptyList()
@@ -227,6 +228,10 @@ class KotlinConstraintSystemCompleter(
         topLevelAtoms: List<ResolvedAtom>
     ) {
         val typeVariable = variableWithConstraints.typeVariable
+        if (typeVariable.safeAs<NewTypeVariable>()?.isStub == true) {
+            c.fixVariable(typeVariable, c.nothingType())
+            return
+        }
 
         val resolvedAtom = findResolvedAtomBy(typeVariable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
         if (resolvedAtom != null) {

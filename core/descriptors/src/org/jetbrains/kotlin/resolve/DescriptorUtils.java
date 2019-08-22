@@ -538,6 +538,21 @@ public class DescriptorUtils {
         return result;
     }
 
+    @NotNull
+    public static <D extends DeclarationDescriptor> Set<D> getAllOriginalDescriptors(@NotNull D declarationDescriptor) {
+        Set<D> result = new LinkedHashSet<D>();
+        collectAllOriginalDescriptors(declarationDescriptor, result);
+        return result;
+    }
+
+    private static <D extends DeclarationDescriptor> void collectAllOriginalDescriptors(@NotNull D current, @NotNull Set<D> result) {
+        if (result.contains(current)) return;
+        @SuppressWarnings("unchecked")
+        D descriptor = (D) current.getOriginal();
+        result.add(descriptor);
+        collectAllOriginalDescriptors(descriptor, result);
+    }
+
     public static boolean isSingletonOrAnonymousObject(@NotNull ClassDescriptor classDescriptor) {
         return classDescriptor.getKind().isSingleton() || isAnonymousObject(classDescriptor);
     }

@@ -289,3 +289,24 @@ private fun NewCapturedType.unCaptureTopLevelType(): UnwrappedType {
 
     return constructor.projection.type.unwrap()
 }
+
+val KotlinType.isVariadic: Boolean
+    get() = constructor.declarationDescriptor.safeAs<TypeParameterDescriptor>()?.isVariadic ?: false
+
+fun KotlinType.substituteVariadicType(from: KotlinType, to: KotlinType): KotlinType {
+    if (this == from) {
+        return to
+    }
+    return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
+        annotations = annotations,
+        constructor = constructor,
+        memberScope = memberScope,
+        nullable = isNullable(),
+        arguments = arguments.map { typeProjection ->
+            TypeProjectionImpl(
+                typeProjection.projectionKind,
+                typeProjection.type.substituteVariadicType(from, to)
+            )
+        }
+    )
+}

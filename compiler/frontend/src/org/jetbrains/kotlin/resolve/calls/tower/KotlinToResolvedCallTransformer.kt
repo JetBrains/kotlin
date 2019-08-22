@@ -5,7 +5,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import javaslang.Tuple
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.TupleType
+import org.jetbrains.kotlin.builtins.getValueParameterTypesFromFunctionType
+import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.diagnostics.Diagnostic
@@ -340,9 +344,28 @@ class KotlinToResolvedCallTransformer(
 
         updatedType = updateRecordedTypeForArgument(updatedType, recordedType, expression, context)
 
+        if (context.expectedType.isVariadicFunctionType() || parameter.isVariadic()) {
+            reportErrorDuringTypeCheck = false
+        }
+
         dataFlowAnalyzer.checkType(updatedType, deparenthesized, context, reportErrorDuringTypeCheck)
 
         return updatedType
+    }
+
+    private fun KotlinType.isVariadicFunctionType(): Boolean =
+        !TypeUtils.noExpectedType(this)
+                && isFunctionType
+                && getValueParameterTypesFromFunctionType().any { TupleType.isTupleType(it.type) }
+
+    private fun ValueParameterDescriptor?.isVariadic(): Boolean {
+        if (this == null) return false
+
+        return DescriptorUtils.getAllOriginalDescriptors(this).any { valueParameter ->
+            valueParameter.varargElementType?.contains {
+                it.constructor.declarationDescriptor.safeAs<TypeParameterDescriptor>()?.isVariadic == true
+            } == true
+        }
     }
 
     private fun createTypeForConvertableConstant(constant: CompileTimeConstant<*>): SimpleType? {

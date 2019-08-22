@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.types.ErrorUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.types.typeUtil.substituteVariadicType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 internal object CheckInstantiationOfAbstractClass : ResolutionPart() {
@@ -176,7 +177,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
 
-        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it) }
+        val freshTypeVariables = typeParameters.map { TypeVariableFromCallableDescriptor(it, isStub = it.isVariadic) }
 
         val toFreshVariables = FreshVariableNewTypeSubstitutor(freshTypeVariables)
 
@@ -429,5 +430,55 @@ internal object ErrorDescriptorResolutionPart : ResolutionPart() {
         kotlinCall.externalArgument?.let {
             resolveKotlinArgument(it, null, isReceiver = true)
         }
+    }
+}
+
+internal object CreateVariadicTypeVariablesResolutionPart : ResolutionPart() {
+    override fun KotlinResolutionCandidate.workCount() = kotlinCall.argumentsInParenthesis.size
+
+    override fun KotlinResolutionCandidate.process(workIndex: Int) {
+        val argument = kotlinCall.argumentsInParenthesis[workIndex]
+        val parameter = resolvedCall.argumentToCandidateParameter[argument] ?: return
+
+        val variadicTypeParameter = candidateDescriptor.typeParameters.singleOrNull { it.isVariadic } ?: return
+        val packTypeVariableType = resolvedCall.substitutor.safeSubstitute(variadicTypeParameter.defaultType)
+
+        val packTypeVariable: TypeVariableFromCallableDescriptor =
+            csBuilder.currentStorage().allTypeVariables.values.singleOrNull { typeVariable ->
+                typeVariable is TypeVariableFromCallableDescriptor && typeVariable.defaultType == packTypeVariableType
+            }.safeAs()
+                ?: error { "Type variable for parameter $variadicTypeParameter is not found in constraint storage" }
+
+        prepareNewVariableForVariadicArgument(argument, parameter, variadicTypeParameter, packTypeVariable)
+    }
+
+    private fun KotlinResolutionCandidate.prepareNewVariableForVariadicArgument(
+        argument: KotlinCallArgument,
+        parameter: ValueParameterDescriptor,
+        variadicTypeParameter: TypeParameterDescriptor,
+        variadicPackTypeVariable: TypeVariableFromCallableDescriptor
+    ) {
+        if (!parameter.isVararg)
+            return
+
+        val varargTypeIsVariadic = parameter.varargElementType?.contains { it == variadicTypeParameter.defaultType } ?: false
+        if (!varargTypeIsVariadic)
+            return
+
+        val freshVariable = VariadicTypeVariableFromCallableDescriptor(variadicPackTypeVariable, resolvedCall.variadicTypeVariables.size)
+        resolvedCall.variadicTypeVariables.add(freshVariable)
+
+        val argumentStableType = argument.safeAs<SimpleKotlinCallArgument>()?.receiver?.stableType
+            ?: error { "Simple value argument expected for vararg" }
+        val substitutedVarargElementType = parameter.varargElementType
+            ?.substituteVariadicType(variadicTypeParameter.defaultType, freshVariable.defaultType)
+            ?: error { "Type variable not found" }
+
+        csBuilder.registerVariable(freshVariable)
+        csBuilder.addSubtypeConstraint(
+            argumentStableType,
+            substitutedVarargElementType,
+            ArgumentConstraintPosition(argument)
+        )
     }
 }

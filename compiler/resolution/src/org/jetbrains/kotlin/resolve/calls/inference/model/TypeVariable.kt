@@ -33,7 +33,11 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
 
 
-class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debugName: String) : TypeConstructor,
+class TypeVariableTypeConstructor(
+    private val builtIns: KotlinBuiltIns,
+    val debugName: String,
+    val isStub: Boolean = false
+) : TypeConstructor,
     NewTypeVariableConstructor {
     override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
     override fun getSupertypes(): Collection<KotlinType> = emptyList()
@@ -49,8 +53,8 @@ class TypeVariableTypeConstructor(private val builtIns: KotlinBuiltIns, val debu
     override fun toString() = "TypeVariable($debugName)"
 }
 
-sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVariableMarker {
-    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name)
+sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String, val isStub: Boolean = false) : TypeVariableMarker {
+    val freshTypeConstructor: TypeConstructor = TypeVariableTypeConstructor(builtIns, name, isStub)
 
     // member scope is used if we have receiver with type TypeVariable(T)
     // todo add to member scope methods from supertypes for type variable
@@ -65,8 +69,9 @@ sealed class NewTypeVariable(builtIns: KotlinBuiltIns, name: String) : TypeVaria
 }
 
 class TypeVariableFromCallableDescriptor(
-    val originalTypeParameter: TypeParameterDescriptor
-) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier) {
+    val originalTypeParameter: TypeParameterDescriptor,
+    isStub: Boolean = false
+) : NewTypeVariable(originalTypeParameter.builtIns, originalTypeParameter.name.identifier, isStub) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
 
@@ -76,4 +81,11 @@ class TypeVariableForLambdaReturnType(
     name: String
 ) : NewTypeVariable(builtIns, name) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
+}
+
+class VariadicTypeVariableFromCallableDescriptor(
+    val packVariable: TypeVariableFromCallableDescriptor,
+    val index: Int
+) : NewTypeVariable(packVariable.originalTypeParameter.builtIns, "${packVariable.originalTypeParameter.name.identifier}[$index]") {
+    override fun hasOnlyInputTypesAnnotation(): Boolean = packVariable.originalTypeParameter.hasOnlyInputTypesAnnotation()
 }

@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.refinement.TypeRefinement
+import org.jetbrains.kotlin.types.typeUtil.contains
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.util.*
 import kotlin.math.max
 
@@ -97,6 +99,9 @@ class ConstraintInjector(
     private fun Context.shouldWeSkipConstraint(typeVariable: TypeVariableMarker, constraint: Constraint): Boolean {
         assert(constraint.kind != ConstraintKind.EQUALITY)
 
+        if (isConstraintWithVariadicType(constraint))
+            return true
+
         val constraintType = constraint.type
         if (!isAllowedType(constraintType)) return true
 
@@ -117,6 +122,14 @@ class ConstraintInjector(
 
     private fun Context.isAllowedType(type: KotlinTypeMarker) =
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
+
+    private fun isConstraintWithVariadicType(constraint: Constraint): Boolean =
+        constraint.position.initialConstraint.a.safeAs<KotlinType>()?.contains {
+            it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
+        } ?: false
+                || constraint.position.initialConstraint.b.safeAs<KotlinType>()?.contains {
+            it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
+        } ?: false
 
     private inner class TypeCheckerContext(
         val c: Context,

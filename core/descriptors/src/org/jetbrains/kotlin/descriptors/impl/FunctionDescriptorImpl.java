@@ -365,6 +365,7 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
         private Map<UserDataKey<?>, Object> userDataMap = new LinkedHashMap<UserDataKey<?>, Object>();
         private Boolean newHasSynthesizedParameterNames = null;
         protected boolean justForTypeSubstitution = false;
+        private boolean preserveValueParametersUnsubstituted = false;
 
         public CopyConfiguration(
                 @NotNull TypeSubstitution substitution,
@@ -528,6 +529,13 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
 
         @NotNull
         @Override
+        public CopyBuilder<FunctionDescriptor> setPreserveValueParametersUnsubstituted() {
+            this.preserveValueParametersUnsubstituted = true;
+            return this;
+        }
+
+        @NotNull
+        @Override
         public <V> CopyBuilder<FunctionDescriptor> putUserData(@NotNull UserDataKey<V> userDataKey, V value) {
             userDataMap.put(userDataKey, value);
             return this;
@@ -633,10 +641,16 @@ public abstract class FunctionDescriptorImpl extends DeclarationDescriptorNonRoo
             wereChanges[0] |= substitutedExpectedThis != configuration.dispatchReceiverParameter;
         }
 
-        List<ValueParameterDescriptor> substitutedValueParameters = getSubstitutedValueParameters(
-                substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts,
-                configuration.preserveSourceElement, wereChanges
-        );
+        List<ValueParameterDescriptor> substitutedValueParameters;
+        if (configuration.preserveValueParametersUnsubstituted) {
+            substitutedValueParameters = configuration.newValueParameterDescriptors;
+        } else {
+            substitutedValueParameters = getSubstitutedValueParameters(
+                    substitutedDescriptor, configuration.newValueParameterDescriptors, substitutor, configuration.dropOriginalInContainingParts,
+                    configuration.preserveSourceElement, wereChanges
+            );
+        }
+
         if (substitutedValueParameters == null) {
             return null;
         }

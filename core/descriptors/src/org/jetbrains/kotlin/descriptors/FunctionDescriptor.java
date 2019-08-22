@@ -142,6 +142,9 @@ public interface FunctionDescriptor extends CallableMemberDescriptor {
         CopyBuilder<D> setSubstitution(@NotNull TypeSubstitution substitution);
 
         @NotNull
+        CopyBuilder<D> setPreserveValueParametersUnsubstituted();
+
+        @NotNull
         <V> CopyBuilder<D> putUserData(@NotNull UserDataKey<V> userDataKey, V value);
 
         @Nullable
