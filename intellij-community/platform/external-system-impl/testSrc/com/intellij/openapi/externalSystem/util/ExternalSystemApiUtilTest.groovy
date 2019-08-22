@@ -13,24 +13,28 @@ class ExternalSystemApiUtilTest extends AbstractExternalSystemTest {
   void 'test find module data'() {
     def projectNode = buildExternalProjectInfo {
       project {
-        module('root', moduleFilePath: 'root') {}
-        module('main', moduleFilePath: 'main') {}
-        module('test', moduleFilePath: 'test') {}
+        module('root', moduleFilePath: 'root') {
+          module('main', moduleFilePath: 'main') {}
+          module('test', moduleFilePath: 'test') {}
+        }
       }
     }
     applyProjectState([projectNode])
     def projectPath = ExternalSystemApiUtil.normalizePath(projectDir.path)
     def projectInfo = new InternalExternalProjectInfo(systemId, projectPath, projectNode)
     ExternalProjectsManagerImpl.getInstance(project).updateExternalProjectData(projectInfo)
+    assertModuleData(root: 'root', main: 'main', test: 'test')
+  }
+
+  private def assertModuleData(Map<String, String> modules) {
     def moduleManager = ModuleManager.getInstance(project)
-    def rootModule = moduleManager.findModuleByName('root')
-    def rootModuleData = ExternalSystemApiUtil.findModuleData(rootModule, systemId)
-    def mainModule = moduleManager.findModuleByName('main')
-    def mainModuleData = ExternalSystemApiUtil.findModuleData(mainModule, systemId)
-    def testModule = moduleManager.findModuleByName('test')
-    def testModuleData = ExternalSystemApiUtil.findModuleData(testModule, systemId)
-    assertEquals("root", rootModuleData.getData().externalName)
-    assertEquals("main", mainModuleData.getData().externalName)
-    assertEquals("test", testModuleData.getData().externalName)
+    for (def expectation : modules.entrySet()) {
+      def name = expectation.key
+      def path = expectation.value
+      def module = moduleManager.findModuleByName(name)
+      def moduleData = ExternalSystemApiUtil.findModuleData(module, systemId)
+      assertNotNull("Module $name isn't exist", moduleData)
+      assertEquals(path, moduleData.getData().moduleFileDirectoryPath)
+    }
   }
 }

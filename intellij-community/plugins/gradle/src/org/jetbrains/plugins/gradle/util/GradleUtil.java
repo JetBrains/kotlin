@@ -249,6 +249,13 @@ public class GradleUtil {
       .anyMatch(name -> name.startsWith("settings.gradle"));
   }
 
+  /**
+   * Finds real external module data by ide module
+   *
+   * Module 'module' -> ModuleData 'module'
+   * Module 'module.main' -> ModuleData 'module' instead of GradleSourceSetData 'module.main'
+   * Module 'module.test' -> ModuleData 'module' instead of GradleSourceSetData 'module.test'
+   */
   @ApiStatus.Experimental
   @Nullable
   public static DataNode<ModuleData> findGradleModuleData(@NotNull Module module) {
