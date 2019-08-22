@@ -68,6 +68,7 @@
 - [`KT-9792`](https://youtrack.jetbrains.com/issue/KT-9792) Don't propose the same name for arguments of lambda on completion of function call with lambda template
 - [`KT-29572`](https://youtrack.jetbrains.com/issue/KT-29572) Smart completing anonymous object uses incorrect code style
 - [`KT-25264`](https://youtrack.jetbrains.com/issue/KT-25264) Freeze in Kotlin file on completion
+- [`KT-32519`](https://youtrack.jetbrains.com/issue/KT-32519) Keyword completion: support fixing layout and typo tolerance
 
 ### IDE. Debugger
 
@@ -329,6 +330,7 @@
 - [`KT-32210`](https://youtrack.jetbrains.com/issue/KT-32210) Kapt randomly fails with java.io.UTFDataFormatException
 - [`KT-32706`](https://youtrack.jetbrains.com/issue/KT-32706) Gradle target "jsBrowserWebpack" should use output of JS compile task as input
 - [`KT-32697`](https://youtrack.jetbrains.com/issue/KT-32697) [Tests] org.jetbrains.kotlin.gradle.SubpluginsIT
+- [`KT-33246`](https://youtrack.jetbrains.com/issue/KT-33246) Kotlin JS & Native tests + Gradle 5.6: No value has been specified for property 'binaryResultsDirectory'
 
 
 ### Tools. Incremental Compile
@@ -368,6 +370,8 @@
 - [`KT-32835`](https://youtrack.jetbrains.com/issue/KT-32835) New J2K: NumberFormatException occurs on converting binary literals
 - [`KT-32837`](https://youtrack.jetbrains.com/issue/KT-32837) J2K: NumberFormatException occurs on converting literals with underscore characters
 - [`KT-22412`](https://youtrack.jetbrains.com/issue/KT-22412) J2K: Intention to replace if(...) throw IAE with require
+- [`KT-33371`](https://youtrack.jetbrains.com/issue/KT-33371) Add an ability to switch between old and new J2K via settings window
+- [`KT-32863`](https://youtrack.jetbrains.com/issue/KT-32863) New J2K: IllegalArgumentException occurs on Kotlin configuration in java project in Android Studio
 
 ### Tools. JPS
 
