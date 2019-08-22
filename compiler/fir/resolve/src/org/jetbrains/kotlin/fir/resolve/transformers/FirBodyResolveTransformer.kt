@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.references.FirExplicitThisReference
 import org.jetbrains.kotlin.fir.references.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
+import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowInferenceContext
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzerImpl
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
@@ -926,7 +927,7 @@ open class FirBodyResolveTransformer(
 }
 
 private fun inferenceComponents(session: FirSession, returnTypeCalculator: ReturnTypeCalculator, scopeSession: ScopeSession) =
-    InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate {
+    InferenceComponents(object : ConeInferenceContext, TypeSystemInferenceExtensionContextDelegate, DataFlowInferenceContext {
         override fun findCommonIntegerLiteralTypesSuperType(explicitSupertypes: List<SimpleTypeMarker>): SimpleTypeMarker? {
             // TODO: implement
             return null
