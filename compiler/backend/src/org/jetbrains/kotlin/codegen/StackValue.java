@@ -621,7 +621,7 @@ public abstract class StackValue {
         return false;
     }
 
-    private static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
+    public static boolean isUnboxedInlineClass(@NotNull KotlinType kotlinType, @NotNull Type actualType) {
         return KotlinTypeMapper.mapUnderlyingTypeOfInlineClassType(kotlinType).equals(actualType);
     }
 
