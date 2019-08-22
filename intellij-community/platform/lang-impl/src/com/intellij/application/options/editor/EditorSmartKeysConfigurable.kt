@@ -12,10 +12,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable
 import com.intellij.openapi.extensions.ExtensionPointName
 import com.intellij.openapi.keymap.impl.ModifierKeyDoubleClickHandler
-import com.intellij.openapi.options.BoundCompositeConfigurable
-import com.intellij.openapi.options.Configurable
-import com.intellij.openapi.options.SearchableConfigurable
-import com.intellij.openapi.options.UnnamedConfigurable
+import com.intellij.openapi.options.*
 import com.intellij.openapi.options.ex.ConfigurableWrapper
 import com.intellij.openapi.ui.DialogPanel
 import com.intellij.ui.EnumComboBoxModel
@@ -49,6 +46,29 @@ val myCbInsertPairCurlyBraceOnEnter = CheckboxDescriptor(ApplicationBundle.messa
                                                          codeInsightSettings::INSERT_BRACE_ON_ENTER.toBinding())
 val myCbInsertJavadocStubOnEnter = CheckboxDescriptor(ApplicationBundle.message("checkbox.javadoc.stub.after.slash.star.star"),
                                                       codeInsightSettings::SMART_INDENT_ON_ENTER.toBinding())
+
+val childOptions = EditorSmartKeysConfigurable().configurables
+  .map { c -> if (c is ConfigurableWrapper) c.configurable else c }
+  .flatMap { c -> if (c is ConfigurableWithOptionDescriptors) c.getOptionDescriptors(ID) else emptyList() }
+
+
+val editorSmartKeysOptionDescriptors = listOf(
+      myCbSmartHome
+    , myCbSmartEnd
+    , myCbInsertPairBracket
+    , myCbInsertPairQuote
+    , myCbReformatBlockOnTypingRBrace
+    , myCbCamelWords
+    , myCbSurroundSelectionOnTyping
+    , myCbTabExistsBracketsAndQuotes
+    , myCbEnableAddingCaretsOnDoubleCtrlArrows
+    , myCbSmartIndentOnEnter
+    , myCbInsertPairCurlyBraceOnEnter
+    , myCbInsertJavadocStubOnEnter
+).map(CheckboxDescriptor::asOptionDescriptor) + childOptions
+
+const val ID = "editor.preferences.smartKeys"
+
 /**
  * To provide additional options in Editor | Smart Keys section register implementation of {@link com.intellij.openapi.options.UnnamedConfigurable} in the plugin.xml:
  * <p/>
@@ -167,7 +187,7 @@ class EditorSmartKeysConfigurable : BoundCompositeConfigurable<UnnamedConfigurab
 
   override fun hasOwnContent() = true
 
-  override fun getId() = "editor.preferences.smartKeys"
+  override fun getId() = ID
 
   companion object {
     private val EP_NAME = ExtensionPointName.create<EditorSmartKeysConfigurableEP>("com.intellij.editorSmartKeysConfigurable")

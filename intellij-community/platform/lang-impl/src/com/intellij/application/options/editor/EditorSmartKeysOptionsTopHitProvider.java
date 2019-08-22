@@ -15,15 +15,22 @@
  */
 package com.intellij.application.options.editor;
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.project.Project;
+import com.intellij.ide.ui.OptionsSearchTopHitProvider;
+import com.intellij.ide.ui.search.OptionDescription;
+import org.jetbrains.annotations.NotNull;
 
-/**
- * @author Sergey.Malenkov
- */
-public class EditorSmartKeysOptionsTopHitProvider extends EditorOptionsTopHitProviderBase {
+import java.util.Collection;
+
+public class EditorSmartKeysOptionsTopHitProvider implements OptionsSearchTopHitProvider.ApplicationLevelProvider {
+  @NotNull
   @Override
-  protected Configurable getConfigurable(Project project) {
-    return new EditorSmartKeysConfigurable();
+  public String getId() {
+    return EditorSmartKeysConfigurableKt.ID;
+  }
+
+  @NotNull
+  @Override
+  public Collection<OptionDescription> getOptions() {
+    return EditorSmartKeysConfigurableKt.getEditorSmartKeysOptionDescriptors();
   }
 }
