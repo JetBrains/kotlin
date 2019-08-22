@@ -79,6 +79,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
             buildPrimaryInlineClassConstructor(declaration, irConstructor)
             buildBoxFunction(declaration)
             buildUnboxFunction(declaration)
+            buildSpecializedEqualsMethod(declaration)
         }
 
         return declaration
@@ -367,6 +368,24 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         function.body = builder.irBlockBody {
             val thisVal = irGet(function.dispatchReceiverParameter!!)
             +irReturn(irGetField(thisVal, field))
+        }
+
+        irClass.declarations += function
+    }
+
+    private fun buildSpecializedEqualsMethod(irClass: IrClass) {
+        val function = manager.getSpecializedEqualsMethod(irClass, context.irBuiltIns)
+        val left = function.valueParameters[0]
+        val right = function.valueParameters[1]
+        val type = left.type.unboxInlineClass()
+
+        function.body = context.createIrBuilder(irClass.symbol).run {
+            irExprBody(
+                irEquals(
+                    coerceInlineClasses(irGet(left), left.type, type),
+                    coerceInlineClasses(irGet(right), right.type, type)
+                )
+            )
         }
 
         irClass.declarations += function
