@@ -49,8 +49,7 @@ val myCbInsertJavadocStubOnEnter = CheckboxDescriptor(ApplicationBundle.message(
 
 val childOptions = EditorSmartKeysConfigurable().configurables
   .map { c -> if (c is ConfigurableWrapper) c.configurable else c }
-  .flatMap { c -> if (c is ConfigurableWithOptionDescriptors) c.getOptionDescriptors(ID) else emptyList() }
-
+  .flatMap { c -> if (c is ConfigurableWithOptionDescriptors) c.getOptionDescriptors(ID, { s -> s }) else emptyList() }
 
 val editorSmartKeysOptionDescriptors = listOf(
       myCbSmartHome

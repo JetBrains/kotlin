@@ -15,29 +15,22 @@
  */
 package com.intellij.application.options.editor;
 
-import com.intellij.openapi.options.Configurable;
-import com.intellij.openapi.project.Project;
+import com.intellij.ide.ui.OptionsSearchTopHitProvider;
+import com.intellij.ide.ui.search.OptionDescription;
+import org.jetbrains.annotations.NotNull;
 
-import javax.swing.*;
+import java.util.Collection;
 
-/**
- * @author Sergey.Malenkov
- */
-public class CodeFoldingOptionsTopHitProvider extends EditorOptionsTopHitProviderBase.NoPrefix {
-  private int myCount;
-
+public class CodeFoldingOptionsTopHitProvider implements OptionsSearchTopHitProvider.ApplicationLevelProvider {
+  @NotNull
   @Override
-  protected Configurable getConfigurable(Project project) {
-    myCount = 0;
-    return new CodeFoldingConfigurable();
+  public String getId() {
+    return CodeFoldingConfigurable.ID;
   }
 
+  @NotNull
   @Override
-  protected String getOptionName(JCheckBox checkbox) {
-    String name = super.getOptionName(checkbox);
-    if (name != null && 0 < myCount++) {
-      name = "Collapse by default: " + name;
-    }
-    return name;
+  public Collection<OptionDescription> getOptions() {
+    return new CodeFoldingConfigurable().getDescriptors();
   }
 }

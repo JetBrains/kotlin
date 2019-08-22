@@ -3,6 +3,7 @@
 package com.intellij.application.options.editor;
 
 import com.intellij.codeInsight.folding.CodeFoldingManager;
+import com.intellij.ide.ui.search.OptionDescription;
 import com.intellij.openapi.application.ApplicationBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.ModalityState;
@@ -10,9 +11,11 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorSettingsExternalizable;
 import com.intellij.openapi.options.CompositeConfigurable;
+import com.intellij.openapi.options.ConfigurableWithOptionDescriptors;
 import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.ex.ConfigurableWrapper;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.containers.JBIterable;
 import org.jetbrains.annotations.Nls;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,6 +27,7 @@ import java.util.List;
  * @author yole
  */
 public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOptionsProvider> implements EditorOptionsProvider {
+  public static final String ID = "editor.preferences.folding";
   private JCheckBox myCbFolding;
   private JPanel myRootPanel;
   private JPanel myFoldingPanel;
@@ -48,6 +52,15 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
                                                                 GridBagConstraints.NONE, new Insets(5, 0, 7, 0), 0, 0));
     }
     return myRootPanel;
+  }
+
+  @NotNull
+  List<OptionDescription> getDescriptors() {
+    String prefix = ApplicationBundle.message("label.collapse.by.default") + " ";
+    return JBIterable.from(getConfigurables())
+      .map(c -> c instanceof ConfigurableWrapper ? ((ConfigurableWrapper)c).getConfigurable() : c)
+      .filter(ConfigurableWithOptionDescriptors.class)
+      .flatMap(c -> c.getOptionDescriptors(ID, s -> prefix + s)).toList();
   }
 
   @Override
@@ -88,6 +101,6 @@ public class CodeFoldingConfigurable extends CompositeConfigurable<CodeFoldingOp
   @Override
   @NotNull
   public String getId() {
-    return "editor.preferences.folding";
+    return ID;
   }
 }
