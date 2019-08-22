@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // FULL_JDK
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 import java.lang.reflect.InvocationTargetException
@@ -16,11 +15,11 @@ fun box(): String {
         Simple::class.java.getDeclaredMethod(name, String::class.java, String::class.java)
             ?: return "$name not found"
 
-    try {
+    val result = try {
         specializedEquals.invoke(null, "a", "b")
     } catch (e: InvocationTargetException) {
         return if (e.targetException is NullPointerException) "OK" else "${e.targetException}"
     }
 
-    return "Reserved method invoked successfully"
+    return if (result == false) "OK" else "Fail"
 }
