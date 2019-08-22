@@ -12,7 +12,6 @@ import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.ui.showOkNoDialog
-import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -40,7 +39,6 @@ import org.jetbrains.kotlin.psi.psiUtil.createSmartPointer
 import org.jetbrains.kotlin.psi.psiUtil.getSuperNames
 import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 sealed class CreateExpectedFix<D : KtNamedDeclaration>(
     declaration: D,
@@ -177,7 +175,7 @@ private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(element
 
 private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean {
     if (declarationsWithNonExistentClasses.isEmpty()) return true
-    val message = StringUtil.escapeXmlEntities(
+    val message = escapeXml(
         declarationsWithNonExistentClasses.joinToString(
             prefix = "These declarations cannot be transformed:\n",
             separator = "\n",
@@ -198,7 +196,7 @@ private fun showUnknownTypesError(element: KtNamedDeclaration) {
         showErrorHint(
             element.project,
             editor,
-            "You cannot create the expect declaration from:\n${StringUtil.escapeXmlEntities(getExpressionShortText(element))}",
+            "You cannot create the expect declaration from:\n${escapeXml(getExpressionShortText(element))}",
             "Unknown types"
         )
     }
