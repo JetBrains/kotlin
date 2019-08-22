@@ -17,6 +17,7 @@
 package com.intellij.codeInsight.editorActions.moveUpDown;
 
 import com.intellij.codeInsight.folding.CodeFoldingManager;
+import com.intellij.diagnostic.PluginException;
 import com.intellij.openapi.diagnostic.Attachment;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
@@ -86,7 +87,9 @@ class MoverWrapper {
       TextRange range2 = new TextRange(start2, end2);
       if (!range.equals(range2)) {
         if (range.intersectsStrict(range2)) {
-          LOGGER.error("Wrong move ranges requested by " + myMover + " " + start + ":" + end + " vs " + start2 + ":" + end2,
+          LOGGER.error("Cannot perform move",
+                       PluginException.createByClass("Wrong move ranges requested by " + myMover + " " +
+                                                     start + ":" + end + " vs " + start2 + ":" + end2, null, myMover.getClass()),
                        new Attachment("ranges.txt",
                                       start + ":" + end + "(" + textToInsert + ")\n" + start2 + ":" + end2 + "(" + textToInsert2 + ")"));
           return;
