@@ -8,6 +8,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.Presentation;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.CommandProcessor;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.DocCommandGroupId;
 import com.intellij.openapi.project.Project;
@@ -29,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
  * @see MultiCaretCodeInsightActionHandler
  */
 public abstract class MultiCaretCodeInsightAction extends AnAction {
+  private static final Logger LOG = Logger.getInstance(MultiCaretCodeInsightAction.class);
+
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
     final Project project = e.getProject();
@@ -37,6 +40,10 @@ public abstract class MultiCaretCodeInsightAction extends AnAction {
     }
     final Editor hostEditor = e.getData(CommonDataKeys.EDITOR);
     if (hostEditor == null) {
+      return;
+    }
+    if (hostEditor.isDisposed()) {
+      LOG.error("Action " + this + " invoked on a disposed editor in " + e.getDataContext());
       return;
     }
     if (!EditorModificationUtil.checkModificationAllowed(hostEditor)) return;
@@ -78,6 +85,11 @@ public abstract class MultiCaretCodeInsightAction extends AnAction {
 
     Editor hostEditor = e.getData(CommonDataKeys.EDITOR);
     if (hostEditor == null) {
+      presentation.setEnabled(false);
+      return;
+    }
+    if (hostEditor.isDisposed()) {
+      LOG.error("Disposed editor in " + e.getDataContext() + " for " + this);
       presentation.setEnabled(false);
       return;
     }
