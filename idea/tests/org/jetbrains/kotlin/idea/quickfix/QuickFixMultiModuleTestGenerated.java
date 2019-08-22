@@ -159,6 +159,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createActual/annotationOptionalExpectationNoDir/");
         }
 
+        @TestMetadata("annotationWithComment")
+        public void testAnnotationWithComment() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createActual/annotationWithComment/");
+        }
+
         @TestMetadata("class")
         public void testClass() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createActual/class/");
