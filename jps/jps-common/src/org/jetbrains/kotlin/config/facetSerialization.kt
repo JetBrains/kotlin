@@ -136,14 +136,9 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
         element.getAttributeValue("useProjectSettings")?.let { useProjectSettings = it.toBoolean() }
         val targetPlatform = element.getFacetPlatformByConfigurationElement()
         this.targetPlatform = targetPlatform
-        element.getChild("implements")?.let {
-            val items = it.getChildren("implement")
-            implementedModuleNames = if (items.isNotEmpty()) {
-                items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
-            } else {
-                listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
-            }
-        }
+        readModulesList(element, "implements", "implement")?.let { implementedModuleNames = it }
+        readModulesList(element, "dependsOnModuleNames", "dependsOn")?.let { dependsOnModuleNames = it }
+
         element.getChild("sourceSets")?.let {
             val items = it.getChildren("sourceSet")
             sourceSetNames = items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
@@ -181,6 +176,18 @@ private fun readV2AndLaterConfig(element: Element): KotlinFacetSettings {
             PathUtil.toSystemDependentName((it.content.firstOrNull() as? Text)?.textTrim)
         } ?: (compilerArguments as? K2JSCompilerArguments)?.outputFile
     }
+}
+
+private fun readModulesList(element: Element, rootElementName: String, elementName: String): List<String>? {
+    element.getChild(rootElementName)?.let {
+        val items = it.getChildren(elementName)
+        return if (items.isNotEmpty()) {
+            items.mapNotNull { (it.content.firstOrNull() as? Text)?.textTrim }
+        } else {
+            listOfNotNull((it.content.firstOrNull() as? Text)?.textTrim)
+        }
+    }
+    return null
 }
 
 private fun readV2Config(element: Element): KotlinFacetSettings {
@@ -303,18 +310,9 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
     if (!useProjectSettings) {
         element.setAttribute("useProjectSettings", useProjectSettings.toString())
     }
-    if (implementedModuleNames.isNotEmpty()) {
-        element.addContent(
-                Element("implements").apply {
-                    val singleModule = implementedModuleNames.singleOrNull()
-                    if (singleModule != null) {
-                        addContent(singleModule)
-                    } else {
-                        implementedModuleNames.map { addContent(Element("implement").apply { addContent(it) }) }
-                    }
-                }
-        )
-    }
+    saveModulesList(element, implementedModuleNames, "implements", "implement")
+    saveModulesList(element, dependsOnModuleNames, "dependsOnModuleNames", "dependsOn")
+
     if (sourceSetNames.isNotEmpty()) {
         element.addContent(
             Element("sourceSets").apply {
@@ -353,6 +351,21 @@ private fun KotlinFacetSettings.writeLatestConfig(element: Element) {
         it.convertPathsToSystemIndependent()
         val compilerArgumentsXml = buildChildElement(element, "compilerArguments", it, filter)
         compilerArgumentsXml.dropVersionsIfNecessary(it)
+    }
+}
+
+private fun saveModulesList(element: Element, moduleList: List<String>, rootElementName: String, elementName: String) {
+    if (moduleList.isNotEmpty()) {
+        element.addContent(
+            Element(rootElementName).apply {
+                val singleModule = moduleList.singleOrNull()
+                if (singleModule != null) {
+                    addContent(singleModule)
+                } else {
+                    moduleList.map { addContent(Element(elementName).apply { addContent(it) }) }
+                }
+            }
+        )
     }
 }
 
