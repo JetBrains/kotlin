@@ -106,7 +106,7 @@ public class FunctionCodegen {
     }
 
     public void gen(@NotNull KtNamedFunction function) {
-        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(BindingContext.FUNCTION, function);
+        SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) ExpressionCodegen.getFunction(bindingContext, function);
         if (bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor) != null) {
             functionDescriptor =
                     (SimpleFunctionDescriptor) bindingContext.get(CodegenBinding.SUSPEND_FUNCTION_TO_JVM_VIEW, functionDescriptor);
@@ -1338,6 +1338,13 @@ public class FunctionCodegen {
 
         for (ValueParameterDescriptor parameter : valueParameters) {
             frameMap.enter(parameter, state.getTypeMapper().mapType(parameter));
+            if (parameter instanceof ValueParameterDescriptorImpl.WithVariadicComponents) {
+                List<VariableDescriptor> componentParameters =
+                        ((ValueParameterDescriptorImpl.WithVariadicComponents) parameter).getComponentVariables();
+                for (VariableDescriptor componentParameter : componentParameters) {
+                    frameMap.enter(componentParameter, state.getTypeMapper().mapType(componentParameter));
+                }
+            }
         }
 
         return frameMap;

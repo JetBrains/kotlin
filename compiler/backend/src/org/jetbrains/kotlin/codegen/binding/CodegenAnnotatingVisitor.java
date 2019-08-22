@@ -330,7 +330,8 @@ class CodegenAnnotatingVisitor extends KtVisitorVoid {
     @Override
     public void visitLambdaExpression(@NotNull KtLambdaExpression lambdaExpression) {
         KtFunctionLiteral functionLiteral = lambdaExpression.getFunctionLiteral();
-        FunctionDescriptor functionDescriptor =
+        FunctionDescriptor functionDescriptor = bindingContext.get(VARIADIC_LAMBDA, functionLiteral);
+        if (functionDescriptor == null) functionDescriptor =
                 (FunctionDescriptor) bindingContext.get(DECLARATION_TO_DESCRIPTOR, functionLiteral);
         // working around a problem with shallow analysis
         if (functionDescriptor == null) return;

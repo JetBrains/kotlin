@@ -11,6 +11,7 @@ import com.intellij.psi.PsiFile;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.kotlin.codegen.ExpressionCodegen;
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil;
 import org.jetbrains.kotlin.codegen.SamType;
 import org.jetbrains.kotlin.codegen.state.GenerationState;
@@ -137,7 +138,7 @@ public class CodegenBinding {
             return bindingContext.get(ASM_TYPE, descriptor);
         }
 
-        SimpleFunctionDescriptor functionDescriptor = bindingContext.get(FUNCTION, expression);
+        SimpleFunctionDescriptor functionDescriptor = (SimpleFunctionDescriptor) ExpressionCodegen.getFunction(bindingContext, expression);
         if (functionDescriptor != null) {
             return asmTypeForAnonymousClassOrNull(bindingContext, functionDescriptor);
         }

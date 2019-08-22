@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.backend.common.CodegenUtil;
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns;
+import org.jetbrains.kotlin.builtins.TupleType;
 import org.jetbrains.kotlin.codegen.binding.CalculatedClosure;
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding;
 import org.jetbrains.kotlin.codegen.binding.MutableClosure;
@@ -994,12 +995,18 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
 
     @NotNull
     private StackValue genClosure(KtDeclarationWithBody declaration, @Nullable SamType samType) {
-        FunctionDescriptor descriptor = bindingContext.get(FUNCTION, declaration);
+        FunctionDescriptor descriptor = getFunction(bindingContext, declaration);
         assert descriptor != null : "Function is not resolved to descriptor: " + declaration.getText();
 
         return genClosure(
                 declaration, descriptor, new ClosureGenerationStrategy(state, declaration), samType, null, null
         );
+    }
+
+    public static FunctionDescriptor getFunction(BindingContext bindingContext, KtElement declaration) {
+        FunctionDescriptor descriptor = bindingContext.get(BindingContext.VARIADIC_LAMBDA, declaration);
+        if (descriptor != null) return descriptor;
+        return bindingContext.get(FUNCTION, declaration);
     }
 
     @NotNull
@@ -2997,6 +3004,10 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
     @NotNull
     public StackValue genVarargs(@NotNull VarargValueArgument valueArgument, @NotNull KotlinType outType) {
         Type type = asmType(outType);
+        // TODO proper dispatch
+        if (type.equals(Type.getObjectType(TupleType.getClassId().toString()))) {
+            return visitVariadicGenericVararg(valueArgument, outType);
+        }
         assert type.getSort() == Type.ARRAY;
         Type elementType = correctElementType(type);
         List<ValueArgument> arguments = valueArgument.getArguments();
@@ -3100,6 +3111,56 @@ public class ExpressionCodegen extends KtVisitor<StackValue, StackValue> impleme
                     StackValue
                             .arrayElement(elementType, elementKotlinType, StackValue.onStack(type, outType), StackValue.constant(i))
                             .store(rightSide, v);
+                }
+                return Unit.INSTANCE;
+            });
+        }
+    }
+
+    private StackValue visitVariadicGenericVararg(@NotNull VarargValueArgument valueArgument, @NotNull KotlinType outType) {
+        String owner = TupleType.getClassId().toString();
+        Type type = asmType(outType);
+        assert type.equals(Type.getObjectType(owner)) : "Tuple type expected";
+
+        List<ValueArgument> arguments = valueArgument.getArguments();
+        int size = arguments.size();
+
+        boolean hasSpread = false;
+        for (int i = 0; i != size; ++i) {
+            if (arguments.get(i).getSpreadElement() != null) {
+                hasSpread = true;
+                break;
+            }
+        }
+
+        if (hasSpread) {
+            assert size == 1 : "Spread with additional arguments is not supported for tuples";
+            return StackValue.operation(type, outType, adapter -> {
+                String tupleCloneMethodSignature = Type.getMethodDescriptor(type);
+                KtExpression spreadArgument = arguments.get(0).getArgumentExpression();
+                gen(spreadArgument, type, outType);
+                v.invokevirtual(owner, "clone", tupleCloneMethodSignature, false);
+                v.checkcast(type);
+                return Unit.INSTANCE;
+            });
+        } else {
+            return StackValue.operation(type, outType, adapter -> {
+                v.anew(Type.getObjectType(owner));
+                v.dup();
+                v.iconst(size);
+                v.invokespecial(owner, "<init>", "(I)V", false);
+                for (int i = 0; i < size; ++i) {
+                    ValueArgument argument = arguments.get(i);
+                    KtExpression argumentExpression = argument.getArgumentExpression();
+                    v.dup();
+                    v.iconst(i);
+                    gen(argumentExpression, OBJECT_TYPE, outType);
+                    String setMethodDescriptor = Type.getMethodDescriptor(
+                            Type.VOID_TYPE,
+                            Type.INT_TYPE,
+                            OBJECT_TYPE
+                    );
+                    v.invokevirtual(owner, "set", setMethodDescriptor, false);
                 }
                 return Unit.INSTANCE;
             });

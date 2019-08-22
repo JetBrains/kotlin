@@ -28,6 +28,7 @@ class ClosureGenerationStrategy(
 
     override fun doGenerateBody(codegen: ExpressionCodegen, signature: JvmMethodSignature) {
         initializeVariablesForDestructuredLambdaParameters(codegen, codegen.context.functionDescriptor.valueParameters)
+        initializeVariablesForVariadicLambdaParameters(codegen, codegen.context.functionDescriptor.valueParameters)
         if (declaration is KtFunctionLiteral) {
             recordCallLabelForLambdaArgument(declaration, state.bindingTrace)
         }

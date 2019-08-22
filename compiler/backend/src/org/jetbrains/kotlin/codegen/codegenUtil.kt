@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.codegen
 import com.intellij.psi.PsiElement
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.TupleType
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.codegen.binding.CodegenBinding
 import org.jetbrains.kotlin.codegen.context.CodegenContext
@@ -357,6 +358,53 @@ fun initializeVariablesForDestructuredLambdaParameters(codegen: ExpressionCodege
                 }
             }
         }
+    }
+}
+
+fun initializeVariablesForVariadicLambdaParameters(
+    codegen: ExpressionCodegen,
+    valueParameters: List<ValueParameterDescriptor>
+) {
+    codegen.runWithShouldMarkLineNumbers(false) {
+        for (parameterDescriptor in valueParameters) {
+            if (parameterDescriptor is ValueParameterDescriptorImpl.WithVariadicComponents)
+                initializeVariadicParameter(codegen, parameterDescriptor)
+        }
+    }
+}
+
+private fun initializeVariadicParameter(
+    codegen: ExpressionCodegen,
+    parameterDescriptor: ValueParameterDescriptorImpl.WithVariadicComponents
+) = with(codegen) {
+    val tupleStackValue = findLocalOrCapturedValue(parameterDescriptor)
+        ?: error("Stack value for tuple should not be null")
+
+    parameterDescriptor.componentVariables.forEachIndexed { ix, variableDescriptor ->
+        // TODO check underscores
+        val index = codegen.lookupLocalIndex(variableDescriptor)
+        val varType = codegen.asmType(variableDescriptor.type)
+
+        val storeTo = StackValue.local(index, varType, variableDescriptor, null)
+        storeTo.putReceiver(v, false)
+
+        val initializer = tupleComponentInitializer(ix, tupleStackValue)
+        initializer.put(initializer.type, initializer.kotlinType, v)
+        storeTo.storeSelector(initializer.type, initializer.kotlinType, v)
+    }
+}
+
+private fun tupleComponentInitializer(index: Int, tupleStackValue: StackValue): StackValue {
+    return StackValue.operation(AsmTypes.OBJECT_TYPE) { v ->
+        val owner = TupleType.classId.toString()
+        val methodName = "get"
+        val signature = Type.getMethodDescriptor(
+            AsmTypes.OBJECT_TYPE,
+            Type.INT_TYPE
+        )
+        tupleStackValue.put(tupleStackValue.type, tupleStackValue.kotlinType, v)
+        v.iconst(index)
+        v.invokevirtual(owner, methodName, signature)
     }
 }
 
