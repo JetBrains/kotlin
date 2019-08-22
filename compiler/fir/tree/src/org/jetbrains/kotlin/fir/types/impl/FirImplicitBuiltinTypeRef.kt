@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.StandardClassIds
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -55,6 +54,10 @@ class FirImplicitBooleanTypeRef(
 class FirImplicitNothingTypeRef(
     psi: PsiElement?
 ) : FirImplicitBuiltinTypeRef(psi, StandardClassIds.Nothing)
+
+class FirImplicitNullableNothingTypeRef(
+    psi: PsiElement?
+) : FirImplicitBuiltinTypeRef(psi, StandardClassIds.Nothing, isNullable = true)
 
 class FirImplicitStringTypeRef(
     psi: PsiElement?

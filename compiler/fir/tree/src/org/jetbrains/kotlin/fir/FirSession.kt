@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.analyzer.ModuleInfo
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.utils.Jsr305State
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KClass
@@ -16,6 +18,7 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
 
     val jsr305State: Jsr305State? get() = null
 
+    val builtinTypes: BuiltinTypes = BuiltinTypes()
 
     val components: MutableMap<KClass<*>, Any> = mutableMapOf()
 
@@ -35,6 +38,18 @@ abstract class FirSession(val sessionProvider: FirSessionProvider?) {
             componentArray[(tClass as KClass<FirSessionComponent>).componentId()] = t
         }
     }
+}
+
+class BuiltinTypes {
+    val unitType: FirTypeRef = FirImplicitUnitTypeRef(null)
+    val anyType: FirTypeRef = FirImplicitAnyTypeRef(null)
+    val nullableAnyType: FirTypeRef = FirImplicitNullableAnyTypeRef(null)
+    val enumType: FirTypeRef = FirImplicitEnumTypeRef(null)
+    val annotationType: FirTypeRef = FirImplicitAnnotationTypeRef(null)
+    val booleanType: FirTypeRef = FirImplicitBooleanTypeRef(null)
+    val nothingType: FirTypeRef = FirImplicitNothingTypeRef(null)
+    val nullableNothingType: FirTypeRef = FirImplicitNullableNothingTypeRef(null)
+    val stringType: FirTypeRef = FirImplicitStringTypeRef(null)
 }
 
 interface FirSessionProvider {

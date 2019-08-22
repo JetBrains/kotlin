@@ -31,7 +31,9 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.impl.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirResolvedTypeRefImpl
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens.CLOSING_QUOTE
 import org.jetbrains.kotlin.lexer.KtTokens.OPEN_QUOTE
@@ -47,10 +49,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 //T can be either PsiElement, or LighterASTNode
 abstract class BaseFirBuilder<T>(val session: FirSession, val context: Context = Context()) {
 
-    protected val implicitUnitType = FirImplicitUnitTypeRef(null)
-    protected val implicitAnyType = FirImplicitAnyTypeRef(null)
-    protected val implicitEnumType = FirImplicitEnumTypeRef(null)
-    protected val implicitAnnotationType = FirImplicitAnnotationTypeRef(null)
+    protected val implicitUnitType = session.builtinTypes.unitType
+    protected val implicitAnyType = session.builtinTypes.anyType
+    protected val implicitEnumType = session.builtinTypes.enumType
+    protected val implicitAnnotationType = session.builtinTypes.annotationType
 
     abstract val T.elementType: IElementType
     abstract val T.asText: String

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.transformInplace
 import org.jetbrains.kotlin.fir.transformSingle
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitEnumTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
@@ -46,7 +45,7 @@ class FirEnumEntryImpl(
     override val companionObject: FirRegularClass?
         get() = null
 
-    override var typeRef: FirTypeRef = FirImplicitEnumTypeRef(null)
+    override var typeRef: FirTypeRef = session.builtinTypes.enumType
 
     override val arguments = mutableListOf<FirExpression>()
 

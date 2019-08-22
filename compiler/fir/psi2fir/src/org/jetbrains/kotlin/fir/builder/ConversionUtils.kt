@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.types.ConeStarProjection
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitKPropertyTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
@@ -335,7 +334,7 @@ fun FirModifiableAccessorsOwner.generateAccessorsByDelegate(session: FirSession,
             )
         }
     setter = (setter as? FirPropertyAccessorImpl)
-        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, FirImplicitUnitTypeRef(null), FirPropertyAccessorSymbol()).apply {
+        ?: FirPropertyAccessorImpl(session, null, false, Visibilities.UNKNOWN, session.builtinTypes.unitType, FirPropertyAccessorSymbol()).apply {
             val parameter = FirValueParameterImpl(
                 session, null, DELEGATED_SETTER_PARAM,
                 FirImplicitTypeRefImpl(null),

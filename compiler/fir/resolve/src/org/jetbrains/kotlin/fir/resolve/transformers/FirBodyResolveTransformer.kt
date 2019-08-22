@@ -48,7 +48,7 @@ open class FirBodyResolveTransformer(
 
     final override val returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorWithJump(session, scopeSession)
     final override val noExpectedType = FirImplicitTypeRefImpl(null)
-    private val booleanType = FirImplicitBooleanTypeRef(null)
+    private inline val builtinTypes: BuiltinTypes get() = session.builtinTypes
 
     final override val symbolProvider = session.service<FirSymbolProvider>()
 
@@ -755,15 +755,15 @@ open class FirBodyResolveTransformer(
         binaryLogicExpression: FirBinaryLogicExpression,
         data: Any?
     ): CompositeTransformResult<FirStatement> {
-        return super.transformBinaryLogicExpression(binaryLogicExpression, booleanType).also {
-            (it.single as FirBinaryLogicExpression).resultType = booleanType
+        return super.transformBinaryLogicExpression(binaryLogicExpression, builtinTypes.booleanType).also {
+            (it.single as FirBinaryLogicExpression).resultType = builtinTypes.booleanType
         }
     }
 
     override fun transformOperatorCall(operatorCall: FirOperatorCall, data: Any?): CompositeTransformResult<FirStatement> {
         if (operatorCall.operation in FirOperation.BOOLEANS) {
             return (operatorCall.transformChildren(this, noExpectedType) as FirOperatorCall).also {
-                it.resultType = booleanType
+                it.resultType = builtinTypes.booleanType
             }.compose()
         }
         return super.transformOperatorCall(operatorCall, data)

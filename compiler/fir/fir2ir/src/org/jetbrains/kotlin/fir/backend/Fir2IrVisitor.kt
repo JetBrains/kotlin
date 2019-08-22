@@ -75,13 +75,13 @@ internal class Fir2IrVisitor(
 
     private val declarationStorage = Fir2IrDeclarationStorage(session, symbolTable, moduleDescriptor)
 
-    private val nothingType = FirImplicitNothingTypeRef(null).toIrType(session, declarationStorage)
+    private val nothingType = session.builtinTypes.nothingType.toIrType(session, declarationStorage)
 
-    private val unitType = FirImplicitUnitTypeRef(null).toIrType(session, declarationStorage)
+    private val unitType = session.builtinTypes.unitType.toIrType(session, declarationStorage)
 
-    private val booleanType = FirImplicitBooleanTypeRef(null).toIrType(session, declarationStorage)
+    private val booleanType = session.builtinTypes.booleanType.toIrType(session, declarationStorage)
 
-    private val stringType = FirImplicitStringTypeRef(null).toIrType(session, declarationStorage)
+    private val stringType = session.builtinTypes.stringType.toIrType(session, declarationStorage)
 
     private fun ModuleDescriptor.findPackageFragmentForFile(file: FirFile): PackageFragmentDescriptor =
         getPackage(file.packageFqName).fragments.first()
