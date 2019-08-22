@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
+import org.jetbrains.org.objectweb.asm.util.Printer
 
 class IrCallableMethod(
     val owner: Type,
@@ -16,4 +17,7 @@ class IrCallableMethod(
     val dispatchReceiverType: Type?,
     val extensionReceiverType: Type?,
     val isInterfaceMethod: Boolean
-)
+) {
+    override fun toString(): String =
+        "${Printer.OPCODES[invokeOpcode]} $owner.$asmMethod" + (if (isInterfaceMethod) " (itf)" else "")
+}
