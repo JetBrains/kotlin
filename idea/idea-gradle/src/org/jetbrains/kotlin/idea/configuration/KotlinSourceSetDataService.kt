@@ -127,7 +127,8 @@ class KotlinSourceSetDataService : AbstractProjectDataService<GradleSourceSetDat
                 platform,
                 modelsProvider,
                 mainModuleNode.isHmpp,
-                mainModuleNode.pureKotlinSourceFolders
+                mainModuleNode.pureKotlinSourceFolders,
+                kotlinSourceSet.dependsOn
             )
 
             val compilerArguments = kotlinSourceSet.compilerArguments

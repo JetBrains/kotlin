@@ -44,6 +44,7 @@ class KotlinSourceSetInfo @PropertyMapping("kotlinModule") constructor(val kotli
     var dependencyClasspath: List<String> = emptyList()
     var isTestModule: Boolean = false
     var sourceSetIdsByName: MutableMap<String, String> = LinkedHashMap()
+    var dependsOn: List<String> = emptyList()
 }
 
 class KotlinAndroidSourceSetData @PropertyMapping("sourceSetInfos") constructor(val sourceSetInfos: List<KotlinSourceSetInfo>

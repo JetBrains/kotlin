@@ -85,6 +85,7 @@ class KotlinFacetEditorGeneralTab(
 
         // UI components related to MPP target platforms
         lateinit var targetPlatformSelectSingleCombobox: ComboBox<TargetPlatformWrapper>
+        lateinit var dependsOnLabel: JLabel
         lateinit var targetPlatformWrappers: List<TargetPlatformWrapper>
         lateinit var targetPlatformLabel: JLabel //JTextField?
         var targetPlatformsCurrentlySelected: TargetPlatform? = null
@@ -143,6 +144,7 @@ class KotlinFacetEditorGeneralTab(
             )
 
             useProjectSettingsCheckBox = ThreeStateCheckBox("Use project settings").apply { isThirdStateEnabled = isMultiEditor }
+            dependsOnLabel = JLabel()
 
             targetPlatformWrappers =
                 CommonPlatforms.allDefaultTargetPlatforms.sortedBy { unifyJvmVersion(it.oldFashionedDescription) }.map { TargetPlatformWrapper(it) }
@@ -182,6 +184,7 @@ class KotlinFacetEditorGeneralTab(
                     add(useProjectSettingsCheckBox, BorderLayout.WEST)
                     add(projectSettingsLink, BorderLayout.EAST)
                 }).addTargetPlatformComponents()
+                .addComponent(dependsOnLabel)
                 .addComponent(compilerConfigurable.createComponent()!!.apply {
                     border = null
                 })
@@ -387,6 +390,9 @@ class KotlinFacetEditorGeneralTab(
             editor.targetPlatformLabel.text =
                 editor.targetPlatformsCurrentlySelected?.componentPlatforms?.map { it.oldFashionedDescription }?.joinToString(", ")
                     ?: "<none>"
+            editor.dependsOnLabel.isVisible = configuration.settings.dependsOnModuleNames.isNotEmpty()
+            editor.dependsOnLabel.text = configuration.settings.dependsOnModuleNames.joinToString(",","Depends on: ", ".")
+
             editor.targetPlatformSelectSingleCombobox.selectedItem = configuration.settings.targetPlatform?.let {
                 val index = editor.targetPlatformWrappers.indexOf(TargetPlatformWrapper(it))
                 if (index >= 0) {

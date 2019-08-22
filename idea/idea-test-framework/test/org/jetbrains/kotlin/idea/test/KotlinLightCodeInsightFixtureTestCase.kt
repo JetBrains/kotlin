@@ -282,7 +282,7 @@ fun configureLanguageAndApiVersion(
     WriteAction.run<Throwable> {
         val modelsProvider = IdeModifiableModelsProviderImpl(project)
         val facet = module.getOrCreateFacet(modelsProvider, useProjectSettings = false)
-        facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider, false, emptyList())
+        facet.configureFacet(languageVersion, LanguageFeature.State.DISABLED, null, modelsProvider)
         if (apiVersion != null) {
             facet.configuration.settings.apiLevel = LanguageVersion.fromVersionString(apiVersion)
         }

@@ -292,9 +292,7 @@ fun configureFacetByGradleModule(
         compilerVersion,
         coroutinesProperty,
         platform,
-        modelsProvider,
-        moduleNode.isHmpp,
-        moduleNode.pureKotlinSourceFolders
+        modelsProvider
     )
 
     if (sourceSetNode == null) {

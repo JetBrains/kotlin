@@ -43,6 +43,7 @@ class KotlinSourceSetInfo(val kotlinModule: KotlinModule) : Serializable {
     var dependencyClasspath: List<String> = emptyList()
     var isTestModule: Boolean = false
     var sourceSetIdsByName: MutableMap<String, String> = LinkedHashMap()
+    var dependsOn: List<String> = emptyList()
 }
 
 class KotlinAndroidSourceSetData(

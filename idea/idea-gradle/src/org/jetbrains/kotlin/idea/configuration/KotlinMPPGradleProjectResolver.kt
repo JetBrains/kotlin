@@ -724,6 +724,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 info.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 info.actualPlatforms.addSimplePlatforms(sourceSet.actualPlatforms.platforms)
                 info.isTestModule = sourceSet.isTestModule
+                info.dependsOn = sourceSet.dependsOnSourceSets.toList()
                 //TODO(auskov): target flours are lost here
                 info.compilerArguments = createCompilerArguments(emptyList(), sourceSet.actualPlatforms.getSinglePlatform()).also {
                     it.multiPlatform = true
@@ -754,6 +755,7 @@ open class KotlinMPPGradleProjectResolver : AbstractProjectResolverExtension() {
                 sourceSetInfo.gradleModuleId = getModuleId(resolverCtx, gradleModule)
                 sourceSetInfo.actualPlatforms.addSimplePlatforms(listOf(compilation.platform))
                 sourceSetInfo.isTestModule = compilation.isTestModule
+                sourceSetInfo.dependsOn = compilation.sourceSets.flatMap { it.dependsOnSourceSets }.distinct().toList()
                 sourceSetInfo.compilerArguments =
                     createCompilerArguments(compilation.arguments.currentArguments.toList(), compilation.platform).also {
                         it.multiPlatform = true

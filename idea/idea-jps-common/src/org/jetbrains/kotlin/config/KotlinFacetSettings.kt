@@ -245,7 +245,8 @@ class KotlinFacetSettings {
             }
         }
 
-    var implementedModuleNames: List<String> = emptyList()
+    var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
+    var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations
 
     var productionOutputPath: String? = null
     var testOutputPath: String? = null
