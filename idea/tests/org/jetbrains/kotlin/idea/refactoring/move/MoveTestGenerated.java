@@ -579,9 +579,9 @@ public class MoveTestGenerated extends AbstractMoveTest {
         runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/moveFunctionWithImportsRetained/moveFunctionWithImportsRetained.test");
     }
 
-    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/mutualDependency/mutualDependency.test")
+    @TestMetadata("kotlin/moveTopLevelDeclarations/misc/mutualDependency/MutualDependency.test")
     public void testKotlin_moveTopLevelDeclarations_misc_mutualDependency_MutualDependency() throws Exception {
-        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/MutualDependency/mutualDependency.test");
+        runTest("idea/testData/refactoring/move/kotlin/moveTopLevelDeclarations/misc/mutualDependency/MutualDependency.test");
     }
 
     @TestMetadata("kotlin/moveTopLevelDeclarations/misc/nonCodeUsagesWithQuotedName/nonCodeUsageWithQuotedName.test")
