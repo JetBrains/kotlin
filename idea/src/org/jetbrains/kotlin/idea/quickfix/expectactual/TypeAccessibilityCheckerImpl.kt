@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.idea.util.hasPrivateModifier
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.psi.KtTypeParameter
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjection
+import org.jetbrains.kotlin.types.typeUtil.isNullableAny
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 class TypeAccessibilityCheckerImpl(
     override val project: Project,
@@ -101,8 +105,17 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
         }
         is TypeParameterDescriptor -> {
             val upperBounds = upperBounds
-            if (upperBounds.isEmpty()) sequenceOf(fqNameOrNull())
-            else upperBounds.asSequence().flatMap(KotlinType::collectAllTypes)
+            val singleUpperBound = upperBounds.singleOrNull()
+            when {
+                // case for unresolved type
+                singleUpperBound?.isNullableAny() == true -> {
+                    val extendBoundText = findPsi()?.safeAs<KtTypeParameter>()?.extendsBound?.text
+                    if (extendBoundText == null || extendBoundText == "Any?") sequenceOf(singleUpperBound.fqName)
+                    else sequenceOf(null)
+                }
+                upperBounds.isEmpty() -> sequenceOf(fqNameOrNull())
+                else -> upperBounds.asSequence().flatMap(KotlinType::collectAllTypes)
+            }
         }
         else -> emptySequence()
     }
