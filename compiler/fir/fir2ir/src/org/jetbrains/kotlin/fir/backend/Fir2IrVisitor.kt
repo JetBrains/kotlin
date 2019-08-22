@@ -26,14 +26,8 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitBooleanTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitNothingTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitStringTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
-import org.jetbrains.kotlin.fir.types.render
+import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -199,7 +193,7 @@ internal class Fir2IrVisitor(
     }
 
     private fun FirClass.getPrimaryConstructorIfAny(): FirConstructor? =
-        (declarations.firstOrNull() as? FirConstructor)?.takeIf { it.isPrimary }
+        declarations.filterIsInstance<FirConstructor>().firstOrNull()?.takeIf { it.isPrimary }
 
     private fun IrClass.addFakeOverrides(klass: FirClass, processedFunctionNames: MutableList<Name>) {
         if (fakeOverrideMode == FakeOverrideMode.NONE) return
@@ -693,13 +687,19 @@ internal class Fir2IrVisitor(
     }
 
     private fun FirAnnotationCall.toIrExpression(): IrExpression {
-        val type = (annotationTypeRef as? FirResolvedTypeRef)?.type?.toIrType(this@Fir2IrVisitor.session, declarationStorage)
+        val coneType = (annotationTypeRef as? FirResolvedTypeRef)?.type as? ConeLookupTagBasedType
+        val firSymbol = coneType?.lookupTag?.toSymbol(session) as? FirClassSymbol
+        val type = coneType?.toIrType(this@Fir2IrVisitor.session, declarationStorage)
         val symbol = type?.classifierOrNull
         return convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrClassSymbol -> {
                     val irClass = symbol.owner
-                    val irConstructor = irClass.constructors.firstOrNull()
+                    val irConstructor = firSymbol?.fir?.getPrimaryConstructorIfAny()?.let { firConstructor ->
+                        declarationStorage.getIrConstructor(firConstructor, irParent = irClass, shouldLeaveScope = true)
+                    }?.apply {
+                        this.parent = irClass
+                    }
                     if (irConstructor == null) {
                         IrErrorCallExpressionImpl(startOffset, endOffset, type, "No annotation constructor found: ${irClass.name}")
                     } else {
