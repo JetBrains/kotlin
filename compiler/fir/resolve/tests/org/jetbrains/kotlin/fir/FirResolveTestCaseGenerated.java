@@ -44,6 +44,11 @@ public class FirResolveTestCaseGenerated extends AbstractFirResolveTestCase {
         runTest("compiler/fir/resolve/testData/resolve/copy.kt");
     }
 
+    @TestMetadata("delegatedSuperType.kt")
+    public void testDelegatedSuperType() throws Exception {
+        runTest("compiler/fir/resolve/testData/resolve/delegatedSuperType.kt");
+    }
+
     @TestMetadata("derivedClass.kt")
     public void testDerivedClass() throws Exception {
         runTest("compiler/fir/resolve/testData/resolve/derivedClass.kt");

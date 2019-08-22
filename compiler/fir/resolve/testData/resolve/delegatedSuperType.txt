@@ -1,0 +1,23 @@
+FILE: delegatedSuperType.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final class B : R|A| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final override fun foo(): R|kotlin/Unit| {
+        }
+
+    }
+    public final class C : R|A| {
+        public constructor(b: R|B|): R|C| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val b: R|B| = R|<local>/b|
+            public get(): R|B|
+
+    }

@@ -27,11 +27,35 @@ FILE fqName:<root> fileName:/delegatedMembers.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[]
+  CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Test
     TYPE_PARAMETER name:TT index:0 variance: superTypes:[]
     CONSTRUCTOR visibility:public <> (impl:<root>.IBase<TT of <uninitialized parent>>) returnType:<root>.Test<TT of <uninitialized parent>> [primary]
       VALUE_PARAMETER name:impl index:0 type:<root>.IBase<TT of <uninitialized parent>>
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Test modality:FINAL visibility:public superTypes:[<root>.IBase<TT of <root>.Test>]'
+    FUN FAKE_OVERRIDE name:foo visibility:public modality:ABSTRACT <> ($this:<root>.IBase, x:kotlin.Int) returnType:kotlin.Unit
+      overridden:
+        public abstract fun foo (x: kotlin.Int): kotlin.Unit declared in <root>.IBase
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+      VALUE_PARAMETER name:x index:0 type:kotlin.Int
+    FUN FAKE_OVERRIDE name:qux visibility:public modality:ABSTRACT <> ($this:<root>.IBase, t:TT of <root>.Test, x:X of <root>.IBase.qux) returnType:kotlin.Unit
+      overridden:
+        public abstract fun qux <X> (t: T of <root>.IBase, x: X of <root>.IBase.qux): kotlin.Unit declared in <root>.IBase
+      $this: VALUE_PARAMETER name:<this> type:<root>.IBase
+      VALUE_PARAMETER name:t index:0 type:TT of <root>.Test
+      VALUE_PARAMETER name:x index:1 type:X of <root>.IBase.qux
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
