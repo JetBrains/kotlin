@@ -1,5 +1,4 @@
 expect class My {
-    fun foo(): Int
     val some: Double
 
 }

@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -329,4 +330,8 @@ class KotlinTypeInaccessibleException(fqNames: Collection<FqName?>) : Exception(
 fun KtNamedDeclaration.isAlwaysActual(): Boolean = safeAs<KtParameter>()?.parent?.parent?.safeAs<KtPrimaryConstructor>()
     ?.mustHaveValOrVar() ?: false
 
-val KotlinType.fqName: FqName? get() = constructor.declarationDescriptor?.fqNameOrNull()
+val KotlinType.fqName: FqName?
+    get() = when (this) {
+        is AbbreviatedType -> abbreviation.fqName
+        else -> constructor.declarationDescriptor?.fqNameOrNull()
+    }

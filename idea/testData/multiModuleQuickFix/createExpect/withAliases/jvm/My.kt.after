@@ -6,7 +6,7 @@ import kotlin.Double as MyDouble
 typealias MyInt = Int
 
 actual class <caret>My {
-    actual fun foo(): MyInt = 42
+    fun foo(): MyInt = 42
 
     actual val some: MyDouble = 4.0
 }

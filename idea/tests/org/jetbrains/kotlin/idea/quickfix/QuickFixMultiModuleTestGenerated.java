@@ -477,6 +477,16 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/sealedClass/");
         }
 
+        @TestMetadata("stdlibWithJavaAlias")
+        public void testStdlibWithJavaAlias() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/stdlibWithJavaAlias/");
+        }
+
+        @TestMetadata("superTypeFromStdlib")
+        public void testSuperTypeFromStdlib() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/superTypeFromStdlib/");
+        }
+
         @TestMetadata("topLevelFunctionWithAnnotations")
         public void testTopLevelFunctionWithAnnotations() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/topLevelFunctionWithAnnotations/");

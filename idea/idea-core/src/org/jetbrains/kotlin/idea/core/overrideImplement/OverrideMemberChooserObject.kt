@@ -231,13 +231,11 @@ private val EXPECT_RENDERER = OVERRIDE_RENDERER.withOptions {
     secondaryConstructorsAsPrimary = false
     renderDefaultVisibility = false
     renderDefaultModality = false
-    renderTypeExpansions = true
 }
 
 private val ACTUAL_RENDERER = EXPECT_RENDERER.withOptions {
     modifiers = modifiers + ACTUAL
     actualPropertiesInPrimaryConstructor = true
-    renderTypeExpansions = false
     renderConstructorDelegation = true
 }
 
