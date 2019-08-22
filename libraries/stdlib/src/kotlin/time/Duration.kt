@@ -69,7 +69,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
     /** Returns a duration whose value is this duration value divided by the given [scale] number. */
     public operator fun div(scale: Double): Duration = Duration(value / scale)
 
-    /** Returns a number that is the ratio of [this] and [other] duration values. */
+    /** Returns a number that is the ratio of this and [other] duration values. */
     public operator fun div(other: Duration): Double = this.value / other.value
 
     /** Returns true, if the duration value is less than zero. */
@@ -295,7 +295,7 @@ public inline class Duration internal constructor(internal val value: Double) : 
      * and `f` is a fractional part of second. Depending on the roundness of the value the fractional part can be formatted with either
      * 0, 3, 6, or 9 decimal digits.
      *
-     * If the hours component absolute value of this duration is greater than [Int.MAX_VAlUE], it is replaced with [Int.MAX_VALUE],
+     * If the hours component absolute value of this duration is greater than [Int.MAX_VALUE], it is replaced with [Int.MAX_VALUE],
      * so the infinite duration is formatted as `"PT2147483647H".
      *
      * Negative durations are indicated with the sign `-` in the beginning of the returned string, for example, `"-PT5M30S"`.
