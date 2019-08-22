@@ -19,8 +19,10 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.io.File
 
 abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCase() {
+    open val configurationKind: ConfigurationKind get() = ConfigurationKind.JDK_NO_RUNTIME
+
     override fun createEnvironment(): KotlinCoreEnvironment {
-        return createEnvironmentWithMockJdk(ConfigurationKind.JDK_NO_RUNTIME)
+        return createEnvironmentWithMockJdk(configurationKind)
     }
 
     private fun doCreateAndProcessFir(ktFiles: List<KtFile>): List<FirFile> {
@@ -46,8 +48,7 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
         }
     }
 
-
-    fun doTest(path: String) {
+    protected fun processInputFile(path: String): List<FirFile> {
         val file = File(path)
 
         val allFiles = listOf(file) + file.parentFile.listFiles { sibling ->
@@ -66,8 +67,14 @@ abstract class AbstractFirResolveTestCase : AbstractFirResolveWithSessionTestCas
                     KotlinTestUtils.createFile(name, text, project)
                 }
 
-        val firFiles = doCreateAndProcessFir(ktFiles)
+        return doCreateAndProcessFir(ktFiles)
+    }
 
+    open fun doTest(path: String) {
+        checkFir(path, processInputFile(path))
+    }
+
+    fun checkFir(path: String, firFiles: List<FirFile>) {
         val firFileDump = StringBuilder().also { firFiles.first().accept(FirRenderer(it), null) }.toString()
         val expectedPath = path.replace(".kt", ".txt")
         KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)

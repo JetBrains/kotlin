@@ -1,0 +1,41 @@
+FILE: binaryOperations.kt
+    public final fun test_1(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b1| || R|<local>/b2| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b1| && R|<local>/b2| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_3(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|, b3: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b1| && R|<local>/b2| || R|<local>/b3| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_4(b1: R|kotlin/Boolean|, b2: R|kotlin/Boolean|, b3: R|kotlin/Boolean|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b1| || R|<local>/b2| && R|<local>/b3| ->  {
+                Int(1)
+            }
+            else ->  {
+            }
+        }
+
+    }

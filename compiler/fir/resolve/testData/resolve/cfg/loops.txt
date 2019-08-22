@@ -1,0 +1,25 @@
+FILE: loops.kt
+    public final fun testWhile(b: R|kotlin/Boolean|, x: R|kotlin/Any?|): R|kotlin/Unit| {
+        while(R|<local>/b|) {
+            lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        }
+
+        (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun testDoWhile(b: R|kotlin/Boolean|, x: R|kotlin/Any?|): R|kotlin/Unit| {
+        do {
+            lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        }
+        while(R|<local>/b|)
+        (R|<local>/x| is R|kotlin/String|)
+    }
+    public final fun testFor(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        lval <range>: R|kotlin/ranges/IntRange| = Int(0).R|kotlin/Int.rangeTo|(Int(5))
+        lval <iterator>: R|kotlin/collections/IntIterator| = R|<local>/<range>|.R|kotlin/ranges/IntProgression.iterator|()
+        while(R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+            lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()
+            lval y: R|kotlin/Boolean| = (R|<local>/x| is R|kotlin/String|)
+        }
+
+        (R|<local>/x| is R|kotlin/String|)
+    }

@@ -1,0 +1,58 @@
+FILE: propertiesAndInitBlocks.kt
+    public final fun run(block: R|kotlin/Function0<kotlin/Unit>|): R|kotlin/Unit| {
+        R|<local>/block|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
+    }
+    public final val x1: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int|
+    public final var x2: R|kotlin/Int| = Int(1)
+        public get(): R|kotlin/Int| {
+            ^ Int(1)
+        }
+        public set(value: R|kotlin/Int|): R|kotlin/Unit| {
+            F|/x2| = Int(1)
+        }
+    public final val x3: R|kotlin/Unit| = R|/run|(<L> = run@fun <anonymous>(): R|kotlin/Unit| {
+        local final fun foo(): R|kotlin/Unit| {
+            lval c: R|kotlin/Int| = Int(1).R|kotlin/Int.plus|(Int(1))
+            throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+        }
+
+        local final class LocalClass : R|kotlin/Any| {
+            public constructor(): R|LocalClass| {
+                super<R|kotlin/Any|>()
+            }
+
+            init {
+                throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+                Int(1)
+            }
+
+        }
+
+        throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+    }
+    )
+        public get(): R|kotlin/Unit| {
+            local final class LocalClass : R|kotlin/Any| {
+                public constructor(): R|LocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+                init {
+                    throw <Ambiguity: Exception, [java/lang/Exception.Exception, java/lang/Exception.Exception]>#()
+                }
+
+            }
+
+        }
+    public final val x4: R|kotlin/Int| = try {
+        Int(1)
+    }
+    catch (e: R|kotlin/Exception|) {
+        Int(2)
+    }
+    finally {
+        Int(0)
+    }
+
+        public get(): R|kotlin/Int|

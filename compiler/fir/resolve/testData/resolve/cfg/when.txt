@@ -1,0 +1,32 @@
+FILE: when.kt
+    public final fun test_1(x: R|kotlin/Int|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = when () {
+            ==(R|<local>/x|, Int(1)) ->  {
+                Int(10)
+            }
+            ==(R|<local>/x|.R|kotlin/Int.rem|(Int(2)), Int(0)) ->  {
+                Int(20)
+            }
+            ==(Int(1).R|kotlin/Int.minus|(Int(1)), Int(0)) ->  {
+                ^test_1 Unit
+            }
+            else ->  {
+                Int(5)
+            }
+        }
+
+    }
+    public abstract interface A : R|kotlin/Any| {
+    }
+    public abstract interface B : R|kotlin/Any| {
+    }
+    public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| is R|A|) && (R|<local>/x| is R|B|) ->  {
+                (R|<local>/x| is R|A|)
+            }
+            else ->  {
+            }
+        }
+
+    }

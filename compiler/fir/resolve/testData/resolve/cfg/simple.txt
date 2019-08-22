@@ -1,0 +1,8 @@
+FILE: simple.kt
+    public final fun foo(): R|kotlin/Unit| {
+    }
+    public final fun test(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = Int(1)
+        lval y: R|kotlin/Int| = R|<local>/x|.R|kotlin/Int.plus|(Int(1))
+        R|/foo|()
+    }

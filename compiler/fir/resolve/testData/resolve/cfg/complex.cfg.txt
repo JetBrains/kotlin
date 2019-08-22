@@ -1,0 +1,21 @@
+0: Enter function "foo" -> 1
+ 1:   Enter block -> 2  |  <- 0
+ 2:     Try expression enter -> 3  |  <- 1
+ 3:       Try main block enter -> 4, 8, 20  |  <- 2
+ 4:         Enter block -> 5  |  <- 3
+ 5:           Const: Int(1) -> 6  |  <- 4
+ 6:         Exit block -> 7  |  <- 5
+ 7:       Try main block exit -> 14  |  <- 6
+ 8:       Catch enter -> 9, 20  |  <- 3
+ 9:         Enter block -> 10  |  <- 8
+10:           Jump: ^foo Unit -> 11[DEAD], 20  |  <- 9
+11:           Stub[DEAD] -> 12  |  <- 10
+12:         Exit block[DEAD] -> 13  |  <- 11
+13:       Catch exit[DEAD] -> 14  |  <- 12
+14:     Try expression exit -> 15  |  <- 7, 13[DEAD]
+15:     Variable declaration: lval x: R|kotlin/Int| -> 16  |  <- 14
+16:     Access variable R|<local>/x| -> 17  |  <- 15
+17:     Const: Int(1) -> 18  |  <- 16
+18:     Function call: R|<local>/x|.R|kotlin/Int.plus|(Int(1)) -> 19  |  <- 17
+19:   Exit block -> 20  |  <- 18
+20: Exit function "foo" ->   |  <- 3, 8, 10, 19

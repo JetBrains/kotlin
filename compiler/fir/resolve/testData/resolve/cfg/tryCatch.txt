@@ -1,0 +1,55 @@
+FILE: tryCatch.kt
+    public final fun test_1(): R|kotlin/Unit| {
+        try {
+            lval x: R|kotlin/Int| = Int(1)
+        }
+        catch (e: R|kotlin/RuntimeException|) {
+            lval y: R|kotlin/Int| = Int(2)
+        }
+        catch (e: R|kotlin/Exception|) {
+            lval z: R|kotlin/Int| = Int(3)
+        }
+
+    }
+    public final fun test_2(): R|kotlin/Unit| {
+        lval x: R|kotlin/Int| = try {
+            Int(1)
+        }
+        catch (e: R|kotlin/Exception|) {
+            Int(2)
+        }
+
+    }
+    public final fun test_3(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            try {
+                when () {
+                    R|<local>/b| ->  {
+                        ^test_3 Unit
+                    }
+                    else ->  {
+                    }
+                }
+
+                lval x: R|kotlin/Int| = Int(1)
+                when () {
+                    R|<local>/b|.R|kotlin/Boolean.not|() ->  {
+                        break@@@[Boolean(true)]
+                    }
+                    else ->  {
+                    }
+                }
+
+            }
+            catch (e: R|kotlin/Exception|) {
+                continue@@@[Boolean(true)]
+            }
+            catch (e: R|kotlin/RuntimeException|) {
+                break@@@[Boolean(true)]
+            }
+
+            lval y: R|kotlin/Int| = Int(2)
+        }
+
+        lval z: R|kotlin/Int| = Int(3)
+    }

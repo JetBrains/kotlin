@@ -1,0 +1,41 @@
+FILE: jumps.kt
+    public final fun test_1(x: R|kotlin/Int?|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int?| = when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()
+            }
+            else ->  {
+                R|<local>/x|
+            }
+        }
+
+        R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
+    public final fun test_2(x: R|kotlin/Int?|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int?| = when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|
+            }
+            else ->  {
+                R|<local>/x|
+            }
+        }
+
+        R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
+    public final fun test_3(x: R|kotlin/Int?|): R|kotlin/Unit| {
+        while(Boolean(true)) {
+            (R|<local>/x| as R|kotlin/Int|)
+            break@@@[Boolean(true)]
+        }
+
+        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
+    public final fun test_4(x: R|kotlin/Int?|): R|kotlin/Unit| {
+        do {
+            (R|<local>/x| as R|class error: Symbol not found, for `int`|)
+            break@@@[Boolean(true)]
+        }
+        while(Boolean(true))
+        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }

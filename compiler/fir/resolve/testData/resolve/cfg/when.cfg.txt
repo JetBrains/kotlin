@@ -1,0 +1,71 @@
+ 0: Enter function "test_1" -> 1
+ 1:   Enter block -> 2  |  <- 0
+ 2:     Enter when -> 3  |  <- 1
+ 3:       Enter when branch condition  -> 4  |  <- 2
+ 4:         Access variable R|<local>/x| -> 5  |  <- 3
+ 5:         Const: Int(1) -> 6  |  <- 4
+ 6:         Operator == -> 7  |  <- 5
+ 7:       Exit when branch condition -> 8, 12  |  <- 6
+ 8:         Enter block -> 9  |  <- 7
+ 9:           Const: Int(10) -> 10  |  <- 8
+10:         Exit block -> 11  |  <- 9
+11:       Exit when branch result -> 41  |  <- 10
+12:       Enter when branch condition  -> 13  |  <- 7
+13:         Access variable R|<local>/x| -> 14  |  <- 12
+14:         Const: Int(2) -> 15  |  <- 13
+15:         Function call: R|<local>/x|.R|kotlin/Int.rem|(Int(2)) -> 16  |  <- 14
+16:         Const: Int(0) -> 17  |  <- 15
+17:         Operator == -> 18  |  <- 16
+18:       Exit when branch condition -> 19, 23  |  <- 17
+19:         Enter block -> 20  |  <- 18
+20:           Const: Int(20) -> 21  |  <- 19
+21:         Exit block -> 22  |  <- 20
+22:       Exit when branch result -> 41  |  <- 21
+23:       Enter when branch condition  -> 24  |  <- 18
+24:         Const: Int(1) -> 25  |  <- 23
+25:         Const: Int(1) -> 26  |  <- 24
+26:         Function call: Int(1).R|kotlin/Int.minus|(Int(1)) -> 27  |  <- 25
+27:         Const: Int(0) -> 28  |  <- 26
+28:         Operator == -> 29  |  <- 27
+29:       Exit when branch condition -> 30, 35  |  <- 28
+30:         Enter block -> 31  |  <- 29
+31:           Jump: ^test_1 Unit -> 32[DEAD], 44  |  <- 30
+32:           Stub[DEAD] -> 33  |  <- 31
+33:         Exit block[DEAD] -> 34  |  <- 32
+34:       Exit when branch result[DEAD] -> 41  |  <- 33
+35:       Enter when branch condition "else" -> 36  |  <- 29
+36:       Exit when branch condition -> 37  |  <- 35
+37:         Enter block -> 38  |  <- 36
+38:           Const: Int(5) -> 39  |  <- 37
+39:         Exit block -> 40  |  <- 38
+40:       Exit when branch result -> 41  |  <- 39
+41:     Exit when -> 42  |  <- 11, 22, 34[DEAD], 40
+42:     Variable declaration: lval y: R|kotlin/Int| -> 43  |  <- 41
+43:   Exit block -> 44  |  <- 42
+44: Exit function "test_1" ->   |  <- 31, 43
+
+ 0: Enter function "test_2" -> 1
+ 1:   Enter block -> 2  |  <- 0
+ 2:     Enter when -> 3  |  <- 1
+ 3:       Enter when branch condition  -> 4  |  <- 2
+ 4:         Enter && -> 5  |  <- 3
+ 5:           Access variable R|<local>/x| -> 6  |  <- 4
+ 6:           Type operator: "x is A" -> 7, 9  |  <- 5
+ 7:           Access variable R|<local>/x| -> 8  |  <- 6
+ 8:           Type operator: "x is B" -> 9  |  <- 7
+ 9:         Exit && -> 10  |  <- 6, 8
+10:       Exit when branch condition -> 11, 16  |  <- 9
+11:         Enter block -> 12  |  <- 10
+12:           Access variable R|<local>/x| -> 13  |  <- 11
+13:           Type operator: "x is A" -> 14  |  <- 12
+14:         Exit block -> 15  |  <- 13
+15:       Exit when branch result -> 21  |  <- 14
+16:       Enter when branch condition "else" -> 17  |  <- 10
+17:       Exit when branch condition -> 18  |  <- 16
+18:         Enter block -> 19  |  <- 17
+19:         Exit block -> 20  |  <- 18
+20:       Exit when branch result -> 21  |  <- 19
+21:     Exit when -> 22  |  <- 15, 20
+22:   Exit block -> 23  |  <- 21
+23: Exit function "test_2" ->   |  <- 22
+
