@@ -80,6 +80,7 @@ object SpecialBuiltins {
     const val objectSerializer = "ObjectSerializer"
     const val enumSerializer = "EnumSerializer"
     const val polymorphicSerializer = "PolymorphicSerializer"
+    const val sealedSerializer = "SealedClassSerializer"
     const val contextSerializer = "ContextSerializer"
     const val nullableSerializer = "NullableSerializer"
 }

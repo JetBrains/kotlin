@@ -291,7 +291,7 @@ object KSerializerDescriptorResolver {
         )
 
         val markerDesc = classDescriptor.getKSerializerConstructorMarker()
-        val markerType = markerDesc.toSimpleType()
+        val markerType = markerDesc.toSimpleType(nullable = true)
 
         val serializableProperties = bindingContext.serializablePropertiesFor(classDescriptor).serializableProperties
         val parameterDescsAsProps = serializableProperties.map { it.descriptor }

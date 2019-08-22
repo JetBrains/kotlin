@@ -145,6 +145,10 @@ internal fun AbstractSerialGenerator.serializerInstance(
     if (serializerClass.kind == ClassKind.OBJECT) {
         return context.serializerObjectGetter(serializerClass)
     } else {
+        fun instantiate(serializer: ClassDescriptor?, type: KotlinType): JsExpression? {
+            val expr = serializerInstance(context, serializer, module, type, type.genericIndex, genericGetter) ?: return null
+            return if (type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+        }
         var args = when {
             serializerClass.classId == contextSerializerId || serializerClass.classId == polymorphicSerializerId -> listOf(
                 ExpressionVisitor.getObjectKClass(context, kType.toClassDescriptor!!)
@@ -157,10 +161,25 @@ internal fun AbstractSerialGenerator.serializerInstance(
                 JsStringLiteral(kType.serialName()),
                 context.serializerObjectGetter(kType.toClassDescriptor!!)
             )
+            serializerClass.classId == sealedSerializerId -> mutableListOf<JsExpression>().apply {
+                add(JsStringLiteral(kType.serialName()))
+                val (subclasses, subSerializers) = immediateSealedSerializableSubclassesFor(
+                    kType.toClassDescriptor!!,
+                    module
+                )
+                add(JsArrayLiteral(subclasses.map {
+                    ExpressionVisitor.getObjectKClass(
+                        context,
+                        it.toClassDescriptor!!
+                    )
+                }))
+                add(JsArrayLiteral(subSerializers.mapIndexed { i, ser ->
+                    instantiate(ser, subclasses[i])!!
+                }))
+            }
             else -> kType.arguments.map {
                 val argSer = findTypeSerializerOrContext(module, it.type, sourceElement = serializerClass.findPsi())
-                val expr = serializerInstance(context, argSer, module, it.type, it.type.genericIndex, genericGetter) ?: return null
-                if (it.type.isMarkedNullable) JsNew(nullableSerClass, listOf(expr)) else expr
+                instantiate(argSer, it.type) ?: return null
             }
         }
         if (serializerClass.classId == referenceArraySerializerId)

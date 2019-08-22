@@ -159,6 +159,7 @@ internal val enumSerializerId = ClassId(internalPackageFqName, Name.identifier(S
 internal val polymorphicSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.polymorphicSerializer))
 internal val referenceArraySerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.referenceArraySerializer))
 internal val objectSerializerId = ClassId(internalPackageFqName, Name.identifier(SpecialBuiltins.objectSerializer))
+internal val sealedSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.sealedSerializer))
 internal val contextSerializerId = ClassId(packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
 
 
@@ -263,7 +264,7 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
         // instantiate all arg serializers on stack
         val signature = StringBuilder("(")
 
-        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>) {
+        fun instantiate(typeArgument: Pair<KotlinType, ClassDescriptor?>, writeSignature: Boolean = true) {
             val (argType, argSerializer) = typeArgument
             assert(
                 stackValueSerializerInstance(
@@ -278,9 +279,10 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
             )
             // wrap into nullable serializer if argType is nullable
             if (argType.isMarkedNullable) wrapStackValueIntoNullableSerializer()
-            signature.append(kSerializerType.descriptor)
+            if (writeSignature) signature.append(kSerializerType.descriptor)
         }
 
+        val serialName = kType.serialName()
         when (serializer.classId) {
             enumSerializerId, contextSerializerId, polymorphicSerializerId -> {
                 // a special way to instantiate enum -- need a enum KClass reference
@@ -297,15 +299,30 @@ internal fun AbstractSerialGenerator.stackValueSerializerInstance(codegen: Class
                 // Reference array serializer still needs serializer for its argument type
                 instantiate(argSerializers[0])
             }
+            sealedSerializerId -> {
+                aconst(serialName)
+                signature.append("Ljava/lang/String;")
+                val (subClasses, subSerializers) = immediateSealedSerializableSubclassesFor(kType.toClassDescriptor!!, module)
+                // KClasses vararg
+                fillArray(AsmTypes.K_CLASS_TYPE, subClasses) { i, type ->
+                    aconst(codegen.typeMapper.mapType(type, null, TypeMappingMode.GENERIC_ARGUMENT))
+                    AsmUtil.wrapJavaClassIntoKClass(this)
+                }
+                signature.append(AsmTypes.K_CLASS_ARRAY_TYPE.descriptor)
+                // Serializers vararg
+                fillArray(kSerializerType, subSerializers) { i, serializer ->
+                    instantiate(subClasses[i] to serializer, writeSignature = false)
+                }
+                signature.append(kSerializerArrayType.descriptor)
+            }
             objectSerializerId -> {
-                val serialName = kType.serialName()
                 aconst(serialName)
                 signature.append("Ljava/lang/String;")
                 StackValue.singleton(kType.toClassDescriptor!!, codegen.typeMapper).put(Type.getType("Ljava/lang/Object;"), iv)
                 signature.append("Ljava/lang/Object;")
             }
             // all serializers get arguments with serializers of their generic types
-            else -> argSerializers.forEach(::instantiate)
+            else -> argSerializers.forEach { instantiate(it) }
         }
         signature.append(")V")
         // invoke constructor
@@ -319,6 +336,17 @@ fun InstructionAdapter.wrapStackValueIntoNullableSerializer() =
         "kotlinx/serialization/internal/NullableSerializerKt", "makeNullable",
         "(" + kSerializerType.descriptor + ")" + kSerializerType.descriptor, false
     )
+
+fun <T> InstructionAdapter.fillArray(type: Type, args: List<T>, onEach: (Int, T) -> Unit) {
+    iconst(args.size)
+    newarray(type)
+    args.forEachIndexed { i, serializer ->
+        dup()
+        iconst(i)
+        onEach(i, serializer)
+        astore(type)
+    }
+}
 
 //
 // ======= Serializers Resolving =======
