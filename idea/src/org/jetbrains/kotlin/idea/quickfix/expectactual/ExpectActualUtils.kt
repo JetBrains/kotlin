@@ -299,9 +299,21 @@ private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor,
 private fun KtCallableDeclaration.repairAnnotationEntries(descriptor: CallableDescriptor, checker: TypeAccessibilityChecker) {
     for (annotation in descriptor.annotations) {
         if (annotation.isValidInModule(checker)) {
-            val entry = annotation.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtAnnotationEntry>() ?: continue
-            addAnnotationEntry(entry)
+            checkAndAdd(annotation, checker, this)
         }
+    }
+
+    val extension = descriptor.extensionReceiverParameter ?: return
+    val receiver = receiverTypeReference ?: return
+    for (annotation in extension.annotations) {
+        checkAndAdd(annotation, checker, receiver)
+    }
+}
+
+private fun checkAndAdd(annotationDescriptor: AnnotationDescriptor, checker: TypeAccessibilityChecker, target: KtModifierListOwner) {
+    if (annotationDescriptor.isValidInModule(checker)) {
+        val entry = annotationDescriptor.source.safeAs<KotlinSourceElement>()?.psi.safeAs<KtAnnotationEntry>() ?: return
+        target.addAnnotationEntry(entry)
     }
 }
 

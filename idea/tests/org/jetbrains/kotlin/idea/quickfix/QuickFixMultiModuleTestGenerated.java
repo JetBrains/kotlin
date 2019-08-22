@@ -477,6 +477,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/sealedClass/");
         }
 
+        @TestMetadata("topLevelFunctionWithAnnotations")
+        public void testTopLevelFunctionWithAnnotations() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/topLevelFunctionWithAnnotations/");
+        }
+
         @TestMetadata("topLevelPropertyWithTypeParam")
         public void testTopLevelPropertyWithTypeParam() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/topLevelPropertyWithTypeParam/");
