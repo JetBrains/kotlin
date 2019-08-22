@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.idea.util.JavaParametersBuilder
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.*
 import java.io.File
-import kotlin.script.experimental.api.valueOrNull
 
 class KtScratchExecutionSession(
     private val file: ScratchFile,
@@ -166,7 +165,7 @@ class KtScratchExecutionSession(
         }
 
         ScriptDependenciesManager.getInstance(originalFile.project)
-            .getRefinedCompilationConfiguration(originalFile)?.valueOrNull()?.let {
+            .getConfiguration(originalFile)?.let {
                 javaParameters.classPath.addAll(it.dependenciesClassPath.map { f -> f.absolutePath })
             }
 

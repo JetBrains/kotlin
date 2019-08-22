@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.idea.core.script
 
 import com.intellij.openapi.components.ServiceManager
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.projectRoots.JavaSdkType
 import com.intellij.openapi.projectRoots.Sdk
@@ -25,18 +24,17 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiFile
-import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.idea.caches.project.getAllProjectSdks
-import org.jetbrains.kotlin.idea.core.script.dependencies.SyncScriptDependenciesLoader
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
-import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import java.io.File
-import kotlin.script.experimental.api.valueOrNull
-
+import kotlin.script.experimental.api.asSuccess
+import kotlin.script.experimental.api.makeFailureResult
 
 // NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
@@ -45,40 +43,73 @@ class IdeScriptDependenciesProvider(
     project: Project
 ) : ScriptDependenciesProvider(project) {
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? {
-        return scriptDependenciesManager.getRefinedCompilationConfiguration(file)
+        val configuration = getScriptConfiguration(file)
+        val reports = IdeScriptReportSink.getReports(file)
+        if (configuration == null && reports.isNotEmpty()) {
+            return makeFailureResult(reports)
+        }
+        return configuration?.asSuccess(reports)
     }
+
+    override fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? {
+        return scriptDependenciesManager.getConfiguration(file)
+    }
+
 }
 
-// TODO: rename and provide alias for compatibility - this is not only about dependencies anymore
-class ScriptDependenciesManager internal constructor(
-    private val cacheUpdater: ScriptsCompilationConfigurationUpdater,
-    private val cache: ScriptsCompilationConfigurationCache,
-    private val project: Project
-) {
+/**
+ * Facade for loading and caching Kotlin script files configuration.
+ *
+ * Loaded configuration will be cached in [memoryCache] and [fileAttributesCache].
+ * This service also starts indexing of new dependency roots and runs highlighting
+ * of opened files.
+ */
+interface ScriptConfigurationManager {
+    /**
+     * Save configurations into cache.
+     * Start indexing for new class/source roots.
+     * Re-highlight opened scripts with changed configuration.
+     */
+    fun saveCompilationConfigurationAfterImport(files: List<Pair<VirtualFile, ScriptCompilationConfigurationResult>>)
+
+    /**
+     * Start configuration update for files if configuration isn't up to date.
+     * Start indexing for new class/source roots.
+     *
+     * @return true if update was started for any file, false if all configurations are cached
+     */
+    fun updateConfigurationsIfNotCached(files: List<KtFile>): Boolean
+
+    /**
+     * Check if configuration is already cached for [file] (in cache or FileAttributes).
+     * Don't check if file was changed after the last update.
+     * Supposed to be used to switch highlighting off for scripts without configuration.
+     * to avoid all file being highlighted in red.
+     */
+    fun isConfigurationCached(file: KtFile): Boolean
+
+    /**
+     * Clear configuration caches
+     * Start re-highlighting for opened scripts
+     */
+    fun clearConfigurationCachesAndRehighlight()
 
     @Deprecated("Use getScriptClasspath(KtFile) instead")
-    fun getScriptClasspath(file: VirtualFile): List<VirtualFile> {
-        val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return emptyList()
-        return getScriptClasspath(ktFile)
-    }
+    fun getScriptClasspath(file: VirtualFile): List<VirtualFile>
 
-    fun getScriptClasspath(file: KtFile): List<VirtualFile> =
-        toVfsRoots(cacheUpdater.getCurrentCompilationConfiguration(file)?.valueOrNull()?.dependenciesClassPath.orEmpty())
+    fun getScriptClasspath(file: KtFile): List<VirtualFile>
+    fun getConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper?
+    fun getScriptDependenciesClassFilesScope(file: VirtualFile): GlobalSearchScope
+    fun getScriptSdk(file: VirtualFile): Sdk?
+    fun getFirstScriptsSdk(): Sdk?
+    fun getAllScriptsDependenciesClassFilesScope(): GlobalSearchScope
+    fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
+    fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
+    fun getAllScriptDependenciesSources(): List<VirtualFile>
+}
 
-    fun getRefinedCompilationConfiguration(file: KtFile): ScriptCompilationConfigurationResult? =
-        cacheUpdater.getCurrentCompilationConfiguration(file)
-
-    fun getScriptDependenciesClassFilesScope(file: VirtualFile) = cache.scriptDependenciesClassFilesScope(file)
-    fun getScriptSdk(file: VirtualFile) = cache.getScriptSdk(file)
-
-    fun getAllScriptsSdks() = cache.allSdks
-
-    fun getAllScriptsDependenciesClassFilesScope() = cache.allDependenciesClassFilesScope
-    fun getAllScriptDependenciesSourcesScope() = cache.allDependenciesSourcesScope
-
-    fun getAllScriptsDependenciesClassFiles() = cache.allDependenciesClassFiles
-    fun getAllScriptDependenciesSources() = cache.allDependenciesSources
-
+@Deprecated("Use ScriptConfigurationManager instead")
+interface ScriptDependenciesManager : ScriptConfigurationManager {
     companion object {
         @JvmStatic
         fun getInstance(project: Project): ScriptDependenciesManager =
@@ -93,7 +124,7 @@ class ScriptDependenciesManager internal constructor(
                 return anyJavaSdk
             }
 
-            log.warn(
+            LOG.warn(
                 "Default Script SDK is null: " +
                         "projectSdk = ${ProjectRootManager.getInstance(project).projectSdk}, " +
                         "all sdks = ${getAllProjectSdks().joinToString("\n")}"
@@ -118,17 +149,9 @@ class ScriptDependenciesManager internal constructor(
             return res
         }
 
-        internal val log = Logger.getInstance(ScriptDependenciesManager::class.java)
-
         @TestOnly
         fun updateScriptDependenciesSynchronously(file: PsiFile, project: Project) {
-            val loader = SyncScriptDependenciesLoader(project)
-            val scriptDefinition = file.findScriptDefinition() ?: return
-            assert(file is KtFile) {
-                "PsiFile should be a KtFile, otherwise script dependencies cannot be loaded"
-            }
-            loader.loadDependencies(file as KtFile, scriptDefinition)
-            loader.notifyRootsChanged()
+            (getInstance(project) as ScriptConfigurationManagerImpl).updateScriptDependenciesSynchronously(file)
         }
     }
 }

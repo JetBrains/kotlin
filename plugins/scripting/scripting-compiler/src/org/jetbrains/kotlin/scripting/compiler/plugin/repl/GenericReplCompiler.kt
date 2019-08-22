@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import java.io.File
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.write
-import kotlin.script.experimental.api.valueOrNull
 
 // WARNING: not thread safe, assuming external synchronization
 
@@ -71,7 +70,7 @@ open class GenericReplCompiler(
             }
 
             val newDependencies =
-                ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptConfigurationResult(psiFile)?.valueOrNull()
+                ScriptDependenciesProvider.getInstance(checker.environment.project)?.getScriptConfiguration(psiFile)
                     ?.legacyDependencies
             var classpathAddendum: List<File>? = null
             if (compilerState.lastDependencies != newDependencies) {

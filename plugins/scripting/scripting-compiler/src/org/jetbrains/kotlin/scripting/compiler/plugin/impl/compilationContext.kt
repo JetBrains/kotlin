@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.compilerOptions
 import kotlin.script.experimental.api.dependencies
-import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.jdkHome
@@ -244,7 +243,7 @@ private fun CompilerConfiguration.updateWithRefinedConfigurations(
 ) {
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val updatedCompilerOptions = sourceFiles.flatMap {
-        dependenciesProvider?.getScriptConfigurationResult(it)?.valueOrNull()?.configuration?.get(
+        dependenciesProvider?.getScriptConfiguration(it)?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
         ) ?: emptyList()
     }

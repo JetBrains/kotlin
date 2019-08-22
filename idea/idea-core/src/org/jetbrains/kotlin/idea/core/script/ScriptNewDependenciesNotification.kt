@@ -16,7 +16,7 @@ import com.intellij.ui.EditorNotificationPanel
 import com.intellij.ui.HyperlinkLabel
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.psi.UserDataProperty
-import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 
 fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
     withSelectedEditor(project) { manager ->
@@ -28,9 +28,9 @@ fun VirtualFile.removeScriptDependenciesNotificationPanel(project: Project) {
 }
 
 fun VirtualFile.addScriptDependenciesNotificationPanel(
-    compilationConfigurationResult: ScriptCompilationConfigurationResult,
+    compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
     project: Project,
-    onClick: (ScriptCompilationConfigurationResult) -> Unit
+    onClick: (ScriptCompilationConfigurationWrapper) -> Unit
 ) {
     withSelectedEditor(project) { manager ->
         val existingPanel = notificationPanel
@@ -61,8 +61,8 @@ private fun VirtualFile.withSelectedEditor(project: Project, f: FileEditor.(File
 private var FileEditor.notificationPanel: NewScriptDependenciesNotificationPanel? by UserDataProperty<FileEditor, NewScriptDependenciesNotificationPanel>(Key.create("script.dependencies.panel"))
 
 private class NewScriptDependenciesNotificationPanel(
-    onClick: (ScriptCompilationConfigurationResult) -> Unit,
-    val compilationConfigurationResult: ScriptCompilationConfigurationResult,
+    onClick: (ScriptCompilationConfigurationWrapper) -> Unit,
+    val compilationConfigurationResult: ScriptCompilationConfigurationWrapper,
     project: Project
 ) : EditorNotificationPanel() {
 

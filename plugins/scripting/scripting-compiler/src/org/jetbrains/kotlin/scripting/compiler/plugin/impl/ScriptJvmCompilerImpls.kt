@@ -98,7 +98,7 @@ private fun compileImpl(
 
     val dependenciesProvider = ScriptDependenciesProvider.getInstance(context.environment.project)
     val getScriptConfiguration = { ktFile: KtFile ->
-        (dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration ?: context.baseScriptCompilationConfiguration)
+        (dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration ?: context.baseScriptCompilationConfiguration)
             .with {
                 // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
                 // performed with the expected classpath

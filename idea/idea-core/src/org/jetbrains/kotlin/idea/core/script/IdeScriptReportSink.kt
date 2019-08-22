@@ -16,13 +16,9 @@
 
 package org.jetbrains.kotlin.idea.core.script
 
-import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer
-import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.PsiManager
-import com.intellij.ui.EditorNotifications
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
@@ -34,15 +30,6 @@ class IdeScriptReportSink(val project: Project) : ScriptReportSink {
 
         // TODO: persist errors between launches?
         scriptFile.scriptDiagnostics = reports
-
-        ApplicationManager.getApplication().invokeLater {
-            if (scriptFile.isValid && !project.isDisposed) {
-                PsiManager.getInstance(project).findFile(scriptFile)?.let { psiFile ->
-                    DaemonCodeAnalyzer.getInstance(project).restart(psiFile)
-                    EditorNotifications.getInstance(project).updateNotifications(scriptFile)
-                }
-            }
-        }
     }
 
     companion object {

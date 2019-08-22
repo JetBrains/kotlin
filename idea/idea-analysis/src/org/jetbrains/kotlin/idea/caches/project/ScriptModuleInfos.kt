@@ -105,7 +105,7 @@ sealed class ScriptDependenciesInfo(val project: Project) : IdeaModuleInfo, Bina
     class ForProject(project: Project) : ScriptDependenciesInfo(project) {
         override val sdk: Sdk?
             get() {
-                return ScriptDependenciesManager.getInstance(project).getAllScriptsSdks().firstOrNull()
+                return ScriptDependenciesManager.getInstance(project).getFirstScriptsSdk()
                     ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
             }
 

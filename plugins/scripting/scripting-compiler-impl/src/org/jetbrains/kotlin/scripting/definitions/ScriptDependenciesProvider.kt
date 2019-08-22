@@ -12,6 +12,7 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationResult
+import org.jetbrains.kotlin.scripting.resolve.ScriptCompilationConfigurationWrapper
 import kotlin.script.experimental.api.valueOrNull
 import kotlin.script.experimental.dependencies.ScriptDependencies
 
@@ -22,16 +23,18 @@ open class ScriptDependenciesProvider constructor(
     @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun getScriptDependencies(file: VirtualFile): ScriptDependencies? {
         val ktFile = PsiManager.getInstance(project).findFile(file) as? KtFile ?: return null
-        return getScriptConfigurationResult(ktFile)?.valueOrNull()?.legacyDependencies
+        return getScriptConfiguration(ktFile)?.legacyDependencies
     }
 
     @Deprecated("Migrating to configuration refinement", level = DeprecationLevel.ERROR)
     fun getScriptDependencies(file: PsiFile): ScriptDependencies? {
         if (file !is KtFile) return null
-        return getScriptConfigurationResult(file)?.valueOrNull()?.legacyDependencies
+        return getScriptConfiguration(file)?.legacyDependencies
     }
 
     open fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? = null
+
+    open fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? = getScriptConfigurationResult(file)?.valueOrNull()
 
     companion object {
         fun getInstance(project: Project): ScriptDependenciesProvider? =

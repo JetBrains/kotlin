@@ -154,7 +154,7 @@ class KJvmReplCompilerImpl(val hostConfiguration: ScriptingHostConfiguration) : 
                     sourceFiles.first(),
                     sourceDependencies
                 ) { ktFile ->
-                    dependenciesProvider?.getScriptConfigurationResult(ktFile)?.valueOrNull()?.configuration
+                    dependenciesProvider?.getScriptConfiguration(ktFile)?.configuration
                         ?: context.baseScriptCompilationConfiguration
                 }
 
