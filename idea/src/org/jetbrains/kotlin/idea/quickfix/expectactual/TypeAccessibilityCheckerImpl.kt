@@ -32,26 +32,27 @@ class TypeAccessibilityCheckerImpl(
     override var existingFqNames: Collection<String> = emptyList()
 ) : TypeAccessibilityChecker {
     private val scope by lazy { GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule, targetModule.isTestModule) }
-    private val builtInsModule by lazy { targetModule.toDescriptor() }
+    private var builtInsModule: ModuleDescriptor? = targetModule.toDescriptor()
+        get() = if (field?.isValid != false) field
+        else {
+            field = targetModule.toDescriptor()
+            field
+        }
 
-    override fun incorrectTypes(declaration: KtNamedDeclaration): Collection<FqName?> =
-        declaration.descriptor?.let { incorrectTypesInSequence(it.collectAllTypes(), false) } ?: listOf(null)
+    override fun incorrectTypes(declaration: KtNamedDeclaration): Collection<FqName?> = declaration.descriptor?.let {
+        incorrectTypesInSequence(it.collectAllTypes(), false)
+    } ?: listOf(null)
 
-    override fun incorrectTypes(descriptor: DeclarationDescriptor): Collection<FqName?> =
-        incorrectTypesInSequence(descriptor.collectAllTypes(), false)
+    override fun incorrectTypes(descriptor: DeclarationDescriptor): Collection<FqName?> = incorrectTypesInDescriptor(descriptor, false)
 
     override fun incorrectTypes(type: KotlinType): Collection<FqName?> = incorrectTypesInSequence(type.collectAllTypes(), false)
 
     override fun checkAccessibility(declaration: KtNamedDeclaration): Boolean =
         !declaration.hasPrivateModifier() && declaration.descriptor?.let { checkAccessibility(it) } == true
 
-    override fun checkAccessibility(descriptor: DeclarationDescriptor): Boolean =
-        runInContext(descriptor.additionalClasses(existingFqNames)) {
-            incorrectTypesInSequence(descriptor.collectAllTypes(), true).isEmpty()
-        }
+    override fun checkAccessibility(descriptor: DeclarationDescriptor): Boolean = incorrectTypesInDescriptor(descriptor, true).isEmpty()
 
-    override fun checkAccessibility(type: KotlinType): Boolean =
-        incorrectTypesInSequence(type.collectAllTypes(), true).isEmpty()
+    override fun checkAccessibility(type: KotlinType): Boolean = incorrectTypesInSequence(type.collectAllTypes(), true).isEmpty()
 
     override fun <R> runInContext(fqNames: Collection<String>, block: TypeAccessibilityChecker.() -> R): R {
         val oldValue = existingFqNames
@@ -69,11 +70,16 @@ class TypeAccessibilityCheckerImpl(
         } else sequence.filter { !it.canFindClassInModule() }.toList()
     }
 
+    private fun incorrectTypesInDescriptor(descriptor: DeclarationDescriptor, lazy: Boolean) =
+        runInContext(descriptor.additionalClasses(existingFqNames)) {
+            incorrectTypesInSequence(descriptor.collectAllTypes(), lazy)
+        }
+
     private fun FqName?.canFindClassInModule(): Boolean {
         val name = this?.asString() ?: return false
         return name in existingFqNames
-                || builtInsModule?.resolveClassByFqName(this, NoLookupLocation.FROM_BUILTINS) != null
                 || KotlinFullClassNameIndex.getInstance()[name, project, scope].isNotEmpty()
+                || builtInsModule?.resolveClassByFqName(this, NoLookupLocation.FROM_BUILTINS) != null
     }
 }
 
