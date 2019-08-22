@@ -19,6 +19,7 @@ object InlineClassDescriptorResolver {
     @JvmField
     val UNBOX_METHOD_NAME = Name.identifier("unbox")
 
+    @JvmField
     val SPECIALIZED_EQUALS_NAME = Name.identifier("equals-impl0")
 
     val BOXING_VALUE_PARAMETER_NAME = Name.identifier("v")

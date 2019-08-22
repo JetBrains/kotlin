@@ -1164,6 +1164,15 @@ public class AsmUtil {
         }
     }
 
+    public static void pop2(@NotNull MethodVisitor v, @NotNull Type topOfStack, @NotNull Type afterTop) {
+        if (topOfStack.getSize() == 1 && afterTop.getSize() == 1) {
+            v.visitInsn(POP2);
+        } else {
+            pop(v, topOfStack);
+            pop(v, afterTop);
+        }
+    }
+
     public static void pop2(@NotNull MethodVisitor v, @NotNull Type type) {
         if (type.getSize() == 2) {
             v.visitInsn(Opcodes.POP2);
@@ -1203,6 +1212,29 @@ public class AsmUtil {
         }
         else {
             throw new UnsupportedOperationException();
+        }
+    }
+
+    // Duplicate the element afterTop and push it on the top of the stack.
+    public static void dupSecond(@NotNull InstructionAdapter v, @NotNull Type topOfStack, @NotNull Type afterTop) {
+        if (afterTop.getSize() == 0) {
+            return;
+        }
+
+        if (topOfStack.getSize() == 0) {
+            dup(v, afterTop);
+        } else if (topOfStack.getSize() == 1 && afterTop.getSize() == 1) {
+            v.dup2();
+            v.pop();
+        } else {
+            swap(v, topOfStack, afterTop);
+            if (topOfStack.getSize() == 1 && afterTop.getSize() == 2) {
+                v.dup2X1();
+            } else if (topOfStack.getSize() == 2 && afterTop.getSize() == 1) {
+                v.dupX2();
+            } else /* top = 2, after top = 2 */ {
+                v.dup2X2();
+            }
         }
     }
 
