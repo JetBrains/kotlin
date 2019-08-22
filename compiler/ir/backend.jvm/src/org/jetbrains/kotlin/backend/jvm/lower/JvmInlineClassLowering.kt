@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.ir.copyParameterDeclarationsFrom
 import org.jetbrains.kotlin.backend.common.ir.passTypeArgumentsFrom
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -46,7 +47,7 @@ val jvmInlineClassPhase = makeIrFilePhase(
  * We do not unfold inline class types here. Instead, the type mapper will lower inline class
  * types to the types of their underlying field.
  */
-private class JvmInlineClassLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoid() {
+private class JvmInlineClassLowering(private val context: JvmBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     private val manager = MemoizedInlineClassReplacements()
     private val valueMap = mutableMapOf<IrValueSymbol, IrValueDeclaration>()
 
@@ -54,7 +55,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         irFile.transformChildrenVoid()
     }
 
-    override fun visitClass(declaration: IrClass): IrStatement {
+    override fun visitClassNew(declaration: IrClass): IrStatement {
         // The arguments to the primary constructor are in scope in the initializers of IrFields.
         declaration.primaryConstructor?.let {
             manager.getReplacementFunction(it)?.let { replacement ->
@@ -231,9 +232,10 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
         val function = expression.symbol.owner
         val replacement = manager.getReplacementFunction(function)
             ?: return super.visitFunctionAccess(expression)
-        return context.createIrBuilder(expression.symbol).irCall(replacement.function).apply {
-            buildReplacement(function, expression, replacement)
-        }
+        return context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol, expression.startOffset, expression.endOffset)
+            .irCall(replacement.function).apply {
+                buildReplacement(function, expression, replacement)
+            }
     }
 
     private fun coerceInlineClasses(argument: IrExpression, from: IrType, to: IrType) =
@@ -264,7 +266,7 @@ private class JvmInlineClassLowering(private val context: JvmBackendContext) : F
     override fun visitReturn(expression: IrReturn): IrExpression {
         expression.returnTargetSymbol.owner.safeAs<IrFunction>()?.let { target ->
             manager.getReplacementFunction(target)?.let {
-                return context.createIrBuilder(it.function.symbol).irReturn(
+                return context.createIrBuilder(it.function.symbol, expression.startOffset, expression.endOffset).irReturn(
                     expression.value.transform(this, null)
                 )
             }
