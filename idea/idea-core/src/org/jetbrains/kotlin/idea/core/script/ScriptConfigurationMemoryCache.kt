@@ -78,19 +78,19 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
 
             @Suppress("FoldInitializerAndIfToElvis")
             if (sdk == null) {
-                return@createWeakMap NonClasspathDirectoriesScope.compose(ScriptDependenciesManager.toVfsRoots(roots))
+                return@createWeakMap NonClasspathDirectoriesScope.compose(ScriptConfigurationManager.toVfsRoots(roots))
             }
 
             return@createWeakMap NonClasspathDirectoriesScope.compose(
                 sdk.rootProvider.getFiles(OrderRootType.CLASSES).toList() +
-                        ScriptDependenciesManager.toVfsRoots(roots)
+                        ScriptConfigurationManager.toVfsRoots(roots)
             )
         }
 
     val scriptsSdksCache: MutableMap<VirtualFile, Sdk?> =
         ConcurrentFactoryMap.createWeakMap { file ->
             val compilationConfiguration = getConfiguration(file)
-            return@createWeakMap getScriptSdk(compilationConfiguration) ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+            return@createWeakMap getScriptSdk(compilationConfiguration) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
         }
 
     private fun getConfiguration(file: VirtualFile): ScriptCompilationConfigurationWrapper? {
@@ -99,7 +99,7 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
         if (configuration != null) return configuration
 
         val ktFile = runReadAction { PsiManager.getInstance(project).findFile(file) as? KtFile } ?: return null
-        return ScriptDependenciesManager.getInstance(project).getConfiguration(ktFile)
+        return ScriptConfigurationManager.getInstance(project).getConfiguration(ktFile)
     }
 
     private fun getScriptSdk(compilationConfiguration: ScriptCompilationConfigurationWrapper?): Sdk? {
@@ -139,7 +139,7 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
         val scriptDependenciesClasspath = scriptDependenciesCache.getAll()
             .flatMap { it.value.dependenciesClassPath }.distinct()
 
-        sdkFiles + ScriptDependenciesManager.toVfsRoots(scriptDependenciesClasspath)
+        sdkFiles + ScriptConfigurationManager.toVfsRoots(scriptDependenciesClasspath)
     }
 
     val allDependenciesSources by ClearableLazyValue(cacheLock) {
@@ -148,7 +148,7 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
 
         val scriptDependenciesSources = scriptDependenciesCache.getAll()
             .flatMap { it.value.dependenciesSources }.distinct()
-        sdkSources + ScriptDependenciesManager.toVfsRoots(scriptDependenciesSources)
+        sdkSources + ScriptConfigurationManager.toVfsRoots(scriptDependenciesSources)
     }
 
     val allDependenciesClassFilesScope by ClearableLazyValue(cacheLock) {
@@ -201,14 +201,14 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
     }
 
     fun hasNotCachedRoots(compilationConfiguration: ScriptCompilationConfigurationWrapper): Boolean {
-        val scriptSdk = getScriptSdk(compilationConfiguration) ?: ScriptDependenciesManager.getScriptDefaultSdk(project)
+        val scriptSdk = getScriptSdk(compilationConfiguration) ?: ScriptConfigurationManager.getScriptDefaultSdk(project)
         val wasSdkChanged = scriptSdk != null && !allSdks.contains(scriptSdk)
         if (wasSdkChanged) {
             debug { "sdk was changed: $compilationConfiguration" }
             return true
         }
 
-        val newClassRoots = ScriptDependenciesManager.toVfsRoots(compilationConfiguration.dependenciesClassPath)
+        val newClassRoots = ScriptConfigurationManager.toVfsRoots(compilationConfiguration.dependenciesClassPath)
         for (newClassRoot in newClassRoots) {
             if (!allDependenciesClassFiles.contains(newClassRoot)) {
                 debug { "class root was changed: $newClassRoot" }
@@ -216,7 +216,7 @@ class ScriptConfigurationMemoryCache internal constructor(private val project: P
             }
         }
 
-        val newSourceRoots = ScriptDependenciesManager.toVfsRoots(compilationConfiguration.dependenciesSources)
+        val newSourceRoots = ScriptConfigurationManager.toVfsRoots(compilationConfiguration.dependenciesSources)
         for (newSourceRoot in newSourceRoots) {
             if (!allDependenciesSources.contains(newSourceRoot)) {
                 debug { "source root was changed: $newSourceRoot" }

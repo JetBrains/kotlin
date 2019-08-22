@@ -22,7 +22,7 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.ResolveScopeProvider
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.StandardIdeScriptDefinition
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinition
@@ -47,7 +47,7 @@ class KotlinScriptResolveScopeProvider : ResolveScopeProvider() {
             scriptDefinition.asLegacyOrNull<StandardIdeScriptDefinition>() != null -> null
             scriptDefinition is ScriptDefinition.FromConfigurations || scriptDefinition.asLegacyOrNull<KotlinScriptDefinitionFromAnnotatedTemplate>() != null -> {
                 GlobalSearchScope.fileScope(project, file)
-                    .union(ScriptDependenciesManager.getInstance(project).getScriptDependenciesClassFilesScope(file))
+                    .union(ScriptConfigurationManager.getInstance(project).getScriptDependenciesClassFilesScope(file))
             }
             else -> null
         }

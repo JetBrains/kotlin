@@ -65,8 +65,8 @@ import com.intellij.util.io.exists
 import com.intellij.xml.XmlSchemaProvider
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.configuration.getModulesWithKotlinFiles
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.script.ScriptDefinitionsManager
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.toPsiFile
 import org.jetbrains.kotlin.idea.framework.KotlinSdkType
@@ -327,7 +327,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
         val initialText = editor.document.text
         try {
             if (isAKotlinScriptFile(fileName)) {
-                ScriptDependenciesManager.updateScriptDependenciesSynchronously(virtualFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fileInEditor.psiFile, project)
             }
 
             val tasksIdx = fileInEditor.document.text.indexOf(marker)
@@ -402,7 +402,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
                 val initialText = editor.document.text
                 if (isAKotlinScriptFile(fileName)) {
                     runAndMeasure("update script dependencies for $fileName") {
-                        ScriptDependenciesManager.updateScriptDependenciesSynchronously(virtualFile, project)
+                        ScriptConfigurationManager.updateScriptDependenciesSynchronously(file, project)
                     }
                 }
 
@@ -588,7 +588,7 @@ abstract class AbstractPerformanceProjectsTest : UsefulTestCase() {
             testName = "updateScriptDependencies ${notePrefix(note)}${simpleFilename(fileName)}",
             setUp = { it.setUpValue = openFileInEditor(project, fileName) },
             test = {
-                ScriptDependenciesManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile.virtualFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(it.setUpValue!!.psiFile, project)
                 it.value = it.setUpValue
             },
             tearDown = {

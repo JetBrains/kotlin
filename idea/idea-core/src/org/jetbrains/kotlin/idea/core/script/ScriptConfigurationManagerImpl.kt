@@ -19,7 +19,7 @@ import com.intellij.ui.EditorNotifications
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.jetbrains.annotations.TestOnly
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager.Companion.toVfsRoots
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager.Companion.toVfsRoots
 import org.jetbrains.kotlin.idea.core.script.dependencies.*
 import org.jetbrains.kotlin.idea.core.script.settings.KotlinScriptingSettings
 import org.jetbrains.kotlin.idea.core.util.EDT
@@ -32,9 +32,7 @@ import org.jetbrains.kotlin.scripting.resolve.ScriptReportSink
 import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.valueOrNull
 
-class ScriptConfigurationManagerImpl internal constructor(
-    private val project: Project
-) : ScriptConfigurationManager, ScriptDependenciesManager {
+class ScriptConfigurationManagerImpl internal constructor(private val project: Project) : ScriptConfigurationManager {
     private val rootsManager = ScriptClassRootsManager(project)
 
     private val memoryCache = ScriptConfigurationMemoryCache(project)
@@ -206,7 +204,7 @@ class ScriptConfigurationManagerImpl internal constructor(
      * @param skipNotification forces loading new configuration even if auto reload is disabled.
      * @param skipSaveToAttributes skips saving to FileAttributes (used in [ScriptConfigurationFileAttributeCache] only).
      *
-     * @sample ScriptDependenciesManager.getConfiguration
+     * @sample ScriptConfigurationManager.getConfiguration
      */
     private fun saveConfiguration(
         file: VirtualFile,

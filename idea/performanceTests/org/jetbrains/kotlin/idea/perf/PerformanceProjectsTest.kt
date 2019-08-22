@@ -12,7 +12,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.psi.PsiElement
 import com.intellij.testFramework.propertyBased.MadTestingUtil
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiChecker
 import org.jetbrains.kotlin.idea.highlighter.KotlinPsiCheckerAndHighlightingUpdater
 import org.jetbrains.kotlin.idea.testFramework.Fixture
@@ -260,7 +260,7 @@ class PerformanceProjectsTest : AbstractPerformanceProjectsTest() {
 
             // Note: Kotlin scripts require dependencies to be loaded
             if (isAKotlinScriptFile(fileName)) {
-                ScriptDependenciesManager.updateScriptDependenciesSynchronously(fileInEditor.psiFile.virtualFile, project)
+                ScriptConfigurationManager.updateScriptDependenciesSynchronously(fileInEditor.psiFile, project)
             }
 
             resetTimestamp()

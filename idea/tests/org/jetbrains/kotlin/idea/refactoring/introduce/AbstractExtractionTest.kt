@@ -29,7 +29,7 @@ import com.intellij.testFramework.fixtures.CodeInsightTestFixture
 import com.intellij.testFramework.fixtures.JavaCodeInsightTestFixture
 import com.intellij.testFramework.fixtures.LightCodeInsightFixtureTestCase
 import org.jetbrains.kotlin.idea.KotlinFileType
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.util.CodeInsightUtils
 import org.jetbrains.kotlin.idea.refactoring.checkConflictsInteractively
 import org.jetbrains.kotlin.idea.refactoring.chooseMembers
@@ -324,7 +324,7 @@ abstract class AbstractExtractionTest : KotlinLightCodeInsightFixtureTestCase() 
         if (mainFile.extension == KotlinParserDefinition.STD_SCRIPT_SUFFIX) {
             val virtualFile = VfsUtil.findFileByIoFile(mainFile, true)!!
             val ktFile = PsiManager.getInstance(project).findFile(virtualFile)!!
-            ScriptDependenciesManager.updateScriptDependenciesSynchronously(ktFile, project)
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(ktFile, project)
         }
 
         fixture.testDataPath = "${KotlinTestUtils.getHomeDirectory()}/${mainFile.parent}"

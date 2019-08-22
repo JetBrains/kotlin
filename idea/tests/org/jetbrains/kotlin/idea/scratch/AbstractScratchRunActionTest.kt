@@ -23,7 +23,7 @@ import com.intellij.util.ui.UIUtil
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.actions.KOTLIN_WORKSHEET_EXTENSION
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.highlighter.KotlinHighlightingUtil
 import org.jetbrains.kotlin.idea.scratch.actions.ClearScratchAction
 import org.jetbrains.kotlin.idea.scratch.actions.RunScratchAction
@@ -204,7 +204,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
 
         myFixture.openFileInEditor(scratchVirtualFile)
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch file")
@@ -217,7 +217,7 @@ abstract class AbstractScratchRunActionTest : FileEditorManagerTestCase() {
     protected fun configureWorksheetByText(name: String, text: String): ScratchFile {
         val worksheetFile = myFixture.configureByText(name, text).virtualFile
 
-        ScriptDependenciesManager.updateScriptDependenciesSynchronously(myFixture.file, project)
+        ScriptConfigurationManager.updateScriptDependenciesSynchronously(myFixture.file, project)
 
         val scratchFileEditor = getScratchEditorForSelectedFile(myManager, myFixture.file.virtualFile)
             ?: error("Couldn't find scratch panel")

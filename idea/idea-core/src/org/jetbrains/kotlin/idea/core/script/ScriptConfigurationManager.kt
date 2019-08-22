@@ -39,7 +39,7 @@ import kotlin.script.experimental.api.makeFailureResult
 // NOTE: this service exists exclusively because ScriptDependencyManager
 // cannot be registered as implementing two services (state would be duplicated)
 class IdeScriptDependenciesProvider(
-    private val scriptDependenciesManager: ScriptDependenciesManager,
+    private val scriptConfigurationManager: ScriptConfigurationManager,
     project: Project
 ) : ScriptDependenciesProvider(project) {
     override fun getScriptConfigurationResult(file: KtFile): ScriptCompilationConfigurationResult? {
@@ -52,7 +52,7 @@ class IdeScriptDependenciesProvider(
     }
 
     override fun getScriptConfiguration(file: KtFile): ScriptCompilationConfigurationWrapper? {
-        return scriptDependenciesManager.getConfiguration(file)
+        return scriptConfigurationManager.getConfiguration(file)
     }
 
 }
@@ -106,14 +106,11 @@ interface ScriptConfigurationManager {
     fun getAllScriptDependenciesSourcesScope(): GlobalSearchScope
     fun getAllScriptsDependenciesClassFiles(): List<VirtualFile>
     fun getAllScriptDependenciesSources(): List<VirtualFile>
-}
 
-@Deprecated("Use ScriptConfigurationManager instead")
-interface ScriptDependenciesManager : ScriptConfigurationManager {
     companion object {
         @JvmStatic
-        fun getInstance(project: Project): ScriptDependenciesManager =
-            ServiceManager.getService(project, ScriptDependenciesManager::class.java)
+        fun getInstance(project: Project): ScriptConfigurationManager =
+            ServiceManager.getService(project, ScriptConfigurationManager::class.java)
 
         fun getScriptDefaultSdk(project: Project): Sdk? {
             val projectSdk = ProjectRootManager.getInstance(project).projectSdk?.takeIf { it.canBeUsedForScript() }

@@ -43,7 +43,7 @@ import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.findModuleDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.core.isInheritable
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.core.toDescriptor
 import org.jetbrains.kotlin.idea.findUsages.KotlinFindUsagesHandlerFactory
 import org.jetbrains.kotlin.idea.findUsages.handlers.KotlinFindClassUsagesHandler
@@ -136,7 +136,7 @@ class UnusedSymbolInspection : AbstractKotlinInspection() {
 
             val usedScripts = findScriptsWithUsages(declaration)
             if (usedScripts.isNotEmpty()) {
-                if (ScriptDependenciesManager.getInstance(declaration.project).updateConfigurationsIfNotCached(usedScripts)) {
+                if (ScriptConfigurationManager.getInstance(declaration.project).updateConfigurationsIfNotCached(usedScripts)) {
                     return TOO_MANY_OCCURRENCES
                 }
             }

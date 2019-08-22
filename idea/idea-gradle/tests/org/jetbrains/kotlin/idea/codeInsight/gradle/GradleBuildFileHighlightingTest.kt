@@ -10,7 +10,7 @@ import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.diagnostics.rendering.DefaultErrorMessages
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 import org.jetbrains.kotlin.idea.util.application.runReadAction
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.tooling.annotation.TargetVersions
@@ -48,7 +48,7 @@ class GradleBuildFileHighlightingTest : GradleImportingTestCase() {
             val psiFile = PsiManager.getInstance(myProject).findFile(file) as? KtFile
                 ?: error("Couldn't find psiFile for virtual file: ${file.canonicalPath}")
 
-            ScriptDependenciesManager.updateScriptDependenciesSynchronously(psiFile, myProject)
+            ScriptConfigurationManager.updateScriptDependenciesSynchronously(psiFile, myProject)
 
             val bindingContext = psiFile.analyzeWithContent()
 

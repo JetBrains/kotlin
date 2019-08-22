@@ -190,7 +190,7 @@ class ScriptDefinitionsManager(private val project: Project) : LazyScriptDefinit
         scriptDefinitionsCacheLock.write { scriptDefinitionsCache.clear() }
 
         // TODO: clear by script type/definition
-        ScriptDependenciesManager.getInstance(project).clearConfigurationCachesAndRehighlight()
+        ScriptConfigurationManager.getInstance(project).clearConfigurationCachesAndRehighlight()
     }
 
     private fun ScriptDefinitionsSource.safeGetDefinitions(): List<ScriptDefinition> {

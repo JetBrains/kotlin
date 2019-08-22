@@ -23,11 +23,11 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesInfo
 import org.jetbrains.kotlin.idea.caches.project.ScriptDependenciesSourceInfo
 import org.jetbrains.kotlin.idea.caches.project.getModuleInfoByVirtualFile
-import org.jetbrains.kotlin.idea.core.script.ScriptDependenciesManager
+import org.jetbrains.kotlin.idea.core.script.ScriptConfigurationManager
 
 class ScriptDependenciesResolveScopeProvider : ResolveScopeProvider() {
     override fun getResolveScope(file: VirtualFile, project: Project): GlobalSearchScope? {
-        if (ScriptDependenciesManager.getInstance(project).getAllScriptsDependenciesClassFiles().isEmpty()) return null
+        if (ScriptConfigurationManager.getInstance(project).getAllScriptsDependenciesClassFiles().isEmpty()) return null
 
         val moduleInfo = getModuleInfoByVirtualFile(project, file) ?: return null
         val scriptDependenciesModuleInfo = (moduleInfo as? ScriptDependenciesInfo)
