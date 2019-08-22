@@ -235,6 +235,8 @@ abstract class AbstractKotlinNativeCompile : AbstractCompile(), KotlinCompile<Ko
     private fun buildCommonArgs(defaultsOnly: Boolean = false): List<String> = mutableListOf<String>().apply {
 
         add("-Xmulti-platform")
+        // Endorsed libs are disabled in plugin.
+        add("-noendorsedlibs")
 
         // Language features.
         addArgIfNotNull("-language-version", languageVersion)
