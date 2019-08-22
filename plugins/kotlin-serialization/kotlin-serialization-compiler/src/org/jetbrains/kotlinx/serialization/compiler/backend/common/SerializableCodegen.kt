@@ -36,7 +36,7 @@ abstract class SerializableCodegen(
 
     private fun generateSyntheticInternalConstructor() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return
-        if (isAbstractSerializableClass(serializableDescriptor) || SerializerCodegen.getSyntheticLoadMember(serializerDescriptor) != null) {
+        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass() || SerializerCodegen.getSyntheticLoadMember(serializerDescriptor) != null) {
             val constrDesc = serializableDescriptor.secondaryConstructors.find(ClassConstructorDescriptor::isSerializationCtor) ?: return
             generateInternalConstructor(constrDesc)
         }
@@ -44,7 +44,7 @@ abstract class SerializableCodegen(
 
     private fun generateSyntheticMethods() {
         val serializerDescriptor = serializableDescriptor.classSerializer ?: return
-        if (isAbstractSerializableClass(serializableDescriptor) || SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) != null) {
+        if (serializableDescriptor.isAbstractSerializableClass() || serializableDescriptor.isSealedSerializableClass() || SerializerCodegen.getSyntheticSaveMember(serializerDescriptor) != null) {
             val func = KSerializerDescriptorResolver.createWriteSelfFunctionDescriptor(serializableDescriptor)
             generateWriteSelfMethod(func)
         }

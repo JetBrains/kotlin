@@ -90,6 +90,15 @@ fun AbstractSerialGenerator.getSerialTypeInfo(property: SerializableProperty): S
     }
 }
 
+fun AbstractSerialGenerator.immediateSealedSerializableSubclassesFor(
+    klass: ClassDescriptor,
+    module: ModuleDescriptor
+): Pair<List<KotlinType>, List<ClassDescriptor>> {
+    assert(klass.kind == ClassKind.CLASS && klass.modality == Modality.SEALED)
+    val serializableSubtypes = klass.sealedSubclasses.map { it.toSimpleType() }
+    return serializableSubtypes to serializableSubtypes.mapNotNull { findTypeSerializerOrContextUnchecked(module, it) }
+}
+
 fun KotlinType.serialName(): String {
     val serializableDescriptor = this.toClassDescriptor!!
     return serializableDescriptor.serialName()
