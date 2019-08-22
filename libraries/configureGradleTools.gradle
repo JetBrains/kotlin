@@ -1,3 +1,13 @@
+import de.undercouch.gradle.tasks.download.Download
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'de.undercouch:gradle-download-task:4.0.0'
+    }
+}
 
 configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project(':kotlin-noarg'), project(':kotlin-serialization')]) { project ->
     apply plugin: 'com.gradle.plugin-publish'
@@ -10,12 +20,26 @@ configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project
         }
 
         if (project.hasProperty("${project.name}-jar")) {
+            apply plugin: 'de.undercouch.download'
+
+            def artifactName = "${project.name}-${project.version}.jar"
+            def prebuiltJarFile = file("$buildDir/prebuiltJar/$artifactName")
+
+            task downloadPrebuiltJar(type: Download) {
+                def artifactUrlSuffix =
+                        project.group.split("\\.").join("/") + "/" + project.name + "/" + project.version + "/" + artifactName
+                src "https://repo.maven.apache.org/maven2/$artifactUrlSuffix"
+                dest prebuiltJarFile
+                overwrite true
+            }
+
             println("Using pre-built artifact for ${project.name}")
             configurations.archives.artifacts.clear()
 
             artifacts {
-                archives(file(project.getProperty("${project.name}-jar"))) {
+                archives(prebuiltJarFile) {
                     name project.name
+                    builtBy downloadPrebuiltJar
                 }
             }
         }
