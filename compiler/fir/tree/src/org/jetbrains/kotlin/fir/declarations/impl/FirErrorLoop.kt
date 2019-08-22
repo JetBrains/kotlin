@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirErrorExpressionImpl
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 class FirErrorLoop(
@@ -28,5 +29,17 @@ class FirErrorLoop(
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         super<FirLoop>.acceptChildren(visitor, data)
+    }
+
+    override fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirLoop {
+        return this
+    }
+
+    override fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop {
+        return this
+    }
+
+    override fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirLoop {
+        return this
     }
 }

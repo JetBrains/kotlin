@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.VisitedSupertype
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 interface FirLoop : @VisitedSupertype FirStatement, FirLabeledElement, FirAnnotationContainer {
@@ -22,4 +23,8 @@ interface FirLoop : @VisitedSupertype FirStatement, FirLabeledElement, FirAnnota
         block.accept(visitor, data)
         super<FirLabeledElement>.acceptChildren(visitor, data)
     }
+
+    fun <D> transformCondition(transformer: FirTransformer<D>, data: D): FirLoop
+    fun <D> transformBlock(transformer: FirTransformer<D>, data: D): FirLoop
+    fun <D> transformRestChildren(transformer: FirTransformer<D>, data: D): FirLoop
 }
