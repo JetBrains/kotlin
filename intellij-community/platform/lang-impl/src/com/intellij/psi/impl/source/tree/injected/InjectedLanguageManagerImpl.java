@@ -401,13 +401,6 @@ public class InjectedLanguageManagerImpl extends InjectedLanguageManager impleme
     }
   }
 
-  public static FileViewProvider getOriginalProvider(FileViewProvider provider) {
-    if (provider instanceof InjectedFileViewProvider) {
-      return ((AbstractFileViewProvider)provider).getManager().getFileManager().createFileViewProvider(provider.getVirtualFile(), false);
-    }
-    return provider;
-  }
-
   @FunctionalInterface
   interface InjProcessor {
     boolean process(@NotNull PsiElement element, @NotNull MultiHostInjector injector);

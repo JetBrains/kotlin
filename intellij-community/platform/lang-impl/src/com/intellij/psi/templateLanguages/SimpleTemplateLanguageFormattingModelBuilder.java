@@ -24,7 +24,6 @@ import com.intellij.psi.PsiFile;
 import com.intellij.psi.codeStyle.CodeStyleSettings;
 import com.intellij.psi.formatter.DocumentBasedFormattingModel;
 import com.intellij.psi.formatter.common.AbstractBlock;
-import com.intellij.psi.impl.source.tree.injected.InjectedLanguageManagerImpl;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -38,7 +37,7 @@ public class SimpleTemplateLanguageFormattingModelBuilder implements FormattingM
   @NotNull
   public FormattingModel createModel(final PsiElement element, final CodeStyleSettings settings) {
     if (element instanceof PsiFile) {
-      final FileViewProvider viewProvider = InjectedLanguageManagerImpl.getOriginalProvider(((PsiFile)element).getViewProvider());
+      final FileViewProvider viewProvider = ((PsiFile)element).getViewProvider();
       if (viewProvider instanceof TemplateLanguageFileViewProvider) {
         final Language templateDataLanguage = ((TemplateLanguageFileViewProvider)viewProvider).getTemplateDataLanguage();
         FormattingModelBuilder builder = LanguageFormatting.INSTANCE.forLanguage(templateDataLanguage);
