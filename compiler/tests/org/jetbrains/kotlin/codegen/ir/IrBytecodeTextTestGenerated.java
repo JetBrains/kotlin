@@ -2453,6 +2453,11 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/defaultParametersDontBox.kt");
         }
 
+        @TestMetadata("equalsDoesNotBox.kt")
+        public void testEqualsDoesNotBox() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsDoesNotBox.kt");
+        }
+
         @TestMetadata("equalsIsCalledByInlineClass.kt")
         public void testEqualsIsCalledByInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/equalsIsCalledByInlineClass.kt");
