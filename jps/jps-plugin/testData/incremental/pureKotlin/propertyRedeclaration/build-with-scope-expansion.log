@@ -1,10 +1,7 @@
 ================ Step #1 =================
 
-Cleaning output files:
-  out/production/module/META-INF/module.kotlin_module
-  out/production/module/test/Prop2Kt.class
-End of files
 Compiling files:
+  src/prop1.kt
   src/prop2.kt
 End of files
 Exit code: ABORT

@@ -1,0 +1,10 @@
+================ Step #1 =================
+
+Compiling files:
+  src/fun1.kt
+  src/fun2.kt
+End of files
+Exit code: ABORT
+------------------------------------------
+COMPILATION FAILED
+Conflicting overloads: public constructor function() defined in test.function, public fun function(): Unit defined in test
