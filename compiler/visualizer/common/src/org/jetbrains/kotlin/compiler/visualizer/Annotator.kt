@@ -12,9 +12,9 @@ object Annotator {
     private const val verticalLine = "│"
     private const val comment = "//"
 
-    class AnnotationInfo(val text: String, val range: TextRange)
+    data class AnnotationInfo(val text: String, val range: TextRange)
 
-    private fun putAnnotationToLines(annotations: List<AnnotationInfo>, lineStart: Int, lineSize: Int): List<StringBuilder> {
+    private fun putAnnotationToLines(annotations: List<AnnotationInfo>, lineStart: Int, lineSize: Int): List<String> {
         val annotationLines = mutableListOf(StringBuilder(comment + " ".repeat(lineSize - comment.length)))
         val levelToOffset = mutableMapOf(0 to 0)
 
@@ -40,10 +40,10 @@ object Annotator {
             }
         }
 
-        return annotationLines
+        return annotationLines.map { it.trim().toString() }
     }
 
-    fun annotate(text: String, annotation: List<AnnotationInfo>): List<String> {
+    fun annotate(text: String, annotation: Set<AnnotationInfo>): List<String> {
         val lines = text.lines()
         val resultLines = mutableListOf<String>()
         var lineStartOffset = 0
@@ -55,7 +55,7 @@ object Annotator {
 
             if (annotations.isNotEmpty()) {
                 val annotationLines = putAnnotationToLines(annotations, lineStartOffset, line.length)
-                annotationLines.asReversed().mapTo(resultLines) { it.toString() }
+                resultLines += annotationLines.asReversed()
             }
             resultLines.add(line)
 

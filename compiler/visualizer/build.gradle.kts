@@ -4,6 +4,7 @@ plugins {
 
 dependencies {
     testRuntime(intellijDep())
+    testCompile(intellijCoreDep()) { includeJars("intellij-core") }
     
     testCompile(project(":compiler:visualizer:render-psi"))
     testCompile(project(":compiler:visualizer:render-fir"))

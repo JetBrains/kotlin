@@ -1,15 +1,16 @@
 data class Tuple(val x: Int, val y: Int)
 
-//                                  fun ((Tuple) -> Int).invoke(Tuple): Int
-//                                  │ constructor Tuple(Int, Int)
-//                                  │ │     Int   
-//                                  │ │     │  Int
-//                                  │ │     │  │  
+//                                Int
+//                                │ fun ((Tuple) -> Int).invoke(Tuple): Int
+//                                │ │ constructor Tuple(Int, Int)
+//                                │ │ │     Int
+//                                │ │ │     │  Int
+//                                │ │ │     │  │
 inline fun use(f: (Tuple) -> Int) = f(Tuple(1, 2))
 
 fun foo(): Int {
-//      (Tuple) -> Int    
-//      │                 
+//      (Tuple) -> Int
+//      │
     val l1 = { t: Tuple ->
 //              foo.<anonymous>.t: Tuple
 //          Int │ val (Tuple).x: Int
@@ -29,13 +30,13 @@ fun foo(): Int {
 //  │               val foo.<anonymous>.x: Int
 //  │      Int      │ fun (Int).plus(Int): Int
 //  │      │  Int   │ │ val foo.<anonymous>.y: Int
-//  │      │  │     │ │ │  
+//  │      │  │     │ │ │
     use { (x, y) -> x + y }
 
 //         fun use((Tuple) -> Int): Int
-//         │    
+//         │
     return use {
-//      Unit                       
+//      Unit
 //      │   foo.<anonymous>.it: Tuple
 //      │   │  val (Tuple).x: Int
 //      │   │  │ fun (Any).equals(Any?): Boolean
@@ -51,9 +52,9 @@ fun foo(): Int {
 
 fun bar(): Int {
 //         fun use((Tuple) -> Int): Int
-//         │           
+//         │
     return use lambda@{
-//      Unit                       
+//      Unit
 //      │   bar.<anonymous>.it: Tuple
 //      │   │  val (Tuple).x: Int
 //      │   │  │ fun (Any).equals(Any?): Boolean
@@ -71,24 +72,24 @@ fun bar(): Int {
 //             │
 fun test(list: List<Int>) {
 //      collections/MutableMap<Int, String>
-//      │     fun <K, V> collections/mutableMapOf(): collections/MutableMap<Int, String>
-//      │     │                          
+//      │     fun <K, V> collections/mutableMapOf<Int, String>(): collections/MutableMap<Int, String>
+//      │     │
     val map = mutableMapOf<Int, String>()
 //  test.list: collections/List<Int>
-//  │    fun <T> collections/Iterable<Int>.forEach((Int) -> Unit): Unit
+//  │    fun <T> collections/Iterable<Int>.forEach<Int>((Int) -> Unit): Unit
 //  │    │         val test.map: collections/MutableMap<Int, String>
-//  │    │         │   fun <K, V> collections/MutableMap<Int, String>.getOrPut(Int, () -> String): String
+//  │    │         │   fun <K, V> collections/MutableMap<Int, String>.getOrPut<Int, String>(Int, () -> String): String
 //  │    │         │   │        test.<anonymous>.it: Int
-//  │    │         │   │        │     fun <T> collections/mutableListOf(): collections/MutableList<???>
+//  │    │         │   │        │     fun <T> collections/mutableListOf<???>(): collections/MutableList<???>
 //  │    │         │   │        │     │                  fun (String).plus(Any?): String
-//  │    │         │   │        │     │                  │      
+//  │    │         │   │        │     │                  │
     list.forEach { map.getOrPut(it, { mutableListOf() }) += "" }
 }
 
-//  () -> Unit  
-//  │           
+//  () -> Unit
+//  │
 val simple = { }
 
-//  () -> Int   Int 
-//  │           │   
+//  () -> Int   Int
+//  │           │
 val another = { 42 }

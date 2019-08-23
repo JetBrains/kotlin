@@ -41,7 +41,7 @@ enum class Planet(val m: Double, internal val r: Double) {
         }
     };
 
-//                  val (Planet/Companion).G: Double
+//                  val (Planet.Companion).G: Double
 //                  │ fun (Double).times(Double): Double
 //                  │ │ val (Planet).m: Double
 //                  │ │ │ fun (Double).div(Double): Double

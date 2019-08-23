@@ -45,8 +45,8 @@ var withSetter
 //          val p4: String
 //          │
     get() = p4
-//               <set-withSetter>.value: String
-//               │
+//      String   <set-withSetter>.value: String
+//      │        │
     set(value) = value
 
 //  Boolean
@@ -62,6 +62,8 @@ val withGetter2: Boolean
 //  │
 var withSetter2: String
     get() = "1"
+//      String
+//      │
     set(value) {
 //      var <set-withSetter2>.field: String
 //      │       <set-withSetter2>.value: String

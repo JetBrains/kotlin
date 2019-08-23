@@ -13,7 +13,7 @@ class B {
 }
 
 fun foo(a: Int, b: Int): Int {
-//  fun <T, R> with(A, A.() -> Int): Int
+//  fun <T, R> with<A, Int>(A, A.() -> Int): Int
 //  │    constructor A()
 //  │    │    with@0
 //  │    │    │
@@ -23,7 +23,7 @@ fun foo(a: Int, b: Int): Int {
 //      │
         aProp
 
-//      fun <T, R> with(B, B.() -> Int): Int
+//      fun <T, R> with<B, Int>(B, B.() -> Int): Int
 //      │    constructor B()
 //      │    │    with@1
 //      │    │    │
@@ -43,7 +43,7 @@ fun foo(a: Int, b: Int): Int {
         }
     }
 
-//  fun <T, R> with(A, A.() -> Int): Int
+//  fun <T, R> with<A, Int>(A, A.() -> Int): Int
 //  │    constructor A()
 //  │    │    with@0
 //  │    │    │
@@ -53,7 +53,7 @@ fun foo(a: Int, b: Int): Int {
 //      │
         aProp
 
-//      fun <T, R> with(B, B.() -> Int): Int
+//      fun <T, R> with<B, Int>(B, B.() -> Int): Int
 //      │    constructor B()
 //      │    │    with@1
 //      │    │    │
@@ -68,7 +68,7 @@ fun foo(a: Int, b: Int): Int {
             bProp
         }
 
-//      fun <T, R> with(B, B.() -> Int): Int
+//      fun <T, R> with<B, Int>(B, B.() -> Int): Int
 //      │    constructor B()
 //      │    │    with@1
 //      │    │    │

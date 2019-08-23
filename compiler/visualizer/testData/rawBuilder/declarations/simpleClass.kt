@@ -17,20 +17,22 @@ class SomeClass : SomeInterface {
 //             │ │ SomeClass.foo.x: Int
 //             │ │ │ fun (String).plus(Any?): String
 //             │ │ │ │ val (SomeClass).baz: Int
-//             │ │ │ │ │  
+//             │ │ │ │ │
         return y + x + baz
     }
 
-//               Boolean     
-//               │           
+//               Boolean
+//               │
     override var bar: Boolean
 //              Boolean
-//              │   
+//              │
         get() = true
+//          Boolean
+//          │
         set(value) {}
 
-//               Double     
-//               │          
+//               Double
+//               │
     lateinit var fau: Double
 }
 
