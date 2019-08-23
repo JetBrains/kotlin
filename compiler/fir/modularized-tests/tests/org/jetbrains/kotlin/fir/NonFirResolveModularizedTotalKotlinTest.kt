@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import kotlin.system.measureNanoTime
 
-private val PASSES = 1
 
 class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
