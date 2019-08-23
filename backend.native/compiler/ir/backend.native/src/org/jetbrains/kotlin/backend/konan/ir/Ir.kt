@@ -226,6 +226,7 @@ internal class KonanSymbols(
     override val ThrowTypeCastException = internalFunction("ThrowTypeCastException")
 
     val throwInvalidReceiverTypeException = internalFunction("ThrowInvalidReceiverTypeException")
+    val throwIllegalStateException = internalFunction("ThrowIllegalStateException")
 
     override val ThrowUninitializedPropertyAccessException = internalFunction("ThrowUninitializedPropertyAccessException")
 
@@ -302,14 +303,6 @@ internal class KonanSymbols(
     val valuesForEnum = internalFunction("valuesForEnum")
 
     val valueOfForEnum = internalFunction("valueOfForEnum")
-
-    val enumValues = symbolTable.referenceSimpleFunction(
-             builtInsPackage("kotlin").getContributedFunctions(
-                     Name.identifier("enumValues"), NoLookupLocation.FROM_BACKEND).single())
-
-    val enumValueOf = symbolTable.referenceSimpleFunction(
-            builtInsPackage("kotlin").getContributedFunctions(
-                    Name.identifier("enumValueOf"), NoLookupLocation.FROM_BACKEND).single())
 
     val createUninitializedInstance = internalFunction("createUninitializedInstance")
 

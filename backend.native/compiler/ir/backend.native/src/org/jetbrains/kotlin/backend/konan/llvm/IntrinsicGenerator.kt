@@ -63,6 +63,9 @@ internal enum class IntrinsicType {
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
+    // Enums
+    ENUM_VALUES,
+    ENUM_VALUE_OF,
     // Coroutines
     GET_CONTINUATION,
     RETURN_IF_SUSPENDED,
@@ -246,6 +249,8 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_STATIC_C_FUNCTION,
                 IntrinsicType.INTEROP_FUNPTR_INVOKE,
                 IntrinsicType.INTEROP_CONVERT,
+                IntrinsicType.ENUM_VALUES,
+                IntrinsicType.ENUM_VALUE_OF,
                 IntrinsicType.WORKER_EXECUTE ->
                     reportNonLoweredIntrinsic(intrinsicType)
                 IntrinsicType.INIT_INSTANCE,

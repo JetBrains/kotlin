@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.backend.common.lower.EnumWhenLowering
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DECLARATION_ORIGIN_ENUM
+import org.jetbrains.kotlin.backend.konan.llvm.IntrinsicType
+import org.jetbrains.kotlin.backend.konan.llvm.tryGetIntrinsicType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -95,29 +97,30 @@ internal class EnumUsageLowering(val context: Context)
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid(this)
 
-        if (expression.symbol != enumValuesSymbol && expression.symbol != enumValueOfSymbol)
+        val intrinsicType = tryGetIntrinsicType(expression)
+        if (intrinsicType != IntrinsicType.ENUM_VALUES && intrinsicType != IntrinsicType.ENUM_VALUE_OF)
             return expression
 
+        val startOffset = expression.startOffset
+        val endOffset = expression.endOffset
         val irClassSymbol = expression.getTypeArgument(0)!!.classifierOrNull as? IrClassSymbol
-                ?: return expression // Type parameter.
 
-        if (irClassSymbol == context.ir.symbols.enum) return expression // Type parameter erased to 'Enum'.
+        if (irClassSymbol == null || irClassSymbol == context.ir.symbols.enum) {
+            // Either a type parameter or a type parameter erased to 'Enum'.
+            return irCall(startOffset, endOffset, context.ir.symbols.throwIllegalStateException.owner, emptyList())
+        }
 
         val irClass = irClassSymbol.owner
 
         assert (irClass.kind == ClassKind.ENUM_CLASS)
 
-        return if (expression.symbol == enumValuesSymbol) {
-            enumSyntheticFunctionsBuilder.buildValuesExpression(expression.startOffset, expression.endOffset, irClass)
+        return if (intrinsicType == IntrinsicType.ENUM_VALUES) {
+            enumSyntheticFunctionsBuilder.buildValuesExpression(startOffset, endOffset, irClass)
         } else {
             val value = expression.getValueArgument(0)!!
-            enumSyntheticFunctionsBuilder.buildValueOfExpression(expression.startOffset, expression.endOffset, irClass, value)
+            enumSyntheticFunctionsBuilder.buildValueOfExpression(startOffset, endOffset, irClass, value)
         }
     }
-
-    private val enumValueOfSymbol = context.ir.symbols.enumValueOf
-
-    private val enumValuesSymbol = context.ir.symbols.enumValues
 
     private fun loadEnumEntry(startOffset: Int, endOffset: Int, enumClass: IrClass, name: Name): IrExpression {
         val loweredEnum = context.specialDeclarationsFactory.getLoweredEnum(enumClass)

@@ -117,7 +117,7 @@ public fun <T: Enum<T>> valueOfForEnum(name: String, values: Array<T>) : T {
             else -> return values[middle]
         }
     }
-    throw Exception("Invalid enum name: $name")
+    throw Exception("Invalid enum value name: $name")
 }
 
 public fun <T: Enum<T>> valuesForEnum(values: Array<T>): Array<T> {
