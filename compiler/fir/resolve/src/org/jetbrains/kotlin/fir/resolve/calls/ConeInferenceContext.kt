@@ -12,12 +12,10 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.withArguments
 import org.jetbrains.kotlin.fir.resolve.withNullability
 import org.jetbrains.kotlin.fir.service
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
-import org.jetbrains.kotlin.fir.symbols.invoke
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
 import org.jetbrains.kotlin.types.model.*
@@ -59,10 +57,14 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext,
         nullable: Boolean
     ): SimpleTypeMarker {
         require(constructor is ConeClassifierSymbol)
-        when (constructor) {
-            is ConeClassLikeSymbol -> return ConeClassTypeImpl(
+        return when (constructor) {
+            is ConeClassLikeSymbol -> ConeClassTypeImpl(
                 constructor.toLookupTag(),
                 (arguments as List<ConeKotlinTypeProjection>).toTypedArray(),
+                nullable
+            )
+            is ConeTypeParameterSymbol -> ConeTypeParameterTypeImpl(
+                constructor.toLookupTag(),
                 nullable
             )
             else -> error("!")
