@@ -91,6 +91,21 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun androidNativeArm64(name: String, configure: Closure<*>) = androidNativeArm64(name) { ConfigureUtil.configure(configure, this) }
     fun androidNativeArm64(configure: Closure<*>) = androidNativeArm64 { ConfigureUtil.configure(configure, this) }
 
+    fun androidNativeX64(
+        name: String = "androidNativeX64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("androidNativeX64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun androidNativeX64() = androidNativeX64("androidNativeX64") { }
+    fun androidNativeX64(name: String) = androidNativeX64(name) { }
+    fun androidNativeX64(name: String, configure: Closure<*>) = androidNativeX64(name) { ConfigureUtil.configure(configure, this) }
+    fun androidNativeX64(configure: Closure<*>) = androidNativeX64 { ConfigureUtil.configure(configure, this) }
+
     fun iosArm32(
         name: String = "iosArm32",
         configure: KotlinNativeTarget.() -> Unit = { }
@@ -135,6 +150,66 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun iosX64(name: String) = iosX64(name) { }
     fun iosX64(name: String, configure: Closure<*>) = iosX64(name) { ConfigureUtil.configure(configure, this) }
     fun iosX64(configure: Closure<*>) = iosX64 { ConfigureUtil.configure(configure, this) }
+
+    fun watchosArm64(
+        name: String = "watchosArm64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosArm64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun watchosArm64() = watchosArm64("watchosArm64") { }
+    fun watchosArm64(name: String) = watchosArm64(name) { }
+    fun watchosArm64(name: String, configure: Closure<*>) = watchosArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun watchosArm64(configure: Closure<*>) = watchosArm64 { ConfigureUtil.configure(configure, this) }
+
+    fun watchosX64(
+        name: String = "watchosX64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("watchosX64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun watchosX64() = watchosX64("watchosX64") { }
+    fun watchosX64(name: String) = watchosX64(name) { }
+    fun watchosX64(name: String, configure: Closure<*>) = watchosX64(name) { ConfigureUtil.configure(configure, this) }
+    fun watchosX64(configure: Closure<*>) = watchosX64 { ConfigureUtil.configure(configure, this) }
+
+    fun tvosArm64(
+        name: String = "tvosArm64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("tvosArm64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun tvosArm64() = tvosArm64("tvosArm64") { }
+    fun tvosArm64(name: String) = tvosArm64(name) { }
+    fun tvosArm64(name: String, configure: Closure<*>) = tvosArm64(name) { ConfigureUtil.configure(configure, this) }
+    fun tvosArm64(configure: Closure<*>) = tvosArm64 { ConfigureUtil.configure(configure, this) }
+
+    fun tvosX64(
+        name: String = "tvosX64",
+        configure: KotlinNativeTarget.() -> Unit = { }
+    ): KotlinNativeTarget =
+        configureOrCreate(
+            name,
+            presets.getByName("tvosX64") as KotlinNativeTargetPreset,
+            configure
+        )
+
+    fun tvosX64() = tvosX64("tvosX64") { }
+    fun tvosX64(name: String) = tvosX64(name) { }
+    fun tvosX64(name: String, configure: Closure<*>) = tvosX64(name) { ConfigureUtil.configure(configure, this) }
+    fun tvosX64(configure: Closure<*>) = tvosX64 { ConfigureUtil.configure(configure, this) }
 
     fun linuxX64(
         name: String = "linuxX64",
