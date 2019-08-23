@@ -83,6 +83,11 @@ class Android25ProjectHandler(
                 .toTypedArray()
         }
         kotlinTask.javaOutputDir = javaTask.destinationDir
+
+        compilation.output.classesDirs.run {
+            from(project.files(kotlinTask.taskData.destinationDir).builtBy(kotlinTask))
+            from(project.files(project.provider { javaTask.destinationDir }).builtBy(javaTask))
+        }
     }
 
     override fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider> =

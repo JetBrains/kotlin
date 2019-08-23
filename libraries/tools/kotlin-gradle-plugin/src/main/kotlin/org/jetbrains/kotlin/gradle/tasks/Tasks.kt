@@ -139,7 +139,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     @get:Internal
     internal var buildReportMode: BuildReportMode? = null
 
-    private val taskData: KotlinCompileTaskData
+    @get:Internal
+    internal val taskData: KotlinCompileTaskData
         get() = KotlinCompileTaskData.get(project, name)
 
     @get:Input
