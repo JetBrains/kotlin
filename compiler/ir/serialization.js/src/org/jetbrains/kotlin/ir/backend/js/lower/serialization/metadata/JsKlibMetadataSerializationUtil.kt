@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.library.SerializedMetadata
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
@@ -16,50 +18,102 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.filterOutSourceAnnotations
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.serialization.AnnotationSerializer
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedPropertyDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
+import java.io.OutputStream
 
 object JsKlibMetadataSerializationUtil {
-    fun serializeMetadata(
-        bindingContext: BindingContext,
-        jsDescriptor: JsKlibMetadataModuleDescriptor<ModuleDescriptor>,
-        languageVersionSettings: LanguageVersionSettings,
-        metadataVersion: JsKlibMetadataVersion,
-        declarationTableHandler: (DeclarationDescriptor) -> JsKlibMetadataProtoBuf.DescriptorUniqId?
+
+    fun serializedMetadata(
+        module: ModuleDescriptor,
+        settings: LanguageVersionSettings,
+        importedModules: List<String>,
+        fragments: Map<String, List<ByteArray>>
     ): SerializedMetadata {
-        val libraryProto = JsKlibMetadataProtoBuf.Library.newBuilder()
-        jsDescriptor.imported.forEach { libraryProto.addImportedModule(it) }
-
-        val serializedFragments = HashMap<FqName, ProtoBuf.PackageFragment>()
-        val module = jsDescriptor.data
-        val fragments = mutableListOf<List<ByteArray>>()
         val fragmentNames = mutableListOf<String>()
+        val fragmentParts = mutableListOf<List<ByteArray>>()
 
-        for (fqName in getPackagesFqNames(module).sortedBy { it.asString() }) {
-            val fragment = serializeDescriptors(
-                bindingContext, module,
-                module.getPackage(fqName).memberScope.getContributedDescriptors(),
-                fqName, languageVersionSettings, metadataVersion, declarationTableHandler
-            )
+        for ((fqName, fragment) in fragments.entries.sortedBy { it.key }) {
+            fragmentNames += fqName
+            fragmentParts += fragment
+        }
 
-            if (!fragment.isEmpty()) {
-                serializedFragments[fqName] = fragment
+        val stream = ByteArrayOutputStream()
+
+        serializeHeader(module, null, settings).writeDelimitedTo(stream)
+        asLibrary().writeTo(stream)
+        stream.appendPackageFragments(fragments)
+        importedModules.forEach {
+            stream.writeProto(JsKlibMetadataProtoBuf.Library.IMPORTED_MODULE_FIELD_NUMBER, it.toByteArray())
+        }
+
+        val moduleLibrary = stream.toByteArray()
+
+        return SerializedMetadata(moduleLibrary, fragmentParts, fragmentNames)
+    }
+
+    private fun asLibrary(): JsKlibMetadataProtoBuf.Library {
+        return JsKlibMetadataProtoBuf.Library.newBuilder().build()
+    }
+
+    private fun OutputStream.writeProto(fieldNumber: Int, content: ByteArray) {
+        // Message header
+        write((fieldNumber shl 3) or 2)
+        // Size varint
+        var size = content.size
+        while (size > 0x7F) {
+            write(0x80 or (size and 0x7F))
+            size = size ushr 7
+        }
+        write(size)
+        // Fragment itself
+        write(content)
+    }
+
+    private fun OutputStream.appendPackageFragments(serializedFragments: Map<String, List<ByteArray>>) {
+        for ((_, fragments) in serializedFragments.entries.sortedBy { it.key }) {
+            for (fragment in fragments) {
+                writeProto(JsKlibMetadataProtoBuf.Library.PACKAGE_FRAGMENT_FIELD_NUMBER, fragment)
             }
         }
+    }
 
-        for ((fqName, fragment) in serializedFragments.entries.sortedBy { (fqName, _) -> fqName.asString() }) {
-            libraryProto.addPackageFragment(fragment)
-            fragments.add(listOf(fragment.toByteArray()))
-            fragmentNames.add(fqName.asString())
+    fun serializeHeader(
+        module: ModuleDescriptor, packageFqName: FqName?, languageVersionSettings: LanguageVersionSettings
+    ): JsKlibMetadataProtoBuf.Header {
+        val header = JsKlibMetadataProtoBuf.Header.newBuilder()
+
+        if (packageFqName != null) {
+            header.packageFqName = packageFqName.asString()
         }
 
-        val libraryAsByteArray = libraryProto.build().toByteArray()
-        return SerializedMetadata(libraryAsByteArray, fragments, fragmentNames)
+        if (languageVersionSettings.isPreRelease()) {
+            header.flags = 1
+        }
+
+        val experimentalAnnotationFqNames = languageVersionSettings.getFlag(AnalysisFlags.experimental)
+        if (experimentalAnnotationFqNames.isNotEmpty()) {
+            val stringTable = StringTableImpl()
+            for (fqName in experimentalAnnotationFqNames) {
+                val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_ALREADY_TRACKED) ?: continue
+                header.addAnnotation(ProtoBuf.Annotation.newBuilder().apply {
+                    id = stringTable.getFqNameIndex(descriptor)
+                })
+            }
+            val (strings, qualifiedNames) = stringTable.buildProto()
+            header.strings = strings
+            header.qualifiedNames = qualifiedNames
+        }
+
+        // TODO: write JS code binary version
+
+        return header.build()
     }
 
     fun serializeDescriptors(
@@ -143,33 +197,11 @@ object JsKlibMetadataSerializationUtil {
         return filesProto.build()
     }
 
-    private fun ProtoBuf.PackageFragment.isEmpty(): Boolean =
-        class_Count == 0 && `package`.let { it.functionCount == 0 && it.propertyCount == 0 && it.typeAliasCount == 0 }
-
-    private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-        return mutableSetOf<FqName>().apply {
-            getSubPackagesFqNames(module.getPackage(FqName.ROOT), this)
-            add(FqName.ROOT)
-        }
-    }
-
-    private fun getSubPackagesFqNames(packageView: PackageViewDescriptor, result: MutableSet<FqName>) {
-        val fqName = packageView.fqName
-        if (!fqName.isRoot) {
-            result.add(fqName)
-        }
-
-        for (descriptor in packageView.memberScope.getContributedDescriptors(DescriptorKindFilter.PACKAGES, MemberScope.ALL_NAME_FILTER)) {
-            if (descriptor is PackageViewDescriptor) {
-                getSubPackagesFqNames(descriptor, result)
-            }
-        }
-    }
-
     @JvmStatic
     fun readModuleAsProto(metadata: ByteArray): JsKlibMetadataParts {
-        val header = JsKlibMetadataProtoBuf.Header.parseFrom(metadata, JsKlibMetadataSerializerProtocol.extensionRegistry)
-        val content = JsKlibMetadataProtoBuf.Library.parseFrom(metadata, JsKlibMetadataSerializerProtocol.extensionRegistry)
+        val inputStream = ByteArrayInputStream(metadata)
+        val header = JsKlibMetadataProtoBuf.Header.parseDelimitedFrom(inputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
+        val content = JsKlibMetadataProtoBuf.Library.parseFrom(inputStream, JsKlibMetadataSerializerProtocol.extensionRegistry)
         return JsKlibMetadataParts(header, content.packageFragmentList, content.importedModuleList)
     }
 }

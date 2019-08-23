@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VfsUtilCore
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorTable
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -14,13 +16,14 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.CompositePackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrModuleSerializer
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsMangler
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.newJsDescriptorUniqId
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.metadata.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -30,12 +33,14 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.analyze.TopDownAnalyzerFacadeForJS
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.konan.KonanVersionImpl
 import org.jetbrains.kotlin.konan.MetaVersion
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.buildKoltinLibrary
 import org.jetbrains.kotlin.library.impl.createKotlinLibrary
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -43,9 +48,11 @@ import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.resolve.CompilerDeserializationConfiguration
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.DFS
+import java.io.File
 import org.jetbrains.kotlin.konan.file.File as KFile
 
 
@@ -73,6 +80,8 @@ private val emptyLoggingContext = object : LoggingContext {
 private val CompilerConfiguration.metadataVersion
     get() = get(CommonConfigurationKeys.METADATA_VERSION) as? JsKlibMetadataVersion ?: JsKlibMetadataVersion.INSTANCE
 
+class KotlinFileSerializedData(val metadata: ByteArray, val irData: SerializedIrFile)
+
 fun generateKLib(
     project: Project,
     files: List<KtFile>,
@@ -82,11 +91,38 @@ fun generateKLib(
     outputKlibPath: String,
     nopack: Boolean
 ) {
+    val incrementalDataProvider = configuration.get(JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER)
+
+    val icData: List<KotlinFileSerializedData>
+
+    if (incrementalDataProvider != null) {
+        val nonCompiledSources = files.map { VfsUtilCore.virtualToIoFile(it.virtualFile) to it }.toMap()
+        val compiledIrFiles = incrementalDataProvider.serializedIrFiles
+        val compiledMetaFiles = incrementalDataProvider.compiledPackageParts
+
+        assert(compiledIrFiles.size == compiledMetaFiles.size)
+
+        val storage = mutableListOf<KotlinFileSerializedData>()
+
+        for (f in compiledIrFiles.keys) {
+            if (f in nonCompiledSources) continue
+
+            val irData = compiledIrFiles[f] ?: error("No Ir Data found for file $f")
+            val metaFile = compiledMetaFiles[f] ?: error("No Meta Data found for file $f")
+            val irFile = with(irData) {
+                SerializedIrFile(fileData, String(fqn), f.path, symbols, types, strings, bodies, declarations)
+            }
+            storage.add(KotlinFileSerializedData(metaFile.metadata, irFile))
+        }
+
+        icData = storage
+    } else {
+        icData = emptyList()
+    }
+
     val depsDescriptors = ModulesStructure(project, files, configuration, allDependencies, friendDependencies)
 
     val psi2IrContext = runAnalysisAndPreparePsi2Ir(depsDescriptors)
-
-    trySaveIncrementalData(psi2IrContext, configuration, files)
 
     val moduleFragment = psi2IrContext.generateModuleFragment(files)
 
@@ -96,12 +132,13 @@ fun generateKLib(
 
     serializeModuleIntoKlib(
         moduleName,
-        configuration.metadataVersion,
-        configuration.languageVersionSettings,
+        configuration,
         psi2IrContext.bindingContext,
+        files,
         outputKlibPath,
         allDependencies,
         moduleFragment,
+        icData,
         nopack
     )
 }
@@ -211,7 +248,6 @@ private fun loadKlibMetadata(
     return md
 }
 
-
 private class ModulesStructure(
     private val project: Project,
     private val files: List<KtFile>,
@@ -284,33 +320,90 @@ private class ModulesStructure(
             null // null in case compiling builtInModule itself
 }
 
+private fun getDescriptorForElement(
+    context: BindingContext,
+    element: PsiElement
+): DeclarationDescriptor = BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, element)
+
 fun serializeModuleIntoKlib(
     moduleName: String,
-    metadataVersion: JsKlibMetadataVersion,
-    languageVersionSettings: LanguageVersionSettings,
+    configuration: CompilerConfiguration,
     bindingContext: BindingContext,
+    files: List<KtFile>,
     klibPath: String,
     dependencies: List<KotlinLibrary>,
     moduleFragment: IrModuleFragment,
+    cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean
 ) {
-    val descriptorTable = DescriptorTable()
+    assert(files.size == moduleFragment.files.size)
 
+    val descriptorTable = DescriptorTable()
     val serializedIr =
         JsIrModuleSerializer(emptyLoggingContext, moduleFragment.irBuiltins, descriptorTable).serializedIrModule(moduleFragment)
-    val serializer = JsKlibMetadataSerializationUtil
 
-    val moduleDescription =
-        JsKlibMetadataModuleDescriptor(moduleName, dependencies.map { it.moduleName }, moduleFragment.descriptor)
-    val serializedMetadata = serializer.serializeMetadata(
-        bindingContext,
-        moduleDescription,
-        languageVersionSettings,
-        metadataVersion
-    ) { declarationDescriptor ->
+    val moduleDescriptor = moduleFragment.descriptor
+
+    val descriptorSelector = { declarationDescriptor: DeclarationDescriptor ->
         val index = descriptorTable.get(declarationDescriptor) ?: error("No descriptor ID found for $declarationDescriptor")
         newJsDescriptorUniqId(index)
     }
+
+    val metadataVersion = configuration.metadataVersion
+    val languageVersionSettings = configuration.languageVersionSettings
+
+    fun serializeScope(fqName: FqName, memberScope: Collection<DeclarationDescriptor>): ByteArray {
+        return JsKlibMetadataSerializationUtil.serializeDescriptors(
+            bindingContext,
+            moduleDescriptor,
+            memberScope,
+            fqName,
+            languageVersionSettings,
+            metadataVersion,
+            descriptorSelector
+        ).toByteArray()
+    }
+
+    val incrementalResultsConsumer = configuration.get(JSConfigurationKeys.INCREMENTAL_RESULTS_CONSUMER)
+    val empty = ByteArray(0)
+
+    fun processCompiledFileData(ioFile: File, compiledFile: KotlinFileSerializedData) {
+        incrementalResultsConsumer?.run {
+            processPackagePart(ioFile, compiledFile.metadata, empty, empty)
+            with(compiledFile.irData) {
+                processIrFile(ioFile, fileData, symbols, types, strings, declarations, bodies, fqName.toByteArray())
+            }
+        }
+    }
+
+    val additionalFiles = mutableListOf<KotlinFileSerializedData>()
+
+    for ((ktFile, binaryFile) in files.zip(serializedIr.files)) {
+        val ioFile = VfsUtilCore.virtualToIoFile(ktFile.virtualFile)
+        assert(ioFile.path == binaryFile.path) { "The Kt and Ir files are put in different order" }
+        val memberScope = ktFile.declarations.map { getDescriptorForElement(bindingContext, it) }
+        val packageFragment = serializeScope(ktFile.packageFqName, memberScope)
+        val compiledKotlinFile = KotlinFileSerializedData(packageFragment, binaryFile)
+
+        additionalFiles += compiledKotlinFile
+        processCompiledFileData(ioFile, compiledKotlinFile)
+    }
+
+    incrementalResultsConsumer?.run {
+        processHeader(JsKlibMetadataSerializationUtil.serializeHeader(moduleDescriptor, null, languageVersionSettings).toByteArray())
+    }
+
+    val compiledKotlinFiles = cleanFiles + additionalFiles
+
+    val serializedMetadata =
+        JsKlibMetadataSerializationUtil.serializedMetadata(
+            moduleDescriptor,
+            languageVersionSettings,
+            dependencies.map { it.moduleName },
+            compiledKotlinFiles.groupBy { it.irData.fqName }.map { (fqn, data) -> fqn to data.sortedBy { it.irData.path }.map { it.metadata } }.toMap()
+        )
+
+    val fullSerializedIr = SerializedIrModule(compiledKotlinFiles.map { it.irData })
 
     val abiVersion = KotlinAbiVersion.CURRENT
     val compilerVersion = KonanVersionImpl(MetaVersion.DEV, 1, 3, 0, -1)
@@ -320,7 +413,7 @@ fun serializeModuleIntoKlib(
 
     buildKoltinLibrary(
         linkDependencies = dependencies,
-        ir = serializedIr,
+        ir = fullSerializedIr,
         metadata = serializedMetadata,
         dataFlowGraph = null,
         manifestProperties = null,
