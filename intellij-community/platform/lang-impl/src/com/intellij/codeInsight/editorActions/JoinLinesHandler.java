@@ -40,9 +40,9 @@ public class JoinLinesHandler extends EditorActionHandler {
   }
 
   @NotNull
-  private static TextRange findStartAndEnd(@NotNull CharSequence text, int start, int end, int maxoffset) {
+  private static TextRange findStartAndEnd(@NotNull CharSequence text, int start, int end) {
     while (start > 0 && isSpaceOrTab(text, start)) start--;
-    while (end < maxoffset && isSpaceOrTab(text, end)) end++;
+    end = StringUtil.skipWhitespaceForward(text, end);
     return new TextRange(start, end);
   }
 
@@ -144,7 +144,7 @@ public class JoinLinesHandler extends EditorActionHandler {
       offsets = calcJoinLinesOffsets(psiFile, doc, startLine);
     }
 
-    TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine, doc.getTextLength());
+    TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
     int start = limits.getStartOffset();
     int end = limits.getEndOffset();
     // run raw joiners
@@ -162,14 +162,9 @@ public class JoinLinesHandler extends EditorActionHandler {
       if (offsets.lastNonSpaceOffsetInStartLine == doc.getLineStartOffset(startLine)) {
         doc.deleteString(doc.getLineStartOffset(startLine), offsets.firstNonSpaceOffsetInNextLine);
 
-        int indent = -1;
-        try {
-          docManager.commitDocument(doc);
-          indent = CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, startLine == 0 ? 0 : doc.getLineStartOffset(startLine));
-        }
-        catch (IncorrectOperationException e) {
-          LOG.error(e);
-        }
+        docManager.commitDocument(doc);
+        int indent =
+          CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, startLine == 0 ? 0 : doc.getLineStartOffset(startLine));
 
         if (caretRestoreOffset.get() == CANNOT_JOIN) {
           caretRestoreOffset.set(indent);
@@ -181,10 +176,9 @@ public class JoinLinesHandler extends EditorActionHandler {
       doc.deleteString(offsets.lineEndOffset, offsets.lineEndOffset + doc.getLineSeparatorLength(startLine));
 
       text = doc.getCharsSequence();
-      limits = findStartAndEnd(text, offsets.lineEndOffset - 1, offsets.lineEndOffset, doc.getTextLength());
+      limits = findStartAndEnd(text, offsets.lineEndOffset - 1, offsets.lineEndOffset);
       start = limits.getStartOffset(); end = limits.getEndOffset();
 
-      // Check if we're joining splitted string literal.
       docManager.commitDocument(doc);
 
       for(JoinLinesHandlerDelegate delegate: JoinLinesHandlerDelegate.EP_NAME.getExtensionList()) {
@@ -208,41 +202,48 @@ public class JoinLinesHandler extends EditorActionHandler {
 
 
     if (offsets.isStartLineEndsWithComment() && offsets.isNextLineStartsWithComment()) {
-      boolean adjacentLineComments = false;
-      if (text.charAt(end) == '*' && end < text.length() && text.charAt(end + 1) != '/') {
-        end++;
-        while (end < doc.getTextLength() && isSpaceOrTab(text, end)) end++;
-      }
-      else if (!offsets.isJoiningSameComment() &&
-               !(replaceStart >= 2 && text.charAt(replaceStart - 2) == '*' && text.charAt(replaceStart - 1) == '/') &&
-               text.charAt(end) == '/' && end + 1 < text.length() && text.charAt(end + 1) == '/') {
-        adjacentLineComments = true;
-        end += 2;
-        while (end < doc.getTextLength() && isSpaceOrTab(text, end)) end++;
-      }
-
-      doc.replaceString(replaceStart, end, adjacentLineComments || offsets.isJoiningSameComment() ? " " : "");
-      return;
+      postProcessAdjacentComments(doc, text, offsets, end, replaceStart);
+    } else {
+      postProcessWhitespace(doc, project, docManager, psiFile, text, limits, replaceStart, doc.getLineStartOffset(startLine));
     }
+    docManager.commitDocument(doc);
+  }
 
-    while (end < doc.getTextLength() && isSpaceOrTab(text, end)) end++;
+  private static void postProcessWhitespace(@NotNull DocumentEx doc,
+                                            @NotNull Project project,
+                                            @NotNull PsiDocumentManager docManager,
+                                            @NotNull PsiFile psiFile,
+                                            CharSequence text,
+                                            TextRange limits, int replaceStart, int lineStart) {
+    int end = StringUtil.skipWhitespaceForward(text, limits.getEndOffset());
 
     int spacesToCreate = CodeStyleManager.getInstance(project).getSpacing(psiFile, end);
     if (spacesToCreate < 0) spacesToCreate = 1;
     String spacing = StringUtil.repeatSymbol(' ', spacesToCreate);
 
     doc.replaceString(replaceStart, end, spacing);
-    docManager.commitDocument(doc);
 
-    if (start <= doc.getLineStartOffset(startLine)) {
-      try {
-        CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, doc.getLineStartOffset(startLine));
-      }
-      catch (IncorrectOperationException e) {
-        LOG.error(e);
-      }
+    if (limits.getStartOffset() <= lineStart) {
       docManager.commitDocument(doc);
+      CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, lineStart);
     }
+  }
+
+  private static void postProcessAdjacentComments(@NotNull DocumentEx doc,
+                                                  CharSequence text,
+                                                  JoinLinesOffsets offsets, int end, int replaceStart) {
+    boolean adjacentLineComments = false;
+    if (text.charAt(end) == '*' && end < text.length() && text.charAt(end + 1) != '/') {
+      end = StringUtil.skipWhitespaceForward(text, end + 1);
+    }
+    else if (!offsets.isJoiningSameComment() &&
+             !(replaceStart >= 2 && text.charAt(replaceStart - 2) == '*' && text.charAt(replaceStart - 1) == '/') &&
+             text.charAt(end) == '/' && end + 1 < text.length() && text.charAt(end + 1) == '/') {
+      adjacentLineComments = true;
+      end = StringUtil.skipWhitespaceForward(text, end + 2);
+    }
+
+    doc.replaceString(replaceStart, end, adjacentLineComments || offsets.isJoiningSameComment() ? " " : "");
   }
 
   private static int checkOffset(int offset, JoinLinesHandlerDelegate delegate, DocumentEx doc) {
@@ -283,10 +284,7 @@ public class JoinLinesHandler extends EditorActionHandler {
     PsiElement elementAtNextLineStart = psiFile.findElementAt(offsets.firstNonSpaceOffsetInNextLine);
     offsets.commentAtLineStart = getCommentElement(elementAtNextLineStart);
 
-    offsets.lastNonSpaceOffsetInStartLine = offsets.lineEndOffset;
-    while (offsets.lastNonSpaceOffsetInStartLine > 0 && isSpaceOrTab(text, offsets.lastNonSpaceOffsetInStartLine - 1)) {
-      offsets.lastNonSpaceOffsetInStartLine--;
-    }
+    offsets.lastNonSpaceOffsetInStartLine = StringUtil.skipWhitespaceBackward(text, offsets.lineEndOffset);
     int elemOffset = offsets.lastNonSpaceOffsetInStartLine > doc.getLineStartOffset(startLine) ? offsets.lastNonSpaceOffsetInStartLine - 1 : -1;
     offsets.elementAtStartLineEnd = elemOffset == -1 ? null : psiFile.findElementAt(elemOffset);
     offsets.commentAtLineEnd = getCommentElement(offsets.elementAtStartLineEnd);
