@@ -13,13 +13,13 @@ abstract class My<T : Some> {
 
 //               [ERROR : T]
 //               │  class My<T : Some>
-//               │  │   
+//               │  │
     abstract val y: My.T
 
 //               [ERROR : T]
 //               │  package test
 //               │  │    class My<T : Some>
-//               │  │    │   
+//               │  │    │
     abstract val z: test.My.T
 
 //               [ERROR : T]

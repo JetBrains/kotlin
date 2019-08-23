@@ -27,17 +27,17 @@ fun simple() {
 //  collections/List<String>
 //  │
 fun List<String>.modify() {
-//       fun <T> collections/Collection<String>.plus(String): collections/List<String>
+//       fun <T> collections/Collection<String>.plus<String>(String): collections/List<String>
 //       │
     this += "Alpha"
-//       fun <T> collections/Collection<String>.plus(String): collections/List<String>
+//       fun <T> collections/Collection<String>.plus<String>(String): collections/List<String>
 //       │
     this += "Omega"
 }
 
 fun Any.modify() {
 //           collections/List<Int>
-//           │          fun <T> collections/Collection<Int>.plus(Int): collections/List<Int>
+//           │          fun <T> collections/Collection<Int>.plus<Int>(Int): collections/List<Int>
 //           │          │  Int
 //           │          │  │
     (this as List<Int>) += 42

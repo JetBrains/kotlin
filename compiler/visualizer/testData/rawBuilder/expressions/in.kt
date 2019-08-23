@@ -1,5 +1,6 @@
 //                         collections/Collection<Int>
-//                         │
+//                         │                Boolean
+//                         │                │
 fun foo(x: Int, y: Int, c: Collection<Int>) =
 //  foo.x: Int
 //  │ fun (collections/Collection<Int>).contains(Int): Boolean

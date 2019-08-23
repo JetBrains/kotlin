@@ -1,9 +1,9 @@
 //                            foo.a: Int
 //                            │ fun (Int).compareTo(Int): Int
 //                            │ │ foo.b: Int
-//                            │ │ │  foo.a: Int
-//                        Int │ │ │  │      foo.b: Int
-//                        │   │ │ │  │      │
+//                      Int   │ │ │  foo.a: Int
+//                      │ Int │ │ │  │      foo.b: Int
+//                      │ │   │ │ │  │      │
 fun foo(a: Int, b: Int) = if (a > b) a else b
 
 fun bar(a: Double, b: Double): Double {
@@ -43,13 +43,13 @@ fun baz(a: Long, b: Long): Long {
         a > b -> {
 //          fun io/println(Long): Unit
 //          │       baz.a: Long
-//          │       │ 
+//          │       │
             println(a)
 //                 baz.a: Long
 //                 │
             return a
         }
-//              Nothing 
+//              Nothing
 //              │      baz.b: Long
 //              │      │
         else -> return b
@@ -57,34 +57,34 @@ fun baz(a: Long, b: Long): Long {
 }
 
 fun grade(g: Int): String {
-//         String    
+//         String
 //         │     grade.g: Int
-//         │     │   
+//         │     │
     return when (g) {
-//      Int                  
-//      │  Int  String       
-//      │  │    │            
+//      Int
+//      │  Int  String
+//      │  │    │
         6, 7 -> "Outstanding"
-//      Int  String     
-//      │    │          
+//      Int  String
+//      │    │
         5 -> "Excellent"
 //      Int  String
-//      │    │     
+//      │    │
         4 -> "Good"
-//      Int  String    
-//      │    │         
+//      Int  String
+//      │    │
         3 -> "Mediocre"
 //      fun (ranges/IntRange).contains(Int): Boolean
-//      │  Int           
+//      │  Int
 //      │  │fun (Int).rangeTo(Int): ranges/IntRange
 //      │  ││ Int  String
-//      │  ││ │    │     
+//      │  ││ │    │
         in 1..2 -> "Fail"
-//                   String  
-//                   │       
+//                   String
+//                   │
         is Number -> "Number"
-//              String   
-//              │        
+//              String
+//              │
         else -> "Unknown"
     }
 }

@@ -12,8 +12,9 @@ fun test() {
     x[1] = 0
 }
 
-//          Int
-//          │
+//        Int
+//        │ Int
+//        │ │
 fun foo() = 1
 
 fun test2() {

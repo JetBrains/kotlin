@@ -1,5 +1,7 @@
 interface Any
 
+//                                            T?
+//                                            │
 inline fun <reified T : Any> Any.safeAs(): T? = this as? T
 
 abstract class Summator {

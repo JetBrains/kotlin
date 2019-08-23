@@ -8,6 +8,8 @@ expect val x: Int
 
 actual class MyClass
 
+//               String
+//               │
 actual fun foo() = "Hello"
 
 //         Int Int

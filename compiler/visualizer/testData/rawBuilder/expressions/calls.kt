@@ -1,38 +1,44 @@
-//                                   distance.x: Int
-//                                   │ fun (Int).plus(Int): Int
-//                                   │ │ distance.y: Int
-//                                   │ │ │
+//                                 Int
+//                                 │ distance.x: Int
+//                                 │ │ fun (Int).plus(Int): Int
+//                                 │ │ │ distance.y: Int
+//                                 │ │ │ │
 infix fun distance(x: Int, y: Int) = x + y
 
-//                Int
-//                │ [ERROR: not resolved]
-//                │ │        Int
-//                │ │        │
+//              [ERROR: unknown type]
+//              │ Int
+//              │ │ [ERROR: not resolved]
+//              │ │ │        Int
+//              │ │ │        │
 fun test(): Int = 3 distance 4
 
-//                       fun distance(Int, Int): Int
-//                       │        Int
-//                       │        │  Int
-//                       │        │  │
+//                     Int
+//                     │ fun distance(Int, Int): Int
+//                     │ │        Int
+//                     │ │        │  Int
+//                     │ │        │  │
 fun testRegular(): Int = distance(3, 4)
 
 class My(var x: Int) {
-//                          var (My).x: Int
-//                          │
+//                        Int
+//                        │ var (My).x: Int
+//                        │ │
     operator fun invoke() = x
 
     fun foo() {}
 
-//               constructor My(Int)
-//               │  var (My).x: Int
-//               │  │
+//             My
+//             │ constructor My(Int)
+//             │ │  var (My).x: Int
+//             │ │  │
     fun copy() = My(x)
 }
 
-//                      constructor My(Int)
-//                      fun (My).invoke(): Int
-//                      │  Int
-//                      │  │
+//                    Int
+//                    │ constructor My(Int)
+//                    │ fun (My).invoke(): Int
+//                    │ │  Int
+//                    │ │  │
 fun testInvoke(): Int = My(13)()
 
 fun testQualified(first: My, second: My?) {

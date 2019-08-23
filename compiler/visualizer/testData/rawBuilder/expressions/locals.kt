@@ -1,14 +1,15 @@
 fun withLocals(p: Int): Int {
     class Local(val pp: Int) {
-//                   val (withLocals/Local).pp: Int
-//                   │  fun (Int).minus(Int): Int
-//                   │  │ withLocals.p: Int
-//                   │  │ │
+//                 Int
+//                 │ val (withLocals.Local).pp: Int
+//                 │ │  fun (Int).minus(Int): Int
+//                 │ │  │ withLocals.p: Int
+//                 │ │  │ │
         fun diff() = pp - p
     }
 
 //          constructor withLocals.Local(Int)
-//      Int │     Int fun (withLocals/Local).diff(): Int
+//      Int │     Int fun (withLocals.Local).diff(): Int
 //      │   │     │   │
     val x = Local(42).diff()
 
@@ -26,10 +27,11 @@ fun withLocals(p: Int): Int {
 //      Int              constructor Any()
 //      │                │
     val code = (object : Any() {
-//                  fun (Any).hashCode(): Int
-//                  │
+//                Int
+//                │ fun (Any).hashCode(): Int
+//                │ │
         fun foo() = hashCode()
-//     fun (withLocals/<no name provided>).foo(): Int
+//     fun (withLocals.<no name provided>).foo(): Int
 //     │
     }).foo()
 
@@ -37,10 +39,11 @@ fun withLocals(p: Int): Int {
 //         │   val withLocals.code: Int
 //         │   │     constructor withLocals.Local(Int)
 //         │   │     │     Int
-//         │   │     │     │  fun (withLocals/Local).diff(): Int
-//         │   │     │     │  │                             withLocals.<no name provided>.x: Int
-//         │   │     │     │  │                             │ fun (Int).plus(Int): Int
-//         │   │     │     │  │                             │ │ withLocals.<no name provided>.y: Int
-//         │   │     │     │  │                             │ │ │
+//         │   │     │     │  fun (withLocals.Local).diff(): Int
+//         │   │     │     │  │                           Int
+//         │   │     │     │  │                           │ withLocals.<no name provided>.x: Int
+//         │   │     │     │  │                           │ │ fun (Int).plus(Int): Int
+//         │   │     │     │  │                           │ │ │ withLocals.<no name provided>.y: Int
+//         │   │     │     │  │                           │ │ │ │
     return sum(code, Local(1).diff(), fun(x: Int, y: Int) = x + y)
 }

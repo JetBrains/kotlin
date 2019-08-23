@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.compiler.visualizer.Annotator.annotate
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.AnonymousFunctionDescriptor
+import org.jetbrains.kotlin.descriptors.impl.LazyPackageViewDescriptorImpl
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getChildOfType
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.bindingContextUtil.getAbbreviatedTypeOrType
 import org.jetbrains.kotlin.resolve.calls.callUtil.getCall
 import org.jetbrains.kotlin.resolve.calls.callUtil.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.callUtil.getType
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.declaresOrInheritsDefaultValue
@@ -34,14 +36,14 @@ import org.jetbrains.kotlin.types.*
 import java.util.ArrayList
 
 class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : BaseRenderer {
-    val bindingContext = analysisResult.bindingContext
-    private val annotations = mutableListOf<Annotator.AnnotationInfo>()
+    private val bindingContext = analysisResult.bindingContext
+    private val annotations = mutableSetOf<Annotator.AnnotationInfo>()
     private val filePackage = file.packageFqName.toString().replace(".", "/")
+    private val argumentsLabel = "<PLACE-FOR-ARGUMENTS>"
 
     val descriptorRenderer = PsiDescriptorRenderer()
 
     private val unnecessaryData = mapOf(
-        "kotlin." to "",
         "kotlin/" to ""
     )
 
@@ -98,6 +100,13 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             //don't resolve this expression
         }
 
+        override fun visitNamedFunction(function: KtNamedFunction) {
+            if (function.bodyExpression != null && function.equalsToken != null) {
+                addAnnotation(renderType(function.bodyExpression!!.getType(bindingContext)), function.equalsToken!!)
+            }
+            super.visitNamedFunction(function)
+        }
+
         private fun renderVariableType(variable: KtVariableDeclaration) {
             val descriptor = bindingContext[VARIABLE, variable]
             addAnnotation(renderType(descriptor), variable.nameIdentifier!!)
@@ -109,6 +118,13 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
 
         override fun visitDestructuringDeclarationEntry(multiDeclarationEntry: KtDestructuringDeclarationEntry) =
             renderVariableType(multiDeclarationEntry)
+
+        override fun visitParameter(parameter: KtParameter) {
+            if ((parameter.isLoopParameter && parameter.destructuringDeclaration == null) || parameter.ownerFunction is KtPropertyAccessor) {
+                addAnnotation(renderType(bindingContext[VALUE_PARAMETER, parameter]?.returnType), parameter.nameIdentifier!!)
+            }
+            super.visitParameter(parameter)
+        }
 
         override fun visitTypeReference(typeReference: KtTypeReference) {
             if (typeReference.text.isNotEmpty()) {
@@ -148,7 +164,10 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
             }
 
             val descriptor = resolvedCall.resultingDescriptor
-            val annotation = descriptorRenderer.render(descriptor)
+            val typeArguments = if (resolvedCall.typeArguments.isNotEmpty()) {
+                buildString { resolvedCall.typeArguments.values.joinTo(this, ", ", "<", ">") { renderType(it) } }
+            } else ""
+            val annotation = descriptorRenderer.render(descriptor).replace(argumentsLabel, typeArguments)
             addAnnotation(annotation, expression, deleteDuplicate = false)
 
             fun addReceiverAnnotation(receiver: ReceiverValue?, receiverKind: ExplicitReceiverKind) {
@@ -214,16 +233,15 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         }
     }
 
-    inner class PsiDescriptorRenderer : DeclarationDescriptorVisitor<Unit, StringBuilder> {
+    inner class PsiDescriptorRenderer(
+        private val needToRenderSpecialFun: Boolean = false
+    ) : DeclarationDescriptorVisitor<Unit, StringBuilder> {
         private val typeRenderer: DescriptorRenderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
             modifiers = emptySet()
             classifierNamePolicy = object : ClassifierNamePolicy {
                 override fun renderClassifier(classifier: ClassifierDescriptor, renderer: DescriptorRenderer): String {
-                    val fqName = (if (classifier is TypeParameterDescriptor) renderer.renderName(classifier.name, false)
-                    else renderer.renderFqName(DescriptorUtils.getFqName(classifier))).replace(".", "/")
-
-                    return removeCurrentFilePackage(fqName)
+                    return renderFqName(classifier)
                 }
             }
             includeAdditionalModifiers = false
@@ -238,7 +256,7 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
 
         fun render(declarationDescriptor: DeclarationDescriptor): String {
             if (declarationDescriptor is CallableDescriptor && declarationDescriptor.isSpecial()) {
-                return this.renderSpecialFunction(declarationDescriptor)
+                return if (needToRenderSpecialFun) this.renderSpecialFunction(declarationDescriptor) else ""
             }
             return buildString {
                 declarationDescriptor.accept(this@PsiDescriptorRenderer, this)
@@ -258,23 +276,26 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
         }
 
         private fun renderFqName(descriptor: DeclarationDescriptor, removeCurrentPackage: Boolean = true): String {
-            val fqName = generateSequence(descriptor) { it.containingDeclaration }
-                .fold("") { acc, desc ->
-                    val name = when (desc) {
-                        is LazyPackageDescriptor -> desc.fqName.toString().replace(".", "/")
-                        else -> desc.name.asString()
-                    }
-                    val separator = when {
-                        acc.isEmpty() -> ""
-                        else -> if (desc is PackageFragmentDescriptor || desc is PackageViewDescriptor) "/" else "."
-                    }
-                    if (name == FqName.ROOT.toString() || desc is ModuleDescriptor) {
-                        return@fold acc
-                    }
-                    return@fold "$name$separator$acc"
-                }
-
+            if (descriptor is TypeParameterDescriptor) return descriptor.name.render()
+            val fqName = qualifierNameCombine(descriptor)
             return if (removeCurrentPackage) removeCurrentFilePackage(fqName) else fqName
+        }
+
+        private fun qualifierNameCombine(descriptor: DeclarationDescriptor): String {
+            val nameString = descriptor.name.render()
+            if (nameString == FqName.ROOT.toString()) return ""
+
+            val containingDeclaration = descriptor.containingDeclaration
+            val qualifier = qualifierName(containingDeclaration)
+            val separator =
+                if (containingDeclaration is PackageFragmentDescriptor || containingDeclaration is PackageViewDescriptor) "/" else "."
+            return if (qualifier != "") qualifier + separator + nameString else nameString
+        }
+
+        private fun qualifierName(descriptor: DeclarationDescriptor?): String = when (descriptor) {
+            is ModuleDescriptor, null -> ""
+            is PackageFragmentDescriptor, is PackageViewDescriptor -> descriptor.fqNameUnsafe.render().replace(".", "/")
+            else -> qualifierNameCombine(descriptor)
         }
 
         private fun removeCurrentFilePackage(fqName: String): String {
@@ -366,6 +387,9 @@ class PsiRenderer(private val file: KtFile, analysisResult: AnalysisResult) : Ba
 
             //render name
             data.append(renderName(function, receiver != null))
+
+            //render type arguments
+            data.append(argumentsLabel)
 
             //render value parameters
             visitValueParameters(function.valueParameters, data)

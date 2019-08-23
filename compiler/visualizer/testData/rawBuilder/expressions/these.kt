@@ -1,6 +1,7 @@
 class Some {
-//                   Int
-//                   │
+//                 Int
+//                 │ Int
+//                 │ │
     fun foo(): Int = 1
 
     fun bar(): Int {
@@ -23,12 +24,12 @@ class Some {
     }
 }
 
-//                          fun (Some).bar(): Int
-//                          │
+//                   Int    fun (Some).bar(): Int
+//                   │      │
 fun Some.extension() = this.bar()
 
 fun test(some: Some): Int {
-//         fun <T, R> with(Some, Some.() -> Int): Int
+//         fun <T, R> with<Some, Int>(Some, Some.() -> Int): Int
 //         │    test.some: Some
 //         │    │     with@0
 //         │    │     │
