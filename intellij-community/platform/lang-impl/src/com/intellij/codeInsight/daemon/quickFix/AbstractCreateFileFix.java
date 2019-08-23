@@ -11,6 +11,8 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
+import com.intellij.openapi.ui.MessageType;
+import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -90,7 +92,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
                      @NotNull PsiElement endElement) {
     if (isAvailable(project, null, file)) {
       if (myDirectories.size() == 1) {
-        apply(myStartElement.getProject(), myDirectories.get(0));
+        apply(myStartElement.getProject(), myDirectories.get(0), editor);
       }
       else {
         List<TargetDirectory> directories = ContainerUtil.filter(myDirectories, d -> d.getDirectory() != null);
@@ -101,7 +103,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
         if (editor == null || ApplicationManager.getApplication().isUnitTestMode()) {
           // run on first item of sorted list in batch mode
-          apply(myStartElement.getProject(), directories.get(0));
+          apply(myStartElement.getProject(), directories.get(0), editor);
         }
         else {
           showOptionsPopup(project, editor, directories);
@@ -110,9 +112,14 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     }
   }
 
-  protected abstract void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException;
+  protected abstract void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor)
+    throws IncorrectOperationException;
 
-  protected static PsiDirectory findOrCreateSubdirectory(PsiDirectory directory, String subDirectoryName) {
+  @Nullable
+  protected static PsiDirectory findOrCreateSubdirectory(@Nullable PsiDirectory directory, @NotNull String subDirectoryName) {
+    if (directory == null) {
+      return null;
+    }
     if (CURRENT_DIRECTORY_REF.equals(subDirectoryName)) {
       return directory;
     }
@@ -125,6 +132,26 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
       return directory.createSubdirectory(subDirectoryName);
     }
     return existingDirectory;
+  }
+
+  @Nullable
+  protected PsiDirectory findOrCreatePath(@NotNull TargetDirectory directory, @NotNull PsiDirectory currentDirectory) {
+    for (String pathPart : directory.getPathToCreate()) {
+      currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+    }
+    for (String pathPart : mySubPath) {
+      currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+    }
+    return currentDirectory;
+  }
+
+  protected void showIncorrectPathNotification(@NotNull Editor editor) {
+    JBPopupFactory factory = JBPopupFactory.getInstance();
+
+    factory
+      .createHtmlTextBalloonBuilder(CodeInsightBundle.message("create.file.incorrect.path"), MessageType.ERROR, null)
+      .createBalloon()
+      .show(factory.guessBestPopupLocation(editor), Balloon.Position.below);
   }
 
   protected void showOptionsPopup(@NotNull Project project,
@@ -158,7 +185,7 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
 
         WriteCommandAction.writeCommandAction(project)
           .withName(CodeInsightBundle.message("create.file.text", myNewFileName))
-          .run(() -> apply(project, chosenValue.getTarget()));
+          .run(() -> apply(project, chosenValue.getTarget(), editor));
       })
       .addListener(new JBPopupAdapter() {
         @Override

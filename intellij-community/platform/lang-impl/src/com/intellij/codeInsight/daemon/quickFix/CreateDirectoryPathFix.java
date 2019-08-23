@@ -2,6 +2,7 @@
 package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.CodeInsightBundle;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.psi.PsiDirectory;
 import com.intellij.psi.PsiElement;
@@ -51,7 +52,9 @@ public class CreateDirectoryPathFix extends AbstractCreateFileFix {
   }
 
   @Override
-  protected void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException {
+  protected void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor)
+    throws IncorrectOperationException {
+
     myIsAvailableTimeStamp = 0; // to revalidate applicability
 
     PsiDirectory currentDirectory = directory.getDirectory();
@@ -60,12 +63,14 @@ public class CreateDirectoryPathFix extends AbstractCreateFileFix {
     }
 
     try {
-      for (String pathPart : directory.getPathToCreate()) {
-        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      currentDirectory = findOrCreatePath(directory, currentDirectory);
+      if (currentDirectory == null) {
+        if (editor != null) {
+          showIncorrectPathNotification(editor);
+        }
+        return;
       }
-      for (String pathPart : mySubPath) {
-        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
-      }
+
       currentDirectory.createSubdirectory(myNewFileName);
     }
     catch (IncorrectOperationException e) {

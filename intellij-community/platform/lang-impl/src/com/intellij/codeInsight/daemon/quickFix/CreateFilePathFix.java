@@ -5,6 +5,7 @@ import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManager;
@@ -62,7 +63,7 @@ public class CreateFilePathFix extends AbstractCreateFileFix {
     myFileTextSupplier = fileTextSupplier;
   }
 
-  private void createFile(@NotNull Project project, @NotNull PsiDirectory currentDirectory, String fileName)
+  private void createFile(@NotNull Project project, @NotNull PsiDirectory currentDirectory, @NotNull String fileName)
     throws IncorrectOperationException {
 
     String newFileName = fileName;
@@ -152,7 +153,9 @@ public class CreateFilePathFix extends AbstractCreateFileFix {
   }
 
   @Override
-  protected void apply(@NotNull Project project, TargetDirectory directory) throws IncorrectOperationException {
+  protected void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor)
+    throws IncorrectOperationException {
+
     myIsAvailableTimeStamp = 0; // to revalidate applicability
 
     PsiDirectory currentDirectory = directory.getDirectory();
@@ -161,11 +164,12 @@ public class CreateFilePathFix extends AbstractCreateFileFix {
     }
 
     try {
-      for (String pathPart : directory.getPathToCreate()) {
-        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
-      }
-      for (String pathPart : mySubPath) {
-        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      currentDirectory = findOrCreatePath(directory, currentDirectory);
+      if (currentDirectory == null) {
+        if (editor != null) {
+          showIncorrectPathNotification(editor);
+        }
+        return;
       }
       createFile(project, currentDirectory, myNewFileName);
     }
