@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
-import org.jetbrains.kotlin.gradle.plugin.mpp.DefaultKotlinDependencyHandler
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.GranularMetadataTransformation
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -119,6 +118,15 @@ class DefaultKotlinSourceSet(
 
     internal val dependencyTransformations: MutableMap<KotlinDependencyScope, GranularMetadataTransformation> = mutableMapOf()
 
+    private val _requiresVisibilityOf = mutableSetOf<KotlinSourceSet>()
+
+    override val requiresVisibilityOf: MutableSet<KotlinSourceSet>
+        get() = Collections.unmodifiableSet(_requiresVisibilityOf)
+
+    override fun requiresVisibilityOf(other: KotlinSourceSet) {
+        requiresVisibilityOf += other
+    }
+
     //region IDE import for Granular source sets metadata
 
     data class MetadataDependencyTransformation(
@@ -140,6 +148,10 @@ class DefaultKotlinSourceSet(
 
         return getDependenciesTransformation(scope)
     }
+
+    @Suppress("unused") // Used in IDE import
+    fun getAdditionalVisibleSourceSets(): Set<KotlinSourceSet> =
+        getVisibleSourceSetsFromAssociateCompilations(project, this)
 
     internal fun getDependenciesTransformation(scope: KotlinDependencyScope): Iterable<MetadataDependencyTransformation> {
         val metadataDependencyResolutionByModule =

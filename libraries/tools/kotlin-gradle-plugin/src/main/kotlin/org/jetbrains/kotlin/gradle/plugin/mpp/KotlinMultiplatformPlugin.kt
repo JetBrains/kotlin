@@ -21,12 +21,13 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.jvm.tasks.Jar
 import org.gradle.util.ConfigureUtil
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.configureOrCreate
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
+import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
 import org.jetbrains.kotlin.gradle.utils.*
@@ -91,8 +92,6 @@ class KotlinMultiplatformPlugin(
         setupCompilerPluginOptions(project)
 
         project.pluginManager.apply(ScriptingGradleSubplugin::class.java)
-
-        UnusedSourceSetsChecker.checkSourceSets(project)
     }
 
     private fun setupCompilerPluginOptions(project: Project) {
@@ -255,6 +254,12 @@ class KotlinMultiplatformPlugin(
             target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
                 sourceSets.findByName(testCompilation.defaultSourceSetName)?.dependsOn(test)
             }
+        }
+
+        UnusedSourceSetsChecker.checkSourceSets(project)
+
+        project.whenEvaluated {
+            checkSourceSetVisibilityRequirements(project)
         }
     }
 

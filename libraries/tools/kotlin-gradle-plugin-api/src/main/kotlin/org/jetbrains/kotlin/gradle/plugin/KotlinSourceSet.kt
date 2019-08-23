@@ -42,5 +42,8 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
 
     val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
 
+    val requiresVisibilityOf: Set<KotlinSourceSet>
+    fun requiresVisibilityOf(other: KotlinSourceSet)
+
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
 }
