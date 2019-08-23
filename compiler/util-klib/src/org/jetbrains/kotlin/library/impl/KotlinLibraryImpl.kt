@@ -229,8 +229,8 @@ fun createKotlinLibrary(
 
     val base = BaseKotlinLibraryImpl(baseAccess, isDefault)
     val metadata = MetadataLibraryImpl(metadataAccess)
-//    val ir = IrMonoliticLibraryImpl(irAccess)
-    val ir = IrPerFileLibraryImpl(irAccess)
+    val ir = IrMonoliticLibraryImpl(irAccess)
+//    val ir = IrPerFileLibraryImpl(irAccess)
 
     return KotlinLibraryImpl(base, metadata, ir)
 }
