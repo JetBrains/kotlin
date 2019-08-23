@@ -34,6 +34,7 @@ import com.intellij.util.ui.UIUtil;
 import org.jetbrains.annotations.CalledInAwt;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.TestOnly;
 
 import javax.swing.*;
 import javax.swing.event.ListDataListener;
@@ -77,6 +78,9 @@ public class RangeSearch implements RangeSearchTask.Callback {
   private final ActionToolbar myActionToolbar;
 
   private RangeSearchTask lastExecutedRangeSearchTask;
+
+  @TestOnly
+  private List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = new ArrayList<>();
 
   public boolean isButtonFindFurtherEnabled(boolean directionForward) {
     if (directionForward) {
@@ -454,6 +458,10 @@ public class RangeSearch implements RangeSearchTask.Callback {
         setAdditionalStatusText("Search complete.");
       }
       callScheduledUpdate();
+
+      for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
+        listener.onSearchFinished();
+      }
     });
   }
 
@@ -489,6 +497,14 @@ public class RangeSearch implements RangeSearchTask.Callback {
   @Override
   public void tellSearchIsStopped(long curPageNumber) {
     callScheduledUpdate();
+
+    if (!myEdtRangeSearchEventsListeners.isEmpty()) {
+      ApplicationManager.getApplication().invokeLater(() -> {
+        for (EdtRangeSearchEventsListener listener : myEdtRangeSearchEventsListeners) {
+          listener.onSearchStopped();
+        }
+      });
+    }
   }
 
   @Override
@@ -515,6 +531,21 @@ public class RangeSearch implements RangeSearchTask.Callback {
     if (lastExecutedRangeSearchTask != null) {
       lastExecutedRangeSearchTask.shouldStop();
     }
+  }
+
+  @TestOnly
+  void addEdtRangeSearchEventsListener(EdtRangeSearchEventsListener listener) {
+    myEdtRangeSearchEventsListeners.add(listener);
+  }
+
+  @TestOnly
+  boolean removeEdtRangeSearchEventsListener(EdtRangeSearchEventsListener listener) {
+    return myEdtRangeSearchEventsListeners.remove(listener);
+  }
+
+  @TestOnly
+  List<SearchResult> getSearchResultsList() {
+    return myResultsListModel.getItems();
   }
 
   private interface ListElementWrapper {
@@ -676,5 +707,15 @@ public class RangeSearch implements RangeSearchTask.Callback {
         suspend();
       }
     }
+  }
+
+  @TestOnly
+  interface EdtRangeSearchEventsListener {
+
+    @CalledInAwt
+    void onSearchStopped();
+
+    @CalledInAwt
+    void onSearchFinished();
   }
 }
