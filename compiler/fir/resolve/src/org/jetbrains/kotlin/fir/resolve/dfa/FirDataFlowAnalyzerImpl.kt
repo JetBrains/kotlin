@@ -36,12 +36,12 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
     private val graphBuilder = ControlFlowGraphBuilder()
     private val logicSystem = LogicSystem(context)
-    private val variableStorage = DataFlowVariableStorage(session)
+    private val variableStorage = DataFlowVariableStorage()
     private val edges = mutableMapOf<CFGNode<*>, Flow>().withDefault { Flow.EMPTY }
 
     override fun getTypeUsingSmartcastInfo(qualifiedAccessExpression: FirQualifiedAccessExpression): ConeKotlinType? {
         val symbol: FirBasedSymbol<*> = qualifiedAccessExpression.resolvedSymbol ?: return null
-        val variable = variableStorage[symbol] ?: return null
+        val variable = variableStorage[symbol]?.real ?: return null
         val smartCastTypes = graphBuilder.lastNode.flow.approvedFacts(variable)?.exactType ?: return null
         val smartCastType = context.myIntersectTypes(smartCastTypes.toList()) ?: return null
         val originalType = qualifiedAccessExpression.typeRef.coneTypeSafe<ConeKotlinType>() ?: return null
@@ -421,9 +421,28 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     override fun exitVariableDeclaration(variable: FirVariable<*>) {
         val node = graphBuilder.exitVariableDeclaration(variable).passFlow(false)
         try {
-            val initializerVariable = variableStorage[variable.initializer ?: return] ?: return
-            val realVariable = getRealVariable(variable.symbol)
-            node.flow = node.flow.copyNotApprovedFacts(initializerVariable, realVariable)
+            val initializer = variable.initializer ?: return
+
+            /*
+             * That part is needed for cases like that:
+             *
+             *   val b = x is String
+             *   ...
+             *   if (b) {
+             *      x.length
+             *   }
+             */
+            variableStorage[initializer]?.let { initializerVariable ->
+                assert(initializerVariable.isSynthetic)
+                val realVariable = getRealVariable(variable.symbol)
+                node.flow = node.flow.copyNotApprovedFacts(initializerVariable, realVariable)
+            }
+
+            initializer.resolvedSymbol?.let { initializerSymbol: FirBasedSymbol<*> ->
+                val rhsVariable = variableStorage[initializerSymbol]?.takeIf { !it.isSynthetic } ?: return
+                variableStorage.createAliasVariable(variable.symbol, rhsVariable)
+            }
+
         } finally {
             node.flow.freeze()
         }
@@ -431,6 +450,9 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
     override fun exitVariableAssignment(assignment: FirVariableAssignment) {
         graphBuilder.exitVariableAssignment(assignment).passFlow()
+        val lhsVariable = variableStorage[assignment.resolvedSymbol ?: return] ?: return
+        val rhsVariable = variableStorage[assignment.rValue.resolvedSymbol ?: return]?.takeIf { !it.isSynthetic } ?: return
+        variableStorage.rebindAliasVariable(lhsVariable, rhsVariable)
     }
 
     override fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
@@ -565,7 +587,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
     }
 
     private fun getSyntheticVariable(fir: FirElement): DataFlowVariable = variableStorage.getOrCreateNewSyntheticVariable(fir)
-    private fun getRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable = variableStorage.getOrCreateNewRealVariable(symbol)
+    private fun getRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable = variableStorage.getOrCreateNewRealVariable(symbol).real
 
     private fun getVariable(fir: FirElement): DataFlowVariable {
         val symbol = fir.resolvedSymbol

@@ -94,6 +94,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/booleanOperators.kt");
         }
 
+        @TestMetadata("boundSmartcasts.kt")
+        public void testBoundSmartcasts() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/boundSmartcasts.kt");
+        }
+
         @TestMetadata("casts.kt")
         public void testCasts() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");

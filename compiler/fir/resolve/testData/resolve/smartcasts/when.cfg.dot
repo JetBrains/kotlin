@@ -300,7 +300,7 @@ subgraph test_3 {
   146 [shape=box label="Exit when branch condition"];
   147 [shape=box label="Enter block"];
   148 [shape=box label="Access variable R|<local>/x|"];
-  149 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+  149 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   150 [shape=box label="Access variable R|<local>/y|"];
   151 [shape=box label="Function call: R|<local>/y|.R|/A.foo|()"];
   152 [shape=box label="Exit block"];
@@ -310,7 +310,7 @@ subgraph test_3 {
   156 [shape=box label="Exit when branch condition"];
   157 [shape=box label="Enter block"];
   158 [shape=box label="Access variable R|<local>/x|"];
-  159 [shape=box label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+  159 [shape=box label="Function call: R|<local>/x|.R|/B.bar|()"];
   160 [shape=box label="Access variable R|<local>/y|"];
   161 [shape=box label="Function call: R|<local>/y|.R|/B.bar|()"];
   162 [shape=box label="Exit block"];
@@ -335,7 +335,7 @@ subgraph test_3 {
   181 [shape=box label="Exit when branch condition"];
   182 [shape=box label="Enter block"];
   183 [shape=box label="Access variable R|<local>/x|"];
-  184 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+  184 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   185 [shape=box label="Access variable R|<local>/y|"];
   186 [shape=box label="Function call: R|<local>/y|.R|/A.foo|()"];
   187 [shape=box label="Exit block"];
@@ -345,11 +345,11 @@ subgraph test_3 {
   191 [shape=box label="Exit when branch condition"];
   192 [shape=box label="Enter block"];
   193 [shape=box label="Access variable R|<local>/x|"];
-  194 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+  194 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   195 [shape=box label="Access variable R|<local>/x|"];
-  196 [shape=box label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+  196 [shape=box label="Function call: R|<local>/x|.R|/B.bar|()"];
   197 [shape=box label="Access variable R|<local>/x|"];
-  198 [shape=box label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+  198 [shape=box label="Function call: R|<local>/x|.R|kotlin/Int.inc|()"];
   199 [shape=box label="Access variable R|<local>/y|"];
   200 [shape=box label="Function call: R|<local>/y|.R|/A.foo|()"];
   201 [shape=box label="Access variable R|<local>/y|"];
@@ -362,9 +362,9 @@ subgraph test_3 {
   208 [shape=box label="Exit when branch condition"];
   209 [shape=box label="Enter block"];
   210 [shape=box label="Access variable R|<local>/x|"];
-  211 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+  211 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
   212 [shape=box label="Access variable R|<local>/x|"];
-  213 [shape=box label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+  213 [shape=box label="Function call: R|<local>/x|.R|/B.bar|()"];
   214 [shape=box label="Access variable R|<local>/y|"];
   215 [shape=box label="Function call: R|<local>/y|.R|/A.foo|()"];
   216 [shape=box label="Access variable R|<local>/y|"];

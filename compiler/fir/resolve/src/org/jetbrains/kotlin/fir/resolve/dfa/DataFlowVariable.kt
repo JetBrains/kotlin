@@ -6,44 +6,77 @@
 package org.jetbrains.kotlin.fir.resolve.dfa
 
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FirStub
-import org.jetbrains.kotlin.fir.resolve.transformers.resultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 /*
  * isSynthetic = false for variables that represents actual variables in fir
  * isSynthetic = true for complex expressions (like when expression)
  */
-data class DataFlowVariable(
-    val name: String,
-    val type: FirTypeRef,
-    val isSynthetic: Boolean
-) {
-    override fun toString(): String {
-        return name
+sealed class DataFlowVariable(val index: Int) {
+    abstract val isSynthetic: Boolean
+    abstract val real: DataFlowVariable
+
+    final override fun hashCode(): Int {
+        return index
+    }
+
+    final override fun equals(other: Any?): Boolean {
+        if (other !is DataFlowVariable) return false
+        return index == other.index
+    }
+
+    final override fun toString(): String {
+        return "d$index"
     }
 }
 
-class DataFlowVariableStorage(private val session: FirSession) {
+private class RealDataFlowVariable(index: Int) : DataFlowVariable(index) {
+    override val isSynthetic: Boolean get() = false
+
+    override val real: DataFlowVariable get() = this
+}
+
+private class SyntheticDataFlowVariable(index: Int) : DataFlowVariable(index) {
+    override val isSynthetic: Boolean get() = true
+
+    override val real: DataFlowVariable get() = this
+}
+
+private class AliasedDataFlowVariable(index: Int, var delegate: DataFlowVariable) : DataFlowVariable(index) {
+    override val isSynthetic: Boolean get() = delegate.isSynthetic
+
+    override val real: DataFlowVariable get() = delegate.real
+}
+
+
+class DataFlowVariableStorage {
     private val dfi2FirMap: MutableMap<DataFlowVariable, FirElement> = mutableMapOf()
     private val fir2DfiMap: MutableMap<FirElement, DataFlowVariable> = mutableMapOf()
     private var counter: Int = 1
 
-    private fun getVarName(): String = "d${counter++}"
-
     fun getOrCreateNewRealVariable(symbol: FirBasedSymbol<*>): DataFlowVariable {
         val fir = symbol.fir
         get(fir)?.let { return it }
-        return DataFlowVariable(getVarName(), fir.type, false).also { storeVariable(it, fir) }
+        return RealDataFlowVariable(counter++).also { storeVariable(it, fir) }
     }
 
     fun getOrCreateNewSyntheticVariable(fir: FirElement): DataFlowVariable {
         get(fir)?.let { return it }
-        return DataFlowVariable(getVarName(), fir.type, true).also { storeVariable(it, fir) }
+        return SyntheticDataFlowVariable(counter++).also { storeVariable(it, fir) }
+    }
+
+    fun createAliasVariable(symbol: FirBasedSymbol<*>, variable: DataFlowVariable) {
+        createAliasVariable(symbol.fir, variable)
+    }
+
+    private fun createAliasVariable(fir: FirElement, variable: DataFlowVariable) {
+        AliasedDataFlowVariable(counter++, variable).also { storeVariable(it, fir) }
+    }
+
+    fun rebindAliasVariable(aliasVariable: DataFlowVariable, newVariable: DataFlowVariable) {
+        val fir = removeVariable(aliasVariable)
+        requireNotNull(fir)
+        createAliasVariable(fir, newVariable)
     }
 
     fun removeRealVariable(symbol: FirBasedSymbol<*>) {
@@ -85,13 +118,5 @@ class DataFlowVariableStorage(private val session: FirSession) {
     }
 
     @Deprecated("only for debug")
-    fun getByName(name: String): DataFlowVariable? = dfi2FirMap.keys.firstOrNull { it.name == name }
-
-    private val FirElement.type: FirTypeRef
-        get() = when (this) {
-            is FirExpression -> this.resultType
-            is FirTypedDeclaration -> this.returnTypeRef
-            is FirStub -> session.builtinTypes.nothingType
-            else -> TODO(toString())
-        }
+    fun getByIndex(index: Int): DataFlowVariable? = dfi2FirMap.keys.firstOrNull { it.index == index }
 }

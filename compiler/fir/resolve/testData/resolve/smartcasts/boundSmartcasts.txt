@@ -1,0 +1,69 @@
+FILE: boundSmartcasts.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public abstract interface B : R|kotlin/Any| {
+        public abstract fun bar(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(x: R|kotlin/Any|): R|kotlin/Unit| {
+        lval y: R|kotlin/Any| = R|<local>/x|
+        when () {
+            (R|<local>/x| is R|A|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(x: R|kotlin/Any|): R|kotlin/Unit| {
+        lval y: R|kotlin/Any| = R|<local>/x|
+        when () {
+            (R|<local>/y| is R|A|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_3(x: R|kotlin/Any|, y: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar z: R|kotlin/Any| = R|<local>/x|
+        when () {
+            (R|<local>/x| is R|A|) ->  {
+                R|<local>/z|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/z| = R|<local>/y|
+        when () {
+            (R|<local>/y| is R|B|) ->  {
+                R|<local>/z|.R|/B.bar|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_4(y: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar x: R|kotlin/Any| = Int(1)
+        (R|<local>/x| as R|kotlin/Int|)
+        R|<local>/x|.R|kotlin/Int.inc|()
+        R|<local>/x| = R|<local>/y|
+        R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            (R|<local>/y| is R|A|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+    }

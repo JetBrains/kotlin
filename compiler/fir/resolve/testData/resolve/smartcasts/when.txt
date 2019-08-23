@@ -70,11 +70,11 @@ FILE: when.kt
     public final fun test_3(x: R|kotlin/Any?|): R|kotlin/Unit| {
         when (lval y: R|kotlin/Any?| = R|<local>/x|) {
             ($subj$ is R|A|) ->  {
-                R|<local>/x|.<Unresolved name: foo>#()
+                R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
             ($subj$ is R|B|) ->  {
-                R|<local>/x|.<Unresolved name: bar>#()
+                R|<local>/x|.R|/B.bar|()
                 R|<local>/y|.R|/B.bar|()
             }
             else ->  {
@@ -85,20 +85,20 @@ FILE: when.kt
             ($subj$ !is R|A|) ->  {
             }
             ($subj$ !is R|B|) ->  {
-                R|<local>/x|.<Unresolved name: foo>#()
+                R|<local>/x|.R|/A.foo|()
                 R|<local>/y|.R|/A.foo|()
             }
             ($subj$ is R|kotlin/Int|) ->  {
-                R|<local>/x|.<Unresolved name: foo>#()
-                R|<local>/x|.<Unresolved name: bar>#()
-                R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.R|/B.bar|()
+                R|<local>/x|.R|kotlin/Int.inc|()
                 R|<local>/y|.R|/A.foo|()
                 R|<local>/y|.R|/B.bar|()
                 R|<local>/y|.R|kotlin/Int.inc|()
             }
             else ->  {
-                R|<local>/x|.<Unresolved name: foo>#()
-                R|<local>/x|.<Unresolved name: bar>#()
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/x|.R|/B.bar|()
                 R|<local>/y|.R|/A.foo|()
                 R|<local>/y|.R|/B.bar|()
             }
