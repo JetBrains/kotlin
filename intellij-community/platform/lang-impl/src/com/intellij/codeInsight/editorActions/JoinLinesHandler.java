@@ -142,7 +142,7 @@ public class JoinLinesHandler extends EditorActionHandler {
     docManager.doPostponedOperationsAndUnblockDocument(doc);
     docManager.commitDocument(doc);
     CharSequence text = doc.getCharsSequence();
-    JoinLinesOffsets offsets = calcJoinLinesOffsets(psiFile, doc, startLine);
+    JoinLinesOffsets offsets = new JoinLinesOffsets(doc, startLine);
 
     TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
     int start = limits.getStartOffset();
@@ -200,12 +200,7 @@ public class JoinLinesHandler extends EditorActionHandler {
     int replaceStart = start == offsets.lineEndOffset ? start : start + 1;
     if (caretRestoreOffset.get() == CANNOT_JOIN) caretRestoreOffset.set(replaceStart);
 
-
-    if (offsets.isStartLineEndsWithComment() && offsets.isNextLineStartsWithComment()) {
-      postProcessAdjacentComments(doc, text, offsets, end, replaceStart);
-    } else {
-      postProcessWhitespace(doc, project, docManager, psiFile, text, limits, replaceStart, doc.getLineStartOffset(startLine));
-    }
+    postProcessWhitespace(doc, project, docManager, psiFile, text, limits, replaceStart, doc.getLineStartOffset(startLine));
     docManager.commitDocument(doc);
   }
 
@@ -229,23 +224,6 @@ public class JoinLinesHandler extends EditorActionHandler {
     }
   }
 
-  private static void postProcessAdjacentComments(@NotNull DocumentEx doc,
-                                                  CharSequence text,
-                                                  JoinLinesOffsets offsets, int end, int replaceStart) {
-    boolean adjacentLineComments = false;
-    if (text.charAt(end) == '*' && end < text.length() && text.charAt(end + 1) != '/') {
-      end = StringUtil.skipWhitespaceForward(text, end + 1);
-    }
-    else if (!offsets.isJoiningSameComment() &&
-             !(replaceStart >= 2 && text.charAt(replaceStart - 2) == '*' && text.charAt(replaceStart - 1) == '/') &&
-             text.charAt(end) == '/' && end + 1 < text.length() && text.charAt(end + 1) == '/') {
-      adjacentLineComments = true;
-      end = StringUtil.skipWhitespaceForward(text, end + 2);
-    }
-
-    doc.replaceString(replaceStart, end, adjacentLineComments || offsets.isJoiningSameComment() ? " " : "");
-  }
-
   private static int checkOffset(int offset, JoinLinesHandlerDelegate delegate, DocumentEx doc) {
     if (offset == CANNOT_JOIN) return offset;
     if (offset < 0) {
@@ -260,29 +238,16 @@ public class JoinLinesHandler extends EditorActionHandler {
   }
 
   private static class JoinLinesOffsets {
-    int lineEndOffset;
-    int lastNonSpaceOffsetInStartLine;
-    int firstNonSpaceOffsetInNextLine;
-    PsiComment commentAtLineEnd;
-    PsiComment commentAtLineStart;
-    boolean isStartLineEndsWithComment() { return commentAtLineEnd != null; }
-    boolean isNextLineStartsWithComment() { return commentAtLineStart != null; }
-    boolean isJoiningSameComment() { return commentAtLineStart == commentAtLineEnd; }
-  }
+    final int lineEndOffset;
+    final int lastNonSpaceOffsetInStartLine;
+    final int firstNonSpaceOffsetInNextLine;
 
-  private static JoinLinesOffsets calcJoinLinesOffsets(PsiFile psiFile, Document doc, int startLine) {
-    JoinLinesOffsets offsets = new JoinLinesOffsets();
-    CharSequence text = doc.getCharsSequence();
-    offsets.lineEndOffset = doc.getLineEndOffset(startLine);
-    offsets.firstNonSpaceOffsetInNextLine = StringUtil.skipWhitespaceForward(text, doc.getLineStartOffset(startLine + 1));
-    PsiElement elementAtNextLineStart = psiFile.findElementAt(offsets.firstNonSpaceOffsetInNextLine);
-    offsets.commentAtLineStart = getCommentElement(elementAtNextLineStart);
-
-    offsets.lastNonSpaceOffsetInStartLine = StringUtil.skipWhitespaceBackward(text, offsets.lineEndOffset);
-    int elemOffset = offsets.lastNonSpaceOffsetInStartLine > doc.getLineStartOffset(startLine) ? offsets.lastNonSpaceOffsetInStartLine - 1 : -1;
-    offsets.commentAtLineEnd = getCommentElement(elemOffset == -1 ? null : psiFile.findElementAt(elemOffset));
-    return offsets;
-
+    JoinLinesOffsets(Document doc, int startLine) {
+      CharSequence text = doc.getCharsSequence();
+      this.lineEndOffset = doc.getLineEndOffset(startLine);
+      this.firstNonSpaceOffsetInNextLine = StringUtil.skipWhitespaceForward(text, doc.getLineStartOffset(startLine + 1));
+      this.lastNonSpaceOffsetInStartLine = StringUtil.skipWhitespaceBackward(text, this.lineEndOffset);
+    }
   }
 
   private static void convertEndComments(PsiFile psiFile, Document doc, int startLine, int lineCount) {
