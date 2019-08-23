@@ -1330,8 +1330,8 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
   // returns false if doc was not indexed because it is already up to date
   // return true if document was indexed
   // caller is responsible to ensure no concurrent same document processing
-  private boolean indexUnsavedDocument(@NotNull final Document document, @NotNull final ID<?, ?> requestedIndexId, final Project project,
-                                       @NotNull final VirtualFile vFile) {
+  private void indexUnsavedDocument(@NotNull final Document document, @NotNull final ID<?, ?> requestedIndexId, final Project project,
+                                    @NotNull final VirtualFile vFile) {
     final PsiFile dominantContentFile = project == null ? null : findLatestKnownPsiForUncomittedDocument(document, project);
 
     final DocumentContent content;
@@ -1347,7 +1347,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     final long currentDocStamp = psiBasedIndex ? PsiDocumentManager.getInstance(project).getLastCommittedStamp(document) : content.getModificationStamp();
 
     final long previousDocStamp = myLastIndexedDocStamps.get(document, requestedIndexId);
-    if (previousDocStamp == currentDocStamp) return false;
+    if (previousDocStamp == currentDocStamp) return;
 
     final CharSequence contentText = content.getText();
     myFileTypeManager.freezeFileTypeTemporarilyIn(vFile, () -> {
@@ -1396,8 +1396,6 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
       long previousState = myLastIndexedDocStamps.set(document, requestedIndexId, currentDocStamp);
       assert previousState == previousDocStamp;
     });
-
-    return true;
   }
 
   private final StorageGuard myStorageLock = new StorageGuard();
@@ -1422,7 +1420,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
         if (myPreviousDataBufferingState != transientInMemoryIndices) {
           IndexConfiguration state = getState();
           for (ID<?, ?> indexId : state.getIndexIDs()) {
-            final UpdatableIndex index = state.getIndex(indexId);
+            final UpdatableIndex<?, ?, FileContent> index = state.getIndex(indexId);
             assert index != null;
             index.setBufferingEnabled(transientInMemoryIndices);
           }
@@ -2411,7 +2409,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
 
   private class FileIndexDataInitialization extends IndexInfrastructure.DataInitialization<IndexConfiguration> {
     private final IndexConfiguration state = new IndexConfiguration();
-    private final Set<ID> versionChangedIndexes = ContainerUtil.newConcurrentSet();
+    private final Set<ID<?, ?>> versionChangedIndexes = ContainerUtil.newConcurrentSet();
     private boolean currentVersionCorrupted;
     private SerializationManagerEx mySerializationManagerEx;
 
