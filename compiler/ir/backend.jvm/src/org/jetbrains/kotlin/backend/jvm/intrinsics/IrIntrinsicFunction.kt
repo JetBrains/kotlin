@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.jvm.intrinsics
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.codegen.BlockInfo
 import org.jetbrains.kotlin.backend.jvm.codegen.ExpressionCodegen
+import org.jetbrains.kotlin.backend.jvm.codegen.mapClass
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.Callable
 import org.jetbrains.kotlin.codegen.StackValue
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.isVararg
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.substitute
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.types.KotlinType
@@ -138,10 +140,13 @@ open class IrIntrinsicFunction(
 }
 
 fun IrFunctionAccessExpression.argTypes(context: JvmBackendContext): ArrayList<Type> {
-    val callableMethod = context.methodSignatureMapper.mapToCallableMethod(this, false)
+    val callee = symbol.owner
+    val signature = context.methodSignatureMapper.mapSignatureSkipGeneric(callee)
     return arrayListOf<Type>().apply {
-        callableMethod.dispatchReceiverType?.let { add(it) }
-        addAll(callableMethod.asmMethod.argumentTypes)
+        if (dispatchReceiver != null) {
+            add(context.typeMapper.mapClass(callee.parentAsClass))
+        }
+        addAll(signature.asmMethod.argumentTypes)
     }
 }
 

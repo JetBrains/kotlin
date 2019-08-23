@@ -957,9 +957,6 @@ class ExpressionCodegen(
         return classReference.onStack
     }
 
-    private fun resolveToCallable(irCall: IrFunctionAccessExpression, isSuper: Boolean): IrCallableMethod =
-        methodSignatureMapper.mapToCallableMethod(irCall, isSuper)
-
     private fun getOrCreateCallGenerator(element: IrFunctionAccessExpression, data: BlockInfo): IrCallGenerator {
         if (!element.symbol.owner.isInlineFunctionCall(context) ||
             classCodegen.irClass.fileParent.fileEntry is MultifileFacadeFileEntry
