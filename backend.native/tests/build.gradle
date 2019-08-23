@@ -2396,6 +2396,12 @@ standaloneTest("devirtualization_getter_looking_as_box_function") {
     source = "codegen/devirtualization/getter_looking_as_box_function.kt"
 }
 
+standaloneTest("devirtualization_anonymousObject") {
+    goldValue = "zzz\n"
+    flags = ["-opt"]
+    source = "codegen/devirtualization/anonymousObject.kt"
+}
+
 standaloneTest("multiargs") {
     arguments = ["AAA", "BB", "C"]
     multiRuns = true

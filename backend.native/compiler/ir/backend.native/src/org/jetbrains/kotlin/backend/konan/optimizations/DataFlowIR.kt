@@ -500,13 +500,10 @@ internal object DataFlowIR {
 
         private fun IrClass.isFinal() = modality == Modality.FINAL
 
-        fun mapClassReferenceType(irClass: IrClass, eraseLocalObjects: Boolean = true): Type {
+        fun mapClassReferenceType(irClass: IrClass): Type {
             // Do not try to devirtualize ObjC classes.
             if (irClass.module.name == Name.special("<forward declarations>") || irClass.isObjCClass())
                 return Type.Virtual
-
-            if (eraseLocalObjects && irClass.isAnonymousObject)
-                return mapClassReferenceType(irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner)
 
             val isFinal = irClass.isFinal()
             val isAbstract = irClass.isAbstract()
@@ -556,11 +553,11 @@ internal object DataFlowIR {
                     )
                 }
 
-        fun mapType(type: IrType, eraseLocalObjects: Boolean = true): Type {
+        fun mapType(type: IrType): Type {
             val binaryType = type.computeBinaryType()
             return when (binaryType) {
                 is BinaryType.Primitive -> mapPrimitiveBinaryType(binaryType.type)
-                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()), eraseLocalObjects)
+                is BinaryType.Reference -> mapClassReferenceType(choosePrimary(binaryType.types.toList()))
             }
         }
 
