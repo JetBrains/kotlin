@@ -118,5 +118,10 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
         public void testSimpleIf() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/simpleIf.kt");
         }
+
+        @TestMetadata("when.kt")
+        public void testWhen() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/when.kt");
+        }
     }
 }

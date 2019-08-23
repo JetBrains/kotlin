@@ -101,11 +101,19 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
 
     // ----------------------------------- Operator call -----------------------------------
 
+    private fun FirExpression.getResolvedSymbol(): FirCallableSymbol<*>? {
+        val expression = (this as? FirWhenSubjectExpression)?.whenSubject?.whenExpression?.let {
+            it.subjectVariable?.symbol?.let { return it }
+            it.subject
+        } ?: this
+        return expression.toResolvedCallableSymbol() as? FirCallableSymbol<*>
+    }
+
     override fun exitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall) {
         val node = graphBuilder.exitTypeOperatorCall(typeOperatorCall).passFlow(false)
         try {
             if (typeOperatorCall.operation !in FirOperation.TYPES) return
-            val symbol: FirCallableSymbol<*> = typeOperatorCall.argument.toResolvedCallableSymbol() as? FirCallableSymbol<*> ?: return
+            val symbol: FirCallableSymbol<*> = typeOperatorCall.argument.getResolvedSymbol() ?: return
             val type = typeOperatorCall.conversionTypeRef.coneTypeSafe<ConeKotlinType>() ?: return
             val varVariable = getRealVariable(symbol)
 
