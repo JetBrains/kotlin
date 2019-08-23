@@ -1,0 +1,36 @@
+package
+
+public fun </*0*/ Ts1, /*1*/ Ts2> bar(): kotlin.Unit
+public inline fun </*0*/ Ts> foo(): kotlin.String
+public infix fun </*0*/ Ts> kotlin.Unit.foo(/*0*/ other: kotlin.Unit): kotlin.Unit
+
+public open class Base {
+    public constructor Base()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open fun </*0*/ Ts> foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Baz {
+    public constructor Baz()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final operator fun </*0*/ Ts> get(/*0*/ index: kotlin.Int): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class Derived : Base {
+    public constructor Derived()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ fun </*0*/ Ts> foo(): kotlin.Unit
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+public final class VariadicClass</*0*/ Ts> {
+    public constructor VariadicClass</*0*/ Ts>()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}

@@ -16,6 +16,6 @@ fun <T, R, vararg Ts> Box<T>.withOthers (
 
 fun box(): String {
     return Box("O").withOthers(Box(15), Box("K")) { arg1, int, arg2 ->
-        "$arg1$arg2"
+        arg1 + arg2
     }.value
 }

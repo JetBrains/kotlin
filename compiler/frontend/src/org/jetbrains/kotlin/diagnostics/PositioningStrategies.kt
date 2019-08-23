@@ -420,8 +420,8 @@ object PositioningStrategies {
     }
 
     @JvmField
-    val PARAMETER_VARARG_MODIFIER: PositioningStrategy<KtParameter> = object : PositioningStrategy<KtParameter>() {
-        override fun mark(element: KtParameter): List<TextRange> {
+    val PARAMETER_VARARG_MODIFIER: PositioningStrategy<KtModifierListOwner> = object : PositioningStrategy<KtModifierListOwner>() {
+        override fun mark(element: KtModifierListOwner): List<TextRange> {
             val varargModifier = element.modifierList!!.getModifier(KtTokens.VARARG_KEYWORD)!!
             return markNode(varargModifier.node)
         }

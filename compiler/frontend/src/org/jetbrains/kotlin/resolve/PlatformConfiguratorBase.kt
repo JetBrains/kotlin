@@ -31,7 +31,8 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     AnnotationClassTargetAndRetentionChecker(),
     ReservedMembersAndConstructsForInlineClass(),
     ResultClassInReturnTypeChecker(),
-    LocalVariableTypeParametersChecker()
+    LocalVariableTypeParametersChecker(),
+    VariadicDeclarationsChecker()
 )
 
 private val DEFAULT_CALL_CHECKERS = listOf(

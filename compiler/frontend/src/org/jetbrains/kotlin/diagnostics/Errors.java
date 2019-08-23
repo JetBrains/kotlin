@@ -591,7 +591,7 @@ public interface Errors {
 
     DiagnosticFactory0<KtParameter> USELESS_VARARG_ON_PARAMETER = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<KtParameter> MULTIPLE_VARARG_PARAMETERS = DiagnosticFactory0.create(ERROR, PARAMETER_VARARG_MODIFIER);
+    DiagnosticFactory0<KtModifierListOwner> MULTIPLE_VARARG_PARAMETERS = DiagnosticFactory0.create(ERROR, PARAMETER_VARARG_MODIFIER);
 
     DiagnosticFactory1<KtParameter, KotlinType> FORBIDDEN_VARARG_PARAMETER_TYPE = DiagnosticFactory1.create(ERROR, PARAMETER_VARARG_MODIFIER);
 
