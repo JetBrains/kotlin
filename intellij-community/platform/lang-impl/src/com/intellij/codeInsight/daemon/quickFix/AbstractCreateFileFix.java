@@ -3,6 +3,7 @@ package com.intellij.codeInsight.daemon.quickFix;
 
 import com.intellij.codeInsight.CodeInsightBundle;
 import com.intellij.codeInsight.daemon.DaemonCodeAnalyzer;
+import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInspection.LocalQuickFixAndIntentionActionOnPsiElement;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.command.WriteCommandAction;
@@ -11,8 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.roots.impl.ProjectFileIndexImpl;
-import com.intellij.openapi.ui.MessageType;
-import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.ui.popup.JBPopupAdapter;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.LightweightWindowEvent;
@@ -112,11 +111,41 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     }
   }
 
-  protected abstract void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor)
+  private void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor) {
+    myIsAvailableTimeStamp = 0; // to revalidate applicability
+
+    PsiDirectory currentDirectory = directory.getDirectory();
+    if (currentDirectory == null) {
+      return;
+    }
+
+    try {
+      for (String pathPart : directory.getPathToCreate()) {
+        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      }
+      for (String pathPart : mySubPath) {
+        currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
+      }
+      if (currentDirectory == null) {
+        if (editor != null) {
+          HintManager hintManager = HintManager.getInstance();
+          hintManager.showErrorHint(editor, CodeInsightBundle.message("create.file.incorrect.path.hint", myNewFileName));
+        }
+        return;
+      }
+
+      apply(project, currentDirectory, editor);
+    }
+    catch (IncorrectOperationException e) {
+      myIsAvailable = false;
+    }
+  }
+
+  protected abstract void apply(@NotNull Project project, @NotNull PsiDirectory targetDirectory, @Nullable Editor editor)
     throws IncorrectOperationException;
 
   @Nullable
-  protected static PsiDirectory findOrCreateSubdirectory(@Nullable PsiDirectory directory, @NotNull String subDirectoryName) {
+  private static PsiDirectory findOrCreateSubdirectory(@Nullable PsiDirectory directory, @NotNull String subDirectoryName) {
     if (directory == null) {
       return null;
     }
@@ -134,29 +163,9 @@ public abstract class AbstractCreateFileFix extends LocalQuickFixAndIntentionAct
     return existingDirectory;
   }
 
-  @Nullable
-  protected PsiDirectory findOrCreatePath(@NotNull TargetDirectory directory, @NotNull PsiDirectory currentDirectory) {
-    for (String pathPart : directory.getPathToCreate()) {
-      currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
-    }
-    for (String pathPart : mySubPath) {
-      currentDirectory = findOrCreateSubdirectory(currentDirectory, pathPart);
-    }
-    return currentDirectory;
-  }
-
-  protected void showIncorrectPathNotification(@NotNull Editor editor) {
-    JBPopupFactory factory = JBPopupFactory.getInstance();
-
-    factory
-      .createHtmlTextBalloonBuilder(CodeInsightBundle.message("create.file.incorrect.path"), MessageType.ERROR, null)
-      .createBalloon()
-      .show(factory.guessBestPopupLocation(editor), Balloon.Position.below);
-  }
-
-  protected void showOptionsPopup(@NotNull Project project,
-                                  @NotNull Editor editor,
-                                  List<TargetDirectory> directories) {
+  private void showOptionsPopup(@NotNull Project project,
+                                @NotNull Editor editor,
+                                List<TargetDirectory> directories) {
     List<TargetDirectoryListItem> items = getTargetDirectoryListItems(directories);
 
     String filePath = myNewFileName;

@@ -153,28 +153,9 @@ public class CreateFilePathFix extends AbstractCreateFileFix {
   }
 
   @Override
-  protected void apply(@NotNull Project project, @NotNull TargetDirectory directory, @Nullable Editor editor)
+  protected void apply(@NotNull Project project, @NotNull PsiDirectory targetDirectory, @Nullable Editor editor)
     throws IncorrectOperationException {
 
-    myIsAvailableTimeStamp = 0; // to revalidate applicability
-
-    PsiDirectory currentDirectory = directory.getDirectory();
-    if (currentDirectory == null) {
-      return;
-    }
-
-    try {
-      currentDirectory = findOrCreatePath(directory, currentDirectory);
-      if (currentDirectory == null) {
-        if (editor != null) {
-          showIncorrectPathNotification(editor);
-        }
-        return;
-      }
-      createFile(project, currentDirectory, myNewFileName);
-    }
-    catch (IncorrectOperationException e) {
-      myIsAvailable = false;
-    }
+    createFile(project, targetDirectory, myNewFileName);
   }
 }
