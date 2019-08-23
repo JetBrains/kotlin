@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
-//import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.backend.common.LoggingContext
 import org.jetbrains.kotlin.backend.common.ir.ir2string
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.ClassKind.*
 import org.jetbrains.kotlin.ir.IrElement
@@ -23,10 +21,12 @@ import org.jetbrains.kotlin.ir.util.lineStartOffsets
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.library.SerializedDeclaration
 import org.jetbrains.kotlin.library.SerializedIrFile
-import org.jetbrains.kotlin.library.impl.SerializedDeclaration
-import org.jetbrains.kotlin.library.impl.SkippedDeclaration
-import org.jetbrains.kotlin.library.impl.TopLevelDeclaration
+import org.jetbrains.kotlin.library.SkippedDeclaration
+import org.jetbrains.kotlin.library.TopLevelDeclaration
+import org.jetbrains.kotlin.library.impl.IrMemoryArrayWriter
+import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
@@ -1352,13 +1352,13 @@ open class IrFileSerializer(
 
         return SerializedIrFile(
             proto.build().toByteArray(),
-            file.fqName.pathSegments().map { it.identifier },
+            file.fqName.asString(),
             file.path,
-            protoSymbolArray.map { it.toByteArray() },
-            protoTypeArray.map { it.toByteArray() },
-            protoStringArray.map { it.toByteArray() },
-            protoBodyArray.map { it.toByteArray() },
-            topLevelDeclarations
+            IrMemoryArrayWriter(protoSymbolArray.map { it.toByteArray() }).writeIntoMemory(),
+            IrMemoryArrayWriter(protoTypeArray.map { it.toByteArray() }).writeIntoMemory(),
+            IrMemoryArrayWriter(protoStringArray.map { it.toByteArray() }).writeIntoMemory(),
+            IrMemoryArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            IrMemoryDeclarationWriter(topLevelDeclarations).writeIntoMemory()
         )
     }
 }

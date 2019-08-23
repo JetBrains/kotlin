@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.library
 
 import org.jetbrains.kotlin.konan.properties.Properties
-import org.jetbrains.kotlin.library.impl.SerializedDeclaration
 
 interface BaseWriter {
     val versions: KonanLibraryVersioning
@@ -33,17 +32,37 @@ class SerializedMetadata(
     val fragmentNames: List<String>
 )
 
+sealed class SerializedDeclaration {
+    abstract val id: Long
+    abstract val local: Int
+    abstract val size: Int
+    abstract val bytes: ByteArray
+
+    abstract val declarationName: String
+}
+
+class TopLevelDeclaration(override val id: Long, isLocal: Boolean, override val declarationName: String, override val bytes: ByteArray) : SerializedDeclaration() {
+    override val local = if (isLocal) 1 else 0
+    override val size = bytes.size
+}
+
+object SkippedDeclaration : SerializedDeclaration() {
+    override val id = -1L
+    override val local = -1
+    override val size = 0
+    override val bytes = ByteArray(0)
+    override val declarationName: String = "<SKIPPED>"
+}
+
 class SerializedIrFile(
     val fileData: ByteArray,
-//    val fileProto: ProtoFile,
-    val fqName: List<String>,
+    val fqName: String,
     val path: String,
-//    val symbols: List<SerializedIrSymbol>,
-    val symbols: List<ByteArray>,
-    val types: List<ByteArray>,
-    val strings: List<ByteArray>,
-    val bodies: List<ByteArray>,
-    val declarations: List<SerializedDeclaration>
+    val symbols: ByteArray,
+    val types: ByteArray,
+    val strings: ByteArray,
+    val bodies: ByteArray,
+    val declarations: ByteArray
 )
 
 class SerializedIrModule(val files: Collection<SerializedIrFile>)

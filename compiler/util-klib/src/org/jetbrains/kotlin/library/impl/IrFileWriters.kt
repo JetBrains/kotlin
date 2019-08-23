@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.impl
 
+import org.jetbrains.kotlin.library.SerializedDeclaration
 import java.io.ByteArrayOutputStream
 import java.io.DataOutput
 import java.io.DataOutputStream
@@ -86,30 +87,6 @@ class IrTableWriter(private val data: List<Pair<Long, ByteArray>>) : IrFileWrite
 
         data.forEach { dataOutput.write(it.second) }
     }
-}
-
-sealed class SerializedDeclaration {
-    abstract val id: Long
-    abstract val local: Int
-    abstract val size: Int
-    abstract val bytes: ByteArray
-
-    abstract val declarationName: String
-}
-
-class TopLevelDeclaration(override val id: Long, isLocal: Boolean, override val declarationName: String, override val bytes: ByteArray) : SerializedDeclaration() {
-    override val local = if (isLocal) 1 else 0
-    override val size = bytes.size
-}
-
-object SkippedDeclaration : SerializedDeclaration() {
-    override val id = -1L
-    override val local = -1
-    override val size = 0
-    override val bytes = ByteArray(0)
-    override val declarationName: String = "<SKIPPED>"
-
-
 }
 
 class IrDeclarationWriter(private val declarations: List<SerializedDeclaration>) : IrFileWriter() {

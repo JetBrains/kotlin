@@ -22,11 +22,11 @@ class IrMonoliticWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLa
     override fun addIr(ir: SerializedIrModule) {
         with(ir.files.sortedBy { it.path }) {
             IrArrayWriter(map { it.fileData }).writeIntoFile(irLayout.irFiles.absolutePath)
-            IrArrayWriter(map { IrMemoryDeclarationWriter(it.declarations).writeIntoMemory() }).writeIntoFile(irLayout.irDeclarations.absolutePath)
-            IrArrayWriter(map { IrMemoryArrayWriter(it.symbols).writeIntoMemory() }).writeIntoFile(irLayout.irSymbols.absolutePath)
-            IrArrayWriter(map { IrMemoryArrayWriter(it.types).writeIntoMemory() }).writeIntoFile(irLayout.irTypes.absolutePath)
-            IrArrayWriter(map { IrMemoryArrayWriter(it.strings).writeIntoMemory() }).writeIntoFile(irLayout.irStrings.absolutePath)
-            IrArrayWriter(map { IrMemoryArrayWriter(it.bodies).writeIntoMemory() }).writeIntoFile(irLayout.irBodies.absolutePath)
+            IrArrayWriter(map { it.declarations }).writeIntoFile(irLayout.irDeclarations.absolutePath)
+            IrArrayWriter(map { it.symbols }).writeIntoFile(irLayout.irSymbols.absolutePath)
+            IrArrayWriter(map { it.types }).writeIntoFile(irLayout.irTypes.absolutePath)
+            IrArrayWriter(map { it.strings }).writeIntoFile(irLayout.irStrings.absolutePath)
+            IrArrayWriter(map { it.bodies }).writeIntoFile(irLayout.irBodies.absolutePath)
         }
     }
 }
@@ -39,7 +39,7 @@ class IrPerFileWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLayo
     }
 
     private fun serializeFile(file: SerializedIrFile) {
-        val fqnPath = file.fqName.joinToString(separator = ".")
+        val fqnPath = file.fqName
         val fileId = file.path.hashCode().toString(Character.MAX_RADIX)
         val irFileDirectory = "$fqnPath.$fileId.file"
         val fileDir = irLayout.irDir.child(irFileDirectory)
@@ -48,11 +48,11 @@ class IrPerFileWriterImpl(irLayout: IrKotlinLibraryLayout) : IrWriterImpl(irLayo
         fileDir.mkdirs()
 
         irLayout.irFile(fileDir).writeBytes(file.fileData)
-        IrDeclarationWriter(file.declarations).writeIntoFile(irLayout.irDeclarations(fileDir).absolutePath)
-        IrArrayWriter(file.symbols).writeIntoFile(irLayout.irSymbols(fileDir).absolutePath)
-        IrArrayWriter(file.types).writeIntoFile(irLayout.irTypes(fileDir).absolutePath)
-        IrArrayWriter(file.strings).writeIntoFile(irLayout.irStrings(fileDir).absolutePath)
-        IrArrayWriter(file.bodies).writeIntoFile(irLayout.irBodies(fileDir).absolutePath)
-//        fileDir.child("declarations.txt").writeText(file.declarations.joinToString(separator = "\n") { "${it.declarationName} -> (${it.id}, ${it.local})" })
+
+        irLayout.irDeclarations(fileDir).writeBytes(file.declarations)
+        irLayout.irSymbols(fileDir).writeBytes(file.symbols)
+        irLayout.irTypes(fileDir).writeBytes(file.types)
+        irLayout.irStrings(fileDir).writeBytes(file.strings)
+        irLayout.irBodies(fileDir).writeBytes(file.bodies)
     }
 }
