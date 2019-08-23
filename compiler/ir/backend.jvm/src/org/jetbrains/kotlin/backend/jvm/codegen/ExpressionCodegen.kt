@@ -941,7 +941,12 @@ class ExpressionCodegen(
                 putReifiedOperationMarkerIfTypeIsReifiedParameter(classType, ReifiedTypeInliner.OperationKind.JAVA_CLASS, mv, this)
             }
 
-            putJavaLangClassInstance(mv, typeMapper.mapType(classType), classType.toKotlinType(), typeMapper.kotlinTypeMapper)
+            val asmType = typeMapper.mapType(classType)
+            if (classType.getClass()?.isInline == true || !isPrimitive(asmType)) {
+                mv.aconst(typeMapper.boxType(classType))
+            } else {
+                mv.getstatic(boxType(asmType).internalName, "TYPE", "Ljava/lang/Class;")
+            }
         } else {
             throw AssertionError("not an IrGetClass or IrClassReference: ${classReference.dump()}")
         }

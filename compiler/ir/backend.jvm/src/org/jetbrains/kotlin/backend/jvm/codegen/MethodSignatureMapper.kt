@@ -27,7 +27,7 @@ import org.jetbrains.org.objectweb.asm.commons.Method
 
 class MethodSignatureMapper(context: JvmBackendContext) {
     private val typeMapper: IrTypeMapper = context.typeMapper
-    private val kotlinTypeMapper: KotlinTypeMapper = typeMapper.kotlinTypeMapper
+    private val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
 
     fun mapAsmMethod(irFunction: IrFunction): Method =
         kotlinTypeMapper.mapAsmMethod(irFunction.descriptor)

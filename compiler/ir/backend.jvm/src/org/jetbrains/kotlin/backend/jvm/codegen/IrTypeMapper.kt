@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
-import org.jetbrains.kotlin.codegen.ClassBuilderMode
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.codegen.signature.JvmSignatureWriter
@@ -32,7 +31,6 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.org.objectweb.asm.Type
 
 class IrTypeMapper(private val context: JvmBackendContext) {
-    val kotlinTypeMapper: KotlinTypeMapper = context.state.typeMapper
     private val typeSystem = IrTypeCheckerContext(context.irBuiltIns)
 
     fun classInternalName(irClass: IrClass): String =
@@ -71,7 +69,7 @@ class IrTypeMapper(private val context: JvmBackendContext) {
 
         // TODO: rewrite this part to produce the correct Type without the fake descriptor
         if (type.toKotlinType().isSuspendFunctionType) {
-            return kotlinTypeMapper.mapType(
+            return context.state.typeMapper.mapType(
                 transformSuspendFunctionToRuntimeFunctionType(type.toKotlinType(), isReleaseCoroutines = true), sw, mode
             )
         }
