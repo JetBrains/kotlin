@@ -53,11 +53,11 @@ Add sources to project:
 
 ```
 src
-├── iosAppMain
-│   └── apple
-│       ├── AppDelegate.swift
-│       ├── Assets.xcassets
-│       ├── LaunchScreen.storyboard
-│       ├── Main.storyboard
-│       └── ViewController.swift
+└── iosAppMain
+    └── apple
+        ├── AppDelegate.swift
+        ├── Assets.xcassets
+        ├── LaunchScreen.storyboard
+        ├── Main.storyboard
+        └── ViewController.swift
 ```
