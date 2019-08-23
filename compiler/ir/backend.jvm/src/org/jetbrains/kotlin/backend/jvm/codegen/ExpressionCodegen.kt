@@ -438,23 +438,24 @@ class ExpressionCodegen(
     }
 
     override fun visitFieldAccess(expression: IrFieldAccessExpression, data: BlockInfo): PromisedValue {
-        expression.symbol.owner.constantValue()?.let {
+        val callee = expression.symbol.owner
+        callee.constantValue()?.let {
             // Handling const reads before codegen is important for constant folding.
-            assert(expression is IrSetField) { "read of const val ${expression.symbol.owner.name} not inlined by ConstLowering" }
+            assert(expression is IrSetField) { "read of const val ${callee.name} not inlined by ConstLowering" }
             // This can only be the field's initializer; JVM implementations are required
             // to generate those for ConstantValue-marked fields automatically, so this is redundant.
             return defaultValue(expression.type)
         }
 
-        val realField = expression.symbol.owner.resolveFakeOverride()!!
+        val realField = callee.resolveFakeOverride()!!
         val fieldType = typeMapper.mapType(realField.type)
-        val ownerType = methodSignatureMapper.mapImplementationOwner(expression.symbol.owner).internalName
+        val ownerType = typeMapper.mapClass(callee.parentAsClass).internalName
         val fieldName = realField.name.asString()
         val isStatic = expression.receiver == null
         expression.markLineNumber(startOffset = true)
         expression.receiver?.accept(this, data)?.materialize()
         return if (expression is IrSetField) {
-            expression.value.accept(this, data).coerce(fieldType, expression.symbol.owner.type).materialize()
+            expression.value.accept(this, data).coerce(fieldType, callee.type).materialize()
             when {
                 isStatic -> mv.putstatic(ownerType, fieldName, fieldType.descriptor)
                 else -> mv.putfield(ownerType, fieldName, fieldType.descriptor)
@@ -462,12 +463,10 @@ class ExpressionCodegen(
             defaultValue(expression.type)
         } else {
             when {
-                isStatic ->
-                    mv.getstatic(ownerType, fieldName, fieldType.descriptor)
-                else ->
-                    mv.getfield(ownerType, fieldName, fieldType.descriptor)
+                isStatic -> mv.getstatic(ownerType, fieldName, fieldType.descriptor)
+                else -> mv.getfield(ownerType, fieldName, fieldType.descriptor)
             }
-            MaterialValue(this, fieldType, expression.symbol.owner.type).coerce(expression.type)
+            MaterialValue(this, fieldType, callee.type).coerce(expression.type)
         }
     }
 

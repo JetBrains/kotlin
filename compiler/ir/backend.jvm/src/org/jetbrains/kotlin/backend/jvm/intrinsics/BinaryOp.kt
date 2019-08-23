@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.codegen.AsmUtil.numberFunctionOperandType
 import org.jetbrains.kotlin.codegen.StackValue
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.types.isChar
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.org.objectweb.asm.Opcodes.*
 import org.jetbrains.org.objectweb.asm.Type
@@ -33,10 +36,9 @@ class BinaryOp(private val opcode: Int) : IntrinsicMethod() {
         signature: JvmMethodSignature,
         context: JvmBackendContext
     ): IrIntrinsicFunction {
-        val owner = context.methodSignatureMapper.mapImplementationOwner(expression.symbol.owner)
         val returnType = signature.returnType
         val intermediateResultType = numberFunctionOperandType(returnType)
-        val argTypes = if (owner != Type.CHAR_TYPE) {
+        val argTypes = if (!expression.symbol.owner.parentAsClass.defaultType.isChar()) {
             listOf(intermediateResultType, if (shift()) Type.INT_TYPE else intermediateResultType)
         } else {
             listOf(Type.CHAR_TYPE, signature.valueParameters[0].asmType)

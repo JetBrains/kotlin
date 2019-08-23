@@ -41,9 +41,6 @@ class MethodSignatureMapper(context: JvmBackendContext) {
     fun mapAnnotationParameterName(field: IrField): String =
         kotlinTypeMapper.mapAnnotationParameterName(field.descriptor)
 
-    fun mapImplementationOwner(irDeclaration: IrDeclaration): Type =
-        kotlinTypeMapper.mapImplementationOwner(irDeclaration.descriptor)
-
     fun mapReturnType(irField: IrField): Type =
         kotlinTypeMapper.mapReturnType(irField.descriptor)
 
