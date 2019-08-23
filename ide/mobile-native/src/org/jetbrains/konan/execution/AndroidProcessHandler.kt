@@ -22,7 +22,8 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
     private var processClient: Client? = null
     private val logCatTask = LogCatReceiverTask(raw)
 
-    val debuggerPort: Int? get() = processClient?.debuggerListenPort
+    val debuggerPort: Int?
+        @Synchronized get() = processClient?.debuggerListenPort
 
     private fun isRelevantEvent(device: IDevice, changeMask: Int, expectedMask: Int) =
         (changeMask and expectedMask) == expectedMask &&
@@ -33,8 +34,8 @@ class AndroidProcessHandler(private val raw: IDevice) : ProcessHandler() {
             if (!isRelevantEvent(client.device, changeMask, Client.CHANGE_NAME)) return
 
             synchronized(this@AndroidProcessHandler) {
-                if (appId == client.clientData.clientDescription ||
-                    appId == client.clientData.packageName
+                if (appId == client.clientData?.clientDescription ||
+                    appId == client.clientData?.packageName
                 ) {
                     processClient = client
                 }
