@@ -695,17 +695,17 @@ class ExpressionCodegen(
                 // Convert single arg to string.
                 val arg = expression.arguments[0]
                 val result = arg.accept(this, data).boxInlineClasses(arg.type).materialized
-                if (!arg.type.isString())
-                    AsmUtil.genToString(StackValue.onStack(result.type), result.type, result.kotlinType, typeMapper.kotlinTypeMapper)
-                        .put(expression.asmType, mv)
+                if (!arg.type.isString()) {
+                    result.genToString(mv)
+                }
             }
             arity == 2 && expression.arguments[0].type.isStringClassType() -> {
                 // Call the stringPlus intrinsic
-                expression.arguments.forEach {
-                    val result = it.accept(this, data).boxInlineClasses(it.type).materialized
-                    val type = result.type
-                    if (type.sort != Type.OBJECT)
-                        AsmUtil.genToString(StackValue.onStack(type), type, result.kotlinType, typeMapper.kotlinTypeMapper).put(expression.asmType, mv)
+                for (argument in expression.arguments) {
+                    val result = argument.accept(this, data).boxInlineClasses(argument.type).materialized
+                    if (result.type.sort != Type.OBJECT) {
+                        result.genToString(mv)
+                    }
                 }
                 mv.invokestatic(
                     IrIntrinsicMethods.INTRINSICS_CLASS_NAME,
@@ -717,13 +717,19 @@ class ExpressionCodegen(
             else -> {
                 // Use StringBuilder to concatenate.
                 genStringBuilderConstructor(mv)
-                expression.arguments.forEach {
-                    genInvokeAppendMethod(mv, it.accept(this, data).boxInlineClasses(it.type).materialized.type, null)
+                for (argument in expression.arguments) {
+                    genInvokeAppendMethod(mv, argument.accept(this, data).boxInlineClasses(argument.type).materialized.type, null)
                 }
                 mv.invokevirtual("java/lang/StringBuilder", "toString", "()Ljava/lang/String;", false)
             }
         }
         return expression.onStack
+    }
+
+    private fun MaterialValue.genToString(v: InstructionAdapter) {
+        val asmType =
+            if (irType.getClass()?.isInline == true) OBJECT_TYPE else stringValueOfType(type)
+        v.invokestatic("java/lang/String", "valueOf", Type.getMethodDescriptor(AsmTypes.JAVA_STRING_TYPE, asmType), false)
     }
 
     override fun visitWhileLoop(loop: IrWhileLoop, data: BlockInfo): PromisedValue {
