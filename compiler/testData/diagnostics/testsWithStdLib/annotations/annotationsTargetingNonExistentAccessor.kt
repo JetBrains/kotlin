@@ -62,12 +62,6 @@ class PrivateToThis<in I> {
 }
 
 class Statics {
-    @get:Ann
-    lateinit var y0: String
-
-    <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>
-    private lateinit var y1: String
-
     companion object {
         @JvmField
         <!ANNOTATION_TARGETS_NON_EXISTENT_ACCESSOR!>@get:Ann<!>

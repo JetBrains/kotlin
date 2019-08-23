@@ -86,8 +86,6 @@ public final class PrivateToThis</*0*/ in I> {
 
 public final class Statics {
     public constructor Statics()
-    @get:Ann public final lateinit var y0: kotlin.String
-    @get:Ann private final lateinit var y1: kotlin.String
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String

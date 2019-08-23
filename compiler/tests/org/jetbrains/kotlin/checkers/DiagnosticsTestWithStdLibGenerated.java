@@ -166,6 +166,11 @@ public class DiagnosticsTestWithStdLibGenerated extends AbstractDiagnosticsTestW
             KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
         }
 
+        @TestMetadata("annotationsTargetingLateinitAccessors.kt")
+        public void testAnnotationsTargetingLateinitAccessors() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationsTargetingLateinitAccessors.kt");
+        }
+
         @TestMetadata("annotationsTargetingNonExistentAccessor.kt")
         public void testAnnotationsTargetingNonExistentAccessor() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/annotationsTargetingNonExistentAccessor.kt");

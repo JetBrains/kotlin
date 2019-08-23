@@ -71,6 +71,11 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             runTest("compiler/testData/codegen/box/annotations/annotationsOnDefault.kt");
         }
 
+        @TestMetadata("annotationsOnLateinitAccessors.kt")
+        public void testAnnotationsOnLateinitAccessors() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/annotationsOnLateinitAccessors.kt");
+        }
+
         @TestMetadata("annotationsOnNonExistentAccessors.kt")
         public void testAnnotationsOnNonExistentAccessors() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/annotationsOnNonExistentAccessors.kt");
