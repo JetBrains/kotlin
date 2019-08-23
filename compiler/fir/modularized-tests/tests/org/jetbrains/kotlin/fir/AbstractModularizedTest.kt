@@ -15,6 +15,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 
 data class ModuleData(
     val name: String,
+    val outputDir: String,
     val qualifiedName: String,
     val classpath: List<File>,
     val sources: List<File>,
@@ -75,7 +76,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             }
         }
 
-        return ModuleData(moduleName, qualifiedModuleName, classpath, sources, javaSourceRoots)
+        return ModuleData(moduleName, outputDir, qualifiedModuleName, classpath, sources, javaSourceRoots)
     }
 
 
@@ -90,9 +91,10 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
         println("BASE PATH: ${root.absolutePath}")
 
+        val filterRegex = (System.getProperty("fir.bench.filter") ?: ".*").toRegex()
         val modules =
             root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
-                .filter { it.qualifiedName == "kotlin.idea.main" }
+                .filter { it.outputDir.matches(filterRegex) }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
