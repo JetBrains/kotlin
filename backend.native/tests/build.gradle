@@ -3703,16 +3703,7 @@ standaloneTest("coverage_basic_program") {
     flags = ["-Xcoverage-file=$coverageFile", "-Xcoverage", "-entry", "coverage.basic.program.main"]
     source = "$projectDir/coverage/basic/program/main.kt"
 
-    doFirst { file(coverageFile).delete() }
-
     doLast {
-        if (twoStageEnabled) {
-            // If two-stage compilation is enabled, no sources are passed to the compiler when a final binary is generated.
-            // So according to -Xcoverage flag semantics it must provide no coverage info.
-            assert !file(coverageFile).exists()
-            return
-        }
-
         execLlvm("llvm-profdata") {
             args "merge"
             args "$dir/program.profraw"

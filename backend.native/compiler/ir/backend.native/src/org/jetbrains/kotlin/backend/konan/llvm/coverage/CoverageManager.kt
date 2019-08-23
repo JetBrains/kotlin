@@ -65,7 +65,8 @@ internal class CoverageManager(val context: Context) {
         val coveredUserCode = if (shouldCoverProgram) setOf(context.moduleDescriptor) else emptySet()
         val coveredLibs = context.irModules.filter { it.key in librariesToCover }.values
                 .map { it.descriptor }.toSet()
-        coveredLibs + coveredUserCode
+        val coveredIncludedLibs = if (shouldCoverProgram) context.getIncludedLibraryDescriptors().toSet() else emptySet()
+        coveredLibs + coveredUserCode + coveredIncludedLibs
     }
 
     private fun fileCoverageFilter(file: IrFile) =
