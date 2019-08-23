@@ -316,6 +316,7 @@ class MockKotlinCompilation(
     override fun attributes(configure: AttributeContainer.() -> Unit) = throw UnsupportedOperationException()
     override fun attributes(configure: Closure<*>) = throw UnsupportedOperationException()
     override val compileAllTaskName: String get() = throw UnsupportedOperationException()
+    override val moduleName: String get() = throw UnsupportedOperationException()
     //endregion
 
     override fun toString(): String = "compilation '${name}'"

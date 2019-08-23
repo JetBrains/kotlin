@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.COMPILER_CLASSPATH_CONFIGURATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithTransitiveClosure
+import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.utils.isGradleVersionAtLeast
 import org.jetbrains.kotlin.gradle.utils.isParentOf
@@ -399,7 +401,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.apply { fillDefaultValues() }
         super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
 
-        args.moduleName = friendTask?.moduleName ?: moduleName
+        args.moduleName = taskData.compilation.moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
 
         args.friendPaths = friendPaths.value
@@ -540,7 +542,7 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
         get() = kotlinOptionsImpl
 
     private val defaultOutputFile: File
-        get() = File(destinationDir, "$moduleName.js")
+        get() = File(destinationDir, "${taskData.compilation.ownModuleName}.js")
 
     @Suppress("unused")
     @get:OutputFile

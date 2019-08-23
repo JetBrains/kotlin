@@ -19,6 +19,7 @@ import org.gradle.api.tasks.TaskState
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.internal.KotlinCompilationsModuleGroups
 import org.jetbrains.kotlin.gradle.plugin.sources.defaultSourceSetLanguageSettingsChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.getSourceSetHierarchy
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
@@ -191,14 +192,8 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 
-    internal val moduleName: String
-        get() {
-            val project = target.project
-            val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
-                ?: project.name
-            val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
-            return filterModuleName("$baseName$suffix")
-        }
+    override val moduleName: String
+        get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName
 
     override fun associateWith(other: KotlinCompilation<*>) {
         require(other.target == target) { "Only associations between compilations of a single target are supported" }
@@ -207,6 +202,7 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
         _associateWith += other
 
         addAssociateCompilationDependencies(other)
+        KotlinCompilationsModuleGroups.unionModules(this, other)
     }
 
     protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
@@ -232,6 +228,15 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
     override val associateWith: Set<KotlinCompilation<*>>
         get() = Collections.unmodifiableSet(_associateWith)
 }
+
+ internal val KotlinCompilation<*>.ownModuleName: String
+     get() {
+         val project = target.project
+         val baseName = project.convention.findPlugin(BasePluginConvention::class.java)?.archivesBaseName
+             ?: project.name
+         val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
+         return filterModuleName("$baseName$suffix")
+     }
 
  internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
      get() = mutableSetOf<KotlinCompilation<*>>().apply {

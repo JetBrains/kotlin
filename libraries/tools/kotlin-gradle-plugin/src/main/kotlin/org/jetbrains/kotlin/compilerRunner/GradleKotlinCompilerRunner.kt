@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTaskData
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.ownModuleName
 import org.jetbrains.kotlin.gradle.utils.archivePathCompatible
 import org.jetbrains.kotlin.gradle.utils.newTmpFile
 import org.jetbrains.kotlin.gradle.utils.relativeToRoot
@@ -192,7 +193,7 @@ internal open class GradleCompilerRunner(protected val task: Task) {
                     val target = taskData.compilation.target
                     val module = IncrementalModuleEntry(
                         project.path,
-                        compilation.moduleName,
+                        compilation.ownModuleName,
                         project.buildDir,
                         taskData.buildHistoryFile
                     )

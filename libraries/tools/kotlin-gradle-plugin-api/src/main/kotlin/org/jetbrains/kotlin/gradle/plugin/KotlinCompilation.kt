@@ -75,6 +75,8 @@ interface KotlinCompilation<out T : KotlinCommonOptions> : Named, HasAttributes,
 
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
+
+    val moduleName: String
 }
 
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptions> : KotlinCompilation<T> {
