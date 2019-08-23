@@ -1,0 +1,141 @@
+digraph loops_kt {
+subgraph testWhile {
+  0 [shape=box label="Enter function testWhile"];
+  1 [shape=box label="Enter block"];
+  2 [shape=box label="Enter while loop"];
+  3 [shape=box label="Enter loop condition"];
+  4 [shape=box label="Access variable R|<local>/b|"];
+  5 [shape=box label="Exit loop condition"];
+  6 [shape=box label="Enter loop block"];
+  7 [shape=box label="Enter block"];
+  8 [shape=box label="Access variable R|<local>/x|"];
+  9 [shape=box label="Type operator: x is String"];
+  10 [shape=box label="Variable declaration: lval y: R|kotlin/Boolean|"];
+  11 [shape=box label="Exit block"];
+  12 [shape=box label="Exit loop block"];
+  13 [shape=box label="Exit whileloop"];
+  14 [shape=box label="Access variable R|<local>/x|"];
+  15 [shape=box label="Type operator: x is String"];
+  16 [shape=box label="Exit block"];
+  17 [shape=box label="Exit function testWhile"];
+
+  0 -> {1};
+  1 -> {2};
+  2 -> {3};
+  3 -> {4};
+  4 -> {5};
+  5 -> {13 6};
+  6 -> {7};
+  7 -> {8};
+  8 -> {9};
+  9 -> {10};
+  10 -> {11};
+  11 -> {12};
+  12 -> {3};
+  13 -> {14};
+  14 -> {15};
+  15 -> {16};
+  16 -> {17};
+}
+
+subgraph testDoWhile {
+  18 [shape=box label="Enter function testDoWhile"];
+  19 [shape=box label="Enter block"];
+  20 [shape=box label="Enter do-while loop"];
+  21 [shape=box label="Enter loop block"];
+  22 [shape=box label="Enter block"];
+  23 [shape=box label="Access variable R|<local>/x|"];
+  24 [shape=box label="Type operator: x is String"];
+  25 [shape=box label="Variable declaration: lval y: R|kotlin/Boolean|"];
+  26 [shape=box label="Exit block"];
+  27 [shape=box label="Exit loop block"];
+  28 [shape=box label="Enter loop condition"];
+  29 [shape=box label="Access variable R|<local>/b|"];
+  30 [shape=box label="Exit loop condition"];
+  31 [shape=box label="Exit do-whileloop"];
+  32 [shape=box label="Access variable R|<local>/x|"];
+  33 [shape=box label="Type operator: x is String"];
+  34 [shape=box label="Exit block"];
+  35 [shape=box label="Exit function testDoWhile"];
+
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {23};
+  23 -> {24};
+  24 -> {25};
+  25 -> {26};
+  26 -> {27};
+  27 -> {28};
+  28 -> {29};
+  29 -> {30};
+  30 -> {21 31};
+  31 -> {32};
+  32 -> {33};
+  33 -> {34};
+  34 -> {35};
+}
+
+subgraph testFor {
+  36 [shape=box label="Enter function testFor"];
+  37 [shape=box label="Enter block"];
+  38 [shape=box label="Const: Int(0)"];
+  39 [shape=box label="Const: Int(5)"];
+  40 [shape=box label="Function call: Int(0).R|kotlin/Int.rangeTo|(Int(5))"];
+  41 [shape=box label="Variable declaration: lval <range>: R|kotlin/ranges/IntRange|"];
+  42 [shape=box label="Access variable R|<local>/<range>|"];
+  43 [shape=box label="Function call: R|<local>/<range>|.R|kotlin/ranges/IntProgression.iterator|()"];
+  44 [shape=box label="Variable declaration: lval <iterator>: R|kotlin/collections/IntIterator|"];
+  45 [shape=box label="Enter while loop"];
+  46 [shape=box label="Enter loop condition"];
+  47 [shape=box label="Access variable R|<local>/<iterator>|"];
+  48 [shape=box label="Function call: R|<local>/<iterator>|.R|FakeOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()"];
+  49 [shape=box label="Exit loop condition"];
+  50 [shape=box label="Enter loop block"];
+  51 [shape=box label="Enter block"];
+  52 [shape=box label="Access variable R|<local>/<iterator>|"];
+  53 [shape=box label="Function call: R|<local>/<iterator>|.R|kotlin/collections/IntIterator.next|()"];
+  54 [shape=box label="Variable declaration: lval i: R|kotlin/Int|"];
+  55 [shape=box label="Access variable R|<local>/x|"];
+  56 [shape=box label="Type operator: x is String"];
+  57 [shape=box label="Variable declaration: lval y: R|kotlin/Boolean|"];
+  58 [shape=box label="Exit block"];
+  59 [shape=box label="Exit loop block"];
+  60 [shape=box label="Exit whileloop"];
+  61 [shape=box label="Access variable R|<local>/x|"];
+  62 [shape=box label="Type operator: x is String"];
+  63 [shape=box label="Exit block"];
+  64 [shape=box label="Exit function testFor"];
+
+  36 -> {37};
+  37 -> {38};
+  38 -> {39};
+  39 -> {40};
+  40 -> {41};
+  41 -> {42};
+  42 -> {43};
+  43 -> {44};
+  44 -> {45};
+  45 -> {46};
+  46 -> {47};
+  47 -> {48};
+  48 -> {49};
+  49 -> {60 50};
+  50 -> {51};
+  51 -> {52};
+  52 -> {53};
+  53 -> {54};
+  54 -> {55};
+  55 -> {56};
+  56 -> {57};
+  57 -> {58};
+  58 -> {59};
+  59 -> {46};
+  60 -> {61};
+  61 -> {62};
+  62 -> {63};
+  63 -> {64};
+}
+
+}

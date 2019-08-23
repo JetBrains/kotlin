@@ -1,0 +1,192 @@
+digraph jumps_kt {
+subgraph test_1 {
+  0 [shape=box label="Enter function test_1"];
+  1 [shape=box label="Enter block"];
+  2 [shape=box label="Enter when"];
+  3 [shape=box label="Enter when branch condition "];
+  4 [shape=box label="Access variable R|<local>/x|"];
+  5 [shape=box label="Const: Null(null)"];
+  6 [shape=box label="Operator =="];
+  7 [shape=box label="Exit when branch condition"];
+  8 [shape=box label="Enter block"];
+  9 [shape=box label="Function call: R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()"];
+  10 [shape=box label="Throw: throw R|kotlin/KotlinNullPointerException.KotlinNullPointerException|()"];
+  11 [shape=box label="Stub[DEAD]"];
+  12 [shape=box label="Exit block[DEAD]"];
+  13 [shape=box label="Exit when branch result[DEAD]"];
+  14 [shape=box label="Enter when branch condition else"];
+  15 [shape=box label="Exit when branch condition"];
+  16 [shape=box label="Enter block"];
+  17 [shape=box label="Access variable R|<local>/x|"];
+  18 [shape=box label="Exit block"];
+  19 [shape=box label="Exit when branch result"];
+  20 [shape=box label="Exit when"];
+  21 [shape=box label="Variable declaration: lval y: R|kotlin/Int|"];
+  22 [shape=box label="Access variable R|<local>/y|"];
+  23 [shape=box label="Function call: R|<local>/y|.R|kotlin/Int.inc|()"];
+  24 [shape=box label="Exit block"];
+  25 [shape=box label="Exit function test_1"];
+
+  0 -> {1};
+  1 -> {2};
+  2 -> {3};
+  3 -> {4};
+  4 -> {5};
+  5 -> {6};
+  6 -> {7};
+  7 -> {8 14};
+  8 -> {9};
+  9 -> {10};
+  10 -> {25};
+  10 -> {11} [style=dotted];
+  11 -> {12} [style=dotted];
+  12 -> {13} [style=dotted];
+  13 -> {20} [style=dotted];
+  14 -> {15};
+  15 -> {16};
+  16 -> {17};
+  17 -> {18};
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {23};
+  23 -> {24};
+  24 -> {25};
+}
+
+subgraph test_2 {
+  26 [shape=box label="Enter function test_2"];
+  27 [shape=box label="Enter block"];
+  28 [shape=box label="Enter when"];
+  29 [shape=box label="Enter when branch condition "];
+  30 [shape=box label="Access variable R|<local>/x|"];
+  31 [shape=box label="Const: Null(null)"];
+  32 [shape=box label="Operator =="];
+  33 [shape=box label="Exit when branch condition"];
+  34 [shape=box label="Enter block"];
+  35 [shape=box label="Access variable R|<local>/x|"];
+  36 [shape=box label="Exit block"];
+  37 [shape=box label="Exit when branch result"];
+  38 [shape=box label="Enter when branch condition else"];
+  39 [shape=box label="Exit when branch condition"];
+  40 [shape=box label="Enter block"];
+  41 [shape=box label="Access variable R|<local>/x|"];
+  42 [shape=box label="Exit block"];
+  43 [shape=box label="Exit when branch result"];
+  44 [shape=box label="Exit when"];
+  45 [shape=box label="Variable declaration: lval y: R|kotlin/Int?|"];
+  46 [shape=box label="Access variable R|<local>/y|"];
+  47 [shape=box label="Function call: R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+  48 [shape=box label="Exit block"];
+  49 [shape=box label="Exit function test_2"];
+
+  26 -> {27};
+  27 -> {28};
+  28 -> {29};
+  29 -> {30};
+  30 -> {31};
+  31 -> {32};
+  32 -> {33};
+  33 -> {34 38};
+  34 -> {35};
+  35 -> {36};
+  36 -> {37};
+  37 -> {44};
+  38 -> {39};
+  39 -> {40};
+  40 -> {41};
+  41 -> {42};
+  42 -> {43};
+  43 -> {44};
+  44 -> {45};
+  45 -> {46};
+  46 -> {47};
+  47 -> {48};
+  48 -> {49};
+}
+
+subgraph test_3 {
+  50 [shape=box label="Enter function test_3"];
+  51 [shape=box label="Enter block"];
+  52 [shape=box label="Enter while loop"];
+  53 [shape=box label="Enter loop condition"];
+  54 [shape=box label="Const: Boolean(true)"];
+  55 [shape=box label="Exit loop condition"];
+  56 [shape=box label="Enter loop block"];
+  57 [shape=box label="Enter block"];
+  58 [shape=box label="Access variable R|<local>/x|"];
+  59 [shape=box label="Type operator: x as Int"];
+  60 [shape=box label="Jump: break@@@[Boolean(true)] "];
+  61 [shape=box label="Stub[DEAD]"];
+  62 [shape=box label="Exit block[DEAD]"];
+  63 [shape=box label="Exit loop block[DEAD]"];
+  64 [shape=box label="Exit whileloop"];
+  65 [shape=box label="Access variable R|<local>/x|"];
+  66 [shape=box label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()"];
+  67 [shape=box label="Exit block"];
+  68 [shape=box label="Exit function test_3"];
+
+  50 -> {51};
+  51 -> {52};
+  52 -> {53};
+  53 -> {54};
+  54 -> {55};
+  55 -> {64 56};
+  56 -> {57};
+  57 -> {58};
+  58 -> {59};
+  59 -> {60};
+  60 -> {64};
+  60 -> {61} [style=dotted];
+  61 -> {62} [style=dotted];
+  62 -> {63} [style=dotted];
+  63 -> {53} [style=dotted];
+  64 -> {65};
+  65 -> {66};
+  66 -> {67};
+  67 -> {68};
+}
+
+subgraph test_4 {
+  69 [shape=box label="Enter function test_4"];
+  70 [shape=box label="Enter block"];
+  71 [shape=box label="Enter do-while loop"];
+  72 [shape=box label="Enter loop block"];
+  73 [shape=box label="Enter block"];
+  74 [shape=box label="Access variable R|<local>/x|"];
+  75 [shape=box label="Type operator: x as int"];
+  76 [shape=box label="Jump: break@@@[Boolean(true)] "];
+  77 [shape=box label="Stub[DEAD]"];
+  78 [shape=box label="Exit block[DEAD]"];
+  79 [shape=box label="Exit loop block[DEAD]"];
+  80 [shape=box label="Enter loop condition[DEAD]"];
+  81 [shape=box label="Const: Boolean(true)[DEAD]"];
+  82 [shape=box label="Exit loop condition[DEAD]"];
+  83 [shape=box label="Exit do-whileloop[DEAD]"];
+  84 [shape=box label="Access variable R|<local>/x|[DEAD]"];
+  85 [shape=box label="Function call: R|<local>/x|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()[DEAD]"];
+  86 [shape=box label="Exit block[DEAD]"];
+  87 [shape=box label="Exit function test_4[DEAD]"];
+
+  69 -> {70};
+  70 -> {71};
+  71 -> {72};
+  72 -> {73};
+  73 -> {74};
+  74 -> {75};
+  75 -> {76};
+  76 -> {83 77} [style=dotted];
+  77 -> {78} [style=dotted];
+  78 -> {79} [style=dotted];
+  79 -> {80} [style=dotted];
+  80 -> {81} [style=dotted];
+  81 -> {82} [style=dotted];
+  82 -> {72 83} [style=dotted];
+  83 -> {84} [style=dotted];
+  84 -> {85} [style=dotted];
+  85 -> {86} [style=dotted];
+  86 -> {87} [style=dotted];
+}
+
+}

@@ -38,7 +38,8 @@ class Flow(
         to: DataFlowVariable,
         transform: ((UnapprovedFirDataFlowInfo) -> UnapprovedFirDataFlowInfo)? = null
     ): Flow {
-        if (isFrozen) copyForBuilding().copyNotApprovedFacts(from, to)
+        if (isFrozen)
+            return copyForBuilding().copyNotApprovedFacts(from, to, transform)
         var facts = if (from.isSynthetic) {
             notApprovedFacts.removeAll(from)
         } else {

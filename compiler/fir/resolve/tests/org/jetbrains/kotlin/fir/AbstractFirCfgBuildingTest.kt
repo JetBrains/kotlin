@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
-import org.jetbrains.kotlin.fir.resolve.dfa.cfg.renderToStringBuilder
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -25,18 +25,83 @@ abstract class AbstractFirCfgBuildingTest : AbstractFirResolveTestCase() {
     }
 
     fun checkCfg(path: String, firFiles: List<FirFile>) {
-        val firFileDump = StringBuilder().also { firFiles.first().accept(FirControlFlowGraphRenderVisitor(it), null) }.toString()
-        val expectedPath = path.replace(".kt", ".cfg.txt")
-        KotlinTestUtils.assertEqualsToFile(File(expectedPath), firFileDump)
+        val simpleBuilder = StringBuilder()
+        val dotBuilder = StringBuilder()
+
+        firFiles.first().accept(FirControlFlowGraphRenderVisitor(simpleBuilder, dotBuilder), null)
+
+        val dotCfgDump = dotBuilder.toString()
+        val dotExpectedPath = path.replace(".kt", ".cfg.dot")
+        KotlinTestUtils.assertEqualsToFile(File(dotExpectedPath), dotCfgDump)
     }
 
-    private class FirControlFlowGraphRenderVisitor(private val builder: StringBuilder) : FirVisitorVoid() {
+    private class FirControlFlowGraphRenderVisitor(
+        private val simpleBuilder: StringBuilder,
+        private val dotBuilder: StringBuilder
+    ) : FirVisitorVoid() {
+        private var indexOffset = 0
+
+        override fun visitFile(file: FirFile) {
+            dotBuilder.appendln("digraph ${file.name.replace(".", "_")} {")
+            super.visitFile(file)
+            dotBuilder.appendln("}")
+        }
+
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)
         }
 
         override fun visitControlFlowGraphReference(controlFlowGraphReference: FirControlFlowGraphReference) {
-            (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph?.renderToStringBuilder(builder)
+            val controlFlowGraph = (controlFlowGraphReference as? FirControlFlowGraphReferenceImpl)?.controlFlowGraph ?: return
+            controlFlowGraph.renderToStringBuilder(simpleBuilder)
+            indexOffset = controlFlowGraph.dotRenderToStringBuilder(dotBuilder, indexOffset)
+            dotBuilder.appendln()
         }
+    }
+}
+
+private const val EDGE = " -> "
+private const val INDENT = "  "
+
+fun ControlFlowGraph.dotRenderToStringBuilder(builder: StringBuilder, indexOffset: Int): Int {
+    with(builder) {
+        val sortedNodes = sortNodes()
+        val indices = sortedNodes.indicesMap().mapValues { (_, index) -> index + indexOffset }
+        appendln("subgraph ${name.replace(" ", "_")} {")
+
+        fun CFGNode<*>.splitEdges(): Pair<List<CFGNode<*>>, List<CFGNode<*>>> =
+            if (isDead) emptyList<CFGNode<*>>() to followingNodes
+            else followingNodes.filter { !it.isDead } to followingNodes.filter { it.isDead }
+
+        sortedNodes.forEach {
+            append(INDENT)
+            append(indices.getValue(it))
+            appendln(" [shape=box label=\"${it.render().replace("\"", "")}\"];")
+        }
+        appendln()
+
+        sortedNodes.forEachIndexed { i, node ->
+            if (node.followingNodes.isEmpty()) return@forEachIndexed
+            val (aliveEdges, deadEdges) = node.splitEdges()
+
+            fun renderEdges(edges: List<CFGNode<*>>, isDead: Boolean) {
+                if (edges.isEmpty()) return
+                append(INDENT)
+                append(i + indexOffset)
+                append(EDGE)
+                append(edges.joinToString(prefix = "{", postfix = "}", separator = " ") { indices.getValue(it).toString() })
+                if (isDead) {
+                    append(" [style=dotted]")
+                }
+                appendln(";")
+            }
+
+            renderEdges(aliveEdges, false)
+            renderEdges(deadEdges, true)
+        }
+
+        appendln("}")
+
+        return indexOffset + sortedNodes.size
     }
 }

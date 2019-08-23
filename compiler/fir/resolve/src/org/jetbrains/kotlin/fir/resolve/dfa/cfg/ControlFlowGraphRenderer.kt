@@ -22,8 +22,11 @@ import org.jetbrains.kotlin.utils.DFS
 private const val INDENT = "  "
 private const val DEAD = "[DEAD]"
 
-fun ControlFlowGraph.renderToStringBuilder(builder: StringBuilder) {
-    val sortedNodes: List<CFGNode<*>> = DFS.topologicalOrder(
+
+fun List<CFGNode<*>>.indicesMap(): Map<CFGNode<*>, Int> = mapIndexed { i, node -> node to i }.toMap()
+
+fun ControlFlowGraph.sortNodes(): List<CFGNode<*>> {
+    return DFS.topologicalOrder(
         nodes
     ) {
         val result = if (it !is WhenBranchConditionExitNode || it.followingNodes.size < 2) {
@@ -33,9 +36,12 @@ fun ControlFlowGraph.renderToStringBuilder(builder: StringBuilder) {
         }
         result
     }
+}
 
+fun ControlFlowGraph.renderToStringBuilder(builder: StringBuilder) {
+    val sortedNodes = sortNodes()
 
-    val indices = sortedNodes.mapIndexed { i, node -> node to i }.toMap()
+    val indices = sortedNodes.indicesMap()
     val notVisited = sortedNodes.toMutableSet()
     val maxLineNumberSize = sortedNodes.size.toString().length
 

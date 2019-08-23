@@ -1,0 +1,94 @@
+digraph complex_kt {
+subgraph fetchPluginReleaseDate {
+  0 [shape=box label="Enter function fetchPluginReleaseDate"];
+  1 [shape=box label="Enter block"];
+  2 [shape=box label="Const: String(https://plugins.jetbrains.com/api/plugins/)"];
+  3 [shape=box label="Access variable R|<local>/pluginId|"];
+  4 [shape=box label="Access variable <Unresolved name: idString>#"];
+  5 [shape=box label="Const: String(/updates?version=)"];
+  6 [shape=box label="Access variable R|<local>/version|"];
+  7 [shape=box label="Variable declaration: lval url: R|kotlin/String|"];
+  8 [shape=box label="Try expression enter"];
+  9 [shape=box label="Try main block enter"];
+  10 [shape=box label="Enter block"];
+  11 [shape=box label="Access variable <Unresolved name: HttpRequests>#"];
+  12 [shape=box label="Access variable R|<local>/url|"];
+  13 [shape=box label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|)"];
+  14 [shape=box label="Function call: <Unresolved name: HttpRequests>#.<Unresolved name: request>#(R|<local>/url|).<Unresolved name: connect>#(<L> = connect@fun <implicit>.<anonymous>(): <implicit> {
+    GsonBuilder#().create#().fromJson#(it#.inputStream#.reader#(), <getClass>(Array#<R|class error: Symbol not found, for `PluginDTO`|>()).java#)
+}
+)"];
+  15 [shape=box label="Exit block"];
+  16 [shape=box label="Try main block exit"];
+  17 [shape=box label="Catch enter"];
+  18 [shape=box label="Enter block"];
+  19 [shape=box label="Const: String(Can't parse json response)"];
+  20 [shape=box label="Access variable R|<local>/syntaxException|"];
+  21 [shape=box label="Function call: <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
+  22 [shape=box label="Throw: throw <Unresolved name: ResponseParseException>#(String(Can't parse json response), R|<local>/syntaxException|)"];
+  23 [shape=box label="Stub[DEAD]"];
+  24 [shape=box label="Exit block[DEAD]"];
+  25 [shape=box label="Catch exit[DEAD]"];
+  26 [shape=box label="Catch enter"];
+  27 [shape=box label="Enter block"];
+  28 [shape=box label="Access variable R|<local>/ioException|"];
+  29 [shape=box label="Function call: <Unresolved name: IOException>#(R|<local>/ioException|)"];
+  30 [shape=box label="Throw: throw <Unresolved name: IOException>#(R|<local>/ioException|)"];
+  31 [shape=box label="Stub[DEAD]"];
+  32 [shape=box label="Exit block[DEAD]"];
+  33 [shape=box label="Catch exit[DEAD]"];
+  34 [shape=box label="Try expression exit"];
+  35 [shape=box label="Variable declaration: lval pluginDTOs: R|kotlin/Array<class error: Symbol not found, for `PluginDTO`>|"];
+  36 [shape=box label="Exit block"];
+  37 [shape=box label="Enter annotation"];
+  38 [shape=box label="Access variable <Unresolved name: IOException>#"];
+  39 [shape=box label="Access variable <Unresolved name: ResponseParseException>#"];
+  40 [shape=box label="Exit annotation"];
+  41 [shape=box label="Exit function fetchPluginReleaseDate"];
+
+  0 -> {1};
+  1 -> {2};
+  2 -> {3};
+  3 -> {4};
+  4 -> {5};
+  5 -> {6};
+  6 -> {7};
+  7 -> {8};
+  8 -> {9};
+  9 -> {41 26 17 10};
+  10 -> {11};
+  11 -> {12};
+  12 -> {13};
+  13 -> {14};
+  14 -> {15};
+  15 -> {16};
+  16 -> {34};
+  17 -> {41 18};
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+  21 -> {22};
+  22 -> {41};
+  22 -> {23} [style=dotted];
+  23 -> {24} [style=dotted];
+  24 -> {25} [style=dotted];
+  25 -> {34} [style=dotted];
+  26 -> {41 27};
+  27 -> {28};
+  28 -> {29};
+  29 -> {30};
+  30 -> {41};
+  30 -> {31} [style=dotted];
+  31 -> {32} [style=dotted];
+  32 -> {33} [style=dotted];
+  33 -> {34} [style=dotted];
+  34 -> {35};
+  35 -> {36};
+  36 -> {37};
+  37 -> {38};
+  38 -> {39};
+  39 -> {40};
+  40 -> {41};
+}
+
+}

@@ -19,9 +19,9 @@
 18:         Exit block -> 19  |  <- 17
 19:       Exit when branch result -> 20  |  <- 18
 20:     Exit when -> 21  |  <- 13[DEAD], 19
-21:     Variable declaration: lval y: R|kotlin/Int?| -> 22  |  <- 20
+21:     Variable declaration: lval y: R|kotlin/Int| -> 22  |  <- 20
 22:     Access variable R|<local>/y| -> 23  |  <- 21
-23:     Function call: R|<local>/y|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#() -> 24  |  <- 22
+23:     Function call: R|<local>/y|.R|kotlin/Int.inc|() -> 24  |  <- 22
 24:   Exit block -> 25  |  <- 23
 25: Exit function "test_1" ->   |  <- 10, 24
 
