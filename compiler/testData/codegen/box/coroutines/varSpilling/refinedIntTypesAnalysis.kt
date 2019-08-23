@@ -1,8 +1,4 @@
-// IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
-// FULL_JDK
-
-import java.nio.ByteBuffer
 
 class Test {
     suspend fun discardSuspend(discarded0: Long, max: Long) {
