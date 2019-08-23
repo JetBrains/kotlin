@@ -36,10 +36,11 @@ internal fun getExportedLibraries(
         resolver: SearchPathResolver,
         report: Boolean
 ): List<KonanLibrary> = getFeaturedLibraries(
-    configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
-    resolvedLibraries,
-    resolver,
-    if (report) FeaturedLibrariesReporter.forExportedLibraries(configuration) else FeaturedLibrariesReporter.Silent
+        configuration.getList(KonanConfigKeys.EXPORTED_LIBRARIES),
+        resolvedLibraries,
+        resolver,
+        if (report) FeaturedLibrariesReporter.forExportedLibraries(configuration) else FeaturedLibrariesReporter.Silent,
+        allowDefaultLibs = false
 )
 
 internal fun getIncludedLibraries(
@@ -47,9 +48,10 @@ internal fun getIncludedLibraries(
     configuration: CompilerConfiguration,
     resolvedLibraries: KonanLibraryResolveResult
 ): List<KonanLibrary> = getFeaturedLibraries(
-    includedLibraryFiles.toSet(),
-    resolvedLibraries,
-    FeaturedLibrariesReporter.forIncludedLibraries(configuration)
+        includedLibraryFiles.toSet(),
+        resolvedLibraries,
+        FeaturedLibrariesReporter.forIncludedLibraries(configuration),
+        allowDefaultLibs = false
 )
 
 internal fun getCoveredLibraries(
@@ -57,10 +59,11 @@ internal fun getCoveredLibraries(
     resolvedLibraries: KonanLibraryResolveResult,
     resolver: SearchPathResolver
 ): List<KonanLibrary> = getFeaturedLibraries(
-    configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
-    resolvedLibraries,
-    resolver,
-    FeaturedLibrariesReporter.forCoveredLibraries(configuration)
+        configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER),
+        resolvedLibraries,
+        resolver,
+        FeaturedLibrariesReporter.forCoveredLibraries(configuration),
+        allowDefaultLibs = true
 )
 
 private sealed class FeaturedLibrariesReporter {
@@ -146,17 +149,20 @@ private fun getFeaturedLibraries(
         featuredLibraries: List<String>,
         resolvedLibraries: KonanLibraryResolveResult,
         resolver: SearchPathResolver,
-        reporter: FeaturedLibrariesReporter
+        reporter: FeaturedLibrariesReporter,
+        allowDefaultLibs: Boolean
 ) = getFeaturedLibraries(
         featuredLibraries.toUnresolvedLibraries.map { resolver.resolve(it).libraryFile }.toSet(),
         resolvedLibraries,
-        reporter
+        reporter,
+        allowDefaultLibs
 )
 
 private fun getFeaturedLibraries(
     featuredLibraryFiles: Set<File>,
     resolvedLibraries: KonanLibraryResolveResult,
-    reporter: FeaturedLibrariesReporter
+    reporter: FeaturedLibrariesReporter,
+    allowDefaultLibs: Boolean
 ) : List<KonanLibrary> {
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
     val result = mutableListOf<KonanLibrary>()
@@ -166,7 +172,7 @@ private fun getFeaturedLibraries(
         val libraryFile = library.libraryFile
         if (libraryFile in featuredLibraryFiles) {
             remainingFeaturedLibraries -= libraryFile
-            if (library.isInterop || library.isDefault) {
+            if (library.isInterop || (!allowDefaultLibs && library.isDefault)) {
                 reporter.reportIllegalKind(library)
             } else {
                 result += library
