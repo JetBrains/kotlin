@@ -14,7 +14,9 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.buildDefaultUseSiteScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
-import org.jetbrains.kotlin.fir.symbols.*
+import org.jetbrains.kotlin.fir.symbols.CallableId
+import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -46,6 +48,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         return state.classifierContainerFileMap[fqName] ?: error("Couldn't find container for $fqName")
     }
 
+    override fun getClassNamesInPackage(fqName: FqName): Set<Name> {
+        return state.classesInPackage[fqName] ?: emptySet()
+    }
+
     fun recordFile(file: FirFile) {
         recordFile(file, state)
     }
@@ -63,6 +69,10 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
 
                 state.classifierMap[classId] = regularClass
                 state.classifierContainerFileMap[classId] = file
+
+                if (!classId.isNestedClass && !classId.isLocal) {
+                    state.classesInPackage.getOrPut(classId.packageFqName, ::mutableSetOf).add(classId.shortClassName)
+                }
 
                 regularClass.acceptChildren(this)
             }
@@ -102,6 +112,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
         val fileMap = mutableMapOf<FqName, List<FirFile>>()
         val classifierMap = mutableMapOf<ClassId, FirClassLikeDeclaration<*>>()
         val classifierContainerFileMap = mutableMapOf<ClassId, FirFile>()
+        val classesInPackage = mutableMapOf<FqName, MutableSet<Name>>()
         val callableMap = mutableMapOf<CallableId, List<FirCallableSymbol<*>>>()
         val callableContainerMap = mutableMapOf<ConeCallableSymbol, FirFile>()
 
@@ -117,6 +128,7 @@ class FirProviderImpl(val session: FirSession) : FirProvider() {
             classifierContainerFileMap.putAll(other.classifierContainerFileMap)
             callableMap.putAll(other.callableMap)
             callableContainerMap.putAll(other.callableContainerMap)
+            classesInPackage.putAll(other.classesInPackage)
         }
     }
 

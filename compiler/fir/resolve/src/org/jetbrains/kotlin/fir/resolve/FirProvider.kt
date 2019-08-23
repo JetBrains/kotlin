@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 abstract class FirProvider : FirSymbolProvider() {
-    abstract fun getFirClassifierByFqName(fqName: ClassId): FirMemberDeclaration?
+    abstract fun getFirClassifierByFqName(fqName: ClassId): FirClassLikeDeclaration<*>?
 
     abstract override fun getClassLikeSymbolByFqName(classId: ClassId): FirClassLikeSymbol<*>?
 

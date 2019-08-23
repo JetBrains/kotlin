@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.types
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.superConeTypes
 import org.jetbrains.kotlin.fir.resolve.*
@@ -17,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeTypeVariableTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.calls.hasNullableSuperType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.resolve.transformers.firSafeNullable
 import org.jetbrains.kotlin.fir.resolve.transformers.firUnsafe
 import org.jetbrains.kotlin.fir.service
 import org.jetbrains.kotlin.fir.symbols.*
@@ -26,13 +29,18 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.impl.ConeAbbreviatedTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.AbstractTypeCheckerContext
+import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.convertVariance
 import org.jetbrains.kotlin.types.model.*
 
 class ErrorTypeConstructor(val reason: String) : TypeConstructorMarker
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext {
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
@@ -429,6 +437,70 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
         // TODO: Intersection types
         return false
+    }
+
+    private fun TypeConstructorMarker.toFirRegularClass(): FirRegularClass? {
+        if (this !is ConeClassLikeSymbol) return null
+        return this.firSafeNullable()
+    }
+
+    override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
+        val firRegularClass = toFirRegularClass() ?: return false
+
+        return firRegularClass.modality == Modality.FINAL ||
+                firRegularClass.classKind == ClassKind.ENUM_ENTRY ||
+                firRegularClass.classKind == ClassKind.ANNOTATION_CLASS
+    }
+
+    override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {
+        // TODO support annotations
+        return false
+    }
+
+    override fun KotlinTypeMarker.getAnnotationFirstArgumentValue(fqName: FqName): Any? {
+        // TODO support annotations
+        return null
+    }
+
+    override fun TypeConstructorMarker.getTypeParameterClassifier(): TypeParameterMarker? {
+        return this as? FirTypeParameterSymbol
+    }
+
+    override fun TypeConstructorMarker.isInlineClass(): Boolean {
+        return toFirRegularClass()?.isInline == true
+    }
+
+    override fun TypeParameterMarker.getRepresentativeUpperBound(): KotlinTypeMarker {
+        require(this is ConeTypeParameterSymbol)
+        return this.firSafeNullable<FirTypeParameter>()?.bounds?.getOrNull(0)?.let { (it as? FirResolvedTypeRef)?.type }
+            ?: ConeClassTypeImpl(
+                ConeClassLikeLookupTagImpl(ClassId.topLevel(KotlinBuiltIns.FQ_NAMES.any.toSafe())), emptyArray(), true
+            )
+    }
+
+    override fun KotlinTypeMarker.getSubstitutedUnderlyingType(): KotlinTypeMarker? {
+        // TODO: support inline classes
+        return null
+    }
+
+    override fun TypeConstructorMarker.getPrimitiveType() =
+        getClassFqNameUnsafe()?.let(KotlinBuiltIns.FQ_NAMES.fqNameToPrimitiveType::get)
+
+    override fun TypeConstructorMarker.getPrimitiveArrayType() =
+        getClassFqNameUnsafe()?.let(KotlinBuiltIns.FQ_NAMES.arrayClassFqNameToPrimitiveType::get)
+
+    override fun TypeConstructorMarker.isUnderKotlinPackage() =
+        getClassFqNameUnsafe()?.startsWith(Name.identifier("kotlin")) == true
+
+    override fun TypeConstructorMarker.getClassFqNameUnsafe(): FqNameUnsafe? {
+        return toFirRegularClass()?.symbol?.toLookupTag()?.classId?.asSingleFqName()?.toUnsafe()
+    }
+
+    override fun TypeParameterMarker.getName() = (this as ConeTypeParameterSymbol).name
+
+    override fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean {
+        val classKind = typeConstructor().toFirRegularClass()?.classKind ?: return false
+        return classKind == ClassKind.ANNOTATION_CLASS || classKind == ClassKind.INTERFACE
     }
 
     override fun TypeConstructorMarker.isError(): Boolean {

@@ -1,0 +1,20 @@
+public final class B1 implements A<java.lang.String> {
+}
+public final class B2 implements A<Pair<? super java.lang.String, ? extends java.lang.String>> {
+}
+public final class B3 implements A<A<?>> {
+}
+public final class B4 implements A<A<java.lang.String>> {
+}
+public final class B5 implements A<java.util.List<A<?>>> {
+}
+public final class B6 implements A<java.lang.Integer> {
+}
+public final class B7 implements A<int[]> {
+}
+public final class B8 implements A<java.lang.String[]> {
+}
+public final class B9 implements A<java.lang.Integer[]> {
+}
+public final class B10 implements A<int[][]> {
+}

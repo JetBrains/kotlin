@@ -57,4 +57,7 @@ class FirJavaClass internal constructor(
         superTypeRefs.addAll(newSupertypes)
         return this
     }
+
+    override fun setCallbackOnSupertypesComputed(callback: () -> Unit) =
+        error("Supertypes computation should happen just before the instance is published")
 }
