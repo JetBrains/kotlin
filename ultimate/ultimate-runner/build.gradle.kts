@@ -20,6 +20,6 @@ val ideaUltimateSandboxDir: File by rootProject.extra
 
 if (intellijUltimateEnabled) {
     runIdeTask("runUltimate", ideaUltimatePluginDir, ideaUltimateSandboxDir) {
-        dependsOn(":dist", ":ideaPlugin", ":ultimate:ideaUltimatePlugin")
+        dependsOn(":dist", ":ideaPlugin", ":kotlin-ultimate:ultimate:ideaUltimatePlugin")
     }
 }
