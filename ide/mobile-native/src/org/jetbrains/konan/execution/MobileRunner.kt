@@ -30,7 +30,7 @@ class MobileRunner : CidrRunner() {
 
         val device = environment.executionTarget as Device
         val isDebug = environment.executor.id == DefaultDebugExecutor.EXECUTOR_ID
-        if (isDebug || device is ApplePhysicalDevice) {
+        if (device is AppleDevice && (isDebug || device is ApplePhysicalDevice)) {
             return startDebugSession(state as CidrCommandLineState, environment, !isDebug).runContentDescriptor
         }
         return super.doExecute(state, environment)
