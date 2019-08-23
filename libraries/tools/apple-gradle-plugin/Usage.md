@@ -34,7 +34,7 @@ buildscript {
 }
 
 plugins {
-    id("org.jetbrains.gradle.apple.applePlugin") version "0.1"
+    id("org.jetbrains.gradle.apple.applePlugin") version "0.1-SNAPSHOT-192.6262.58"
 }
 
 apple {
