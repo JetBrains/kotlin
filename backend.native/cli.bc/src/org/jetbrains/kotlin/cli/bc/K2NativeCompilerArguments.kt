@@ -158,11 +158,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     var runtimeFile: String? = null
 
     @Argument(
-        value = SOURCE_LIBRARY_ARG,
+        value = INCLUDE_ARG,
         valueDescription = "<path>",
         description = "A path to an intermediate library that should be processed in the same manner as source files.\n"
     )
-    var sourceLibraries: Array<String>? = null
+    var includes: Array<String>? = null
 
     @Argument(value = STATIC_FRAMEWORK_FLAG, description = "Create a framework with a static library instead of a dynamic one")
     var staticFramework: Boolean = false
@@ -216,4 +216,4 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
 const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"
 const val EMBED_BITCODE_MARKER_FLAG = "-Xembed-bitcode-marker"
 const val STATIC_FRAMEWORK_FLAG = "-Xstatic-framework"
-const val SOURCE_LIBRARY_ARG = "-Xinclude"
+const val INCLUDE_ARG = "-Xinclude"

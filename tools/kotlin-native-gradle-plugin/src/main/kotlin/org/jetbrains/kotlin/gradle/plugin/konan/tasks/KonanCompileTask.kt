@@ -183,7 +183,6 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         addAll(secondStageExtraOpts())
 
-        addArg("-l", klibPath)
         add("-Xinclude=${klibPath}")
     }
 

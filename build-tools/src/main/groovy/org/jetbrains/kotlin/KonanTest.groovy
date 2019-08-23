@@ -622,7 +622,7 @@ fun runTest() {
                     // Two-stage compilation.
                     def klibPath = "${exePath}.klib"
                     runCompiler(compileList, klibPath, flags + ["-p", "library"])
-                    runCompiler([], exePath, flags + ["-l", klibPath, "-Xinclude=$klibPath"])
+                    runCompiler([], exePath, flags + ["-Xinclude=$klibPath"])
                 } else {
                     // Regular compilation.
                     runCompiler(compileList, exePath, flags)

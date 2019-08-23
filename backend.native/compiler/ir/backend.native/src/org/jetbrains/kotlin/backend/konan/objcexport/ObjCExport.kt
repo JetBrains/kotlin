@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.konan.exec.Command
@@ -275,7 +274,7 @@ internal class ObjCExport(val context: Context, symbolTable: SymbolTable) {
     }
 
     private fun guessMainPackage(): FqName {
-        val allPackages = (context.getSourceLibraryDescriptors() + context.moduleDescriptor).flatMap {
+        val allPackages = (context.getIncludedLibraryDescriptors() + context.moduleDescriptor).flatMap {
             it.getPackageFragments() // Includes also all parent packages, e.g. the root one.
         }
 

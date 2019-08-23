@@ -90,7 +90,7 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
     }
 
     val K2NativeCompilerArguments.isUsefulWithoutFreeArgs: Boolean
-        get() = listTargets || listPhases || checkDependencies || !sourceLibraries.isNullOrEmpty()
+        get() = listTargets || listPhases || checkDependencies || !includes.isNullOrEmpty()
 
     fun Array<String>?.toNonNullList(): List<String> {
         return this?.asList<String>() ?: listOf<String>()
@@ -193,14 +193,14 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
                 put(
                     CHECK_DEPENDENCIES,
                     configuration.kotlinSourceRoots.isNotEmpty()
-                            || !arguments.sourceLibraries.isNullOrEmpty()
+                            || !arguments.includes.isNullOrEmpty()
                             || arguments.checkDependencies
                 )
                 if (arguments.friendModules != null)
                     put(FRIEND_MODULES, arguments.friendModules!!.split(File.pathSeparator).filterNot(String::isEmpty))
 
                 put(EXPORTED_LIBRARIES, selectExportedLibraries(configuration, arguments, outputKind))
-                put(SOURCE_LIBRARIES, selectSourceLibraries(configuration, arguments, outputKind))
+                put(INCLUDED_LIBRARIES, selectIncludes(configuration, arguments, outputKind))
                 put(FRAMEWORK_IMPORT_HEADERS, arguments.frameworkImportHeaders.toNonNullList())
                 arguments.emitLazyObjCHeader?.let { put(EMIT_LAZY_OBJC_HEADER_FILE, it) }
 
@@ -302,23 +302,23 @@ private fun selectExportedLibraries(
     }
 }
 
-private fun selectSourceLibraries(
+private fun selectIncludes(
     configuration: CompilerConfiguration,
     arguments: K2NativeCompilerArguments,
     outputKind: CompilerOutputKind
 ): List<String> {
-    val sourceLibraries = arguments.sourceLibraries?.toList().orEmpty()
+    val includes = arguments.includes?.toList().orEmpty()
     val produceBinaryOrBitcode = outputKind.let { it.isNativeBinary || it == CompilerOutputKind.BITCODE }
 
-    return if (sourceLibraries.isNotEmpty() && !produceBinaryOrBitcode) {
+    return if (includes.isNotEmpty() && !produceBinaryOrBitcode) {
         configuration.report(
             ERROR,
-            "The $SOURCE_LIBRARY_ARG flag is only supported when producing native binaries or bitcode files, " +
+            "The $INCLUDE_ARG flag is only supported when producing native binaries or bitcode files, " +
                     "but the compiler is producing ${outputKind.name.toLowerCase()}"
         )
         emptyList()
     } else {
-        sourceLibraries
+        includes
     }
 }
 
