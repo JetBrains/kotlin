@@ -27,12 +27,15 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
     override fun make(cacheDir: File, sourceRoots: Iterable<File>, args: K2JSCompilerArguments): TestCompilationResult {
         val reporter = TestICReporter()
         val messageCollector = TestMessageCollector()
-        makeJsIncrementally(cacheDir, sourceRoots, args, reporter = reporter, messageCollector = messageCollector)
+        makeJsIncrementally(cacheDir, sourceRoots, args, messageCollector, reporter, scopeExpansionMode)
         return TestCompilationResult(reporter, messageCollector)
     }
 
     override val buildLogFinder: BuildLogFinder
-        get() = super.buildLogFinder.copy(isJsEnabled = true)
+        get() = super.buildLogFinder.copy(
+            isJsEnabled = true,
+            isScopeExpansionEnabled = scopeExpansionMode != CompileScopeExpansionMode.NEVER
+        )
 
     override fun createCompilerArguments(destinationDir: File, testDir: File): K2JSCompilerArguments =
         K2JSCompilerArguments().apply {
@@ -40,4 +43,6 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             sourceMap = true
             metaInfo = true
         }
+
+    protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER
 }

@@ -272,7 +272,8 @@ class IncrementalJvmCompilerRunner(
 
     override fun additionalDirtyFiles(
         caches: IncrementalJvmCachesManager,
-        generatedFiles: List<GeneratedFile>
+        generatedFiles: List<GeneratedFile>,
+        services: Services
     ): Iterable<File> {
         val cache = caches.platformCache
         val result = HashSet<File>()
@@ -318,9 +319,10 @@ class IncrementalJvmCompilerRunner(
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         caches: IncrementalJvmCachesManager,
-        compilationMode: CompilationMode
+        dirtySources: Set<File>,
+        isIncremental: Boolean
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
             val targetId = TargetId(args.moduleName!!, "java-production")
             val targetToCache = mapOf(targetId to caches.platformCache)
             val incrementalComponents = IncrementalCompilationComponentsImpl(targetToCache)

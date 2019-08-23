@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import org.jetbrains.kotlin.progress.CompilationCanceledStatus
+import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
@@ -96,12 +97,12 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
 
                 return if (collector.hasErrors()) COMPILATION_ERROR else code
             } catch (e: CompilationCanceledException) {
-                collector.report(INFO, "Compilation was canceled", null)
+                collector.reportCompilationCancelled(e)
                 return ExitCode.OK
             } catch (e: RuntimeException) {
                 val cause = e.cause
                 if (cause is CompilationCanceledException) {
-                    collector.report(INFO, "Compilation was canceled", null)
+                    collector.reportCompilationCancelled(cause)
                     return ExitCode.OK
                 } else {
                     throw e
@@ -116,6 +117,12 @@ abstract class CLICompiler<A : CommonCompilerArguments> : CLITool<A>() {
             return INTERNAL_ERROR
         } finally {
             collector.flush()
+        }
+    }
+
+    private fun MessageCollector.reportCompilationCancelled(e: CompilationCanceledException) {
+        if (e !is IncrementalNextRoundException) {
+            report(INFO, "Compilation was canceled", null)
         }
     }
 

@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.progress
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressIndicatorProvider
 
-class CompilationCanceledException : ProcessCanceledException()
+open class CompilationCanceledException : ProcessCanceledException()
+
+class IncrementalNextRoundException : CompilationCanceledException()
 
 interface CompilationCanceledStatus {
     fun checkCanceled(): Unit

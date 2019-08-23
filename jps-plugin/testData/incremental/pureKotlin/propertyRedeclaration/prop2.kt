@@ -1,5 +1,3 @@
 package test
 
-fun dummy() {
-
-}
+val prop2 = 2

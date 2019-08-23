@@ -1,3 +1,3 @@
 package test
 
-val prop1 = 1
+fun dummy() {}

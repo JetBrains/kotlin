@@ -163,7 +163,7 @@ abstract class IncrementalCompilerRunner<
 
     protected open fun preBuildHook(args: Args, compilationMode: CompilationMode) {}
     protected open fun postCompilationHook(exitCode: ExitCode) {}
-    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>): Iterable<File> =
+    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
         emptyList()
 
     protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
@@ -174,7 +174,8 @@ abstract class IncrementalCompilerRunner<
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         caches: CacheManager,
-        compilationMode: CompilationMode
+        dirtySources: Set<File>,
+        isIncremental: Boolean
     ): Services.Builder =
         Services.Builder().apply {
             register(LookupTracker::class.java, lookupTracker)
@@ -227,7 +228,10 @@ abstract class IncrementalCompilerRunner<
             val text = dirtySources.joinToString(separator = System.getProperty("line.separator")) { it.canonicalPath }
             dirtySourcesSinceLastTimeFile.writeText(text)
 
-            val services = makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).build()
+            val services = makeServices(
+                args, lookupTracker, expectActualTracker, caches,
+                dirtySources.toSet(), compilationMode is CompilationMode.Incremental
+            ).build()
 
             args.reportOutputFiles = true
             val outputItemsCollector = OutputItemsCollectorImpl()
@@ -237,20 +241,20 @@ abstract class IncrementalCompilerRunner<
             postCompilationHook(exitCode)
 
             reporter.reportCompileIteration(compilationMode is CompilationMode.Incremental, sourcesToCompile, exitCode)
-            if (exitCode != ExitCode.OK) break
-
-            dirtySourcesSinceLastTimeFile.delete()
             val generatedFiles = outputItemsCollector.outputs.map(SimpleOutputItem::toGeneratedFile)
 
             if (compilationMode is CompilationMode.Incremental) {
                 // todo: feels dirty, can this be refactored?
                 val dirtySourcesSet = dirtySources.toHashSet()
-                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles).filter { it !in dirtySourcesSet }
+                val additionalDirtyFiles = additionalDirtyFiles(caches, generatedFiles, services).filter { it !in dirtySourcesSet }
                 if (additionalDirtyFiles.isNotEmpty()) {
                     dirtySources.addAll(additionalDirtyFiles)
                     continue
                 }
             }
+            if (exitCode != ExitCode.OK) break
+
+            dirtySourcesSinceLastTimeFile.delete()
 
             caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
             caches.inputsCache.registerOutputForSourceFiles(generatedFiles)

@@ -26,10 +26,7 @@ import org.jetbrains.kotlin.config.IncrementalCompilation
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider
-import org.jetbrains.kotlin.incremental.js.IncrementalDataProviderFromCache
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
-import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumerImpl
+import org.jetbrains.kotlin.incremental.js.*
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.multiproject.ModulesApiHistory
 import org.jetbrains.kotlin.library.metadata.KlibMetadataSerializerProtocol
@@ -41,7 +38,8 @@ fun makeJsIncrementally(
     sourceRoots: Iterable<File>,
     args: K2JSCompilerArguments,
     messageCollector: MessageCollector = MessageCollector.NONE,
-    reporter: ICReporter = EmptyICReporter
+    reporter: ICReporter = EmptyICReporter,
+    scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
 ) {
     val allKotlinFiles = sourceRoots.asSequence().flatMap { it.walk() }
         .filter { it.isFile && it.extension.equals("kt", ignoreCase = true) }.toList()
@@ -51,7 +49,8 @@ fun makeJsIncrementally(
         val compiler = IncrementalJsCompilerRunner(
             cachesDir, reporter,
             buildHistoryFile = buildHistoryFile,
-            modulesApiHistory = EmptyModulesApiHistory
+            modulesApiHistory = EmptyModulesApiHistory,
+            scopeExpansion = scopeExpansion
         )
         compiler.compile(allKotlinFiles, args, messageCollector, providedChangedFiles = null)
     }
@@ -72,7 +71,8 @@ class IncrementalJsCompilerRunner(
     workingDir: File,
     reporter: ICReporter,
     buildHistoryFile: File,
-    private val modulesApiHistory: ModulesApiHistory
+    private val modulesApiHistory: ModulesApiHistory,
+    private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER
 ) : IncrementalCompilerRunner<K2JSCompilerArguments, IncrementalJsCachesManager>(
     workingDir,
     "caches-js",
@@ -129,17 +129,19 @@ class IncrementalJsCompilerRunner(
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
         caches: IncrementalJsCachesManager,
-        compilationMode: CompilationMode
+        dirtySources: Set<File>,
+        isIncremental: Boolean
     ): Services.Builder =
-        super.makeServices(args, lookupTracker, expectActualTracker, caches, compilationMode).apply {
-            register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
-
-            if (compilationMode is CompilationMode.Incremental) {
-                register(
-                    IncrementalDataProvider::class.java,
-                    IncrementalDataProviderFromCache(caches.platformCache)
-                )
+        super.makeServices(args, lookupTracker, expectActualTracker, caches, dirtySources, isIncremental).apply {
+            if (isIncremental) {
+                if (scopeExpansion == CompileScopeExpansionMode.ALWAYS) {
+                    val nextRoundChecker = IncrementalNextRoundCheckerImpl(caches, dirtySources)
+                    register(IncrementalNextRoundChecker::class.java, nextRoundChecker)
+                }
+                register(IncrementalDataProvider::class.java, IncrementalDataProviderFromCache(caches.platformCache))
             }
+
+            register(IncrementalResultsConsumer::class.java, IncrementalResultsConsumerImpl())
         }
 
     override fun updateCaches(
@@ -171,6 +173,54 @@ class IncrementalJsCompilerRunner(
             K2JSCompiler().exec(messageCollector, services, args)
         } finally {
             args.freeArgs = freeArgsBackup
+        }
+    }
+
+    override fun additionalDirtyFiles(
+        caches: IncrementalJsCachesManager,
+        generatedFiles: List<GeneratedFile>,
+        services: Services
+    ): Iterable<File> {
+        val additionalDirtyFiles: Set<File> =
+            when (scopeExpansion) {
+                CompileScopeExpansionMode.ALWAYS ->
+                    (services[IncrementalNextRoundChecker::class.java] as IncrementalNextRoundCheckerImpl).newDirtySources
+                CompileScopeExpansionMode.NEVER ->
+                    emptySet()
+            }
+
+        return additionalDirtyFiles + super.additionalDirtyFiles(caches, generatedFiles, services)
+    }
+
+    inner class IncrementalNextRoundCheckerImpl(
+        private val caches: IncrementalJsCachesManager,
+        private val sourcesToCompile: Set<File>
+    ) : IncrementalNextRoundChecker {
+        val newDirtySources = HashSet<File>()
+
+        private val emptyByteArray = ByteArray(0)
+        private val translatedFiles = HashMap<File, TranslationResultValue>()
+
+        override fun checkProtoChanges(sourceFile: File, packagePartMetadata: ByteArray) {
+            translatedFiles[sourceFile] = TranslationResultValue(packagePartMetadata, emptyByteArray, emptyByteArray)
+        }
+
+        override fun shouldGoToNextRound(): Boolean {
+            val changesCollector = ChangesCollector()
+            // todo: split compare and update (or cache comparing)
+            caches.platformCache.compare(translatedFiles, changesCollector)
+            val (dirtyLookupSymbols, dirtyClassFqNames) = changesCollector.getDirtyData(listOf(caches.platformCache), reporter)
+            // todo unify with main cycle
+            newDirtySources.addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = sourcesToCompile))
+            newDirtySources.addAll(
+                mapClassesFqNamesToFiles(
+                    listOf(caches.platformCache),
+                    dirtyClassFqNames,
+                    reporter,
+                    excludes = sourcesToCompile
+                )
+            )
+            return newDirtySources.isNotEmpty()
         }
     }
 }

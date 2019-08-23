@@ -1230,6 +1230,12 @@ fun main(args: Array<String>) {
             model("incremental/js", extension = null, excludeParentDirs = true)
         }
 
+        testClass<AbstractIncrementalJsKlibCompilerWithScopeExpansionRunnerTest> {
+            model("incremental/pureKotlin", extension = null, recursive = false)
+            model("incremental/classHierarchyAffected", extension = null, recursive = false)
+            model("incremental/js", extension = null, excludeParentDirs = true)
+        }
+
         testClass<AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest> {
             model("incremental/js/friendsModuleDisabled", extension = null, recursive = false)
         }
