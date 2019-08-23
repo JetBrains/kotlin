@@ -7,10 +7,15 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.attributes.AttributeContainer
+import org.gradle.api.execution.TaskExecutionListener
 import org.gradle.api.file.FileCollection
 import org.gradle.api.plugins.BasePluginConvention
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.TaskState
 import org.gradle.util.ConfigureUtil
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -218,55 +223,64 @@ internal fun KotlinCompilation<*>.disambiguateName(simpleName: String): String {
     )
 }
 
-internal object CompilationSourceSetUtil {
-    // Store only names in the cache to avoid memory leak through indirect references to the project
-    private data class TargetCompilationName(val targetName: String, val compilationName: String) {
-        fun toCompilation(project: Project): KotlinCompilation<*>? {
-            val kotlinExtension = project.kotlinExtension
-            val target = when (kotlinExtension) {
-                is KotlinMultiplatformExtension -> kotlinExtension.targets.findByName(targetName)
-                is KotlinSingleTargetExtension -> kotlinExtension.target.takeIf { it.name == targetName }
-                else -> null
-            }
-            return target?.compilations?.getByName(compilationName)
-        }
+ private typealias CompilationsBySourceSet = Map<KotlinSourceSet, Set<KotlinCompilation<*>>>
 
-        companion object {
-            fun from(compilation: KotlinCompilation<*>) = TargetCompilationName(compilation.target.name, compilation.name)
+internal object CompilationSourceSetUtil {
+    private const val EXT_NAME = "kotlin.compilations.bySourceSets"
+
+    @Suppress("UNCHECKED_CAST")
+    private fun getOrCreateProperty(
+        project: Project,
+        initialize: Property<CompilationsBySourceSet>.() -> Unit
+    ): Property<CompilationsBySourceSet> {
+        val ext = project.extensions.getByType(ExtraPropertiesExtension::class.java)
+        if (!ext.has(EXT_NAME)) {
+            ext.set(EXT_NAME, project.objects.property(Any::class.java as Class<CompilationsBySourceSet>).also(initialize))
         }
+        return ext.get(EXT_NAME) as Property<CompilationsBySourceSet>
     }
 
-    private val compilationsBySourceSetCache = WeakHashMap<Project, Map<String, Set<TargetCompilationName>>>()
+    fun compilationsBySourceSets(project: Project): CompilationsBySourceSet {
+        val compilationNamesBySourceSetName = getOrCreateProperty(project) {
+            var shouldFinalizeValue = false
 
-    /** Evaluates once per project. Don't access until all source set dependsOn relationships are built and all source sets are added
-     * to the relevant compilations. */
-    fun compilationsBySourceSets(project: Project): Map<KotlinSourceSet, Set<KotlinCompilation<*>>> {
-        val compilationNamesBySourceSetName = compilationsBySourceSetCache.computeIfAbsent(project) { _ ->
-            check(project.state.executed) { "Should only be computed after the project is evaluated" }
+            set(project.provider {
+                val kotlinExtension = project.kotlinExtension
+                val targets = when (kotlinExtension) {
+                    is KotlinMultiplatformExtension -> kotlinExtension.targets
+                    is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
+                    else -> emptyList()
+                }
 
-            val kotlinExtension = project.kotlinExtension
-            val targets = when (kotlinExtension) {
-                is KotlinMultiplatformExtension -> kotlinExtension.targets
-                is KotlinSingleTargetExtension -> listOf(kotlinExtension.target)
-                else -> emptyList()
+                val compilations = targets.flatMap { it.compilations }
+
+                val result = compilations
+                    .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
+                    .groupBy(
+                        { (_, sourceSet) -> sourceSet },
+                        valueTransform = { (compilation, _) -> compilation }
+                    )
+                    .mapValues { (_, compilations) -> compilations.toSet() }
+
+                if (shouldFinalizeValue) {
+                    set(result)
+                }
+
+                return@provider result
+            })
+
+            project.gradle.taskGraph.whenReady { shouldFinalizeValue = true }
+
+            // In case the value is first queried after the task graph has been calculated, finalize the value as soon as a task executes:
+            object : TaskExecutionListener {
+                override fun beforeExecute(task: Task) = Unit
+                override fun afterExecute(task: Task, state: TaskState) {
+                    shouldFinalizeValue = true
+                }
             }
-
-            val compilations = targets.flatMap { it.compilations }
-
-            compilations
-                .flatMap { compilation -> compilation.allKotlinSourceSets.map { sourceSet -> compilation to sourceSet } }
-                .groupBy(
-                    { (_, sourceSet) -> sourceSet.name },
-                    valueTransform = { (compilation, _) -> TargetCompilationName.from(compilation) }
-                )
-                .mapValues { (_, compilations) -> compilations.toSet() }
         }
 
-        return compilationNamesBySourceSetName.entries.associate { (sourceSetName, compilationNames) ->
-            project.kotlinExtension.sourceSets.getByName(sourceSetName).to(
-                compilationNames.map { checkNotNull(it.toCompilation(project)) }.toSet()
-            )
-        }
+        return compilationNamesBySourceSetName.get()
     }
 
     fun sourceSetsInMultipleCompilations(project: Project) =
