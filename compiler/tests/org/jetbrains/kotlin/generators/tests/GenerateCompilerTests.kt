@@ -439,7 +439,7 @@ fun main(args: Array<String>) {
 
     testGroup("compiler/fir/resolve/tests", "compiler/fir/resolve/testData") {
         testClass<AbstractFirResolveTestCase> {
-            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg"))
+            model("resolve", pattern = KT_WITHOUT_DOTS_IN_NAME, excludeDirs = listOf("stdlib", "cfg", "smartcasts"))
         }
 
         testClass<AbstractFirResolveTestCaseWithStdlib> {
@@ -448,6 +448,7 @@ fun main(args: Array<String>) {
 
         testClass<AbstractFirCfgBuildingTest> {
             model("resolve/cfg", pattern = KT_WITHOUT_DOTS_IN_NAME)
+            model("resolve/smartcasts", pattern = KT_WITHOUT_DOTS_IN_NAME)
         }
     }
 

@@ -1,0 +1,67 @@
+FILE: casts.kt
+    public final fun test_1(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        (R|<local>/x| as R|kotlin/String|)
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun test_2(x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            (R|<local>/x| as R|kotlin/Boolean|) ->  {
+                R|<local>/x|.R|kotlin/Boolean.not|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.R|kotlin/Boolean.not|()
+    }
+    public final fun test_3(b: R|kotlin/Boolean|, x: R|kotlin/Any?|): R|kotlin/Unit| {
+        when () {
+            R|<local>/b| && (R|<local>/x| as R|kotlin/Boolean|) ->  {
+                R|<local>/x|.R|kotlin/Boolean.not|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: not>#()
+        when () {
+            R|<local>/b| && ==((R|<local>/x| as R|kotlin/Boolean|), Boolean(true)) ->  {
+                R|<local>/x|.R|kotlin/Boolean.not|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: not>#()
+        when () {
+            R|<local>/b| || (R|<local>/x| as R|kotlin/Boolean|) ->  {
+                R|<local>/x|.<Unresolved name: not>#()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.<Unresolved name: not>#()
+    }
+    public final fun test_4(b: R|kotlin/Any|): R|kotlin/Unit| {
+        when () {
+            !=((R|<local>/b| as? R|kotlin/Boolean|), Null(null)) ->  {
+                R|<local>/b|.R|kotlin/Boolean.not|()
+            }
+            else ->  {
+                R|<local>/b|.<Unresolved name: not>#()
+            }
+        }
+
+        R|<local>/b|.<Unresolved name: not>#()
+        when () {
+            ==((R|<local>/b| as? R|kotlin/Boolean|), Null(null)) ->  {
+                R|<local>/b|.<Unresolved name: not>#()
+            }
+            else ->  {
+                R|<local>/b|.R|kotlin/Boolean.not|()
+            }
+        }
+
+        R|<local>/b|.<Unresolved name: not>#()
+    }

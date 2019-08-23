@@ -1,0 +1,273 @@
+digraph returns_kt {
+subgraph test_0 {
+  0 [shape=box label="Enter function test_0"];
+  1 [shape=box label="Enter block"];
+  2 [shape=box label="Enter when"];
+  3 [shape=box label="Enter when branch condition "];
+  4 [shape=box label="Access variable R|<local>/x|"];
+  5 [shape=box label="Type operator: x is String"];
+  6 [shape=box label="Exit when branch condition"];
+  7 [shape=box label="Enter block"];
+  8 [shape=box label="Access variable R|<local>/x|"];
+  9 [shape=box label="Access variable R|kotlin/String.length|"];
+  10 [shape=box label="Exit block"];
+  11 [shape=box label="Exit when branch result"];
+  12 [shape=box label="Enter when branch condition else"];
+  13 [shape=box label="Exit when branch condition"];
+  14 [shape=box label="Enter block"];
+  15 [shape=box label="Exit block"];
+  16 [shape=box label="Exit when branch result"];
+  17 [shape=box label="Exit when"];
+  18 [shape=box label="Access variable R|<local>/x|"];
+  19 [shape=box label="Access variable <Unresolved name: length>#"];
+  20 [shape=box label="Exit block"];
+  21 [shape=box label="Exit function test_0"];
+
+  0 -> {1};
+  1 -> {2};
+  2 -> {3};
+  3 -> {4};
+  4 -> {5};
+  5 -> {6};
+  6 -> {7 12};
+  7 -> {8};
+  8 -> {9};
+  9 -> {10};
+  10 -> {11};
+  11 -> {17};
+  12 -> {13};
+  13 -> {14};
+  14 -> {15};
+  15 -> {16};
+  16 -> {17};
+  17 -> {18};
+  18 -> {19};
+  19 -> {20};
+  20 -> {21};
+}
+
+subgraph test_1 {
+  22 [shape=box label="Enter function test_1"];
+  23 [shape=box label="Enter block"];
+  24 [shape=box label="Enter when"];
+  25 [shape=box label="Enter when branch condition "];
+  26 [shape=box label="Access variable R|<local>/x|"];
+  27 [shape=box label="Type operator: x is String"];
+  28 [shape=box label="Exit when branch condition"];
+  29 [shape=box label="Enter block"];
+  30 [shape=box label="Access variable R|<local>/x|"];
+  31 [shape=box label="Access variable R|kotlin/String.length|"];
+  32 [shape=box label="Exit block"];
+  33 [shape=box label="Exit when branch result"];
+  34 [shape=box label="Enter when branch condition else"];
+  35 [shape=box label="Exit when branch condition"];
+  36 [shape=box label="Enter block"];
+  37 [shape=box label="Jump: ^test_1 Unit"];
+  38 [shape=box label="Stub[DEAD]"];
+  39 [shape=box label="Exit block[DEAD]"];
+  40 [shape=box label="Exit when branch result[DEAD]"];
+  41 [shape=box label="Exit when"];
+  42 [shape=box label="Access variable R|<local>/x|"];
+  43 [shape=box label="Access variable R|kotlin/String.length|"];
+  44 [shape=box label="Exit block"];
+  45 [shape=box label="Exit function test_1"];
+
+  22 -> {23};
+  23 -> {24};
+  24 -> {25};
+  25 -> {26};
+  26 -> {27};
+  27 -> {28};
+  28 -> {29 34};
+  29 -> {30};
+  30 -> {31};
+  31 -> {32};
+  32 -> {33};
+  33 -> {41};
+  34 -> {35};
+  35 -> {36};
+  36 -> {37};
+  37 -> {45};
+  37 -> {38} [style=dotted];
+  38 -> {39} [style=dotted];
+  39 -> {40} [style=dotted];
+  40 -> {41} [style=dotted];
+  41 -> {42};
+  42 -> {43};
+  43 -> {44};
+  44 -> {45};
+}
+
+subgraph foo {
+  46 [shape=box label="Enter function foo"];
+  47 [shape=box label="Exit function foo"];
+
+  46 -> {47};
+}
+
+subgraph bar {
+  48 [shape=box label="Enter function bar"];
+  49 [shape=box label="Exit function bar"];
+
+  48 -> {49};
+}
+
+subgraph baz {
+  50 [shape=box label="Enter function baz"];
+  51 [shape=box label="Exit function baz"];
+
+  50 -> {51};
+}
+
+subgraph test_2 {
+  52 [shape=box label="Enter function test_2"];
+  53 [shape=box label="Enter block"];
+  54 [shape=box label="Enter when"];
+  55 [shape=box label="Enter when branch condition "];
+  56 [shape=box label="Access variable R|<local>/x|"];
+  57 [shape=box label="Type operator: x is B"];
+  58 [shape=box label="Exit when branch condition"];
+  59 [shape=box label="Enter block"];
+  60 [shape=box label="Access variable R|<local>/x|"];
+  61 [shape=box label="Function call: R|<local>/x|.R|/B.bar|()"];
+  62 [shape=box label="Exit block"];
+  63 [shape=box label="Exit when branch result"];
+  64 [shape=box label="Enter when branch condition "];
+  65 [shape=box label="Access variable R|<local>/x|"];
+  66 [shape=box label="Type operator: x is C"];
+  67 [shape=box label="Exit when branch condition"];
+  68 [shape=box label="Enter block"];
+  69 [shape=box label="Access variable R|<local>/x|"];
+  70 [shape=box label="Function call: R|<local>/x|.R|/C.baz|()"];
+  71 [shape=box label="Exit block"];
+  72 [shape=box label="Exit when branch result"];
+  73 [shape=box label="Enter when branch condition else"];
+  74 [shape=box label="Exit when branch condition"];
+  75 [shape=box label="Enter block"];
+  76 [shape=box label="Jump: ^test_2 Unit"];
+  77 [shape=box label="Stub[DEAD]"];
+  78 [shape=box label="Exit block[DEAD]"];
+  79 [shape=box label="Exit when branch result[DEAD]"];
+  80 [shape=box label="Exit when"];
+  81 [shape=box label="Access variable R|<local>/x|"];
+  82 [shape=box label="Function call: R|<local>/x|.R|/A.foo|()"];
+  83 [shape=box label="Access variable R|<local>/x|"];
+  84 [shape=box label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+  85 [shape=box label="Access variable R|<local>/x|"];
+  86 [shape=box label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+  87 [shape=box label="Exit block"];
+  88 [shape=box label="Exit function test_2"];
+
+  52 -> {53};
+  53 -> {54};
+  54 -> {55};
+  55 -> {56};
+  56 -> {57};
+  57 -> {58};
+  58 -> {59 64};
+  59 -> {60};
+  60 -> {61};
+  61 -> {62};
+  62 -> {63};
+  63 -> {80};
+  64 -> {65};
+  65 -> {66};
+  66 -> {67};
+  67 -> {68 73};
+  68 -> {69};
+  69 -> {70};
+  70 -> {71};
+  71 -> {72};
+  72 -> {80};
+  73 -> {74};
+  74 -> {75};
+  75 -> {76};
+  76 -> {88};
+  76 -> {77} [style=dotted];
+  77 -> {78} [style=dotted];
+  78 -> {79} [style=dotted];
+  79 -> {80} [style=dotted];
+  80 -> {81};
+  81 -> {82};
+  82 -> {83};
+  83 -> {84};
+  84 -> {85};
+  85 -> {86};
+  86 -> {87};
+  87 -> {88};
+}
+
+subgraph test_3 {
+  89 [shape=box label="Enter function test_3"];
+  90 [shape=box label="Enter block"];
+  91 [shape=box label="Enter when"];
+  92 [shape=box label="Enter when branch condition "];
+  93 [shape=box label="Access variable R|<local>/x|"];
+  94 [shape=box label="Type operator: x is B"];
+  95 [shape=box label="Exit when branch condition"];
+  96 [shape=box label="Enter block"];
+  97 [shape=box label="Access variable R|<local>/x|"];
+  98 [shape=box label="Function call: R|<local>/x|.R|/B.bar|()"];
+  99 [shape=box label="Exit block"];
+  100 [shape=box label="Exit when branch result"];
+  101 [shape=box label="Enter when branch condition "];
+  102 [shape=box label="Access variable R|<local>/x|"];
+  103 [shape=box label="Type operator: x is C"];
+  104 [shape=box label="Exit when branch condition"];
+  105 [shape=box label="Enter block"];
+  106 [shape=box label="Access variable R|<local>/x|"];
+  107 [shape=box label="Function call: R|<local>/x|.R|/C.baz|()"];
+  108 [shape=box label="Exit block"];
+  109 [shape=box label="Exit when branch result"];
+  110 [shape=box label="Enter when branch condition else"];
+  111 [shape=box label="Exit when branch condition"];
+  112 [shape=box label="Enter block"];
+  113 [shape=box label="Exit block"];
+  114 [shape=box label="Exit when branch result"];
+  115 [shape=box label="Exit when"];
+  116 [shape=box label="Access variable R|<local>/x|"];
+  117 [shape=box label="Function call: R|<local>/x|.<Unresolved name: foo>#()"];
+  118 [shape=box label="Access variable R|<local>/x|"];
+  119 [shape=box label="Function call: R|<local>/x|.<Unresolved name: bar>#()"];
+  120 [shape=box label="Access variable R|<local>/x|"];
+  121 [shape=box label="Function call: R|<local>/x|.<Unresolved name: baz>#()"];
+  122 [shape=box label="Exit block"];
+  123 [shape=box label="Exit function test_3"];
+
+  89 -> {90};
+  90 -> {91};
+  91 -> {92};
+  92 -> {93};
+  93 -> {94};
+  94 -> {95};
+  95 -> {96 101};
+  96 -> {97};
+  97 -> {98};
+  98 -> {99};
+  99 -> {100};
+  100 -> {115};
+  101 -> {102};
+  102 -> {103};
+  103 -> {104};
+  104 -> {105 110};
+  105 -> {106};
+  106 -> {107};
+  107 -> {108};
+  108 -> {109};
+  109 -> {115};
+  110 -> {111};
+  111 -> {112};
+  112 -> {113};
+  113 -> {114};
+  114 -> {115};
+  115 -> {116};
+  116 -> {117};
+  117 -> {118};
+  118 -> {119};
+  119 -> {120};
+  120 -> {121};
+  121 -> {122};
+  122 -> {123};
+}
+
+}

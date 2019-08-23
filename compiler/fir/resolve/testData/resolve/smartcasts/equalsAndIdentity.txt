@@ -1,0 +1,73 @@
+FILE: equalsAndIdentity.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+    }
+    public final fun test_1(x: R|A|, y: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_2(x: R|A?|, y: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+                R|<local>/y|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_3(x: R|A?|, y: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/y|, Null(null)) ->  {
+                ^test_3 Unit
+            }
+            else ->  {
+            }
+        }
+
+        when () {
+            ==(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+        when () {
+            ===(R|<local>/x|, R|<local>/y|) ->  {
+                R|<local>/x|.R|/A.foo|()
+                R|<local>/y|.R|/A.foo|()
+            }
+            else ->  {
+            }
+        }
+
+    }

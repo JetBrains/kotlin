@@ -1,0 +1,192 @@
+FILE: nullability.kt
+    public abstract interface A : R|kotlin/Any| {
+        public abstract fun foo(): R|kotlin/Unit|
+
+        public abstract fun getA(): R|A|
+
+    }
+    public abstract interface MyData : R|kotlin/Any| {
+        public abstract val s: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public abstract fun fs(): R|kotlin/Int|
+
+    }
+    public abstract interface Q : R|kotlin/Any| {
+        public abstract val data: R|MyData?|
+            public get(): R|MyData?|
+
+        public abstract fun fdata(): R|MyData?|
+
+    }
+    public final fun test_1(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+            else ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+        }
+
+        R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+    }
+    public final fun test_2(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|, Null(null)) ->  {
+                R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+            }
+            else ->  {
+                R|<local>/x|.R|/A.foo|()
+            }
+        }
+
+        R|<local>/x|.<Inapplicable(WRONG_RECEIVER): [/A.foo]>#()
+    }
+    public final fun test_3(x: R|A?|): R|kotlin/Unit| {
+        when (lval <elvis>: R|A?| = R|<local>/x|) {
+            ==($subj$, Null(null)) ->  {
+                ^test_3 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|!
+            }
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_4(x: R|A?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/x|?.R|/A.getA|(), Null(null)) ->  {
+                ^test_4 Unit
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/x|.R|/A.foo|()
+    }
+    public final fun test_5(q: R|Q?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|(), Null(null)) ->  {
+                R|<local>/q|.R|/Q.data|
+                R|<local>/q|.R|/Q.data|.R|/MyData.s|
+                R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_6(q: R|Q?|): R|kotlin/Unit| {
+        when (lval <elvis>: R|kotlin/Int| = R|<local>/q|?.R|/Q.data|?.R|/MyData.s|?.R|kotlin/Int.inc|()) {
+            ==($subj$, Null(null)) ->  {
+                ^test_6 Unit
+            }
+            else ->  {
+                R|<local>/<elvis>|!
+            }
+        }
+
+        R|<local>/q|.R|/Q.data|
+        R|<local>/q|.R|/Q.data|.R|/MyData.s|
+        R|<local>/q|.R|/Q.data|.R|/MyData.s|.R|kotlin/Int.inc|()
+    }
+    public final fun test_7(q: R|Q?|): R|kotlin/Unit| {
+        when () {
+            !=(R|<local>/q|?.R|/Q.fdata|()?.R|/MyData.fs|()?.R|kotlin/Int.inc|(), Null(null)) ->  {
+                R|<local>/q|.R|/Q.fdata|()
+                R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#()
+                R|<local>/q|.R|/Q.fdata|().<Inapplicable(WRONG_RECEIVER): [/MyData.fs]>#().<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_8(b: R|kotlin/Boolean?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/b|, Boolean(true)) ->  {
+                R|<local>/b|.R|kotlin/Boolean.not|()
+            }
+            else ->  {
+            }
+        }
+
+    }
+    public final fun test_9(a: R|kotlin/Int|, b: R|kotlin/Int?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ===(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ==(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ===(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.R|kotlin/Int.inc|()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
+    public final fun test_10(a: R|kotlin/Int?|, b: R|kotlin/Int?|): R|kotlin/Unit| {
+        when () {
+            ==(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ===(R|<local>/a|, R|<local>/b|) ->  {
+                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ==(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+        when () {
+            ===(R|<local>/b|, R|<local>/a|) ->  {
+                R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+            }
+            else ->  {
+            }
+        }
+
+        R|<local>/b|.<Ambiguity: inc, [kotlin/inc, kotlin/inc]>#()
+    }
