@@ -670,13 +670,16 @@ public class SearchEverywhereUI extends BigPopupUI implements DataProvider, Quic
       @Override
       protected void textChanged(@NotNull DocumentEvent e) {
         String newSearchString = getSearchPattern();
-        boolean newPatternContainsPrevious = myNotFoundString != null && myNotFoundString.length() > 1 && newSearchString.contains(myNotFoundString);
-        if (myEverywhereAutoSet && isEverywhere() && !newPatternContainsPrevious) {
-          setEverywhereAuto(false);
+        if (myNotFoundString != null) {
+          boolean newPatternContainsPrevious = myNotFoundString.length() > 1 && newSearchString.contains(myNotFoundString);
+          if (myEverywhereAutoSet && isEverywhere() && !newPatternContainsPrevious) {
+            myNotFoundString = null;
+            setEverywhereAuto(false);
+            return;
+          }
         }
-        else {
-          rebuildList();
-        }
+
+        rebuildList();
       }
     });
 
