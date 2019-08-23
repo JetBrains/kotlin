@@ -54,8 +54,9 @@ class IntrinsicType {
         const val IMMUTABLE_BLOB                = "IMMUTABLE_BLOB"
         const val INIT_INSTANCE                 = "INIT_INSTANCE"
 
+        // Coroutines
         const val GET_CONTINUATION              = "GET_CONTINUATION"
-        const val RETURN_IF_SUSPEND             = "RETURN_IF_SUSPEND"
+        const val RETURN_IF_SUSPENDED           = "RETURN_IF_SUSPENDED"
         const val COROUTINE_LAUNCHPAD           = "COROUTINE_LAUNCHPAD"
 
         // Interop
