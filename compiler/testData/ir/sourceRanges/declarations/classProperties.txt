@@ -96,7 +96,7 @@
           @47:4..31 RETURN type=kotlin.Nothing from='public final fun <get-test9> (): kotlin.Int declared in test.Test'
             @47:4..31 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test9 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
               @47:4..31 GET_VAR '<this>: test.Test declared in test.Test.<get-test9>' type=test.Test origin=null
-      @47:28..31 FUN name:<set-test9> visibility:private modality:FINAL <> ($this:test.Test, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      @47:28..31 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test9> visibility:private modality:FINAL <> ($this:test.Test, <set-?>:kotlin.Int) returnType:kotlin.Unit
         @47:20..31 VALUE_PARAMETER name:<this> type:test.Test
         @47:28..31 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         @47:28..31 BLOCK_BODY
@@ -113,7 +113,7 @@
           @50:4..51:19 RETURN type=kotlin.Nothing from='public final fun <get-test10> (): kotlin.Int declared in test.Test'
             @50:4..51:19 GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test10 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
               @50:4..51:19 GET_VAR '<this>: test.Test declared in test.Test.<get-test10>' type=test.Test origin=null
-      @51:16..19 FUN name:<set-test10> visibility:private modality:FINAL <> ($this:test.Test, <set-?>:kotlin.Int) returnType:kotlin.Unit
+      @51:16..19 FUN DEFAULT_PROPERTY_ACCESSOR name:<set-test10> visibility:private modality:FINAL <> ($this:test.Test, <set-?>:kotlin.Int) returnType:kotlin.Unit
         @51:8..19 VALUE_PARAMETER name:<this> type:test.Test
         @51:16..19 VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         @51:16..19 BLOCK_BODY

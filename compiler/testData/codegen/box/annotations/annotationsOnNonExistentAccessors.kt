@@ -1,5 +1,4 @@
 // WITH_REFLECT
-// IGNORE_BACKEND: JVM_IR
 // TARGET_BACKEND: JVM
 
 // Please make sure that this test is consistent with the diagnostic test "annotationsTargetingNonExistentAccessor.kt"
@@ -98,12 +97,6 @@ private class EffetivelyPrivate private constructor(
 }
 
 class Statics {
-    @get:Ann
-    lateinit var y0: String
-
-    @get:Ann
-    private lateinit var y1: String
-
     companion object {
         @JvmField
         @get:Ann
@@ -128,9 +121,6 @@ class Statics {
     }
 
     fun test() {
-        check(::y0.getter, annotationExists = true)
-        check(::y1.getter, annotationExists = false)
-
         check(::x0.getter, annotationExists = false)
         check(::x1.getter, annotationExists = false)
 
