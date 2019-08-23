@@ -725,9 +725,7 @@ public final class FileBasedIndexImpl extends FileBasedIndex implements Disposab
     ProgressManager.checkCanceled();
     myChangedFilesCollector.ensureUpToDate();
     ApplicationManager.getApplication().assertReadAccessAllowed();
-    if (getFileBeingCurrentlyIndexed() != null) {
-      throw new AssertionError("Indexes should not been accessed while indexing in progress");
-    }
+
     NoAccessDuringPsiEvents.checkCallContext();
 
     if (!needsFileContentLoading(indexId)) {
