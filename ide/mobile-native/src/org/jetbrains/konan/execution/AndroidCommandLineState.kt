@@ -27,6 +27,7 @@ import com.intellij.xdebugger.XDebugProcess
 import com.intellij.xdebugger.XDebugProcessStarter
 import com.intellij.xdebugger.XDebugSession
 import com.intellij.xdebugger.XDebuggerManager
+import com.intellij.xdebugger.impl.XDebugSessionImpl
 import com.jetbrains.cidr.execution.CidrCommandLineState
 import com.jetbrains.cidr.execution.debugger.CidrDebugProcess
 import com.jetbrains.cidr.execution.testing.CidrLauncher
@@ -73,12 +74,12 @@ class AndroidCommandLineState(
             runInEdt {
                 val debugEnv = DefaultDebugUIEnvironment(environment, debugState, connection, false)
                 val debuggerSession = DebuggerManagerEx.getInstanceEx(project).attachVirtualMachine(debugEnv.environment)!!
-                XDebuggerManager.getInstance(project)
-                    .startSessionAndShowTab(debugEnv.environment.sessionName, environment.contentToReuse, object : XDebugProcessStarter() {
-                        override fun start(session: XDebugSession): XDebugProcess {
-                            return JavaDebugProcess.create(session, debuggerSession)
-                        }
-                    })
+                val session = XDebuggerManager.getInstance(project).startSession(environment, object : XDebugProcessStarter() {
+                    override fun start(session: XDebugSession): XDebugProcess =
+                        JavaDebugProcess.create(session, debuggerSession)
+                })
+                (session as XDebugSessionImpl).showSessionTab()
+                session.debugProcess.processHandler.startNotify()
             }
         }
 
