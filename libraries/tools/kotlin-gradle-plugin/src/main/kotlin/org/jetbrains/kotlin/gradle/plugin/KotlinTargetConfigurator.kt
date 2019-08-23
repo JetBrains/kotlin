@@ -81,10 +81,11 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
 
         if (createTestCompilation) {
             target.compilations.create(KotlinCompilation.TEST_COMPILATION_NAME).apply {
-                compileDependencyFiles += main.output.allOutputs
+                associateWith(main)
 
                 if (this is KotlinCompilationToRunnableFiles) {
-                    runtimeDependencyFiles += project.files(output.allOutputs, main.output.allOutputs)
+                    // TODO: fix inconsistency? KT-27272
+                    runtimeDependencyFiles += project.files(output.allOutputs)
                 }
             }
         }

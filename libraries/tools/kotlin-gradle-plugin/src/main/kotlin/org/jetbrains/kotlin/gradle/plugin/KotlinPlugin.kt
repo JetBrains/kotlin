@@ -476,6 +476,10 @@ internal abstract class AbstractKotlinPlugin(
                 kotlinCompilation.source(kotlinSourceSet)
             }
 
+            kotlinTarget.compilations.run {
+                getByName(KotlinCompilation.TEST_COMPILATION_NAME).associateWith(getByName(KotlinCompilation.MAIN_COMPILATION_NAME))
+            }
+
             // Since the 'java' plugin (as opposed to 'java-library') doesn't known anything about the 'api' configurations,
             // add the API dependencies of the main compilation directly to the 'apiElements' configuration, so that the 'api' dependencies
             // are properly published with the 'compile' scope (KT-28355):
@@ -938,6 +942,12 @@ abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTool
         androidPlugin: BasePlugin
     ) {
         val javaTask = getJavaTask(variantData) ?: return
+
+        getTestedVariantData(variantData)?.let { testedVariant ->
+            val testedVariantName = getVariantName(testedVariant)
+            val testedCompilation = compilation.target.compilations.getByName(testedVariantName)
+            compilation.associateWith(testedCompilation)
+        }
 
         val kotlinTask = compilation.compileKotlinTask
         configureSources(kotlinTask, variantData, compilation)

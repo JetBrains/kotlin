@@ -199,7 +199,49 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
             val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
             return filterModuleName("$baseName$suffix")
         }
+
+    override fun associateWith(other: KotlinCompilation<*>) {
+        require(other.target == target) { "Only associations between compilations of a single target are supported" }
+        other as AbstractKotlinCompilation<*>
+
+        _associateWith += other
+
+        addAssociateCompilationDependencies(other)
+    }
+
+    protected open fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+        target.project.dependencies.run {
+            val project = target.project
+
+            add(
+                compileDependencyConfigurationName,
+                project.files(Callable { other.output.classesDirs }, Callable { other.compileDependencyFiles })
+            )
+
+            if (this@AbstractKotlinCompilation is KotlinCompilationToRunnableFiles<*>) {
+                add(runtimeDependencyConfigurationName, project.files(Callable { other.output.allOutputs }))
+                if (other is KotlinCompilationToRunnableFiles<*>) {
+                    add(runtimeDependencyConfigurationName, project.files(Callable { other.runtimeDependencyFiles }))
+                }
+            }
+        }
+    }
+
+    private val _associateWith: MutableSet<AbstractKotlinCompilation<*>> = mutableSetOf()
+
+    override val associateWith: Set<KotlinCompilation<*>>
+        get() = Collections.unmodifiableSet(_associateWith)
 }
+
+ internal val KotlinCompilation<*>.associateWithTransitiveClosure: Iterable<KotlinCompilation<*>>
+     get() = mutableSetOf<KotlinCompilation<*>>().apply {
+         fun visit(other: KotlinCompilation<*>) {
+             if (add(other)) {
+                 other.associateWith.forEach(::visit)
+             }
+         }
+         associateWith.forEach(::visit)
+     }
 
 abstract class AbstractKotlinCompilationToRunnableFiles<T : KotlinCommonOptions>(
     target: KotlinTarget,
