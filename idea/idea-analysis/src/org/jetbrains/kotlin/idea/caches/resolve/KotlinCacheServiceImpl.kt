@@ -70,9 +70,9 @@ import java.util.concurrent.ConcurrentHashMap
 internal val LOG = Logger.getInstance(KotlinCacheService::class.java)
 
 /**
- * Regulates what sources should be analyzed together.
+ * Regulates which sources should be analyzed together.
  *
- * There are exactly two descendants, which are in string one-to-one correspondence with [ResolutionModeComponent.Mode] pick (meaning
+ * There are exactly two descendants, which are in strong one-to-one correspondence with [ResolutionModeComponent.Mode] (meaning
  * that after checking value of ResolutionMode, it's safe to downcast settings instance to the respective type):
  * - [PlatformAnalysisSettingsImpl] should be used iff we're working under [Mode.SEPARATE], and will create separate
  *   facade for each platforms, sdk, builtIns settings and other stuff.
