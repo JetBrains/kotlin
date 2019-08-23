@@ -42,9 +42,10 @@ configure([project(':kotlin-gradle-plugin'), project(':kotlin-allopen'), project
                     builtBy downloadPrebuiltJar
                 }
             }
+
+            publishPlugins.dependsOn(downloadPrebuiltJar)
         }
 
-        publishPlugins.dependsOn(downloadPrebuiltJar)
         publishPlugins.doFirst {
             assert !kotlinVersion.contains('SNAPSHOT')
         }
