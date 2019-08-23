@@ -236,15 +236,13 @@ public class JoinLinesHandler extends EditorActionHandler {
 
     if (start <= doc.getLineStartOffset(startLine)) {
       try {
-        docManager.commitDocument(doc);
         CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, doc.getLineStartOffset(startLine));
       }
       catch (IncorrectOperationException e) {
         LOG.error(e);
       }
+      docManager.commitDocument(doc);
     }
-
-    docManager.commitDocument(doc);
   }
 
   private static int checkOffset(int offset, JoinLinesHandlerDelegate delegate, DocumentEx doc) {
