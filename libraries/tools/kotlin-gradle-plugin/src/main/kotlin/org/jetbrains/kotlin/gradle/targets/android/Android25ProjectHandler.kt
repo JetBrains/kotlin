@@ -75,12 +75,12 @@ class Android25ProjectHandler(
         }
 
         // Find the classpath entries that comes from the tested variant and register it as the friend path, lazily
-        kotlinTask.friendPaths = lazy {
+        compilation.testedVariantArtifacts.set(project.files(project.provider {
             variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
                 .filter { it.id.componentIdentifier is TestedComponentIdentifier }
-                .map { it.file.absolutePath }
-                .toTypedArray()
-        }
+                .map { it.file }
+        }))
+
         kotlinTask.javaOutputDir = javaTask.destinationDir
 
         compilation.output.classesDirs.run {

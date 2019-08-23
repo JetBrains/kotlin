@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonToolOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.LanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -278,7 +277,9 @@ open class KotlinNativeCompile : AbstractKotlinNativeCompile<KotlinCommonOptions
         get() = project.files(compilation.commonSources).asFileTree
 
     private val friendModule: FileCollection?
-        get() = compilation.friendCompilation?.output?.allOutputs
+        get() = project.files(
+            project.provider { compilation.friendCompilations.map { it.output.allOutputs } + compilation.friendArtifacts }
+        )
     // endregion.
 
     // region Language settings imported from a SourceSet.
@@ -440,7 +441,7 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
         fn.call()
     }
 
-    //region language settings inputs for the [linkFromSources] mode. 
+    //region language settings inputs for the [linkFromSources] mode.
     // TODO: Remove in 1.3.70.
     @get:Optional
     @get:Input
@@ -543,9 +544,15 @@ open class KotlinNativeLink : AbstractKotlinNativeCompile<KotlinCommonToolOption
             // Allow a user to force the old behaviour of a link task.
             // TODO: Remove in 1.3.70.
             mutableListOf<String>().apply {
-                val friends = compilation.friendCompilation?.output?.allOutputs?.files
-                if (friends != null && friends.isNotEmpty()) {
-                    addArg("-friend-modules", friends.joinToString(File.pathSeparator) { it.absolutePath })
+                val friendCompilations = compilation.friendCompilations
+                val friendFiles = if (friendCompilations.isNotEmpty())
+                    project.files(
+                        project.provider { friendCompilations.map { it.output.allOutputs } + compilation.friendArtifacts }
+                    )
+                else null
+
+                if (friendFiles != null && !friendFiles.isEmpty) {
+                    addArg("-friend-modules", friendFiles.joinToString(File.pathSeparator) { it.absolutePath })
                 }
 
                 addAll(project.files(compilation.allSources).map { it.absolutePath })

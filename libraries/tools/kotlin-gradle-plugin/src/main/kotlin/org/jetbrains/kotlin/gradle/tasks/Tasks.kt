@@ -214,9 +214,6 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
             ?: Coroutines.DEFAULT
 
     @get:Internal
-    internal var friendTaskName: String? = null
-
-    @get:Internal
     internal var javaOutputDir: File?
         get() = taskData.javaOutputDir
         set(value) { taskData.javaOutputDir = value }
@@ -233,35 +230,14 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments>() : AbstractKo
     internal val moduleName: String
         get() = taskData.compilation.moduleName
 
-    @Suppress("UNCHECKED_CAST")
-    @get:Internal
-    internal val friendTask: AbstractKotlinCompile<T>?
-        get() = friendTaskName?.let { project.tasks.findByName(it) } as? AbstractKotlinCompile<T>
-
-    /** Classes directories that are not produced by this task but should be consumed by
-     * other tasks that have this one as a [friendTask]. */
-    private val attachedClassesDirs: MutableList<Lazy<File?>> = mutableListOf()
-
-    /** Registers the directory provided by the [provider] as attached, meaning that the directory should
-     * be consumed as a friend classes directory by other tasks that have this task as a [friendTask]. */
-    internal fun attachClassesDir(provider: () -> File?) {
-        attachedClassesDirs += lazy(provider)
-    }
-
     @get:Internal // takes part in the compiler arguments
-    var friendPaths: Lazy<Array<String>?> = lazy {
-        friendTask?.let { friendTask ->
-            val possibleFriendDirs = ArrayList<File?>().apply {
-                add(friendTask.javaOutputDir)
-                add(friendTask.destinationDir)
-                addAll(friendTask.attachedClassesDirs.map { it.value })
-            }
-
-            possibleFriendDirs.filterNotNullTo(HashSet())
-                .map { it.absolutePath }
-                .toTypedArray()
+    val friendPaths: Array<String>
+        get() = taskData.compilation.run {
+            associateWithTransitiveClosure
+                .flatMap { it.output.classesDirs }
+                .plus(friendArtifacts)
+                .map { it.canonicalPath }.toTypedArray()
         }
-    }
 
     private val kotlinLogger by lazy { GradleKotlinLogger(logger) }
 
@@ -404,7 +380,7 @@ open class KotlinCompile : AbstractKotlinCompile<K2JVMCompilerArguments>(), Kotl
         args.moduleName = taskData.compilation.moduleName
         logger.kotlinDebug { "args.moduleName = ${args.moduleName}" }
 
-        args.friendPaths = friendPaths.value
+        args.friendPaths = friendPaths
         logger.kotlinDebug { "args.friendPaths = ${args.friendPaths?.joinToString() ?: "[]"}" }
 
         if (defaultsOnly) return
@@ -571,12 +547,11 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
     @get:InputFiles
     @get:Optional
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    internal val friendDependency
-        get() = friendTaskName
-            ?.let { project.getTasksByName(it, false).singleOrNull() as? Kotlin2JsCompile }
-            ?.outputFile?.parentFile
-            ?.let { if (libraryFilter(it)) it else null }
-            ?.absolutePath
+    internal val friendDependencies: List<String>
+        get() {
+            val filter = libraryFilter
+            return friendPaths.filter { filter(File(it)) }
+        }
 
     private val libraryFilter: (File) -> Boolean
         get() = if ("-Xir" in kotlinOptions.freeCompilerArgs) {
@@ -601,13 +576,13 @@ open class Kotlin2JsCompile : AbstractKotlinCompile<K2JSCompilerArguments>(), Ko
             .filter(libraryFilter)
             .map { it.canonicalPath }
 
-        args.libraries = (dependencies + listOfNotNull(friendDependency)).distinct().let {
+        args.libraries = (dependencies + friendDependencies).distinct().let {
             if (it.isNotEmpty())
                 it.joinToString(File.pathSeparator) else
                 null
         }
 
-        args.friendModules = friendDependency
+        args.friendModules = friendDependencies.joinToString(File.pathSeparator)
 
         if (args.sourceMapBaseDirs == null && !args.sourceMapPrefix.isNullOrEmpty()) {
             args.sourceMapBaseDirs = project.projectDir.absolutePath

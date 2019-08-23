@@ -55,7 +55,6 @@ open class KotlinCompileCommon : AbstractKotlinCompile<K2MetadataCompilerArgumen
         if (defaultsOnly) return
 
         val classpathList = classpath.files.toMutableList()
-        friendTask?.let { classpathList.add(it.destinationDir) }
 
         with(args) {
             classpath = classpathList.joinToString(File.pathSeparator)

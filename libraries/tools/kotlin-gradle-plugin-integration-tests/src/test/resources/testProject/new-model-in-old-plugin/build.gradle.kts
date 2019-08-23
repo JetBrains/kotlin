@@ -34,9 +34,7 @@ kotlin.target.compilations {
 
     val benchmark by creating {
         defaultSourceSet.dependencies {
-            implementation(main.compileDependencyFiles + main.output.allOutputs)
-            runtimeOnly(main.runtimeDependencyFiles)
-
+            associateWith(main)
             implementation(kotlin("reflect"))
         }
     }

@@ -1,0 +1,56 @@
+plugins {
+    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+}
+
+repositories {
+    mavenLocal()
+    jcenter()
+}
+
+kotlin {
+    sourceSets {
+        getByName("commonMain") {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+            }
+        }
+
+        getByName("commonTest") {
+            dependencies {
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+            }
+        }
+
+        create("commonIntegrationTest")
+    }
+
+    jvm {
+        compilations["main"].defaultSourceSet.dependencies {
+            implementation(kotlin("stdlib"))
+        }
+        compilations["test"].defaultSourceSet.dependencies {
+            implementation(kotlin("test-junit"))
+        }
+    }
+
+    js {
+        compilations["main"].defaultSourceSet.dependencies {
+            implementation(kotlin("stdlib-js"))
+        }
+        compilations["test"].defaultSourceSet.dependencies {
+            implementation(kotlin("test-js"))
+        }
+    }
+
+    mingwX64("mingw64") {}
+    linuxX64("linux64") {}
+    macosX64("macos64") {}
+
+    targets.matching { it.name != "metadata" }.all {
+        compilations.create("integrationTest") {
+            associateWith(compilations["test"])
+            defaultSourceSet.dependsOn(sourceSets["commonIntegrationTest"])
+        }
+    }
+}

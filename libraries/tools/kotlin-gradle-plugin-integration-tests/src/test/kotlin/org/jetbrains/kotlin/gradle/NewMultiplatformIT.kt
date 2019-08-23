@@ -2041,4 +2041,31 @@ class NewMultiplatformIT : BaseGradleIT() {
             assertNotContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
         }
     }
+
+    @Test
+    fun testAssociateCompilations() = with(Project("new-mpp-associate-compilations")) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        val tasks = listOf("jvm", "js", nativeHostTargetName).map { ":compileIntegrationTestKotlin${it.capitalize()}" }
+
+        build(*tasks.toTypedArray()) {
+            assertSuccessful()
+            assertTasksExecuted(*tasks.toTypedArray())
+
+            // JVM:
+            checkBytecodeContains(
+                projectDir.resolve("build/classes/kotlin/jvm/integrationTest/com/example/HelloIntegrationTest.class"),
+                "Hello.internalFun\$new_mpp_associate_compilations",
+                "HelloTest.internalTestFun\$new_mpp_associate_compilations"
+            )
+            assertFileExists("build/classes/kotlin/jvm/integrationTest/META-INF/new-mpp-associate-compilations.kotlin_module")
+
+            // JS:
+            assertFileExists("build/classes/kotlin/js/integrationTest/new-mpp-associate-compilations_integrationTest.js")
+
+            // Native:
+            assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/integrationTest.klib")
+        }
+    }
 }

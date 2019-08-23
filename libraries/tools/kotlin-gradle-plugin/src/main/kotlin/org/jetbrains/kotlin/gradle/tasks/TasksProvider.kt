@@ -122,10 +122,6 @@ internal open class KotlinTasksProvider(val targetName: String) {
         propertiesProvider: PropertiesProvider,
         compilation: AbstractKotlinCompilation<*>
     ) {
-        kotlinTaskHolder.configure {
-            it.friendTaskName = taskToFriendTaskMapper[it]
-        }
-
         project.runOnceAfterEvaluated("apply properties and language settings to ${kotlinTaskHolder.name}", kotlinTaskHolder) {
             propertiesProvider.mapKotlinTaskProperties(kotlinTaskHolder.get())
 
@@ -136,17 +132,11 @@ internal open class KotlinTasksProvider(val targetName: String) {
         }
     }
 
-    protected open val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Default(targetName)
-
     private inline fun <reified Task, reified WorkersTask : Task> taskOrWorkersTask(properties: PropertiesProvider): Class<out Task> =
         if (properties.parallelTasksInProject != true) Task::class.java else WorkersTask::class.java
 }
 
 internal class AndroidTasksProvider(targetName: String) : KotlinTasksProvider(targetName) {
-    override val taskToFriendTaskMapper: TaskToFriendTaskMapper =
-        RegexTaskToFriendTaskMapper.Android(targetName)
-
     override fun configure(
         kotlinTaskHolder: TaskProvider<out AbstractKotlinCompile<*>>,
         project: Project,

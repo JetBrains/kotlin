@@ -192,6 +192,13 @@ abstract class AbstractKotlinCompilation<T : KotlinCommonOptions>(
 
     override fun toString(): String = "compilation '$compilationName' ($target)"
 
+    /** If a compilation is aware of its associate compilations' outputs being added to the classpath in a transformed or packaged way,
+     * it should point to those friend artifact files via this property.
+     * This is a workaround for Android variants that are compiled against
+     * JARs of each other, which is not exposed in the API in any other way than in the consumer's classpath. */
+    internal open val friendArtifacts: FileCollection
+        get() = target.project.files()
+
     override val moduleName: String
         get() = KotlinCompilationsModuleGroups.getModuleLeaderCompilation(this).takeIf { it != this }?.ownModuleName ?: ownModuleName
 

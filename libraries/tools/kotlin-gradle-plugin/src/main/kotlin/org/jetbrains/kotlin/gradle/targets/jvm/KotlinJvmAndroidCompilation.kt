@@ -7,7 +7,11 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import com.android.build.gradle.api.BaseVariant
+import org.gradle.api.file.FileCollection
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.getTestedVariantData
 
  class KotlinJvmAndroidCompilation(
      target: KotlinAndroidTarget,
@@ -18,6 +22,17 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 
      override val compileKotlinTask: org.jetbrains.kotlin.gradle.tasks.KotlinCompile
          get() = super.compileKotlinTask as org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+     @Suppress("UnstableApiUsage")
+     internal val testedVariantArtifacts: Property<FileCollection> = target.project.objects.property(FileCollection::class.java)
+
+     override val friendArtifacts: FileCollection get() = target.project.files(super.friendArtifacts, testedVariantArtifacts)
+
+     override fun addAssociateCompilationDependencies(other: KotlinCompilation<*>) {
+         if ((other as? KotlinJvmAndroidCompilation)?.androidVariant != getTestedVariantData(androidVariant)) {
+             super.addAssociateCompilationDependencies(other)
+         } // otherwise, do nothing: the Android Gradle plugin adds these dependencies for us, we don't need to add them to the classpath
+     }
 
      override val relatedConfigurationNames: List<String>
          get() = super.relatedConfigurationNames + listOf(
