@@ -28,6 +28,9 @@ import com.intellij.util.text.CharArrayUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.intellij.codeInsight.editorActions.JoinLinesHandlerDelegate.CANNOT_JOIN;
 
 public class JoinLinesHandler extends EditorActionHandler {
@@ -93,6 +96,8 @@ public class JoinLinesHandler extends EditorActionHandler {
         Ref<Integer> caretRestoreOffset = new Ref<>(-1);
         CodeEditUtil.setNodeReformatStrategy(node -> node.getTextRange().getStartOffset() >= startReformatOffset);
         try {
+          convertEndComments(psiFile, doc, line, lineCount);
+          ProgressManager.checkCanceled();
           int count = 0;
           while (count < lineCount) {
             indicator.checkCanceled();
@@ -138,11 +143,6 @@ public class JoinLinesHandler extends EditorActionHandler {
     docManager.commitDocument(doc);
     CharSequence text = doc.getCharsSequence();
     JoinLinesOffsets offsets = calcJoinLinesOffsets(psiFile, doc, startLine);
-
-    if (offsets.isStartLineEndsWithComment() && !offsets.isNextLineStartsWithComment()) {
-      tryConvertEndOfLineComment(doc, offsets.elementAtStartLineEnd);
-      offsets = calcJoinLinesOffsets(psiFile, doc, startLine);
-    }
 
     TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
     int start = limits.getStartOffset();
@@ -268,31 +268,51 @@ public class JoinLinesHandler extends EditorActionHandler {
     boolean isStartLineEndsWithComment() { return commentAtLineEnd != null; }
     boolean isNextLineStartsWithComment() { return commentAtLineStart != null; }
     boolean isJoiningSameComment() { return commentAtLineStart == commentAtLineEnd; }
-    PsiElement elementAtStartLineEnd;
   }
 
   private static JoinLinesOffsets calcJoinLinesOffsets(PsiFile psiFile, Document doc, int startLine) {
     JoinLinesOffsets offsets = new JoinLinesOffsets();
     CharSequence text = doc.getCharsSequence();
     offsets.lineEndOffset = doc.getLineEndOffset(startLine);
-    offsets.firstNonSpaceOffsetInNextLine = doc.getLineStartOffset(startLine + 1);
-    while (offsets.firstNonSpaceOffsetInNextLine < text.length() - 1
-           && (text.charAt(offsets.firstNonSpaceOffsetInNextLine) == ' ' || text.charAt(offsets.firstNonSpaceOffsetInNextLine) == '\t'))
-    {
-      offsets.firstNonSpaceOffsetInNextLine++;
-    }
+    offsets.firstNonSpaceOffsetInNextLine = StringUtil.skipWhitespaceForward(text, doc.getLineStartOffset(startLine + 1));
     PsiElement elementAtNextLineStart = psiFile.findElementAt(offsets.firstNonSpaceOffsetInNextLine);
     offsets.commentAtLineStart = getCommentElement(elementAtNextLineStart);
 
     offsets.lastNonSpaceOffsetInStartLine = StringUtil.skipWhitespaceBackward(text, offsets.lineEndOffset);
     int elemOffset = offsets.lastNonSpaceOffsetInStartLine > doc.getLineStartOffset(startLine) ? offsets.lastNonSpaceOffsetInStartLine - 1 : -1;
-    offsets.elementAtStartLineEnd = elemOffset == -1 ? null : psiFile.findElementAt(elemOffset);
-    offsets.commentAtLineEnd = getCommentElement(offsets.elementAtStartLineEnd);
+    offsets.commentAtLineEnd = getCommentElement(elemOffset == -1 ? null : psiFile.findElementAt(elemOffset));
     return offsets;
 
   }
 
-  private static void tryConvertEndOfLineComment(Document doc, PsiElement commentElement) {
+  private static void convertEndComments(PsiFile psiFile, Document doc, int startLine, int lineCount) {
+    List<PsiComment> endComments = new ArrayList<>();
+    CharSequence text = doc.getCharsSequence();
+    for (int i = 0; i < lineCount; i++) {
+      int line = startLine + i;
+      int lineEnd = doc.getLineEndOffset(line);
+      int lastNonSpaceOffset = StringUtil.skipWhitespaceBackward(text, lineEnd);
+      if (lastNonSpaceOffset > doc.getLineStartOffset(line)) {
+        PsiComment comment = getCommentElement(psiFile.findElementAt(lastNonSpaceOffset - 1));
+        if (comment != null) {
+          int nextStart = StringUtil.skipWhitespaceForward(text, doc.getLineStartOffset(line + 1));
+          if (getCommentElement(psiFile.findElementAt(nextStart)) == null) {
+            endComments.add(comment);
+          }
+        }
+      }
+    }
+    boolean changed = false;
+    for (PsiComment comment : endComments) {
+      changed |= tryConvertEndOfLineComment(comment);
+      ProgressManager.checkCanceled();
+    }
+    if (changed) {
+      PsiDocumentManager.getInstance(psiFile.getProject()).doPostponedOperationsAndUnblockDocument(doc);
+    }
+  }
+
+  private static boolean tryConvertEndOfLineComment(PsiElement commentElement) {
     Commenter commenter = LanguageCommenters.INSTANCE.forLanguage(commentElement.getLanguage());
     if (commenter instanceof CodeDocumentationAwareCommenter) {
       CodeDocumentationAwareCommenter docCommenter = (CodeDocumentationAwareCommenter) commenter;
@@ -312,13 +332,14 @@ public class JoinLinesHandler extends EditorActionHandler {
           PsiParserFacade parserFacade = PsiParserFacade.SERVICE.getInstance(project);
           PsiComment newComment = parserFacade.createBlockCommentFromText(commentElement.getLanguage(), commentText);
           commentElement.replace(newComment);
-          PsiDocumentManager.getInstance(project).doPostponedOperationsAndUnblockDocument(doc);
+          return true;
         }
         catch (IncorrectOperationException e) {
           LOG.info("Failed to replace line comment with block comment", e);
         }
       }
     }
+    return false;
   }
 
   private static PsiComment getCommentElement(@Nullable final PsiElement element) {
