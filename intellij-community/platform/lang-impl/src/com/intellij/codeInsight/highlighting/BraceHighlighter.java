@@ -3,12 +3,10 @@
 package com.intellij.codeInsight.highlighting;
 
 import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.SelectionModel;
 import com.intellij.openapi.editor.event.*;
-import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorManagerEvent;
 import com.intellij.openapi.fileEditor.FileEditorManagerListener;
@@ -93,8 +91,7 @@ public class BraceHighlighter implements StartupActivity {
   }
 
   static void updateBraces(@NotNull final Editor editor, @NotNull final Alarm alarm) {
-    final Document document = editor.getDocument();
-    if (document instanceof DocumentEx && ((DocumentEx)document).isInBulkUpdate()) return;
+    if (editor.getDocument().isInBulkUpdate()) return;
 
     BraceHighlightingHandler.lookForInjectedAndMatchBracesInOtherThread(editor, alarm, handler -> {
       handler.updateBraces();

@@ -6,7 +6,6 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.Inlay;
 import com.intellij.openapi.editor.VisualPosition;
-import com.intellij.openapi.editor.ex.DocumentEx;
 import com.intellij.openapi.util.Key;
 import com.intellij.util.DocumentUtil;
 import gnu.trove.TIntObjectHashMap;
@@ -126,7 +125,7 @@ public class ParameterHintsUpdater {
       if (action == InlayUpdateInfo.Action.ADD) {
         boolean useAnimation = !myForceImmediateUpdate && !firstTime && !isSameHintRemovedNear(newText, infoIndex) && !isInBulkMode;
         Inlay inlay = myHintsManager.addHint(myEditor, info.offset, info.relatesToPrecedingText, newText, info.widthAdjustment, useAnimation);
-        if (inlay != null && !((DocumentEx)myEditor.getDocument()).isInBulkUpdate()) {
+        if (inlay != null && !myEditor.getDocument().isInBulkUpdate()) {
           VisualPosition inlayPosition = inlay.getVisualPosition();
           VisualPosition visualPosition = new VisualPosition(inlayPosition.line,
                                                              inlayPosition.column + (info.relatesToPrecedingText ? 1 : 0));
