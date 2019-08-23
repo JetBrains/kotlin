@@ -35,7 +35,7 @@ public final class SyntaxInfoBuilder {
   static MyMarkupIterator createMarkupIterator(@NotNull EditorHighlighter highlighter,
                                                @NotNull CharSequence text,
                                                @NotNull EditorColorsScheme schemeToUse,
-                                               @NotNull MarkupModel markupModel,
+                                               @Nullable MarkupModel markupModel,
                                                int startOffsetToUse,
                                                int endOffset) {
 
