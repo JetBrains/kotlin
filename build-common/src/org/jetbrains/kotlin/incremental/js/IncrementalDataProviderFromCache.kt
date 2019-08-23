@@ -21,4 +21,7 @@ class IncrementalDataProviderFromCache(private val cache: IncrementalJsCache) : 
 
     override val packageMetadata: Map<String, ByteArray>
         get() = cache.packageMetadata()
+
+    override val serializedIrFiles: Map<File, IrTranslationResultValue>
+        get() = cache.nonDirtyIrParts()
 }

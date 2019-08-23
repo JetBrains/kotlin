@@ -654,7 +654,7 @@ abstract class BasicBoxTest(
             if (header != null) {
                 configuration.put(
                     JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER,
-                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray(), incrementalData.packageMetadata)
+                    IncrementalDataProviderImpl(header, incrementalData.translatedFiles, JsMetadataVersion.INSTANCE.toArray(), incrementalData.packageMetadata, emptyMap())
                 )
             }
 

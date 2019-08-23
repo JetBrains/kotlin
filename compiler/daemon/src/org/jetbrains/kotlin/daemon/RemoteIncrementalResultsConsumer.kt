@@ -15,6 +15,18 @@ import java.io.File
 
 class RemoteIncrementalResultsConsumer(val facade: CompilerCallbackServicesFacade, eventManager: EventManager, val rpcProfiler: Profiler) :
     IncrementalResultsConsumer {
+    override fun processIrFile(
+        sourceFile: File,
+        fileData: ByteArray,
+        symbols: ByteArray,
+        types: ByteArray,
+        strings: ByteArray,
+        declarations: ByteArray,
+        bodies: ByteArray,
+        fqn: ByteArray
+    ) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     init {
         eventManager.
