@@ -14,6 +14,7 @@ import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.*;
 import com.intellij.openapi.editor.actionSystem.EditorActionHandler;
 import com.intellij.openapi.editor.ex.DocumentEx;
+import com.intellij.openapi.progress.ProgressIndicator;
 import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Ref;
@@ -98,13 +99,16 @@ public class JoinLinesHandler extends EditorActionHandler {
         try {
           convertEndComments(psiFile, doc, line, lineCount);
           ProgressManager.checkCanceled();
+          int newEndLine = processRawJoiners(doc, docManager, psiFile, line, lineCount, caretRestoreOffset, indicator);
+          int newCount = newEndLine - line;
           int count = 0;
-          while (count < lineCount) {
+          while (count < newCount) {
             indicator.checkCanceled();
-            indicator.setFraction(((double)count) / lineCount);
+            indicator.setFraction(((double)count) / newCount * 0.7 + 0.3);
             int beforeLines = doc.getLineCount();
             ProgressManager.getInstance().executeNonCancelableSection(
-              () -> doJoinTwoLines(doc, project, docManager, psiFile, line, caretRestoreOffset));
+              () -> CodeStyleManager.getInstance(project).performActionWithFormatterDisabled(
+                (Runnable)(() -> doJoinTwoLines(doc, project, docManager, psiFile, line, caretRestoreOffset))));
             int afterLines = doc.getLineCount();
             // Single Join two lines procedure could join more than two (e.g. if it removes braces)
             count += Math.max(beforeLines - afterLines, 1);
@@ -116,6 +120,52 @@ public class JoinLinesHandler extends EditorActionHandler {
 
         positionCaret(editor, caret, caretRestoreOffset.get());
       });
+  }
+
+  private static int processRawJoiners(@NotNull DocumentEx doc,
+                                       @NotNull PsiDocumentManager docManager,
+                                       @NotNull PsiFile psiFile,
+                                       int startLine,
+                                       int lineCount,
+                                       Ref<Integer> caretRestoreOffset,
+                                       ProgressIndicator indicator) {
+    int count = 0;
+    List<JoinLinesHandlerDelegate> list = JoinLinesHandlerDelegate.EP_NAME.getExtensionList();
+    int beforeLines = doc.getLineCount();
+    CharSequence text = doc.getCharsSequence();
+    while (count < lineCount) {
+      indicator.checkCanceled();
+      indicator.setFraction(((double)count) / lineCount * 0.3);
+      JoinLinesOffsets offsets = new JoinLinesOffsets(doc, startLine);
+
+      TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
+      int start = limits.getStartOffset();
+      int end = limits.getEndOffset();
+      int rc = CANNOT_JOIN;
+      for (JoinLinesHandlerDelegate delegate : list) {
+        if (delegate instanceof JoinRawLinesHandlerDelegate) {
+          rc = ((JoinRawLinesHandlerDelegate)delegate).tryJoinRawLines(doc, psiFile, start, end);
+          if (rc != CANNOT_JOIN) {
+            caretRestoreOffset.set(checkOffset(rc, delegate, doc));
+            break;
+          }
+        }
+      }
+      if (rc == CANNOT_JOIN) {
+        startLine++;
+        count++;
+      }
+      else {
+        docManager.doPostponedOperationsAndUnblockDocument(doc);
+        docManager.commitDocument(doc);
+        int afterLines = doc.getLineCount();
+        // Single Join two lines procedure could join more than two (e.g. if it removes braces)
+        count += Math.max(beforeLines - afterLines, 1);
+        beforeLines = afterLines;
+        text = doc.getCharsSequence();
+      }
+    }
+    return startLine;
   }
 
   private static void positionCaret(Editor editor, Caret caret, int caretRestoreOffset) {
@@ -141,50 +191,36 @@ public class JoinLinesHandler extends EditorActionHandler {
 
     docManager.doPostponedOperationsAndUnblockDocument(doc);
     docManager.commitDocument(doc);
-    CharSequence text = doc.getCharsSequence();
     JoinLinesOffsets offsets = new JoinLinesOffsets(doc, startLine);
 
-    TextRange limits = findStartAndEnd(text, offsets.lastNonSpaceOffsetInStartLine, offsets.firstNonSpaceOffsetInNextLine);
-    int start = limits.getStartOffset();
-    int end = limits.getEndOffset();
-    // run raw joiners
-    int rc = -1;
-    for (JoinLinesHandlerDelegate delegate: JoinLinesHandlerDelegate.EP_NAME.getExtensionList()) {
-      if (delegate instanceof JoinRawLinesHandlerDelegate) {
-        rc = ((JoinRawLinesHandlerDelegate)delegate).tryJoinRawLines(doc, psiFile, start, end);
-        if (rc != CANNOT_JOIN) {
-          caretRestoreOffset.set(checkOffset(rc, delegate, doc));
-          break;
-        }
-      }
-    }
-    if (rc == CANNOT_JOIN) { // remove indents and newline, run non-raw joiners
-      if (offsets.lastNonSpaceOffsetInStartLine == doc.getLineStartOffset(startLine)) {
-        doc.deleteString(doc.getLineStartOffset(startLine), offsets.firstNonSpaceOffsetInNextLine);
-
-        docManager.commitDocument(doc);
-        int indent =
-          CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, startLine == 0 ? 0 : doc.getLineStartOffset(startLine));
-
-        if (caretRestoreOffset.get() == CANNOT_JOIN) {
-          caretRestoreOffset.set(indent);
-        }
-
-        return;
-      }
-
-      doc.deleteString(offsets.lineEndOffset, offsets.lineEndOffset + doc.getLineSeparatorLength(startLine));
-
-      text = doc.getCharsSequence();
-      limits = findStartAndEnd(text, offsets.lineEndOffset - 1, offsets.lineEndOffset);
-      start = limits.getStartOffset(); end = limits.getEndOffset();
+    // remove indents and newline, run non-raw joiners
+    if (offsets.lastNonSpaceOffsetInStartLine == doc.getLineStartOffset(startLine)) {
+      doc.deleteString(doc.getLineStartOffset(startLine), offsets.firstNonSpaceOffsetInNextLine);
 
       docManager.commitDocument(doc);
+      int indent =
+        CodeStyleManager.getInstance(project).adjustLineIndent(psiFile, startLine == 0 ? 0 : doc.getLineStartOffset(startLine));
 
-      for(JoinLinesHandlerDelegate delegate: JoinLinesHandlerDelegate.EP_NAME.getExtensionList()) {
-        rc = checkOffset(delegate.tryJoinLines(doc, psiFile, start, end), delegate, doc);
-        if (rc != CANNOT_JOIN) break;
+      if (caretRestoreOffset.get() == CANNOT_JOIN) {
+        caretRestoreOffset.set(indent);
       }
+
+      return;
+    }
+
+    doc.deleteString(offsets.lineEndOffset, offsets.lineEndOffset + doc.getLineSeparatorLength(startLine));
+
+    CharSequence text = doc.getCharsSequence();
+    TextRange limits = findStartAndEnd(text, offsets.lineEndOffset - 1, offsets.lineEndOffset);
+    int start = limits.getStartOffset();
+    int end = limits.getEndOffset();
+
+    docManager.commitDocument(doc);
+
+    int rc = CANNOT_JOIN;
+    for (JoinLinesHandlerDelegate delegate : JoinLinesHandlerDelegate.EP_NAME.getExtensionList()) {
+      rc = checkOffset(delegate.tryJoinLines(doc, psiFile, start, end), delegate, doc);
+      if (rc != CANNOT_JOIN) break;
     }
 
     if (rc != CANNOT_JOIN) {
