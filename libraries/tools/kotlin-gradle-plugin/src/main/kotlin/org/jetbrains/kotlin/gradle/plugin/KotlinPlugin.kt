@@ -654,7 +654,7 @@ internal open class KotlinAndroidPlugin(
         fun androidTargetHandler(
             kotlinPluginVersion: String,
             androidTarget: KotlinAndroidTarget
-        ): AbstractAndroidProjectHandler<*> {
+        ): AbstractAndroidProjectHandler {
             val tasksProvider = AndroidTasksProvider(androidTarget.targetName)
 
             val version = loadAndroidPluginVersion()
@@ -687,37 +687,35 @@ class KotlinConfigurationTools internal constructor(
     val kotlinPluginVersion: String
 )
 
-abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationTools: KotlinConfigurationTools) {
+abstract class AbstractAndroidProjectHandler(private val kotlinConfigurationTools: KotlinConfigurationTools) {
     protected val logger = Logging.getLogger(this.javaClass)
 
-    abstract fun forEachVariant(project: Project, action: (V) -> Unit): Unit
-    abstract fun getTestedVariantData(variantData: V): V?
-    abstract fun getResDirectories(variantData: V): FileCollection
-    abstract fun getVariantName(variant: V): String
-    abstract fun getFlavorNames(variant: V): List<String>
-    abstract fun getBuildTypeName(variant: V): String
-    abstract fun getLibraryOutputTask(variant: V): Any?
+    abstract fun forEachVariant(project: Project, action: (BaseVariant) -> Unit): Unit
+    abstract fun getResDirectories(variantData: BaseVariant): FileCollection
+    abstract fun getFlavorNames(variant: BaseVariant): List<String>
+    abstract fun getBuildTypeName(variant: BaseVariant): String
+    abstract fun getLibraryOutputTask(variant: BaseVariant): Any?
 
-    protected abstract fun getSourceProviders(variantData: V): Iterable<SourceProvider>
-    protected abstract fun getAllJavaSources(variantData: V): Iterable<File>
-    protected abstract fun getJavaTask(variantData: V): AbstractCompile?
-    protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: V, javaSourceDirectory: File): Unit
+    protected abstract fun getSourceProviders(variantData: BaseVariant): Iterable<SourceProvider>
+    protected abstract fun getAllJavaSources(variantData: BaseVariant): Iterable<File>
+    protected abstract fun getJavaTask(variantData: BaseVariant): AbstractCompile?
+    protected abstract fun addJavaSourceDirectoryToVariantModel(variantData: BaseVariant, javaSourceDirectory: File): Unit
 
-    protected open fun checkVariantIsValid(variant: V) = Unit
+    protected open fun checkVariantIsValid(variant: BaseVariant) = Unit
 
-    protected open fun setUpDependencyResolution(variant: V, compilation: KotlinJvmAndroidCompilation) = Unit
+    protected open fun setUpDependencyResolution(variant: BaseVariant, compilation: KotlinJvmAndroidCompilation) = Unit
 
     protected abstract fun wireKotlinTasks(
         project: Project,
         compilation: KotlinJvmAndroidCompilation,
         androidPlugin: BasePlugin,
         androidExt: BaseExtension,
-        variantData: V,
+        variantData: BaseVariant,
         javaTask: AbstractCompile,
         kotlinTask: KotlinCompile
     )
 
-    protected abstract fun wrapVariantDataForKapt(variantData: V): KaptVariantData<V>
+    protected abstract fun wrapVariantDataForKapt(variantData: BaseVariant): KaptVariantData<BaseVariant>
 
     fun configureTarget(kotlinAndroidTarget: KotlinAndroidTarget) {
         val project = kotlinAndroidTarget.project
@@ -773,11 +771,11 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             // in afterEvaluate, a user's build script might have already attached item handlers to the compilations container, and those
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
             kotlinAndroidTarget.compilationFactory.create(variantName).let { compilation ->
-                compilation.androidVariant = variant as BaseVariant
+                compilation.androidVariant = variant
 
                 setUpDependencyResolution(variant, compilation)
 
-                preprocessVariant(variant, compilation, project, ext, plugin, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
+                preprocessVariant(variant, compilation, project, kotlinOptions, kotlinConfigurationTools.kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
                 (kotlinAndroidTarget.compilations as NamedDomainObjectCollection<in KotlinJvmAndroidCompilation>).add(compilation)
@@ -852,7 +850,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
         // extendsFrom relationship.
         if (kotlinAndroidTarget.disambiguationClassifier != null) {
 
-            val sourceSetToVariants = mutableMapOf<AndroidSourceSet, MutableList<V>>().apply {
+            val sourceSetToVariants = mutableMapOf<AndroidSourceSet, MutableList<BaseVariant>>().apply {
                 forEachVariant(project) { variant ->
                     for (sourceSet in getSourceProviders(variant)) {
                         val androidSourceSet = sourceSet as? AndroidSourceSet ?: continue
@@ -885,11 +883,9 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     }
 
     private fun preprocessVariant(
-        variantData: V,
+        variantData: BaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
-        androidExt: BaseExtension,
-        androidPlugin: BasePlugin,
         rootKotlinOptions: KotlinJvmOptionsImpl,
         tasksProvider: KotlinTasksProvider
     ) {
@@ -935,7 +931,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     }
 
     private fun postprocessVariant(
-        variantData: V,
+        variantData: BaseVariant,
         compilation: KotlinJvmAndroidCompilation,
         project: Project,
         androidExt: BaseExtension,
@@ -951,7 +947,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
     private fun applySubplugins(
         project: Project,
         compilation: KotlinCompilation<*>,
-        variantData: V,
+        variantData: BaseVariant,
         subpluginEnvironment: SubpluginEnvironment
     ) {
         val kotlinTask = project.tasks.getByName(compilation.compileKotlinTaskName) as KotlinCompile
@@ -965,7 +961,7 @@ abstract class AbstractAndroidProjectHandler<V>(private val kotlinConfigurationT
             .forEach { configureSources(it, variantData, null) }
     }
 
-    private fun configureSources(compileTask: AbstractCompile, variantData: V, compilation: KotlinCompilation<*>?) {
+    private fun configureSources(compileTask: AbstractCompile, variantData: BaseVariant, compilation: KotlinCompilation<*>?) {
         val logger = compileTask.project.logger
 
         for (provider in getSourceProviders(variantData)) {
