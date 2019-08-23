@@ -143,8 +143,7 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
     private val facadeForScriptDependenciesForProject = createFacadeForScriptDependencies(ScriptDependenciesInfo.ForProject(project))
 
     private fun createFacadeForScriptDependencies(
-        dependenciesModuleInfo: ScriptDependenciesInfo,
-        syntheticFiles: Collection<KtFile> = listOf()
+        dependenciesModuleInfo: ScriptDependenciesInfo
     ): ProjectResolutionFacade {
         val sdk = dependenciesModuleInfo.sdk
         val platform = JvmPlatforms.defaultJvmPlatform // TODO: Js scripts?
@@ -179,7 +178,6 @@ class KotlinCacheServiceImpl(val project: Project) : KotlinCacheService {
             dependencies = dependenciesForScriptDependencies,
             moduleFilter = { it == dependenciesModuleInfo },
             invalidateOnOOCB = true,
-            syntheticFiles = syntheticFiles,
             builtInsCache = globalFacade.builtInsCache
         )
     }
