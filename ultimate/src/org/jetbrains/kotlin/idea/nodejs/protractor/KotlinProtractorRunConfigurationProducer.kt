@@ -22,6 +22,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.js.asJsModule
@@ -46,6 +47,11 @@ class KotlinProtractorRunConfigurationProducer :
         context: ConfigurationContext
     ): ProtractorConfigData? {
         val module = context.module?.asJsModule() ?: return null
+
+        if (module.isNewMPPModule) {
+            return null
+        }
+
         val element = context.psiLocation ?: return null
         if (!TestElementPath.isModuleAssociatedDir(element, module)) return null
         val testFilePath = module.jsTestOutputFilePath ?: return null

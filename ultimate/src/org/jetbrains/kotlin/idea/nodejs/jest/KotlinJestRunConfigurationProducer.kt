@@ -14,6 +14,7 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.js.asJsModule
@@ -78,6 +79,10 @@ class KotlinJestRunConfigurationProducer :
     ): JestConfigData? {
         val element = context.psiLocation ?: return null
         val module = context.module?.asJsModule() ?: return null
+
+        if (module.isNewMPPModule) {
+            return null
+        }
 
         if (module.sourceRoots.none { isTestRunnerPackageAvailableFor(module.project, it) }) return null
 

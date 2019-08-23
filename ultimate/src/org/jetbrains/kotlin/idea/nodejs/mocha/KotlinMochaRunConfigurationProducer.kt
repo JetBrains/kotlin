@@ -30,6 +30,7 @@ import com.intellij.util.SmartList
 import com.intellij.util.containers.SmartHashSet
 import com.jetbrains.nodejs.mocha.MochaUtil
 import com.jetbrains.nodejs.mocha.execution.*
+import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
 import org.jetbrains.kotlin.idea.js.asJsModule
@@ -105,6 +106,11 @@ class KotlinMochaRunConfigurationProducer : MochaRunConfigurationProducer(), Kot
 
     override fun getConfigurationData(context: ConfigurationContext): MochaConfigData? {
         val module = context.module?.asJsModule() ?: return null
+
+        if (module.isNewMPPModule) {
+            return null
+        }
+
         val element = context.psiLocation ?: return null
         val file = module.moduleFile ?: return null
         val project = module.project

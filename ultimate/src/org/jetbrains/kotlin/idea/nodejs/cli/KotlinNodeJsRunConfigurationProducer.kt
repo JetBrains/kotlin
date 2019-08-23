@@ -14,6 +14,7 @@ import com.intellij.psi.PsiElement
 import com.jetbrains.nodejs.run.NodeJsRunConfiguration
 import com.jetbrains.nodejs.run.NodeJsRunConfigurationType
 import org.jetbrains.kotlin.idea.MainFunctionDetector
+import org.jetbrains.kotlin.idea.caches.project.isNewMPPModule
 import org.jetbrains.kotlin.idea.caches.resolve.resolveToDescriptorIfAny
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationData
 import org.jetbrains.kotlin.idea.js.KotlinJSRunConfigurationDataProvider
@@ -49,6 +50,10 @@ private class KotlinNodeJsRunConfigurationProducer :
         if (!context.isAcceptable) return null
         val element = context.psiLocation ?: return null
         val module = context.module?.asJsModule() ?: return null
+
+        if (module.isNewMPPModule) {
+            return null
+        }
 
         val jsFilePath = module.jsProductionOutputFilePath ?: return null
         val declaration = element.getNonStrictParentOfType<KtNamedDeclaration>()
