@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.psiUtil.getNonStrictParentOfType
 import org.jetbrains.kotlin.psi.psiUtil.prevSiblingOfSameType
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
-import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyClassDescriptor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.util.findCallableMemberBySignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
@@ -53,7 +53,10 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     protected abstract fun collectMembersToGenerate(descriptor: ClassDescriptor, project: Project): Collection<OverrideMemberChooserObject>
 
-    private fun showOverrideImplementChooser(project: Project, members: Array<OverrideMemberChooserObject>): MemberChooser<OverrideMemberChooserObject>? {
+    private fun showOverrideImplementChooser(
+        project: Project,
+        members: Array<OverrideMemberChooserObject>
+    ): MemberChooser<OverrideMemberChooserObject>? {
         val chooser = MemberChooser(members, true, true, project)
         chooser.title = getChooserTitle()
         chooser.show()
@@ -91,8 +94,7 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
         if (implementAll) {
             selectedElements = members
             copyDoc = false
-        }
-        else {
+        } else {
             val chooser = showOverrideImplementChooser(project, members.toTypedArray()) ?: return
             selectedElements = chooser.selectedElements ?: return
             copyDoc = chooser.isCopyJavadoc
@@ -112,10 +114,10 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
 
     companion object {
         fun generateMembers(
-                editor: Editor?,
-                classOrObject: KtClassOrObject,
-                selectedElements: Collection<OverrideMemberChooserObject>,
-                copyDoc: Boolean
+            editor: Editor?,
+            classOrObject: KtClassOrObject,
+            selectedElements: Collection<OverrideMemberChooserObject>,
+            copyDoc: Boolean
         ) {
             val selectedMemberDescriptors = selectedElements.associate { it.generateMember(classOrObject, copyDoc) to it.descriptor }
 
@@ -123,21 +125,22 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
             if (classBody == null) {
                 insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys)
                 return
-            } else {
-                val offset = editor?.caretModel?.offset ?: classBody.startOffset
-                val offsetCursorElement = PsiTreeUtil.findFirstParent(classBody.containingFile.findElementAt(offset)) {
-                    it.parent == classBody
-                }
-                if (offsetCursorElement != null && offsetCursorElement != classBody.rBrace) {
-                    insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys)
-                    return
-                }
+            }
+            val offset = editor?.caretModel?.offset ?: classBody.startOffset
+            val offsetCursorElement = PsiTreeUtil.findFirstParent(classBody.containingFile.findElementAt(offset)) {
+                it.parent == classBody
+            }
+            if (offsetCursorElement != null && offsetCursorElement != classBody.rBrace) {
+                insertMembersAfter(editor, classOrObject, selectedMemberDescriptors.keys)
+                return
             }
             val classLeftBrace = classBody.lBrace
 
             val allSuperMemberDescriptors = selectedMemberDescriptors.values
-                .mapNotNull { it.containingDeclaration as? LazyClassDescriptor }
-                .associate { it to it.declaredCallableMembers.toList() }
+                .mapNotNull { it.containingDeclaration as? ClassDescriptor }
+                .associateWith {
+                    DescriptorUtils.getAllDescriptors(it.unsubstitutedMemberScope).filterIsInstance<CallableMemberDescriptor>()
+                }
 
             val implementedElements = mutableMapOf<CallableMemberDescriptor, KtDeclaration>()
 
@@ -156,14 +159,14 @@ abstract class OverrideImplementMembersHandler : LanguageCodeInsightActionHandle
                 if (index == -1) return lastElement
                 val classDescriptor = classOrObject.descriptor as? ClassDescriptor ?: return lastElement
 
-                val upperElement = ((index - 1) downTo 0).firstNotNullResult { 
-                    classDescriptor.findElement(superMemberDescriptors[it]) 
+                val upperElement = ((index - 1) downTo 0).firstNotNullResult {
+                    classDescriptor.findElement(superMemberDescriptors[it])
                 }
                 if (upperElement != null) return upperElement
 
                 val lowerElement = ((index + 1) until superMemberDescriptors.size).firstNotNullResult {
                     classDescriptor.findElement(superMemberDescriptors[it])
-                } 
+                }
                 if (lowerElement != null) return lowerElement.prevSiblingOfSameType() ?: classLeftBrace
 
                 return lastElement
