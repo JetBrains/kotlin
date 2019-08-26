@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.j2k.getContainingClass
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asQualifierWithThisAsSelector
 import org.jetbrains.kotlin.nj2k.copyTreeAndDetach
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.symbols.JKClassSymbol
 import org.jetbrains.kotlin.nj2k.symbols.JKSymbol
 import org.jetbrains.kotlin.nj2k.tree.*

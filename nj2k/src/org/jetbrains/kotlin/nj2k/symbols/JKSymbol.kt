@@ -10,9 +10,9 @@ import com.intellij.psi.PsiMember
 import com.intellij.psi.PsiNamedElement
 import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.JKDeclaration
 import org.jetbrains.kotlin.nj2k.tree.JKFile
+import org.jetbrains.kotlin.nj2k.tree.parentOfType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType

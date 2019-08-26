@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.nj2k
 
-import com.intellij.psi.PsiElement
-import com.intellij.psi.util.PsiTreeUtil
-import com.intellij.psi.util.parentsOfType
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.load.java.JvmAbi
@@ -18,11 +15,6 @@ fun <T> List<T>.replace(element: T, replacer: T): List<T> {
     mutableList[index] = replacer
     return mutableList
 }
-
-inline fun <reified T : PsiElement> PsiElement.parentOfType(): T? =
-    PsiTreeUtil.getParentOfType(this, T::class.java)
-
-inline fun <reified T : PsiElement> PsiElement.parentsOfType(): Sequence<T> = parentsOfType(T::class.java)
 
 fun String.asGetterName() =
     takeIf { JvmAbi.isGetterName(it) }

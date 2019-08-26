@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.tree.*
 
 class RemoveWrongExtraModifiersForSingleFunctionsConversion : RecursiveApplicableConversionBase() {

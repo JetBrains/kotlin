@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.nj2k.inference.common
 
 import org.jetbrains.kotlin.idea.resolve.ResolutionFacade
 import org.jetbrains.kotlin.nj2k.inference.common.collectors.ConstraintsCollector
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
