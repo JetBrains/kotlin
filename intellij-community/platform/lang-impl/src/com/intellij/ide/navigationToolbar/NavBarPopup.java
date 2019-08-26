@@ -91,7 +91,7 @@ public class NavBarPopup extends LightweightHint implements Disposable{
   }
 
   private void show(final NavBarItem item, boolean checkRepaint) {
-    UIEventLogger.logUIEvent(UIEventId.NavBarNavigate);
+    UIEventLogger.logUIEvent(UIEventId.NavBarShowPopup);
 
     final RelativePoint point = new RelativePoint(item, new Point(0, item.getHeight()));
     final Point p = point.getPoint(myPanel);
