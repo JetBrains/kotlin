@@ -79,8 +79,7 @@ public class RangeSearch implements RangeSearchTask.Callback {
 
   private RangeSearchTask lastExecutedRangeSearchTask;
 
-  @TestOnly
-  private List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = new ArrayList<>();
+  private final List<EdtRangeSearchEventsListener> myEdtRangeSearchEventsListeners = new ArrayList<>();
 
   public boolean isButtonFindFurtherEnabled(boolean directionForward) {
     if (directionForward) {
@@ -539,8 +538,8 @@ public class RangeSearch implements RangeSearchTask.Callback {
   }
 
   @TestOnly
-  boolean removeEdtRangeSearchEventsListener(EdtRangeSearchEventsListener listener) {
-    return myEdtRangeSearchEventsListeners.remove(listener);
+  void removeEdtRangeSearchEventsListener(EdtRangeSearchEventsListener listener) {
+    myEdtRangeSearchEventsListeners.remove(listener);
   }
 
   @TestOnly
@@ -709,7 +708,6 @@ public class RangeSearch implements RangeSearchTask.Callback {
     }
   }
 
-  @TestOnly
   interface EdtRangeSearchEventsListener {
 
     @CalledInAwt
