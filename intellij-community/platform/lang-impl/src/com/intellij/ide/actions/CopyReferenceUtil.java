@@ -164,7 +164,7 @@ public class CopyReferenceUtil {
   }
 
   @NotNull
-  private static String getVirtualFileFqn(@NotNull VirtualFile virtualFile, @NotNull Project project) {
+  public static String getVirtualFileFqn(@NotNull VirtualFile virtualFile, @NotNull Project project) {
     for (CopyReferenceAction.VirtualFileQualifiedNameProvider provider : CopyReferenceAction.VirtualFileQualifiedNameProvider.EP_NAME.getExtensionList()) {
       String qualifiedName = provider.getQualifiedName(project, virtualFile);
       if (qualifiedName != null) {

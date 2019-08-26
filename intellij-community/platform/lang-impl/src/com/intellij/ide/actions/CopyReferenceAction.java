@@ -43,6 +43,12 @@ public class CopyReferenceAction extends DumbAwareAction {
 
   @Override
   public void update(@NotNull AnActionEvent e) {
+    if (CopyPathsAction.isCopyReferencePopupAvailable()) {
+      e.getPresentation().setEnabledAndVisible(true);
+      e.getPresentation().setText("Copy Reference...");
+      return;
+    }
+
     boolean plural = false;
     boolean enabled;
     boolean paths = false;
@@ -73,6 +79,11 @@ public class CopyReferenceAction extends DumbAwareAction {
 
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
+    if (CopyPathsAction.isCopyReferencePopupAvailable()) {
+      CopyReferencePopup.showPopup(e, "CopyReferencePopupAction");
+      return;
+    }
+
     DataContext dataContext = e.getDataContext();
     Editor editor = CommonDataKeys.EDITOR.getData(dataContext);
     Project project = CommonDataKeys.PROJECT.getData(dataContext);
