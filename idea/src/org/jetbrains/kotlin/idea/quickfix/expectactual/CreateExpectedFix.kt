@@ -164,14 +164,17 @@ class CreateExpectedClassFix(
     generateClassOrObject(project, true, element, checker)
 })
 
-private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
-    val classes = elements.filterIsInstance<KtClassOrObject>()
-    val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
-    existingFqNames = existingNames
+private fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Collection<KtNamedDeclaration>): HashSet<String> {
+    var classes = elements.filterIsInstance<KtClassOrObject>()
+    while (true) {
+        val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
+        existingFqNames = existingNames
 
-    val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivate(it) }
-    return if (classes.size == newExistingClasses.size) existingNames
-    else findAndApplyExistingClasses(newExistingClasses)
+        val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivate(it) }
+        if (classes.size == newExistingClasses.size) return existingNames
+
+        classes = newExistingClasses
+    }
 }
 
 private fun showUnknownTypesDialog(project: Project, declarationsWithNonExistentClasses: Collection<KtNamedDeclaration>): Boolean {
