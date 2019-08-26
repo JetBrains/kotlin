@@ -32,20 +32,24 @@ object CompletionFUSCollector {
     )
 
     fun log(completionStatsData: CompletionStatsData?) {
-        /*if (completionStatsData == null) return
+        if (completionStatsData == null) return
         val data = mutableMapOf<String, String>()
-            .plus(Pair(WindowPopulationTimeAttribute, time))
-            .plus(Pair(FileTypeAttribute, fileType.toString()))
-            .plus(Pair(CompletionTypeAttribute, completionType.toString()))
+            .plus(Pair(FileTypeAttribute, completionStatsData.fileType.toString()))
+            .plus(Pair(CompletionTypeAttribute, completionStatsData.completionType.toString()))
 
-        if (choicePosition != null) {
-            data.plus(Pair(ChoiceAtPositionAttribute, choicePosition))
+        if (completionStatsData.finishTime != null) {
+            val populationTime = (completionStatsData.finishTime - completionStatsData.startTime).toString()
+            data.plus(Pair(WindowPopulationTimeAttribute, populationTime))
+        }
+
+        if (completionStatsData.selectedItem != null) {
+            data.plus(Pair(ChoiceAtPositionAttribute, completionStatsData.selectedItem.toString()))
                 .plus(Pair(CompletionEventAttribute, Chosen))
-            KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
         } else {
             data.plus(Pair(CompletionEventAttribute, NotChosen))
-            KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
-        }*/
+        }
+
+        KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
     }
 }
 
