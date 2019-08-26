@@ -13,7 +13,9 @@ import com.intellij.ide.ui.customization.CustomizationUtil;
 import com.intellij.ide.util.treeView.AbstractTreeBuilder;
 import com.intellij.ide.util.treeView.NodeDescriptor;
 import com.intellij.ide.util.treeView.TreeState;
-import com.intellij.openapi.actionSystem.*;
+import com.intellij.openapi.actionSystem.ActionPlaces;
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.extensions.ExtensionNotApplicableException;
 import com.intellij.openapi.project.Project;
@@ -22,7 +24,7 @@ import com.intellij.openapi.util.Disposer;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.vcs.changes.ChangeList;
 import com.intellij.openapi.vcs.changes.ChangeListAdapter;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
+import com.intellij.openapi.vcs.changes.ChangeListListener;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.packageDependencies.ChangeListScope;
 import com.intellij.packageDependencies.DependencyValidationManager;
@@ -120,7 +122,7 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
 
     myDependencyValidationManager.addScopeListener(scopeListener, this);
     myNamedScopeManager.addScopeListener(scopeListener, this);
-    ChangeListManager.getInstance(project).addChangeListListener(new ChangeListAdapter() {
+    project.getMessageBus().connect(this).subscribe(ChangeListListener.TOPIC, new ChangeListAdapter() {
       @Override
       public void changeListAdded(ChangeList list) {
         invokeLaterIfNeeded(myDependencyValidationManager::fireScopeListeners);
@@ -141,7 +143,7 @@ public final class ScopeViewPane extends AbstractProjectViewPane {
         if (myTreeModel == null) return; // not initialized yet
         myTreeModel.updateScopeIf(ChangeListScope.class);
       }
-    }, this);
+    });
     installComparator();
   }
 

@@ -141,7 +141,6 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
   };
 
   private final MergingUpdateQueue myUpdateQueue = new MergingUpdateQueue("ScopeViewUpdate", 300, isTreeShowing(), myTree);
-  private final ScopeTreeViewPanel.MyChangesListListener myChangesListListener = new MyChangesListListener();
   protected ActionCallback myActionCallback;
 
   public ScopeTreeViewPanel(@NotNull Project project) {
@@ -166,7 +165,7 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
     connection.subscribe(ProjectTopics.PROJECT_ROOTS, new MyModuleRootListener());
     PsiManager.getInstance(myProject).addPsiTreeChangeListener(myPsiTreeChangeAdapter);
     connection.subscribe(ProblemListener.TOPIC, new MyProblemListener());
-    ChangeListManager.getInstance(myProject).addChangeListListener(myChangesListListener);
+    connection.subscribe(ChangeListListener.TOPIC, new MyChangesListListener());
     FileStatusManager.getInstance(myProject).addFileStatusListener(myFileStatusListener, myProject);
   }
 
@@ -174,7 +173,6 @@ public class ScopeTreeViewPanel extends JPanel implements Disposable {
   public void dispose() {
     FileTreeModelBuilder.clearCaches(myProject);
     PsiManager.getInstance(myProject).removePsiTreeChangeListener(myPsiTreeChangeAdapter);
-    ChangeListManager.getInstance(myProject).removeChangeListListener(myChangesListListener);
   }
 
   public void selectNode(final PsiElement element, final PsiFileSystemItem file, final boolean requestFocus) {
