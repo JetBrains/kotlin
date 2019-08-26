@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.descriptorUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
-import org.jetbrains.kotlin.resolve.isInlineClassType
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.Variance
@@ -73,15 +72,18 @@ val CallableDescriptor?.isMethodWithDeclarationSiteWildcards: Boolean
     get() {
         if (this !is CallableMemberDescriptor) return false
         return original.firstOverridden(useOriginal = true) {
-            METHODS_WITH_DECLARATION_SITE_WILDCARDS.contains(it.propertyIfAccessor.fqNameOrNull())
+            it.propertyIfAccessor.fqNameOrNull().isMethodWithDeclarationSiteWildcardsFqName
         } != null
     }
 
+val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
+    get() = this in METHODS_WITH_DECLARATION_SITE_WILDCARDS
+
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
 private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
-        BUILTIN_NAMES.mutableCollection.child("addAll"),
-        BUILTIN_NAMES.mutableList.child("addAll"),
-        BUILTIN_NAMES.mutableMap.child("putAll")
+    BUILTIN_NAMES.mutableCollection.child("addAll"),
+    BUILTIN_NAMES.mutableList.child("addAll"),
+    BUILTIN_NAMES.mutableMap.child("putAll")
 )
 
 fun TypeMappingMode.updateArgumentModeFromAnnotations(
@@ -108,25 +110,35 @@ fun TypeMappingMode.updateArgumentModeFromAnnotations(
 }
 
 internal fun extractTypeMappingModeFromAnnotation(
-        callableDescriptor: CallableDescriptor?,
-        outerType: KotlinType,
-        isForAnnotationParameter: Boolean
+    callableDescriptor: CallableDescriptor?,
+    outerType: KotlinType,
+    isForAnnotationParameter: Boolean
 ): TypeMappingMode? =
-        (outerType.suppressWildcardsMode(SimpleClassicTypeSystemContext) ?: callableDescriptor?.suppressWildcardsMode())?.let {
-            if (outerType.arguments.isNotEmpty())
-                TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
-                        skipDeclarationSiteWildcards = it,
-                        isForAnnotationParameter = isForAnnotationParameter,
-                        needInlineClassWrapping = !outerType.isInlineClassType()
-                )
-            else
-                TypeMappingMode.DEFAULT
-        }
+    SimpleClassicTypeSystemContext.extractTypeMappingModeFromAnnotation(
+        callableDescriptor?.suppressWildcardsMode(), outerType, isForAnnotationParameter
+    )
+
+fun TypeSystemCommonBackendContext.extractTypeMappingModeFromAnnotation(
+    callableSuppressWildcardsMode: Boolean?,
+    outerType: KotlinTypeMarker,
+    isForAnnotationParameter: Boolean
+): TypeMappingMode? {
+    val suppressWildcards =
+        outerType.suppressWildcardsMode(this) ?: callableSuppressWildcardsMode ?: return null
+
+    if (outerType.argumentsCount() == 0) return TypeMappingMode.DEFAULT
+
+    return TypeMappingMode.createWithConstantDeclarationSiteWildcardsMode(
+        skipDeclarationSiteWildcards = suppressWildcards,
+        isForAnnotationParameter = isForAnnotationParameter,
+        needInlineClassWrapping = !outerType.typeConstructor().isInlineClass()
+    )
+}
 
 private fun DeclarationDescriptor.suppressWildcardsMode(): Boolean? =
-        parentsWithSelf.mapNotNull {
-            it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
-        }.firstOrNull()?.suppressWildcardsMode()
+    parentsWithSelf.mapNotNull {
+        it.annotations.findAnnotation(JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME)
+    }.firstOrNull()?.suppressWildcardsMode()
 
 private fun KotlinTypeMarker.suppressWildcardsMode(typeSystem: TypeSystemCommonBackendContext): Boolean? =
     with(typeSystem) {
