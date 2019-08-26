@@ -44,7 +44,7 @@ projectTest {
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
     jvmArgs!!.removeIf { it.contains("-Xmx") }
-    maxHeapSize = "3g"
+    maxHeapSize = "8g"
     dependsOn(":dist")
 }
 
