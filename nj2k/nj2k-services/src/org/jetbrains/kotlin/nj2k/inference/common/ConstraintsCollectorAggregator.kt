@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtImportDirective
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.getStrictParentOfType
 
 class ConstraintsCollectorAggregator(
     private val resolutionFacade: ResolutionFacade,
@@ -24,7 +25,7 @@ class ConstraintsCollectorAggregator(
         val constraintsBuilder = ConstraintBuilder(inferenceContext, boundTypeCalculator)
         for (element in elements) {
             element.forEachDescendantOfType<KtElement> { innerElement ->
-                if (innerElement.parentOfType<KtImportDirective>() != null) return@forEachDescendantOfType
+                if (innerElement.getStrictParentOfType<KtImportDirective>() != null) return@forEachDescendantOfType
                 for (collector in collectors) {
                     with(collector) {
                         constraintsBuilder.collectConstraints(

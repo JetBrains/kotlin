@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.nj2k.NewJ2kConverterContext
 import org.jetbrains.kotlin.nj2k.asGetterName
 import org.jetbrains.kotlin.nj2k.asSetterName
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.postProcessing.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.*
@@ -133,7 +132,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
         return property.add(ktGetter).cast<KtPropertyAccessor>().let {
             if (getter is RealGetter) {
                 getter.function.forAllUsages { usage ->
-                    usage.parentOfType<KtCallExpression>()!!.replace(factory.createExpression(getter.name))
+                    usage.getStrictParentOfType<KtCallExpression>()!!.replace(factory.createExpression(getter.name))
                 }
             }
             it
@@ -183,7 +182,7 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
         ktSetter.filterModifiers()
         if (setter is RealSetter) {
             setter.function.forAllUsages { usage ->
-                val callExpression = usage.parentOfType<KtCallExpression>()!!
+                val callExpression = usage.getStrictParentOfType<KtCallExpression>()!!
                 val qualifier = callExpression.getQualifiedExpressionForSelector()
                 val newValue = callExpression.valueArguments.single()
                 if (qualifier != null) {
@@ -206,8 +205,8 @@ class ConvertGettersAndSettersToPropertyProcessing : ElementsBasedPostProcessing
 
     private fun KtExpression.isReferenceToThis() =
         when (this) {
-            is KtThisExpression -> instanceReference.resolve() == parentOfType<KtClassOrObject>()
-            is KtReferenceExpression -> resolve() == parentOfType<KtClassOrObject>()
+            is KtThisExpression -> instanceReference.resolve() == getStrictParentOfType<KtClassOrObject>()
+            is KtReferenceExpression -> resolve() == getStrictParentOfType<KtClassOrObject>()
             else -> false
         }
 

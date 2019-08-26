@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.nj2k.conversions
 
+import org.jetbrains.kotlin.nj2k.SequentialBaseConversion
 import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
 abstract class MatchBasedConversion : SequentialBaseConversion {

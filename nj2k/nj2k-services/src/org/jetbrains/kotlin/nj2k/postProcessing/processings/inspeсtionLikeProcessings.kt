@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.idea.util.getResolutionScope
 import org.jetbrains.kotlin.j2k.ConverterSettings
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.nj2k.parentOfType
 import org.jetbrains.kotlin.nj2k.postProcessing.ApplicabilityBasedInspectionLikeProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.InspectionLikeProcessing
 import org.jetbrains.kotlin.nj2k.postProcessing.generalInspectionBasedProcessing
@@ -219,7 +218,7 @@ class UninitializedVariableReferenceFromInitializerToThisReferenceProcessing :
 
     override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtSimpleNameExpression) return null
-        val anonymousObject = element.getParentOfType<KtClassOrObject>(true)?.takeIf { it.name == null } ?: return null
+        val anonymousObject = element.getStrictParentOfType<KtClassOrObject>()?.takeIf { it.name == null } ?: return null
 
         val resolved = element.mainReference.resolve() ?: return null
         if (resolved.isAncestor(element, strict = true)) {
@@ -241,9 +240,9 @@ class UnresolvedVariableReferenceFromInitializerToThisReferenceProcessing :
     override fun createAction(element: PsiElement, settings: ConverterSettings?): (() -> Unit)? {
         if (element !is KtSimpleNameExpression || element.mainReference.resolve() != null) return null
 
-        val anonymousObject = element.getParentOfType<KtClassOrObject>(true) ?: return null
+        val anonymousObject = element.getStrictParentOfType<KtClassOrObject>() ?: return null
 
-        val variable = anonymousObject.getParentOfType<KtVariableDeclaration>(true) ?: return null
+        val variable = anonymousObject.getStrictParentOfType<KtVariableDeclaration>() ?: return null
 
         if (variable.nameAsName == element.getReferencedNameAsName() &&
             variable.initializer?.getChildOfType<KtClassOrObject>() == anonymousObject
@@ -260,7 +259,7 @@ class VarToValProcessing : ApplicabilityBasedInspectionLikeProcessing<KtProperty
         ReferencesSearch.search(this, useScope).any { usage ->
             (usage as? KtSimpleNameReference)?.element?.let { nameReference ->
                 val receiver = nameReference.parent?.safeAs<KtDotQualifiedExpression>()?.receiverExpression
-                if (nameReference.parentOfType<KtAnonymousInitializer>() != null
+                if (nameReference.getStrictParentOfType<KtAnonymousInitializer>() != null
                     && (receiver == null || receiver is KtThisExpression)
                 ) return@let false
                 nameReference.readWriteAccess(useResolveForReadWrite = true).isWrite
