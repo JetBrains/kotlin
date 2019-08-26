@@ -57,6 +57,8 @@ abstract class AbstractRunner : Runner {
             )
         }
 
+        Thread.currentThread().contextClassLoader = classLoader
+
         try {
             main.invoke(null, arguments.toTypedArray())
         }
