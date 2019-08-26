@@ -77,6 +77,9 @@ public class CopyHandler extends EditorActionHandler {
         catch (IndexNotReadyException e) {
           LOG.debug(e);
         }
+        catch (Throwable e) {
+          LOG.error(e);
+        }
       }
     });
 
@@ -86,7 +89,12 @@ public class CopyHandler extends EditorActionHandler {
     String rawText = TextBlockTransferable.convertLineSeparators(text, "\n", transferableDatas);
     String escapedText = null;
     for (CopyPastePreProcessor processor : CopyPastePreProcessor.EP_NAME.getExtensionList()) {
-      escapedText = processor.preprocessOnCopy(file, startOffsets, endOffsets, rawText);
+      try {
+        escapedText = processor.preprocessOnCopy(file, startOffsets, endOffsets, rawText);
+      }
+      catch (Throwable e) {
+        LOG.error(e);
+      }
       if (escapedText != null) {
         break;
       }
