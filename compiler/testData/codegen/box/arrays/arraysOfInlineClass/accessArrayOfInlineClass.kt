@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: WASM
 
 inline class Z(val data: Int)
 

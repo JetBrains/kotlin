@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface I {
     val String.foo: String
         get() = this + ";" + bar()

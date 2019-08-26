@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface BK {
     fun foo(): String = 10.toString()
 }

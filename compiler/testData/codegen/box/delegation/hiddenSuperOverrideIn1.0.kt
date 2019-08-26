@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public interface Base {
     fun test() = "base fail"
 }

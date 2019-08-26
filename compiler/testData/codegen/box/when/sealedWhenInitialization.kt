@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 sealed class A {
     object B : A()
 

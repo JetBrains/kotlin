@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Data
 
 fun newInit(f: Data.() -> Data) = Data().f()

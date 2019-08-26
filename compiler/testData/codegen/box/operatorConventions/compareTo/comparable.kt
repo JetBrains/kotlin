@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A : Comparable<A>
 
 class B(val x: Int) : A {

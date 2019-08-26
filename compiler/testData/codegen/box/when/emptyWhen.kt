@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 enum class A { X1, X2 }
 
 fun box(): String {

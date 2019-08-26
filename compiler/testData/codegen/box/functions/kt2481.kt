@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() =
     B().method()
 

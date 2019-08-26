@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KT-5869
 
 operator fun <T> Iterator<T>.iterator(): Iterator<T> = this

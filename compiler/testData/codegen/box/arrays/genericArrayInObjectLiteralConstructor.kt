@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 abstract class Table<T>(
         val content: Array<Array<T>>

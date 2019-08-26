@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyString(var content : String)
 
 object Greeter {

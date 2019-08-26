@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyObject private constructor(val delegate: Interface) : Interface by delegate {
     constructor() : this(Delegate())
 }

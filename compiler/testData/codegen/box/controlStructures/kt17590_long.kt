@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(x: Any?, y: Any?) = 0L
 
 inline fun test(value: Any?): Long {

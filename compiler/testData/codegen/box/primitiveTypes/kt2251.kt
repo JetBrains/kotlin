@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(var b: Byte) {
   fun c(d: Short)  = (b + d.toByte()).toChar()
 }

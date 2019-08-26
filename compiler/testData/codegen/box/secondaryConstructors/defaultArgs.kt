@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val global = "OK"
 class A {
     val prop: String

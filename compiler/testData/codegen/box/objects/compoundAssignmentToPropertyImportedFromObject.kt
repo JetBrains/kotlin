@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 import Host.x
 
 object Host {

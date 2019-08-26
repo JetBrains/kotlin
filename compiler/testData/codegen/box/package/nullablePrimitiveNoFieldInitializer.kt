@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val zint : Int? = 1
 val zlong : Long? = 2
 val zbyte : Byte? = 3

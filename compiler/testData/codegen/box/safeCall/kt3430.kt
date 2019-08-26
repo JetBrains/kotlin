@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun f(b : Int.(Int)->Int) = 1?.b(1)
 
 fun box(): String {

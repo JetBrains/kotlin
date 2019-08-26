@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 fun ltDI(x: Any, y: Any) =
     x is Double && y is Int && x < y
 

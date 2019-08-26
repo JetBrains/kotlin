@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A {
     fun get(vararg x: Int) = x.size
 }

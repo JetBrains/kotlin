@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(): Int? = 42
 
 fun box(): String {

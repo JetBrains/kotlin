@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     fun String.f() = this
     val vf: String.() -> String = { this }

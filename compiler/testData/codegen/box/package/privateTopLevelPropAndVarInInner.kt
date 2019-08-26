@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 private var x = "O"
 private fun f() = "K"
 

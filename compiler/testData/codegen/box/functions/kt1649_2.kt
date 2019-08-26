@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A {
     val method : () -> Unit?
 }

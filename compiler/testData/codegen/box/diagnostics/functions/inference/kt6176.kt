@@ -1,4 +1,5 @@
 // !DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
+// IGNORE_BACKEND: WASM
 
 fun <R> foo(f: () -> R): R = f()
 

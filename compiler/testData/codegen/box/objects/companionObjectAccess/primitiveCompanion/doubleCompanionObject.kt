@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 fun <T> assertEquals(a: T, b: T) { if (a != b) throw AssertionError("$a != $b") }
 

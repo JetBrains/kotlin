@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Foo {
     companion object {
         val bar: String

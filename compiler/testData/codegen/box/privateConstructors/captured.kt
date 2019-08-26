@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public open class Outer private constructor(val s: String) {
 
     companion object {

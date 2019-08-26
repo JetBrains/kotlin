@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Trait {
     fun foo() = "O"
     fun bar(): String

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var order: String = ""
 
 fun a(i: Int): Int? {

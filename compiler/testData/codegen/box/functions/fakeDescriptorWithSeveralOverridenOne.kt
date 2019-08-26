@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Named {
     abstract fun getName() : String;
 }

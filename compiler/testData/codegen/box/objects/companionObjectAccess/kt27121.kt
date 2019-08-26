@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND: WASM
 
 interface A {
     fun test() = ok()

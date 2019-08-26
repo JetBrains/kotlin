@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A (val p: String) {
 
     val _kind: String = when {

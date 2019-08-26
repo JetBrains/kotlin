@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(): Any? = bar()
 
 fun bar() {}

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 fun f(l : Long) {
   l.rangeTo(l)

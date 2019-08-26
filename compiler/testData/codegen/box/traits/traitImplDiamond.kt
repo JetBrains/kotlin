@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A {
     fun foo() = "Fail"
 }

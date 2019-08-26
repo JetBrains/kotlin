@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var xs: IntArray = intArrayOf(1, 2, 3)
     get() = field
     set(ys) {

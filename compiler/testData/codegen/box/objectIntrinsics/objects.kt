@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package foo
 
 fun box(): String {

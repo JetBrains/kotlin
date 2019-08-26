@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class P {
     var x : Int = 0
         private set

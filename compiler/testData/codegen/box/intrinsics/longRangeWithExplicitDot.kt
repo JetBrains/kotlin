@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
   val l: Long = 1
   val l2: Long = 2

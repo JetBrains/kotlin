@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Flusher {
     fun flush() = "OK"
 }

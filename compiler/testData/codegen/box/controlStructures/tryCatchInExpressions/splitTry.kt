@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun test(s: () -> Int): Int =
         try {
             val i = s()

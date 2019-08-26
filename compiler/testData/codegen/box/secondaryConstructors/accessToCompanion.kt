@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 internal class A(val result: Int) {
     companion object {
         fun foo(): Int = 1

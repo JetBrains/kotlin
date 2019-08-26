@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public fun box() : String {
     var i : Short?
     i = 10

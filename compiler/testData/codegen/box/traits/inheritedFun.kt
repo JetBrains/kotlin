@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //KT-2206
 interface A {
     fun f():Int = 239

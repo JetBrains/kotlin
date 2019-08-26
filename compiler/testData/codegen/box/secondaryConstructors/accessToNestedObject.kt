@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(val result: Int) {
     object B {
         fun bar(): Int = 4

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR
 // TODO: Enable for JS when it supports Java class library.
 // IGNORE_BACKEND: JS, NATIVE

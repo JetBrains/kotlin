@@ -1,4 +1,5 @@
 // !LANGUAGE: -NoConstantValueAttributeForNonConstVals
+// IGNORE_BACKEND: WASM
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: NATIVE
 

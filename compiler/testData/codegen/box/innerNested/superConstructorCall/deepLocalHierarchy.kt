@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     abstract class L1 {
         abstract fun foo(): String

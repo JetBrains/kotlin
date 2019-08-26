@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A {
     fun bar2(arg: Int = 239) : Int
 

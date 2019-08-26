@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 // FILE: lateinit.kt
 private lateinit var s: String

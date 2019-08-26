@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface MyIterator<T> {
     operator fun hasNext() : Boolean
     operator fun next() : T

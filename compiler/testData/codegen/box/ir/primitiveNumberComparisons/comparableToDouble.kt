@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 
 fun ltDD(x: Comparable<Double>, y: Double) =
     x is Double && x < y

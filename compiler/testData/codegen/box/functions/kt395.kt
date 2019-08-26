@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun Any.with(operation :  Any.() -> Any) = operation().toString()
 
 val f = { a : Int -> }

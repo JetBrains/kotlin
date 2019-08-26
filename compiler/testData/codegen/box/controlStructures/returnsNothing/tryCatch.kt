@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun exit(): Nothing = null!!
 
 fun box(): String {

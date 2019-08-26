@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: test.kt
 import base.*
 

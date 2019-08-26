@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface R<T: Comparable<T>> {
     var value: T
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.test.AbstractIrJsTypeScriptExportTest
 import org.jetbrains.kotlin.js.test.AbstractJsLineNumberTest
 import org.jetbrains.kotlin.js.test.ir.semantics.*
 import org.jetbrains.kotlin.js.test.semantics.*
+import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrCodegenBoxWasmTest
 import org.jetbrains.kotlin.js.test.wasm.semantics.AbstractIrWasmBoxWasmTest
 import org.jetbrains.kotlin.test.TargetBackend
 
@@ -65,6 +66,55 @@ fun main(args: Array<String>) {
 
         testClass<AbstractIrJsCodegenBoxTest> {
             model("codegen/box", targetBackend = TargetBackend.JS_IR)
+        }
+
+        testClass<AbstractIrCodegenBoxWasmTest> {
+            model(
+                "codegen/box", pattern = "^([^_](.+))\\.kt$", targetBackend = TargetBackend.WASM, excludeDirs = listOf(
+
+                    // JVM-specific
+                    "assert", "builtinStubMethods",
+
+                    // TODO: Support boxing
+                    "boxingOptimization", "bridges", "casts",
+
+                    // TODO: Support arrays
+                    "toArray", "vararg",
+
+                    // TODO: Support reflection
+                    "classLiteral", "reflection",
+
+                    // TODO: Support function references
+                    "closures", "destructuringDeclInLambdaParam", "callableReference",
+
+                    // TODO: Add stdlib
+                    "contracts", "platformTypes", "specialBuiltins",
+
+                    // TODO: Support coroutines
+                    "coroutines",
+
+                    // TODO: Support exceptions
+                    "finally", "deadCodeElimination",
+
+                    // TODO: Support default arguments
+                    "defaultArguments",
+
+                    // TODO: Support delegated properties
+                    "delegatedProperty",
+
+                    // TODO: Support enums
+                    "enum",
+
+                    // TODO: Support inline classes
+                    "inlineClasses", "unsignedTypes",
+
+                    // TODO: Support ranges
+                    "ranges",
+
+                    // TODO: Support super calls
+                    "super"
+                )
+            )
         }
 
         testClass<AbstractNonLocalReturnsTest> {

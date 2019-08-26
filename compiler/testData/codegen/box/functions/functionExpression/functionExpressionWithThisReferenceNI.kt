@@ -1,4 +1,5 @@
 // !LANGUAGE: +NewInference
+// IGNORE_BACKEND: WASM
 // NewInference needed because of KT-26531
 
 fun Int.thisRef1() = fun () = this

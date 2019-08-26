@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class CInt(val value: Int)
 val nCInt3: CInt? = CInt(3)
 

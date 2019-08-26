@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var entered = 0
 
 fun <T> foo(t: T): T {

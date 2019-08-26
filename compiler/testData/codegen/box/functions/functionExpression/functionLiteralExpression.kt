@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun Any.foo1() : ()-> String {
   return { "239" + this }
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // CHECK_CASES_COUNT: function=doTheThing count=2
 // CHECK_IF_COUNT: function=doTheThing count=2
 

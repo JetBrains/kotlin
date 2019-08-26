@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: a.kt
 
 package a

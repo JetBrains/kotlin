@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class It(val id: String)
 
 fun box(): String {

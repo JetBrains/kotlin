@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Range(val from : C, val to: C) {
     operator fun iterator() = It(from, to)
 }

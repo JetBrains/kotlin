@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class Variable {
     val lightVar: LightVariable = if (this is LightVariable) this else LightVariable()
 }

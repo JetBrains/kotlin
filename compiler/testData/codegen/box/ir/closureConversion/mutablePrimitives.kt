@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun testBoolean(v: Boolean): Boolean {
     var value = false
     fun setValue(v: Boolean) {

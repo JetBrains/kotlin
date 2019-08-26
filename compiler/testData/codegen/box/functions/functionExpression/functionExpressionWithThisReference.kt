@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM_IR
 // For JVM_IR, NewInference is needed because of KT-26531. See functionExpressionWithThisReferenceNI.kt
 

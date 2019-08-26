@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var <T> T.varProp: T
     get() = this
     set(value: T) {}

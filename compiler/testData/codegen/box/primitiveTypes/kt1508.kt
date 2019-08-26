@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test( n : Number ) = n.toInt().toLong() + n.toLong()
 
 fun box() : String {

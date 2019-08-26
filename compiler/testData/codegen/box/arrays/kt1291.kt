@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var result = 0
 
 fun <T> Iterator<T>.foreach(action: (T) -> Unit) {

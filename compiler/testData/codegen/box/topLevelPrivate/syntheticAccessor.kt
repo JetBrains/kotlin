@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package test
 
 private val prop = "O"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class P(val actual: String, val expected: String)
 fun array(vararg s: P) = s
 

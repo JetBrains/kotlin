@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Int.compareTo(c: Char) = 0
 
 fun foo(x: Int, y: Char): String {

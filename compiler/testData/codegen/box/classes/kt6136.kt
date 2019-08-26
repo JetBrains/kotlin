@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Id<T> {
     val id: T
 }

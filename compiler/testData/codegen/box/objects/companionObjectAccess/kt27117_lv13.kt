@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun on(body: () -> Any) = body().toString()
 
 class A {

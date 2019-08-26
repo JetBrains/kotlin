@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 // FILE: common.kt
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 data class A(val v: Any?)
 
 data class B<T>(val v: T)

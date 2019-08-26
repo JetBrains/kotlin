@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     class Local {
         open inner class Inner(val s: String) {

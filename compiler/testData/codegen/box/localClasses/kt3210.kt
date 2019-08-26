@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package org.example
 
 interface SomeTrait {}

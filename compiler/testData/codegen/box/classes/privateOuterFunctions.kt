@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C {
     private fun String.ext() : String = ""
     private fun f() {}

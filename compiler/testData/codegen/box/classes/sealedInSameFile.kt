@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class B : A()
 
 sealed class A() {

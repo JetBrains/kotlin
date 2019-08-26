@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A<T> {
   var zzzValue : T
   fun zzz() : T

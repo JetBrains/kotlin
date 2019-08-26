@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Tr<T> {
     val prop: T
 }

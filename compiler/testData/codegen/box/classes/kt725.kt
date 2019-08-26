@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Int?.inc() = this!!.inc()
 
 public fun box() : String {

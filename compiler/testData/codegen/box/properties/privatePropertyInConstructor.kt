@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(
         private val x: String,
         private var y: Double

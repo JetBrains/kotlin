@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class IntentionsBundle {
     companion object {
         fun message(key: String): String {

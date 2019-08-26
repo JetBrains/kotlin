@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 class C {
     operator fun Int.compareTo(c: Char) = 0
 

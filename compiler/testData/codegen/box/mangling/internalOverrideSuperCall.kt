@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A {
     internal open val field = "F"
 

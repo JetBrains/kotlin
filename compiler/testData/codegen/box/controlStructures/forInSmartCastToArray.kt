@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun f(x: Any?): Any? {
     if (x is Array<*>) {
         for (i in x) {

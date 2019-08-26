@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 typealias BoolArray = Array<Boolean>
 typealias IArray = IntArray
 typealias MyArray<T> = Array<T>

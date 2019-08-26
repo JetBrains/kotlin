@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A {
     val x: Any get() {
         return object : Inner() {

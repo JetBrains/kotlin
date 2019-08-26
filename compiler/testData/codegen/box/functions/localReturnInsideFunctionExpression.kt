@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun simple() = fun (): Boolean { return true }
 
 fun withLabel() = l@ fun (): Boolean { return@l true }

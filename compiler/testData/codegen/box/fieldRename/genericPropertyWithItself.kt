@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public class MPair<out A> (
         public val first: A
 ) {

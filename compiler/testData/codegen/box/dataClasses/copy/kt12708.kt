@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProhibitDataClassesOverridingCopy
+// IGNORE_BACKEND: WASM
 
 fun box(): String {
     val a: A = B(1)

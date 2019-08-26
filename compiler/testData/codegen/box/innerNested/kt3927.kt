@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //KT-3927 Inner class cannot be instantiated with child instance of outer class
 
 abstract class Base {

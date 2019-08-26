@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class C(val grandParentProp: String)
 fun box(): String {
     var sideEffects: String = ""
