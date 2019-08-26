@@ -255,7 +255,7 @@ class IrBuiltIns(
             SourceElement.NO_SOURCE
         ).apply {
             val typeParameterT = TypeParameterDescriptorImpl.createForFurtherModification(
-                this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T"), 0, SourceElement.NO_SOURCE
+                this, Annotations.EMPTY, false, false, Variance.INVARIANT, Name.identifier("T"), 0, SourceElement.NO_SOURCE
             ).apply {
                 addUpperBound(builtIns.anyType)
                 setInitialized()
