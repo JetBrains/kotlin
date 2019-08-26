@@ -81,7 +81,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
 
 
     protected abstract fun beforePass()
-    protected abstract fun afterPass()
+    protected abstract fun afterPass(pass: Int)
     protected abstract fun processModule(moduleData: ModuleData): ProcessorAction
 
     protected fun runTestOnce(pass: Int) {
@@ -103,6 +103,6 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             }
         }
 
-        afterPass()
+        afterPass(pass)
     }
 }

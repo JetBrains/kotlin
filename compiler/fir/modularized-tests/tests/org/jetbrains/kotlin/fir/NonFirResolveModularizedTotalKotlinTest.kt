@@ -82,7 +82,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
     }
 
 
-    override fun afterPass() {}
+    override fun afterPass(pass: Int) {}
     override fun beforePass() {}
 
     fun testTotalKotlin() {

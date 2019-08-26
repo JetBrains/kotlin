@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import java.io.File
+import java.io.FileOutputStream
 import java.io.PrintStream
 import java.text.SimpleDateFormat
 import java.util.*
@@ -124,22 +125,46 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         if (DUMP_FIR) dump = MultiModuleHtmlFirDump(File(FIR_HTML_DUMP_PATH))
     }
 
-    override fun afterPass() {
+    override fun afterPass(pass: Int) {
         bench.report(System.out, errorTypeReports = false)
 
-        saveReport()
+        saveReport(pass)
         if (FAIL_FAST) {
             bench.throwFailure()
         }
     }
 
-    private fun saveReport() {
+    private val folderDateFormat = SimpleDateFormat("yyyy-MM-dd")
+    private lateinit var startDate: Date
+
+    override fun setUp() {
+        startDate = Date()
+        super.setUp()
+    }
+
+    private fun reportDir() = File(FIR_LOGS_PATH, folderDateFormat.format(startDate))
+        .also {
+            it.mkdirs()
+        }
+
+    private val reportDateStr by lazy {
+        val reportDateFormat = SimpleDateFormat("yyyy-MM-dd__HH-mm")
+        reportDateFormat.format(startDate)
+    }
+
+    private fun saveReport(pass: Int) {
         if (DUMP_FIR) dump.finish()
-        val format = SimpleDateFormat("yyyy-MM-dd__HH-mm")
-        val logDir = File(FIR_LOGS_PATH)
-        logDir.mkdirs()
-        PrintStream(logDir.resolve("report-${format.format(Date())}.log").outputStream()).use { stream ->
+        PrintStream(
+            FileOutputStream(
+                reportDir().resolve("report-$reportDateStr.log"),
+                true
+            )
+        ).use { stream ->
+            val sep = "=".repeat(10)
+            stream.println("$sep PASS $pass $sep")
             bench.report(stream)
+            stream.println()
+            stream.println()
         }
     }
 
