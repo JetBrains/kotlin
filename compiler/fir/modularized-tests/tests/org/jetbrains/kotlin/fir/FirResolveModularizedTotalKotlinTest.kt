@@ -72,13 +72,14 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
         bench.processFiles(firFiles, totalTransformer.transformers)
 
-        dumpFir(moduleData, firFiles)
-        dumpFirHtml(moduleData, firFiles)
+        val disambiguatedName = moduleData.disambiguatedName()
+        dumpFir(disambiguatedName, moduleData, firFiles)
+        dumpFirHtml(disambiguatedName, moduleData, firFiles)
     }
 
-    private fun dumpFir(moduleData: ModuleData, firFiles: List<FirFile>) {
+    private fun dumpFir(disambiguatedName: String, moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        val dumpRoot = File(FIR_DUMP_PATH).resolve(moduleData.qualifiedName)
+        val dumpRoot = File(FIR_DUMP_PATH).resolve(disambiguatedName)
         firFiles.forEach {
             val directory = it.packageFqName.pathSegments().fold(dumpRoot) { file, name -> file.resolve(name.asString()) }
             directory.mkdirs()
@@ -86,9 +87,19 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
         }
     }
 
-    private fun dumpFirHtml(moduleData: ModuleData, firFiles: List<FirFile>) {
+    private val dumpedModules = mutableSetOf<String>()
+    private fun ModuleData.disambiguatedName(): String {
+        var disambiguatedName = this.name
+        var counter = 0
+        while(!dumpedModules.add(disambiguatedName)) {
+            disambiguatedName = "${this.name}.${counter++}"
+        }
+        return disambiguatedName
+    }
+
+    private fun dumpFirHtml(disambiguatedName: String, moduleData: ModuleData, firFiles: List<FirFile>) {
         if (!DUMP_FIR) return
-        dump.module(moduleData.qualifiedName) {
+        dump.module(disambiguatedName) {
             firFiles.forEach(dump::indexFile)
             firFiles.forEach(dump::generateFile)
         }
