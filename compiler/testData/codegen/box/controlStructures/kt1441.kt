@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Foo {
   var rnd = 10
 

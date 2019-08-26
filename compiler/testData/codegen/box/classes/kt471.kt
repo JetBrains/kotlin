@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyNumber(val i: Int) {
     operator fun inc(): MyNumber = MyNumber(i+1)
 }

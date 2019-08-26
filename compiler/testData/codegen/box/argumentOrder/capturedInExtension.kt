@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     var invokeOrder = "";
     val expectedResult = "1_0_1_9"

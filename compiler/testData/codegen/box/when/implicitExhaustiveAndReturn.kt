@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(i: Int): String {
     when (i) {
         0 -> return "0"

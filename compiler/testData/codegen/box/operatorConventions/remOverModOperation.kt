@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProhibitOperatorMod
+// IGNORE_BACKEND: WASM
 
 class A() {
     var x = 5

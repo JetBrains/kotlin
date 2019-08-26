@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun printlnMock(a: Any) {}
 
 public fun testCoalesce() {

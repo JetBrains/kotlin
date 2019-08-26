@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var z = "0"
 var l = 0L
 

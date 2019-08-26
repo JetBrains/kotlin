@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class T(val f : () -> Any?) {
     fun call() : Any? = f()
 }

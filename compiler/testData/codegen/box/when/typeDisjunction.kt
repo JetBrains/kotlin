@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(s: Any): String {
     val x = when (s) {
         is String -> s

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //KT-1290 Method property in constructor causes NPE
 
 class Foo<T>(val filter: (T) -> Boolean) {

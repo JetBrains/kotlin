@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyClass
 
 operator fun MyClass?.inc(): MyClass? = null

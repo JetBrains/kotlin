@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class D {
     companion object {
         protected val F: String = "OK"

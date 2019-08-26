@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun putNumberCompareAsUnit() {
     if (1 == 1) {
     }

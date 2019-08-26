@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
     val b : Array<Int?> = arrayOfNulls<Int> (5)
     var i = 0

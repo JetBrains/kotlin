@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo() {
     var x = 0
     do {

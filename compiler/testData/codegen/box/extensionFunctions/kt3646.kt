@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(cl: Int.() -> Int):Int = 11.cl()
 
 class Foo {

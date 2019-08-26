@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public abstract class VirtualFile() {
     public abstract val size : Long
 }

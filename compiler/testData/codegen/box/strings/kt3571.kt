@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Thing(delegate: CharSequence) : CharSequence by delegate
   
 fun box(): String {

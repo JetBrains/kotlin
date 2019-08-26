@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun myEquals(a: Double?, b: Double?) = a == b
 
 fun myEquals1(a: Double?, b: Double) = a == b

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //NB: special ieee754 arithmetic logic is not applied to Int comparison
 fun myEquals(a: Int?, b: Int?) = a == b
 

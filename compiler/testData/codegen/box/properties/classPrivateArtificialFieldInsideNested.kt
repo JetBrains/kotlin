@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 abstract class Your {
     abstract val your: String
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KT-2739 Error type inferred for hashSet(Pair, Pair, Pair)
 
 fun <T> foo(vararg ts: T): T? = null

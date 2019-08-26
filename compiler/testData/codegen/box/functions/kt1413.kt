@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package t
 
 interface I{

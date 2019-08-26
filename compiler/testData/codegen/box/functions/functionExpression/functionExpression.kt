@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val foo1 = fun Any.(): String {
 return  "239" + this
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Del<T>(var x: T) {
     operator fun getValue(thisRef: Any?, kProp: Any) = x
 

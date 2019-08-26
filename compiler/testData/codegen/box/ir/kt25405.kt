@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 fun <T> tableView(init: Table<T>.() -> Unit) {
     Table<T>().init()

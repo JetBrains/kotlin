@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface TextField {
     fun getText(): String
     fun setText(text: String)

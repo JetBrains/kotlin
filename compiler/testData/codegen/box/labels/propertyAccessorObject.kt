@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Base {
     fun foo(): Int
 }

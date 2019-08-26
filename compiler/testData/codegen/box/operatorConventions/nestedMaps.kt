@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object Map1 {
     operator fun get(i: Int, j: Int) = Map2
 }

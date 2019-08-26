@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
     val a = IntArray (5)
     var i = 0

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var log = ""
 
 fun foo(): Int {

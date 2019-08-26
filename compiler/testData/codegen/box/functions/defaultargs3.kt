@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 class C() {
     fun Any.toMyPrefixedString(prefix: String = "", suffix: String="") : String = prefix + " " + suffix

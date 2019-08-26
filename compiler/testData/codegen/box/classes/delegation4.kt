@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface First {
   public open fun foo() : Int
 }

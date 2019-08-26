@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object A {
     operator fun get(i: Int) = 1
     operator fun set(i: Int, j: Int) {}

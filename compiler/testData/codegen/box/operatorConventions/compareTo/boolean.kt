@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun checkLess(x: Boolean, y: Boolean) = when {
     x >= y    -> "Fail $x >= $y"
     !(x < y)  -> "Fail !($x < $y)"

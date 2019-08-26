@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package someTest
 
 public class Some private constructor(val v: String) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object A {
     var x = 0
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun myEquals(a: Float?, b: Float?) = a == b
 
 fun myEquals1(a: Float?, b: Float) = a == b

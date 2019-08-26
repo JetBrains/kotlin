@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
 // CHECK_CASES_COUNT: function=exhaustive count=3

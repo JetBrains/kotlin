@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
   1 in 1.rangeTo(10)
   1..10

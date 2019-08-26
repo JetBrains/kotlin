@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(f: (Int?) -> Int): Int {
     return f(0)
 }

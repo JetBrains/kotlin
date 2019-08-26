@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package test
 
 import test.C.E1

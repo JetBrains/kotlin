@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// IGNORE_BACKEND: WASM
 
 val x = 1
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // See KT-14242
 var x = 1
 fun box(): String {

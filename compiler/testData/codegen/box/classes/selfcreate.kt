@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class B () {}
 
 open class A(val b : B) {

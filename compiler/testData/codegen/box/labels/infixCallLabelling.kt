@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(x: Int): Int {
     x myMap {
         return@myMap

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public abstract class BaseClass() {
     protected abstract val kind : String
 

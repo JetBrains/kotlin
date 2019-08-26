@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 
 fun testF(x: Any) =
     when (x) {

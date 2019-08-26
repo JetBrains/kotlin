@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     var aByte: Byte? = 0
     var bByte: Byte = 0

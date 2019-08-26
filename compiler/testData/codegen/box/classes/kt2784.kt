@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class Factory(p: Int)
 
 class A {

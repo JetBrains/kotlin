@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package  As
 
 val staticProperty : String = "1"

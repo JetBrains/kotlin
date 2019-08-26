@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package invoke
 
 fun test1(predicate: (Int) -> Int, i: Int) = predicate(i)

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Request(val path: String) {
 
 }

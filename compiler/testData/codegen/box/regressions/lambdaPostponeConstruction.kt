@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyList<T>
 
 operator fun <T> MyList<T>.plusAssign(element: T) {}

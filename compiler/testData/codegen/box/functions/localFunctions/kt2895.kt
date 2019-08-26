@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun outer() {
     fun inner(i: Int) {
         if (i > 0){

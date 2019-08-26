@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(useScriptArgs: Array<out Any?>?) {
     val constructorArgs: Array<out Any?> = arrayOf(useScriptArgs.orEmpty())
 }

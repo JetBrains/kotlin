@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Expr {
     public fun ttFun() : Int = 12
 }

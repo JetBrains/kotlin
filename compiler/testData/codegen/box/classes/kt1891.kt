@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyList<T>() {
     var value: T? = null
 

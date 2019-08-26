@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var result = ""
 fun result(r: String) { result = r }
 

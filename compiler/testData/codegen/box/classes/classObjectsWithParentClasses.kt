@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class Test {
     companion object {
         fun testStatic(ic: InnerClass): NotInnerClass = NotInnerClass(ic.value)

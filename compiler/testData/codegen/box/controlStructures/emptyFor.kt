@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var index = 0
 
 interface IterableIterator : Iterator<Int> {

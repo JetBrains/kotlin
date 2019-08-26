@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class TestClass {
     companion object {
         inline operator fun <T> invoke(task: () -> T) = task()

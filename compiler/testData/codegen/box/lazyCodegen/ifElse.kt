@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // Name clashes
 // IGNORE_BACKEND: JS_IR
 

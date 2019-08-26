@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Identifier() {
     private var myNullable : Boolean = false
         set(l : Boolean) {

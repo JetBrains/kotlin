@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // See KT-14999
 
 object Obj {

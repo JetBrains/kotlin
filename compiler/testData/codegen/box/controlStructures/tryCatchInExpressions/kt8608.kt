@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Callable {
     fun call(b: Boolean)
 }
