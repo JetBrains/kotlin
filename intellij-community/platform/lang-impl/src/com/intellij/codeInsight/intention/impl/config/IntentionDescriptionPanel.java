@@ -105,7 +105,7 @@ public class IntentionDescriptionPanel {
       HyperlinkLabel label = new HyperlinkLabel(CodeInsightBundle.message("powered.by.plugin", pluginDescriptor.getName()));
       label.addHyperlinkListener(__ -> {
         Project project = ProjectManager.getInstance().getDefaultProject();
-        PluginManagerConfigurableProxy.showPluginConfigurable(null, project, pluginDescriptor);
+        PluginManagerConfigurable.showPluginConfigurable(null, project, pluginDescriptor);
       });
       myPoweredByPanel.add(label, BorderLayout.CENTER);
     }
