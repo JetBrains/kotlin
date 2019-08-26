@@ -17,6 +17,7 @@ import com.intellij.internal.statistic.service.fus.collectors.ProjectUsagesColle
 import com.intellij.internal.statistic.utils.PluginInfo;
 import com.intellij.internal.statistic.utils.PluginInfoDetectorKt;
 import com.intellij.openapi.progress.ProgressIndicator;
+import com.intellij.openapi.progress.ProgressManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.Pair;
 import com.intellij.openapi.util.text.StringUtil;
@@ -49,7 +50,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
 
   @NotNull
   @Override
-  public CancellablePromise<Set<MetricEvent>> getMetrics(@NotNull Project project, @Nullable ProgressIndicator indicator) {
+  public CancellablePromise<Set<MetricEvent>> getMetrics(@NotNull Project project, @NotNull ProgressIndicator indicator) {
     AsyncPromise<Set<MetricEvent>> result = new AsyncPromise<>();
     UIUtil.invokeLaterIfNeeded(() -> {
       try {
@@ -60,9 +61,7 @@ public class RunConfigurationTypeUsagesCollector extends ProjectUsagesCollector 
         }
         RunManager runManager = RunManager.getInstance(project);
         for (RunnerAndConfigurationSettings settings : runManager.getAllSettings()) {
-          if (indicator != null) {
-            indicator.checkCanceled();
-          }
+          ProgressManager.checkCanceled();
           RunConfiguration runConfiguration = settings.getConfiguration();
           final ConfigurationFactory configurationFactory = runConfiguration.getFactory();
           if (configurationFactory == null) {

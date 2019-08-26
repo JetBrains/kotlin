@@ -68,7 +68,7 @@ class CollectFUStatisticsAction : GotoActionBase() {
     }, ModalityState.current(), false)
   }
 
-  private fun showCollectorUsages(project: Project, item: Item, useExtendedPresentation: Boolean, indicator: ProgressIndicator?) {
+  private fun showCollectorUsages(project: Project, item: Item, useExtendedPresentation: Boolean, indicator: ProgressIndicator) {
     if (project.isDisposed) {
       return
     }
