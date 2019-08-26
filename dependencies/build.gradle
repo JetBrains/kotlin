@@ -80,7 +80,8 @@ enum DependencyKind {
 
 def platformManager = rootProject.ext.platformManager
 
-platformManager.enabled.each { target ->
+
+platformManager.filteredOutEnabledButNotSupported.each { target ->
     def loader = platformManager.loader(target)
 
     task "${target}Dependencies"(type: NativeDep) {
