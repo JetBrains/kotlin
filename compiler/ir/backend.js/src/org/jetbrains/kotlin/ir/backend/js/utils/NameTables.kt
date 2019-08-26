@@ -114,6 +114,9 @@ fun functionSignature(declaration: IrFunction): Signature {
         nameBuilder.append("_\$t")
         joinTo(nameBuilder, "") { "_${it.name.asString()}" }
     }
+    declaration.dispatchReceiverParameter?.let {
+        nameBuilder.append("_d$${it.type.asString()}")
+    }
     declaration.extensionReceiverParameter?.let {
         nameBuilder.append("_r$${it.type.asString()}")
     }

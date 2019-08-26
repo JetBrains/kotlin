@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.FqName
 
 // Constructs bridges for inherited generic functions
 //
@@ -63,7 +64,17 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             .forEach { generateBridges(it, irClass) }
     }
 
+    fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
+        hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
+
+    fun IrClass.hasSkipRTTIAnnotation(): Boolean =
+        hasAnnotation(FqName("kotlin.wasm.internal.SkipRTTI")) || hasExcludedFromCodegenAnnotation()
+
     private fun generateBridges(function: IrSimpleFunction, irClass: IrClass) {
+        if (function.hasExcludedFromCodegenAnnotation())
+            return
+        if (irClass.hasSkipRTTIAnnotation())
+            return
         // equals(Any?), hashCode(), toString() never need bridges
         if (function.isMethodOfAny())
             return
@@ -125,7 +136,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             bridge.returnType,
             function.parent,
             bridge.visibility,
-            bridge.modality, // TODO: should copy modality?
+            Modality.OPEN,
             bridge.isInline,
             bridge.isExternal,
             bridge.isTailrec,
@@ -155,7 +166,8 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             }
 
             val call = irCall(delegateTo.symbol)
-            call.dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+            val dr = irGet(irFunction.dispatchReceiverParameter!!)
+            call.dispatchReceiver = irCastIfNeeded(dr, delegateTo.dispatchReceiverParameter!!.type)
             irFunction.extensionReceiverParameter?.let {
                 call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
             }
