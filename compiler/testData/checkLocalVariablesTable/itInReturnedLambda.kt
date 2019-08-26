@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: JVM_IR
 fun foo() {
     fun bar() : (Int) -> Unit {
         return {
