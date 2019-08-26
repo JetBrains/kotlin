@@ -105,7 +105,7 @@ private fun DeclarationDescriptor.collectAllTypes(): Sequence<FqName?> {
         is CallableDescriptor -> {
             val returnType = returnType ?: return sequenceOf(null)
             returnType.collectAllTypes() +
-                    explicitParameters.asSequence().map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes) +
+                    explicitParameters.map(ParameterDescriptor::getType).flatMap(KotlinType::collectAllTypes) +
                     typeParameters.asSequence().flatMap(DeclarationDescriptor::collectAllTypes)
         }
         is TypeParameterDescriptor -> {
@@ -130,19 +130,9 @@ private fun KotlinType.collectAllTypes(): Sequence<FqName?> = sequenceOf(fqName)
     .map(TypeProjection::getType)
     .flatMap(KotlinType::collectAllTypes)
 
-private val CallableDescriptor.explicitParameters: List<ParameterDescriptor>
-    get() {
-        val result = ArrayList<ParameterDescriptor>(valueParameters.size + 2)
-
-        this.dispatchReceiverParameter?.let {
-            result.add(it)
-        }
-
-        this.extensionReceiverParameter?.let {
-            result.add(it)
-        }
-
-        result.addAll(valueParameters)
-
-        return result
-    }
+private val CallableDescriptor.explicitParameters: Sequence<ParameterDescriptor>
+    get() = valueParameters.asSequence() + dispatchReceiverParameter?.let {
+        sequenceOf(it)
+    }.orEmpty() + extensionReceiverParameter?.let {
+        sequenceOf(it)
+    }.orEmpty()
