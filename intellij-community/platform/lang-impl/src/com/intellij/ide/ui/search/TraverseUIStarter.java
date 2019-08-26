@@ -122,8 +122,8 @@ public class TraverseUIStarter implements ApplicationStarter {
           processOptionsContainingConfigurable((OptionsContainingConfigurable)configurable, configurableElement);
         }
         else if (configurable instanceof PluginManagerConfigurableProxy) {
-          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(PluginManagerConfigurableNewLayout.MANAGE_PLUGIN_REPOSITORIES))) {
-            append(null, PluginManagerConfigurableNewLayout.MANAGE_PLUGIN_REPOSITORIES, description.getOption(), configurableElement);
+          for (OptionDescription description : wordsToOptionDescriptors(Collections.singleton(PluginManagerConfigurable.MANAGE_PLUGIN_REPOSITORIES))) {
+            append(null, PluginManagerConfigurable.MANAGE_PLUGIN_REPOSITORIES, description.getOption(), configurableElement);
           }
         }
         else if (configurable instanceof AllFileTemplatesConfigurable) {
