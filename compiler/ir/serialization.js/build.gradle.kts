@@ -15,6 +15,7 @@ dependencies {
     testCompile(project(":compiler:cli"))
     testCompile(project(":compiler:util"))
 
+    testRuntime(project(":kotlin-reflect"))
     testRuntime(intellijDep()) { includeJars("picocontainer", "trove4j", "guava", "jdom", rootProject = rootProject) }
 }
 

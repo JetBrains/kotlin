@@ -423,29 +423,17 @@ abstract class KotlinIrLinker(
                 moduleReversedFileIndex.getOrPut(uniqId) { fileDeserializer }
             }
 
-            when (deserializationStrategy) {
-                DeserializationStrategy.EXPLICITLY_EXPORTED -> {
-                    fileProto.explicitlyExportedToCompilerList.forEach {
-                        val symbolProto = fileDeserializer.loadSymbolData(it.index)
-                        val topLevelUniqId = symbolProto.topLevelUniqId
-                        val uniqId = topLevelUniqId.uniqId()
-                        assert(uniqId.isPublic)
-//                        if (topLevelUniqId.isLocal) {
-//                            fileDeserializer.fileLocalDeserializationState.addUniqID(uniqId)
-//                        } else {
-                            moduleDeserializationState.addUniqID(uniqId)
-//                        }
+            val forceLoadedIds = deserializationStrategy.run {
+                when {
+                    theWholeWorld -> fileProto.declarationIdList
+                    explicitlyExported -> fileProto.explicitlyExportedToCompilerList.map {
+                        fileDeserializer.loadSymbolData(it.index).topLevelUniqId
                     }
+                    else -> emptyList()
                 }
-                DeserializationStrategy.ALL -> {
-                    fileProto.declarationIdList.forEach {
-                        val uniqId = it.uniqId()
-                        assert(uniqId.isPublic)
-                        moduleDeserializationState.addUniqID(uniqId)
-                    }
-                }
-                else -> error("Unexpected deserialization strategy")
             }
+
+            forceLoadedIds.forEach { moduleDeserializationState.addUniqID(it.uniqId().also { i -> assert(i.isPublic) }) }
 
             return file
         }
@@ -626,11 +614,14 @@ abstract class KotlinIrLinker(
 
     fun deserializeFullModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, DeserializationStrategy.ALL)
+
+    fun deserializeOnlyHeaderModule(moduleDescriptor: ModuleDescriptor): IrModuleFragment =
+        deserializeIrModuleHeader(moduleDescriptor, DeserializationStrategy.ONLY_DECLARATION_HEADERS)
 }
 
-enum class DeserializationStrategy(val needBodies: Boolean) {
-    ONLY_REFERENCED(true),
-    ALL(true),
-    EXPLICITLY_EXPORTED(true),
-    ONLY_DECLARATION_HEADERS(false)
+enum class DeserializationStrategy(val needBodies: Boolean, val explicitlyExported: Boolean, val theWholeWorld: Boolean) {
+    ONLY_REFERENCED(true, false, false),
+    ALL(true, true, true),
+    EXPLICITLY_EXPORTED(true, true, false),
+    ONLY_DECLARATION_HEADERS(false, false, false)
 }
