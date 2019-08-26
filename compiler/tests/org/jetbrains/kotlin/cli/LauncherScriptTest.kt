@@ -79,6 +79,15 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         )
     }
 
+    fun testKotlincJvmSimpleScript() {
+        runProcess(
+            "kotlinc-jvm",
+            "-script",
+            "$testDataDirectory/helloWorld.kts",
+            expectedStdout = "Hello!\n"
+        )
+    }
+
     fun testKotlincJsSimple() {
         runProcess(
                 "kotlinc-js",

@@ -63,6 +63,8 @@ public class Preloader {
         Class<?> mainClass = preloaded.loadClass(options.mainClass);
         Method mainMethod = mainClass.getMethod("main", String[].class);
 
+        Thread.currentThread().setContextClassLoader(preloaded);
+
         Runtime.getRuntime().addShutdownHook(
                 new Thread(new Runnable() {
                     @Override
