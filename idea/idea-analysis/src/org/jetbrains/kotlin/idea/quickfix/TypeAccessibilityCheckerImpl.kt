@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.idea.search.usagesSearch.descriptor
 import org.jetbrains.kotlin.idea.stubindex.KotlinFullClassNameIndex
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 import org.jetbrains.kotlin.psi.KtTypeParameter
@@ -48,7 +47,7 @@ class TypeAccessibilityCheckerImpl(
     override fun incorrectTypes(type: KotlinType): Collection<FqName?> = incorrectTypesInSequence(type.collectAllTypes(), false)
 
     override fun checkAccessibility(declaration: KtNamedDeclaration): Boolean =
-        !declaration.hasModifier(KtTokens.PRIVATE_KEYWORD) && declaration.descriptor?.let { checkAccessibility(it) } == true
+        declaration.descriptor?.let { checkAccessibility(it) } == true
 
     override fun checkAccessibility(descriptor: DeclarationDescriptor): Boolean = incorrectTypesInDescriptor(descriptor, true).isEmpty()
 

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.idea.quickfix.TypeAccessibilityChecker
 import org.jetbrains.kotlin.idea.refactoring.getExpressionShortText
 import org.jetbrains.kotlin.idea.refactoring.introduce.showErrorHint
 import org.jetbrains.kotlin.idea.util.application.executeWriteCommand
+import org.jetbrains.kotlin.idea.util.hasPrivateModifier
 import org.jetbrains.kotlin.idea.util.liftToExpected
 import org.jetbrains.kotlin.idea.util.module
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -117,13 +118,13 @@ class CreateExpectedClassFix(
 ) : CreateExpectedFix<KtClassOrObject>(klass, outerExpectedClass, commonModule, block@{ project, checker, element ->
     val originalElements = element.collectDeclarations(withSelf = false).toList()
     val existingClasses = checker.findAndApplyExistingClasses(originalElements + klass)
-    if (!checker.checkAccessibility(element)) {
+    if (!checker.isCorrectAndHaveNonPrivate(element)) {
         showUnknownTypesError(element)
         return@block null
     }
 
     val (members, declarationsWithNonExistentClasses) = originalElements.partition {
-        checker.checkAccessibility(it)
+        checker.isCorrectAndHaveNonPrivate(it)
     }
 
     if (!showUnknownTypesDialog(project, declarationsWithNonExistentClasses)) return@block null
@@ -143,13 +144,13 @@ class CreateExpectedClassFix(
 
     val selectedClasses = checker.findAndApplyExistingClasses(selectedElements)
     val resultDeclarations = if (selectedClasses != existingClasses) {
-        if (!checker.checkAccessibility(element)) {
+        if (!checker.isCorrectAndHaveNonPrivate(element)) {
             showUnknownTypesError(element)
             return@block null
         }
 
         val (resultDeclarations, withErrors) = selectedElements.partition {
-            checker.checkAccessibility(it)
+            checker.isCorrectAndHaveNonPrivate(it)
         }
         if (!showUnknownTypesDialog(project, withErrors)) return@block null
         resultDeclarations
@@ -168,7 +169,7 @@ private tailrec fun TypeAccessibilityChecker.findAndApplyExistingClasses(element
     val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
     existingFqNames = existingNames
 
-    val newExistingClasses = classes.filter { checkAccessibility(it) }
+    val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivate(it) }
     return if (classes.size == newExistingClasses.size) existingNames
     else findAndApplyExistingClasses(newExistingClasses)
 }
@@ -296,7 +297,7 @@ class CreateExpectedCallableMemberFix(
     targetExpectedClass: KtClassOrObject?,
     commonModule: Module
 ) : CreateExpectedFix<KtNamedDeclaration>(declaration, targetExpectedClass, commonModule, block@{ project, checker, element ->
-    if (!checker.checkAccessibility(element)) {
+    if (!checker.isCorrectAndHaveNonPrivate(element)) {
         showUnknownTypesError(element)
         return@block null
     }
@@ -314,3 +315,5 @@ class CreateExpectedCallableMemberFix(
     }
 })
 
+private fun TypeAccessibilityChecker.isCorrectAndHaveNonPrivate(declaration: KtNamedDeclaration): Boolean =
+    !declaration.hasPrivateModifier() && checkAccessibility(declaration)
