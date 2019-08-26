@@ -54,3 +54,47 @@ kotlin {
         }
     }
 }
+
+kotlin {
+    testableTargets.all {
+        testRuns {
+            getByName("test") {
+                filter {
+                    excludeTestsMatching("*.secondTest")
+                }
+            }
+            create("integration") {
+                filter {
+                    includeTestsMatching("com.example.HelloIntegrationTest.test")
+                }
+            }
+        }
+    }
+
+    jvm {
+        testRuns {
+            getByName("test").filter {
+                excludeTestsMatching("com.example.HelloTest.secondTest")
+            }
+
+            getByName("integration") {
+                setExecutionSourceFrom(compilations["integrationTest"])
+            }
+        }
+    }
+
+    targets.matching { it.name == "mingw64" || it.name == "linux64" || it.name == "macos64" }.all {
+        testRuns {
+            getByName("test").filter { excludeTestsMatching("*.secondTest") }
+
+            getByName("integration") {
+                binaries {
+                    test("integration") {
+                        compilation = compilations["integrationTest"]
+                    }
+                }
+                setExecutionSourceFrom(binaries.getTest("integration", "DEBUG"))
+            }
+        }
+    }
+}

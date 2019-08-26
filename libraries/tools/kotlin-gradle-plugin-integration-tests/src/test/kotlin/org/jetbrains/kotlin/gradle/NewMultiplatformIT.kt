@@ -2043,7 +2043,7 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
-    fun testAssociateCompilations() = with(Project("new-mpp-associate-compilations")) {
+    fun testAssociateCompilations() = with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
         setupWorkingDir()
         gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
 
@@ -2066,6 +2066,49 @@ class NewMultiplatformIT : BaseGradleIT() {
 
             // Native:
             assertFileExists("build/classes/kotlin/$nativeHostTargetName/integrationTest/integrationTest.klib")
+        }
+    }
+
+    @Test
+    fun testTestRunsApi() = with(Project("new-mpp-associate-compilations", GradleVersionRequired.AtLeast("5.0"))) {
+        setupWorkingDir()
+        gradleBuildScript().modify(::transformBuildScriptWithPluginsDsl)
+
+        // TOOD: add Kotlin/JS tests once they can be tested without much performance overhead
+        val testTasks =
+            arrayOf(":jvmTest", ":${nativeHostTargetName}Test", ":jvmIntegrationTest", ":${nativeHostTargetName}IntegrationTest")
+
+        build(*testTasks) {
+            assertSuccessful()
+
+            assertTasksExecuted(
+                *testTasks,
+                ":compileIntegrationTestKotlinJvm",
+                ":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"
+            )
+
+            fun checkUnitTestOutput(targetName: String) {
+                val classReportHtml = projectDir
+                    .resolve("build/reports/tests/${targetName}Test/classes/com.example.HelloTest.html")
+                    .readText()
+
+                if (targetName != nativeHostTargetName) // TODO: fix exclude patterns for the Kotlin/Native test tasks
+                    assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+            }
+            checkUnitTestOutput("jvm")
+            checkUnitTestOutput(nativeHostTargetName)
+
+            fun checkIntegrationTestOutput(targetName: String) {
+                val classReportHtml = projectDir
+                    .resolve("build/reports/tests/${targetName}IntegrationTest/classes/com.example.HelloIntegrationTest.html")
+                    .readText()
+
+                assertTrue("test[$targetName]" in classReportHtml, "Test report should contain 'test[$targetName]':\n$classReportHtml")
+                assertTrue("secondTest" !in classReportHtml, "Test report should not contain 'secondTest':\n$classReportHtml")
+                assertTrue("thirdTest" !in classReportHtml, "Test report should not contain 'thirdTest':\n$classReportHtml")
+            }
+            checkIntegrationTestOutput("jvm")
+            checkIntegrationTestOutput(nativeHostTargetName)
         }
     }
 }
