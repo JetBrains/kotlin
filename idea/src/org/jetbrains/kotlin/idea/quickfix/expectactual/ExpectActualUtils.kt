@@ -217,32 +217,37 @@ private fun KtPsiFactory.repairSuperTypeList(
     context: BindingContext
 ): Collection<String> {
     val superNames = linkedSetOf<String>()
-    generated.superTypeListEntries.zip(original.superTypeListEntries).forEach { (generatedEntry, originalEntry) ->
-        val superType = context[BindingContext.TYPE, originalEntry.typeReference]
-        val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
-        if (generateExpectClass && !checker.checkAccessibility(superType)) {
-            generatedEntry.delete()
-            return@forEach
-        }
+    val typeParametersFqName = context[BindingContext.DECLARATION_TO_DESCRIPTOR, original]
+        ?.safeAs<ClassDescriptor>()
+        ?.declaredTypeParameters?.mapNotNull { it.fqNameOrNull()?.asString() }.orEmpty()
 
-        superType.fqName?.shortName()?.asString()?.let { superNames += it }
-        if (generateExpectClass) {
-            if (generatedEntry !is KtSuperTypeCallEntry) return@forEach
-        } else {
-            if (generatedEntry !is KtSuperTypeEntry) return@forEach
-        }
-
-        if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
-            val entryText = IdeDescriptorRenderers.SOURCE_CODE.renderType(superType)
-            val newGeneratedEntry = if (generateExpectClass) {
-                createSuperTypeEntry(entryText)
-            } else {
-                createSuperTypeCallEntry("$entryText()")
+    checker.runInContext(checker.existingTypeNames + typeParametersFqName) {
+        generated.superTypeListEntries.zip(original.superTypeListEntries).forEach { (generatedEntry, originalEntry) ->
+            val superType = context[BindingContext.TYPE, originalEntry.typeReference]
+            val superClassDescriptor = superType?.constructor?.declarationDescriptor as? ClassDescriptor ?: return@forEach
+            if (generateExpectClass && !checker.checkAccessibility(superType)) {
+                generatedEntry.delete()
+                return@forEach
             }
-            generatedEntry.replace(newGeneratedEntry).safeAs<KtElement>()?.addToBeShortenedDescendantsToWaitingSet()
+
+            superType.fqName?.shortName()?.asString()?.let { superNames += it }
+            if (generateExpectClass) {
+                if (generatedEntry !is KtSuperTypeCallEntry) return@forEach
+            } else {
+                if (generatedEntry !is KtSuperTypeEntry) return@forEach
+            }
+
+            if (superClassDescriptor.kind == ClassKind.CLASS || superClassDescriptor.kind == ClassKind.ENUM_CLASS) {
+                val entryText = IdeDescriptorRenderers.SOURCE_CODE.renderType(superType)
+                val newGeneratedEntry = if (generateExpectClass) {
+                    createSuperTypeEntry(entryText)
+                } else {
+                    createSuperTypeCallEntry("$entryText()")
+                }
+                generatedEntry.replace(newGeneratedEntry).safeAs<KtElement>()?.addToBeShortenedDescendantsToWaitingSet()
+            }
         }
     }
-
     if (generated.superTypeListEntries.isEmpty()) generated.getSuperTypeList()?.delete()
     return superNames
 }

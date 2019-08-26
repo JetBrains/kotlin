@@ -332,6 +332,11 @@ public class QuickFixMultiModuleTestGenerated extends AbstractQuickFixMultiModul
             runTest("idea/testData/multiModuleQuickFix/createExpect/class/");
         }
 
+        @TestMetadata("classWithSuperClassAndTypeParameter")
+        public void testClassWithSuperClassAndTypeParameter() throws Exception {
+            runTest("idea/testData/multiModuleQuickFix/createExpect/classWithSuperClassAndTypeParameter/");
+        }
+
         @TestMetadata("classWithSuperTypeFromOtherPackage")
         public void testClassWithSuperTypeFromOtherPackage() throws Exception {
             runTest("idea/testData/multiModuleQuickFix/createExpect/classWithSuperTypeFromOtherPackage/");
