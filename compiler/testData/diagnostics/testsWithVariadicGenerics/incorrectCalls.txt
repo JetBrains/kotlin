@@ -1,0 +1,4 @@
+package
+
+public val v1: kotlin.Unit
+public fun </*0*/ R, /*1*/ Ts> variadic(/*0*/ vararg arguments: Ts /*kotlin.Tuple<Ts>*/, /*1*/ transform: (kotlin.Tuple<Ts>) -> R): R

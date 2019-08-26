@@ -47,8 +47,12 @@ class TypeArgumentsToParametersMapper {
         }
 
         if (call.typeArguments.size != descriptor.typeParameters.size) {
+            val diagnostics =
+                if (descriptor.typeParameters.none { it.isVariadic })
+                    listOf(WrongCountOfTypeArguments(descriptor, call.typeArguments.size))
+                else emptyList()
             return TypeArgumentsMapping.TypeArgumentsMappingImpl(
-                listOf(WrongCountOfTypeArguments(descriptor, call.typeArguments.size)), emptyMap()
+                diagnostics, emptyMap()
             )
         } else {
             val typeParameterToArgumentMap = descriptor.typeParameters.zip(call.typeArguments).associate { it }

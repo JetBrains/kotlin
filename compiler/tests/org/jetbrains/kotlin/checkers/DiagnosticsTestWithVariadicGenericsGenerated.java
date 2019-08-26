@@ -44,6 +44,11 @@ public class DiagnosticsTestWithVariadicGenericsGenerated extends AbstractDiagno
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/errorNoWrapper.kt");
     }
 
+    @TestMetadata("incorrectCalls.kt")
+    public void testIncorrectCalls() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/incorrectCalls.kt");
+    }
+
     @TestMetadata("incorrectModifiers.kt")
     public void testIncorrectModifiers() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithVariadicGenerics/incorrectModifiers.kt");
