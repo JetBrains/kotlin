@@ -16,6 +16,7 @@ import com.intellij.openapi.roots.ProjectFileIndex
 import com.intellij.openapi.vfs.VfsUtilCore
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import java.awt.datatransfer.StringSelection
 
 abstract class CopyPathProvider : DumbAwareAction() {
   override fun update(e: AnActionEvent) {
@@ -41,10 +42,13 @@ abstract class CopyPathProvider : DumbAwareAction() {
     val dataContext = e.dataContext
     val editor = CommonDataKeys.EDITOR.getData(dataContext)
 
-    val copy = project?.let { getQualifiedName(it, getElementsToCopy(editor, dataContext), editor) }
+    val elements = getElementsToCopy(editor, dataContext)
+    val copy = project?.let { getQualifiedName(it, elements, editor) }
 
-    CopyPasteManager.getInstance().setContents(CopyReferenceFQNTransferable(copy))
+    CopyPasteManager.getInstance().setContents(StringSelection(copy))
     setStatusBarText(project, IdeBundle.message("message.path.to.fqn.has.been.copied", copy))
+
+    CopyReferenceUtil.highlight(editor, project, elements)
   }
 
   open fun getQualifiedName(project: Project?, elements: List<PsiElement>, editor: Editor?): String? {
@@ -112,6 +116,6 @@ class CopySourceRootPathProvider : CopyPathProvider() {
 class CopyTBXReferenceProvider : CopyPathProvider() {
   override fun getQualifiedName(project: Project?,
                                 elements: List<PsiElement>,
-                                editor: Editor?): String =
-    project?.let { CopyTBXReferenceAction.createJetbrainsLink(project, elements, editor) } ?: ""
+                                editor: Editor?): String? =
+    project?.let { CopyTBXReferenceAction.createJetbrainsLink(project, elements, editor) }
 }
