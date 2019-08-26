@@ -109,6 +109,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/casts.kt");
         }
 
+        @TestMetadata("elvis.kt")
+        public void testElvis() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/elvis.kt");
+        }
+
         @TestMetadata("equalsAndIdentity.kt")
         public void testEqualsAndIdentity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");
