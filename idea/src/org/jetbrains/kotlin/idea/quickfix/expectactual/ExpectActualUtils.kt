@@ -11,6 +11,7 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.psi.JavaDirectoryService
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.idea.caches.resolve.analyzeWithContent
 import org.jetbrains.kotlin.idea.codeInsight.shorten.addToBeShortenedDescendantsToWaitingSet
 import org.jetbrains.kotlin.idea.core.KotlinNameSuggester
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker
 import org.jetbrains.kotlin.resolve.checkers.ExperimentalUsageChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 fun createFileForDeclaration(module: Module, declaration: KtNamedDeclaration): KtFile? {
@@ -285,7 +287,7 @@ private fun KtCallableDeclaration.repair(
     checker: TypeAccessibilityChecker
 ) {
     if (generatedClass != null) repairOverride(descriptor, checker)
-    repairAnnotationEntries(descriptor, checker)
+    repairAnnotationEntries(this, descriptor, checker)
 }
 
 private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor, checker: TypeAccessibilityChecker) {
@@ -297,17 +299,60 @@ private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor,
     }
 }
 
-private fun KtCallableDeclaration.repairAnnotationEntries(descriptor: CallableDescriptor, checker: TypeAccessibilityChecker) {
-    for (annotation in descriptor.annotations) {
-        if (annotation.isValidInModule(checker)) {
-            checkAndAdd(annotation, checker, this)
+private fun repairAnnotationEntries(
+    target: KtModifierListOwner,
+    descriptor: DeclarationDescriptorNonRoot,
+    checker: TypeAccessibilityChecker
+) {
+    repairAnnotations(checker, target, descriptor.annotations)
+    when (descriptor) {
+        is ValueParameterDescriptor -> {
+            if (target !is KtParameter) return
+            val typeReference = target.typeReference ?: return
+            repairAnnotationEntries(typeReference, descriptor.type, checker)
+        }
+        is TypeParameterDescriptor -> {
+            if (target !is KtTypeParameter) return
+            val extendsBound = target.extendsBound ?: return
+            for (upperBound in descriptor.upperBounds) {
+                repairAnnotationEntries(extendsBound, upperBound, checker)
+            }
+        }
+        is CallableDescriptor -> {
+            val extension = descriptor.extensionReceiverParameter
+            val receiver = target.safeAs<KtCallableDeclaration>()?.receiverTypeReference
+            if (extension != null && receiver != null) {
+                repairAnnotationEntries(receiver, extension, checker)
+            }
+
+            val callableDeclaration = target.safeAs<KtCallableDeclaration>() ?: return
+            callableDeclaration.typeParameters.zip(descriptor.typeParameters).forEach { (typeParameter, typeParameterDescriptor) ->
+                repairAnnotationEntries(typeParameter, typeParameterDescriptor, checker)
+            }
+
+            callableDeclaration.valueParameters.zip(descriptor.valueParameters).forEach { (valueParameter, valueParameterDescriptor) ->
+                repairAnnotationEntries(valueParameter, valueParameterDescriptor, checker)
+            }
         }
     }
+}
 
-    val extension = descriptor.extensionReceiverParameter ?: return
-    val receiver = receiverTypeReference ?: return
-    for (annotation in extension.annotations) {
-        checkAndAdd(annotation, checker, receiver)
+private fun repairAnnotationEntries(
+    typeReference: KtTypeReference,
+    type: KotlinType,
+    checker: TypeAccessibilityChecker
+) {
+    repairAnnotations(checker, typeReference, type.annotations)
+    typeReference.typeElement?.typeArgumentsAsTypes?.zip(type.arguments)?.forEach { (reference, projection) ->
+        repairAnnotationEntries(reference, projection.type, checker)
+    }
+}
+
+private fun repairAnnotations(checker: TypeAccessibilityChecker, target: KtModifierListOwner, annotations: Annotations) {
+    for (annotation in annotations) {
+        if (annotation.isValidInModule(checker)) {
+            checkAndAdd(annotation, checker, target)
+        }
     }
 }
 
