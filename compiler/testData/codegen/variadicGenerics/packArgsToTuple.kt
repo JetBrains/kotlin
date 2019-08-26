@@ -1,7 +1,7 @@
 // !LANGUAGE: +NewInference
 
 fun box(): String {
-    wrapArgsInTuple<Any?>()
+    wrapArgsInTuple()
     wrapArgsInTuple(1)
     wrapArgsInTuple(1, "2")
     return "OK"

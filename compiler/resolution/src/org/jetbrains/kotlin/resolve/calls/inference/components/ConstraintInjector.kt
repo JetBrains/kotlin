@@ -124,12 +124,15 @@ class ConstraintInjector(
         type.typeDepth() <= maxTypeDepthFromInitialConstraints + ALLOWED_DEPTH_DELTA_FOR_INCORPORATION
 
     private fun isConstraintWithVariadicType(constraint: Constraint): Boolean =
-        constraint.position.initialConstraint.a.safeAs<KotlinType>()?.contains {
-            it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
-        } ?: false
-                || constraint.position.initialConstraint.b.safeAs<KotlinType>()?.contains {
-            it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
-        } ?: false
+        constraint.position.initialConstraint.a.containsStubTypeVariable()
+                || constraint.position.initialConstraint.b.containsStubTypeVariable()
+
+    private fun KotlinTypeMarker?.containsStubTypeVariable(): Boolean =
+        safeAs<KotlinType>()?.containsStubTypeVariable() ?: false
+
+    private fun KotlinType.containsStubTypeVariable(): Boolean = contains {
+        it.constructor.safeAs<TypeVariableTypeConstructor>()?.isStub ?: false
+    }
 
     private inner class TypeCheckerContext(
         val c: Context,
@@ -163,7 +166,9 @@ class ConstraintInjector(
         }
 
         fun runIsSubtypeOf(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker) {
-            if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)) {
+            if (!AbstractTypeChecker.isSubtypeOf(this@TypeCheckerContext as AbstractTypeCheckerContext, lowerType, upperType)
+                && listOf(lowerType, upperType).none { it.containsStubTypeVariable() }
+            ) {
                 // todo improve error reporting -- add information about base types
                 c.addError(NewConstraintError(lowerType, upperType, position))
             }

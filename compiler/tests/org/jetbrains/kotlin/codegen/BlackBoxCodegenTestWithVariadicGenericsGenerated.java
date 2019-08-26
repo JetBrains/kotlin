@@ -25,6 +25,11 @@ public class BlackBoxCodegenTestWithVariadicGenericsGenerated extends AbstractBl
         KotlinTestUtils.runTest(this::doTest, TargetBackend.ANY, testDataFilePath);
     }
 
+    @TestMetadata("24args.kt")
+    public void test24args() throws Exception {
+        runTest("compiler/testData/codegen/variadicGenerics/24args.kt");
+    }
+
     public void testAllFilesPresentInVariadicGenerics() throws Exception {
         KotlinTestUtils.assertAllTestsPresentByMetadata(this.getClass(), new File("compiler/testData/codegen/variadicGenerics"), Pattern.compile("^(.+)\\.kt$"), TargetBackend.ANY, true);
     }

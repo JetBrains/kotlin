@@ -1,4 +1,14 @@
 package
 
-public val something: [ERROR : Box<R>]<R>
-public fun </*0*/ R, /*1*/ Ts> variadic(/*0*/ vararg arguments: [ERROR : Box<Ts>]<Ts> /*kotlin.Tuple<[ERROR : Box<Ts>]<Ts>>*/, /*1*/ transform: (kotlin.Tuple<Ts>) -> R): [ERROR : Box<R>]<R>
+public val something: [ERROR : Type for variadic("foo", Box(15)) { _, _ ->
+
+}]
+public fun </*0*/ R, /*1*/ Ts> variadic(/*0*/ vararg arguments: Box<Ts> /*kotlin.Tuple<Box<Ts>>*/, /*1*/ transform: (kotlin.Tuple<Ts>) -> R): Box<R>
+
+public final class Box</*0*/ T> {
+    public constructor Box</*0*/ T>(/*0*/ value: T)
+    public final val value: T
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
