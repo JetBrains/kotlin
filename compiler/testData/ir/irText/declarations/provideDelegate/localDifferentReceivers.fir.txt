@@ -37,14 +37,14 @@ FILE fqName:<root> fileName:/localDifferentReceivers.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun provideDelegate (host: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
         CALL 'public final fun <get-value> (): kotlin.String declared in <root>.MyClass' type=kotlin.String origin=null
-          $this: ERROR_CALL 'Unresolved reference: this#' type=<root>.MyClass
+          $this: GET_VAR '<this>: <root>.MyClass declared in <root>.provideDelegate' type=<root>.MyClass origin=null
   FUN name:getValue visibility:public modality:FINAL <> ($receiver:kotlin.String, receiver:kotlin.Any?, p:kotlin.Any) returnType:kotlin.String
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.String
     VALUE_PARAMETER name:receiver index:0 type:kotlin.Any?
     VALUE_PARAMETER name:p index:1 type:kotlin.Any
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun getValue (receiver: kotlin.Any?, p: kotlin.Any): kotlin.String declared in <root>'
-        ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
+        GET_VAR '<this>: kotlin.String declared in <root>.getValue' type=kotlin.String origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       VAR name:testO type:kotlin.String [val]

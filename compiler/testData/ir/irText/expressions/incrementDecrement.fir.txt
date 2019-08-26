@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val]
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
             value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
@@ -80,7 +80,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val]
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
             value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPrefix' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val]
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
             value: CALL 'public final fun inc (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
           GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/incrementDecrement.kt
         BLOCK type=kotlin.Int origin=null
           VAR name:<unary> type:kotlin.Int [val]
             CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
             value: CALL 'public final fun dec (): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=null
               $this: GET_VAR 'val <unary>: kotlin.Int [val] declared in <root>.testPropPostfix' type=kotlin.Int origin=null
           CALL 'public final fun <get-p> (): kotlin.Int declared in <root>' type=kotlin.Int origin=null

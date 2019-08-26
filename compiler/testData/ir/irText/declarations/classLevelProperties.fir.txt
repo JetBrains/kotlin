@@ -58,7 +58,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test4 type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
             value: GET_VAR 'value: kotlin.Int declared in <root>.C.<set-test4>' type=kotlin.Int origin=null
     PROPERTY name:test5 visibility:public modality:FINAL [var]
       FIELD PROPERTY_BACKING_FIELD name:test5 type:kotlin.Int visibility:public
@@ -98,7 +98,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test7> (): kotlin.Int declared in <root>.C'
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Int origin=null
               $receiver: GET_FIELD 'FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
-              thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+              thisRef: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
               property: PROPERTY_REFERENCE 'public final test7: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test7$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
       FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]
@@ -110,7 +110,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test8> (): IrErrorType declared in <root>.C'
             ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
-              ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+              GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
               PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test8> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test8 visibility:public modality:FINAL [delegated,var]
@@ -118,7 +118,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
         BLOCK_BODY
           ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
-            ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+            GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
             PROPERTY_REFERENCE 'public final test8: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' getter='public final fun <get-test8> (): IrErrorType declared in <root>.C' setter=null type=kotlin.reflect.KProperty<*> origin=null
             GET_VAR '<set-?>: IrErrorType declared in <root>.C.<set-test8>' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

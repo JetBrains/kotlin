@@ -81,7 +81,8 @@ FILE fqName:<root> fileName:/safeCalls.kt
   FUN name:test4 visibility:public modality:FINAL <> (x:<root>.Ref?) returnType:kotlin.Unit
     VALUE_PARAMETER name:x index:0 type:<root>.Ref?
     BLOCK_BODY
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+        receiver: GET_VAR 'x: <root>.Ref? declared in <root>.test4' type=<root>.Ref? origin=null
         value: CONST Int type=kotlin.Int? value=0
   FUN name:test5 visibility:public modality:FINAL <> ($receiver:<root>.IHost, s:kotlin.String?) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:<root>.IHost

@@ -765,6 +765,15 @@ internal class Fir2IrVisitor(
                 }
                 this
             }
+            is IrFieldExpressionBase -> {
+                val explicitReceiver = qualifiedAccess.explicitReceiver?.toIrExpression()
+                if (explicitReceiver != null) {
+                    receiver = explicitReceiver
+                } else {
+                    // TODO: implicit receiver
+                }
+                this
+            }
             else -> this
         }
     }
@@ -823,7 +832,7 @@ internal class Fir2IrVisitor(
             if (symbol != null && symbol.isBound) {
                 when (symbol) {
                     is IrFieldSymbol -> IrSetFieldImpl(
-                        startOffset, endOffset, symbol, symbol.owner.type
+                        startOffset, endOffset, symbol, unitType
                     ).apply {
                         value = variableAssignment.rValue.toIrExpression()
                     }
@@ -832,7 +841,7 @@ internal class Fir2IrVisitor(
                         val backingField = irProperty.backingField
                         if (backingField != null) {
                             IrSetFieldImpl(
-                                startOffset, endOffset, backingField.symbol, backingField.symbol.owner.type
+                                startOffset, endOffset, backingField.symbol, unitType
                             ).apply {
                                 value = variableAssignment.rValue.toIrExpression()
                             }
@@ -850,7 +859,7 @@ internal class Fir2IrVisitor(
             } else {
                 generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }
+        }.applyReceivers(variableAssignment)
     }
 
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {

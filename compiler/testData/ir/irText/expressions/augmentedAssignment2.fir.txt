@@ -63,13 +63,13 @@ FILE fqName:<root> fileName:/augmentedAssignment2.kt
         CONST String type=<root>.A value="*="
   FUN name:testProperty visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=kotlin.Unit origin=null
         value: CONST String type=<root>.A value="+="
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=kotlin.Unit origin=null
         value: CONST String type=<root>.A value="-="
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=kotlin.Unit origin=null
         value: CONST String type=<root>.A value="*="
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=kotlin.Unit origin=null
         value: CONST String type=<root>.A value="/="
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=<root>.A origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:<root>.A visibility:public [final,static]' type=kotlin.Unit origin=null
         value: CONST String type=<root>.A value="%="

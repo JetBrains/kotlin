@@ -99,7 +99,7 @@ FILE fqName:<root> fileName:/kt30020.kt
       FUN name:testOuterThis visibility:public modality:FINAL <> ($this:<root>.AML.Inner) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.AML.Inner
         BLOCK_BODY
-          ERROR_CALL 'Unresolved reference: this@AML' type=IrErrorType
+          ERROR_CALL 'Unresolved reference: this@AML#' type=IrErrorType
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any

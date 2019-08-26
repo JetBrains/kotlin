@@ -6,7 +6,7 @@ FILE fqName:<root> fileName:/variableAsFunctionCall.kt
         FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
             BLOCK_BODY
-              ERROR_CALL 'Unresolved reference: this#' type=kotlin.String
+              GET_VAR '<this>: kotlin.String declared in <root>.k' type=kotlin.String origin=null
   FUN name:test1 visibility:public modality:FINAL <> (f:kotlin.Function0<kotlin.Unit>) returnType:kotlin.Unit
     VALUE_PARAMETER name:f index:0 type:kotlin.Function0<kotlin.Unit>
     BLOCK_BODY

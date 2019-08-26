@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/propertyReferences.kt
       correspondingProperty: PROPERTY name:varWithBackingFieldAndAccessors visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:kotlin.Int
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [static]' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [static]' type=kotlin.Unit origin=null
           value: GET_VAR 'value: kotlin.Int declared in <root>.<set-varWithBackingFieldAndAccessors>' type=kotlin.Int origin=null
   PROPERTY name:test_varWithBackingFieldAndAccessors visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:test_varWithBackingFieldAndAccessors type:kotlin.Int visibility:public [final,static]

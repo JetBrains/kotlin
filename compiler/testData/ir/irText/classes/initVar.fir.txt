@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/initVar.kt
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.TestInitVarInInitBlock.<set-x>' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
           value: CONST Int type=kotlin.Int value=0
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/initVar.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestInitVarWithCustomSetter
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
             value: GET_VAR 'value: kotlin.Int declared in <root>.TestInitVarWithCustomSetter.<set-x>' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
@@ -169,11 +169,11 @@ FILE fqName:<root> fileName:/initVar.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestInitVarWithCustomSetterWithExplicitCtor
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
             value: GET_VAR 'value: kotlin.Int declared in <root>.TestInitVarWithCustomSetterWithExplicitCtor.<set-x>' type=kotlin.Int origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
           value: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitVarWithCustomSetterWithExplicitCtor
       BLOCK_BODY
@@ -208,11 +208,11 @@ FILE fqName:<root> fileName:/initVar.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.TestInitVarWithCustomSetterInCtor
         VALUE_PARAMETER name:value index:0 type:kotlin.Int
         BLOCK_BODY
-          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+          SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
             value: GET_VAR 'value: kotlin.Int declared in <root>.TestInitVarWithCustomSetterInCtor.<set-x>' type=kotlin.Int origin=null
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitVarWithCustomSetterInCtor
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
           value: CONST Int type=kotlin.Int value=42
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:TestInitVarWithCustomSetterInCtor modality:FINAL visibility:public superTypes:[kotlin.Any]'

@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
       $receiver: VALUE_PARAMETER name:<this> type:T of <root>.I.fromInterface
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun fromInterface <T> (): T of <root>.I.fromInterface declared in <root>.I'
-          ERROR_CALL 'Unresolved reference: this#' type=T of <root>.I.fromInterface
+          GET_VAR '<this>: T of <root>.I.fromInterface declared in <root>.I.fromInterface' type=T of <root>.I.fromInterface origin=null
     FUN name:genericFromSuper visibility:public modality:OPEN <> ($this:<root>.I, g:G of <root>.I) returnType:G of <root>.I
       $this: VALUE_PARAMETER name:<this> type:<root>.I
       VALUE_PARAMETER name:g index:0 type:G of <root>.I
@@ -40,7 +40,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.BaseClass
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-fromClass> (): T of <uninitialized parent> declared in <root>.BaseClass'
-            ERROR_CALL 'Unresolved reference: this#' type=<root>.BaseClass
+            GET_VAR '<this>: <root>.BaseClass declared in <root>.BaseClass' type=<root>.BaseClass origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -117,7 +117,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-g2> (): T of <uninitialized parent> declared in <root>.C'
-            ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+            GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any
@@ -178,7 +178,7 @@ FILE fqName:<root> fileName:/useImportedMember.kt
               arg1: CONST Int type=kotlin.Int value=4
           then: RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
             CONST String type=kotlin.String value="4"
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:p type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
         value: CONST Int type=kotlin.Int value=5
       WHEN type=kotlin.Unit origin=IF
         BRANCH

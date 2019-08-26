@@ -168,9 +168,9 @@ FILE fqName:<root> fileName:/genericPropertyRef.kt
       correspondingProperty: PROPERTY name:bar visibility:public modality:FINAL [var]
       VALUE_PARAMETER name:value index:0 type:T of <uninitialized parent>
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public [static]' type=kotlin.Any? origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:recivier type:kotlin.Any? visibility:public [static]' type=kotlin.Unit origin=null
           value: ERROR_CALL 'Unresolved reference: this#' type=IrErrorType
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static]' type=kotlin.Any? origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value2 type:kotlin.Any? visibility:public [static]' type=kotlin.Unit origin=null
           value: GET_VAR 'value: T of <uninitialized parent> declared in <root>.<set-bar>' type=T of <uninitialized parent> origin=null
   PROPERTY name:barRef visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:barRef type:kotlin.String.Companion visibility:public [final,static]

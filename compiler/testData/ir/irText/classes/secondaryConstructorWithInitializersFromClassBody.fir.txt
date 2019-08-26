@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/secondaryConstructorWithInitializersFromClassBody.k
               receiver: GET_VAR '<this>: <root>.TestInitBlock declared in <root>.TestInitBlock.<get-x>' type=<root>.TestInitBlock origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public [final]' type=kotlin.Unit origin=null
           value: CONST Int type=kotlin.Int value=0
     CONSTRUCTOR visibility:public <> () returnType:<root>.TestInitBlock
       BLOCK_BODY

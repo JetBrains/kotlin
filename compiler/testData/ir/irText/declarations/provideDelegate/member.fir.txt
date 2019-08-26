@@ -88,7 +88,7 @@ FILE fqName:<root> fileName:/member.kt
           CALL 'public final fun provideDelegate (thisRef: kotlin.Any?, property: kotlin.Any?): <root>.Delegate declared in <root>.DelegateProvider' type=<root>.Delegate origin=null
             $this: CONSTRUCTOR_CALL 'public constructor <init> (value: kotlin.String) [primary] declared in <root>.DelegateProvider' type=<root>.DelegateProvider origin=null
               value: CONST String type=kotlin.String value="OK"
-            thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+            thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
             property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val]' field=null getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<get-testMember> visibility:public modality:FINAL <> ($this:<root>.Host) returnType:kotlin.String
         correspondingProperty: PROPERTY name:testMember visibility:public modality:FINAL [delegated,val]
@@ -97,7 +97,7 @@ FILE fqName:<root> fileName:/member.kt
           RETURN type=kotlin.Nothing from='public final fun <get-testMember> (): kotlin.String declared in <root>.Host'
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.Any?): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=GET_PROPERTY
-              thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.Host
+              thisRef: GET_VAR '<this>: <root>.Host declared in <root>.Host' type=<root>.Host origin=null
               property: PROPERTY_REFERENCE 'public final testMember: kotlin.String [delegated,val]' field='FIELD DELEGATE name:testMember$delegate type:<root>.Delegate visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

@@ -49,7 +49,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
           RETURN type=kotlin.Nothing from='public final fun <get-test2> (): kotlin.Int declared in <root>.C'
             CALL 'public final fun getValue (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): T of <uninitialized parent> [inline] declared in kotlin' type=kotlin.Int origin=null
               $receiver: GET_FIELD 'FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' type=kotlin.Lazy<kotlin.Int> origin=GET_PROPERTY
-              thisRef: ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+              thisRef: GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
               property: PROPERTY_REFERENCE 'public final test2: kotlin.Int [delegated,val]' field='FIELD DELEGATE name:test2$delegate type:kotlin.Lazy<kotlin.Int> visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
     PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
       FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]
@@ -61,7 +61,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): IrErrorType declared in <root>.C'
             ERROR_CALL 'Unresolved reference: <Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#' type=IrErrorType
-              ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+              GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
               PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter=null setter=null type=kotlin.reflect.KProperty<*> origin=null
       FUN DELEGATED_PROPERTY_ACCESSOR name:<set-test3> visibility:public modality:FINAL <> ($this:<root>.C, <set-?>:IrErrorType) returnType:kotlin.Unit
         correspondingProperty: PROPERTY name:test3 visibility:public modality:FINAL [delegated,var]
@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         VALUE_PARAMETER name:<set-?> index:0 type:IrErrorType
         BLOCK_BODY
           ERROR_CALL 'Unresolved reference: <Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#' type=IrErrorType
-            ERROR_CALL 'Unresolved reference: this#' type=<root>.C
+            GET_VAR '<this>: <root>.C declared in <root>.C' type=<root>.C origin=null
             PROPERTY_REFERENCE 'public final test3: IrErrorType [delegated,var]' field='FIELD DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' getter='public final fun <get-test3> (): IrErrorType declared in <root>.C' setter=null type=kotlin.reflect.KProperty<*> origin=null
             GET_VAR '<set-?>: IrErrorType declared in <root>.C.<set-test3>' type=IrErrorType origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean

@@ -21,13 +21,13 @@ FILE fqName:<root> fileName:/intersectionType3_NI.kt
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun isT <T> (): kotlin.Boolean [inline] declared in <root>'
         TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.isT
-          ERROR_CALL 'Unresolved reference: this#' type=<root>.In<T of <root>.isT>
+          GET_VAR '<this>: <root>.In<T of <root>.isT> declared in <root>.isT' type=<root>.In<T of <root>.isT> origin=null
   FUN name:asT visibility:public modality:FINAL <T> ($receiver:<root>.In<T of <root>.asT>) returnType:kotlin.Unit [inline]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[]
     $receiver: VALUE_PARAMETER name:<this> type:<root>.In<T of <root>.asT>
     BLOCK_BODY
       TYPE_OP type=T of <root>.asT origin=CAST typeOperand=T of <root>.asT
-        ERROR_CALL 'Unresolved reference: this#' type=<root>.In<T of <root>.asT>
+        GET_VAR '<this>: <root>.In<T of <root>.asT> declared in <root>.asT' type=<root>.In<T of <root>.asT> origin=null
   FUN name:sel visibility:public modality:FINAL <S> (x:S of <root>.sel, y:S of <root>.sel) returnType:S of <root>.sel
     TYPE_PARAMETER name:S index:0 variance: superTypes:[]
     VALUE_PARAMETER name:x index:0 type:S of <root>.sel

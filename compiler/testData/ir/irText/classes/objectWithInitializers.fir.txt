@@ -46,7 +46,7 @@ FILE fqName:<root> fileName:/objectWithInitializers.kt
               receiver: GET_VAR '<this>: <root>.Test declared in <root>.Test.<get-y>' type=<root>.Test origin=null
     ANONYMOUS_INITIALIZER isStatic=false
       BLOCK_BODY
-        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Int origin=null
+        SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:public [final]' type=kotlin.Unit origin=null
           value: CALL 'public final fun <get-x> (): kotlin.Int declared in <root>.Test' type=kotlin.Int origin=null
     FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean
       overridden:

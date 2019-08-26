@@ -9,7 +9,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
         WHEN type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=IF
           BRANCH
             if: CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Map' type=kotlin.Boolean origin=null
-              $this: ERROR_CALL 'Unresolved reference: this#' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
+              $this: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
             then: CALL 'public final fun mapOf (pair: kotlin.Pair<K of <uninitialized parent>, V of <uninitialized parent>>): kotlin.collections.Map<K of <uninitialized parent>, V of <uninitialized parent>> declared in kotlin.collections' type=kotlin.collections.Map<K1 of <root>.plus, V1 of <root>.plus> origin=null
               pair: GET_VAR 'pair: kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.Pair<K1 of <root>.plus, V1 of <root>.plus> origin=null
           BRANCH
@@ -18,7 +18,7 @@ FILE fqName:<root> fileName:/builtinMap.kt
               $receiver: CONSTRUCTOR_CALL 'public constructor <init> (<anonymous Java parameter>: kotlin.collections.Map<out K of java.util.LinkedHashMap, out V of java.util.LinkedHashMap>?) declared in java.util.LinkedHashMap' type=java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus> origin=null
                 <class: K>: <none>
                 <class: V>: <none>
-                <anonymous Java parameter>: ERROR_CALL 'Unresolved reference: this#' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus>
+                <anonymous Java parameter>: GET_VAR '<this>: kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> declared in <root>.plus' type=kotlin.collections.Map<out K1 of <root>.plus, V1 of <root>.plus> origin=null
               block: FUN_EXPR type=kotlin.Function2<java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>, kotlin.Unit> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (it:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>) returnType:kotlin.Unit
                   VALUE_PARAMETER name:it index:0 type:java.util.LinkedHashMap<K1 of <root>.plus, V1 of <root>.plus>

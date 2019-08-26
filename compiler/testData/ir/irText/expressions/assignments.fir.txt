@@ -51,5 +51,6 @@ FILE fqName:<root> fileName:/assignments.kt
   FUN name:test2 visibility:public modality:FINAL <> (r:<root>.Ref) returnType:kotlin.Unit
     VALUE_PARAMETER name:r index:0 type:<root>.Ref
     BLOCK_BODY
-      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Int origin=null
+      SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:public' type=kotlin.Unit origin=null
+        receiver: GET_VAR 'r: <root>.Ref declared in <root>.test2' type=<root>.Ref origin=null
         value: CONST Int type=kotlin.Int value=0

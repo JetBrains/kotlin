@@ -25,14 +25,14 @@ FILE fqName:<root> fileName:/calls.kt
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun ext1 (): kotlin.Int declared in <root>'
-        ERROR_CALL 'Unresolved reference: this#' type=kotlin.Int
+        GET_VAR '<this>: kotlin.Int declared in <root>.ext1' type=kotlin.Int origin=null
   FUN name:ext2 visibility:public modality:FINAL <> ($receiver:kotlin.Int, x:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
     VALUE_PARAMETER name:x index:0 type:kotlin.Int
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun ext2 (x: kotlin.Int): kotlin.Int declared in <root>'
         CALL 'public final fun foo (x: kotlin.Int, y: kotlin.Int): kotlin.Int declared in <root>' type=kotlin.Int origin=null
-          x: ERROR_CALL 'Unresolved reference: this#' type=kotlin.Int
+          x: GET_VAR '<this>: kotlin.Int declared in <root>.ext2' type=kotlin.Int origin=null
           y: GET_VAR 'x: kotlin.Int declared in <root>.ext2' type=kotlin.Int origin=null
   FUN name:ext3 visibility:public modality:FINAL <> ($receiver:kotlin.Int, x:kotlin.Int) returnType:kotlin.Int
     $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int

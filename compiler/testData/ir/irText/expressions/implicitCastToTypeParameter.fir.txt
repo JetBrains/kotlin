@@ -7,8 +7,8 @@ FILE fqName:<root> fileName:/implicitCastToTypeParameter.kt
         WHEN type=kotlin.Any? origin=IF
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=T of <root>.test1
-              ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
-            then: ERROR_CALL 'Unresolved reference: this#' type=kotlin.Any
+              GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
+            then: GET_VAR '<this>: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Null type=kotlin.Nothing? value=null
