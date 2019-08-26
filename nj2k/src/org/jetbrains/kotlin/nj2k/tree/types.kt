@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.idea.caches.resolve.analyze
 import org.jetbrains.kotlin.idea.caches.resolve.util.getJavaClassDescriptor
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
 import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.js.descriptorUtils.getJetTypeFqName
 import org.jetbrains.kotlin.js.resolve.diagnostics.findPsi
@@ -157,11 +158,12 @@ fun KotlinType.toJK(symbolProvider: JKSymbolProvider): JKType {
     }
 }
 
-val JKType.isKotlinFunctionType: Boolean
+val PsiType.isKotlinFunctionalType: Boolean
     get() {
-        val fqName = safeAs<JKClassType>()?.fqName ?: return false
-        return functionalTypeRegex.matches(fqName)
+        val fqName = safeAs<PsiClassType>()?.resolve()?.getKotlinFqName() ?: return false
+        return functionalTypeRegex.matches(fqName.asString())
     }
+
 
 private val functionalTypeRegex = """(kotlin\.jvm\.functions|kotlin)\.Function[\d+]""".toRegex()
 
