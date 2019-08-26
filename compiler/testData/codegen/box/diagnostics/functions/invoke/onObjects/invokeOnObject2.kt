@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object A {
     operator fun invoke(i: Int) = i
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A {
     operator fun component1() = "O"
     operator fun component2(): String = throw RuntimeException("fail 0")

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object O {
     val x = "OK"
 

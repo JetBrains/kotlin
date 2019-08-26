@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 typealias S = String
 
 typealias SF<T> = (T) -> S

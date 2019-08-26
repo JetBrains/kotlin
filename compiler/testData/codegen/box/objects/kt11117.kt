@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(val value: String)
 
 fun A.test(): String {

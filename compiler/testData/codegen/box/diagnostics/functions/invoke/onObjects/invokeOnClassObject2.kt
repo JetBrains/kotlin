@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface B
 
 operator fun B.invoke(i: Int) = i

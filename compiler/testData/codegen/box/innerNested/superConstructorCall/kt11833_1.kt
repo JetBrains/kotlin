@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 abstract class Father {
     abstract inner class InClass {
         abstract fun work(): String

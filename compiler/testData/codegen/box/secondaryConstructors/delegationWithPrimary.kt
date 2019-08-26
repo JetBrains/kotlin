@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 internal interface A {
     fun foo(): String
 }

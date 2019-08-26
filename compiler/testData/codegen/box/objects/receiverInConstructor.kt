@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A(open val v: String)
 
 fun A.a(newv: String) = object: A("fail") {

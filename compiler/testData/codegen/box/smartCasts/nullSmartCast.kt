@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun String?.foo() = this ?: "OK"
 
 fun foo(i: Int?): String {

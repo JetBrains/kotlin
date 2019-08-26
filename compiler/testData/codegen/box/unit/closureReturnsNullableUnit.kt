@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun isNull(x: Unit?) = x == null
 
 fun box(): String {

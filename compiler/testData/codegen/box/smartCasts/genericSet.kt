@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Wrapper<T>(var x: T)
 
 inline fun <reified T> change(w: Wrapper<T>, x: Any?) {

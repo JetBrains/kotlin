@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun WithCompanion.test(): String {
     object : WithCompanion(this) {}
     return "OK"

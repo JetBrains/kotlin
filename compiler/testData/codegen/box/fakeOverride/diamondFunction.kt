@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface T {
     fun foo(): Unit
 }

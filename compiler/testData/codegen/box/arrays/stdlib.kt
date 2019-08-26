@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface ISized {
     val size : Int
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C(val x: String)
 
 typealias Alias = C

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 sealed class Season {
     class Warm: Season()
     class Cold: Season()

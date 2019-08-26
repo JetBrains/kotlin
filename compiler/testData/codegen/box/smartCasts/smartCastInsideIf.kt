@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(val s: String = "FAIL")
 
 private fun foo(a: A?, aOther: A?): A {

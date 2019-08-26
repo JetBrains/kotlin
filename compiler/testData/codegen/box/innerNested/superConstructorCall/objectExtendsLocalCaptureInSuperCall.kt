@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A(val s: String)
 
 fun box(): String {

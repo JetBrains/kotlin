@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 
 fun test(x: Any?): String {
     if (x !is Int) return "Fail 1"

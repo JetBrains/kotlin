@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun withWhen(counter : Int, d : Any) : Int =

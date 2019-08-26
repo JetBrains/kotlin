@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Outer private constructor(public val x: String) {
     class Nested {
         fun foo() = OuterAlias("OK")

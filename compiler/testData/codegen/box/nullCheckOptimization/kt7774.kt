@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var flag = false
 
 inline fun foo(c: String? = null) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A() {
 
     fun ok() = Foo.Bar.bar() + Foo.Bar.barv

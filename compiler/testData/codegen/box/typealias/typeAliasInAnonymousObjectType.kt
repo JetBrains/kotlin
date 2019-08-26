@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class Foo<T>(val x: T)
 
 typealias FooStr = Foo<String>

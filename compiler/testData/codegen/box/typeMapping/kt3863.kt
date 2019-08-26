@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 import kotlin.reflect.KProperty
 
 // java.lang.VerifyError: (class: NotImplemented, method: get signature: (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;) Unable to pop operand off an empty stack

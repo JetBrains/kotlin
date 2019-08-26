@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object A {
     private val p = "OK";
 

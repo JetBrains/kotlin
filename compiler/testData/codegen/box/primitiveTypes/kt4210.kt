@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val s: String? = "abc"
     val c = s?.get(0)!! - 'b'

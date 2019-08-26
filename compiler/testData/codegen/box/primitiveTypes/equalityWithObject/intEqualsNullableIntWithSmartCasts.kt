@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 
 fun eq1(a: Any?, b: Any?) =
     a is Int? && b is Int && a == b

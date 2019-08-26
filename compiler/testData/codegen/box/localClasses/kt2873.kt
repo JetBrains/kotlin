@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo() : String {
     val u = {
         class B(val data : String)

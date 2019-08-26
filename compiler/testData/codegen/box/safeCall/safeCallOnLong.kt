@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun f(b : Long.(Long)->Long) = 1L?.b(2L)
 
 fun box(): String {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object Foo {
     val bar: String
 

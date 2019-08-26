@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Outer(val x: String) {
     abstract inner class InnerBase
 

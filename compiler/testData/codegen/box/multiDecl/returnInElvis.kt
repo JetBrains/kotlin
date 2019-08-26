@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 data class Z(val p: String, val k: String)
 
 

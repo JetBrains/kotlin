@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Outer {
     enum class Nested {
         O,

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val c: Char? = '0'
     c!!.toInt()

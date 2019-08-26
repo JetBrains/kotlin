@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 abstract class Base(val fn: () -> String)
 
 class Host {

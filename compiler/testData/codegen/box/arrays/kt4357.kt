@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val array = intArrayOf(11, 12, 13)
     val p = array.get(0)

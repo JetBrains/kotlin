@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object A {
     object B {
         object C {

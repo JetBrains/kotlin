@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C(val x: String) {
     constructor(n: Int) : this(n.toString())
 }

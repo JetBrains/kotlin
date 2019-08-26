@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Bar(val name: String)
 
 abstract class Foo {

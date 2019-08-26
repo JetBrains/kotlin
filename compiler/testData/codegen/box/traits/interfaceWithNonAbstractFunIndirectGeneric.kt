@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface I<T> {
     fun foo(x: T): String = "foo($x)"
 

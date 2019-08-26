@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package a.b
 
 interface Test {

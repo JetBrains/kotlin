@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A {
     open fun foo(): Int {
         return 2

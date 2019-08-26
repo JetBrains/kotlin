@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 data class D(private val x: Long, private val y: Char) {
     fun foo() = "${component1()}${component2()}"
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A<T> () {
    fun plus(e: T) = B<T> (e)
 }

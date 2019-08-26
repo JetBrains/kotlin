@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     A.Nested().nestedA()
     A.Nested().Inner().innerA()

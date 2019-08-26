@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun Array<String>.test1(): Array<String> {
     val func = { i:Int  -> this}
     return func(1)

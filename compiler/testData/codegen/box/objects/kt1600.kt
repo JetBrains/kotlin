@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 abstract class Foo<T> {
     fun hello(id: T) = "O$id"
 }

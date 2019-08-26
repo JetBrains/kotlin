@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND: WASM
 
 class Outer {
     protected companion object {

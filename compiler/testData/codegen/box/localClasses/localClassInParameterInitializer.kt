@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(
         val a: String = {
             open class B() {
