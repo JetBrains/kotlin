@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirAbstractPropertyAccessor
@@ -65,18 +66,48 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
             is FirConstructor -> function.name.asString()
             else -> throw IllegalArgumentException("Unknown function: ${function.render()}")
         }
-        graphs.push(ControlFlowGraph(name))
-        functionExitNodes.push(createFunctionExitNode(function))
-        lexicalScopes.push(stackOf())
-        return createFunctionEnterNode(function).also { lastNodes.push(it) }.also { levelCounter++ }
+        val invocationKind = function.invocationKind
+        val isInplace = invocationKind.isInplace()
+        if (!isInplace) {
+            graphs.push(ControlFlowGraph(name))
+        }
+        val enterNode = createFunctionEnterNode(function, isInplace).also {
+            if (isInplace) {
+                addNewSimpleNode(it)
+            } else {
+                lexicalScopes.push(stackOf())
+                lastNodes.push(it)
+            }
+        }
+        val exitNode = createFunctionExitNode(function, isInplace)
+
+        @Suppress("NON_EXHAUSTIVE_WHEN")
+        when (invocationKind) {
+            InvocationKind.AT_LEAST_ONCE -> addEdge(exitNode, enterNode)
+            InvocationKind.AT_MOST_ONCE -> addEdge(enterNode, exitNode)
+        }
+
+        functionExitNodes.push(exitNode)
+        levelCounter++
+        return enterNode
     }
 
-    fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph> {
+    fun exitFunction(function: FirFunction<*>): Pair<FunctionExitNode, ControlFlowGraph?> {
         levelCounter--
         val exitNode = functionExitNodes.pop()
-        addEdge(lastNodes.pop(), exitNode)
-        lexicalScopes.pop()
-        return exitNode to graphs.pop()
+        val isInplace = function.isInplace()
+        if (isInplace) {
+            addNewSimpleNode(exitNode)
+        } else {
+            addEdge(lastNodes.pop(), exitNode)
+            lexicalScopes.pop()
+        }
+        val graph = if (!isInplace) {
+            graphs.pop()
+        } else {
+            null
+        }
+        return exitNode to graph
     }
 
     // ----------------------------------- Block -----------------------------------
@@ -502,5 +533,17 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         }
         from.followingNodes += to
         to.previousNodes += from
+    }
+
+    private val FirFunction<*>.invocationKind: InvocationKind?
+        get() = (this as? FirAnonymousFunction)?.invocationKind
+
+    private fun InvocationKind?.isInplace(): Boolean {
+        return this != null && this != InvocationKind.UNKNOWN
+    }
+
+    private fun FirFunction<*>.isInplace(): Boolean {
+        val invocationKind = this.invocationKind
+        return invocationKind != null && invocationKind != InvocationKind.UNKNOWN
     }
 }

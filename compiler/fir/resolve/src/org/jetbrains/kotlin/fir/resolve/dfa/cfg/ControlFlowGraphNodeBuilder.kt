@@ -54,13 +54,18 @@ abstract class ControlFlowGraphNodeBuilder {
 
     protected fun createPropertyEnterNode(fir: FirProperty): PropertyEnterNode = PropertyEnterNode(graph, fir, levelCounter)
 
-    protected fun createFunctionEnterNode(fir: FirFunction<*>): FunctionEnterNode =
+    protected fun createFunctionEnterNode(fir: FirFunction<*>, isInPlace: Boolean): FunctionEnterNode =
         FunctionEnterNode(graph, fir, levelCounter).also {
-            graph.enterNode = it
+            if (!isInPlace) {
+                graph.enterNode = it
+            }
         }
 
-    protected fun createFunctionExitNode(fir: FirFunction<*>): FunctionExitNode = FunctionExitNode(graph, fir, levelCounter).also {
-        graph.exitNode = it
+    protected fun createFunctionExitNode(fir: FirFunction<*>, isInPlace: Boolean): FunctionExitNode =
+        FunctionExitNode(graph, fir, levelCounter).also {
+            if (!isInPlace) {
+                graph.exitNode = it
+            }
     }
 
     protected fun createBinaryOrEnterNode(fir: FirBinaryLogicExpression): BinaryOrEnterNode =

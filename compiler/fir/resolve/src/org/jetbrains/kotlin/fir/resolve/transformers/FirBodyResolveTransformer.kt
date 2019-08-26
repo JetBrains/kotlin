@@ -603,8 +603,9 @@ open class FirBodyResolveTransformer(
             dataFlowAnalyzer.enterFunction(function)
             super.transformFunction(function, data).also {
                 val result = it.single as FirFunction<*>
-                val controlFlowGraph = dataFlowAnalyzer.exitFunction(result)
-                result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                dataFlowAnalyzer.exitFunction(result)?.let { controlFlowGraph ->
+                    result.transformControlFlowGraphReference(ControlFlowGraphReferenceTransformer, controlFlowGraph)
+                }
             }
         }
     }

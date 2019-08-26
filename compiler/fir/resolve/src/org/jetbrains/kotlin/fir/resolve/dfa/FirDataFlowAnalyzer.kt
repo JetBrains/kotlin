@@ -18,7 +18,7 @@ abstract class FirDataFlowAnalyzer {
     // ----------------------------------- Named function -----------------------------------
 
     abstract fun enterFunction(function: FirFunction<*>)
-    abstract fun exitFunction(function: FirFunction<*>): ControlFlowGraph
+    abstract fun exitFunction(function: FirFunction<*>): ControlFlowGraph?
 
     // ----------------------------------- Property -----------------------------------
 

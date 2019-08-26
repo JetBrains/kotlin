@@ -24,7 +24,7 @@ class DummyFirDataFlowAnalyzer : FirDataFlowAnalyzer() {
 
     override fun enterFunction(function: FirFunction<*>) {}
 
-    override fun exitFunction(function: FirFunction<*>): ControlFlowGraph = ControlFlowGraph(DUMMY)
+    override fun exitFunction(function: FirFunction<*>): ControlFlowGraph? = null
 
     override fun enterBlock(block: FirBlock) {}
 

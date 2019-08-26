@@ -51,6 +51,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
             runTest("compiler/fir/resolve/testData/resolve/cfg/jumps.kt");
         }
 
+        @TestMetadata("lambdas.kt")
+        public void testLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/cfg/lambdas.kt");
+        }
+
         @TestMetadata("loops.kt")
         public void testLoops() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/cfg/loops.kt");
@@ -107,6 +112,11 @@ public class FirCfgBuildingTestGenerated extends AbstractFirCfgBuildingTest {
         @TestMetadata("equalsAndIdentity.kt")
         public void testEqualsAndIdentity() throws Exception {
             runTest("compiler/fir/resolve/testData/resolve/smartcasts/equalsAndIdentity.kt");
+        }
+
+        @TestMetadata("inPlaceLambdas.kt")
+        public void testInPlaceLambdas() throws Exception {
+            runTest("compiler/fir/resolve/testData/resolve/smartcasts/inPlaceLambdas.kt");
         }
 
         @TestMetadata("nullability.kt")

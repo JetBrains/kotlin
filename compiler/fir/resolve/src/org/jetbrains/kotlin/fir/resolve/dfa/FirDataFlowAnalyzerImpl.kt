@@ -58,7 +58,7 @@ class FirDataFlowAnalyzerImpl(transformer: FirBodyResolveTransformer) : FirDataF
         }
     }
 
-    override fun exitFunction(function: FirFunction<*>): ControlFlowGraph {
+    override fun exitFunction(function: FirFunction<*>): ControlFlowGraph? {
         val (node, graph) = graphBuilder.exitFunction(function)
         node.passFlow()
         for (valueParameter in function.valueParameters) {
