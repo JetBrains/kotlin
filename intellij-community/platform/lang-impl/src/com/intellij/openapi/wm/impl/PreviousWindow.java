@@ -7,15 +7,9 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.DumbAware;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
-
 final class PreviousWindow extends AbstractTraverseWindowAction implements DumbAware {
   @Override
   public void actionPerformed(@NotNull AnActionEvent e) {
-    Window w = isTraversable();
-    if (w == null) return;
-    Window window = IdeEventQueue.getInstance().nextWindowBefore(w);
-    Component recentFocusOwner = window.getMostRecentFocusOwner();
-    (recentFocusOwner == null ? window : recentFocusOwner).requestFocus();
+    doPerform(w -> IdeEventQueue.getInstance().nextWindowBefore(w));
   }
 }
