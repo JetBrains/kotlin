@@ -37,18 +37,10 @@ val prepareDepsPath: File = propertiesFile.parentFile.resolve("buildSrc/prepare-
 fun externalDepsDir(depsProjectName: String, suffix: String): File =
         prepareDepsPath.resolve(depsProjectName).resolve("build/external-deps").resolve(suffix)
 
-//val intellijBranchString = (rootProject.extra["versions.intellijSdk"] as? String?)?.substringBefore('.')?.toIntOrNull()
-val intellijBranch: Int by rootProject.extra(
-        if (rootProject.extra.has("versions.intellijSdk"))
-            (rootProject.extra["versions.intellijSdk"] as String).substringBefore('.').toInt()
-        else
-            192
-)
-
 val clionVersion: String by rootProject.extra(rootProject.extra["versions.clion"] as String)
 val clionVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.clion.strict"].toBoolean())
 val clionFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("CLion", clionVersion))
-val clionUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(clionVersion) >= 192)
+val clionUseJavaPlugin: Boolean by rootProject.extra(ijProductBranch(clionVersion) >= 192)
 val clionRepo: String = rootProject.extra["versions.clion.repo"] as String
 val clionUnscrambledJarArtifact: String by rootProject.extra("$clionRepo:$clionVersion:unscrambled/clion.jar")
 val clionUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "clion-unscrambled-$clionVersion"))
@@ -71,7 +63,7 @@ val clionJavaPluginDownloadUrl: URL? by rootProject.extra(
 val appcodeVersion: String by rootProject.extra(rootProject.extra["versions.appcode"] as String)
 val appcodeVersionStrict: Boolean by rootProject.extra(rootProject.extra["versions.appcode.strict"].toBoolean())
 val appcodeFriendlyVersion: String by rootProject.extra(cidrProductFriendlyVersion("AppCode", appcodeVersion))
-val appcodeUseJavaPlugin: Boolean by rootProject.extra(cidrProductBranch(appcodeVersion) >= 192)
+val appcodeUseJavaPlugin: Boolean by rootProject.extra(ijProductBranch(appcodeVersion) >= 192)
 val appcodeRepo: String = rootProject.extra["versions.appcode.repo"] as String
 val appcodeUnscrambledJarArtifact: String by rootProject.extra("$appcodeRepo:$appcodeVersion:unscrambled/appcode.jar")
 val appcodeUnscrambledJarDir: File by rootProject.extra(externalDepsDir("kotlin-native-platform-deps", "appcode-unscrambled-$appcodeVersion"))
@@ -145,6 +137,17 @@ if (isStandaloneBuild) { // setup additional properties that are required only w
     val cidrUnscrambledJarDir: File by rootProject.extra(clionUnscrambledJarDir)
 }
 
+val intellijBranch: Int by rootProject.extra(
+        when {
+            rootProject.extra.has("versions.intellijSdk") -> ijProductBranch(rootProject.extra["versions.intellijSdk"] as String)
+            isStandaloneBuild -> {
+                val useAppCodeForCommon = findProperty("useAppCodeForCommon").toBoolean()
+                ijProductBranch(if (useAppCodeForCommon) appcodeVersion else clionVersion)
+            }
+            else -> error("Can't determine effective IntelliJ platform branch")
+        }
+)
+
 // Note:
 // - "appcodePluginNumber" Gradle property can be used to override the default plugin number (SNAPSHOT)
 // - "appcodePluginZipPath" Gradle property can be used to override the standard location of packed plugin artifacts
@@ -176,15 +179,14 @@ val excludesListFromIdeaPlugin: List<String> by rootProject.extra(listOf(
         "lib/jps/**", // JSP plugin
         "kotlinc/**"
 ))
-//val isStandaloneBuild: Boolean by rootProject.extra(rootProject.findProject(":idea") == null)
 
-fun cidrProductBranch(productVersion: String): Int {
+fun ijProductBranch(productVersion: String): Int {
     return productVersion.substringBefore('.').toIntOrNull()
             ?: error("Invalid product version format: $productVersion")
 }
 
 fun cidrProductFriendlyVersion(productName: String, productVersion: String): String {
-    val productBranch = cidrProductBranch(productVersion)
+    val productBranch = ijProductBranch(productVersion)
     val year = 2000 + productBranch / 10
     val majorRelease = productBranch % 10
 

@@ -104,7 +104,7 @@ fun addIdeaNativeModuleDepsComposite(project: Project) = with(project) {
             "extensions",
             "jdom"
         ) + if (ideBranch >= 192)
-            listOf("intellij-dvcs", "platform-util-ui", "platform-util-ex")
+            listOf("intellij-dvcs", "platform-concurrency", "platform-core-ui", "platform-util-ui", "platform-util-ex")
         else
             emptyList()
 
@@ -168,10 +168,5 @@ fun addCidrDeps(project: Project) = with(project) {
     }
 }
 
-fun addIdeaNativeModuleDeps(project: Project) = with(project) {
-    if (isStandaloneBuild) {
-        addIdeaNativeModuleDepsStandalone(project)
-    } else {
-        addIdeaNativeModuleDepsComposite(project)
-    }
-}
+fun addIdeaNativeModuleDeps(project: Project) =
+        if (isStandaloneBuild) addIdeaNativeModuleDepsStandalone(project) else addIdeaNativeModuleDepsComposite(project)

@@ -46,9 +46,6 @@ val pluginXmlPath = "META-INF/plugin.xml"
 
 val javaPluginId = "com.intellij.kotlinNative.platformDeps"
 
-val ultimateTools: Map<String, Any> by rootProject.extensions
-val addIdeaNativeModuleDepsComposite: (Project) -> Unit by ultimateTools
-
 val excludesListFromIdeaPlugin: List<String> by rootProject.extra
 val platformDepsJarName: String by rootProject.extra
 val isStandaloneBuild: Boolean by rootProject.extra

@@ -11,9 +11,6 @@ val intellijBranch: Int by rootProject.extra
 dependencies {
     addCidrDeps(project)
     addIdeaNativeModuleDeps(project)
-    Platform[192].orHigher {
-        compileOnly(intellijUltimateDep()) { includeJars("platform-concurrency", "platform-core-ui") }
-    }
 }
 
 if (intellijBranch >= 192 || cidrUnscrambledJarDir?.exists() == true) {
