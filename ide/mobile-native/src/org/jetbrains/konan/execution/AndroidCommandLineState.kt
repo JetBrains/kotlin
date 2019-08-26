@@ -6,7 +6,7 @@
 package org.jetbrains.konan.execution
 
 import com.intellij.debugger.DebuggerManagerEx
-import com.intellij.debugger.DefaultDebugUIEnvironment
+import com.intellij.debugger.DefaultDebugEnvironment
 import com.intellij.debugger.engine.JavaDebugProcess
 import com.intellij.execution.DefaultExecutionResult
 import com.intellij.execution.ExecutionResult
@@ -72,8 +72,8 @@ class AndroidCommandLineState(
             wrapper.detachProcess() // to reuse already existing run tab
 
             runInEdt {
-                val debugEnv = DefaultDebugUIEnvironment(environment, debugState, connection, false)
-                val debuggerSession = DebuggerManagerEx.getInstanceEx(project).attachVirtualMachine(debugEnv.environment)!!
+                val debugEnvironment = DefaultDebugEnvironment(environment, debugState, connection, false)
+                val debuggerSession = DebuggerManagerEx.getInstanceEx(project).attachVirtualMachine(debugEnvironment)!!
                 val session = XDebuggerManager.getInstance(project).startSession(environment, object : XDebugProcessStarter() {
                     override fun start(session: XDebugSession): XDebugProcess =
                         JavaDebugProcess.create(session, debuggerSession)
