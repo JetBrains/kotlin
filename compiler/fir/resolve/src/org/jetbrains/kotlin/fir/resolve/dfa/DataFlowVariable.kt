@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
-import com.google.common.collect.LinkedHashMultimap
-import com.google.common.collect.Multimap
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirTypedDeclaration
@@ -31,7 +29,7 @@ data class DataFlowVariable(
 }
 
 class DataFlowVariableStorage(private val session: FirSession) {
-    private val dfi2FirMap: Multimap<DataFlowVariable, FirElement> = LinkedHashMultimap.create()
+    private val dfi2FirMap: MutableMap<DataFlowVariable, FirElement> = mutableMapOf()
     private val fir2DfiMap: MutableMap<FirElement, DataFlowVariable> = mutableMapOf()
     private var counter: Int = 1
 
@@ -57,12 +55,13 @@ class DataFlowVariableStorage(private val session: FirSession) {
         removeVariable(variable)
     }
 
-    fun removeVariable(variable: DataFlowVariable) {
-        val firExpressions = dfi2FirMap.removeAll(variable)
-        firExpressions.forEach(fir2DfiMap::remove)
+    fun removeVariable(variable: DataFlowVariable): FirElement? {
+        return dfi2FirMap.remove(variable)?.also {
+            fir2DfiMap.remove(it)
+        }
     }
 
-    operator fun get(variable: DataFlowVariable): Collection<FirElement> {
+    operator fun get(variable: DataFlowVariable): FirElement? {
         return dfi2FirMap[variable]
     }
 
@@ -81,12 +80,12 @@ class DataFlowVariableStorage(private val session: FirSession) {
     }
 
     private fun storeVariable(variable: DataFlowVariable, fir: FirElement) {
-        dfi2FirMap.put(variable, fir)
-        fir2DfiMap.put(fir, variable)
+        dfi2FirMap[variable] = fir
+        fir2DfiMap[fir] = variable
     }
 
     @Deprecated("only for debug")
-    fun getByName(name: String): DataFlowVariable? = dfi2FirMap.keySet().firstOrNull { it.name == name }
+    fun getByName(name: String): DataFlowVariable? = dfi2FirMap.keys.firstOrNull { it.name == name }
 
     private val FirElement.type: FirTypeRef
         get() = when (this) {
