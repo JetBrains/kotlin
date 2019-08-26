@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.idea.statistics
 object CompletionFUSCollector {
     private const val FileTypeAttribute = "file_type"
     private const val WindowPopulationTimeAttribute = "window_population_time"
+    private const val WindowAppearanceTimeAttribute = "window_appearance_time"
     private const val CompletionEventAttribute = "completion_event"
     private const val ChoiceAtPositionAttribute = "choice_at_position"
     private const val CompletionTypeAttribute = "completion_type"
@@ -33,20 +34,26 @@ object CompletionFUSCollector {
 
     fun log(completionStatsData: CompletionStatsData?) {
         if (completionStatsData == null) return
+
         val data = mutableMapOf<String, String>()
-            .plus(Pair(FileTypeAttribute, completionStatsData.fileType.toString()))
-            .plus(Pair(CompletionTypeAttribute, completionStatsData.completionType.toString()))
+        data[FileTypeAttribute] = completionStatsData.fileType.toString()
+        data[CompletionTypeAttribute] = completionStatsData.completionType.toString()
 
         if (completionStatsData.finishTime != null) {
             val populationTime = (completionStatsData.finishTime - completionStatsData.startTime).toString()
-            data.plus(Pair(WindowPopulationTimeAttribute, populationTime))
+            data[WindowPopulationTimeAttribute] = populationTime
+        }
+
+        if (completionStatsData.shownTime != null) {
+            val appearanceTime = (completionStatsData.shownTime - completionStatsData.startTime).toString()
+            data[WindowAppearanceTimeAttribute] = appearanceTime
         }
 
         if (completionStatsData.selectedItem != null) {
-            data.plus(Pair(ChoiceAtPositionAttribute, completionStatsData.selectedItem.toString()))
-                .plus(Pair(CompletionEventAttribute, Chosen))
+            data[ChoiceAtPositionAttribute] = completionStatsData.selectedItem.toString()
+            data[CompletionEventAttribute] = Chosen
         } else {
-            data.plus(Pair(CompletionEventAttribute, NotChosen))
+            data[CompletionEventAttribute] = NotChosen
         }
 
         KotlinFUSLogger.log(FUSEventGroups.Editor, EventName, data)
