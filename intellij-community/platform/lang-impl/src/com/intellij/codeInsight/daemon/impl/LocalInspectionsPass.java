@@ -544,7 +544,7 @@ public class LocalInspectionsPass extends ProgressableTextEditorHighlightingPass
                        " is not from the file '" + file.getVirtualFile().getPath() +
                        "' the inspection '" + toolWrapper +
                        "' (" + tool.getClass() +
-                       ") was invoked for. Message: '" + descriptor + "'.\nElement' containing file: " +
+                       ") was invoked for. Message: '" + descriptor + "'.\nElement containing file: " +
                        context + "\nInspection invoked for file: " + myContext + "\n";
       PluginException.logPluginError(LOG, errorMessage, null, tool.getClass());
     }
