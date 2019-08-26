@@ -315,8 +315,6 @@ class ControlFlowGraphBuilder : ControlFlowGraphNodeBuilder() {
         binaryOrExitNodes.push(createBinaryOrExitNode(binaryLogicExpression))
         return createBinaryOrEnterNode(binaryLogicExpression).also {
             addNewSimpleNode(it)
-            // put or enter node twice so we can refer it after exit from left argument
-            lastNodes.push(it)
         }.also { levelCounter++ }
     }
 
