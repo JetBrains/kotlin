@@ -18,10 +18,8 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irNot
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsName
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -50,9 +48,14 @@ import org.jetbrains.kotlin.ir.util.*
 //            fun foo(t: Any?) = foo(t as Int)  // Constructed bridge
 //          }
 //
-class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass {
-
+abstract class BridgesConstruction<FunctionSignature>(val context: CommonBackendContext) : ClassLoweringPass {
     private val specialBridgeMethods = SpecialBridgeMethods(context)
+
+    abstract fun getFunctionSignature(function: IrSimpleFunction): FunctionSignature
+
+    open val castDispatchReceiver: Boolean = false
+
+    open fun shouldSkipFunction(function: IrSimpleFunction): Boolean = false
 
     override fun lower(irClass: IrClass) {
         irClass.declarations
@@ -64,6 +67,8 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
     }
 
     private fun generateBridges(function: IrSimpleFunction, irClass: IrClass) {
+        if (shouldSkipFunction(function))
+            return
         // equals(Any?), hashCode(), toString() never need bridges
         if (function.isMethodOfAny())
             return
@@ -125,7 +130,7 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             bridge.returnType,
             function.parent,
             bridge.visibility,
-            bridge.modality, // TODO: should copy modality?
+            function.modality,
             bridge.isInline,
             bridge.isExternal,
             bridge.isTailrec,
@@ -155,7 +160,13 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
             }
 
             val call = irCall(delegateTo.symbol)
-            call.dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+            val dispatchReceiver = irGet(irFunction.dispatchReceiverParameter!!)
+
+            call.dispatchReceiver = if (castDispatchReceiver)
+                irCastIfNeeded(dispatchReceiver, delegateTo.dispatchReceiverParameter!!.type)
+            else
+                dispatchReceiver
+
             irFunction.extensionReceiverParameter?.let {
                 call.extensionReceiver = irCastIfNeeded(irGet(it), delegateTo.extensionReceiverParameter!!.type)
             }
@@ -177,6 +188,25 @@ class BridgesConstruction(val context: CommonBackendContext) : ClassLoweringPass
     // TODO: get rid of Unit check
     private fun IrBlockBodyBuilder.irCastIfNeeded(argument: IrExpression, type: IrType): IrExpression =
         if (argument.type.classifierOrNull == type.classifierOrNull) argument else irAs(argument, type)
+
+    // Wrapper around function that compares and hashCodes it based on signature
+    // Designed to be used as a Signature type parameter in backend.common.bridges
+    inner class FunctionAndSignature(val function: IrSimpleFunction) {
+
+        // TODO: Use type-upper-bound-based signature instead of Strings
+        // Currently strings are used for compatibility with a hack-based name generator
+
+        private val signature = getFunctionSignature(function)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (other !is BridgesConstruction<*>.FunctionAndSignature) return false
+
+            return signature == other.signature
+        }
+
+        override fun hashCode(): Int = signature.hashCode()
+    }
 }
 
 // Handle for common.bridges
@@ -193,23 +223,5 @@ data class IrBasedFunctionHandle(val function: IrSimpleFunction) : FunctionHandl
         function.overriddenSymbols.map { IrBasedFunctionHandle(it.owner) }
 }
 
-// Wrapper around function that compares and hashCodes it based on signature
-// Designed to be used as a Signature type parameter in backend.common.bridges
-class FunctionAndSignature(val function: IrSimpleFunction) {
-
-    // TODO: Use type-upper-bound-based signature instead of Strings
-    // Currently strings are used for compatibility with a hack-based name generator
-
-    private val signature = functionSignature(function)
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is FunctionAndSignature) return false
-
-        return signature == other.signature
-    }
-
-    override fun hashCode(): Int = signature.hashCode()
-}
 
 

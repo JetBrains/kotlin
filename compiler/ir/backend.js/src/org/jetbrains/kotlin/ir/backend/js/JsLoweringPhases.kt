@@ -285,7 +285,7 @@ private val multipleCatchesLoweringPhase = makeJsModulePhase(
 )
 
 private val bridgesConstructionPhase = makeJsModulePhase(
-    ::BridgesConstruction,
+    ::JsBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges",
     prerequisite = setOf(suspendFunctionsLoweringPhase)

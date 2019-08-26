@@ -239,7 +239,7 @@ private val returnableBlockLoweringPhase = makeWasmModulePhase(
 )
 
 private val bridgesConstructionPhase = makeWasmModulePhase(
-    ::BridgesConstruction,
+    ::WasmBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges"
 )

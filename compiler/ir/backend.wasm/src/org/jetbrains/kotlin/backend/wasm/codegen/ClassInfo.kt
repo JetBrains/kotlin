@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.common.ir.isOverridableOrOverrides
 import org.jetbrains.kotlin.ir.backend.js.utils.Signature
-import org.jetbrains.kotlin.ir.backend.js.utils.functionSignature
+import org.jetbrains.kotlin.ir.backend.js.utils.jsFunctionSignature
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -35,7 +35,7 @@ class ClassMetadata(
             klass.declarations
                 .filterIsInstance<IrSimpleFunction>()
                 .filterVirtualFunctions()
-                .map { VirtualMethodMetadata(it, functionSignature(it)) }
+                .map { VirtualMethodMetadata(it, jsFunctionSignature(it)) }
 
         val signatureToVirtualFunction = virtualFunctions.associateBy { it.signature }
 
