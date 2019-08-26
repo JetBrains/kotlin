@@ -19,7 +19,8 @@ data class ModuleData(
     val qualifiedName: String,
     val classpath: List<File>,
     val sources: List<File>,
-    val javaSourceRoots: List<File>
+    val javaSourceRoots: List<File>,
+    val isCommon: Boolean
 )
 
 private fun NodeList.toList(): List<Node> {
@@ -58,6 +59,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val javaSourceRoots = mutableListOf<File>()
         val classpath = mutableListOf<File>()
         val sources = mutableListOf<File>()
+        var isCommon = false
 
         for (index in 0 until moduleElement.childNodes.length) {
             val item = moduleElement.childNodes.item(index)
@@ -74,9 +76,12 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             if (item.nodeName == "sources") {
                 sources += File(item.attributes.getNamedItem("path").nodeValue)
             }
+            if (item.nodeName == "commonSources") {
+                isCommon = true
+            }
         }
 
-        return ModuleData(moduleName, outputDir, qualifiedModuleName, classpath, sources, javaSourceRoots)
+        return ModuleData(moduleName, outputDir, qualifiedModuleName, classpath, sources, javaSourceRoots, isCommon)
     }
 
 
@@ -95,6 +100,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val modules =
             root.listFiles().sortedBy { it.lastModified() }.map { loadModule(it) }
                 .filter { it.outputDir.matches(filterRegex) }
+                .filter { !it.isCommon }
 
 
         for (module in modules.progress(step = 0.0) { "Analyzing ${it.qualifiedName}" }) {
