@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations.impl
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -38,6 +39,8 @@ class FirAnonymousFunctionImpl(
 
     override var controlFlowGraphReference: FirControlFlowGraphReference = FirEmptyControlFlowGraphReference()
 
+    override var invocationKind: InvocationKind? = null
+
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirElement {
         returnTypeRef = returnTypeRef.transformSingle(transformer, data)
         receiverTypeRef = receiverTypeRef?.transformSingle(transformer, data)
@@ -65,5 +68,9 @@ class FirAnonymousFunctionImpl(
     override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction {
         controlFlowGraphReference = controlFlowGraphReference.transformSingle(transformer, data)
         return this
+    }
+
+    override fun replaceInvocationKind(invocationKind: InvocationKind) {
+        this.invocationKind = invocationKind
     }
 }

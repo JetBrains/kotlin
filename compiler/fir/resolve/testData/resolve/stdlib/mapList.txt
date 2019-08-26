@@ -1,11 +1,11 @@
 FILE: mapList.kt
     public final fun main(): R|kotlin/Unit| {
         lval x: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/emptyList|<R|kotlin/Int|>()
-        lval u: R|kotlin/collections/List<kotlin/Int>| = R|<local>/x|.R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+        lval u: R|kotlin/collections/List<kotlin/Int>| = R|<local>/x|.R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|<local>/it|.R|kotlin/Int.plus|(R|<local>/it|)
         }
         )
-        R|<local>/u|.R|/applyX|<R|kotlin/collections/List<kotlin/Int>|>(<L> = applyX@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
+        R|<local>/u|.R|/applyX|<R|kotlin/collections/List<kotlin/Int>|>(<L> = applyX@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|FakeOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
             this@R|kotlin/collections/List|.R|FakeOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
         }

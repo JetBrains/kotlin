@@ -4,7 +4,7 @@ FILE: recursiveBug.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val result: R|kotlin/String| = this@R|/Foo|.R|kotlin/run|<R|Foo|, R|kotlin/String|>(<L> = run@fun R|Foo|.<anonymous>(it: R|Foo|): R|kotlin/String| {
+        public final val result: R|kotlin/String| = this@R|/Foo|.R|kotlin/run|<R|Foo|, R|kotlin/String|>(<L> = run@fun R|Foo|.<anonymous>(it: R|Foo|): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         }
         )
@@ -15,7 +15,7 @@ FILE: recursiveBug.kt
 
     }
     public final fun bar(name: R|kotlin/Function0<kotlin/String>|): R|kotlin/Unit| {
-        lval result: R|kotlin/String| = R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| {
+        lval result: R|kotlin/String| = R|kotlin/run|<R|kotlin/String|>(<L> = run@fun <anonymous>(): R|kotlin/String| <kind=EXACTLY_ONCE>  {
             R|<local>/name|.R|FakeOverride<kotlin/Function0.invoke: R|kotlin/String|>|()
         }
         )

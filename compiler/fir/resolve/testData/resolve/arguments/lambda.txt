@@ -6,38 +6,38 @@ FILE: lambda.kt
     public final fun baz(f: R|kotlin/Function0<kotlin/Unit>|, other: R|kotlin/Boolean| = Boolean(true)): R|kotlin/Unit| {
     }
     public final fun test(): R|kotlin/Unit| {
-        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| {
+        R|/foo|(<L> = foo@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        R|/foo|(foo@fun <anonymous>(): R|kotlin/Unit| {
+        R|/foo|(foo@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(1), <L> = foo@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(Int(1), <L> = foo@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
         <Inapplicable(PARAMETER_MAPPING_ERROR): [/foo]>#(f = foo@fun <implicit>.<anonymous>(): <implicit> {
             Unit
         }
-        , <L> = foo@fun <implicit>.<anonymous>(): <implicit> {
+        , <L> = foo@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        R|/bar|(Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| {
+        R|/bar|(Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        R|/bar|(x = Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| {
+        R|/bar|(x = Int(1), <L> = bar@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        R|/bar|(Int(1), bar@fun <anonymous>(): R|kotlin/Unit| {
+        R|/bar|(Int(1), bar@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
@@ -45,11 +45,11 @@ FILE: lambda.kt
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(<L> = bar@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(<L> = bar@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(bar@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/bar]>#(bar@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
@@ -57,19 +57,19 @@ FILE: lambda.kt
             Unit
         }
         )
-        R|/baz|(baz@fun <anonymous>(): R|kotlin/Unit| {
+        R|/baz|(baz@fun <anonymous>(): R|kotlin/Unit| <kind=EXACTLY_ONCE>  {
             Unit
         }
         , Boolean(false))
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(<L> = baz@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )
-        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(other = Boolean(false), <L> = baz@fun <implicit>.<anonymous>(): <implicit> {
+        <Inapplicable(PARAMETER_MAPPING_ERROR): [/baz]>#(other = Boolean(false), <L> = baz@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Unit
         }
         )

@@ -373,6 +373,9 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         anonymousFunction.valueParameters.renderParameters()
         print(": ")
         anonymousFunction.returnTypeRef.accept(this)
+        if (anonymousFunction.invocationKind != null) {
+            print(" <kind=${anonymousFunction.invocationKind}> ")
+        }
         anonymousFunction.body?.renderBody()
     }
 

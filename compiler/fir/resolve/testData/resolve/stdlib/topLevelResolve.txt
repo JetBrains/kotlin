@@ -19,24 +19,24 @@ FILE: topLevelResolve.kt
         ^id R|<local>/arg|
     }
     public final fun testMap(): R|kotlin/Unit| {
-        lval first: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+        lval first: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|<local>/it|.R|kotlin/Int.times|(Int(2))
         }
         )
-        lval second: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/intArrayOf|(Int(4), Int(5), Int(6)).R|kotlin/collections/map|<R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+        lval second: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/intArrayOf|(Int(4), Int(5), Int(6)).R|kotlin/collections/map|<R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|<local>/it|.R|kotlin/Int.times|(Int(2))
         }
         )
-        lval withId: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+        lval withId: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(1), Int(2), Int(3)).R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|/id|<R|kotlin/Int|>(R|<local>/it|)
         }
         )
-        lval stringToInt: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/String|>(String(alpha), String(omega)).R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| {
+        lval stringToInt: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/collections/listOf|<R|kotlin/String|>(String(alpha), String(omega)).R|kotlin/collections/map|<R|kotlin/String|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/String|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             R|<local>/it|.R|kotlin/String.length|
         }
         )
-        lval viaWith: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/with|<R|kotlin/collections/List<kotlin/Int>|, R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)), <L> = with@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/collections/List<kotlin/Int>| {
-            this@R|special/anonymous|.R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| {
+        lval viaWith: R|kotlin/collections/List<kotlin/Int>| = R|kotlin/with|<R|kotlin/collections/List<kotlin/Int>|, R|kotlin/collections/List<kotlin/Int>|>(R|kotlin/collections/listOf|<R|kotlin/Int|>(Int(42)), <L> = with@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/collections/List<kotlin/Int>| <kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|kotlin/collections/map|<R|kotlin/Int|, R|kotlin/Int|>(<L> = map@fun <anonymous>(it: R|kotlin/Int|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
                 R|<local>/it|.R|kotlin/Int.times|(R|<local>/it|)
             }
             )
@@ -44,11 +44,11 @@ FILE: topLevelResolve.kt
         )
     }
     public final fun testWith(): R|kotlin/Unit| {
-        lval length: R|kotlin/Int| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Int|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/Int| {
+        lval length: R|kotlin/Int| = R|kotlin/with|<R|kotlin/String|, R|kotlin/Int|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/Int| <kind=EXACTLY_ONCE>  {
             this@R|kotlin/String|.R|kotlin/String.length|
         }
         )
-        lval indices: R|kotlin/ranges/IntRange| = R|kotlin/with|<R|kotlin/String|, R|kotlin/ranges/IntRange|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/ranges/IntRange| {
+        lval indices: R|kotlin/ranges/IntRange| = R|kotlin/with|<R|kotlin/String|, R|kotlin/ranges/IntRange|>(String(), <L> = with@fun R|kotlin/String|.<anonymous>(it: R|kotlin/String|): R|kotlin/ranges/IntRange| <kind=EXACTLY_ONCE>  {
             this@R|special/anonymous|.R|kotlin/text/indices|
         }
         )

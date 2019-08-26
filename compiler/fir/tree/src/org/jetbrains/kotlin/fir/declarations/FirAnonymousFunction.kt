@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.FirLabeledElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.VisitedSupertype
@@ -26,6 +27,8 @@ abstract class FirAnonymousFunction(
 
     abstract override val controlFlowGraphReference: FirControlFlowGraphReference
 
+    abstract val invocationKind: InvocationKind?
+
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
         visitor.visitAnonymousFunction(this, data)
 
@@ -37,6 +40,8 @@ abstract class FirAnonymousFunction(
     }
 
     abstract fun replaceReceiverTypeRef(receiverTypeRef: FirTypeRef)
+
+    abstract fun replaceInvocationKind(invocationKind: InvocationKind)
 
     abstract override fun <D> transformControlFlowGraphReference(transformer: FirTransformer<D>, data: D): FirAnonymousFunction
 }

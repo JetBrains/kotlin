@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.contracts.description.InvocationKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -56,7 +57,8 @@ fun FirAnonymousFunction.copy(
     annotations: List<FirAnnotationCall> = this.annotations,
     typeRef: FirTypeRef = this.typeRef,
     label: FirLabel? = this.label,
-    controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference
+    controlFlowGraphReference: FirControlFlowGraphReference = this.controlFlowGraphReference,
+    invocationKind: InvocationKind? = this.invocationKind
 ): FirAnonymousFunction {
     return FirAnonymousFunctionImpl(session, psi, returnTypeRef, receiverTypeRef, symbol).apply {
         this.valueParameters.addAll(valueParameters)
@@ -65,6 +67,7 @@ fun FirAnonymousFunction.copy(
         this.typeRef = typeRef
         this.label = label
         this.controlFlowGraphReference = controlFlowGraphReference
+        this.invocationKind = invocationKind
     }
 }
 

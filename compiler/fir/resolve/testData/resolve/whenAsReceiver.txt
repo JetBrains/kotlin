@@ -19,7 +19,7 @@ FILE: whenAsReceiver.kt
                 Null(null)
             }
         }
-        ?.<Inapplicable(WRONG_RECEIVER): [/also]>#(<L> = also@fun <implicit>.<anonymous>(): <implicit> {
+        ?.<Inapplicable(WRONG_RECEIVER): [/also]>#(<L> = also@fun <implicit>.<anonymous>(): <implicit> <kind=EXACTLY_ONCE>  {
             Int(1)
         }
         )
