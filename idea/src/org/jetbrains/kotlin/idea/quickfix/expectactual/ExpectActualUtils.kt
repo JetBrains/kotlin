@@ -140,7 +140,7 @@ internal fun KtPsiFactory.generateClassOrObject(
         }
     }
 
-    val existingFqNamesWithSuperTypes = (checker.existingFqNames + superNames).toSet()
+    val existingFqNamesWithSuperTypes = (checker.existingTypeNames + superNames).toSet()
     declLoop@ for (originalDeclaration in originalClass.declarations) {
         val descriptor = originalDeclaration.toDescriptor() ?: continue
         if (generateExpectClass && !originalDeclaration.isEffectivelyActual(false)) continue
@@ -292,7 +292,7 @@ private fun KtCallableDeclaration.repairOverride(descriptor: CallableDescriptor,
     if (!hasModifier(KtTokens.OVERRIDE_KEYWORD)) return
 
     val superDescriptor = descriptor.overriddenDescriptors.firstOrNull()?.containingDeclaration
-    if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in checker.existingFqNames) {
+    if (superDescriptor?.fqNameOrNull()?.shortName()?.asString() !in checker.existingTypeNames) {
         removeModifier(KtTokens.OVERRIDE_KEYWORD)
     }
 }

@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 class TypeAccessibilityCheckerImpl(
     override val project: Project,
     override val targetModule: Module,
-    override var existingFqNames: Collection<String> = emptyList()
+    override var existingTypeNames: Collection<String> = emptyList()
 ) : TypeAccessibilityChecker {
     private val scope by lazy { GlobalSearchScope.moduleWithDependenciesAndLibrariesScope(targetModule, targetModule.isTestModule) }
     private var builtInsModule: ModuleDescriptor? = targetModule.toDescriptor()
@@ -54,9 +54,9 @@ class TypeAccessibilityCheckerImpl(
     override fun checkAccessibility(type: KotlinType): Boolean = incorrectTypesInSequence(type.collectAllTypes(), true).isEmpty()
 
     override fun <R> runInContext(fqNames: Collection<String>, block: TypeAccessibilityChecker.() -> R): R {
-        val oldValue = existingFqNames
-        existingFqNames = fqNames
-        return block().also { existingFqNames = oldValue }
+        val oldValue = existingTypeNames
+        existingTypeNames = fqNames
+        return block().also { existingTypeNames = oldValue }
     }
 
     private fun incorrectTypesInSequence(
@@ -70,13 +70,13 @@ class TypeAccessibilityCheckerImpl(
     }
 
     private fun incorrectTypesInDescriptor(descriptor: DeclarationDescriptor, lazy: Boolean) =
-        runInContext(descriptor.additionalClasses(existingFqNames)) {
+        runInContext(descriptor.additionalClasses(existingTypeNames)) {
             incorrectTypesInSequence(descriptor.collectAllTypes(), lazy)
         }
 
     private fun FqName?.canFindClassInModule(): Boolean {
         val name = this?.asString() ?: return false
-        return name in existingFqNames
+        return name in existingTypeNames
                 || KotlinFullClassNameIndex.getInstance()[name, project, scope].isNotEmpty()
                 || builtInsModule?.resolveClassByFqName(this, NoLookupLocation.FROM_BUILTINS) != null
     }

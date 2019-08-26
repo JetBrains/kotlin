@@ -168,7 +168,7 @@ private fun TypeAccessibilityChecker.findAndApplyExistingClasses(elements: Colle
     var classes = elements.filterIsInstance<KtClassOrObject>()
     while (true) {
         val existingNames = classes.mapNotNull { it.fqName?.asString() }.toHashSet()
-        existingFqNames = existingNames
+        existingTypeNames = existingNames
 
         val newExistingClasses = classes.filter { isCorrectAndHaveNonPrivate(it) }
         if (classes.size == newExistingClasses.size) return existingNames
@@ -305,7 +305,7 @@ class CreateExpectedCallableMemberFix(
         return@block null
     }
     val descriptor = element.toDescriptor() as? CallableMemberDescriptor
-    checker.existingFqNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
+    checker.existingTypeNames = targetExpectedClass?.getSuperNames()?.toSet().orEmpty()
     descriptor?.let {
         generateCallable(
             project,

@@ -16,7 +16,14 @@ import org.jetbrains.kotlin.types.KotlinType
 interface TypeAccessibilityChecker {
     val project: Project
     val targetModule: Module
-    var existingFqNames: Collection<String>
+
+    /***
+     * Contains additional [FqName] as [String], which aren't available in the module at the time of verification.
+     *
+     * For example, you want to move `open class A<T : A>` class to another module.
+     * In this case, you should add [FqName] of class `A` in [existingTypeNames].
+     */
+    var existingTypeNames: Collection<String>
 
     fun incorrectTypes(declaration: KtNamedDeclaration): Collection<FqName?>
     fun incorrectTypes(descriptor: DeclarationDescriptor): Collection<FqName?>
