@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 data class A(val x: Array<Int>, val y: IntArray)
 
@@ -9,3 +10,6 @@ fun box(): String {
     val (x, y) = foo(a, b)
     return if (a == x && b == y) "OK" else "Fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

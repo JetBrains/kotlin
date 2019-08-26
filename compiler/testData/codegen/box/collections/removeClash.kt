@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class Queue<T>(override val size: Int) : Collection<T> {
     override fun contains(element: T): Boolean = TODO()
@@ -14,3 +15,6 @@ class Queue<T>(override val size: Int) : Collection<T> {
 fun box(): String {
     return Queue<String>(1).remove("OK") as String
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ TODO 

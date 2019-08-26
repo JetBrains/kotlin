@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 
@@ -23,3 +24,6 @@ enum class A {
 // MODULE: main(lib)
 // FILE: main.kt
 fun box() = A.X.test
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

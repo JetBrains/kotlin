@@ -186,7 +186,7 @@ class JsSharedVariablesManager(val builtIns: IrBuiltIns, val implicitDeclaration
         val receiver = JsIrBuilder.buildGetValue(closureBoxClassDeclaration.thisReceiver!!.symbol)
         val value = JsIrBuilder.buildGetValue(parameterDeclaration.symbol)
 
-        val setField = JsIrBuilder.buildSetField(closureBoxFieldDeclaration.symbol, receiver, value, closureBoxFieldDeclaration.type)
+        val setField = JsIrBuilder.buildSetField(closureBoxFieldDeclaration.symbol, receiver, value, builtIns.unitType)
 
         declaration.body = IrBlockBodyImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(setField))
 

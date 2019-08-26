@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 inline fun <reified T> jaggedArray(x: (Int, Int, Int) -> T): Array<Array<Array<T>>> = Array(1) { i ->
     Array(1) {
@@ -16,3 +17,6 @@ fun box(): String {
     if (x3[0][0][0][0] != 1) return "fail 3"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

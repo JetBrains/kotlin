@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class mInt(val i : Int) {
     override fun toString() : String = "mint: $i"
@@ -22,3 +23,6 @@ fun box() : String {
         a[mInt(i)]
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

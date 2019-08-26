@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package demo2
 
 fun print(o : Any?) {}
@@ -23,3 +24,6 @@ fun box() : String {
     for (i in 1..12) test(i)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

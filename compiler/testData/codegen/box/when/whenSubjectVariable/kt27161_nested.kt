@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 enum class Test {
     A, B, OTHER
@@ -24,3 +25,6 @@ fun box(): String {
     }
     return x
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReleaseCoroutines
+// IGNORE_BACKEND: WASM
 // WITH_COROUTINES
 // WITH_REFLECT
 // DONT_TARGET_EXACT_BACKEND: JS_IR
@@ -17,3 +18,6 @@ fun box(): String {
     if (A::noArgs.isSuspend) return "FAIL"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ experimental 

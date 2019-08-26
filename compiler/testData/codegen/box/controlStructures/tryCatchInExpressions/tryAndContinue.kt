@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun idiv(a: Int, b: Int): Int =
         if (b == 0) throw Exception("Division by zero") else a / b
 
@@ -15,3 +16,5 @@ fun box(): String {
 
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

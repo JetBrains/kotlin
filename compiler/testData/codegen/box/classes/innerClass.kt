@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 class Outer(val foo: StringBuilder) {
@@ -19,3 +20,6 @@ fun box() : String {
   val l = i.len()
   return if (l != 5) "fail" else "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ StringBuilder 

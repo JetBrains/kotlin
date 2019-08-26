@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isInlined
 
 abstract class AbstractJsMangler : KotlinManglerImpl() {
     override val IrType.isInlined: Boolean
-        get() = this.isInlined()
+        get() = TODO("Implement")
 }
 
 object JsMangler : AbstractJsMangler()

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // CHECK_CASES_COUNT: function=test1 count=2
 // CHECK_IF_COUNT: function=test1 count=0
 // CHECK_BREAKS_COUNT: function=test1 count=1
@@ -25,3 +26,6 @@ fun box(): String {
     test2(1)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 // DONT_RUN_GENERATED_CODE: JS
@@ -10,3 +11,6 @@ fun box() : String {
     val s = "a".repeat(10000)
     return if (s.length == 10000) "OK" else "FAIL: ${s.length}"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ StringBuilder 

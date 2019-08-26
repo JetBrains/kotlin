@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 open class Foo(val value: String) {
 
@@ -13,3 +14,6 @@ open class Foo(val value: String) {
 fun box(): String {
     return Foo("K").obj.result()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: ARRAY

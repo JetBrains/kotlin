@@ -9,7 +9,7 @@ inline class Z(val s: String) {
 }
 
 fun box(): String {
-    if (Z("a").toString() == "Z(s=\"a\")")
+    if (Z("a").toString() == "Z(s=a)")
         return "OK"
     return "Fail"
 }

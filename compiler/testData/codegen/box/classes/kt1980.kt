@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 public inline fun Int.times(body : () -> Unit) {
@@ -27,3 +28,6 @@ fun box() : String {
     val x = calc()
     return if (x == 4) "OK" else x.toString()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ ArrayList 

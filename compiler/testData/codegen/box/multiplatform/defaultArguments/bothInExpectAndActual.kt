@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // FILE: common.kt
@@ -27,3 +28,6 @@ fun box(): String {
     return if (result[0] == 42 && result[1] == 43 && result[2] == 47) "OK"
            else "Fail: ${result[0]} ${result[1]} ${result[2]}"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

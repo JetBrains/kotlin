@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // FILE: twoInheritedProtectedCompanions.kt
 import c.C
@@ -34,3 +35,6 @@ import b.B
 class C : B() {
     fun test() = { A.AC.getO() + B.BC.getK() }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

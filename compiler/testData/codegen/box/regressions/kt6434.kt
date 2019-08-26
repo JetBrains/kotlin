@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
@@ -33,3 +34,6 @@ fun box(): String {
     val res = C(hashMapOf(E.VALUE to 11, E.VALUE2 to 12)).normalizedNums.values.sorted().joinToString()
     return  if ("0.0, 1.0" == res) "OK" else "fail $res"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ min 

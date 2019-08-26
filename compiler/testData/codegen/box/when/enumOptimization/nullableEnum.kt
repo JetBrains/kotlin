@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // CHECK_CASES_COUNT: function=test count=0
 // CHECK_IF_COUNT: function=test count=3
@@ -16,3 +17,6 @@ fun test(e: E?) = when (e) {
 fun box(): String {
     return test(null)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

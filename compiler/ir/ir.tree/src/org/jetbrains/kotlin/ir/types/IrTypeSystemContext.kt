@@ -380,7 +380,7 @@ fun extractTypeParameters(klass: IrDeclarationParent): List<IrTypeParameter> {
             when (current) {
                 is IrField -> current.parent
                 is IrClass -> when {
-                    current.isInner -> current.parent as IrClass
+                    current.isInner -> current.parent
                     current.visibility == Visibilities.LOCAL -> current.parent
                     else -> null
                 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
 
@@ -13,3 +14,6 @@ fun box(): String {
     if (state != 2) return "Fail: $state"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
@@ -27,3 +28,6 @@ fun box(): String {
     val p = Value("O", "K")
     return p.additionalValue + p.additionalText
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCE

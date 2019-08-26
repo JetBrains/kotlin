@@ -29,3 +29,6 @@ fun box() : String {
     if (test1(fun(x: Int) = x - 1, 1) != 0) return "fail 8"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

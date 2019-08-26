@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     try {
         if ((null as Int?)!! == 10) return "Fail #1"
@@ -7,3 +8,6 @@ fun box(): String {
         return "OK"
     }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

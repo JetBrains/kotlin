@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class M {
   operator fun Long.component1() = this + 1
@@ -16,3 +17,5 @@ fun box(): String {
   val s = M().doTest()
   return if (s == "1:2;2:3;3:4;") "OK" else "fail: $s"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

@@ -6,22 +6,86 @@
 package org.jetbrains.kotlin.backend.wasm.codegen
 
 import org.jetbrains.kotlin.backend.wasm.ast.*
+import org.jetbrains.kotlin.backend.wasm.utils.getWasmInlinedClass
+import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.descriptors.IrBuiltIns
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType
+import org.jetbrains.kotlin.ir.util.isInterface
+
+class WasmTypeTransformer(
+    val context: WasmBaseCodegenContext,
+    val builtIns: IrBuiltIns
+) {
+    fun IrType.toWasmResultType(): WasmValueType? =
+        when (this) {
+            builtIns.unitType,
+            builtIns.nothingType ->
+                null
+
+            else ->
+                toWasmValueType()
+        }
+
+    fun IrType.toBoxedInlineClassType(): WasmValueType =
+        WasmStructRef(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass))
+
+    fun IrType.toWasmValueType(): WasmValueType =
+        when (this) {
+            builtIns.booleanType,
+            builtIns.byteType,
+            builtIns.shortType,
+            builtIns.intType,
+            builtIns.charType ->
+                WasmI32
+
+            builtIns.longType ->
+                WasmI64
+
+            builtIns.floatType ->
+                WasmF32
+
+            builtIns.doubleType ->
+                WasmF64
+
+            builtIns.stringType ->
+                WasmAnyRef
+
+            builtIns.nothingNType ->
+                WasmStructRef(context.referenceStructType(builtIns.anyClass))
+
+            else -> {
+                val ic = this.getWasmInlinedClass()
+                if (ic != null) {
+                    getInlineClassUnderlyingType(ic).toWasmValueType()
+                } else {
+                    WasmStructRef(context.referenceStructType(erasedUpperBound?.symbol ?: builtIns.anyClass))
+                }
+            }
+        }
+}
 
 
-fun WasmCodegenContext.transformType(irType: IrType): WasmValueType =
-    when {
-        irType.isBoolean() -> WasmI32
-        irType.isByte() -> WasmI32
-        irType.isShort() -> WasmI32
-        irType.isInt() -> WasmI32
-        irType.isLong() -> WasmI64
-        irType.isChar() -> WasmI32
-        irType.isFloat() -> WasmF32
-        irType.isDouble() -> WasmF64
-        irType.isString() -> WasmAnyRef
-        irType.isAny() || irType.isNullableAny() -> WasmAnyRef
-        else ->
-            TODO("Unsupported type: ${irType.render()}")
+// Return null if upper bound is Any
+val IrTypeParameter.erasedUpperBound: IrClass?
+    get() {
+        // Pick the (necessarily unique) non-interface upper bound if it exists
+        for (type in superTypes) {
+            return type.classOrNull?.owner ?: continue
+        }
+
+        return null
+    }
+
+
+val IrType.erasedUpperBound: IrClass?
+    get() = when (val classifier = classifierOrNull) {
+        is IrClassSymbol -> classifier.owner
+        is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
+        else -> throw IllegalStateException()
+    }.let {
+        if (it?.isInterface == true) null
+        else it
     }

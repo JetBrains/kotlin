@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Long.component1() = this + 1
 operator fun Long.component2() = this + 2
 
@@ -13,3 +14,5 @@ fun box(): String {
   val s = doTest()
   return if (s == "1:2;2:3;3:4;") "OK" else "fail: $s"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

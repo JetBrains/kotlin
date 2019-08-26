@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var GUEST_USER_ID = 3
 val USER_ID =
     try {
@@ -27,3 +28,6 @@ fun box() : String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ UnsupportedOperationException 

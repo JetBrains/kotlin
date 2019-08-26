@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun t1 () {
     val a1 = arrayOfNulls<String>(1)

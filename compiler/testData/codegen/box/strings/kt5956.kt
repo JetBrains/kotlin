@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KT-5956 java.lang.AbstractMethodError: test.Thing.subSequence(II)Ljava/lang/CharSequence
 
 class Thing(val delegate: CharSequence) : CharSequence {
@@ -13,3 +14,6 @@ fun box(): String {
     val s = txt.subSequence(0, 1)
     return if ("$s" == "h") "OK" else "Fail: $s"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ UnsupportedOperationException 

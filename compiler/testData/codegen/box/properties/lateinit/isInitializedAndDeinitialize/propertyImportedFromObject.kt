@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // IGNORE_BACKEND: JS
@@ -15,3 +16,6 @@ object Derived : Base(::p.isInitialized) {
 fun box(): String {
     return if (Derived.b) "Fail" else "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ isInitialized 

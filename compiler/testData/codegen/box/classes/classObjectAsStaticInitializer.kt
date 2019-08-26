@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JS_IR
 var global = 0;
@@ -19,3 +20,6 @@ fun box(): String {
   if (global == 1) return "OK" else return "fail2: global = $global"
 }
 
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var xs: IntArray = intArrayOf(1, 2, 3)
     get() = field
     set(ys) {
@@ -14,3 +15,5 @@ fun box(): String {
     xs = intArrayOf()
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

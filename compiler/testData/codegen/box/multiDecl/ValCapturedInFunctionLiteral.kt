@@ -11,3 +11,6 @@ fun box() : String {
     }
     return if (run() == 1 && b == 2) "OK" else "fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

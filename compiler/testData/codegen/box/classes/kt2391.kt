@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KJS_WITH_FULL_RUNTIME
 public interface LoggerAware {
     public val logger: StringBuilder
@@ -18,3 +19,6 @@ fun box(): String {
     server.start()
     return server.logger.toString()!!
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ StringBuilder 

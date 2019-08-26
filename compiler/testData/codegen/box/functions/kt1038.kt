@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-1038 Cannot compile lazy iterators
 
@@ -63,3 +64,6 @@ fun box() : String {
         res += x
     return if (res == 10100) "OK" else "fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ IndexOutOfBoundsException 

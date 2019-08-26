@@ -1,4 +1,5 @@
 // !LANGUAGE: +MultiPlatformProjects
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 // FILE: common.kt
@@ -16,3 +17,6 @@ actual class C(actual val value: String) {
 }
 
 fun box() = C("Fail").test("OK")
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Default parameter copied from expect points to removed expect property accessor call

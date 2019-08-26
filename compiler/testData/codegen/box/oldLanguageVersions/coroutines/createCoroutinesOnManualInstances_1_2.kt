@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReleaseCoroutines
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 // WITH_COROUTINES
 // DONT_TARGET_EXACT_BACKEND: JS_IR
@@ -95,3 +96,6 @@ fun box(): String {
 
     return "fail 3"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ experimental 

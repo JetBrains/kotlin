@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JVM, JVM_IR
 // IGNORE_LIGHT_ANALYSIS
@@ -24,3 +25,6 @@ private val bar = run {
 // K/N & K/JS used to go like this when JVM fails
 
 fun box(): String = foo
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ run 

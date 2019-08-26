@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // MODULE: lib
@@ -36,3 +37,5 @@ fun box(): String {
     val g = G("FAIL_G")
     return qux(c::live, "O") + qux(g::live, "K")
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCE

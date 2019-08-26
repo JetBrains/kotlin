@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 operator fun ArrayList<String>.get(index1: Int, index2: Int) = this[index1 + index2]

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A {
     public lateinit var str: String
 }
@@ -11,3 +12,5 @@ fun box(): String {
     }
     return "FAIL"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ RuntimeException 

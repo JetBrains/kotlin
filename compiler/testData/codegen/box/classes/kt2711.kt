@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class IntRange {
     operator fun contains(a: Int) = (1..2).contains(a)
 }
@@ -13,3 +14,6 @@ fun box(): String {
     }
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

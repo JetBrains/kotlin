@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // CHECK_CASES_COUNT: function=box count=18
 // CHECK_IF_COUNT: function=box count=3
@@ -58,3 +59,5 @@ fun box(): String {
     if (res1 != res2) return "different results: $res1 != $res2"
     return res1
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

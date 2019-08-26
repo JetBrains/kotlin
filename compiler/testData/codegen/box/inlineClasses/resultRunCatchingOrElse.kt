@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 inline class Result<out T>(val value: Any?) {
     fun exceptionOrNull(): Throwable? =
@@ -41,3 +42,6 @@ class A {
 }
 
 fun box(): String = A().f()
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IR_TRY

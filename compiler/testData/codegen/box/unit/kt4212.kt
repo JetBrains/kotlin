@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(): Any? = bar()
 
 fun bar() {}
@@ -18,3 +19,6 @@ fun box(): String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT

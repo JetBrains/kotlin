@@ -18,3 +18,7 @@ fun wasm_f32_compareTo(x: Float, y: Float): Int =
 
 fun wasm_f64_compareTo(x: Double, y: Double): Int =
     wasm_f64_ge(x, y) - wasm_f64_le(x, y)
+
+@WasmImport("runtime", "String_equals")
+fun wasm_string_eq(x: String, y: String): Boolean =
+    implementedAsIntrinsic

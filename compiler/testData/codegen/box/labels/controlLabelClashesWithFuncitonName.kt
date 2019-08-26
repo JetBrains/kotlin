@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test1(): Boolean {
     test1@ for(i in 1..2) {
         continue@test1
@@ -20,3 +21,5 @@ fun box(): String {
     if (!test2()) return "fail test2"
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

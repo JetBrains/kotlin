@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-10934 compiler throws UninferredParameterTypeConstructor in when block that covers all types
 
@@ -37,3 +38,5 @@ sealed class Result<TInput, TValue> {
 }
 
 fun box() = "OK"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

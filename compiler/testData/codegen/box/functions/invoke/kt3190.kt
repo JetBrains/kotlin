@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 //KT-3190 Compiler crash if function called 'invoke' calls a closure
@@ -26,3 +27,6 @@ fun <K,V> MutableMap<K,V>.getOrPut(key: K, defaultValue: ()-> V) : V {
         return answer
     }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ HashMap 

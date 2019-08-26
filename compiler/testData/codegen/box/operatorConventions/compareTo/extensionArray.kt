@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun checkLess(x: Array<Int>, y: Array<Int>) = when {
     x >= y    -> "Fail $x >= $y"
@@ -15,3 +16,6 @@ fun box(): String {
     val b = arrayOfNulls<Int>(1) as Array<Int>
     return checkLess(a, b)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

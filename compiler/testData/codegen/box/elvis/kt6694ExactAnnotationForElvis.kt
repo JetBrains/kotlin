@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface PsiElement {
     fun <T: PsiElement> findChildByType(i: Int): T? =
             if (i == 42) JetOperationReferenceExpression() as T else throw Exception()
@@ -17,3 +18,6 @@ fun box(): String {
     val element = JetLabelReferenceExpression().getReferencedNameElement()
     return if (element is JetOperationReferenceExpression) "OK" else "fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 operator fun Long.component1() = this + 1
@@ -19,3 +20,5 @@ fun box(): String {
   val s = doTest(l)
   return if (s == "1:2;2:3;3:4;") "OK" else "fail: $s"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ ArrayList 

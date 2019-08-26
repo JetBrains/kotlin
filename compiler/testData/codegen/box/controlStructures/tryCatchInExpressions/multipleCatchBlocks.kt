@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Exception1(msg: String): Exception(msg)
 class Exception2(msg: String): Exception(msg)
 class Exception3(msg: String): Exception(msg)
@@ -18,3 +19,6 @@ fun box(): String =
         catch (e: Exception) {
             "e"
         }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 class Template() {
@@ -17,3 +18,6 @@ fun box() : String {
     u.test()
     return if(u.collected.size == 1 && u.collected.get(0) == "239") "OK" else "fail"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ ArrayList 

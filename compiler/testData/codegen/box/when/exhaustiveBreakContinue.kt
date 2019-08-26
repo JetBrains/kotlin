@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 enum class Color { RED, GREEN, BLUE }
 
@@ -13,3 +14,5 @@ fun foo(arr: Array<Color>): Color {
 }
 
 fun box() = if (foo(arrayOf(Color.BLUE, Color.GREEN)) == Color.GREEN) "OK" else "FAIL"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

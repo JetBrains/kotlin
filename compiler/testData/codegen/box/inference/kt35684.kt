@@ -1,5 +1,6 @@
 // !LANGUAGE: +NewInference
 // !USE_EXPERIMENTAL: kotlin.Experimental
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
@@ -24,3 +25,5 @@ interface Inv<T> {
 fun <K> materialize(): Inv<K> = TODO()
 
 fun box(): String = "OK"
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ UseExperimental 

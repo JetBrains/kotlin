@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
@@ -33,3 +34,6 @@ fun print(message : String) { System.out?.print(message) }
 fun println(message : String) { System.out?.println(message) }
 operator fun StringBuilder.plusAssign(o : Any) { append(o) }
 val <T> Array<T>.isEmpty : Boolean get() = size == 0
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ StringBuilder 

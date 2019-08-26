@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 open class C(val f: () -> Unit) {
     fun test() {
@@ -17,3 +18,5 @@ fun box() : String {
     b.foo()
     return if (b.x != 3) "fail: b.x = ${b.x}" else "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

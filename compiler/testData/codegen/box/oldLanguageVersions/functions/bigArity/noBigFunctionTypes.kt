@@ -1,4 +1,5 @@
 // !LANGUAGE: -FunctionTypesWithBigArity
+// IGNORE_BACKEND: WASM
 
 // This test does not make sense for JVM because a diagnostic is reported when function types with big arity are not available
 // (see diagnostics/tests/sourceCompatibility/noBigFunctionTypes.kt)
@@ -20,3 +21,6 @@ fun bar(x: Function30<A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A, A
 fun box(): String {
     return bar(::foo)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

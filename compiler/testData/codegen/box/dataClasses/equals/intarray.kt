@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 data class A(val v: IntArray)
 
@@ -7,3 +8,5 @@ fun box() : String {
   if(A(myArray) != A(myArray)) return "fail 2"
   return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

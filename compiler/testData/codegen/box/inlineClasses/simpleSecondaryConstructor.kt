@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR, NATIVE, JVM
 // !LANGUAGE: +InlineClasses
@@ -17,3 +18,6 @@ inline class Foo(val x: String) {
 fun box(): String {
     return Foo(42.0).x
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ java 

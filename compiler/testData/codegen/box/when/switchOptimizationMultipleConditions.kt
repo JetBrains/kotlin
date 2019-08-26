@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // KJS_WITH_FULL_RUNTIME
@@ -19,3 +20,6 @@ fun box(): String {
     if (result != "4, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4") return result
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

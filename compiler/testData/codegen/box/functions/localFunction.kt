@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun IntRange.forEach(body : (Int) -> Unit) {
     for(i in this) {
@@ -45,3 +46,6 @@ fun box() : String {
 
     return if(seed == 30) "OK" else seed.toString()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ IntRange 

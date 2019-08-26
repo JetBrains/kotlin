@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 var result = "fail"
 
@@ -11,3 +12,6 @@ fun box(): String {
     val x = sideEffect() is Nothing?
     return result
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT
