@@ -11,8 +11,8 @@ import kotlin.wasm.internal.*
 /**
  * Represents a 8-bit signed integer.
  */
-public class Byte private constructor() : Number(), Comparable<Byte> {
-    @ExcludedFromCodegen
+@SkipRTTI
+public class Byte @ExcludedFromCodegen private constructor() : Number(), Comparable<Byte> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Byte can have.
@@ -233,7 +233,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * The least significant 8 bits of the resulting `Char` code are the same as the bits of this `Byte` value,
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public override fun toChar(): Char = implementedAsIntrinsic
 
     /**
@@ -244,7 +244,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * The least significant 8 bits of the resulting `Short` value are the same as the bits of this `Byte` value,
      * whereas the most significant 8 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public override fun toShort(): Short = implementedAsIntrinsic
 
     /**
@@ -255,7 +255,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * The least significant 8 bits of the resulting `Int` value are the same as the bits of this `Byte` value,
      * whereas the most significant 24 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public override fun toInt(): Int = implementedAsIntrinsic
 
     /**
@@ -266,7 +266,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      * The least significant 8 bits of the resulting `Long` value are the same as the bits of this `Byte` value,
      * whereas the most significant 56 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.I64_EXTEND_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.I64_EXTEND_I32_S)
     public override fun toLong(): Long = implementedAsIntrinsic
 
     /**
@@ -274,7 +274,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * The resulting `Float` value represents the same numerical value as this `Byte`.
      */
-    @WasmInstruction(WasmInstruction.F32_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F32_CONVERT_I32_S)
     public override fun toFloat(): Float = implementedAsIntrinsic
 
     /**
@@ -282,7 +282,7 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
      *
      * The resulting `Double` value represents the same numerical value as this `Byte`.
      */
-    @WasmInstruction(WasmInstruction.F64_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F64_CONVERT_I32_S)
     public override fun toDouble(): Double = implementedAsIntrinsic
 
 //    /** Creates a range from this value to the specified [other] value. */
@@ -310,7 +310,10 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
         wasm_i32_eq(this.toInt(), other.toInt()).reinterpretAsBoolean()
 
     // TODO: Implement Byte.toString()
-    // public override fun toString(): String
+
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -319,8 +322,8 @@ public class Byte private constructor() : Number(), Comparable<Byte> {
 /**
  * Represents a 16-bit signed integer.
  */
-public class Short private constructor() : Number(), Comparable<Short> {
-    @ExcludedFromCodegen
+@SkipRTTI
+public class Short @ExcludedFromCodegen private constructor() : Number(), Comparable<Short> {
     companion object {
         /**
          * A constant holding the minimum value an instance of Short can have.
@@ -563,7 +566,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      * The resulting `Char` code is equal to this value reinterpreted as an unsigned number,
      * i.e. it has the same binary representation as this `Short`.
      */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public override fun toChar(): Char =
         implementedAsIntrinsic
 
@@ -579,7 +582,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      * The least significant 16 bits of the resulting `Int` value are the same as the bits of this `Short` value,
      * whereas the most significant 16 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     public override fun toInt(): Int =
         implementedAsIntrinsic
 
@@ -591,7 +594,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      * The least significant 16 bits of the resulting `Long` value are the same as the bits of this `Short` value,
      * whereas the most significant 48 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.I64_EXTEND_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.I64_EXTEND_I32_S)
     public override fun toLong(): Long =
         implementedAsIntrinsic
 
@@ -600,7 +603,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      *
      * The resulting `Float` value represents the same numerical value as this `Short`.
      */
-    @WasmInstruction(WasmInstruction.F32_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F32_CONVERT_I32_S)
     public override fun toFloat(): Float =
         implementedAsIntrinsic
 
@@ -609,7 +612,7 @@ public class Short private constructor() : Number(), Comparable<Short> {
      *
      * The resulting `Double` value represents the same numerical value as this `Short`.
      */
-    @WasmInstruction(WasmInstruction.F64_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F64_CONVERT_I32_S)
     public override fun toDouble(): Double =
         implementedAsIntrinsic
 
@@ -621,7 +624,8 @@ public class Short private constructor() : Number(), Comparable<Short> {
 //        other is Short && wasm_i32_eq(this.toInt(), other.toInt()).reinterpretAsBoolean()
 
     // TODO: Implement Short.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String = implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this.toInt()
@@ -630,9 +634,9 @@ public class Short private constructor() : Number(), Comparable<Short> {
 /**
  * Represents a 32-bit signed integer.
  */
-public class Int private constructor() : Number(), Comparable<Int> {
+@SkipRTTI
+public class Int @ExcludedFromCodegen private constructor() : Number(), Comparable<Int> {
 
-    @ExcludedFromCodegen
     companion object {
         /**
          * A constant holding the minimum value an instance of Int can have.
@@ -714,7 +718,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
         this + other.toInt()
 
     /** Adds the other value to this value. */
-    @WasmInstruction(WasmInstruction.I32_ADD)
+    @WasmBinaryOp(WasmBinaryOp.I32_ADD)
     public operator fun plus(other: Int): Int =
         implementedAsIntrinsic
 
@@ -739,7 +743,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
         this - other.toInt()
 
     /** Subtracts the other value from this value. */
-    @WasmInstruction(WasmInstruction.I32_SUB)
+    @WasmBinaryOp(WasmBinaryOp.I32_SUB)
     public operator fun minus(other: Int): Int =
         implementedAsIntrinsic
 
@@ -764,7 +768,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
         this * other.toInt()
 
     /** Multiplies this value by the other value. */
-    @WasmInstruction(WasmInstruction.I32_MUL)
+    @WasmBinaryOp(WasmBinaryOp.I32_MUL)
     public operator fun times(other: Int): Int =
         implementedAsIntrinsic
 
@@ -789,7 +793,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
         this / other.toInt()
 
     /** Divides this value by the other value. */
-    @WasmInstruction(WasmInstruction.I32_DIV_S)
+    @WasmBinaryOp(WasmBinaryOp.I32_DIV_S)
     public operator fun div(other: Int): Int =
         implementedAsIntrinsic
 
@@ -814,7 +818,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
         this % other.toInt()
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @WasmInstruction(WasmInstruction.I32_REM_S)
+    @WasmBinaryOp(WasmBinaryOp.I32_REM_S)
     public operator fun rem(other: Int): Int =
         implementedAsIntrinsic
 
@@ -845,32 +849,32 @@ public class Int private constructor() : Number(), Comparable<Int> {
     public inline operator fun unaryMinus(): Int = 0 - this
 
     /** Shifts this value left by the [bitCount] number of bits. */
-    @WasmInstruction(WasmInstruction.I32_SHL)
+    @WasmBinaryOp(WasmBinaryOp.I32_SHL)
     public infix fun shl(bitCount: Int): Int =
         implementedAsIntrinsic
 
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit. */
-    @WasmInstruction(WasmInstruction.I32_SHR_S)
+    @WasmBinaryOp(WasmBinaryOp.I32_SHR_S)
     public infix fun shr(bitCount: Int): Int =
         implementedAsIntrinsic
 
     /** Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros. */
-    @WasmInstruction(WasmInstruction.I32_SHR_U)
+    @WasmBinaryOp(WasmBinaryOp.I32_SHR_U)
     public infix fun ushr(bitCount: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise AND operation between the two values. */
-    @WasmInstruction(WasmInstruction.I32_AND)
+    @WasmBinaryOp(WasmBinaryOp.I32_AND)
     public infix fun and(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
-    @WasmInstruction(WasmInstruction.I32_OR)
+    @WasmBinaryOp(WasmBinaryOp.I32_OR)
     public infix fun or(other: Int): Int =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
-    @WasmInstruction(WasmInstruction.I32_XOR)
+    @WasmBinaryOp(WasmBinaryOp.I32_XOR)
     public infix fun xor(other: Int): Int =
         implementedAsIntrinsic
 
@@ -940,7 +944,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      * The least significant 32 bits of the resulting `Long` value are the same as the bits of this `Int` value,
      * whereas the most significant 32 bits are filled with the sign bit of this value.
      */
-    @WasmInstruction(WasmInstruction.I64_EXTEND_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.I64_EXTEND_I32_S)
     public override fun toLong(): Long =
         implementedAsIntrinsic
 
@@ -951,7 +955,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      * In case when this `Int` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @WasmInstruction(WasmInstruction.F32_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F32_CONVERT_I32_S)
     public override fun toFloat(): Float =
         implementedAsIntrinsic
 
@@ -960,7 +964,7 @@ public class Int private constructor() : Number(), Comparable<Int> {
      *
      * The resulting `Double` value represents the same numerical value as this `Int`.
      */
-    @WasmInstruction(WasmInstruction.F64_CONVERT_I32_S)
+    @WasmUnaryOp(WasmUnaryOp.F64_CONVERT_I32_S)
     public override fun toDouble(): Double =
         implementedAsIntrinsic
 
@@ -971,29 +975,30 @@ public class Int private constructor() : Number(), Comparable<Int> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Int && wasm_i32_eq(this, other).reinterpretAsBoolean()
 
-    // TODO: Implement Int.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         this
 
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     @PublishedApi
     internal fun reinterpretAsBoolean(): Boolean =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     internal fun reinterpretAsByte(): Byte =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     internal fun reinterpretAsShort(): Short =
         implementedAsIntrinsic
 
     @PublishedApi
-    @WasmInstruction(WasmInstruction.NOP)
+    @WasmReinterpret
     internal fun reinterpretAsChar(): Char =
         implementedAsIntrinsic
 }
@@ -1001,9 +1006,9 @@ public class Int private constructor() : Number(), Comparable<Int> {
 /**
  * Represents a 64-bit signed integer.
  */
-public class Long private constructor() : Number(), Comparable<Long> {
+@SkipRTTI
+public class Long @ExcludedFromCodegen private constructor() : Number(), Comparable<Long> {
 
-    @ExcludedFromCodegen
     companion object {
         /**
          * A constant holding the minimum value an instance of Long can have.
@@ -1089,7 +1094,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
         this + other.toLong()
 
     /** Adds the other value to this value. */
-    @WasmInstruction(WasmInstruction.I64_ADD)
+    @WasmBinaryOp(WasmBinaryOp.I64_ADD)
     public operator fun plus(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1114,7 +1119,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
         this - other.toLong()
 
     /** Subtracts the other value from this value. */
-    @WasmInstruction(WasmInstruction.I64_SUB)
+    @WasmBinaryOp(WasmBinaryOp.I64_SUB)
     public operator fun minus(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1139,7 +1144,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
         this * other.toLong()
 
     /** Multiplies this value by the other value. */
-    @WasmInstruction(WasmInstruction.I64_MUL)
+    @WasmBinaryOp(WasmBinaryOp.I64_MUL)
     public operator fun times(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1164,7 +1169,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
         this / other.toLong()
 
     /** Divides this value by the other value. */
-    @WasmInstruction(WasmInstruction.I64_DIV_S)
+    @WasmBinaryOp(WasmBinaryOp.I64_DIV_S)
     public operator fun div(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1189,7 +1194,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
         this % other.toLong()
 
     /** Calculates the remainder of dividing this value by the other value. */
-    @WasmInstruction(WasmInstruction.I64_REM_S)
+    @WasmBinaryOp(WasmBinaryOp.I64_REM_S)
     public operator fun rem(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1246,17 +1251,17 @@ public class Long private constructor() : Number(), Comparable<Long> {
         wasm_i64_shr_u(this, bitCount.toLong())
 
     /** Performs a bitwise AND operation between the two values. */
-    @WasmInstruction(WasmInstruction.I64_AND)
+    @WasmBinaryOp(WasmBinaryOp.I64_AND)
     public infix fun and(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise OR operation between the two values. */
-    @WasmInstruction(WasmInstruction.I64_OR)
+    @WasmBinaryOp(WasmBinaryOp.I64_OR)
     public infix fun or(other: Long): Long =
         implementedAsIntrinsic
 
     /** Performs a bitwise XOR operation between the two values. */
-    @WasmInstruction(WasmInstruction.I64_XOR)
+    @WasmBinaryOp(WasmBinaryOp.I64_XOR)
     public infix fun xor(other: Long): Long =
         implementedAsIntrinsic
 
@@ -1305,7 +1310,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
      *
      * The resulting `Int` value is represented by the least significant 32 bits of this `Long` value.
      */
-    @WasmInstruction(WasmInstruction.I32_WRAP_I64)
+    @WasmUnaryOp(WasmUnaryOp.I32_WRAP_I64)
     public override fun toInt(): Int =
         implementedAsIntrinsic
 
@@ -1320,7 +1325,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
      * In case when this `Long` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @WasmInstruction(WasmInstruction.F32_CONVERT_I64_S)
+    @WasmUnaryOp(WasmUnaryOp.F32_CONVERT_I64_S)
     public override fun toFloat(): Float =
         implementedAsIntrinsic
 
@@ -1331,7 +1336,7 @@ public class Long private constructor() : Number(), Comparable<Long> {
      * In case when this `Long` value is exactly between two `Double`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @WasmInstruction(WasmInstruction.F64_CONVERT_I64_S)
+    @WasmUnaryOp(WasmUnaryOp.F64_CONVERT_I64_S)
     public override fun toDouble(): Double =
         implementedAsIntrinsic
 
@@ -1342,8 +1347,9 @@ public class Long private constructor() : Number(), Comparable<Long> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Long && wasm_i64_eq(this, other).reinterpretAsBoolean()
 
-    // TODO: Implement Long.toString()
-    // public override fun toString(): String
+    // TODO: Implement proper Long.toString
+    public override fun toString(): String = 
+        toDouble().toString()
 
     public override fun hashCode(): Int =
         ((this ushr 32) xor this).toInt()
@@ -1352,9 +1358,9 @@ public class Long private constructor() : Number(), Comparable<Long> {
 /**
  * Represents a single-precision 32-bit IEEE 754 floating point number.
  */
-public class Float private constructor() : Number(), Comparable<Float> {
+@SkipRTTI
+public class Float @ExcludedFromCodegen private constructor() : Number(), Comparable<Float> {
 
-    @ExcludedFromCodegen
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Float.
@@ -1381,7 +1387,8 @@ public class Float private constructor() : Number(), Comparable<Float> {
         /**
          * A constant holding the "not a number" value of Float.
          */
-        public val NaN: Float = wasm_f32_const_nan()
+        // TODO: Implement
+        public val NaN: Float = wasm_unreachable()
     }
 
     /**
@@ -1453,7 +1460,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
         this + other.toFloat()
 
     /** Adds the other value to this value. */
-    @WasmInstruction(WasmInstruction.F32_ADD)
+    @WasmBinaryOp(WasmBinaryOp.F32_ADD)
     public operator fun plus(other: Float): Float =
         implementedAsIntrinsic
 
@@ -1478,7 +1485,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
         this - other.toFloat()
 
     /** Subtracts the other value from this value. */
-    @WasmInstruction(WasmInstruction.F32_SUB)
+    @WasmBinaryOp(WasmBinaryOp.F32_SUB)
     public operator fun minus(other: Float): Float =
         implementedAsIntrinsic
 
@@ -1503,7 +1510,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
         this * other.toFloat()
 
     /** Multiplies this value by the other value. */
-    @WasmInstruction(WasmInstruction.F32_MUL)
+    @WasmBinaryOp(WasmBinaryOp.F32_MUL)
     public operator fun times(other: Float): Float =
         implementedAsIntrinsic
 
@@ -1528,7 +1535,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
         this / other.toFloat()
 
     /** Divides this value by the other value. */
-    @WasmInstruction(WasmInstruction.F32_DIV)
+    @WasmBinaryOp(WasmBinaryOp.F32_DIV)
     public operator fun div(other: Float): Float =
         implementedAsIntrinsic
 
@@ -1572,7 +1579,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
     public inline operator fun unaryPlus(): Float = this
 
     /** Returns the negative of this value. */
-    @WasmInstruction(WasmInstruction.F32_NEG)
+    @WasmUnaryOp(WasmUnaryOp.F32_NEG)
     public operator fun unaryMinus(): Float =
         implementedAsIntrinsic
 
@@ -1632,7 +1639,7 @@ public class Float private constructor() : Number(), Comparable<Float> {
      *
      * The resulting `Double` value represents the same numerical value as this `Float`.
      */
-    @WasmInstruction(WasmInstruction.F64_PROMOTE_F32)
+    @WasmUnaryOp(WasmUnaryOp.F64_PROMOTE_F32)
     public override fun toDouble(): Double =
         implementedAsIntrinsic
 
@@ -1643,23 +1650,24 @@ public class Float private constructor() : Number(), Comparable<Float> {
 //    public override fun equals(other: Any?): Boolean =
 //        other is Float && this.equals(other)
 
-    // TODO: Implement Float.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int =
         bits()
 
     @PublishedApi
-    @WasmInstruction(WasmInstruction.I32_REINTERPRET_F32)
+    @WasmUnaryOp(WasmUnaryOp.I32_REINTERPRET_F32)
     internal fun bits(): Int = implementedAsIntrinsic
 }
 
 /**
  * Represents a double-precision 64-bit IEEE 754 floating point number.
  */
-public class Double private constructor() : Number(), Comparable<Double> {
+@SkipRTTI
+public class Double @ExcludedFromCodegen private constructor() : Number(), Comparable<Double> {
 
-    @ExcludedFromCodegen
     companion object {
         /**
          * A constant holding the smallest *positive* nonzero value of Double.
@@ -1686,7 +1694,8 @@ public class Double private constructor() : Number(), Comparable<Double> {
         /**
          * A constant holding the "not a number" value of Double.
          */
-        public val NaN: Double = wasm_f64_const_nan()
+        // TODO: Implement
+        public val NaN: Double = wasm_unreachable()
     }
 
     /**
@@ -1762,7 +1771,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
         this + other.toDouble()
 
     /** Adds the other value to this value. */
-    @WasmInstruction(WasmInstruction.F64_ADD)
+    @WasmBinaryOp(WasmBinaryOp.F64_ADD)
     public operator fun plus(other: Double): Double =
         implementedAsIntrinsic
 
@@ -1787,7 +1796,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
         this - other.toDouble()
 
     /** Subtracts the other value from this value. */
-    @WasmInstruction(WasmInstruction.F64_SUB)
+    @WasmBinaryOp(WasmBinaryOp.F64_SUB)
     public operator fun minus(other: Double): Double =
         implementedAsIntrinsic
 
@@ -1812,7 +1821,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
         this * other.toDouble()
 
     /** Multiplies this value by the other value. */
-    @WasmInstruction(WasmInstruction.F64_MUL)
+    @WasmBinaryOp(WasmBinaryOp.F64_MUL)
     public operator fun times(other: Double): Double =
         implementedAsIntrinsic
 
@@ -1837,7 +1846,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
         this / other.toDouble()
 
     /** Divides this value by the other value. */
-    @WasmInstruction(WasmInstruction.F64_DIV)
+    @WasmBinaryOp(WasmBinaryOp.F64_DIV)
     public operator fun div(other: Double): Double =
         implementedAsIntrinsic
 
@@ -1878,7 +1887,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
         this
 
     /** Returns the negative of this value. */
-    @WasmInstruction(WasmInstruction.F64_NEG)
+    @WasmUnaryOp(WasmUnaryOp.F64_NEG)
     public operator fun unaryMinus(): Double =
         implementedAsIntrinsic
 
@@ -1936,7 +1945,7 @@ public class Double private constructor() : Number(), Comparable<Double> {
      * In case when this `Double` value is exactly between two `Float`s,
      * the one with zero at least significant bit of mantissa is selected.
      */
-    @WasmInstruction(WasmInstruction.F32_DEMOTE_F64)
+    @WasmUnaryOp(WasmUnaryOp.F32_DEMOTE_F64)
     public override fun toFloat(): Float =
         implementedAsIntrinsic
 
@@ -1952,12 +1961,14 @@ public class Double private constructor() : Number(), Comparable<Double> {
 //        other is Double && this.bits() == other.bits()
 
     // TODO: Implement Double.toString()
-    // public override fun toString(): String
+    @WasmImport("runtime", "coerceToString")
+    public override fun toString(): String =
+        implementedAsIntrinsic
 
     public override inline fun hashCode(): Int = bits().hashCode()
 
     @PublishedApi
-    @WasmInstruction(WasmInstruction.I64_REINTERPRET_F64)
+    @WasmUnaryOp(WasmUnaryOp.I64_REINTERPRET_F64)
     internal fun bits(): Long =
         implementedAsIntrinsic
 }

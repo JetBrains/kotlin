@@ -6,5 +6,20 @@
 package kotlin.wasm.internal
 
 @WasmImport("runtime", "String_getLiteral")
-public fun stringLiteral(index: Int): String =
+internal fun stringLiteral(index: Int): String =
     implementedAsIntrinsic
+
+
+internal fun throwWithMessageStub(s: String): Nothing {
+    wasm_unreachable()
+}
+
+@WasmReinterpret
+internal fun unsafeNotNull(x: Any?): Any =
+    implementedAsIntrinsic
+
+internal fun nullableEquals(lhs: Any?, rhs: Any?): Boolean {
+    if(wasm_ref_is_null(lhs).reinterpretAsBoolean())
+        return wasm_ref_is_null(rhs).reinterpretAsBoolean()
+    return unsafeNotNull(lhs).equals(rhs)
+}

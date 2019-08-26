@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.name.FqName
@@ -26,16 +27,19 @@ class WasmSymbols(
     private val symbolTable: SymbolTable
 ) : Symbols<WasmBackendContext>(context, symbolTable) {
 
-    override val ThrowNullPointerException
-        get() = TODO()
-    override val ThrowNoWhenBranchMatchedException
-        get() = TODO()
-    override val ThrowTypeCastException
-        get() = TODO()
-    override val ThrowUninitializedPropertyAccessException
-        get() = TODO()
-    override val defaultConstructorMarker
-        get() = TODO()
+    private val wasmInternalPackage = context.module.getPackage(FqName("kotlin.wasm.internal"))
+
+    val throwWithMessageStub = getInternalFunction("throwWithMessageStub")
+    val unreachable = getInternalFunction("wasm_unreachable")
+
+    override val ThrowNullPointerException = unreachable
+    override val ThrowNoWhenBranchMatchedException = throwWithMessageStub
+    override val ThrowTypeCastException = unreachable
+    override val ThrowUninitializedPropertyAccessException = throwWithMessageStub
+
+    override val defaultConstructorMarker =
+        getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
+
     override val stringBuilder
         get() = TODO()
     override val copyRangeTo: Map<ClassDescriptor, IrSimpleFunctionSymbol>
@@ -59,7 +63,6 @@ class WasmSymbols(
     override val returnIfSuspended
         get() = TODO()
 
-    private val wasmInternalPackage = context.module.getPackage(FqName("kotlin.wasm.internal"))
 
     val equalityFunctions = mapOf(
         context.irBuiltIns.booleanType to getInternalFunction("wasm_i32_eq"),
@@ -69,7 +72,9 @@ class WasmSymbols(
         context.irBuiltIns.intType to getInternalFunction("wasm_i32_eq"),
         context.irBuiltIns.longType to getInternalFunction("wasm_i64_eq"),
         context.irBuiltIns.floatType to getInternalFunction("wasm_f32_eq"),
-        context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq")
+        context.irBuiltIns.doubleType to getInternalFunction("wasm_f64_eq"),
+        context.irBuiltIns.stringType to getInternalFunction("wasm_string_eq"),
+        context.irBuiltIns.stringType.makeNullable() to getInternalFunction("wasm_string_eq")
     )
 
     private fun wasmString(classfier: IrClassifierSymbol): String = with(context.irBuiltIns) {
@@ -98,6 +103,22 @@ class WasmSymbols(
     }
 
     val stringGetLiteral = getInternalFunction("stringLiteral")
+
+    val isSubClass = getInternalFunction("isSubClass")
+    val isInterface = getInternalFunction("isInterface")
+    val booleanNot = getInternalFunction("wasm_i32_eqz")
+    val booleanAnd = getInternalFunction("wasm_i32_and")
+    val booleanOr = getInternalFunction("wasm_i32_or")
+
+    val wasmClassId = getInternalFunction("wasmClassId")
+    val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
+
+    val getVirtualMethodId = getInternalFunction("getVirtualMethodId")
+    val getInterfaceMethodId = getInternalFunction("getInterfaceMethodId")
+
+    val nullableEquals = getInternalFunction("nullableEquals")
+
+    val structNarrow = getInternalFunction("wasm_struct_narrow")
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor
