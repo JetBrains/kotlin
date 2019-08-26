@@ -1118,6 +1118,41 @@ class NewMultiplatformIT : BaseGradleIT() {
     }
 
     @Test
+    fun testNativeFreeArgsWarning() = with(transformProjectWithPluginsDsl("kotlin-dsl", gradleVersion, "new-mpp-native-binaries")) {
+        gradleBuildScript().appendText(
+            """kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt""""
+        )
+        gradleBuildScript("exported").appendText(
+            """
+                kotlin.targets["macos64"].compilations["main"].kotlinOptions.freeCompilerArgs += "-opt"
+                kotlin.targets["macos64"].compilations["test"].kotlinOptions.freeCompilerArgs += "-g"
+                kotlin.targets["linux64"].compilations["main"].kotlinOptions.freeCompilerArgs +=
+                    listOf("-g", "-Xdisable-phases=Devirtualization,BuildDFG")
+            """.trimIndent()
+        )
+        build("tasks") {
+            assertSuccessful()
+            assertContains(
+                """
+                The following free compiler arguments must be specified for a binary instead of a compilation:
+                    * In project ':':
+                        * In target 'macos64':
+                            * Compilation: 'main', arguments: [-opt]
+                    * In project ':exported':
+                        * In target 'linux64':
+                            * Compilation: 'main', arguments: [-g, -Xdisable-phases=Devirtualization,BuildDFG]
+                        * In target 'macos64':
+                            * Compilation: 'main', arguments: [-opt]
+                            * Compilation: 'test', arguments: [-g]
+
+                Please move them into final binary declarations. E.g. binaries.executable { freeCompilerArgs += "..." }
+                See more about final binaries: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#building-final-native-binaries.
+                """.trimIndent()
+            )
+        }
+    }
+
+    @Test
     fun testSourceJars() = with(Project("sample-lib", gradleVersion, "new-mpp-lib-and-app")) {
         setupWorkingDir()
 

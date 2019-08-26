@@ -44,7 +44,7 @@ kotlin {
 
             executable("test2") {
                 compilation = compilations["test"]
-                freeCompilerArgs.add("-tr")
+                freeCompilerArgs += "-tr"
                 linkTask.kotlinOptions {
                     freeCompilerArgs += "-Xtime"
                 }

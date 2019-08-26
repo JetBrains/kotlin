@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.targets.native.CompilationFreeArgsValidator
 
 class KotlinNativeCompilationFactory(
     val project: Project,
@@ -21,6 +23,9 @@ class KotlinNativeCompilationFactory(
         KotlinNativeCompilation(target, name).apply {
             if (name == KotlinCompilation.TEST_COMPILATION_NAME) {
                 friendCompilationName = KotlinCompilation.MAIN_COMPILATION_NAME
+            }
+            project.whenEvaluated {
+                CompilationFreeArgsValidator.validate(this@apply)
             }
         }
 }
