@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.idea.statistics
 
 object CompletionFUSCollector {
-    private const val FileTypeAttribute = "file_type"
     private const val WindowPopulationTimeAttribute = "window_population_time"
     private const val WindowAppearanceTimeAttribute = "window_appearance_time"
-    private const val CompletionEventAttribute = "completion_event"
-    private const val ChoiceAtPositionAttribute = "choice_at_position"
     private const val CompletionTypeAttribute = "completion_type"
+    private const val FileTypeAttribute = "file_type"
+    private const val FinishReason = "finish_reason"
+    private const val ChoiceAtPositionAttribute = "choice_at_position"
+    private const val InvocationCount = "invocation_count"
+    private const val CompletionEventAttribute = "completion_event"
 
     private const val Chosen = "chosen"
     private const val NotChosen = "not_chosen"
@@ -47,6 +49,14 @@ object CompletionFUSCollector {
         if (completionStatsData.shownTime != null) {
             val appearanceTime = (completionStatsData.shownTime - completionStatsData.startTime).toString()
             data[WindowAppearanceTimeAttribute] = appearanceTime
+        }
+
+        if (completionStatsData.finishReason != null) {
+            data[FinishReason] = completionStatsData.finishReason.toString()
+        }
+
+        if (completionStatsData.invocationCount != null) {
+            data[InvocationCount] = completionStatsData.invocationCount.toString()
         }
 
         if (completionStatsData.selectedItem != null) {
