@@ -29,6 +29,13 @@ void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
 
 void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject);
 
+ForeignRefContext InitLocalForeignRef(ObjHeader* object);
+
+ForeignRefContext InitForeignRef(ObjHeader* object);
+void DeinitForeignRef(ObjHeader* object, ForeignRefContext context);
+
+bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context);
+
 }  // extern "C"
 
 #endif // RUNTIME_MEMORYPRIVATE_HPP

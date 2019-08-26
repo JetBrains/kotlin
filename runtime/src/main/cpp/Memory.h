@@ -596,4 +596,7 @@ class KRefSharedHolder {
   void verifyRefOwner() const;
 };
 
+class ForeignRefManager;
+typedef ForeignRefManager* ForeignRefContext;
+
 #endif // RUNTIME_MEMORY_H

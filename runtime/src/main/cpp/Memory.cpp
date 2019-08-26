@@ -289,7 +289,110 @@ inline bool isShareable(ContainerHeader* container) {
     return container == nullptr || container->shareable();
 }
 
+void garbageCollect();
+
 }  // namespace
+
+class ForeignRefManager {
+ public:
+  static ForeignRefManager* create() {
+    ForeignRefManager* result = konanConstructInstance<ForeignRefManager>();
+    result->addRef();
+    return result;
+  }
+
+  void addRef() {
+    atomicAdd(&refCount, 1);
+  }
+
+  void releaseRef() {
+    if (atomicAdd(&this->refCount, -1) == 0) {
+      // So the owning MemoryState has abandoned [this].
+      // Leaving the queued work items would result in memory leak.
+      // Luckily current thread has exclusive access to [this],
+      // so it can process the queue pretending like it takes ownership of all its objects:
+      this->processAbandoned();
+
+      konanDestructInstance(this);
+    }
+  }
+
+  bool tryReleaseRefOwned() {
+    if (atomicAdd(&this->refCount, -1) == 0) {
+      if (this->releaseList != nullptr) {
+        // There are no more holders of [this] to process the enqueued work items in [releaseRef].
+        // Revert the reference counter back and notify the caller to process and then retry:
+        atomicAdd(&this->refCount, 1);
+        return false;
+      }
+
+      konanDestructInstance(this);
+    }
+
+    return true;
+  }
+
+  void enqueueReleaseRef(ObjHeader* obj) {
+    ListNode* newListNode = konanConstructInstance<ListNode>();
+    newListNode->obj = obj;
+    while (true) {
+      ListNode* next = this->releaseList;
+      newListNode->next = next;
+      if (compareAndSet(&this->releaseList, next, newListNode)) break;
+    }
+  }
+
+  template <typename func>
+  void processEnqueuedReleaseRefsWith(func process) {
+    if (releaseList == nullptr) return;
+
+    ListNode* toProcess = nullptr;
+
+    while (true) {
+      toProcess = releaseList;
+      if (compareAndSet<ListNode*>(&this->releaseList, toProcess, nullptr)) break;
+    }
+
+    while (toProcess != nullptr) {
+      process(toProcess->obj);
+      ListNode* next = toProcess->next;
+      konanDestructInstance(toProcess);
+      toProcess = next;
+    }
+  }
+
+private:
+  int refCount;
+
+  struct ListNode {
+    ObjHeader* obj;
+    ListNode* next;
+  };
+
+  ListNode* volatile releaseList;
+
+  void processAbandoned() {
+    if (this->releaseList != nullptr) {
+      bool hadNoRuntimeInitialized = (memoryState == nullptr);
+
+      if (hadNoRuntimeInitialized) {
+        Kotlin_initRuntimeIfNeeded(); // Required by ReleaseHeapRef.
+      }
+
+      processEnqueuedReleaseRefsWith([](ObjHeader* obj) {
+        ReleaseHeapRef(obj);
+      });
+
+      if (hadNoRuntimeInitialized) {
+        // This thread is likely not intended to run Kotlin code.
+        // In this case it has no chances to process the release-refs enqueued above using
+        // the general heuristics, so do this manually:
+        garbageCollect();
+        // TODO: how to handle subsequent processAbandoned() calls?
+      }
+    }
+  }
+};
 
 struct MemoryState {
 #if TRACE_MEMORY
@@ -320,6 +423,8 @@ struct MemoryState {
   bool gcInProgress;
   // Objects to be released.
   ContainerHeaderList* toRelease;
+
+  ForeignRefManager* foreignRefManager;
 
   bool gcErgonomics;
   uint64_t lastGcTimestamp;
@@ -1377,6 +1482,11 @@ void processDecrements(MemoryState* state) {
        container = realShareableContainer(container);
      decrementRC(container);
   }
+
+  state->foreignRefManager->processEnqueuedReleaseRefsWith([](ObjHeader* obj) {
+    ContainerHeader* container = obj->container();
+    if (container != nullptr) decrementRC(container);
+  });
   state->gcSuspendCount--;
 }
 
@@ -1480,6 +1590,58 @@ void deinitInstanceBody(const TypeInfo* typeInfo, void* body) {
   }
 }
 
+ForeignRefManager* initLocalForeignRef(ObjHeader* object) {
+  if (!IsStrictMemoryModel) return nullptr;
+
+  return memoryState->foreignRefManager;
+}
+
+ForeignRefManager* initForeignRef(ObjHeader* object) {
+  addHeapRef(object);
+
+  if (!IsStrictMemoryModel) return nullptr;
+
+  // Note: it is possible to return nullptr for shared object as an optimization,
+  // but this will force the implementation to release objects on uninitialized threads
+  // which is generally a memory leak. See [deinitForeignRef].
+  auto* manager = memoryState->foreignRefManager;
+  manager->addRef();
+  return manager;
+}
+
+bool isForeignRefAccessible(ObjHeader* object, ForeignRefManager* manager) {
+  if (!IsStrictMemoryModel) return true;
+
+  if (manager == memoryState->foreignRefManager) {
+    // Note: it is important that this code neither crashes nor returns false-negative result
+    // (although may produce false-positive one) if [manager] is a dangling pointer.
+    // See BackRefFromAssociatedObject::releaseRef for more details.
+    return true;
+  }
+
+  // Note: getting container and checking it with 'isShareable()' is supposed to be correct even for unowned object.
+  return isShareable(object->container());
+}
+
+void deinitForeignRef(ObjHeader* object, ForeignRefManager* manager) {
+  if (IsStrictMemoryModel) {
+    if (memoryState != nullptr && isForeignRefAccessible(object, manager)) {
+      releaseHeapRef<true>(object);
+    } else {
+      // Prefer this for (memoryState == nullptr) since otherwise the object may leak:
+      // an uninitialized thread did not run any Kotlin code;
+      // it may be an externally-managed thread which is not supposed to run Kotlin code
+      // and not going to exit soon.
+      manager->enqueueReleaseRef(object);
+    }
+
+    manager->releaseRef();
+  } else {
+    releaseHeapRef<false>(object);
+    RuntimeAssert(manager == nullptr, "must be null");
+  }
+}
+
 MemoryState* initMemory() {
   RuntimeAssert(offsetof(ArrayHeader, typeInfoOrMeta_)
                 ==
@@ -1503,6 +1665,7 @@ MemoryState* initMemory() {
   memoryState->allocSinceLastGcThreshold = kMaxGcAllocThreshold;
   memoryState->gcErgonomics = true;
 #endif
+  memoryState->foreignRefManager = ForeignRefManager::create();
   atomicAdd(&aliveMemoryStatesCount, 1);
   return memoryState;
 }
@@ -1513,7 +1676,7 @@ void deinitMemory(MemoryState* memoryState) {
   do {
     GC_LOG("Calling garbageCollect from DeinitMemory()\n")
     garbageCollect(memoryState, true);
-  } while (memoryState->toRelease->size() > 0);
+  } while (memoryState->toRelease->size() > 0 || !memoryState->foreignRefManager->tryReleaseRefOwned());
   RuntimeAssert(memoryState->toFree->size() == 0, "Some memory have not been released after GC");
   RuntimeAssert(memoryState->toRelease->size() == 0, "Some memory have not been released after GC");
   konanDestructInstance(memoryState->toFree);
@@ -2480,6 +2643,22 @@ void ReleaseRefFromAssociatedObject(const ObjHeader* object) {
 
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body) {
   deinitInstanceBody(typeInfo, body);
+}
+
+ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
+  return initLocalForeignRef(object);
+}
+
+ForeignRefContext InitForeignRef(ObjHeader* object) {
+  return initForeignRef(object);
+}
+
+void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
+  deinitForeignRef(object, context);
+}
+
+bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
+  return isForeignRefAccessible(object, context);
 }
 
 // Public memory interface.
