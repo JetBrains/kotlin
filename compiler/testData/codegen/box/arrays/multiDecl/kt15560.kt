@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val array = arrayOf(doubleArrayOf(-1.0))
     for (node in array) {

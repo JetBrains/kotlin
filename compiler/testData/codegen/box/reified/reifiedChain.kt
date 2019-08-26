@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun <reified T> Any?.check(): Boolean {
     return this is T
 }

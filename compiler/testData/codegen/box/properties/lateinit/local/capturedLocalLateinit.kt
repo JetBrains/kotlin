@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun runNoInline(f: () -> Unit) = f()
 
 fun box(): String {

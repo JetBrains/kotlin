@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Option<out T> {
     val s: String
 }

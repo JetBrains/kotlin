@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Foo {
     private val fld: String = "O"
         get() = { field }() + "K"

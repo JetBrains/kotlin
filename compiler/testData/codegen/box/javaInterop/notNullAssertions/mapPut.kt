@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KJS_WITH_FULL_RUNTIME
 
 fun <K: Any, V: Any> foo(k: K, v: V) {

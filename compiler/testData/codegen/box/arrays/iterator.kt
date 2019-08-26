@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val x = Array<Int>(5, { it } ).iterator()
     var i = 0

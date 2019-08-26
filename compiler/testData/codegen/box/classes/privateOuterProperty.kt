@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C{
     private var v : Int = 0
 

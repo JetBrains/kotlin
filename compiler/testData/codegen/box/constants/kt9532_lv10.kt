@@ -1,4 +1,5 @@
 // !LANGUAGE: -InlineConstVals
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM_IR, JS_IR, NATIVE
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: JS

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() = Class().printSome()
 
 public abstract class AbstractClass<T> {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class My {
     companion object {
         private val my: String = "O"

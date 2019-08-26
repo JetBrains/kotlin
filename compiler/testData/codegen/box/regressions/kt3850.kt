@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 private class One {
     val a1 = arrayOf(
             object { val fy = "text"}

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun Any.foo() = 1
 
 class A {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val x : Array<Array<*>> = arrayOf(arrayOf(1))
     val y : Array<in Array<String>> = x

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun String?.plus(p: String): String {
     return "" + this
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Int?.inc(): Int? = this
 
 fun init(): Int? { return 10 }

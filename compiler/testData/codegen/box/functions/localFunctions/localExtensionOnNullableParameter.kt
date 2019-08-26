@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class T(var value: Int) {}
 
 fun localExtensionOnNullableParameter(): T {

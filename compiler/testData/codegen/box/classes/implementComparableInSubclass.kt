@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // See KT-12865
 
 package foo

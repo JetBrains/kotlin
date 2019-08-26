@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(str: String): String {
     var s = ""
     for (i in 1..3) {

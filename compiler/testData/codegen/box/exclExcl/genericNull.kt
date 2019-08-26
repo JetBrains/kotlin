@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T> foo(t: T) {
     t!!
 }

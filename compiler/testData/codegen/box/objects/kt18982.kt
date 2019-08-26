@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 import Foo.bar0 as bar
 
 object Foo {

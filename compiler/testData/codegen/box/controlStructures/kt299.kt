@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyRange1() : ClosedRange<Int> {
     override val start: Int
         get() = 0

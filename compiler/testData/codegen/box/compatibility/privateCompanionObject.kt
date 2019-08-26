@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Test {
     private companion object {
         val res = "OK"

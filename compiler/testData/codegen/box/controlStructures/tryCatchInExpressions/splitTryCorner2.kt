@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun shouldReturn11() : Int {
     var x = 0
     while (true) {

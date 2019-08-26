@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface MyTrait
 {
     var property : String

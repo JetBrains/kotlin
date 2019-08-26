@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 
 fun test(a: String, b: String): String {
     return a + b;

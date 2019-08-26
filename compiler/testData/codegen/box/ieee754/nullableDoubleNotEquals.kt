@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun myNotEquals(a: Double?, b: Double?) = a != b
 
 fun myNotEquals1(a: Double?, b: Double) = a != b

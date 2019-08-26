@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A {
     class B : A() {
         val a = "FAIL"

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface IFn {
     operator fun invoke(): String
 }

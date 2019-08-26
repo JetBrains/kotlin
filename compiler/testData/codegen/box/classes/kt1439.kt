@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyClass(var fnc : () -> String) {
 
     fun test(): String {

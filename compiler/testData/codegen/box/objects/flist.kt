@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public abstract class FList<T>() {
     public abstract val head: T
     public abstract val tail: FList<T>

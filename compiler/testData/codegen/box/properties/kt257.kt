@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A<T>(var t: T) {}
 class B<R>(val r: R) {}
 

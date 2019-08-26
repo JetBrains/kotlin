@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(i: Int): Int {
     return i
 }

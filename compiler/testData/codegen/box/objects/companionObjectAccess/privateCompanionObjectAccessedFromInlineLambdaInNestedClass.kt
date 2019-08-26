@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// IGNORE_BACKEND: WASM
 
 inline fun <T> run(fn: () -> T) = fn()
 

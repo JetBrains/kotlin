@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package p
 
 private class C(val y: Int) {

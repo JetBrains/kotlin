@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // CHECK_CASES_COUNT: function=crash count=2
 // CHECK_IF_COUNT: function=crash count=1
 

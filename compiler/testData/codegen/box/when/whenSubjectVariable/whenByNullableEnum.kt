@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 import kotlin.test.assertEquals

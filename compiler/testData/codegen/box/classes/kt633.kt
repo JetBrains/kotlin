@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class mInt(val i : Int) {
     override fun toString() : String = "mint: $i"
     operator fun plus(i : Int) = mInt(this.i + i)

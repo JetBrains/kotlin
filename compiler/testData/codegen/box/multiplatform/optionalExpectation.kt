@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // MODULE: library

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Outer {
     inner class Inner<T>(val t: T) {
         fun box() = t

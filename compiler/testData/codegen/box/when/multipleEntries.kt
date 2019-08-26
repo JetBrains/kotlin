@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(x: Any) =
         when (x) {
             0, 1 -> "bit"

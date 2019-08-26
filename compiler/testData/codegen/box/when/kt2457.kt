@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(i: Int) : Int =
     when (i) {
         1 -> 1

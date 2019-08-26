@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // FILE: Outer.kt
 
 package another

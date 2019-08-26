@@ -1,4 +1,5 @@
 // !API_VERSION: 1.0
+// IGNORE_BACKEND: WASM
 
 fun box(): String {
     val nullValue: Any? = null

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C {
     public object Obj {
         val o = "O"

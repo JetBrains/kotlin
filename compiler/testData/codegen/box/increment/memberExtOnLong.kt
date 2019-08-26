@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 object ExtProvider {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T> T.toPrefixedString(prefix: String = "", suffix: String="") = prefix + this.toString() + suffix
 
 fun box() : String {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // KJS_WITH_FULL_RUNTIME
 fun StringBuilder.first() = this.get(0)
 

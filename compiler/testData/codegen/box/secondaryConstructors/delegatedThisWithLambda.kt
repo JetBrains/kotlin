@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(val f: () -> Int) {
     constructor() : this({ 23 })
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test(
         b: Boolean,
         i: Int

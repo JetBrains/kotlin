@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T> test(a: T, b: T, operation: (x: T) -> T) {
     operation(if (3 > 2) a else b)
 }

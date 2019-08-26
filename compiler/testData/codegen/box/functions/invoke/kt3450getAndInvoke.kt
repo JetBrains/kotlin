@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //KT-3450 get and invoke are not parsed in one expression
 
 public class A(val s: String) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 operator fun Int?.inc() : Int { if (this != null) return this.inc() else throw NullPointerException() }
 
 public fun box() : String {

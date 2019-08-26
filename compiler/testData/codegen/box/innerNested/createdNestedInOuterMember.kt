@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(f: (Int) -> Int) = f(0)
 
 class Outer {

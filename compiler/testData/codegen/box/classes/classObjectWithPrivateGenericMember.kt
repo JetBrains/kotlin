@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C() {
     companion object {
         private fun <T> create() = C()

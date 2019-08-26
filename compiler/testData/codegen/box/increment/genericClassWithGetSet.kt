@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A<T>(var value: T) {
     operator fun get(i: Int) = value
 

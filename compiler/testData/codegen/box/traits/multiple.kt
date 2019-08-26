@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface AL {
     fun get(index: Int) : Any? = null
 }

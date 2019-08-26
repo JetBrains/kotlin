@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 import Class.C.f
 import Class.C.p
 import Class.C.ext

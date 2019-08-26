@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var global = 0
 
 fun sideEffect() = global++

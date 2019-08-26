@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface Intf {
     val aValue: String
 }

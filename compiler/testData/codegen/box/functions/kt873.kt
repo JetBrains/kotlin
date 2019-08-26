@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
   val fps  : Double = 1.toDouble()
   var mspf : Long

@@ -1,4 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
 

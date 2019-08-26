@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun fill(dest : Array<in String>, v : String) {
     dest[0] = v
 }

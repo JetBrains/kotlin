@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Test {
     val Long.foo: Long
         get() = this + 1

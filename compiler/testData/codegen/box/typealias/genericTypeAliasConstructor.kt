@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Cell<T>(val x: T)
 
 typealias StringCell = Cell<String>

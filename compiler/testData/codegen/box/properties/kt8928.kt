@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class App {
     fun init() {
         s = "OK"

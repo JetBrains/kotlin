@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 typealias ArrayS = Array<String>
 
 fun testArray() {

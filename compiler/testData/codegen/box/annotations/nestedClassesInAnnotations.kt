@@ -1,4 +1,5 @@
 // !LANGUAGE: +NestedClassesInAnnotations
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 
 annotation class Foo(val kind: Kind) {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 //KT-3772 Invoke and overload resolution ambiguity
 
 open class A {

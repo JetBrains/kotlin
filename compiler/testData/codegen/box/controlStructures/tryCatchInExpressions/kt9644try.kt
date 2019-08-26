@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun doCall(f: () -> Any) = f()
 
 fun test1() {

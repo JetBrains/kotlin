@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 object Test {
     var z = "0"
     var l = 0L

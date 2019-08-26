@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 abstract class C {
     fun test(x: Int) {
         if (x == 0) return

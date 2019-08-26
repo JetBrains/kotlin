@@ -1,4 +1,5 @@
 // !LANGUAGE: +VariableDeclarationInWhenSubject
+// IGNORE_BACKEND: WASM
 
 fun box(): String {
     var y: String = "OK"

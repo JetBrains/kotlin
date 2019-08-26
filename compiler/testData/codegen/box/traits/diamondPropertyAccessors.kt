@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 interface A {
     var bar: Boolean
         get() = false

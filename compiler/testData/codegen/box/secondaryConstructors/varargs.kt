@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun join(x: Array<out String>): String {
     var result = ""
     for (i in x) {

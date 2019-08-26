@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 enum class MyEnum {
     O;
     companion object {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var result = "FAIL"
 val d = 0.0
 

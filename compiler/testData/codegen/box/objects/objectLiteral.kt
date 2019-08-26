@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class C(x: Int, val y: Int) {
     fun initChild(x0: Int): Any {
         var x = x0

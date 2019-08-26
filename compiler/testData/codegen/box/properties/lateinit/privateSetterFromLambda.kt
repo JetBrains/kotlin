@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class My {
     lateinit var x: String
         private set

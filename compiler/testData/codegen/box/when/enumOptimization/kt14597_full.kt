@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // CHECK_CASES_COUNT: function=box count=18
 // CHECK_IF_COUNT: function=box count=3
 

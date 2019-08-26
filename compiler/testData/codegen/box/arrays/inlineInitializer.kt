@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Foo(
     val width: Int,
     val height: Int,

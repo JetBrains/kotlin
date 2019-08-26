@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package array_test
 
 fun box() : String {

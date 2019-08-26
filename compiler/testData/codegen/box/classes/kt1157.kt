@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public object SomeClass {
     private val work = object : Runnable {
         override fun run() {

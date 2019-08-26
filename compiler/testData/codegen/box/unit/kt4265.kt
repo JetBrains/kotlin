@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun <T : Any, R> T.let(f: (T) -> R): R = f(this)
 
 fun box(): String {

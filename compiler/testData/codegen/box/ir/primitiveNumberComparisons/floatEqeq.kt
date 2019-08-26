@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 fun eqeq(x: Any, y: Any) =
         x is Float && y is Float && x == y
 

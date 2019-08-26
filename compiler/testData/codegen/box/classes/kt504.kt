@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 package mult_constructors_3_bug
 
 public open class Identifier() {

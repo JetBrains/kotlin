@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class My {
     var my: String = "U"
         get() = { field }()

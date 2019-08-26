@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun less(a: Comparable<Double>, b: Double): Boolean {
     return a < b
 }

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 var log = ""
 
 class A(p: String) {

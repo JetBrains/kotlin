@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun foo(x: Int) {}
 
 fun loop(times : Int) {

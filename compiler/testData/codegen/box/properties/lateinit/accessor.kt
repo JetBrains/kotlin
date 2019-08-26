@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public class A {
 
     fun setMyStr() {

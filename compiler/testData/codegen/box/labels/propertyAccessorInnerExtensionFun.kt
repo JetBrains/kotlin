@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val Int.getter: Int
     get() {
         val extFun: Int.() -> Int = {

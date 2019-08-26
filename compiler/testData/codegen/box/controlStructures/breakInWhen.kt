@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // !LANGUAGE: +AllowBreakAndContinueInsideWhen
 
 fun testFor() {

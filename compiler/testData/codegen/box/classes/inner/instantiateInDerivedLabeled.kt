@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 open class A(val value: String) {
     inner class B(val s: String) {
         val result = value + "_" + s

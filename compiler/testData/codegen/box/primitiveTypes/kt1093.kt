@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 val f : (Any) -> String = { it.toString() }
 
 fun box() : String {

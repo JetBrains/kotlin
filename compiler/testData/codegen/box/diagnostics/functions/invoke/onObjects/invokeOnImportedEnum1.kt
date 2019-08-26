@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 import A.ONE
 
 enum class A {

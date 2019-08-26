@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun run2(block: () -> Unit) = block()
 
 class A {

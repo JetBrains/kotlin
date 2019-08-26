@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Test(val prop: String) {
 
   companion object {

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class Binder() {
     lateinit var bindee: Container<*>
 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 data class A(val a: Foo<String>) {}
 
 class Foo<T>(val a: T) { }
