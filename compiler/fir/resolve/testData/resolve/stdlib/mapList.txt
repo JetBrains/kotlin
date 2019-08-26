@@ -6,7 +6,7 @@ FILE: mapList.kt
         }
         )
         R|<local>/u|.R|/applyX|<R|kotlin/collections/List<kotlin/Int>|>(<L> = applyX@fun R|kotlin/collections/List<kotlin/Int>|.<anonymous>(it: R|kotlin/collections/List<kotlin/Int>|): R|kotlin/Unit| {
-            this#.R|FakeOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
+            this@R|special/anonymous|.R|FakeOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
             R|FakeOverride<kotlin/collections/List.contains: R|kotlin/Boolean|>|(Int(1))
         }
         )

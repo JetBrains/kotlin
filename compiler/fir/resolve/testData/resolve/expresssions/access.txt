@@ -29,7 +29,7 @@ FILE: access.kt
         }
 
         public final fun bar(): R|Bar| {
-            ^bar this#
+            ^bar this@R|/Bar|
         }
 
         public final operator fun R|kotlin/String|.plus(bar: R|Bar|): R|kotlin/String| {

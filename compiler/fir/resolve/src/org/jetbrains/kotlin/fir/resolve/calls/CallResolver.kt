@@ -27,7 +27,7 @@ class CallResolver(
 
     private fun processImplicitReceiver(
         towerDataConsumer: TowerDataConsumer,
-        implicitReceiverValue: ImplicitReceiverValue,
+        implicitReceiverValue: ImplicitReceiverValue<*>,
         oldGroup: Int
     ): Int {
         var group = oldGroup
@@ -147,9 +147,9 @@ class CallResolver(
 
     val collector by lazy { CandidateCollector(components, resolutionStageRunner) }
     lateinit var towerDataConsumer: TowerDataConsumer
-    private lateinit var implicitReceiverValues: List<ImplicitReceiverValue>
+    private lateinit var implicitReceiverValues: List<ImplicitReceiverValue<*>>
 
-    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue>): CandidateCollector {
+    fun runTowerResolver(consumer: TowerDataConsumer, implicitReceiverValues: List<ImplicitReceiverValue<*>>): CandidateCollector {
         this.implicitReceiverValues = implicitReceiverValues
         towerDataConsumer = consumer
 

@@ -2,7 +2,7 @@ FILE: farInvokeExtension.kt
     public final fun x(): R|kotlin/Unit| {
     }
     public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
-        ^invoke this@Foo
+        ^invoke this@Foo#
     }
     public final class Foo : R|kotlin/Any| {
         public constructor(): R|Foo| {

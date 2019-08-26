@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirLoopJump
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.symbols.ConeCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeSymbol
-import org.jetbrains.kotlin.fir.symbols.StandardClassIds
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -755,16 +752,19 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
         print("*")
     }
 
+    private fun ConeSymbol.render(): String {
+        if (this is ConeCallableSymbol)
+            return callableId.toString()
+        else if (this is ConeClassLikeSymbol)
+            return classId.toString()
+        return "?"
+    }
+
     override fun visitNamedReference(namedReference: FirNamedReference) {
         val symbol = namedReference.candidateSymbol
         when {
             symbol != null -> {
-                print("R?C|")
-                if (symbol is ConeCallableSymbol)
-                    print(symbol.callableId)
-                else if (symbol is ConeClassLikeSymbol)
-                    print(symbol.classId)
-                print("|")
+                print("R?C|${symbol.render()}|")
             }
             namedReference is FirErrorNamedReference -> print("<${namedReference.errorReason}>#")
             else -> print("${namedReference.name}#")
@@ -791,10 +791,7 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
             print("FakeOverride<")
         }
         val symbol = resolvedCallableReference.coneSymbol
-        if (symbol is ConeCallableSymbol)
-            print(symbol.callableId)
-        else if (symbol is ConeClassLikeSymbol)
-            print(symbol.classId)
+        print(symbol.render())
         if (isFakeOverride) {
             when (symbol) {
                 is FirNamedFunctionSymbol -> {
@@ -814,10 +811,11 @@ class FirRenderer(builder: StringBuilder) : FirVisitorVoid() {
     override fun visitThisReference(thisReference: FirThisReference) {
         print("this")
         val labelName = thisReference.labelName
-        if (labelName != null) {
-            print("@$labelName")
-        } else {
-            print("#")
+        val symbol = thisReference.candidateOwner
+        when {
+            symbol != null -> print("@R|${symbol.render()}|")
+            labelName != null -> print("@$labelName#")
+            else -> print("#")
         }
     }
 

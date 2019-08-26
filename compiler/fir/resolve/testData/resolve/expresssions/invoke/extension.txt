@@ -7,7 +7,7 @@ FILE: extension.kt
         }
 
         public final operator fun R|kotlin/Int|.invoke(): R|Foo| {
-            ^invoke this@Foo
+            ^invoke this@R|/Foo|
         }
 
         public final val x: R|kotlin/Int| = Int(0)

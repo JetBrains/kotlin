@@ -9,10 +9,10 @@ FILE: simpleDelegatedToMap.kt
 
         public final var foo: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>by R|<local>/map|
             public get(): <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]> {
-                ^ D|/C.foo|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this#, ::R|/C.foo|)
+                ^ D|/C.foo|.<Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>#(this@R|/C|, ::R|/C.foo|)
             }
             public set(<set-?>: <ERROR TYPE REF: Ambiguity: getValue, [kotlin/collections/getValue, kotlin/collections/getValue, kotlin/collections/getValue]>): R|kotlin/Unit| {
-                D|/C.foo|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this#, ::R|/C.foo|, R|<local>/<set-?>|)
+                D|/C.foo|.<Inapplicable(INAPPLICABLE): [kotlin/collections/setValue]>#(this@R|/C|, ::R|/C.foo|, R|<local>/<set-?>|)
             }
 
     }

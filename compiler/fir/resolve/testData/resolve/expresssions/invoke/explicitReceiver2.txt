@@ -5,7 +5,7 @@ FILE: explicitReceiver2.kt
         }
 
         public final operator fun invoke(): R|Foo| {
-            ^invoke this#
+            ^invoke this@R|/Bar|
         }
 
     }
@@ -17,7 +17,7 @@ FILE: explicitReceiver2.kt
         }
 
         public final operator fun R|Bar|.invoke(): R|Foo| {
-            ^invoke this#
+            ^invoke this@R|/Foo.invoke|
         }
 
         public final val x: R|Bar| = R|/Bar.Bar|()

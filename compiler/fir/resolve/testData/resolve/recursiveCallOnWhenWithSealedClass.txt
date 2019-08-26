@@ -28,7 +28,7 @@ FILE: recursiveCallOnWhenWithSealedClass.kt
         }
 
         public final fun unwrap(): <ERROR TYPE REF: Inapplicable when expression> {
-            ^unwrap when (this#) {
+            ^unwrap when (this@R|/Maybe|) {
                 ($subj$ is R|Maybe.Nope|) ->  {
                     throw R|java/lang/Exception.Exception|(String())
                 }

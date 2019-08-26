@@ -5,7 +5,7 @@ FILE: threeReceivers.kt
         }
 
         public final fun R|FooBar|.invoke(): R|Bar| {
-            ^invoke this#
+            ^invoke this@R|/Bar.invoke|
         }
 
     }

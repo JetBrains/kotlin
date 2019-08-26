@@ -9,7 +9,7 @@ FILE: implicitTypeOrder.kt
         }
 
         public final fun invoke(): R|A| {
-            ^invoke this#
+            ^invoke this@R|/A|
         }
 
     }

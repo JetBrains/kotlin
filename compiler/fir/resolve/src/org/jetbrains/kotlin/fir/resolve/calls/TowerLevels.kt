@@ -51,7 +51,7 @@ interface TowerScopeLevel {
         fun consumeCandidate(
             symbol: T,
             dispatchReceiverValue: ClassDispatchReceiverValue?,
-            implicitExtensionReceiverValue: ImplicitReceiverValue?
+            implicitExtensionReceiverValue: ImplicitReceiverValue<*>?
         ): ProcessorAction
     }
 
@@ -90,7 +90,7 @@ abstract class SessionBasedTowerLevel(val session: FirSession) : TowerScopeLevel
 class MemberScopeTowerLevel(
     session: FirSession,
     val dispatchReceiver: ReceiverValue,
-    val implicitExtensionReceiver: ImplicitReceiverValue? = null,
+    val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null,
     val scopeSession: ScopeSession
 ) : SessionBasedTowerLevel(session) {
     private fun <T : AbstractFirBasedSymbol<*>> processMembers(
@@ -150,7 +150,7 @@ class MemberScopeTowerLevel(
 class ScopeTowerLevel(
     session: FirSession,
     val scope: FirScope,
-    val implicitExtensionReceiver: ImplicitReceiverValue? = null
+    val implicitExtensionReceiver: ImplicitReceiverValue<*>? = null
 ) : SessionBasedTowerLevel(session) {
     private fun FirCallableSymbol<*>.hasConsistentReceivers(extensionReceiver: ReceiverValue?): Boolean =
         hasConsistentExtensionReceiver(extensionReceiver) && (scope is FirAbstractImportingScope || dispatchReceiverValue() == null)

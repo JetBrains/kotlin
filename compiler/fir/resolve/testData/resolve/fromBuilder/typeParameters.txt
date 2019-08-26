@@ -23,7 +23,7 @@ FILE: typeParameters.kt
         }
 
         public final override fun concat(other: R|List<kotlin/Int>|): R|List<kotlin/Int>| {
-            ^concat this#
+            ^concat this@R|/SomeList|
         }
 
     }

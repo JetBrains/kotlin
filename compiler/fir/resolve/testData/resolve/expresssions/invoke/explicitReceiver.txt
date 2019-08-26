@@ -10,7 +10,7 @@ FILE: explicitReceiver.kt
             public get(): R|Foo|
 
         public final operator fun invoke(): R|Foo| {
-            ^invoke this#
+            ^invoke this@R|/Foo|
         }
 
         public final fun bar(): R|Foo| {
@@ -30,7 +30,7 @@ FILE: explicitReceiver.kt
             public get(): R|Bar|
 
         public final operator fun invoke(): R|Bar| {
-            ^invoke this#
+            ^invoke this@R|/Bar|
         }
 
         public final fun baz(): R|kotlin/Unit| {

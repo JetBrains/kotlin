@@ -39,7 +39,7 @@ class FirCallResolver(
     private val transformer: FirBodyResolveTransformer,
     private val topLevelScopes: List<FirScope>,
     private val localScopes: List<FirLocalScope>,
-    private val implicitReceiverStack: List<ImplicitReceiverValue>,
+    private val implicitReceiverStack: List<ImplicitReceiverValue<*>>,
     private val qualifiedResolver: FirQualifiedNameResolver
 ) : BodyResolveComponents by transformer {
 

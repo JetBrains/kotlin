@@ -11,19 +11,19 @@ FILE: this.kt
         }
 
         public final fun bar(): R|Foo| {
-            ^bar this#
+            ^bar this@R|/Foo|
         }
 
         public final fun R|Bar|.buz(): R|Bar| {
-            ^buz this#
+            ^buz this@R|/Foo.buz|
         }
 
         public final fun R|Bar|.foo(): R|Foo| {
-            ^foo this@Foo
+            ^foo this@R|/Foo|
         }
 
         public final fun R|Bar|.foobar(): R|Bar| {
-            ^foobar this@foobar
+            ^foobar this@R|/Foo.foobar|
         }
 
     }

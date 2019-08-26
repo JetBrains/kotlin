@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -26,7 +27,7 @@ interface SessionHolder {
 
 interface BodyResolveComponents : SessionHolder {
     val returnTypeCalculator: ReturnTypeCalculator
-    val labels: SetMultimap<Name, ConeKotlinType>
+    val implicitReceiverPerLabel: SetMultimap<Name, ImplicitReceiverValue<*>>
     val noExpectedType: FirTypeRef
     val symbolProvider: FirSymbolProvider
     val file: FirFile

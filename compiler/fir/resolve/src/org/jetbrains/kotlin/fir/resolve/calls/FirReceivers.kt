@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.fir.resolve.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.scopes.FirScope
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassTypeImpl
@@ -41,7 +43,8 @@ class ExpressionReceiverValue(
             ?: ConeKotlinErrorType("No type calculated for: ${explicitReceiverExpression.renderWithType()}") // TODO: assert here
 }
 
-abstract class ImplicitReceiverValue(
+abstract class ImplicitReceiverValue<S : AbstractFirBasedSymbol<*>>(
+    val boundSymbol: S,
     final override val type: ConeKotlinType,
     useSiteSession: FirSession,
     scopeSession: ScopeSession
@@ -52,19 +55,20 @@ abstract class ImplicitReceiverValue(
 }
 
 class ImplicitDispatchReceiverValue(
-    val boundSymbol: FirClassSymbol,
+    boundSymbol: FirClassSymbol,
     type: ConeKotlinType,
     symbolProvider: FirSymbolProvider,
     useSiteSession: FirSession,
     scopeSession: ScopeSession
-) : ImplicitReceiverValue(type, useSiteSession, scopeSession) {
+) : ImplicitReceiverValue<FirClassSymbol>(boundSymbol, type, useSiteSession, scopeSession) {
     val implicitCompanionScope: FirScope? = boundSymbol.fir.companionObject?.let { companionObject ->
         symbolProvider.getClassUseSiteMemberScope(companionObject.classId, useSiteSession, scopeSession)
     }
 }
 
 class ImplicitExtensionReceiverValue(
+    boundSymbol: FirCallableSymbol<*>,
     type: ConeKotlinType,
     useSiteSession: FirSession,
     scopeSession: ScopeSession
-) : ImplicitReceiverValue(type, useSiteSession, scopeSession)
+) : ImplicitReceiverValue<FirCallableSymbol<*>>(boundSymbol, type, useSiteSession, scopeSession)

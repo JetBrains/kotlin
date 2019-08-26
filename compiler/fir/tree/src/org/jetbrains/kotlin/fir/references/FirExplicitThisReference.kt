@@ -8,5 +8,8 @@ package org.jetbrains.kotlin.fir.references
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.fir.FirAbstractElement
 import org.jetbrains.kotlin.fir.FirThisReference
+import org.jetbrains.kotlin.fir.symbols.AbstractFirBasedSymbol
 
-class FirExplicitThisReference(psi: PsiElement?, override val labelName: String?) : FirAbstractElement(psi), FirThisReference
+class FirExplicitThisReference(psi: PsiElement?, override val labelName: String?) : FirAbstractElement(psi), FirThisReference {
+    override var candidateOwner: AbstractFirBasedSymbol<*>? = null
+}
