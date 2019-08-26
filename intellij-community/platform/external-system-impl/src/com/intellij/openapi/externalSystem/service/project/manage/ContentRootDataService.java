@@ -30,9 +30,7 @@ import com.intellij.openapi.roots.ModifiableRootModel;
 import com.intellij.openapi.roots.SourceFolder;
 import com.intellij.openapi.startup.StartupManager;
 import com.intellij.openapi.util.io.FileUtil;
-import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
-import com.intellij.openapi.vcs.changes.ChangeListManager;
 import com.intellij.openapi.vfs.VfsUtil;
 import com.intellij.openapi.vfs.VfsUtilCore;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -345,9 +343,6 @@ public class ContentRootDataService extends AbstractProjectDataService<ContentRo
     }
     logDebug("Importing excluded root '%s' for content root '%s' of module '%s'", root, entry.getUrl(), moduleName);
     entry.addExcludeFolder(pathToUrl(rootPath));
-    if (!Registry.is("ide.hide.excluded.files")) {
-      ChangeListManager.getInstance(project).addDirectoryToIgnoreImplicitly(rootPath);
-    }
   }
 
 
