@@ -1,4 +1,5 @@
 // !SANITIZE_PARENTHESES
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR
 
@@ -20,3 +21,6 @@ fun bar(p: () -> String) = p()
 fun box(): String {
     return `()`().`()`()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 fun for_int_range(): Int {
@@ -123,3 +124,6 @@ fun box(): String {
     if (for_double_list() != 5) return "fail 9"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class A(val p: String) {
     val prop: String = throw RuntimeException()
 }
@@ -30,3 +31,5 @@ fun box(): String {
 
     return "fail"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ RuntimeException 

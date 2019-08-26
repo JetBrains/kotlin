@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 fun foo() : Int =
@@ -21,3 +22,6 @@ fun box() : String {
     val s = bar(HashSet<Int>())
     return if (s.contains(42)) "OK" else "fail 2"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ HashSet 

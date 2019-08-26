@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     var invokeOrder = "";
@@ -29,3 +30,5 @@ fun box(): String {
 fun Double.test(a: Int, b: Long, c: () -> String): String {
     return "${this.toInt()}_${a}_${b}_${c()}"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

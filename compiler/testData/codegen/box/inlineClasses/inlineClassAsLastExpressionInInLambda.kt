@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Name(private val value: String) {
@@ -41,3 +42,5 @@ fun box(): String {
 
 inline fun <R> inlinedRun(block: () -> R): R = block()
 fun <R> notInlinedRun(block: () -> R): R = block()
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

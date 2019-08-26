@@ -50,7 +50,7 @@ object LateinitModifierApplicabilityChecker {
             if (UnsignedTypes.isUnsignedType(type)) {
                 trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of unsigned types"))
             } else {
-                trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of inline class types"))
+                // trace.report(Errors.INAPPLICABLE_LATEINIT_MODIFIER.on(modifier, "is not allowed on $variables of inline class types"))
             }
         }
 

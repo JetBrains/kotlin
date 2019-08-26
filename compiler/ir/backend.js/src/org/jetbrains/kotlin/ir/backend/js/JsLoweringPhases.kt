@@ -468,7 +468,7 @@ private val multipleCatchesLoweringPhase = makeBodyLoweringPhase(
 )
 
 private val bridgesConstructionPhase = makeDeclarationTransformerPhase(
-    ::BridgesConstruction,
+    ::JsBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges",
     prerequisite = setOf(suspendFunctionsLoweringPhase)

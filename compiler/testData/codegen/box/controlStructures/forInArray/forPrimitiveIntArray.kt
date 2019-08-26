@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box() : String {
     val a = IntArray (5)
     var i = 0
@@ -12,3 +13,6 @@ fun box() : String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

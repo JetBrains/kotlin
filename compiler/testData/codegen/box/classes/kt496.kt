@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun test1() : Boolean {
     try {
         return true
@@ -81,3 +82,6 @@ fun box() : String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IR_TRY

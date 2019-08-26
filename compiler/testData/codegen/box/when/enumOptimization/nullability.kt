@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // CHECK_CASES_COUNT: function=foo1 count=0
@@ -45,3 +46,6 @@ fun box() : String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

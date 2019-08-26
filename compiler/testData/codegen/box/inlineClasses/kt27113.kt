@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS, JS_IR, NATIVE
 // WITH_RUNTIME
@@ -18,3 +19,5 @@ fun box(): String {
     if (cl.toString() != "abc'def'") return throw AssertionError(cl.toString())
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

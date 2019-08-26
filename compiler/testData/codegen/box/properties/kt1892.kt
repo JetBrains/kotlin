@@ -3,3 +3,6 @@ val Long.ext: Long get() = 4.ext().toLong()  //(c.kt:4)
 val y: Long get() = 10L.ext
 
 fun box(): String = if (y == 5L) "OK" else "fail: $y"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

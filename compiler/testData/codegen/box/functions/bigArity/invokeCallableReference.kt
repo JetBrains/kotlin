@@ -1,4 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
+// IGNORE_BACKEND: WASM
 
 class A
 
@@ -16,3 +17,6 @@ fun box(): String {
     val a = A()
     return ref(a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

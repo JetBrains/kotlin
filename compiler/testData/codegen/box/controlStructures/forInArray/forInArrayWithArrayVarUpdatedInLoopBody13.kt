@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // WITH_RUNTIME
 
 // See https://youtrack.jetbrains.com/issue/KT-21354
@@ -11,3 +12,6 @@ fun box(): String {
     }
     return if (sum == 123) "OK" else "Fail: $sum"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

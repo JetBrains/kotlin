@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 public class CalculatorConstants(
         val id: Long = 0,
         val detour: Double = 0.0,
@@ -23,3 +24,6 @@ fun box(): String {
     val c = CalculatorConstants()
     return c.status
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Segfaults SpiderMonkey Shell

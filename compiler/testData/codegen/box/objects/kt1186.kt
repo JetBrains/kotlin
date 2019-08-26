@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 enum class Color(val rgb : Int) {
     RED(0xFF0000),
@@ -27,3 +28,6 @@ fun foo(d: Direction) = when(d) {
 
 fun box() : String =
     if (foo(Direction.EAST) == 4 && bar(Color.GREEN) == 2) "OK" else "fail"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 abstract class Base(val s: String, vararg ints: Int)
 
@@ -7,3 +8,6 @@ fun box(): String {
     return foo("OK", intArrayOf(1, 2)).s
 }
 
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

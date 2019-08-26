@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()
@@ -24,3 +25,5 @@ fun box(): String {
         }
     }
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception

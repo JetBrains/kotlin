@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // See KT-14242
 var x = 1
@@ -12,3 +13,6 @@ fun box(): String {
 
     return size?.toString() ?: "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

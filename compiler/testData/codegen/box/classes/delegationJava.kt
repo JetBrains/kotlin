@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // IGNORE_BACKEND: JS_IR
 // Enable for JS when it supports Java class library.
@@ -16,3 +17,6 @@ fun box() : String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Runnable 

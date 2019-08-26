@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-1572 Frontend doesn't mark all vars included in closure as refs.
 
@@ -22,3 +23,6 @@ fun testPrimitives() : Boolean {
 }
 
 fun box() = if (testKt1572() && testPrimitives()) "OK" else "fail"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

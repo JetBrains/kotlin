@@ -135,7 +135,8 @@ class InlineClassLowering(val context: CommonBackendContext) {
 
         private fun transformMethodBodyFlat(function: IrSimpleFunction, staticMethod: IrSimpleFunction) {
             // TODO: Support fake-overridden methods without boxing
-            if (function.isStaticMethodOfClass || !function.isReal) return // TODO error()
+            if (function.isStaticMethodOfClass || !function.isReal || function.origin == IrDeclarationOrigin.BRIDGE)
+                return
 
             val functionBody = function.body
 

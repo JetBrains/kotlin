@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 var result = "fail"
 
@@ -9,3 +10,5 @@ fun box(): String {
     if (result != "OK") return "fail $result"
     return obj1.o + obj1.k
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     testForInFloatArrayWithUpcastToAny()
     testForInDoubleArrayWithUpcastToAny()
@@ -47,3 +48,5 @@ private fun useDoubleAsAny(a: Any) {
 private fun useDoubleAsComparable(a: Comparable<*>) {
     a as Double
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

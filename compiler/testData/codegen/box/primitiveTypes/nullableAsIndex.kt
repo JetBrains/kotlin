@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 fun test(ix: Int?): String {
@@ -12,3 +13,6 @@ fun test(ix: Int?): String {
 
 fun box() = test(0)
 
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

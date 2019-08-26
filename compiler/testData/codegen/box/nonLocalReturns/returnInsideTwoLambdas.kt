@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun <T> outer(command: () -> T) : T = command()
 
@@ -27,3 +28,5 @@ fun test2(): String {
 fun box(): String {
     return test1() + test2()
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

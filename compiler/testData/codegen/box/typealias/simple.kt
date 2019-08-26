@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 typealias S = String
 
@@ -6,3 +7,6 @@ typealias SF<T> = (T) -> S
 val f: SF<S> = { it }
 
 fun box(): S = f("OK")
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

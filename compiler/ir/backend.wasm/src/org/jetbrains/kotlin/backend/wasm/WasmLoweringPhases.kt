@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.FunctionInlining
 import org.jetbrains.kotlin.backend.common.phaser.*
+import org.jetbrains.kotlin.backend.wasm.lower.*
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.backend.wasm.lower.BuiltInsLowering
 import org.jetbrains.kotlin.backend.wasm.lower.WasmBlockDecomposerLowering
@@ -71,6 +72,12 @@ private val expectDeclarationsRemovingPhase = makeWasmModulePhase(
     description = "Remove expect declaration from module fragment"
 )
 
+private val stringConstructorLowering = makeWasmModulePhase(
+    ::SimpleStringConcatenationLowering,
+    name = "StringConcatenation",
+    description = "String concatenation lowering"
+)
+
 private val lateinitNullableFieldsPhase = makeWasmModulePhase(
     ::NullableFieldsForLateinitCreationLowering,
     name = "LateinitNullableFields",
@@ -88,7 +95,6 @@ private val lateinitUsageLoweringPhase = makeWasmModulePhase(
     name = "LateinitUsage",
     description = "Insert checks for lateinit field references"
 )
-
 
 // TODO make all lambda-related stuff work with IrFunctionExpression and drop this phase
 private val provisionalFunctionExpressionPhase = makeWasmModulePhase(
@@ -265,7 +271,7 @@ private val returnableBlockLoweringPhase = makeWasmModulePhase(
 )
 
 private val bridgesConstructionPhase = makeWasmModulePhase(
-    ::BridgesConstruction,
+    ::WasmBridgesConstruction,
     name = "BridgesConstruction",
     description = "Generate bridges"
 )
@@ -282,11 +288,17 @@ private val inlineClassUsageLoweringPhase = makeWasmModulePhase(
     description = "Handle inline class usages"
 )
 
-//private val autoboxingTransformerPhase = makeJsModulePhase(
-//    ::AutoboxingTransformer,
-//    name = "AutoboxingTransformer",
-//    description = "Insert box/unbox intrinsics"
-//)
+private val autoboxingTransformerPhase = makeWasmModulePhase(
+    { context ->
+        WasmAutoboxingTransformer(
+            context,
+            boxIntrinsic = context.wasmSymbols.boxIntrinsic,
+            unboxIntrinsic = context.wasmSymbols.unboxIntrinsic
+        )
+    },
+    name = "AutoboxingTransformer",
+    description = "Insert box/unbox intrinsics"
+)
 
 private val blockDecomposerLoweringPhase = makeCustomWasmModulePhase(
     { context, module ->
@@ -333,6 +345,19 @@ private val staticMembersLoweringPhase = makeWasmModulePhase(
     description = "Move static member declarations to top-level"
 )
 
+private val fieldInitializersLoweringPhase = makeWasmModulePhase(
+    ::FieldInitializersLowering,
+    name = "FieldInitializersLowering",
+    description = "Move field initializers to start function"
+)
+
+private val builtInsLoweringPhase0 = makeWasmModulePhase(
+    ::BuiltInsLowering,
+    name = "BuiltInsLowering0",
+    description = "Lower IR buildins 0"
+)
+
+
 private val builtInsLoweringPhase = makeWasmModulePhase(
     ::BuiltInsLowering,
     name = "BuiltInsLowering",
@@ -340,7 +365,7 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
 )
 
 private val objectDeclarationLoweringPhase = makeWasmModulePhase(
-    ::ObjectUsageLowering,
+    ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
     description = "Create lazy object instance generator functions"
 )
@@ -351,13 +376,31 @@ private val objectUsageLoweringPhase = makeWasmModulePhase(
     description = "Transform IrGetObjectValue into instance generator call"
 )
 
+private val typeOperatorLoweringPhase = makeWasmModulePhase(
+    ::WasmTypeOperatorLowering,
+    name = "TypeOperatorLowering",
+    description = "Lower IrTypeOperator with corresponding logic"
+)
+
+private val genericReturnTypeLowering = makeWasmModulePhase(
+    ::GenericReturnTypeLowering,
+    name = "GenericReturnTypeLowering",
+    description = "Cast calls to functions with generic return types"
+)
+
+
+private val virtualDispatchReceiverExtractionPhase = makeWasmModulePhase(
+    ::VirtualDispatchReceiverExtraction,
+    name = "VirtualDispatchReceiverExtraction",
+    description = "Eliminate side-effects in dispatch receivers of virtual function calls"
+)
+
 val wasmPhases = namedIrModulePhase<WasmBackendContext>(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
-            provisionalFunctionExpressionPhase then
 
             // TODO: Need some helpers from stdlib
             // arrayConstructorPhase then
@@ -384,7 +427,6 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
             initializersCleanupLoweringPhase then
             // Common prefix ends
 
-            builtInsLoweringPhase then
 
 //            TODO: Commonize enumEntryToGetInstanceFunction
 //                  Commonize array literal creation
@@ -397,6 +439,7 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Requires stdlib
 //            suspendFunctionsLoweringPhase then
 
+            stringConstructorLowering then
             returnableBlockLoweringPhase then
 
 //            TODO: Callable reference lowering is too JS specific.
@@ -420,7 +463,6 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Investigate exception proposal
 //            multipleCatchesLoweringPhase then
 
-            bridgesConstructionPhase then
 
 //            TODO: Reimplement
 //            typeOperatorLoweringPhase then
@@ -432,11 +474,12 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            TODO: Reimplement
 //            classReferenceLoweringPhase then
 
+
             inlineClassDeclarationLoweringPhase then
             inlineClassUsageLoweringPhase then
 
+            bridgesConstructionPhase then
 //            TODO: Commonize box/unbox intrinsics
-//            autoboxingTransformerPhase then
 
             blockDecomposerLoweringPhase then
 
@@ -444,8 +487,21 @@ val wasmPhases = namedIrModulePhase<WasmBackendContext>(
 //            constLoweringPhase then
 
             objectDeclarationLoweringPhase then
-            objectUsageLoweringPhase then
+
             staticMembersLoweringPhase then
+            fieldInitializersLoweringPhase then
+
+            genericReturnTypeLowering then
+
+            builtInsLoweringPhase0 then
+            autoboxingTransformerPhase then
+
+            objectUsageLoweringPhase then
+
+            typeOperatorLoweringPhase then
+            builtInsLoweringPhase then
+
+            virtualDispatchReceiverExtractionPhase then
 
             validateIrAfterLowering
 )

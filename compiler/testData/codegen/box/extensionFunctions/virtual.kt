@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class Request(val path: String) {
 
@@ -23,3 +24,6 @@ class Handler() {
 }
 
 fun box() : String = if(Handler().test(Request("239")) == "239") "OK" else "fail"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

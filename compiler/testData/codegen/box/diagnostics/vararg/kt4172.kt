@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     main(array())
@@ -15,3 +16,5 @@ object D {
 
 @Suppress("UNCHECKED_CAST")
 inline fun <reified T> array(vararg t : T) : Array<T> = t as Array<T>
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

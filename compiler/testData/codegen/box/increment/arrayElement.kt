@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val aByte: Array<Byte> = arrayOf<Byte>(1)
@@ -68,3 +69,5 @@ fun box(): String {
 
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

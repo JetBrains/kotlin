@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 // CHECK_CASES_COUNT: function=bar1 count=3
@@ -46,3 +47,6 @@ fun box() : String {
     assertEquals("autumn", bar2(Season.AUTUMN))
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

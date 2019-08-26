@@ -13,3 +13,5 @@ class Bad(val a: () -> Int) {
 
     operator fun invoke(): Int = 2
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

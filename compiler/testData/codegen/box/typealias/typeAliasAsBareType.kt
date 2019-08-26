@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 // WITH_RUNTIME
@@ -11,3 +12,5 @@ fun box(): String {
     if (test.toList() != test2) return "test.toList() != test2"
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ listOf 

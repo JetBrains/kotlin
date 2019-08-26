@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     val capture = "O"
@@ -16,3 +17,6 @@ fun box(): String {
 
     return Local().obj.result()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: ARRAY

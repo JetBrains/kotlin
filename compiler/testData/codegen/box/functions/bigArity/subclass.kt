@@ -1,4 +1,5 @@
 // !LANGUAGE: +FunctionTypesWithBigArity
+// IGNORE_BACKEND: WASM
 
 // Implementing function interface is prohibited in JavaScript
 // IGNORE_BACKEND: JS_IR, JS
@@ -22,3 +23,6 @@ fun box(): String {
     val f = Fun()
     return f(a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, a, A("O"), a, a, a, a, a, a, a, a, a, a, A("K"), a, a, a, a, a, a, a, a, a, a)
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

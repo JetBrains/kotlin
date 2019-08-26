@@ -578,7 +578,8 @@ fun createStaticFunctionWithReceivers(
         visibility,
         modality,
         oldFunction.returnType,
-        isInline = oldFunction.isInline,
+        // FIXME(WASM): put inline to false only for virtual functions
+        isInline = false,
         isExternal = false,
         isTailrec = false,
         isSuspend = oldFunction.isSuspend,

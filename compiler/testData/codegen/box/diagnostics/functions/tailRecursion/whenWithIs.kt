@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun withWhen(counter : Int, d : Any) : Int =
@@ -15,3 +16,6 @@ tailrec fun withWhen(counter : Int, d : Any) : Int =
         }
 
 fun box() : String = if (withWhen(100000, "test") == 0) "OK" else "FAIL"
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ IllegalStateException 

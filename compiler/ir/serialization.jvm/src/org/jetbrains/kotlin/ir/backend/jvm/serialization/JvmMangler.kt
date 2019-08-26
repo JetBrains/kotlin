@@ -7,11 +7,10 @@ package org.jetbrains.kotlin.ir.backend.jvm.serialization
 
 import org.jetbrains.kotlin.backend.common.serialization.KotlinManglerImpl
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.util.isInlined
 
 // Copied from JsMangler for now
 object JvmMangler : KotlinManglerImpl() {
 
     override val IrType.isInlined: Boolean
-        get() = this.isInlined()
+        get() = TODO() // this.isInlined()
 }

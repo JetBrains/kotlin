@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     var x = "OK"
     while (true) {
@@ -10,3 +11,6 @@ fun box(): String {
     }
     return x
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IR_TRY

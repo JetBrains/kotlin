@@ -1,4 +1,5 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 
 inline class Composed(val s: String) {
@@ -12,3 +13,7 @@ inline class Composed(val s: String) {
 }
 
 fun box() = Composed("O").p1("K1234")().s
+
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: Function references

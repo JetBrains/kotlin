@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val b: Byte = 42
     val c: Char = 'z'
@@ -60,3 +61,6 @@ fun main(args: Array<String>) {
     }
 }
 */
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ rangeTo 

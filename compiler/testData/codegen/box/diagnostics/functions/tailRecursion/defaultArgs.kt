@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // DONT_RUN_GENERATED_CODE: JS
 
 tailrec fun test(x : Int = 0, e : Any = "a") {
@@ -13,3 +14,5 @@ fun box() : String {
     test(100000)
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ IllegalArgumentException 

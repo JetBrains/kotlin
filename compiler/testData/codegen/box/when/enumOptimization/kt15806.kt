@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // CHECK_CASES_COUNT: function=doTheThing count=2
 // CHECK_IF_COUNT: function=doTheThing count=2
@@ -26,3 +27,5 @@ enum class Level {
 fun box(): String {
     return "O".doTheThing() + Level.K.doTheThing()
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ENUMS

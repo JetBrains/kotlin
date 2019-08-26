@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 public abstract class FList<T>() {
     public abstract val head: T
@@ -52,3 +53,6 @@ fun box() : String {
   }
   return r
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ UnsupportedOperationException 

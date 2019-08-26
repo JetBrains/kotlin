@@ -1,4 +1,5 @@
 // !LANGUAGE: -ProperForInArrayLoopRangeVariableAssignmentSemantic
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: JS_IR
@@ -14,3 +15,6 @@ fun box(): String {
     }
     return if (sum == 15) "OK" else "Fail: $sum"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: WASM_ARRAYS_UNSUPPORTED

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 abstract class C {
     fun test(x: Int) {
@@ -15,3 +16,6 @@ fun box(): String {
     D().test(10)
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: UNIT

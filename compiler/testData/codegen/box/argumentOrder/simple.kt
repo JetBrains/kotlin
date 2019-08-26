@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun box(): String {
     var res = "";
@@ -20,3 +21,5 @@ fun box(): String {
 fun test(a: String, b: String, c: () -> String): String {
     return a + b + c();
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

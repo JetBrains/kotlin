@@ -39,7 +39,37 @@ const runtime = {
         return 0;
     },
 
+    /**
+     * @return {boolean}
+     */
+    String_equals(str, other) {
+        // if (typeof str != "string") throw `Illegal argument str: ${str}`;
+        return str === other;
+    },
+
+    /**
+     * @return {string}
+     */
+    String_subsequence(str, startIndex, endIndex) {
+        return str.substring(startIndex, endIndex);
+    },
+    
     String_getLiteral(index) {
         return runtime.stringLiterals[index];
+    },
+
+    coerceToString(value) {
+        return String(value);
+    },
+
+    /**
+     * @return {string}
+     */
+    Char_toString(char) {
+        return String.fromCharCode(char)
+    },
+
+    println(value) {
+        console.log(">>>  " + value)
     }
 };

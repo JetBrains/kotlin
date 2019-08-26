@@ -84,10 +84,10 @@ object InlineClassDeclarationChecker : DeclarationChecker {
                 return
             }
 
-            if (baseParameterType.isRecursiveInlineClassType()) {
-                trace.report(Errors.INLINE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
-                return
-            }
+            // if (baseParameterType.isRecursiveInlineClassType()) {
+            //     trace.report(Errors.INLINE_CLASS_CANNOT_BE_RECURSIVE.on(baseParameterTypeReference))
+            //     return
+            // }
         }
 
         for (supertypeEntry in declaration.superTypeListEntries) {

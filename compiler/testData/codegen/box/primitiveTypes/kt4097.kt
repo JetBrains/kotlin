@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun box(): String {
     val shouldBeTrue = 555555555555555555L in 123456789123456789L..987654321987654321L
     if (!shouldBeTrue) return "Fail 1"
@@ -13,3 +14,6 @@ fun box(): String {
         else -> "OK"
     }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

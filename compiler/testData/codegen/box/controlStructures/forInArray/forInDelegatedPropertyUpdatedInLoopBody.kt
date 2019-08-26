@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 class Del<T>(var x: T) {
     operator fun getValue(thisRef: Any?, kProp: Any) = x
@@ -16,3 +17,5 @@ fun box(): String {
     }
     return if (sum == 123) "OK" else "Fail: $sum"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCE

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 object A {
     operator fun get(i: Int) = 1
@@ -10,3 +11,5 @@ fun box(): String {
     A[0] += 1
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

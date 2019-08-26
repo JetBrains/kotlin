@@ -96,10 +96,13 @@ class CheckIrElementVisitor(
         }
 
         var type = expression.type
-        while (true) {
-            val inlinedClass = type.getInlinedClass() ?: break
-            type = getInlineClassUnderlyingType(inlinedClass)
-        }
+//        while (true) {
+//            val inlinedClass = type.getInlinedClass() ?: break
+//            // TODO(Wasm): Stop using recursive inline classes
+//            if (getInlineClassUnderlyingType(inlinedClass) == type)
+//                break
+//            type = getInlineClassUnderlyingType(inlinedClass)
+//        }
         expression.ensureTypesEqual(type, naturalType)
     }
 

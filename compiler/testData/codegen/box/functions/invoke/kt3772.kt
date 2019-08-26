@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 //KT-3772 Invoke and overload resolution ambiguity
 
@@ -20,3 +21,5 @@ fun box(): String {
     val d = D()
     return if (d.attr {} == 2) "OK" else "fail"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

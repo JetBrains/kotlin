@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReleaseCoroutines
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: JS_IR, JS
 // IGNORE_BACKEND: JVM_IR
 // WITH_RUNTIME
@@ -17,3 +18,6 @@ fun box(): String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ experimental 

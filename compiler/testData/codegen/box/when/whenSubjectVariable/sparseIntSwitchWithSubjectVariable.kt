@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // KJS_WITH_FULL_RUNTIME
 // !LANGUAGE: +VariableDeclarationInWhenSubject
@@ -18,3 +19,6 @@ fun box(): String {
     if (result != "4, 1, 2, 3") return "sparse:" + result
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ .. 

@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperIeee754Comparisons
+// IGNORE_BACKEND: WASM
 // It doesn't work on JS due to how numbers are represented, but it could be changed in the future.
 // IGNORE_BACKEND: JS
 // IGNORE_BACKEND: JS_IR
@@ -20,3 +21,5 @@ fun box(): String {
 
     return "OK"
 }
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: IGNORED_IN_JS

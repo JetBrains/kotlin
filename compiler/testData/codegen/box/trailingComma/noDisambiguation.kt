@@ -1,4 +1,5 @@
 // !LANGUAGE: +TrailingCommas
+// IGNORE_BACKEND: WASM
 
 fun foo(vararg x: Int) = false
 fun foo(x: Int) = true
@@ -8,3 +9,6 @@ fun box(): String {
     val y = foo(1,)
     return if (x && y) "OK" else "ERROR"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: ARRAYS

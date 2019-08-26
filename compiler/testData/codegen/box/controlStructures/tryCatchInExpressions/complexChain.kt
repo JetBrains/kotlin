@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 fun cleanup() {}
 
 inline fun concat(x: String, y: String): String = x + y
@@ -50,3 +51,6 @@ fun box(): String =
                     )
             )
     )
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ Exception 

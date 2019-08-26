@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun f(x: Any?): Any? {
     if (x is Array<*>) {
@@ -13,3 +14,6 @@ fun box(): String {
     a[0] = "OK"
     return f(a) as String
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: ARRAYS

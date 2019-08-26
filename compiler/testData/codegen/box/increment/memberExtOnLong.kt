@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
@@ -13,3 +14,6 @@ fun box(): String {
         return if (y == 0L) "OK" else "Failed, y=$y"
     }
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ with 

@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 // WITH_RUNTIME
 
@@ -32,3 +33,6 @@ open class Foo {
 fun box(): String {
     return Foo().test()
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ isInitialized 

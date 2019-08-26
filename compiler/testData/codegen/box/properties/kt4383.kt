@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 import kotlin.reflect.KProperty
 
@@ -17,3 +18,6 @@ fun box(): String {
     if (P.w != P.u) return "Fail w"
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: PROPERTY_REFERENCE

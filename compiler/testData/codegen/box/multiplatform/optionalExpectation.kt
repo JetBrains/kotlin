@@ -1,5 +1,6 @@
 // !LANGUAGE: +MultiPlatformProjects
 // !USE_EXPERIMENTAL: kotlin.ExperimentalMultiplatform
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND: NATIVE
 // WITH_RUNTIME
 // MODULE: library
@@ -34,3 +35,6 @@ import a.B
 fun box(): String {
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ OptionalExpectation 

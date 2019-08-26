@@ -2,6 +2,7 @@
 // IGNORE_BACKEND_FIR: JVM_IR
 // TODO: muted automatically, investigate should it be ran for JS or not
 // IGNORE_BACKEND: NATIVE
+// IGNORE_BACKEND: WASM
 
 object A {
     const val a: String = "$"
@@ -33,3 +34,6 @@ fun box(): String {
 
     return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+//DONT_TARGET_WASM_REASON: CONSTANT_POOLS

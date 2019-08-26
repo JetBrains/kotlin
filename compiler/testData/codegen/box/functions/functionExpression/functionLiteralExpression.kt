@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 // IGNORE_BACKEND_FIR: JVM_IR
 fun Any.foo1() : ()-> String {
   return { "239" + this }
@@ -26,3 +27,6 @@ fun box() : String {
   if(  (fooT2<String>("mama"))("papa") != "mamapapa")  return "test 9 failed";
   return "OK"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ WASM_FUNCTION_REFERENCES_UNSUPPORTED

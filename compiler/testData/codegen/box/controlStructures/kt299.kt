@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: WASM
 class MyRange1() : ClosedRange<Int> {
     override val start: Int
         get() = 0
@@ -19,3 +20,6 @@ fun box(): String {
     }
     return "fail 1"
 }
+
+// DONT_TARGET_EXACT_BACKEND: WASM
+ //DONT_TARGET_WASM_REASON: UNRESOLVED_REF__ ClosedRange 
