@@ -16,12 +16,14 @@ import javax.xml.parsers.DocumentBuilderFactory
 data class ModuleData(
     val name: String,
     val outputDir: String,
-    val qualifiedName: String,
+    val qualifier: String,
     val classpath: List<File>,
     val sources: List<File>,
     val javaSourceRoots: List<File>,
     val isCommon: Boolean
-)
+) {
+    val qualifiedName get() = if (name in qualifier) qualifier else "$name.$qualifier"
+}
 
 private fun NodeList.toList(): List<Node> {
     val list = mutableListOf<Node>()
@@ -55,7 +57,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val moduleElement = document.childNodes.item(0).childNodesList.first { it.nodeType == Node.ELEMENT_NODE }
         val moduleName = moduleElement.attributes.getNamedItem("name").nodeValue
         val outputDir = moduleElement.attributes.getNamedItem("outputDir").nodeValue
-        val qualifiedModuleName = outputDir.substringAfterLast("/")
+        val moduleNameQualifier = outputDir.substringAfterLast("/")
         val javaSourceRoots = mutableListOf<File>()
         val classpath = mutableListOf<File>()
         val sources = mutableListOf<File>()
@@ -81,7 +83,7 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
             }
         }
 
-        return ModuleData(moduleName, outputDir, qualifiedModuleName, classpath, sources, javaSourceRoots, isCommon)
+        return ModuleData(moduleName, outputDir, moduleNameQualifier, classpath, sources, javaSourceRoots, isCommon)
     }
 
 

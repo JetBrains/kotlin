@@ -89,10 +89,11 @@ class FirResolveModularizedTotalKotlinTest : AbstractModularizedTest() {
 
     private val dumpedModules = mutableSetOf<String>()
     private fun ModuleData.disambiguatedName(): String {
-        var disambiguatedName = this.name
+        val baseName = qualifiedName
+        var disambiguatedName = baseName
         var counter = 0
         while(!dumpedModules.add(disambiguatedName)) {
-            disambiguatedName = "${this.name}.${counter++}"
+            disambiguatedName = "$baseName.${counter++}"
         }
         return disambiguatedName
     }
