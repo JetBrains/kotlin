@@ -9,6 +9,7 @@ import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import junit.framework.TestCase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.backend.wasm.compileWasm
@@ -25,8 +26,10 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.test.InTextDirectivesUtils
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
+import org.jetbrains.kotlin.test.TargetBackend
 import java.io.Closeable
 import java.io.File
 import java.lang.Boolean.getBoolean
@@ -43,8 +46,16 @@ abstract class BasicWasmBoxTest(
 
     private val spiderMonkey by lazy { SpiderMonkeyEngine() }
 
+    private val runIgnoredWasmTests =
+        getBoolean("kotlin.wasm.run.ignored.tests")
+
     fun doTest(filePath: String) {
         val file = File(filePath)
+
+        val isIgnored = InTextDirectivesUtils.isIgnoredTarget(TargetBackend.WASM, file)
+        if (isIgnored && !runIgnoredWasmTests)
+            TestCase.fail("Wasm test is ignored")
+
         val outputDir = getOutputDir(file)
         val fileContent = KotlinTestUtils.doLoadFile(file)
 
