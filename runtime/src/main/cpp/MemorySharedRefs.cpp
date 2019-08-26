@@ -75,14 +75,15 @@ void BackRefFromAssociatedObject::addRef() {
 }
 
 bool BackRefFromAssociatedObject::tryAddRef() {
+  // Suboptimal but simple:
   ObjHeader* obj = this->ref();
-  if (!obj->has_meta_object()) {
-    // Then object is being deallocated.
-    return false;
-  } else {
-    this->addRef();
-    return true;
-  }
+
+  if (!TryAddHeapRef(obj)) return false;
+  this->addRef();
+  ReleaseHeapRef(obj); // Balance TryAddHeapRef.
+  // TODO: consider optimizing for non-shared objects.
+
+  return true;
 }
 
 void BackRefFromAssociatedObject::releaseRef() {

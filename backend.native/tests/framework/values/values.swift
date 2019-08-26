@@ -805,7 +805,7 @@ func testWeakRefs0(frozen: Bool) throws {
     try test1()
     try test2()
     try test3()
-    // try test4()
+    try test4()
 }
 
 var falseFlag = false

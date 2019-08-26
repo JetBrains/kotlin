@@ -989,6 +989,11 @@ void traverseStronglyConnectedComponent(ContainerHeader* start,
   }
 }
 
+template <bool Atomic>
+inline bool tryIncrementRC(ContainerHeader* container) {
+  return container->tryIncRefCount<Atomic>();
+}
+
 #if !USE_GC
 
 template <bool Atomic>
@@ -1375,6 +1380,29 @@ inline void addHeapRef(const ObjHeader* header) {
   auto* container = header->container();
   if (container != nullptr)
     addHeapRef(const_cast<ContainerHeader*>(container));
+}
+
+inline bool tryAddHeapRef(ContainerHeader* container) {
+  switch (container->tag()) {
+    case CONTAINER_TAG_STACK:
+      break;
+    case CONTAINER_TAG_LOCAL:
+      if (!tryIncrementRC</* Atomic = */ false>(container)) return false;
+      break;
+    /* case CONTAINER_TAG_FROZEN: case CONTAINER_TAG_SHARED: */
+    default:
+      if (!tryIncrementRC</* Atomic = */ true>(container)) return false;
+      break;
+  }
+
+  MEMORY_LOG("AddHeapRef %p: rc=%d\n", container, container->refCount() - 1)
+  UPDATE_ADDREF_STAT(memoryState, container, needAtomicAccess(container), 0)
+  return true;
+}
+
+inline bool tryAddHeapRef(const ObjHeader* header) {
+  auto* container = header->container();
+  return (container != nullptr) ? tryAddHeapRef(container) : true;
 }
 
 template <bool Strict>
@@ -2601,6 +2629,10 @@ ArrayHeader* ArenaContainer::PlaceArray(const TypeInfo* type_info, uint32_t coun
 extern "C" {
 
 // Private memory interface.
+bool TryAddHeapRef(const ObjHeader* object) {
+  return tryAddHeapRef(object);
+}
+
 void ReleaseHeapRefStrict(const ObjHeader* object) {
   releaseHeapRef<true>(const_cast<ObjHeader*>(object));
 }

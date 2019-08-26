@@ -20,6 +20,7 @@
 #include "KAssert.h"
 #include "Common.h"
 #include "TypeInfo.h"
+#include "Atomic.h"
 
 typedef enum {
   // Those bit masks are applied to refCount_ field.
@@ -134,6 +135,32 @@ struct ContainerHeader {
     else
       refCount_ += CONTAINER_TAG_INCREMENT;
 #endif
+  }
+
+  template <bool Atomic>
+  inline bool tryIncRefCount() {
+    if (Atomic) {
+      while (true) {
+        uint32_t currentRefCount_ = refCount_;
+        if (((int)currentRefCount_ >> CONTAINER_TAG_SHIFT) > 0) {
+          if (compareAndSet(&refCount_, currentRefCount_, currentRefCount_ + CONTAINER_TAG_INCREMENT)) {
+            return true;
+          }
+        } else {
+          return false;
+        }
+      }
+    } else {
+      // Note: tricky case here is doing this during cycle collection.
+      // This can actually happen due to deallocation hooks.
+      // Fortunately by this point reference counts have been made precise again.
+      if (refCount() > 0) {
+        incRefCount</* Atomic = */ false>();
+        return true;
+      } else {
+        return false;
+      }
+    }
   }
 
   template <bool Atomic>

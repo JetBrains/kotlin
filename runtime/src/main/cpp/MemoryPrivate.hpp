@@ -21,6 +21,8 @@
 
 extern "C" {
 
+bool TryAddHeapRef(const ObjHeader* object);
+
 MODEL_VARIANTS(void, ReleaseHeapRef, const ObjHeader* object);
 
 void DeinitInstanceBody(const TypeInfo* typeInfo, void* body);
