@@ -96,7 +96,8 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         return process(listOf(element), elementFilter).single()
     }
 
-    fun process(file: KtFile, startOffset: Int, endOffset: Int) {
+    @JvmOverloads
+    fun process(file: KtFile, startOffset: Int, endOffset: Int, additionalFilter: (PsiElement) -> FilterResult = { FilterResult.PROCESS }) {
         val documentManager = PsiDocumentManager.getInstance(file.project)
         val document = file.viewProvider.document!!
         if (!documentManager.isCommitted(document)) {
@@ -106,33 +107,36 @@ class ShortenReferences(val options: (KtElement) -> Options = { Options.DEFAULT 
         val rangeMarker = document.createRangeMarker(startOffset, endOffset)
         rangeMarker.isGreedyToLeft = true
         rangeMarker.isGreedyToRight = true
+
+        val rangeFilter = { element: PsiElement ->
+            if (rangeMarker.isValid) {
+                val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
+
+                val elementRange = element.textRange!!
+                when {
+                    range.contains(elementRange) -> FilterResult.PROCESS
+
+                    range.intersects(elementRange) -> {
+                        // for qualified call expression allow to shorten only the part without parenthesis
+                        val calleeExpression = ((element as? KtDotQualifiedExpression)
+                            ?.selectorExpression as? KtCallExpression)
+                            ?.calleeExpression
+                        if (calleeExpression != null) {
+                            val rangeWithoutParenthesis = TextRange(elementRange.startOffset, calleeExpression.textRange!!.endOffset)
+                            if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
+                        } else {
+                            FilterResult.GO_INSIDE
+                        }
+                    }
+                    else -> FilterResult.SKIP
+                }
+            } else {
+                FilterResult.SKIP
+            }
+        }
         try {
             process(listOf(file)) { element ->
-                if (rangeMarker.isValid) {
-                    val range = TextRange(rangeMarker.startOffset, rangeMarker.endOffset)
-
-                    val elementRange = element.textRange!!
-                    when {
-                        range.contains(elementRange) -> FilterResult.PROCESS
-
-                        range.intersects(elementRange) -> {
-                            // for qualified call expression allow to shorten only the part without parenthesis
-                            val calleeExpression = ((element as? KtDotQualifiedExpression)
-                                ?.selectorExpression as? KtCallExpression)
-                                ?.calleeExpression
-                            if (calleeExpression != null) {
-                                val rangeWithoutParenthesis = TextRange(elementRange.startOffset, calleeExpression.textRange!!.endOffset)
-                                if (range.contains(rangeWithoutParenthesis)) FilterResult.PROCESS else FilterResult.GO_INSIDE
-                            } else {
-                                FilterResult.GO_INSIDE
-                            }
-                        }
-
-                        else -> FilterResult.SKIP
-                    }
-                } else {
-                    FilterResult.SKIP
-                }
+                minOf(rangeFilter(element), additionalFilter(element))
             }
         } finally {
             rangeMarker.dispose()

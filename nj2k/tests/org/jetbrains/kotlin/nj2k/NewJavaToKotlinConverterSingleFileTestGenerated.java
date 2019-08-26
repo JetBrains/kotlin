@@ -3472,6 +3472,16 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/methodCallExpression/collectionsMethods2.java");
         }
 
+        @TestMetadata("conflictJavaMethodCall.java")
+        public void testConflictJavaMethodCall() throws Exception {
+            runTest("nj2k/testData/newJ2k/methodCallExpression/conflictJavaMethodCall.java");
+        }
+
+        @TestMetadata("conflictJavaMethodCallWithExplicitImports.java")
+        public void testConflictJavaMethodCallWithExplicitImports() throws Exception {
+            runTest("nj2k/testData/newJ2k/methodCallExpression/conflictJavaMethodCallWithExplicitImports.java");
+        }
+
         @TestMetadata("emptyCall.java")
         public void testEmptyCall() throws Exception {
             runTest("nj2k/testData/newJ2k/methodCallExpression/emptyCall.java");

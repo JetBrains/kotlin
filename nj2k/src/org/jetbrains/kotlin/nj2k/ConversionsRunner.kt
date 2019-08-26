@@ -73,7 +73,6 @@ object ConversionsRunner {
 
             //Kotlin --> Kotlin conversions
             +InnerClassConversion()
-            +FilterImportsConversion()
             +StaticsToCompanionExtractConversion()
             +InterfaceWithFieldConversion()
             +ClassToObjectPromotionConversion(context)
@@ -84,6 +83,7 @@ object ConversionsRunner {
             +LiteralConversion()
 
             +CollectImportsConversion(context)
+            +FilterImportsConversion()
             +MoveInitBlocksToTheEndConversion()
             +AddElementsInfoConversion(context)
         }

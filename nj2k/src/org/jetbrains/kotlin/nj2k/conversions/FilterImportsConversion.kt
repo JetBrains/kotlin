@@ -12,12 +12,9 @@ import org.jetbrains.kotlin.nj2k.tree.JKTreeElement
 
 class FilterImportsConversion : RecursiveApplicableConversionBase() {
     override fun applyToElement(element: JKTreeElement): JKTreeElement {
-        if (element is JKImportList) {
-            for (import in element.imports) {
-                if (!ImportStorage.isImportNeeded(import.name.value)) {
-                    element.imports -= import
-                }
-            }
+        if (element !is JKImportList) return recurse(element)
+        element.imports = element.imports.filter { import ->
+            ImportStorage.isImportNeeded(import.name.value)
         }
         return recurse(element)
     }

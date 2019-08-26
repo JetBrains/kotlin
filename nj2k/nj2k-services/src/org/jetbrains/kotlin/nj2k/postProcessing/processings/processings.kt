@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.idea.caches.resolve.getResolutionFacade
 import org.jetbrains.kotlin.idea.core.ShortenReferences
 import org.jetbrains.kotlin.idea.core.util.range
 import org.jetbrains.kotlin.idea.formatter.commitAndUnblockDocument
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.idea.references.mainReference
+import org.jetbrains.kotlin.nj2k.ImportStorage
 import org.jetbrains.kotlin.nj2k.asLabel
 import org.jetbrains.kotlin.nj2k.inference.common.BoundTypeCalculatorImpl
 import org.jetbrains.kotlin.nj2k.inference.common.ByInfoSuperFunctionsProvider
@@ -29,6 +32,7 @@ import org.jetbrains.kotlin.nj2k.inference.nullability.NullabilityStateUpdater
 import org.jetbrains.kotlin.nj2k.postProcessing.postProcessing
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
 val formatCodeProcessing =
     postProcessing { file, rangeMarker, _ ->
@@ -90,12 +94,19 @@ private fun KtFile.clearUndefinedLabels() {
 
 val shortenReferencesProcessing =
     postProcessing { file, rangeMarker, _ ->
+        val filter = filter@{ element: PsiElement ->
+            if (element !is KtQualifiedExpression) return@filter ShortenReferences.FilterResult.PROCESS
+            val fqName = element.selectorExpression?.mainReference?.resolve()?.getKotlinFqName()
+                ?: return@filter ShortenReferences.FilterResult.PROCESS
+            if (ImportStorage.isImportNeeded(fqName)) ShortenReferences.FilterResult.PROCESS
+            else ShortenReferences.FilterResult.SKIP
+        }
         if (rangeMarker != null) {
             if (rangeMarker.isValid) {
-                ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset)
+                ShortenReferences.DEFAULT.process(file, rangeMarker.startOffset, rangeMarker.endOffset, filter)
             }
         } else {
-            ShortenReferences.DEFAULT.process(file)
+            ShortenReferences.DEFAULT.process(file, filter)
         }
     }
 
