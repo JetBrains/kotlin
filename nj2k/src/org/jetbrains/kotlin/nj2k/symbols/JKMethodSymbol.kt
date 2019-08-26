@@ -9,13 +9,12 @@ import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiReference
 import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.idea.refactoring.fqName.getKotlinFqName
+import org.jetbrains.kotlin.j2k.ast.Nullability
 import org.jetbrains.kotlin.nj2k.JKSymbolProvider
-import org.jetbrains.kotlin.nj2k.tree.JKClass
-import org.jetbrains.kotlin.nj2k.tree.JKMethod
-import org.jetbrains.kotlin.nj2k.tree.JKType
+import org.jetbrains.kotlin.nj2k.tree.*
 import org.jetbrains.kotlin.nj2k.tree.impl.JKClassTypeImpl
 import org.jetbrains.kotlin.nj2k.tree.impl.JKNoTypeImpl
-import org.jetbrains.kotlin.nj2k.tree.toJK
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
@@ -49,7 +48,8 @@ class JKMultiverseMethodSymbol(
     override val parameterTypes: List<JKType>
         get() = target.parameterList.parameters.map { it.type.toJK(symbolProvider) }
     override val returnType: JKType
-        get() = target.returnType!!.toJK(symbolProvider)
+        get() = target.returnType?.toJK(symbolProvider) // null for constructor call
+            ?: symbolProvider.provideClassSymbol(target.getKotlinFqName()!!).asType(Nullability.NotNull)
 
     override val fqName: String
         get() {

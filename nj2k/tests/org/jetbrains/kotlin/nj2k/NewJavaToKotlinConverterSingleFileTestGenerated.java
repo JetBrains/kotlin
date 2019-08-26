@@ -2443,6 +2443,11 @@ public class NewJavaToKotlinConverterSingleFileTestGenerated extends AbstractNew
             runTest("nj2k/testData/newJ2k/function/public.java");
         }
 
+        @TestMetadata("referenceToConstructor.java")
+        public void testReferenceToConstructor() throws Exception {
+            runTest("nj2k/testData/newJ2k/function/referenceToConstructor.java");
+        }
+
         @TestMetadata("synchronizedMethod.java")
         public void testSynchronizedMethod() throws Exception {
             runTest("nj2k/testData/newJ2k/function/synchronizedMethod.java");
