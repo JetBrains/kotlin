@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import org.jetbrains.org.objectweb.asm.commons.Method
 
@@ -186,7 +187,14 @@ private class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPass
         val bridge = createBridgeHeader(irClass, target, method, isSpecial = isSpecial, isSynthetic = !isSpecial)
         bridge.createBridgeBody(target, defaultValueGenerator, isSpecial)
         irClass.declarations.add(bridge)
-        target.overriddenSymbols.remove(method.symbol)
+
+        // For lambda classes, we move override from the `invoke` function to its bridge. This will allow us to avoid boxing
+        // the return type of `invoke` in codegen, in case lambda's return type is primitive.
+        if (method.name == OperatorNameConventions.INVOKE && irClass.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+            target.overriddenSymbols.remove(method.symbol)
+            bridge.overriddenSymbols.add(method.symbol)
+        }
+
         signaturesToSkip.add(signature)
     }
 
